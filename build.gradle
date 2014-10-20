@@ -14,7 +14,7 @@ dependencies {
 	compile project("qabel-core")
 }
 
-task fatJar(type: Jar) {
+task fatJar(type: Jar, dependsOn: ':build') {
     from files(sourceSets.main.output.classesDir)
     from {configurations.compile.collect {zipTree(it)}} {
         exclude "META-INF/*.SF"
