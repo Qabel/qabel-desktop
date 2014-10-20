@@ -14,3 +14,15 @@ dependencies {
 	compile project("qabel-core")
 }
 
+task fatJar(type: Jar) {
+    from files(sourceSets.main.output.classesDir)
+    from {configurations.compile.collect {zipTree(it)}} {
+        exclude "META-INF/*.SF"
+        exclude "META-INF/*.DSA"
+        exclude "META-INF/*.RSA"
+    }
+    manifest {
+        attributes 'Main-Class': 'de.qabel.desktop.QblMain'
+    }
+}
+
