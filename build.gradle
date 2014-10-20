@@ -1,5 +1,8 @@
 apply plugin: 'java'
+apply plugin: 'application'
 apply plugin: 'eclipse'
+
+mainClassName = "de.qabel.desktop.QblMain"
 
 repositories {
     mavenCentral()
@@ -7,5 +10,7 @@ repositories {
 
 dependencies {
     testCompile "junit:junit:4.11"
+    compile 'commons-cli:commons-cli:1.2'
 	compile project("qabel-core")
 }
+
