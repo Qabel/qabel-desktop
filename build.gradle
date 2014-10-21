@@ -21,10 +21,6 @@ dependencies {
     testCompile "junit:junit:4.11"
     compile 'commons-cli:commons-cli:1.2'
 		compile project("qabel-core")
-		runtime group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.+'
-		runtime group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.+'
-		runtime group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.51'
-		runtime group: 'org.apache.james', name: 'apache-mime4j', version: '0.7.2'
 		runtime fileTree(dir: 'libs', include: '*.jar')
 }
 
