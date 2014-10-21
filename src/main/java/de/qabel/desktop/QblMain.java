@@ -10,6 +10,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Contacts;
+import de.qabel.core.config.DropServer;
 import de.qabel.core.config.DropServers;
 import de.qabel.core.config.Identity;
 import de.qabel.core.crypto.QblEncPublicKey;
@@ -75,10 +76,11 @@ public class QblMain {
 		DropServers servers = new DropServers();
 		// Generate DropServer instances here and
 		// put them into servers. Example:
-//		DropServer dropServer = new DropServer();
-//		dropServer
-//				.setUrl(new URL(
-//						"http://localhost:8000/123456789012345678901234567890123456789012c"));
+		DropServer dropServer = new DropServer();
+		dropServer
+				.setUrl(new URL(
+						"http://localhost:8000/123456789012345678901234567890123456789012d"));
+        servers.getDropServer().add(dropServer);
 		dropController.setDropServers(servers);
 	}
 
