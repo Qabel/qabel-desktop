@@ -3,10 +3,8 @@ package de.qabel.desktop;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.Security;
 
 import org.apache.commons.cli.*;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Contacts;
