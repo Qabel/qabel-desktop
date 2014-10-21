@@ -3,26 +3,34 @@ apply plugin: 'application'
 apply plugin: 'eclipse'
 
 mainClassName = "de.qabel.desktop.QblMain"
+version = '0.1'
 
 repositories {
     mavenCentral()
 }
 
+jar.doFirst{
+	manifest {
+		attributes 'Implementation-Title': 'Qabel Core', 'Implementation-Version': version
+		attributes 'Main-Class': 'de.qabel.desktop.QblMain'
+	  attributes 'Class-Path': configurations.runtime.collect { it.getName() }.join(' ')
+	}
+}
+
 dependencies {
     testCompile "junit:junit:4.11"
     compile 'commons-cli:commons-cli:1.2'
-	compile project("qabel-core")
+		compile project("qabel-core")
+		runtime fileTree(dir: 'libs', include: '*.jar')
 }
 
-task fatJar(type: Jar, dependsOn: ':build') {
-    from files(sourceSets.main.output.classesDir)
-    from {configurations.compile.collect {zipTree(it)}} {
-        exclude "META-INF/*.SF"
-        exclude "META-INF/*.DSA"
-        exclude "META-INF/*.RSA"
-    }
-    manifest {
-        attributes 'Main-Class': 'de.qabel.desktop.QblMain'
-    }
+task copyToLib(type: Copy) {
+  	from configurations.runtime
+    into "$buildDir/libs"  
 }
 
+classes {   
+	 doLast {
+        copyToLib.execute()
+    }
+}
