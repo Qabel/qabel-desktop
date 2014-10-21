@@ -79,7 +79,7 @@ public class QblMain {
 //		dropServer
 //				.setUrl(new URL(
 //						"http://localhost:8000/123456789012345678901234567890123456789012c"));
-//		dropController.setDropServers(servers);
+		dropController.setDropServers(servers);
 	}
 
 	private void run() throws InterruptedException {
