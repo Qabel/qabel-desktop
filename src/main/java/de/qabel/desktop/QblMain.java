@@ -30,7 +30,6 @@ public class QblMain {
 	public static void main(String[] args) throws InstantiationException,
 			IllegalAccessException, ClassNotFoundException,
 			InterruptedException, MalformedURLException {
-		System.setSecurityManager(null);
 
 
 		QblMain main = new QblMain();
