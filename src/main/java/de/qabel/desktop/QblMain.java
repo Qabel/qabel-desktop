@@ -49,9 +49,6 @@ public class QblMain {
 		QblPrimaryKeyPair myKey = QblKeyFactory.getInstance()
 				.generateQblPrimaryKeyPair();
 		identity.setPrimaryKeyPair(myKey);
-
-		QblPrimaryKeyPair coKey = QblKeyFactory.getInstance()
-				.generateQblPrimaryKeyPair();
 		
 		Contacts contacts = new Contacts();
 		Contact contact = new Contact(identity);
