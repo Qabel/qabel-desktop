@@ -39,42 +39,62 @@ public class QblMain {
 	}
 
 	private void loadContacts() throws MalformedURLException {
-		Identity identity = new Identity(
+		Identity alice = new Identity(
 				"Alice",
 				new URL(
-						"http://localhost:8000/123456789012345678901234567890123456789012c"));
-		QblPrimaryKeyPair myKey = QblKeyFactory.getInstance()
+						"http://localhost:8000/123456789012345678901234567890123456789012a"));
+		QblPrimaryKeyPair alicesKey = QblKeyFactory.getInstance()
 				.generateQblPrimaryKeyPair();
-		identity.setPrimaryKeyPair(myKey);
-		
-		Contacts contacts = new Contacts();
-		Contact contact = new Contact(identity);
-		QblPrimaryKeyPair qpkp = QblKeyFactory.getInstance()
-				.generateQblPrimaryKeyPair();
-		QblPrimaryPublicKey qppk = qpkp.getQblPrimaryPublicKey();
-		QblEncPublicKey qepk = qpkp.getQblEncPublicKey();
-		QblSignPublicKey qspk = qpkp.getQblSignPublicKey();
+		alice.setPrimaryKeyPair(alicesKey);
 
-        contact.setPrimaryPublicKey(qppk);
-        contact.setEncryptionPublicKey(qepk);
-        contact.setSignaturePublicKey(qspk);
+        Identity bob = new Identity(
+                "Bob",
+                new URL(
+                        "http://localhost:8000/123456789012345678901234567890123456789012b"));
+        QblPrimaryKeyPair bobsKey = QblKeyFactory.getInstance()
+                .generateQblPrimaryKeyPair();
+        bob.setPrimaryKeyPair(bobsKey);
 
-		contact.getDropUrls()
-				.add(new URL(
-						"http://localhost:8000/123456789012345678901234567890123456789012d"));
-		contacts.getContacts().add(contact);
+		Contact alicesContact = new Contact(alice);
+        alicesContact.setPrimaryPublicKey(bobsKey.getQblPrimaryPublicKey());
+        alicesContact.setEncryptionPublicKey(bobsKey.getQblEncPublicKey());
+        alicesContact.setSignaturePublicKey(bobsKey.getQblSignPublicKey());
+        alicesContact.getDropUrls().add(new URL("http://localhost:8000/123456789012345678901234567890123456789012b"));
+
+        Contact bobsContact = new Contact(bob);
+        bobsContact.setPrimaryPublicKey(alicesKey.getQblPrimaryPublicKey());
+        bobsContact.setEncryptionPublicKey(alicesKey.getQblEncPublicKey());
+        bobsContact.setSignaturePublicKey(alicesKey.getQblSignPublicKey());
+        alicesContact.getDropUrls().add(new URL("http://localhost:8000/123456789012345678901234567890123456789012a"));
+
+        Contacts contacts = new Contacts();
+        contacts.getContacts().add(alicesContact);
+        contacts.getContacts().add(bobsContact);
+
 		dropController.setContacts(contacts);
 	}
 
+    /**
+     * Generate DropServer instances here and
+     * put them into global available servers.
+     * @throws MalformedURLException
+     */
 	private void loadDropServers() throws MalformedURLException {
-		DropServers servers = new DropServers();
-		// Generate DropServer instances here and
-		// put them into servers. Example:
-		DropServer dropServer = new DropServer();
-		dropServer
+		DropServer alicesServer = new DropServer();
+        alicesServer
 				.setUrl(new URL(
-						"http://localhost:8000/123456789012345678901234567890123456789012d"));
-        servers.getDropServer().add(dropServer);
+						"http://localhost:8000/123456789012345678901234567890123456789012a"));
+
+        DropServer bobsServer = new DropServer();
+        bobsServer
+                .setUrl(new URL(
+                        "http://localhost:8000/123456789012345678901234567890123456789012b"));
+
+        DropServers servers = new DropServers();
+
+        servers.getDropServer().add(alicesServer);
+        servers.getDropServer().add(bobsServer);
+
 		dropController.setDropServers(servers);
 	}
 
