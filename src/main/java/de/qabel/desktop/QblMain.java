@@ -38,6 +38,10 @@ public class QblMain {
 		main.run();
 	}
 
+    /**
+     * Creates global available identities and puts them into contact with each other.
+     * @throws MalformedURLException
+     */
 	private void loadContacts() throws MalformedURLException {
 		Identity alice = new Identity(
 				"Alice",
@@ -98,6 +102,10 @@ public class QblMain {
 		dropController.setDropServers(servers);
 	}
 
+    /**
+     * The application main loop.
+     * @throws InterruptedException
+     */
 	private void run() throws InterruptedException {
 		while (true) {
 			dropController.retrieve();
@@ -116,6 +124,12 @@ public class QblMain {
 	private ModuleManager moduleManager;
 	private CommandLine commandLine;
 
+    /**
+     * Starts all modules given on the commandline.
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws ClassNotFoundException
+     */
 	private void startModules() throws InstantiationException,
 			IllegalAccessException, ClassNotFoundException {
 		for (String module : commandLine.getOptionValues(MODULE_OPT)) {
@@ -123,6 +137,9 @@ public class QblMain {
 		}
 	}
 
+    /**
+     * Instantiates global DropController and ModuleManager.
+     */
 	private QblMain() {
 		options.addOption(MODULE_OPT, true, "start a module at loadtime");
 		dropController = new DropController();
@@ -130,6 +147,11 @@ public class QblMain {
 		moduleManager.setDropController(dropController);
 	}
 
+    /**
+     * Parses commandline arguments.
+     * @param args Which module(s) should be loaded. Usage: "path to jar":"full class name of module"
+     * @return
+     */
 	private boolean parse(String... args) {
 		CommandLineParser parser = new GnuParser();
 		try {
@@ -143,6 +165,13 @@ public class QblMain {
 		return true;
 	}
 
+    /**
+     * Uses the module manager to start a module.
+     * @param module The module that gets started.
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws ClassNotFoundException
+     */
 	private void startModule(String module) throws InstantiationException,
 			IllegalAccessException, ClassNotFoundException {
 		String[] moduleParts = module.split(":", 2);
