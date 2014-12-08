@@ -3,7 +3,11 @@ package de.qabel.desktop;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.InvalidKeyException;
+import java.util.ArrayList;
+import java.util.Collection;
 
+import de.qabel.core.exceptions.QblDropInvalidURL;
 import org.apache.commons.cli.*;
 
 import de.qabel.core.config.Contact;
@@ -11,14 +15,12 @@ import de.qabel.core.config.Contacts;
 import de.qabel.core.config.DropServer;
 import de.qabel.core.config.DropServers;
 import de.qabel.core.config.Identity;
-import de.qabel.core.crypto.QblEncPublicKey;
 import de.qabel.core.crypto.QblKeyFactory;
 import de.qabel.core.crypto.QblPrimaryKeyPair;
-import de.qabel.core.crypto.QblPrimaryPublicKey;
-import de.qabel.core.crypto.QblSignPublicKey;
 import de.qabel.core.drop.DropController;
 import de.qabel.core.module.Module;
 import de.qabel.core.module.ModuleManager;
+import de.qabel.core.drop.DropURL;
 
 public class QblMain {
 	private static final String MODULE_OPT = "module";
@@ -27,8 +29,7 @@ public class QblMain {
 
 	public static void main(String[] args) throws InstantiationException,
 			IllegalAccessException, ClassNotFoundException,
-			InterruptedException, MalformedURLException {
-
+			InterruptedException, MalformedURLException, QblDropInvalidURL, InvalidKeyException {
 
 		QblMain main = new QblMain();
 		main.parse(args);
@@ -40,40 +41,46 @@ public class QblMain {
 
     /**
      * Creates global available identities and puts them into contact with each other.
-     * @throws MalformedURLException
+	 * @throws MalformedURLException, QblDropInvalidURL, InvalidKeyException
      */
-	private void loadContacts() throws MalformedURLException {
-		Identity alice = new Identity(
-				"Alice",
-				new URL(
-						"http://localhost:6000/123456789012345678901234567890123456789012a"));
+	private void loadContacts() throws MalformedURLException, QblDropInvalidURL, InvalidKeyException {
+		Collection<DropURL> aliceDropURLs = new ArrayList<DropURL>();
+		aliceDropURLs.add(new DropURL(
+				"http://localhost:6000/123456789012345678901234567890123456789012a"));
 		QblPrimaryKeyPair alicesKey = QblKeyFactory.getInstance()
 				.generateQblPrimaryKeyPair();
-		alice.setPrimaryKeyPair(alicesKey);
+		Identity alice = new Identity(
+				"Alice",
+				aliceDropURLs,
+				alicesKey
+		);
 
-        Identity bob = new Identity(
-                "Bob",
-                new URL(
-                        "http://localhost:6000/123456789012345678901234567890123456789012b"));
-        QblPrimaryKeyPair bobsKey = QblKeyFactory.getInstance()
-                .generateQblPrimaryKeyPair();
-        bob.setPrimaryKeyPair(bobsKey);
+		Collection<DropURL> bobDropURLs = new ArrayList<DropURL>();
+		aliceDropURLs.add(new DropURL(
+				"http://localhost:6000/123456789012345678901234567890123456789012b"));
+		QblPrimaryKeyPair bobsKey = QblKeyFactory.getInstance()
+				.generateQblPrimaryKeyPair();
+		Identity bob = new Identity(
+				"Bob",
+				bobDropURLs,
+				bobsKey
+		);
 
 		Contact alicesContact = new Contact(alice);
         alicesContact.setPrimaryPublicKey(bobsKey.getQblPrimaryPublicKey());
-        alicesContact.setEncryptionPublicKey(bobsKey.getQblEncPublicKey());
-        alicesContact.setSignaturePublicKey(bobsKey.getQblSignPublicKey());
-        alicesContact.getDropUrls().add(new URL("http://localhost:6000/123456789012345678901234567890123456789012b"));
+		alicesContact.addEncryptionPublicKey(bobsKey.getQblEncPublicKey());
+		alicesContact.addSignaturePublicKey(bobsKey.getQblSignPublicKey());
+        alicesContact.getDropUrls().add(new DropURL("http://localhost:6000/123456789012345678901234567890123456789012b"));
 
         Contact bobsContact = new Contact(bob);
         bobsContact.setPrimaryPublicKey(alicesKey.getQblPrimaryPublicKey());
-        bobsContact.setEncryptionPublicKey(alicesKey.getQblEncPublicKey());
-        bobsContact.setSignaturePublicKey(alicesKey.getQblSignPublicKey());
-        alicesContact.getDropUrls().add(new URL("http://localhost:6000/123456789012345678901234567890123456789012a"));
+		bobsContact.addEncryptionPublicKey(alicesKey.getQblEncPublicKey());
+		bobsContact.addSignaturePublicKey(alicesKey.getQblSignPublicKey());
+        alicesContact.getDropUrls().add(new DropURL("http://localhost:6000/123456789012345678901234567890123456789012a"));
 
-        Contacts contacts = new Contacts();
-        contacts.getContacts().add(alicesContact);
-        contacts.getContacts().add(bobsContact);
+		Contacts contacts = new Contacts();
+		contacts.add(alicesContact);
+		contacts.add(bobsContact);
 
 		dropController.setContacts(contacts);
 	}
@@ -87,7 +94,7 @@ public class QblMain {
 		DropServer alicesServer = new DropServer();
         alicesServer
 				.setUrl(new URL(
-						"http://localhost:6000/123456789012345678901234567890123456789012a"));
+		                "http://localhost:6000/123456789012345678901234567890123456789012a"));
 
         DropServer bobsServer = new DropServer();
         bobsServer
@@ -96,8 +103,8 @@ public class QblMain {
 
         DropServers servers = new DropServers();
 
-        servers.getDropServer().add(alicesServer);
-        servers.getDropServer().add(bobsServer);
+		servers.add(alicesServer);
+		servers.add(bobsServer);
 
 		dropController.setDropServers(servers);
 	}
