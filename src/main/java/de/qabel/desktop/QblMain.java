@@ -7,7 +7,9 @@ import java.security.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import de.qabel.ackack.event.EventEmitter;
 import de.qabel.core.exceptions.QblDropInvalidURL;
+import de.qabel.core.module.ModuleThread;
 import org.apache.commons.cli.*;
 
 import de.qabel.core.config.Contact;
@@ -17,7 +19,7 @@ import de.qabel.core.config.DropServers;
 import de.qabel.core.config.Identity;
 import de.qabel.core.crypto.QblKeyFactory;
 import de.qabel.core.crypto.QblPrimaryKeyPair;
-import de.qabel.core.drop.DropController;
+import de.qabel.core.drop.DropActor;
 import de.qabel.core.module.Module;
 import de.qabel.core.module.ModuleManager;
 import de.qabel.core.drop.DropURL;
@@ -25,7 +27,7 @@ import de.qabel.core.drop.DropURL;
 public class QblMain {
 	private static final String MODULE_OPT = "module";
 
-	private DropController dropController;
+	private DropActor dropController;
 
 	public static void main(String[] args) throws InstantiationException,
 			IllegalAccessException, ClassNotFoundException,
@@ -114,17 +116,9 @@ public class QblMain {
      * @throws InterruptedException
      */
 	private void run() throws InterruptedException {
-		while (true) {
-			dropController.retrieve();
-			try {
-				Thread.sleep(10000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				break;
-			}
-		}
-		for (Module module : moduleManager.getModules()) {
-			module.join();
+		dropController.run();
+		for (ModuleThread module : moduleManager.getModules()) {
+			module.getModule().stopModule();
 		}
 	}
 
@@ -149,9 +143,10 @@ public class QblMain {
      */
 	private QblMain() {
 		options.addOption(MODULE_OPT, true, "start a module at loadtime");
-		dropController = new DropController();
+		EventEmitter emitter = EventEmitter.getDefault();
+		dropController = new DropActor(emitter);
 		moduleManager = new ModuleManager();
-		moduleManager.setDropController(dropController);
+		moduleManager.setDropActor(dropController);
 	}
 
     /**
