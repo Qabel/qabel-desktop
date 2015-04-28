@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import de.qabel.ackack.event.EventEmitter;
+import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.core.exceptions.QblDropInvalidURL;
-import de.qabel.core.module.ModuleThread;
 import org.apache.commons.cli.*;
 
 import de.qabel.core.config.Contact;
@@ -17,12 +17,10 @@ import de.qabel.core.config.Contacts;
 import de.qabel.core.config.DropServer;
 import de.qabel.core.config.DropServers;
 import de.qabel.core.config.Identity;
-import de.qabel.core.crypto.QblKeyFactory;
-import de.qabel.core.crypto.QblPrimaryKeyPair;
 import de.qabel.core.drop.DropActor;
-import de.qabel.core.module.Module;
 import de.qabel.core.module.ModuleManager;
 import de.qabel.core.drop.DropURL;
+import org.bouncycastle.util.encoders.Hex;
 
 public class QblMain {
 	private static final String MODULE_OPT = "module";
@@ -49,36 +47,31 @@ public class QblMain {
 		Collection<DropURL> aliceDropURLs = new ArrayList<DropURL>();
 		aliceDropURLs.add(new DropURL(
 				"http://localhost:6000/123456789012345678901234567890123456789012a"));
-		QblPrimaryKeyPair alicesKey = QblKeyFactory.getInstance()
-				.generateQblPrimaryKeyPair();
+		QblECKeyPair aliceKey = new QblECKeyPair(Hex.decode("77076d0a7318a57d3c16c17251b26645df4c2f87ebc0992ab177fba51db92c2a"));
+		QblECKeyPair bobKey = new QblECKeyPair(Hex.decode("5dab087e624a8a4b79e17f8b83800ee66f3bb1292618b6fd1c2f8b27ff88e0eb"));
+
 		Identity alice = new Identity(
 				"Alice",
 				aliceDropURLs,
-				alicesKey
+				aliceKey
 		);
 
 		Collection<DropURL> bobDropURLs = new ArrayList<DropURL>();
 		aliceDropURLs.add(new DropURL(
 				"http://localhost:6000/123456789012345678901234567890123456789012b"));
-		QblPrimaryKeyPair bobsKey = QblKeyFactory.getInstance()
-				.generateQblPrimaryKeyPair();
 		Identity bob = new Identity(
 				"Bob",
 				bobDropURLs,
-				bobsKey
+				bobKey
 		);
 
-		Contact alicesContact = new Contact(alice);
-        alicesContact.setPrimaryPublicKey(bobsKey.getQblPrimaryPublicKey());
-		alicesContact.addEncryptionPublicKey(bobsKey.getQblEncPublicKey());
-		alicesContact.addSignaturePublicKey(bobsKey.getQblSignPublicKey());
-        alicesContact.getDropUrls().add(new DropURL("http://localhost:6000/123456789012345678901234567890123456789012b"));
+		Contact alicesContact = new Contact(alice,aliceDropURLs,aliceKey.getPub());
 
-        Contact bobsContact = new Contact(bob);
-        bobsContact.setPrimaryPublicKey(alicesKey.getQblPrimaryPublicKey());
-		bobsContact.addEncryptionPublicKey(alicesKey.getQblEncPublicKey());
-		bobsContact.addSignaturePublicKey(alicesKey.getQblSignPublicKey());
-        alicesContact.getDropUrls().add(new DropURL("http://localhost:6000/123456789012345678901234567890123456789012a"));
+        alicesContact.addDrop(new DropURL("http://localhost:6000/123456789012345678901234567890123456789012b"));
+
+        Contact bobsContact = new Contact(bob, bobDropURLs, aliceKey.getPub());
+
+        alicesContact.addDrop(new DropURL("http://localhost:6000/123456789012345678901234567890123456789012a"));
 
 		Contacts contacts = new Contacts();
 		contacts.add(alicesContact);
@@ -117,9 +110,7 @@ public class QblMain {
      */
 	private void run() throws InterruptedException {
 		dropController.run();
-		for (ModuleThread module : moduleManager.getModules()) {
-			module.getModule().stopModule();
-		}
+		moduleManager.shutdown();
 	}
 
 	private ModuleManager moduleManager;
