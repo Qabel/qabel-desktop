@@ -17,4 +17,6 @@ include 'services:webservice'
 */
 
 include ':qabel-core'
+include 'ackack'
+project(':ackack').projectDir = new File('qabel-core/ackack')
 rootProject.name = 'qabel-desktop'
