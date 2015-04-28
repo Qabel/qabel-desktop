@@ -25,6 +25,8 @@ Desktop Frontend of Qabel
    cd qabel-desktop
    git submodule init
    git submodule update
+   git submodule foreach git submodule init
+   git submodule foreach git submodule update
    ./gradlew jar
    ```
 0. run (example with helloworld-module)
