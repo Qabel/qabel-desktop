@@ -8,15 +8,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import de.qabel.ackack.event.EventEmitter;
+import de.qabel.core.config.*;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.core.exceptions.QblDropInvalidURL;
 import org.apache.commons.cli.*;
 
-import de.qabel.core.config.Contact;
-import de.qabel.core.config.Contacts;
-import de.qabel.core.config.DropServer;
-import de.qabel.core.config.DropServers;
-import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropActor;
 import de.qabel.core.module.ModuleManager;
 import de.qabel.core.drop.DropURL;
@@ -24,8 +20,12 @@ import org.bouncycastle.util.encoders.Hex;
 
 public class QblMain {
 	private static final String MODULE_OPT = "module";
+	private final EventEmitter emitter;
+	private Thread dropActorThread;
+	private ContactsActor contactsActor;
 
-	private DropActor dropController;
+	private DropActor dropActor;
+	private Thread contactActorThread;
 
 	public static void main(String[] args) throws InstantiationException,
 			IllegalAccessException, ClassNotFoundException,
@@ -33,8 +33,8 @@ public class QblMain {
 
 		QblMain main = new QblMain();
 		main.parse(args);
-		main.loadContacts();
 		main.loadDropServers();
+		main.loadContacts();
 		main.startModules();
 		main.run();
 	}
@@ -64,6 +64,9 @@ public class QblMain {
 				bobDropURLs,
 				bobKey
 		);
+		Identities identities = new Identities();
+		identities.add(alice);
+		identities.add(bob);
 
 		Contact alicesContact = new Contact(alice,aliceDropURLs,aliceKey.getPub());
 
@@ -77,7 +80,12 @@ public class QblMain {
 		contacts.add(alicesContact);
 		contacts.add(bobsContact);
 
-		dropController.setContacts(contacts);
+		// TODO: Remove this once DropActor retrieves contacts from ContactsActor
+		dropActor.setIdentities(identities);
+		dropActor.setContacts(contacts);
+
+		contactsActor = ContactsActor.getDefault();
+		contactActorThread = new Thread(contactsActor, "ContactsActor");
 	}
 
     /**
@@ -89,19 +97,21 @@ public class QblMain {
 		DropServer alicesServer = new DropServer();
         alicesServer
 				.setUrl(new URL(
-		                "http://localhost:6000/123456789012345678901234567890123456789012a"));
+						"http://localhost:6000/123456789012345678901234567890123456789012a"));
 
         DropServer bobsServer = new DropServer();
         bobsServer
                 .setUrl(new URL(
-                        "http://localhost:6000/123456789012345678901234567890123456789012b"));
+						"http://localhost:6000/123456789012345678901234567890123456789012b"));
 
         DropServers servers = new DropServers();
 
 		servers.add(alicesServer);
 		servers.add(bobsServer);
 
-		dropController.setDropServers(servers);
+		dropActor = new DropActor(emitter);
+		dropActorThread = new Thread(dropActor, "DropActor");
+		dropActor.setDropServers(servers);
 	}
 
     /**
@@ -109,7 +119,12 @@ public class QblMain {
      * @throws InterruptedException
      */
 	private void run() throws InterruptedException {
-		dropController.run();
+		dropActorThread.start();
+		contactActorThread.start();
+
+		dropActorThread.join();
+		contactActorThread.join();
+
 		moduleManager.shutdown();
 	}
 
@@ -124,7 +139,11 @@ public class QblMain {
      */
 	private void startModules() throws InstantiationException,
 			IllegalAccessException, ClassNotFoundException {
-		for (String module : commandLine.getOptionValues(MODULE_OPT)) {
+
+		String[] moduleStrs = commandLine.getOptionValues(MODULE_OPT);
+		if(moduleStrs == null)
+			return;
+		for (String module : moduleStrs) {
 			startModule(module);
 		}
 	}
@@ -134,10 +153,9 @@ public class QblMain {
      */
 	private QblMain() {
 		options.addOption(MODULE_OPT, true, "start a module at loadtime");
-		EventEmitter emitter = EventEmitter.getDefault();
-		dropController = new DropActor(emitter);
+		emitter = EventEmitter.getDefault();
 		moduleManager = new ModuleManager();
-		moduleManager.setDropActor(dropController);
+		moduleManager.setDropActor(dropActor);
 	}
 
     /**
