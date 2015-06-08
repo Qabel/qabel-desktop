@@ -23,9 +23,11 @@ public class QblMain {
 	private final EventEmitter emitter;
 	private Thread dropActorThread;
 	private ContactsActor contactsActor;
+	private ConfigActor configActor;
 
 	private DropActor dropActor;
 	private Thread contactActorThread;
+	private Thread configActorThread;
 
 	public static void main(String[] args) throws InstantiationException,
 			IllegalAccessException, ClassNotFoundException,
@@ -65,8 +67,8 @@ public class QblMain {
 				bobKey
 		);
 		Identities identities = new Identities();
-		identities.add(alice);
-		identities.add(bob);
+		identities.put(alice);
+		identities.put(bob);
 
 		Contact alicesContact = new Contact(alice,aliceDropURLs,aliceKey.getPub());
 
@@ -77,15 +79,12 @@ public class QblMain {
         alicesContact.addDrop(new DropURL("http://localhost:6000/123456789012345678901234567890123456789012a"));
 
 		Contacts contacts = new Contacts();
-		contacts.add(alicesContact);
-		contacts.add(bobsContact);
+		contacts.put(alicesContact);
+		contacts.put(bobsContact);
 
 		// TODO: Remove this once DropActor retrieves contacts from ContactsActor
-		dropActor.setIdentities(identities);
-		dropActor.setContacts(contacts);
-
-		contactsActor = ContactsActor.getDefault();
-		contactActorThread = new Thread(contactsActor, "ContactsActor");
+		this.configActor.writeIdentities(identities.getIdentities().toArray(new Identity[0]));
+		this.contactsActor.writeContacts(contacts.getContacts().toArray(new Contact[0]));
 	}
 
     /**
@@ -106,12 +105,12 @@ public class QblMain {
 
         DropServers servers = new DropServers();
 
-		servers.add(alicesServer);
-		servers.add(bobsServer);
+		servers.put(alicesServer);
+		servers.put(bobsServer);
 
 		dropActor = new DropActor(emitter);
 		dropActorThread = new Thread(dropActor, "DropActor");
-		dropActor.setDropServers(servers);
+		this.configActor.writeDropServers(servers.getDropServers().toArray(new DropServer[0]));
 	}
 
     /**
@@ -156,6 +155,12 @@ public class QblMain {
 		emitter = EventEmitter.getDefault();
 		moduleManager = new ModuleManager();
 		moduleManager.setDropActor(dropActor);
+		contactsActor = ContactsActor.getDefault();
+		contactActorThread = new Thread(contactsActor, "ContactsActor");
+		configActorThread.start();
+		configActor = ConfigActor.getDefault();
+		configActorThread = new Thread(configActor, "ConfigActor");
+		configActorThread.start();
 	}
 
     /**
