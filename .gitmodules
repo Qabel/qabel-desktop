@@ -1,4 +1,0 @@
-[submodule "qabel-core"]
-	path = qabel-core
-	url = https://github.com/Qabel/qabel-core.git
-	branch = master
