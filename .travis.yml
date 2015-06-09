@@ -1,0 +1,25 @@
+language: java
+
+jdk:
+ - oraclejdk7
+
+notifications:
+  email: false
+
+install:
+ - cd ..
+ - git clone https://github.com/Qabel/qabel.git
+ - cd qabel
+ - git submodule init
+ - git submodule update
+ - rm -rf qabel-desktop
+ - mv ../qabel-desktop ./
+ - redis-server > /dev/null 2>&1 &
+ - sudo apt-get install python-pip npm nodejs
+ - sudo pip install virtualenv
+ - virtualenv qabel-drop
+ - source qabel-drop/bin/activate 
+ - pip install -r qabel-drop/requirements.txt  
+
+script:
+ - travis_wait ./gradlew check
