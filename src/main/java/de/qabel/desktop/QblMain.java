@@ -28,7 +28,6 @@ public class QblMain {
 	private DropActor dropActor;
 	private Thread contactActorThread;
 	private Thread configActorThread;
-
 	public static void main(String[] args) throws InstantiationException,
 			IllegalAccessException, ClassNotFoundException,
 			InterruptedException, MalformedURLException, QblDropInvalidURL, InvalidKeyException {
@@ -108,8 +107,6 @@ public class QblMain {
 		servers.put(alicesServer);
 		servers.put(bobsServer);
 
-		dropActor = new DropActor(emitter);
-		dropActorThread = new Thread(dropActor, "DropActor");
 		this.configActor.writeDropServers(servers.getDropServers().toArray(new DropServer[0]));
 	}
 
@@ -118,11 +115,7 @@ public class QblMain {
      * @throws InterruptedException
      */
 	private void run() throws InterruptedException {
-		dropActorThread.start();
-		contactActorThread.start();
-
 		dropActorThread.join();
-		contactActorThread.join();
 
 		moduleManager.shutdown();
 	}
@@ -151,16 +144,19 @@ public class QblMain {
      * Instantiates global DropController and ModuleManager.
      */
 	private QblMain() {
+		Persistence.setPassword("qabel".toCharArray());
 		options.addOption(MODULE_OPT, true, "start a module at loadtime");
 		emitter = EventEmitter.getDefault();
-		moduleManager = new ModuleManager();
-		moduleManager.setDropActor(dropActor);
 		contactsActor = ContactsActor.getDefault();
-		contactActorThread = new Thread(contactsActor, "ContactsActor");
-		configActorThread.start();
 		configActor = ConfigActor.getDefault();
 		configActorThread = new Thread(configActor, "ConfigActor");
 		configActorThread.start();
+		contactActorThread = new Thread(contactsActor, "ContactsActor");
+		contactActorThread.start();
+		dropActor = new DropActor(emitter);
+		dropActorThread = new Thread(dropActor, "DropActor");
+		dropActorThread.start();
+		moduleManager = new ModuleManager(emitter, configActor, contactsActor);
 	}
 
     /**
