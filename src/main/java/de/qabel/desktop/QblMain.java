@@ -1,8 +1,8 @@
 package de.qabel.desktop;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,11 +11,13 @@ import de.qabel.ackack.event.EventEmitter;
 import de.qabel.core.config.*;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.core.exceptions.QblDropInvalidURL;
+
 import org.apache.commons.cli.*;
 
 import de.qabel.core.drop.DropActor;
 import de.qabel.core.module.ModuleManager;
 import de.qabel.core.drop.DropURL;
+
 import org.bouncycastle.util.encoders.Hex;
 
 public class QblMain {
@@ -31,7 +33,7 @@ public class QblMain {
 
 	public static void main(String[] args) throws InstantiationException,
 			IllegalAccessException, ClassNotFoundException,
-			InterruptedException, MalformedURLException, QblDropInvalidURL, InvalidKeyException {
+			InterruptedException, URISyntaxException, QblDropInvalidURL, InvalidKeyException {
 
 		QblMain main = new QblMain();
 		main.parse(args);
@@ -43,9 +45,9 @@ public class QblMain {
 
     /**
      * Creates global available identities and puts them into contact with each other.
-	 * @throws MalformedURLException, QblDropInvalidURL, InvalidKeyException
+	 * @throws URISyntaxException, QblDropInvalidURL, InvalidKeyException
      */
-	private void loadContacts() throws MalformedURLException, QblDropInvalidURL, InvalidKeyException {
+	private void loadContacts() throws URISyntaxException, QblDropInvalidURL, InvalidKeyException {
 		Collection<DropURL> aliceDropURLs = new ArrayList<DropURL>();
 		aliceDropURLs.add(new DropURL(
 				"http://localhost:6000/123456789012345678901234567890123456789012a"));
@@ -90,17 +92,17 @@ public class QblMain {
     /**
      * Generate DropServer instances here and
      * put them into global available servers.
-     * @throws MalformedURLException
+     * @throws URISyntaxException
      */
-	private void loadDropServers() throws MalformedURLException {
+	private void loadDropServers() throws URISyntaxException {
 		DropServer alicesServer = new DropServer();
         alicesServer
-				.setUrl(new URL(
+				.setUri(new URI(
 						"http://localhost:6000/123456789012345678901234567890123456789012a"));
 
         DropServer bobsServer = new DropServer();
         bobsServer
-                .setUrl(new URL(
+                .setUri(new URI(
 						"http://localhost:6000/123456789012345678901234567890123456789012b"));
 
         DropServers servers = new DropServers();
