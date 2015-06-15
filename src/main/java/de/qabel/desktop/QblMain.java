@@ -16,10 +16,12 @@ import org.apache.commons.cli.*;
 import de.qabel.core.drop.DropActor;
 import de.qabel.core.module.ModuleManager;
 import de.qabel.core.drop.DropURL;
-import org.bouncycastle.util.encoders.Hex;
 
 public class QblMain {
 	private static final String MODULE_OPT = "module";
+	private static final String ALICE_DROP_URL = "http://localhost:6000/123456789012345678901234567890123456789012a";
+	private static final String BOB_DROP_URL = "http://localhost:6000/123456789012345678901234567890123456789012b";
+
 	private final EventEmitter emitter;
 	private Thread dropActorThread;
 	private ContactsActor contactsActor;
@@ -35,7 +37,7 @@ public class QblMain {
 		QblMain main = new QblMain();
 		main.parse(args);
 		main.loadDropServers();
-		main.loadContacts();
+		main.loadContactsAndIdentities();
 		main.startModules();
 		main.run();
 	}
@@ -44,45 +46,27 @@ public class QblMain {
      * Creates global available identities and puts them into contact with each other.
 	 * @throws MalformedURLException, QblDropInvalidURL, InvalidKeyException
      */
-	private void loadContacts() throws MalformedURLException, QblDropInvalidURL, InvalidKeyException {
-		Collection<DropURL> aliceDropURLs = new ArrayList<DropURL>();
-		aliceDropURLs.add(new DropURL(
-				"http://localhost:6000/123456789012345678901234567890123456789012a"));
-		QblECKeyPair aliceKey = new QblECKeyPair(Hex.decode("77076d0a7318a57d3c16c17251b26645df4c2f87ebc0992ab177fba51db92c2a"));
-		QblECKeyPair bobKey = new QblECKeyPair(Hex.decode("5dab087e624a8a4b79e17f8b83800ee66f3bb1292618b6fd1c2f8b27ff88e0eb"));
+	private void loadContactsAndIdentities() throws MalformedURLException, QblDropInvalidURL, InvalidKeyException {
+		Collection<DropURL> aliceDropURLs = new ArrayList<>();
+		aliceDropURLs.add(new DropURL(ALICE_DROP_URL));
 
-		Identity alice = new Identity(
-				"Alice",
-				aliceDropURLs,
-				aliceKey
-		);
+		Collection<DropURL> bobDropURLs = new ArrayList<>();
+		bobDropURLs.add(new DropURL(BOB_DROP_URL));
 
-		Collection<DropURL> bobDropURLs = new ArrayList<DropURL>();
-		aliceDropURLs.add(new DropURL(
-				"http://localhost:6000/123456789012345678901234567890123456789012b"));
-		Identity bob = new Identity(
-				"Bob",
-				bobDropURLs,
-				bobKey
-		);
+		Identity alice = new Identity("Alice", aliceDropURLs, new QblECKeyPair());
+		Identity bob = new Identity("Bob", bobDropURLs, new QblECKeyPair());
+
 		Identities identities = new Identities();
 		identities.put(alice);
 		identities.put(bob);
+		this.configActor.writeIdentities(identities.getIdentities().toArray(new Identity[0]));
 
-		Contact alicesContact = new Contact(alice,aliceDropURLs,aliceKey.getPub());
-
-        alicesContact.addDrop(new DropURL("http://localhost:6000/123456789012345678901234567890123456789012b"));
-
-        Contact bobsContact = new Contact(bob, bobDropURLs, aliceKey.getPub());
-
-        alicesContact.addDrop(new DropURL("http://localhost:6000/123456789012345678901234567890123456789012a"));
+		Contact aliceAsContactForBob = new Contact(bob, aliceDropURLs, alice.getEcPublicKey());
+		Contact bobAsContactForAlice = new Contact(alice, bobDropURLs, bob.getEcPublicKey());
 
 		Contacts contacts = new Contacts();
-		contacts.put(alicesContact);
-		contacts.put(bobsContact);
-
-		// TODO: Remove this once DropActor retrieves contacts from ContactsActor
-		this.configActor.writeIdentities(identities.getIdentities().toArray(new Identity[0]));
+		contacts.put(aliceAsContactForBob);
+		contacts.put(bobAsContactForAlice);
 		this.contactsActor.writeContacts(contacts.getContacts().toArray(new Contact[0]));
 	}
 
@@ -93,17 +77,12 @@ public class QblMain {
      */
 	private void loadDropServers() throws MalformedURLException {
 		DropServer alicesServer = new DropServer();
-        alicesServer
-				.setUrl(new URL(
-						"http://localhost:6000/123456789012345678901234567890123456789012a"));
+		alicesServer.setUrl(new URL(ALICE_DROP_URL));
 
-        DropServer bobsServer = new DropServer();
-        bobsServer
-                .setUrl(new URL(
-						"http://localhost:6000/123456789012345678901234567890123456789012b"));
+		DropServer bobsServer = new DropServer();
+		bobsServer.setUrl(new URL(BOB_DROP_URL));
 
-        DropServers servers = new DropServers();
-
+		DropServers servers = new DropServers();
 		servers.put(alicesServer);
 		servers.put(bobsServer);
 
