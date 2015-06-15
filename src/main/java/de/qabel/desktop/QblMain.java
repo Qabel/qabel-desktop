@@ -154,6 +154,7 @@ public class QblMain {
 		contactActorThread = new Thread(contactsActor, "ContactsActor");
 		contactActorThread.start();
 		dropActor = new DropActor(emitter);
+		dropActor.setInterval(5000L);
 		dropActorThread = new Thread(dropActor, "DropActor");
 		dropActorThread.start();
 		moduleManager = new ModuleManager(emitter, configActor, contactsActor);
