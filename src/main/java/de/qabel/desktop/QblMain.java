@@ -24,12 +24,10 @@ public class QblMain {
 
 	private final EventEmitter emitter;
 	private Thread dropActorThread;
-	private ContactsActor contactsActor;
-	private ConfigActor configActor;
+	private ResourceActor resourceActor;
 
 	private DropActor dropActor;
-	private Thread contactActorThread;
-	private Thread configActorThread;
+	private Thread resourceActorThread;
 	public static void main(String[] args) throws InstantiationException,
 			IllegalAccessException, ClassNotFoundException,
 			InterruptedException, MalformedURLException, QblDropInvalidURL, InvalidKeyException {
@@ -59,7 +57,7 @@ public class QblMain {
 		Identities identities = new Identities();
 		identities.put(alice);
 		identities.put(bob);
-		this.configActor.writeIdentities(identities.getIdentities().toArray(new Identity[0]));
+		this.resourceActor.writeIdentities(identities.getIdentities().toArray(new Identity[0]));
 
 		Contact aliceAsContactForBob = new Contact(bob, aliceDropURLs, alice.getEcPublicKey());
 		Contact bobAsContactForAlice = new Contact(alice, bobDropURLs, bob.getEcPublicKey());
@@ -67,7 +65,7 @@ public class QblMain {
 		Contacts contacts = new Contacts();
 		contacts.put(aliceAsContactForBob);
 		contacts.put(bobAsContactForAlice);
-		this.contactsActor.writeContacts(contacts.getContacts().toArray(new Contact[0]));
+		this.resourceActor.writeContacts(contacts.getContacts().toArray(new Contact[0]));
 	}
 
     /**
@@ -86,7 +84,7 @@ public class QblMain {
 		servers.put(alicesServer);
 		servers.put(bobsServer);
 
-		this.configActor.writeDropServers(servers.getDropServers().toArray(new DropServer[0]));
+		this.resourceActor.writeDropServers(servers.getDropServers().toArray(new DropServer[0]));
 	}
 
     /**
@@ -126,17 +124,14 @@ public class QblMain {
 		Persistence.setPassword("qabel".toCharArray());
 		options.addOption(MODULE_OPT, true, "start a module at loadtime");
 		emitter = EventEmitter.getDefault();
-		contactsActor = ContactsActor.getDefault();
-		configActor = ConfigActor.getDefault();
-		configActorThread = new Thread(configActor, "ConfigActor");
-		configActorThread.start();
-		contactActorThread = new Thread(contactsActor, "ContactsActor");
-		contactActorThread.start();
+		resourceActor = ResourceActor.getDefault();
+		resourceActorThread = new Thread(resourceActor, "ConfigActor");
+		resourceActorThread.start();
 		dropActor = new DropActor(emitter);
 		dropActor.setInterval(5000L);
 		dropActorThread = new Thread(dropActor, "DropActor");
 		dropActorThread.start();
-		moduleManager = new ModuleManager(emitter, configActor, contactsActor);
+		moduleManager = new ModuleManager(emitter, resourceActor);
 	}
 
     /**
