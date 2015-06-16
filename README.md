@@ -32,5 +32,5 @@ Desktop Frontend of Qabel
 0. run (example with helloworld-module)
 
    ```
-   java -Djava.library.path=qabel-core -jar build/libs/qabel-desktop-0.1.jar --module ../qabel-helloworld-module/build/libs/qabel-helloworld-module-0.1.jar:de.qabel.helloworld.QblHelloWorldModule
+   java -Djava.library.path=qabel-core -cp "qabel-helloworld-module/build/libs/qabel-helloworld-module-0.1.jar:qabel-desktop/build/libs/qabel-desktop-0.1.jar" de.qabel.desktop.QblMain -module qabel-hellowor-module/build/libs/qabel-helloworld-module-0.1.jar:de.qabel.helloworld.QblHelloWorldModule
    ```
