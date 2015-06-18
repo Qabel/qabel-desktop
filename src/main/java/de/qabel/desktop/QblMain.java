@@ -2,7 +2,8 @@ package de.qabel.desktop;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,7 +31,7 @@ public class QblMain {
 	private Thread resourceActorThread;
 	public static void main(String[] args) throws InstantiationException,
 			IllegalAccessException, ClassNotFoundException,
-			InterruptedException, MalformedURLException, QblDropInvalidURL, InvalidKeyException {
+			InterruptedException, URISyntaxException, QblDropInvalidURL, InvalidKeyException {
 
 		QblMain main = new QblMain();
 		main.parse(args);
@@ -42,9 +43,9 @@ public class QblMain {
 
     /**
      * Creates global available identities and puts them into contact with each other.
-	 * @throws MalformedURLException, QblDropInvalidURL, InvalidKeyException
+	 * @throws URISyntaxException, QblDropInvalidURL, InvalidKeyException
      */
-	private void loadContactsAndIdentities() throws MalformedURLException, QblDropInvalidURL, InvalidKeyException {
+	private void loadContactsAndIdentities() throws URISyntaxException, QblDropInvalidURL, InvalidKeyException {
 		Collection<DropURL> aliceDropURLs = new ArrayList<>();
 		aliceDropURLs.add(new DropURL(ALICE_DROP_URL));
 
@@ -71,14 +72,14 @@ public class QblMain {
     /**
      * Generate DropServer instances here and
      * put them into global available servers.
-     * @throws MalformedURLException
+     * @throws URISyntaxException
      */
-	private void loadDropServers() throws MalformedURLException {
+	private void loadDropServers() throws URISyntaxException {
 		DropServer alicesServer = new DropServer();
-		alicesServer.setUrl(new URL(ALICE_DROP_URL));
+		alicesServer.setUri(new URI(ALICE_DROP_URL));
 
 		DropServer bobsServer = new DropServer();
-		bobsServer.setUrl(new URL(BOB_DROP_URL));
+		bobsServer.setUri(new URI(BOB_DROP_URL));
 
 		DropServers servers = new DropServers();
 		servers.put(alicesServer);
