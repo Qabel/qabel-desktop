@@ -122,13 +122,13 @@ public class QblMain {
      * Instantiates global DropController and ModuleManager.
      */
 	private QblMain() {
-		Persistence.setPassword("qabel".toCharArray());
-		options.addOption(MODULE_OPT, true, "start a module at loadtime");
+		Persistence<String> persistence = new SQLitePersistence("qabel-desktop.sqlite", "qabel".toCharArray());
 		emitter = EventEmitter.getDefault();
-		resourceActor = ResourceActor.getDefault();
+		resourceActor = new ResourceActor(persistence, emitter);
+		options.addOption(MODULE_OPT, true, "start a module at loadtime");
 		resourceActorThread = new Thread(resourceActor, "ConfigActor");
 		resourceActorThread.start();
-		dropActor = new DropActor(emitter);
+		dropActor = new DropActor(resourceActor, emitter);
 		dropActor.setInterval(5000L);
 		dropActorThread = new Thread(dropActor, "DropActor");
 		dropActorThread.start();
