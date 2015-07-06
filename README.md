@@ -15,6 +15,8 @@ Desktop Frontend of Qabel
    ```
    ./gradlew jar
    ```
+0. [start the servers](https://github.com/Qabel/qabel/blob/master/README.md#starting-the-servers) in a new terminal
+
 0. run (example with helloworld-module)
 
    ```
