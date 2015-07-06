@@ -8,8 +8,6 @@ Desktop Frontend of Qabel
 
 ## building source
 
-0. Make sure you have a working [git client](http://git-scm.com/) installed
-
 0. install everything from `requirements` and do `building source` from the [qabel README.md](https://github.com/Qabel/qabel/blob/master/README.md)
 
 0. build the jars from inside the qabel-core folder
@@ -20,6 +18,5 @@ Desktop Frontend of Qabel
 0. run (example with helloworld-module)
 
    ```
-   cd qabel-desktop
    java -Djava.library.path=qabel-core -cp "qabel-helloworld-module/build/libs/qabel-helloworld-module-0.1.jar:qabel-desktop/build/libs/qabel-desktop-0.1.jar" de.qabel.desktop.QblMain -module qabel-hellowor-module/build/libs/qabel-helloworld-module-0.1.jar:de.qabel.helloworld.QblHelloWorldModule
    ```
