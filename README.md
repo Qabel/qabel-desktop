@@ -10,7 +10,7 @@ Desktop Frontend of Qabel
 
 0. install everything from `requirements` and do `building source` from the [qabel README.md](https://github.com/Qabel/qabel/blob/master/README.md)
 
-0. build the jars from inside the qabel-core folder
+0. build the jars from inside the qabel folder
 
    ```
    ./gradlew jar
