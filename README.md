@@ -1,5 +1,5 @@
 # Qabel documentation
-For the documentation take a look at the [wiki](https://github.com/Qabel/qabel-doc/wiki/Table-of-contents) in our documentation [repository](https://github.com/Qabel/qabel-doc).
+For the documentation take a look at the [documentation](http://qabel.github.io/docs/).
 
 qabel-desktop
 =============
@@ -8,27 +8,15 @@ Desktop Frontend of Qabel
 
 ## building source
 
-0. Make sure you have a working [git client](http://git-scm.com/) installed
+0. install everything from `requirements` and do `building source` from the [qabel README.md](https://github.com/Qabel/qabel/blob/master/README.md)
 
-0. clone and build your submodules
-
-   have a look at https://github.com/Qabel/qabel-helloworld-module/ for an example
-  
-0. clone the source
+0. build the jars from inside the qabel folder
 
    ```
-   git clone https://github.com/Qabel/qabel-desktop.git
-   ```
-0. build the project
-
-   ```
-   cd qabel-desktop
-   git submodule init
-   git submodule update
-   git submodule foreach git submodule init
-   git submodule foreach git submodule update
    ./gradlew jar
    ```
+0. [start the servers](https://github.com/Qabel/qabel/blob/master/README.md#starting-the-servers) in a new terminal
+
 0. run (example with helloworld-module)
 
    ```
