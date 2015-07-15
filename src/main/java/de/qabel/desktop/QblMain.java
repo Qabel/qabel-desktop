@@ -60,8 +60,8 @@ public class QblMain {
 		identities.put(bob);
 		this.resourceActor.writeIdentities(identities.getIdentities().toArray(new Identity[0]));
 
-		Contact aliceAsContactForBob = new Contact(bob, aliceDropURLs, alice.getEcPublicKey());
-		Contact bobAsContactForAlice = new Contact(alice, bobDropURLs, bob.getEcPublicKey());
+		Contact aliceAsContactForBob = new Contact(bob, "Alice", aliceDropURLs, alice.getEcPublicKey());
+		Contact bobAsContactForAlice = new Contact(alice, "Bob", bobDropURLs, bob.getEcPublicKey());
 
 		Contacts contacts = new Contacts();
 		contacts.put(aliceAsContactForBob);
