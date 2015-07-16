@@ -12,6 +12,7 @@ import de.qabel.ackack.event.EventEmitter;
 import de.qabel.core.config.*;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.core.exceptions.QblDropInvalidURL;
+import de.qabel.core.exceptions.QblInvalidEncryptionKeyException;
 import org.apache.commons.cli.*;
 
 import de.qabel.core.drop.DropActor;
@@ -122,7 +123,12 @@ public class QblMain {
      * Instantiates global DropController and ModuleManager.
      */
 	private QblMain() {
-		Persistence<String> persistence = new SQLitePersistence("qabel-desktop.sqlite", "qabel".toCharArray());
+		Persistence<String> persistence = null;
+		try {
+			persistence = new SQLitePersistence("qabel-desktop.sqlite", "qabel".toCharArray());
+		} catch (QblInvalidEncryptionKeyException e) {
+			// Can currently not happen due to the static password
+		}
 		emitter = EventEmitter.getDefault();
 		resourceActor = new ResourceActor(persistence, emitter);
 		options.addOption(MODULE_OPT, true, "start a module at loadtime");
