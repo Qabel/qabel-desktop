@@ -134,7 +134,7 @@ public class QblMain {
 		options.addOption(MODULE_OPT, true, "start a module at loadtime");
 		resourceActorThread = new Thread(resourceActor, "ConfigActor");
 		resourceActorThread.start();
-		dropActor = new DropActor(resourceActor, emitter);
+		dropActor = new DropActor(resourceActor, emitter, new QblClassLoader(ClassLoader.getSystemClassLoader()));
 		dropActor.setInterval(5000L);
 		dropActorThread = new Thread(dropActor, "DropActor");
 		dropActorThread.start();
