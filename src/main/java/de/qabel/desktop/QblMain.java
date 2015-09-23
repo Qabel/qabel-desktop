@@ -39,6 +39,10 @@ public class QblMain {
 		main.loadDropServers();
 		main.loadContactsAndIdentities();
 		main.startModules();
+
+		Thread restServer = new Thread(new QblRESTServer(9696));
+		restServer.start();
+		System.out.println("REST Server running at http://localhost:9696");
 		main.run();
 	}
 
