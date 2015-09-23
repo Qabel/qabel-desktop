@@ -4,3 +4,5 @@ build/
 .classpath
 .project
 .settings/
+*.sqlite
+qabel-desktop.iml
