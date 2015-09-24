@@ -8,17 +8,49 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 
-class QblRESTServer implements Runnable {
+import de.qabel.core.config.ResourceActor;
+import de.qabel.core.drop.DropActor;
+import de.qabel.core.module.ModuleManager;
+
+public class QblRESTServer implements Runnable {
 
     private int port;
 
-    public QblRESTServer(int port) {
+    public ResourceActor getResourceActor() {
+        return resourceActor;
+    }
+
+    public DropActor getDropActor() {
+        return dropActor;
+    }
+
+    public ModuleManager getModuleManager() {
+        return moduleManager;
+    }
+
+    public HttpServer getServer() {
+        return server;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    private ResourceActor resourceActor;
+    private DropActor dropActor;
+    private ModuleManager moduleManager;
+    private HttpServer server;
+
+    public QblRESTServer(int port, ResourceActor resourceActor, DropActor dropActor, ModuleManager moduleManager) {
         this.port = port;
+        this.resourceActor = resourceActor;
+        this.dropActor = dropActor;
+        this.moduleManager = moduleManager;
     }
 
     @Override
     public void run() {
-        HttpServer server = null;
+        server = null;
         try {
             server = HttpServer.create(new InetSocketAddress(this.port), 0);
         } catch (IOException e) {
@@ -37,5 +69,12 @@ class QblRESTServer implements Runnable {
         });
         server.start();
 
+    }
+
+    public void stop() {
+        if (server != null) {
+            // delay until stopping = 0
+            server.stop(0);
+        }
     }
 }

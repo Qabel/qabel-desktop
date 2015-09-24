@@ -1,7 +1,6 @@
 package de.qabel.desktop;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
@@ -40,9 +39,6 @@ public class QblMain {
 		main.loadContactsAndIdentities();
 		main.startModules();
 
-		Thread restServer = new Thread(new QblRESTServer(9696));
-		restServer.start();
-		System.out.println("REST Server running at http://localhost:9696");
 		main.run();
 	}
 
@@ -143,6 +139,9 @@ public class QblMain {
 		dropActorThread = new Thread(dropActor, "DropActor");
 		dropActorThread.start();
 		moduleManager = new ModuleManager(emitter, resourceActor);
+		Thread restServer = new Thread(new QblRESTServer(9696, resourceActor, dropActor, moduleManager));
+		restServer.start();
+		System.out.println("REST Server running at http://localhost:9696");
 	}
 
     /**
