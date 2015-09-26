@@ -13,9 +13,16 @@ import org.junit.Before;
 import org.junit.Assert;
 
 import java.io.File;
+import java.net.ProtocolException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 /**
  * Created by dax on 24.09.15.
  */
@@ -28,6 +35,7 @@ public class QblRESTServerTest {
 	private QblRESTServer restServer;
 	private DropActor dropActor;
 	private ResourceActor resourceActor;
+	private String requestOutput;
 
 	@Before
 	public void setUp() throws Exception {
@@ -70,6 +78,28 @@ public class QblRESTServerTest {
 		}
 	}
 
+	private int sendRequest(String ressource, String method) throws IOException {
+		String address = "http://localhost:" + PORT + "/" + ressource;
+        URL url = new URL(address);
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod(method);
+		conn.setRequestProperty("Accept", "application/json");
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(
+                (conn.getInputStream())));
+
+        StringBuffer output = new StringBuffer();
+        String out;
+        System.out.println("Output from Server .... \n");
+        while ((out = br.readLine()) != null) {
+            output.append(out);
+        }
+
+		conn.disconnect();
+		requestOutput = output.toString();
+        return conn.getResponseCode();
+	}
+
 	@org.junit.Test
     public void testSetUp() throws Exception {
 		Assert.assertEquals(PORT, restServer.getPort());
@@ -79,5 +109,9 @@ public class QblRESTServerTest {
 		Assert.assertNull(restServer.getServer());
 		restServer.run();
 		Assert.assertNotNull(restServer.getServer());
+		Assert.assertEquals(200, sendRequest("status", "GET"));
+		Assert.assertEquals("{status: \"running\"}", requestOutput);
 	}
+
+
 }
