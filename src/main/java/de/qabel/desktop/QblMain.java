@@ -1,6 +1,7 @@
 package de.qabel.desktop;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
@@ -31,7 +32,7 @@ public class QblMain {
 	private Thread resourceActorThread;
 	public static void main(String[] args) throws InstantiationException,
 			IllegalAccessException, ClassNotFoundException,
-			InterruptedException, URISyntaxException, QblDropInvalidURL, InvalidKeyException {
+			InterruptedException, URISyntaxException, QblDropInvalidURL, InvalidKeyException, IOException {
 
 		QblMain main = new QblMain();
 		main.parse(args);
@@ -122,7 +123,7 @@ public class QblMain {
     /**
      * Instantiates global DropController and ModuleManager.
      */
-	private QblMain() {
+	private QblMain() throws IOException {
 		Persistence<String> persistence = null;
 		try {
 			persistence = new SQLitePersistence("qabel-desktop.sqlite", "qabel".toCharArray());

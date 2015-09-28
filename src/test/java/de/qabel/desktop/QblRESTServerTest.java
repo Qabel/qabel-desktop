@@ -1,31 +1,24 @@
 package de.qabel.desktop;
 
-import com.sun.net.httpserver.HttpServer;
 import de.qabel.ackack.event.EventEmitter;
 import de.qabel.core.config.*;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.core.drop.DropActor;
 import de.qabel.core.drop.DropURL;
 import de.qabel.core.module.ModuleManager;
-import de.qabel.desktop.QblRESTServer;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Assert;
-
-import java.io.File;
-import java.net.ProtocolException;
-import java.util.ArrayList;
-import java.util.Collection;
+import org.junit.Before;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-/**
- * Created by dax on 24.09.15.
- */
+import java.util.ArrayList;
+import java.util.Collection;
+
 public class QblRESTServerTest {
 
 	private static final String DB_NAME = "QblHelloWorldModuleTest.sqlite";
@@ -42,6 +35,7 @@ public class QblRESTServerTest {
 		Persistence<String> persistence = new SQLitePersistence(DB_NAME, "qabel".toCharArray());
 		resourceActor = new ResourceActor(persistence, EventEmitter.getDefault());
 		moduleManager = new ModuleManager(EventEmitter.getDefault(), resourceActor);
+		restServer = new QblRESTServer(PORT, resourceActor, dropActor,moduleManager);
 
 		Collection<DropURL> bobDropURLs = new ArrayList<>();
 		bobDropURLs.add(new DropURL(BOB_DROP_URL));
@@ -63,15 +57,11 @@ public class QblRESTServerTest {
 		Thread dropActorThread = new Thread(dropActor);
 		dropActor.setInterval(500);
 		dropActorThread.start();
-
-		restServer = new QblRESTServer(PORT, resourceActor, dropActor,moduleManager);
 	}
 
 	@After
 	public void tearDown() throws InterruptedException {
-		if (restServer != null) {
-			restServer.stop();
-		}
+		restServer.stop();
 		File persistenceTestDB = new File(DB_NAME);
 		if(persistenceTestDB.exists()) {
 			persistenceTestDB.delete();
@@ -90,7 +80,6 @@ public class QblRESTServerTest {
 
         StringBuffer output = new StringBuffer();
         String out;
-        System.out.println("Output from Server .... \n");
         while ((out = br.readLine()) != null) {
             output.append(out);
         }
@@ -102,16 +91,9 @@ public class QblRESTServerTest {
 
 	@org.junit.Test
     public void testSetUp() throws Exception {
-		Assert.assertEquals(PORT, restServer.getPort());
-		Assert.assertEquals(dropActor, restServer.getDropActor());
-		Assert.assertEquals(moduleManager, restServer.getModuleManager());
-		Assert.assertEquals(resourceActor, restServer.getResourceActor());
-		Assert.assertNull(restServer.getServer());
 		restServer.run();
-		Assert.assertNotNull(restServer.getServer());
 		Assert.assertEquals(200, sendRequest("status", "GET"));
 		Assert.assertEquals("{status: \"running\"}", requestOutput);
 	}
-
 
 }
