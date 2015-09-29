@@ -35,7 +35,7 @@ public class QblRESTServerTest {
 		Persistence<String> persistence = new SQLitePersistence(DB_NAME, "qabel".toCharArray());
 		resourceActor = new ResourceActor(persistence, EventEmitter.getDefault());
 		moduleManager = new ModuleManager(EventEmitter.getDefault(), resourceActor);
-		restServer = new QblRESTServer(PORT, resourceActor, dropActor,moduleManager);
+		restServer = new QblRESTServer(PORT, resourceActor, dropActor, moduleManager);
 
 		Collection<DropURL> bobDropURLs = new ArrayList<>();
 		bobDropURLs.add(new DropURL(BOB_DROP_URL));
@@ -63,34 +63,34 @@ public class QblRESTServerTest {
 	public void tearDown() throws InterruptedException {
 		restServer.stop();
 		File persistenceTestDB = new File(DB_NAME);
-		if(persistenceTestDB.exists()) {
+		if (persistenceTestDB.exists()) {
 			persistenceTestDB.delete();
 		}
 	}
 
 	private int sendRequest(String ressource, String method) throws IOException {
 		String address = "http://localhost:" + PORT + "/" + ressource;
-        URL url = new URL(address);
+		URL url = new URL(address);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setRequestMethod(method);
 		conn.setRequestProperty("Accept", "application/json");
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(
-                (conn.getInputStream())));
+		BufferedReader br = new BufferedReader(new InputStreamReader(
+				(conn.getInputStream())));
 
-        StringBuffer output = new StringBuffer();
-        String out;
-        while ((out = br.readLine()) != null) {
-            output.append(out);
-        }
+		StringBuffer output = new StringBuffer();
+		String out;
+		while ((out = br.readLine()) != null) {
+			output.append(out);
+		}
 
 		conn.disconnect();
 		requestOutput = output.toString();
-        return conn.getResponseCode();
+		return conn.getResponseCode();
 	}
 
 	@org.junit.Test
-    public void testSetUp() throws Exception {
+	public void testSetUp() throws Exception {
 		restServer.run();
 		Assert.assertEquals(200, sendRequest("status", "GET"));
 		Assert.assertEquals("{status: \"running\"}", requestOutput);
