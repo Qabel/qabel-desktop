@@ -2,24 +2,46 @@ language: java
 
 jdk:
  - oraclejdk7
+ - openjdk7
+ - oraclejdk8
+
+matrix:
+ allow_failures:
+   - openjdk7
+   - oraclejdk8
 
 notifications:
   email: false
 
 install:
+ - redis-server > /dev/null 2>&1 &
  - cd ..
- - git clone https://github.com/Qabel/qabel.git
+ - git clone --depth 1 https://github.com/Qabel/qabel.git
  - cd qabel
  - git submodule init
- - git submodule update
+ - git submodule update --depth 1
  - rm -rf qabel-desktop
  - mv ../qabel-desktop ./
- - redis-server > /dev/null 2>&1 &
- - sudo apt-get install python-pip npm nodejs
- - sudo pip install virtualenv
- - virtualenv qabel-drop
- - source qabel-drop/bin/activate 
- - pip install -r qabel-drop/requirements.txt  
+ - virtualenv --system-site-packages qabel-drop
+ - source qabel-drop/bin/activate
+ - pip install --upgrade pip
+ - pip install --user -r qabel-drop/requirements.txt
+
+cache:
+ apt: true
+ directories:
+  - $HOME/.cache/pip
+  - $HOME/.gradle/caches
+  - $HOME/build/qabel/qabel-drop/lib
+
+sudo: false
+
+addons:
+ apt:
+  packages:
+   - python-pip
+   - nodejs
+   - python-virtualenv
 
 script:
  - travis_wait ./gradlew check
