@@ -30,6 +30,8 @@ public class QblMain {
 
 	private DropActor dropActor;
 	private Thread resourceActorThread;
+	private QblRESTServer restServer;
+
 	public static void main(String[] args) throws InstantiationException,
 			IllegalAccessException, ClassNotFoundException,
 			InterruptedException, URISyntaxException, QblDropInvalidURL, InvalidKeyException, IOException {
@@ -140,8 +142,8 @@ public class QblMain {
 		dropActorThread = new Thread(dropActor, "DropActor");
 		dropActorThread.start();
 		moduleManager = new ModuleManager(emitter, resourceActor);
-		Thread restServer = new Thread(new QblRESTServer(9696, resourceActor, dropActor, moduleManager));
-		restServer.start();
+		restServer = new QblRESTServer(9696, resourceActor, dropActor, moduleManager);
+		restServer.run();
 		System.out.println("REST Server running at http://localhost:9696");
 	}
 
