@@ -35,6 +35,10 @@ classes {
     }
 }
 
+tasks.withType(Test) {
+	systemProperty "java.library.path", "../qabel-core"
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.2.1'
 }

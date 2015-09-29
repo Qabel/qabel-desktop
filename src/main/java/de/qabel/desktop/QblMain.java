@@ -1,7 +1,7 @@
 package de.qabel.desktop;
 
 import java.io.File;
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
@@ -30,15 +30,18 @@ public class QblMain {
 
 	private DropActor dropActor;
 	private Thread resourceActorThread;
+	private QblRESTServer restServer;
+
 	public static void main(String[] args) throws InstantiationException,
 			IllegalAccessException, ClassNotFoundException,
-			InterruptedException, URISyntaxException, QblDropInvalidURL, InvalidKeyException {
+			InterruptedException, URISyntaxException, QblDropInvalidURL, InvalidKeyException, IOException {
 
 		QblMain main = new QblMain();
 		main.parse(args);
 		main.loadDropServers();
 		main.loadContactsAndIdentities();
 		main.startModules();
+
 		main.run();
 	}
 
@@ -122,7 +125,7 @@ public class QblMain {
     /**
      * Instantiates global DropController and ModuleManager.
      */
-	private QblMain() {
+	private QblMain() throws IOException {
 		Persistence<String> persistence = null;
 		try {
 			persistence = new SQLitePersistence("qabel-desktop.sqlite", "qabel".toCharArray());
@@ -139,6 +142,9 @@ public class QblMain {
 		dropActorThread = new Thread(dropActor, "DropActor");
 		dropActorThread.start();
 		moduleManager = new ModuleManager(emitter, resourceActor);
+		restServer = new QblRESTServer(9696, resourceActor, dropActor, moduleManager);
+		restServer.run();
+		System.out.println("REST Server running at http://localhost:9696");
 	}
 
     /**
