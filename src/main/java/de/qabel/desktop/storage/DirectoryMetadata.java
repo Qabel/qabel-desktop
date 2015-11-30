@@ -92,17 +92,10 @@ class DirectoryMetadata {
 		} catch (IOException e) {
 			throw new QblStorageException(e);
 		}
-		Connection connection;
-		try {
-			connection = DriverManager.getConnection(JDBC_PREFIX + path.getAbsolutePath());
-			connection.setAutoCommit(true);
-		} catch (SQLException e) {
-			throw new RuntimeException("Cannot open database!", e);
-		}
-		DirectoryMetadata dm = new DirectoryMetadata(connection, root, deviceId, path,
-				UUID.randomUUID().toString(), tempDir);
+		DirectoryMetadata dm = openDatabase(path, deviceId, UUID.randomUUID().toString(), tempDir);
 		try {
 			dm.initDatabase();
+			dm.setRoot(root);
 		} catch (SQLException e) {
 			throw new RuntimeException("Cannot init the database", e);
 		}

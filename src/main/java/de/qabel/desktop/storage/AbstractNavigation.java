@@ -9,6 +9,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spongycastle.crypto.params.KeyParameter;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -48,7 +49,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 		try {
 			InputStream indexDl = readBackend.download(target.ref);
 			File tmp = File.createTempFile("dir", "db", dm.getTempDir());
-			SecretKey key = makeKey(target.key);
+			KeyParameter key = new KeyParameter(target.key);
 			if (cryptoUtils.decryptFileAuthenticatedSymmetricAndValidateTag(indexDl, tmp, key)) {
 				DirectoryMetadata dm = DirectoryMetadata.openDatabase(
 						tmp, deviceId, target.ref, this.dm.getTempDir());
@@ -155,9 +156,9 @@ public abstract class AbstractNavigation implements BoxNavigation {
 
 	@Override
 	public BoxFile upload(String name, File file) throws QblStorageException {
-		SecretKey key = cryptoUtils.generateSymmetricKey();
+		KeyParameter key = cryptoUtils.generateSymmetricKey();
 		String block = UUID.randomUUID().toString();
-		BoxFile boxFile = new BoxFile(block, name, file.length(), 0L, key.getEncoded());
+		BoxFile boxFile = new BoxFile(block, name, file.length(), 0L, key.getKey());
 		boxFile.mtime = uploadEncrypted(file, key, "blocks/" + block);
 		// Overwrite = delete old file, upload new file
 		BoxFile oldFile = dm.getFile(name);
@@ -170,7 +171,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 		return boxFile;
 	}
 
-	protected long uploadEncrypted(File file, SecretKey key, String block) throws QblStorageException {
+	protected long uploadEncrypted(File file, KeyParameter key, String block) throws QblStorageException {
 		try {
 			File tempFile = File.createTempFile("upload", "up", dm.getTempDir());
 			OutputStream outputStream = new FileOutputStream(tempFile);
@@ -188,7 +189,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	public InputStream download(BoxFile boxFile) throws QblStorageException {
 		InputStream download = readBackend.download("blocks/" + boxFile.block);
 		File temp;
-		SecretKey key = makeKey(boxFile.key);
+		KeyParameter key = new KeyParameter(boxFile.key);
 		try {
 			temp = File.createTempFile("upload", "down", dm.getTempDir());
 			if (!cryptoUtils.decryptFileAuthenticatedSymmetricAndValidateTag(download, temp, key)) {
@@ -203,10 +204,10 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	@Override
 	public BoxFolder createFolder(String name) throws QblStorageException {
 		DirectoryMetadata dm = DirectoryMetadata.newDatabase(null, deviceId, this.dm.getTempDir());
-		SecretKey secretKey = cryptoUtils.generateSymmetricKey();
-		BoxFolder folder = new BoxFolder(dm.getFileName(), name, secretKey.getEncoded());
+		KeyParameter secretKey = cryptoUtils.generateSymmetricKey();
+		BoxFolder folder = new BoxFolder(dm.getFileName(), name, secretKey.getKey());
 		this.dm.insertFolder(folder);
-		BoxNavigation newFolder = new FolderNavigation(dm, keyPair, secretKey.getEncoded(),
+		BoxNavigation newFolder = new FolderNavigation(dm, keyPair, secretKey.getKey(),
 				deviceId, readBackend, writeBackend);
 		newFolder.commit();
 		return folder;

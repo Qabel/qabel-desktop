@@ -37,7 +37,7 @@ public abstract class BoxVolumeTest {
 	QblECKeyPair keyPair;
 	final String bucket = "qabel";
 	final String prefix = UUID.randomUUID().toString();
-	private final String testFileName = "src/test/java/de/qabel/core/storage/testFile.txt";
+	private final String testFileName = "src/test/java/de/qabel/desktop/storage/testFile.txt";
 
 	@Before
 	public void setUp() throws IOException, QblStorageException {

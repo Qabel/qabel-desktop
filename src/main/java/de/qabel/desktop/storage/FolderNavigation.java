@@ -5,6 +5,7 @@ import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.exceptions.QblStorageNotFound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spongycastle.crypto.params.KeyParameter;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -28,7 +29,7 @@ public class FolderNavigation extends AbstractNavigation {
 	@Override
 	protected void uploadDirectoryMetadata() throws QblStorageException {
 		logger.info("Uploading directory metadata");
-		SecretKey secretKey = new SecretKeySpec(key, "AES");
+		KeyParameter secretKey = new KeyParameter(key);
 		uploadEncrypted(dm.getPath(), secretKey, dm.getFileName());
 	}
 
@@ -39,7 +40,7 @@ public class FolderNavigation extends AbstractNavigation {
 		try {
 			InputStream indexDl = readBackend.download(dm.getFileName());
 			File tmp = File.createTempFile("dir", "db", dm.getTempDir());
-			SecretKey key = makeKey(this.key);
+			KeyParameter key = new KeyParameter(this.key);
 			if (cryptoUtils.decryptFileAuthenticatedSymmetricAndValidateTag(indexDl, tmp, key)) {
 				return DirectoryMetadata.openDatabase(tmp, deviceId, dm.getFileName(), dm.getTempDir());
 			} else {
