@@ -1,8 +1,7 @@
 package de.qabel.desktop.storage;
 
 import de.qabel.core.crypto.QblECPublicKey;
-import de.qabel.desktop.exceptions.QblStorageException;
-import de.qabel.desktop.exceptions.QblStorageNameConflict;
+import de.qabel.desktop.exceptions.*;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
@@ -90,14 +89,14 @@ class DirectoryMetadata {
 		try {
 			path = File.createTempFile("dir", "db", tempDir);
 		} catch (IOException e) {
-			throw new QblStorageException(e);
+			throw new QblStorageIOFailure(e);
 		}
 		DirectoryMetadata dm = openDatabase(path, deviceId, UUID.randomUUID().toString(), tempDir);
 		try {
 			dm.initDatabase();
 			dm.setRoot(root);
 		} catch (SQLException e) {
-			throw new RuntimeException("Cannot init the database", e);
+			throw new QblStorageCorruptMetadata(e);
 		}
 		return dm;
 	}
@@ -108,7 +107,7 @@ class DirectoryMetadata {
 			connection = DriverManager.getConnection(JDBC_PREFIX + path.getAbsolutePath());
 			connection.setAutoCommit(true);
 		} catch (SQLException e) {
-			throw new RuntimeException("Cannot open database!", e);
+			throw new QblStorageCorruptMetadata(e);
 		}
 		return new DirectoryMetadata(connection, deviceId, path, fileName, tempDir);
 	}
@@ -156,7 +155,7 @@ class DirectoryMetadata {
 				if (rs.next()) {
 					return rs.getString(1);
 				} else {
-					throw new QblStorageException("No root found!");
+					throw new QblStorageNotFound("No root found!");
 				}
 			}
 		} catch (SQLException e) {
@@ -171,7 +170,7 @@ class DirectoryMetadata {
 				if (rs.next()) {
 					return rs.getInt(1);
 				} else {
-					throw new QblStorageException("No version found!");
+					throw new QblStorageCorruptMetadata("No version found!");
 				}
 			}
 		} catch (SQLException e) {
@@ -197,13 +196,13 @@ class DirectoryMetadata {
 					String lastChanged = rs.getString(1);
 					return Hex.decodeHex(lastChanged.toCharArray());
 				} else {
-					throw new QblStorageException("No version found!");
+					throw new QblStorageCorruptMetadata("No version found!");
 				}
 			} catch (DecoderException e) {
-				throw new QblStorageException(e);
+				throw new QblStorageCorruptMetadata(e);
 			}
 		} catch (SQLException e) {
-			throw new QblStorageException(e);
+			throw new QblStorageCorruptMetadata(e);
 		}
 	}
 
@@ -212,7 +211,7 @@ class DirectoryMetadata {
 		try {
 			md = MessageDigest.getInstance("SHA-256");
 		} catch (NoSuchAlgorithmException e) {
-			throw new QblStorageException(e);
+			throw new QblStorageDecryptionFailed(e);
 		}
 		md.update(new byte[]{0, 0});
 		md.update(deviceId);
@@ -226,11 +225,11 @@ class DirectoryMetadata {
 				if (rs.next()) {
 					return rs.getBytes(1);
 				} else {
-					throw new QblStorageException("No version found!");
+					throw new QblStorageCorruptMetadata("No version found!");
 				}
 			}
 		} catch (SQLException e) {
-			throw new QblStorageException(e);
+			throw new QblStorageCorruptMetadata(e);
 		}
 	}
 
