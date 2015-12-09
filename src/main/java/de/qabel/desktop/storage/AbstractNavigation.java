@@ -156,16 +156,28 @@ public abstract class AbstractNavigation implements BoxNavigation {
 
 	@Override
 	public BoxFile upload(String name, File file) throws QblStorageException {
+		BoxFile oldFile = dm.getFile(name);
+		if (oldFile != null) {
+			throw new QblStorageNameConflict("File already exists");
+		}
+		return uploadFile(name, file, null);
+	}
+
+	@Override
+	public BoxFile overwrite(String name, File file) throws QblStorageException {
+		BoxFile oldFile = dm.getFile(name);
+		if (oldFile == null) {
+			throw new QblStorageNotFound("Could not find file to overwrite");
+		}
+		dm.deleteFile(oldFile);
+		return uploadFile(name, file, oldFile);
+	}
+
+	private BoxFile uploadFile(String name, File file, BoxFile oldFile) throws QblStorageException {
 		KeyParameter key = cryptoUtils.generateSymmetricKey();
 		String block = UUID.randomUUID().toString();
 		BoxFile boxFile = new BoxFile(block, name, file.length(), 0L, key.getKey());
 		boxFile.mtime = uploadEncrypted(file, key, "blocks/" + block);
-		// Overwrite = delete old file, upload new file
-		BoxFile oldFile = dm.getFile(name);
-		if (oldFile != null) {
-			deleteQueue.add(oldFile.block);
-			dm.deleteFile(oldFile);
-		}
 		updatedFiles.add(new FileUpdate(oldFile, boxFile));
 		dm.insertFile(boxFile);
 		return boxFile;

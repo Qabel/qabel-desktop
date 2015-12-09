@@ -150,11 +150,28 @@ public abstract class BoxVolumeTest {
 		} catch (QblStorageNotFound e) { }
 	}
 
-	@Test
-	public void testOverrideFile() throws QblStorageException, IOException {
+	@Test(expected = QblStorageNameConflict.class)
+	public void testOverwriteFileError() throws QblStorageException, IOException {
 		BoxNavigation nav = volume.navigate();
 		uploadFile(nav);
 		uploadFile(nav);
+	}
+
+	@Test(expected = QblStorageNotFound.class)
+	public void testOverwriteFileNotFound() throws QblStorageException, IOException {
+		BoxNavigation nav = volume.navigate();
+		File file = new File(testFileName);
+		BoxFile boxFile = nav.overwrite("foobar", file);
+	}
+
+	@Test
+	public void testOverwriteFile() throws QblStorageException, IOException {
+		BoxNavigation nav = volume.navigate();
+		File file = new File(testFileName);
+		BoxFile boxFile = nav.upload("foobar", file);
+		nav.commit();
+		nav.overwrite("foobar", file);
+		nav.commit();
 		assertThat(nav.listFiles().size(), is(1));
 	}
 
