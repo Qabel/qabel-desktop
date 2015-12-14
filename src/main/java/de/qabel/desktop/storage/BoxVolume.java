@@ -59,6 +59,13 @@ public class BoxVolume {
 		Class.forName("org.sqlite.JDBC");
 	}
 
+	/**
+	 * Navigate to the index file of the volume
+	 * @return
+	 * @throws QblStorageException
+	 * @throws QblStorageDecryptionFailed if the index file could not be decrypted
+	 * @throws QblStorageIOFailure if the temporary files could not be accessed
+	 */
 	public BoxNavigation navigate() throws QblStorageException {
 		String rootRef = getRootRef();
 		logger.info("Navigating to " + rootRef);
@@ -80,6 +87,11 @@ public class BoxVolume {
 		return new IndexNavigation(dm, keyPair, deviceId, readBackend, writeBackend);
 	}
 
+	/**
+	 * Calculate the filename of the index metadata file
+	 * @return
+	 * @throws QblStorageException if the hash algorithm could not be found
+	 */
 	public String getRootRef() throws QblStorageException {
 		MessageDigest md;
 		try {
@@ -95,10 +107,21 @@ public class BoxVolume {
 		return uuid.toString();
 	}
 
+	/**
+	 * Create a new index metadata file
+	 * @param bucket
+	 * @param prefix
+	 * @throws QblStorageException
+	 */
 	public void createIndex(String bucket, String prefix) throws QblStorageException {
 		createIndex("https://" + bucket + ".s3.amazonaws.com/" + prefix);
 	}
 
+	/**
+	 * Create a new index metadata file
+	 * @param root
+	 * @throws QblStorageException
+	 */
 	public void createIndex(String root) throws QblStorageException {
 		String rootRef = getRootRef();
 		DirectoryMetadata dm = DirectoryMetadata.newDatabase(root, deviceId, tempDir);

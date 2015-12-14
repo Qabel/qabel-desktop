@@ -84,6 +84,14 @@ class DirectoryMetadata {
 		this.tempDir = tempDir;
 	}
 
+	/**
+	 * Create a new database and init it with an sql schema and a metadata
+	 * @param root path to the metadata file
+	 * @param deviceId 16 random bytes that identify the current device
+	 * @param tempDir writable temp directory
+	 * @return
+	 * @throws QblStorageException
+	 */
 	static DirectoryMetadata newDatabase(String root, byte[] deviceId, File tempDir) throws QblStorageException {
 		File path;
 		try {
@@ -101,6 +109,15 @@ class DirectoryMetadata {
 		return dm;
 	}
 
+	/**
+	 * Open an existing database from a decrypted file
+	 * @param path writable location of the metadata file
+	 * @param deviceId 16 random bytes that identify the current device
+	 * @param fileName name of the file on the storage backend
+	 * @param tempDir writable temp directory
+	 * @return
+	 * @throws QblStorageException
+	 */
 	static DirectoryMetadata openDatabase(File path, byte[] deviceId, String fileName, File tempDir) throws QblStorageException {
 		Connection connection;
 		try {
@@ -112,12 +129,28 @@ class DirectoryMetadata {
 		return new DirectoryMetadata(connection, deviceId, path, fileName, tempDir);
 	}
 
+	/**
+	 * Path of the metadata file on the local filesystem
+	 * @return
+	 */
 	public File getPath() {
 		return path;
 	}
 
+	/**
+	 * Name of the file on the storage backend
+	 * @return
+	 */
 	public String getFileName() {
 		return fileName;
+	}
+
+	/**
+	 * Writable temporary directory which is used for encryption and decryption
+	 * @return
+	 */
+	public File getTempDir() {
+		return tempDir;
 	}
 
 	private void initDatabase() throws SQLException, QblStorageException {
@@ -446,10 +479,5 @@ class DirectoryMetadata {
 		return TYPE_NONE;
 	}
 
-	public File getTempDir() {
-		return tempDir;
-
-
-	}
 }
 
