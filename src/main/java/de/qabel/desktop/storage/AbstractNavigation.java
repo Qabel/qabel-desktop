@@ -11,8 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongycastle.crypto.params.KeyParameter;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.security.InvalidKeyException;
 import java.util.*;
@@ -63,10 +61,6 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	}
 
 	protected abstract DirectoryMetadata reloadMetadata() throws QblStorageException;
-
-	protected SecretKey makeKey(byte[] key2) {
-		return new SecretKeySpec(key2, "AES");
-	}
 
 	@Override
 	public void commit() throws QblStorageException {
