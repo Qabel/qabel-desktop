@@ -32,21 +32,23 @@ public class BoxVolume {
 	private byte[] deviceId;
 	private CryptoUtils cryptoUtils;
 	private File tempDir;
+	private String prefix;
 
 	public BoxVolume(String bucket, String prefix, AWSCredentials credentials,
 	                 QblECKeyPair keyPair, byte[] deviceId, File tempDir) {
 		this(new S3ReadBackend(bucket, prefix), new S3WriteBackend(credentials, bucket, prefix),
-				keyPair, deviceId, tempDir);
+				keyPair, deviceId, tempDir, prefix);
 	}
 
 	public BoxVolume(StorageReadBackend readBackend, StorageWriteBackend writeBackend,
-	                 QblECKeyPair keyPair, byte[] deviceId, File tempDir) {
+	                 QblECKeyPair keyPair, byte[] deviceId, File tempDir, String prefix) {
 		this.keyPair = keyPair;
 		this.deviceId = deviceId;
 		this.readBackend = readBackend;
 		this.writeBackend = writeBackend;
 		cryptoUtils = new CryptoUtils();
 		this.tempDir = tempDir;
+		this.prefix = prefix;
 		try {
 			loadDriver();
 		} catch (ClassNotFoundException e) {
@@ -87,6 +89,7 @@ public class BoxVolume {
 		} catch (NoSuchAlgorithmException e) {
 			throw new QblStorageException(e);
 		}
+		md.update(this.prefix.getBytes());
 		md.update(keyPair.getPrivateKey());
 		byte[] digest = md.digest();
 		byte[] firstBytes = Arrays.copyOfRange(digest, 0, 16);
