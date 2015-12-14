@@ -20,6 +20,11 @@ class S3ReadBackend extends StorageReadBackend {
 
 	private static final Logger logger = LoggerFactory.getLogger(S3ReadBackend.class.getName());
 
+	// Number of http connections to S3
+	// The default was too low, 20 works. Further testing may be required
+	// to find the best amount of connections.
+	private static final int CONNECTIONS = 20;
+
 	String root;
 	private final CloseableHttpClient httpclient;
 
@@ -31,9 +36,10 @@ class S3ReadBackend extends StorageReadBackend {
 		this.root = root;
 		// Increase max total connection
 		PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
-		connManager.setMaxTotal(20);
+		connManager.setMaxTotal(CONNECTIONS);
 		// Increase default max connection per route
-		connManager.setDefaultMaxPerRoute(20);
+		// Set to the max total because we only have 1 route
+		connManager.setDefaultMaxPerRoute(CONNECTIONS);
 
 		httpclient = HttpClients.custom()
 				.setConnectionManager(connManager).build();
