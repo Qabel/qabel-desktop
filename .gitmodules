@@ -1,0 +1,6 @@
+[submodule "qabel-core"]
+	path = qabel-core
+	url = git@github.com:Qabel/qabel-core.git
+[submodule "ackack"]
+	path = ackack
+	url = git@github.com:Qabel/ackack.git

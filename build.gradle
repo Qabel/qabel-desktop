@@ -7,6 +7,9 @@ version = '0.1'
 
 repositories {
     mavenCentral()
+    flatDir {
+        dir 'libs'
+    }
 }
 
 jar.doFirst{
@@ -19,9 +22,11 @@ jar.doFirst{
 
 dependencies {
     testCompile "junit:junit:4.11"
+    testCompile group: 'org.meanbean', name: 'meanbean', version: '2.+'
     compile 'commons-cli:commons-cli:1.2'
-		compile project(":qabel-core")
-		runtime fileTree(dir: 'libs', include: '*.jar')
+    compile project(":qabel-core")
+    compile project(":ackack")
+    compile 'com.amazonaws:aws-java-sdk:1.10.32'
 }
 
 task copyToLib(type: Copy) {
@@ -38,3 +43,4 @@ classes {
 task wrapper(type: Wrapper) {
     gradleVersion = '2.2.1'
 }
+
