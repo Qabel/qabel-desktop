@@ -8,3 +8,5 @@ build/
 *.iml
 log
 gradle
+accounting.log
+drop.log

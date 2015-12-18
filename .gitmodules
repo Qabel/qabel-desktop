@@ -4,3 +4,9 @@
 [submodule "ackack"]
 	path = ackack
 	url = git@github.com:Qabel/ackack.git
+[submodule "qabel-drop"]
+	path = qabel-drop
+	url = git@github.com:Qabel/qabel-drop.git
+[submodule "qabel-accounting"]
+	path = qabel-accounting
+	url = https://github.com/Qabel/qabel-accounting
