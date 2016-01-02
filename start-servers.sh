@@ -1,9 +1,8 @@
 #!/bin/bash
--e
--x
+set -e
 cd qabel-drop
 if [ ! -d venv ]; then
-  virtualenv --python=python3.4 venv
+  virtualenv --python=python3 venv
 fi
 source venv/bin/activate
 pip install -r requirements.txt
@@ -17,7 +16,7 @@ cd ..
 
 cd qabel-accounting
 if [ ! -d venv ]; then
-  virtualenv --python=python3.4 venv
+  virtualenv --python=python3 venv
 fi
 source venv/bin/activate
 pip install -r requirements.txt

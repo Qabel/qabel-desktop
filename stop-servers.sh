@@ -1,6 +1,5 @@
 #!/bin/bash
--e
--x
+set -x
 cat drop.pid | xargs kill
 rm drop.pid
 cat accounting.pid | xargs kill
