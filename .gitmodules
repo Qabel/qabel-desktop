@@ -1,12 +1,12 @@
 [submodule "qabel-core"]
 	path = qabel-core
-	url = git@github.com:Qabel/qabel-core.git
+	url = https://github.com/Qabel/qabel-core.git
 [submodule "ackack"]
 	path = ackack
-	url = git@github.com:Qabel/ackack.git
+	url = https://github.com/Qabel/ackack.git
 [submodule "qabel-drop"]
 	path = qabel-drop
-	url = git@github.com:Qabel/qabel-drop.git
+	url = https://github.com/Qabel/qabel-drop.git
 [submodule "qabel-accounting"]
 	path = qabel-accounting
-	url = https://github.com/Qabel/qabel-accounting
+	url = https://github.com/Qabel/qabel-accounting.git
