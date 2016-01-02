@@ -50,5 +50,7 @@ tasks.withType(Test) {
     def platform = "${System.properties['os.name'].toLowerCase()}_${System.properties['os.arch']}"
     systemProperty "java.library.path", "./qabel-core/build/binaries/curve25519SharedLibrary/$platform/"
 }
-
-
+run {
+    def platform = "${System.properties['os.name'].toLowerCase()}_${System.properties['os.arch']}"
+    systemProperty "java.library.path", "./qabel-core/build/binaries/curve25519SharedLibrary/$platform/"
+}
