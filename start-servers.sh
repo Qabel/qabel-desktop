@@ -1,4 +1,6 @@
 #!/bin/bash
+-e
+-x
 cd qabel-drop
 if [ ! -d venv ]; then
   virtualenv --python=python3.4 venv
