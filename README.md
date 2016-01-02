@@ -22,3 +22,7 @@ Desktop Frontend of Qabel
    ```
    java -Djava.library.path=../qabel-core -cp "../qabel-helloworld-module/build/libs/qabel-helloworld-module-0.1.jar:../qabel-desktop/build/libs/qabel-desktop-0.1.jar" de.qabel.desktop.QblMain -module qabel-helloworld-module/build/libs/qabel-helloworld-module-0.1.jar:de.qabel.helloworld.QblHelloWorldModule
    ```
+
+### all-in-one build
+
+travis uses the build.sh. it starts the required servers, runs the tests and stops the servers afterwards.
