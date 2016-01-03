@@ -1,7 +1,6 @@
 package de.qabel.desktop;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
