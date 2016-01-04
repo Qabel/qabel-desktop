@@ -10,3 +10,5 @@ log
 gradle
 accounting.log
 drop.log
+accounting.pid
+drop.pid
