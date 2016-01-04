@@ -1,10 +1,11 @@
 package de.qabel.desktop;
 
 import javafx.application.Application;
-import javafx.scene.Group;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+
 
 public class DesktopClient extends Application {
 	private static final String TITLE = "Qabel Desktop Client";
@@ -15,15 +16,11 @@ public class DesktopClient extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		setUserAgentStylesheet(STYLESHEET_MODENA);
-
-		Rectangle rect = new Rectangle(40, 40);
-		Group root = new Group(rect);
-		Scene scene = new Scene(root, 400, 300);
-
-		primaryStage.setScene(scene);
+		Parent root = FXMLLoader.load(getClass().getResource("/fxml/hello_world.fxml"));
+		Scene scene = new Scene(root, 800, 600);
 
 		primaryStage.setTitle(TITLE);
+		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
 }
