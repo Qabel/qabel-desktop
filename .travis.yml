@@ -8,30 +8,24 @@ jdk:
 matrix:
  allow_failures:
    - openjdk7
-   - oraclejdk8
+   - oraclejdk7
 
 notifications:
   email: false
 
 install:
  - redis-server > /dev/null 2>&1 &
- - cd ..
- - git clone --depth 1 https://github.com/Qabel/qabel.git
- - cd qabel
  - git submodule init
  - git submodule update --depth 1
- - rm -rf qabel-desktop
- - mv ../qabel-desktop ./
- - virtualenv --system-site-packages qabel-drop
- - source qabel-drop/bin/activate
- - pip install --upgrade pip
- - pip install --user -r qabel-drop/requirements.txt
 
 cache:
  apt: true
  directories:
   - $HOME/.cache/pip
   - $HOME/.gradle/caches
+  - $HOME/gradle
+  - $HOME/qabel-core/.gradle/caches
+  - $HOME/qabel-core/gradle
   - $HOME/build/qabel/qabel-drop/lib
 
 sudo: false
@@ -39,9 +33,10 @@ sudo: false
 addons:
  apt:
   packages:
-   - python-pip
+   - python3
+   - python3-pip
    - nodejs
-   - python-virtualenv
+   - python3-virtualenv
 
 script:
- - travis_wait ./gradlew check
+ - travis_wait bash build.sh

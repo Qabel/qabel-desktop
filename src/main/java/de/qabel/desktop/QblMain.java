@@ -1,7 +1,6 @@
 package de.qabel.desktop;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
@@ -21,8 +20,8 @@ import de.qabel.core.drop.DropURL;
 
 public class QblMain {
 	private static final String MODULE_OPT = "module";
-	private static final String ALICE_DROP_URL = "http://localhost:6000/123456789012345678901234567890123456789012a";
-	private static final String BOB_DROP_URL = "http://localhost:6000/123456789012345678901234567890123456789012b";
+	private static final String ALICE_DROP_URL = "http://localhost:5000/123456789012345678901234567890123456789012a";
+	private static final String BOB_DROP_URL = "http://localhost:5000/123456789012345678901234567890123456789012b";
 
 	private final EventEmitter emitter;
 	private Thread dropActorThread;

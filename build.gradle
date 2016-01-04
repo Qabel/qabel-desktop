@@ -1,12 +1,16 @@
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'eclipse'
+apply plugin: 'c'
 
 mainClassName = "de.qabel.desktop.QblMain"
 version = '0.1'
 
 repositories {
     mavenCentral()
+    flatDir {
+        dir 'libs'
+    }
 }
 
 jar.doFirst{
@@ -19,9 +23,12 @@ jar.doFirst{
 
 dependencies {
     testCompile "junit:junit:4.11"
+    testCompile group: 'org.meanbean', name: 'meanbean', version: '2.+'
+
     compile 'commons-cli:commons-cli:1.2'
-		compile project(":qabel-core")
-		runtime fileTree(dir: 'libs', include: '*.jar')
+    compile 'com.amazonaws:aws-java-sdk:1.10.32'
+
+    compile project(":qabel-core")
 }
 
 task copyToLib(type: Copy) {
@@ -37,4 +44,13 @@ classes {
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.2.1'
+}
+
+tasks.withType(Test) {
+    def platform = "${System.properties['os.name'].toLowerCase()}_${System.properties['os.arch']}"
+    systemProperty "java.library.path", "./qabel-core/build/binaries/curve25519SharedLibrary/$platform/"
+}
+run {
+    def platform = "${System.properties['os.name'].toLowerCase()}_${System.properties['os.arch']}"
+    systemProperty "java.library.path", "./qabel-core/build/binaries/curve25519SharedLibrary/$platform/"
 }

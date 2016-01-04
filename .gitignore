@@ -4,3 +4,9 @@ build/
 .classpath
 .project
 .settings/
+.idea
+*.iml
+log
+gradle
+accounting.log
+drop.log
