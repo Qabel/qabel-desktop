@@ -12,3 +12,5 @@ accounting.log
 drop.log
 accounting.pid
 drop.pid
+qabel-desktop.sqlite
+ScenicView.jar
