@@ -71,30 +71,30 @@ public class RemoteFSController implements Initializable {
 
     private TreeItem<BoxObject> calculateSubFolderStructure(
             BoxNavigation nav,
-            TreeItem<BoxObject> TreeNode,
+            TreeItem<BoxObject> treeNode,
             boolean first) throws QblStorageException {
 
         BoxNavigation target;
         if (first) {
             target = nav;
         } else {
-            target = nav.navigate((BoxFolder) TreeNode.getValue());
+            target = nav.navigate((BoxFolder) treeNode.getValue());
         }
 
         for (BoxFile file : target.listFiles()) {
             TreeItem<BoxObject> BoxObjectTreeItem = new TreeItem<>((BoxObject) file);
-            TreeNode.getChildren().add(BoxObjectTreeItem);
+            treeNode.getChildren().add(BoxObjectTreeItem);
 
         }
         for (BoxFolder subFolder : target.listFolders()) {
 
             TreeItem<BoxObject> BoxObjectTreeItem = new TreeItem<>(subFolder);
-            TreeNode.getChildren().add(BoxObjectTreeItem);
+            treeNode.getChildren().add(BoxObjectTreeItem);
 
             calculateSubFolderStructure(nav, BoxObjectTreeItem, false);
         }
 
-        return TreeNode;
+        return treeNode;
     }
 
     private void calculateTableContent() {
