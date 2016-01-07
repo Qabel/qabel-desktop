@@ -14,6 +14,7 @@ import javafx.scene.control.TreeTableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -28,9 +29,6 @@ public class RemoteFSController implements Initializable {
     private ImageView folderIcon = new ImageView(
             new Image(getClass().getResourceAsStream("/folder.png"))
     );
-
-    private TreeItem<BoxObject> parentNode;
-    private List<BoxFolder> folders;
 
     @FXML
     private TreeTableView treeTable;
@@ -64,7 +62,7 @@ public class RemoteFSController implements Initializable {
       //  BoxFolder rootFolder = new BoxFolder("block", "root Folder", new byte[16]);
 
         TreeItem<BoxObject> rootNode = new TreeItem<>(new BoxFolder("block", "root Folder", new byte[16]));
-        parentNode = calculateSubFolderStructure(nav, rootNode, true);
+        TreeItem<BoxObject> parentNode = calculateSubFolderStructure(nav, rootNode, true);
         parentNode.setExpanded(true);
         return parentNode;
     }
@@ -85,11 +83,18 @@ public class RemoteFSController implements Initializable {
             TreeItem<BoxObject> BoxObjectTreeItem = new TreeItem<>((BoxObject) file);
             TreeNode.getChildren().add(BoxObjectTreeItem);
 
+
+
+
+
+
         }
         for (BoxFolder subFolder : target.listFolders()) {
 
             TreeItem<BoxObject> BoxObjectTreeItem = new TreeItem<>(subFolder);
+
             TreeNode.getChildren().add(BoxObjectTreeItem);
+
 
             calculateSubFolderStructure(nav, BoxObjectTreeItem, false);
         }
