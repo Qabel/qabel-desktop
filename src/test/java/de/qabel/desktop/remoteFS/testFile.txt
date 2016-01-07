@@ -1,3 +1,0 @@
-This a test file to test file encryption for storage module.
-
-Just another sentence to have more than one.

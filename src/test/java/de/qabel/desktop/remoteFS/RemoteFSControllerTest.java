@@ -6,6 +6,7 @@ import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
 import javafx.scene.control.TreeItem;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,16 +29,19 @@ public class RemoteFSControllerTest {
     private QblECKeyPair keyPair;
     private byte[] deviceID;
     private Path tempFolder;
+    private LocalReadBackend localRead;
+    private LocalWriteBackend localWrite;
     private RemoteFSController controller = new RemoteFSController();
     private UUID uuid = UUID.randomUUID();
     private final String bucket = "qabel";
     private final String prefix = UUID.randomUUID().toString();
     private final String testFileName = "src/test/java/de/qabel/desktop/remoteFS/testFile.txt";
-
+    private File file;
+    private File localStorageFile;
     @Before
     public void setUp() throws Exception {
 
-
+        file = File.createTempFile("File2", ".txt", new File(System.getProperty("java.io.tmpdir")));
         utils = new CryptoUtils();
         deviceID = utils.getRandomBytes(16);
         keyPair = new QblECKeyPair();
@@ -47,20 +51,33 @@ public class RemoteFSControllerTest {
         bb.putLong(uuid.getMostSignificantBits());
         bb.putLong(uuid.getLeastSignificantBits());
 
-        volume = new BoxVolume(new LocalReadBackend(tempFolder),
-                new LocalWriteBackend(tempFolder),
-                keyPair, deviceID, new File(System.getProperty("java.io.tmpdir")));
+        localRead = new LocalReadBackend(tempFolder);
+        localWrite = new LocalWriteBackend(tempFolder);
+        localStorageFile = new File(System.getProperty("java.io.tmpdir"));
+
+        volume = new BoxVolume(
+                localRead,
+                localWrite,
+                keyPair,
+                deviceID,
+                localStorageFile);
 
         volume.createIndex(bucket, prefix);
         nav = volume.navigate();
+    }
+
+    @After
+    public void after() throws Exception {
+
+        localWrite.delete(localStorageFile.getName());
     }
 
     @Test
     public void testEmpty() {
         try {
 
-            TreeItem rootnode = controller.calculateFolderStructure(nav);
-            assertThat(rootnode.getChildren().size(), is(0));
+            TreeItem rootNode = controller.calculateFolderStructure(nav);
+            assertThat(rootNode.getChildren().size(), is(0));
 
         } catch (QblStorageException e) {
             e.printStackTrace();
@@ -74,8 +91,8 @@ public class RemoteFSControllerTest {
             nav.createFolder("folder");
             nav.commit();
 
-            TreeItem rootnode = controller.calculateFolderStructure(nav);
-            assertThat(rootnode.getChildren().size(), is(1));
+            TreeItem rootNode = controller.calculateFolderStructure(nav);
+            assertThat(rootNode.getChildren().size(), is(1));
 
         } catch (QblStorageException e) {
             e.printStackTrace();
@@ -86,14 +103,13 @@ public class RemoteFSControllerTest {
     public void testCalculateFileStructure() {
         try {
 
-            File file = File.createTempFile("File2", ".txt", new File(System.getProperty("java.io.tmpdir")));
             nav.upload("File", file);
             nav.commit();
 
-            TreeItem rootnode = controller.calculateFolderStructure(nav);
-            assertThat(rootnode.getChildren().size(), is(1));
+            TreeItem rootNode = controller.calculateFolderStructure(nav);
+            assertThat(rootNode.getChildren().size(), is(1));
 
-        } catch (QblStorageException | IOException e) {
+        } catch (QblStorageException e) {
             e.printStackTrace();
         }
     }
@@ -103,18 +119,37 @@ public class RemoteFSControllerTest {
         try {
             BoxFolder folder = nav.createFolder("folder");
             BoxNavigation navFolder1 = nav.navigate(folder);
-            File file = File.createTempFile("File2", ".txt", new File(System.getProperty("java.io.tmpdir")));
             navFolder1.upload("File", file);
             navFolder1.commit();
 
-            TreeItem rootnode = controller.calculateFolderStructure(nav);
-            assertThat(rootnode.getChildren().size(), is(1));
-            TreeItem subnode = (TreeItem) rootnode.getChildren().get(0);
+            TreeItem rootNode = controller.calculateFolderStructure(nav);
+            assertThat(rootNode.getChildren().size(), is(1));
+            TreeItem subnode = (TreeItem) rootNode.getChildren().get(0);
             assertThat(subnode.getChildren().size(), is(1));
 
-        } catch (QblStorageException | IOException e) {
+        } catch (QblStorageException e) {
             e.printStackTrace();
         }
     }
+        @Test
+        public void testObserveFoldersSubfolder() {
+            try {
 
+                BoxFolder folder = nav.createFolder("folder");
+                nav.commit();
+
+                BoxNavigation navFolder3 = nav.navigate(folder);
+                navFolder3.createFolder("subFolder");
+                navFolder3.commit();
+
+                TreeItem rootNode = controller.calculateFolderStructure(nav);
+                assertThat(rootNode.getChildren().size(), is(1));
+                TreeItem subnode = (TreeItem) rootNode.getChildren().get(0);
+                assertThat(subnode.getChildren().size(), is(1));
+
+            } catch (QblStorageException e) {
+                e.printStackTrace();
+            }
+
+        }
 }

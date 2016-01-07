@@ -66,18 +66,18 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	public void commit() throws QblStorageException {
 		byte[] version = dm.getVersion();
 		dm.commit();
-		logger.info("Committing version "+ new String(Hex.encodeHex(dm.getVersion()))
-				+ " with device id " + new String(Hex.encodeHex(dm.deviceId)));
+		//logger.info("Committing version "+ new String(Hex.encodeHex(dm.getVersion()))
+		//		+ " with device id " + new String(Hex.encodeHex(dm.deviceId)));
 		DirectoryMetadata updatedDM = null;
 		try {
 			updatedDM = reloadMetadata();
-			logger.info("Remote version is " + new String(Hex.encodeHex(updatedDM.getVersion())));
+			//logger.info("Remote version is " + new String(Hex.encodeHex(updatedDM.getVersion())));
 		} catch (QblStorageNotFound e) {
-			logger.info("Could not reload metadata");
+			//logger.info("Could not reload metadata");
 		}
 		// the remote version has changed from the _old_ version
 		if ((updatedDM != null) && (!Arrays.equals(version, updatedDM.getVersion()))) {
-			logger.info("Conflicting version");
+			//logger.info("Conflicting version");
 			// ignore our local directory metadata
 			// all changes that are not inserted in the new dm are _lost_!
 			dm = updatedDM;
@@ -108,9 +108,9 @@ public abstract class AbstractNavigation implements BoxNavigation {
 				handleConflict(update);
 			}
 		} else if (newFile.equals(update.old)) {
-			logger.info("No conflict for the file " + local.name);
+			//logger.info("No conflict for the file " + local.name);
 		} else {
-			logger.info("Inserting conflict marked file");
+			//logger.info("Inserting conflict marked file");
 			local.name = conflictName(local);
 			if (update.old != null) {
 				dm.deleteFile(update.old);
@@ -228,11 +228,11 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	public void delete(BoxFolder folder) throws QblStorageException {
 		BoxNavigation folderNav = navigate(folder);
 		for (BoxFile file: folderNav.listFiles()) {
-			logger.info("Deleting file " + file.name);
+			//logger.info("Deleting file " + file.name);
 			folderNav.delete(file);
 		}
 		for (BoxFolder subFolder: folderNav.listFolders()) {
-			logger.info("Deleting folder " + folder.name);
+			//logger.info("Deleting folder " + folder.name);
 			folderNav.delete(subFolder);
 		}
 		folderNav.commit();

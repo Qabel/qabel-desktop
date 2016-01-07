@@ -2,7 +2,6 @@ package de.qabel.desktop.CellValueFactory;
 
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
-import de.qabel.desktop.remoteFS.RemoteFSApplication;
 import de.qabel.desktop.storage.*;
 import javafx.application.Application;
 import javafx.beans.value.ObservableValue;
@@ -17,28 +16,23 @@ import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 
 public class BoxObjectCellValueFactoryTest {
 
-    BoxNavigation nav;
-    BoxVolume volume;
-    CryptoUtils utils;
-    QblECKeyPair keyPair;
-    byte[] deviceID;
-    Path tempFolder;
-   // TreeTableColumn<BoxObject, String> nameColumn = new TreeTableColumn<BoxObject, String>();
-    ObservableValue<String> nameColumn;
-    private TreeTableView treeTable;
-    TreeItem<BoxObject> rootNode = new TreeItem<>(new BoxFolder("block", "root Folder", new byte[16]));
-    UUID uuid = UUID.randomUUID();
-    final String bucket = "qabel";
-    final String prefix = UUID.randomUUID().toString();
+    private ObservableValue<String> column;
+    private TreeTableView treeTableFile;
+    private TreeTableView treeTableFolder;
+    private TreeItem<BoxObject> rootNodeFolder = new TreeItem<>(new BoxFolder("block", "root Folder", new byte[16]));
+    private TreeItem<BoxObject> rootNodeFile = new TreeItem<>(new BoxFolder("block", "root Folder", new byte[16]));
+    private UUID uuid = UUID.randomUUID();
+    private final String prefix = UUID.randomUUID().toString();
 
 
     @BeforeClass
@@ -56,52 +50,82 @@ public class BoxObjectCellValueFactoryTest {
     @Before
     public void setUp() throws Exception {
 
-        utils = new CryptoUtils();
-        deviceID = utils.getRandomBytes(16);
-        keyPair = new QblECKeyPair();
-        tempFolder = Files.createTempDirectory("");
+        CryptoUtils utils = new CryptoUtils();
+        byte[] deviceID = utils.getRandomBytes(16);
+        QblECKeyPair keyPair = new QblECKeyPair();
+        Path tempFolder = Files.createTempDirectory("");
         ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
         bb.putLong(uuid.getMostSignificantBits());
         bb.putLong(uuid.getLeastSignificantBits());
 
-        volume = new BoxVolume(new LocalReadBackend(tempFolder),
+        BoxVolume volume = new BoxVolume(
+                new LocalReadBackend(tempFolder),
                 new LocalWriteBackend(tempFolder),
-                keyPair, deviceID, new File(System.getProperty("java.io.tmpdir")));
+                keyPair,
+                deviceID,
+                new File(System.getProperty("java.io.tmpdir")));
 
+        String bucket = "qabel";
         volume.createIndex(bucket, prefix);
-        nav = volume.navigate();
 
-        TreeItem<BoxObject> BoxObjectTreeItem = new TreeItem<>(new BoxObject("Folder"));
-        rootNode.getChildren().add(BoxObjectTreeItem);
+        TreeItem<BoxObject> boxFolderTreeItem = new TreeItem<>(new BoxFolder("ref", "Folder", new byte[16]));
+        rootNodeFolder.getChildren().add(boxFolderTreeItem);
+        treeTableFolder = new TreeTableView(rootNodeFolder);
+
+        TreeItem<BoxObject> boxFileTreeItem = new TreeItem<>(new BoxFile("block", "File", 1L, 2L, new byte[16]));
+        rootNodeFile.getChildren().add(boxFileTreeItem);
+        treeTableFile = new TreeTableView(rootNodeFile);
 
     }
 
     @Test
     public void testEmpty() {
 
-        treeTable = new TreeTableView(rootNode);
-        nameColumn = new BoxObjectCellValueFactory("").
-                call(new TreeTableColumn.CellDataFeatures<>(
-                        treeTable,
-                        new TreeTableColumn<>(),
-                        rootNode.getChildren().get(0)));
-
-        assertThat("", is(nameColumn.getValue()));
+        column = getColumnValue("", rootNodeFile);
+        assertThat(column.getValue(), is(""));
     }
 
     @Test
-    public void testName() {
+    public void testSize() {
 
-        treeTable = new TreeTableView(rootNode);
-        nameColumn = new BoxObjectCellValueFactory("name").
-                call(new TreeTableColumn.CellDataFeatures<>(
-                        treeTable,
-                        new TreeTableColumn<>(),
-                        rootNode.getChildren().get(0)));
-
-        assertNotNull(nameColumn);
-        assertThat(rootNode.getChildren().get(0).getValue().name, is(nameColumn.getValue()));
+        column = getColumnValue("size", rootNodeFile);
+        BoxFile subnode = (BoxFile) rootNodeFile.getChildren().get(0).getValue();
+        assertThat(column.getValue(), is(subnode.size.toString()));
     }
 
+    @Test
+    public void testNameFile() {
 
+        column = getColumnValue("name", rootNodeFile);
+
+        BoxFile subnode = (BoxFile) rootNodeFile.getChildren().get(0).getValue();
+        assertThat(column.getValue(), is(subnode.name));
+    }
+
+    @Test
+    public void testNameFolder() {
+
+        column = getColumnValue("name", rootNodeFolder);
+
+        BoxFolder subnode = (BoxFolder) rootNodeFolder.getChildren().get(0).getValue();
+        assertThat(column.getValue(), is(subnode.name));
+    }
+
+    @Test
+    public void testDate() {
+
+        column = getColumnValue("mtime", rootNodeFile);
+        BoxFile subnode = (BoxFile) rootNodeFile.getChildren().get(0).getValue();
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        String date = dateFormat.format(subnode.mtime);
+        assertThat(column.getValue(), is(date));
+    }
+
+    private ObservableValue<String> getColumnValue(String searchString, TreeItem<BoxObject> rootNode) {
+        return new BoxObjectCellValueFactory(searchString).
+                call(new TreeTableColumn.CellDataFeatures<>(
+                        treeTableFile,
+                        new TreeTableColumn<>(),
+                        rootNode.getChildren().get(0)));
+    }
 }

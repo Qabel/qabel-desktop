@@ -23,7 +23,7 @@ public class LocalReadBackend extends StorageReadBackend {
 
     InputStream download(String name) throws QblStorageException {
         Path file = root.resolve(name);
-        logger.info("Downloading file path " + file.toString());
+        //logger.info("Downloading file path " + file.toString());
         try {
             return Files.newInputStream(file);
         } catch (IOException e) {

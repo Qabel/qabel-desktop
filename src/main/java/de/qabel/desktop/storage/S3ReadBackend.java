@@ -44,11 +44,11 @@ class S3ReadBackend extends StorageReadBackend {
 		httpclient = HttpClients.custom()
 				.setConnectionManager(connManager).build();
 
-		logger.info("S3ReadBackend with root address set to " + root);
+		//logger.info("S3ReadBackend with root address set to " + root);
 	}
 
 	InputStream download(String name) throws QblStorageException {
-		logger.info("Downloading " + name);
+		//logger.info("Downloading " + name);
 		URI uri;
 		try {
 			uri = new URI(this.root + '/' + name);
