@@ -43,7 +43,7 @@
                           </VBox>
                        </center>
                        <right>
-                          <Button alignment="CENTER" mnemonicParsing="false" text="Edit" BorderPane.alignment="CENTER" />
+                          <Button alignment="CENTER" mnemonicParsing="false" onAction="#edit" text="Edit" BorderPane.alignment="CENTER" />
                        </right>
                     </BorderPane>
                     <BorderPane style="-fx-background-color: orange; -fx-background-radius: 10;">

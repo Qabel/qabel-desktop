@@ -5,6 +5,7 @@ import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.repository.AccountRepository;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.PersistenceException;
+import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.item.AccountingItemView;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,7 +17,7 @@ import javax.inject.Inject;
 import java.net.URL;
 import java.util.*;
 
-public class AccountingController implements Initializable {
+public class AccountingController extends AbstractController implements Initializable {
 	private Identity selectedIdentity;
 
 	@FXML
@@ -24,15 +25,13 @@ public class AccountingController implements Initializable {
 
 	List<AccountingItemView> itemViews = new LinkedList<>();
 
+	TextInputDialog dialog;
+
 	@Inject
 	private IdentityRepository identityRepository;
 
 	@Inject
 	private IdentityBuilderFactory identityBuilderFactory;
-
-	public AccountingController() {
-
-	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -59,10 +58,9 @@ public class AccountingController implements Initializable {
 		addIdentity();
 	}
 
-	TextInputDialog dialog;
-
 	public void addIdentity() {
 		dialog = new TextInputDialog("My Name");
+		dialog.setHeaderText(null);
 		dialog.setTitle("New Identity");
 		dialog.setContentText("Please specify an alias for your new Identity");
 		Optional<String> result = dialog.showAndWait();
@@ -74,12 +72,8 @@ public class AccountingController implements Initializable {
 		try {
 			identityRepository.save(identity);
 		} catch (PersistenceException e) {
-			alert("Failed to save new identity");
+			alert("Failed to save new identity", e);
 		}
 		loadIdentities();
-	}
-
-	private void alert(String message) {
-		System.err.println(message);
 	}
 }

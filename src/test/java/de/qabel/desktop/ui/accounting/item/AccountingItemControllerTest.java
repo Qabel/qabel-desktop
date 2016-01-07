@@ -15,15 +15,31 @@ public class AccountingItemControllerTest extends AbstractControllerTest {
 	public void identityLabelsAreFilledCorrectly() throws Exception {
 		diContainer.put("account", new Account("providerName", "userName", "authString"));
 		Identity identity = new Identity("my identity", null, null);
-
-		Map<String, Identity> params = new HashMap<String, Identity>();
-		params.put("identity", identity);
-		AccountingItemView view = new AccountingItemView(params::get);
-		view.getView();
-		AccountingItemController controller = (AccountingItemController)view.getPresenter();
+		AccountingItemController controller = getController(identity);
 
 		assertEquals("my identity", controller.alias.getText());
 		assertEquals("providerName", controller.provider.getText());
 		assertEquals("userName", controller.mail.getText());
+	}
+
+	private AccountingItemController getController(Identity identity) {
+		AccountingItemView view = new AccountingItemView(createParams(identity)::get);
+		view.getView();
+		return (AccountingItemController)view.getPresenter();
+	}
+
+	private Map<String, Identity> createParams(Identity identity) {
+		Map<String, Identity> params = new HashMap<>();
+		params.put("identity", identity);
+		return params;
+	}
+
+	@Test
+	public void savesAlias() throws Exception {
+		AccountingItemController controller = getController(new Identity("alias", null, null));
+		controller.setAlias("new alias");
+		assertEquals("new alias", controller.alias.getText());
+
+		assertEquals("new alias", identityRepository.findAll().get(0).getAlias());
 	}
 }
