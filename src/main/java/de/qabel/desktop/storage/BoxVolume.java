@@ -26,7 +26,7 @@ public class BoxVolume {
 	private static final Logger logger = LoggerFactory.getLogger(BoxVolume.class.getName());
 
 	StorageReadBackend readBackend;
-	StorageWriteBackend writeBackend;
+	public StorageWriteBackend writeBackend;
 
 	private QblECKeyPair keyPair;
 	private byte[] deviceId;
@@ -55,7 +55,7 @@ public class BoxVolume {
 	}
 
 	protected void loadDriver() throws ClassNotFoundException {
-		//logger.info("Loading PC sqlite driver");
+		logger.info("Loading PC sqlite driver");
 		Class.forName("org.sqlite.JDBC");
 	}
 
@@ -68,7 +68,7 @@ public class BoxVolume {
 	 */
 	public BoxNavigation navigate() throws QblStorageException {
 		String rootRef = getRootRef();
-		//logger.info("Navigating to " + rootRef);
+		logger.info("Navigating to " + rootRef);
 		InputStream indexDl = readBackend.download(rootRef);
 		File tmp;
 		try {

@@ -326,7 +326,7 @@ class DirectoryMetadata {
 			}
 
 		} catch (SQLException e) {
-			//logger.error("Could not insert file " + file.name);
+			logger.error("Could not insert file " + file.name);
 			throw new QblStorageException(e);
 		}
 	}
