@@ -64,6 +64,7 @@ public class RemoteFSController implements Initializable {
 
         TreeItem<BoxObject> rootNode = new TreeItem<>(new BoxFolder("block", "root Folder", new byte[16]));
         TreeItem<BoxObject> parentNode = calculateSubFolderStructure(nav, rootNode, true);
+        parentNode.setExpanded(true);
 
 
         return parentNode;
@@ -85,11 +86,17 @@ public class RemoteFSController implements Initializable {
             TreeItem<BoxObject> BoxObjectTreeItem = new TreeItem<>((BoxObject) file);
             treeNode.getChildren().add(BoxObjectTreeItem);
 
+
+
+
+
+
         }
         for (BoxFolder subFolder : target.listFolders()) {
 
             TreeItem<BoxObject> BoxObjectTreeItem = new TreeItem<>(subFolder);
             treeNode.getChildren().add(BoxObjectTreeItem);
+
 
             calculateSubFolderStructure(nav, BoxObjectTreeItem, false);
         }
