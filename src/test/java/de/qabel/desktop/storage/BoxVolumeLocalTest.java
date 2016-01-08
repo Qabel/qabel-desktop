@@ -17,10 +17,10 @@ public class BoxVolumeLocalTest extends BoxVolumeTest {
 
 		volume = new BoxVolume(new LocalReadBackend(tempFolder),
 				new LocalWriteBackend(tempFolder),
-				keyPair, deviceID, new File(System.getProperty("java.io.tmpdir")));
+				keyPair, deviceID, new File(System.getProperty("java.io.tmpdir")), "");
 		volume2 = new BoxVolume(new LocalReadBackend(tempFolder),
 				new LocalWriteBackend(tempFolder),
-				keyPair, deviceID2, new File(System.getProperty("java.io.tmpdir")));
+				keyPair, deviceID2, new File(System.getProperty("java.io.tmpdir")), "");
 	}
 
 	@Override
