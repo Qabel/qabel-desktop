@@ -15,7 +15,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
-import javafx.scene.image.Image;
 import org.spongycastle.util.encoders.Hex;
 import java.io.File;
 import java.io.IOException;
@@ -46,11 +45,11 @@ public class RemoteFSController implements Initializable {
 
 
         try {
+            BoxNavigation nav = createSetup();
 
             //DELETEME
-           // uploadFilesAndFolders(nav);
+            //uploadFilesAndFolders(nav);
 
-            BoxNavigation nav = createSetup();
             TreeItem rootNodeWithChilds = calculateFolderStructure(nav);
             treeTable.setRoot(rootNodeWithChilds);
         } catch (QblStorageException e) {
@@ -144,8 +143,9 @@ public class RemoteFSController implements Initializable {
         this.volume = new BoxVolume(bucket, prefix, chain.getCredentials(), testKey, deviceID,
                 new File(System.getProperty("java.io.tmpdir")));
 
-       // cleanVolume();
-       // volume.createIndex(bucket, prefix);
+        //DELETEME
+        //cleanVolume();
+        //volume.createIndex(bucket, prefix);
 
         return volume.navigate();
     }

@@ -28,7 +28,7 @@ public class DesktopClient extends Application {
 		setUserAgentStylesheet(STYLESHEET_MODENA);
 
 		final Map<String, Object> customProperties = new HashMap<>();
-		Persistence<String> persistence = new SQLitePersistence("qabel-desktop.sqlite", "qabel".toCharArray());
+		Persistence<String> persistence = new SQLitePersistence("qabel-desktop.sqlite", "qabel".toCharArray(), 65536);
 		customProperties.put("persistence", persistence);
 		customProperties.put("dropUrlGenerator", new DropUrlGenerator("http://localhost:5000"));
 		customProperties.put("identityRepository", new PersistenceIdentityRepository(persistence));

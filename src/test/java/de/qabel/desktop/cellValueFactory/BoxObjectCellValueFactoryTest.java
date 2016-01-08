@@ -63,7 +63,9 @@ public class BoxObjectCellValueFactoryTest {
                 new LocalWriteBackend(tempFolder),
                 keyPair,
                 deviceID,
-                new File(System.getProperty("java.io.tmpdir")));
+                new File(System.getProperty("java.io.tmpdir")),
+                prefix
+        );
 
         String bucket = "qabel";
         volume.createIndex(bucket, prefix);
