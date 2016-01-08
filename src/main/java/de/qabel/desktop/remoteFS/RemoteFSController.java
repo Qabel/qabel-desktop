@@ -121,27 +121,12 @@ public class RemoteFSController implements Initializable {
         }
 
         try {
-            BoxFolder folder = nav.createFolder("folder1");
-            nav.commit();
 
-            BoxFolder folder2 = nav.createFolder("folder2");
-            nav.commit();
 
             BoxFolder folder3 = nav.createFolder("folder3");
             nav.commit();
 
             File file1 = File.createTempFile("File0", ".txt", new File(System.getProperty("java.io.tmpdir")));
-
-            nav.navigate(folder).upload("File0", file1);
-            nav.navigate(folder).commit();
-
-            BoxNavigation navFolder1 = nav.navigate(folder);
-            navFolder1.upload("File1", file1);
-            navFolder1.commit();
-
-            BoxNavigation navFolder2 = nav.navigate(folder2);
-            navFolder2.upload("File2", file1);
-            navFolder2.commit();
 
             BoxNavigation navFolder3 = nav.navigate(folder3);
             BoxFolder folder4 = navFolder3.createFolder("folder4");
