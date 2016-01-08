@@ -27,7 +27,6 @@ public class RemoteFSControllerTest {
     private final String prefix = UUID.randomUUID().toString();
     private File file;
     private File localStorageFile;
-
     @Before
     public void setUp() throws Exception {
 
@@ -50,7 +49,8 @@ public class RemoteFSControllerTest {
                 localWrite,
                 keyPair,
                 deviceID,
-                localStorageFile);
+                localStorageFile,
+                prefix);
 
         String bucket = "qabel";
         volume.createIndex(bucket, prefix);

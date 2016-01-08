@@ -27,6 +27,9 @@ dependencies {
 
     compile 'commons-cli:commons-cli:1.2'
     compile 'com.amazonaws:aws-java-sdk:1.10.32'
+    // see https://github.com/AdamBien/afterburner.fx/pull/54 //compile 'com.airhacks:afterburner.fx:1.6.2' // Apache 2.0
+    compile 'javax.inject:javax.inject:1'
+    compile name: 'afterburner'
 
     compile project(":qabel-core")
 }

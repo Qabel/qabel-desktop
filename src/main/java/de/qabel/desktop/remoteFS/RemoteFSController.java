@@ -44,10 +44,12 @@ public class RemoteFSController implements Initializable {
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
         try {
-            //DELETEME
-           // uploadFilesAndFolders(nav);
 
             BoxNavigation nav = createSetup();
+
+            //DELETEME
+            //uploadFilesAndFolders(nav);
+
             TreeItem rootNodeWithChilds = calculateFolderStructure(nav);
             treeTable.setRoot(rootNodeWithChilds);
         } catch (QblStorageException e) {
@@ -135,8 +137,9 @@ public class RemoteFSController implements Initializable {
         this.volume = new BoxVolume(bucket, prefix, chain.getCredentials(), testKey, deviceID,
                 new File(System.getProperty("java.io.tmpdir")));
 
-       // cleanVolume();
-       // volume.createIndex(bucket, prefix);
+        //DELETEME
+        //cleanVolume();
+        //volume.createIndex(bucket, prefix);
 
         return volume.navigate();
     }
