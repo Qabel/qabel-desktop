@@ -7,7 +7,7 @@ import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
-import de.qabel.desktop.CellValueFactory.BoxObjectCellValueFactory;
+import de.qabel.desktop.cellValueFactory.BoxObjectCellValueFactory;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
 import javafx.fxml.FXML;
@@ -15,10 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import org.spongycastle.util.encoders.Hex;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -29,14 +26,9 @@ import java.util.ResourceBundle;
 
 public class RemoteFSController implements Initializable {
 
-    private ImageView folderIcon = new ImageView(
-            new Image(getClass().getResourceAsStream("/folder.png"))
-    );
-
     final String bucket = "qabel";
     final String prefix = "qabelTest";
     private BoxVolume volume;
-    private List<BoxFolder> folders;
     public static final String PRIVATE_KEY = "77076d0a7318a57d3c16c17251b26645df4c2f87ebc0992ab177fba51db92c2a";
 
     @FXML
@@ -53,11 +45,11 @@ public class RemoteFSController implements Initializable {
 
 
         try {
+            BoxNavigation nav = createSetup();
 
             //DELETEME
-           // uploadFilesAndFolders(nav);
+            //uploadFilesAndFolders(nav);
 
-            BoxNavigation nav = createSetup();
             TreeItem rootNodeWithChilds = calculateFolderStructure(nav);
             treeTable.setRoot(rootNodeWithChilds);
         } catch (QblStorageException e) {
@@ -113,9 +105,9 @@ public class RemoteFSController implements Initializable {
     }
 
     private void calculateTableContent() {
-        nameColumn.setCellValueFactory(new BoxObjectCellValueFactory("name"));
-        sizeColumn.setCellValueFactory(new BoxObjectCellValueFactory("size"));
-        dateColumn.setCellValueFactory(new BoxObjectCellValueFactory("mtime"));
+        nameColumn.setCellValueFactory(new BoxObjectCellValueFactory(BoxObjectCellValueFactory.NAME));
+        sizeColumn.setCellValueFactory(new BoxObjectCellValueFactory(BoxObjectCellValueFactory.SIZE));
+        dateColumn.setCellValueFactory(new BoxObjectCellValueFactory(BoxObjectCellValueFactory.MTIME));
 
         treeTable.getColumns().setAll(nameColumn, sizeColumn, dateColumn);
 
@@ -158,8 +150,9 @@ public class RemoteFSController implements Initializable {
         this.volume = new BoxVolume(bucket, prefix, chain.getCredentials(), testKey, deviceID,
                 new File(System.getProperty("java.io.tmpdir")));
 
-       // cleanVolume();
-       // volume.createIndex(bucket, prefix);
+        //DELETEME
+        //cleanVolume();
+        //volume.createIndex(bucket, prefix);
 
         return volume.navigate();
     }
