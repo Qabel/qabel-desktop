@@ -22,6 +22,7 @@ public class QblMain {
 	private static final String MODULE_OPT = "module";
 	private static final String ALICE_DROP_URL = "http://localhost:5000/123456789012345678901234567890123456789012a";
 	private static final String BOB_DROP_URL = "http://localhost:5000/123456789012345678901234567890123456789012b";
+	private static final int NUM_PBKDF2_ROUNDS = 65536;
 
 	private final EventEmitter emitter;
 	private Thread dropActorThread;
@@ -124,7 +125,7 @@ public class QblMain {
 	private QblMain() {
 		Persistence<String> persistence = null;
 		try {
-			persistence = new SQLitePersistence("qabel-desktop.sqlite", "qabel".toCharArray());
+			persistence = new SQLitePersistence("qabel-desktop.sqlite", "qabel".toCharArray(), NUM_PBKDF2_ROUNDS);
 		} catch (QblInvalidEncryptionKeyException e) {
 			// Can currently not happen due to the static password
 		}
