@@ -10,6 +10,7 @@ import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.CellValueFactory.BoxObjectCellValueFactory;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TreeItem;
@@ -17,6 +18,7 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
 import org.spongycastle.util.encoders.Hex;
 
 import java.io.File;
@@ -47,13 +49,9 @@ public class RemoteFSController implements Initializable {
     private TreeTableColumn<BoxObject, String> sizeColumn;
     @FXML
     private TreeTableColumn<BoxObject, String> dateColumn;
-
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
-
-
         try {
-
             //DELETEME
            // uploadFilesAndFolders(nav);
 
@@ -69,12 +67,9 @@ public class RemoteFSController implements Initializable {
     }
 
     TreeItem calculateFolderStructure(BoxNavigation nav) throws QblStorageException {
-
         TreeItem<BoxObject> rootNode = new TreeItem<>(new BoxFolder("block", "root Folder", new byte[16]));
         TreeItem<BoxObject> parentNode = calculateSubFolderStructure(nav, rootNode, true);
         parentNode.setExpanded(true);
-
-
         return parentNode;
     }
 
@@ -93,22 +88,12 @@ public class RemoteFSController implements Initializable {
         for (BoxFile file : target.listFiles()) {
             TreeItem<BoxObject> BoxObjectTreeItem = new TreeItem<>((BoxObject) file);
             treeNode.getChildren().add(BoxObjectTreeItem);
-
-
-
-
-
-
         }
         for (BoxFolder subFolder : target.listFolders()) {
-
             TreeItem<BoxObject> BoxObjectTreeItem = new TreeItem<>(subFolder);
             treeNode.getChildren().add(BoxObjectTreeItem);
-
-
             calculateSubFolderStructure(nav, BoxObjectTreeItem, false);
         }
-
         return treeNode;
     }
 
@@ -116,9 +101,7 @@ public class RemoteFSController implements Initializable {
         nameColumn.setCellValueFactory(new BoxObjectCellValueFactory("name"));
         sizeColumn.setCellValueFactory(new BoxObjectCellValueFactory("size"));
         dateColumn.setCellValueFactory(new BoxObjectCellValueFactory("mtime"));
-
         treeTable.getColumns().setAll(nameColumn, sizeColumn, dateColumn);
-
     }
 
     private void uploadFilesAndFolders(BoxNavigation nav) throws QblStorageException {
@@ -177,5 +160,12 @@ public class RemoteFSController implements Initializable {
         DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucket);
         deleteObjectsRequest.setKeys(keys);
         client.deleteObjects(deleteObjectsRequest);
+    }
+
+    @FXML
+    protected void handleSubmitButtonAction(ActionEvent event) {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Open File");
+        chooser.showOpenDialog(treeTable.getScene().getWindow());
     }
 }
