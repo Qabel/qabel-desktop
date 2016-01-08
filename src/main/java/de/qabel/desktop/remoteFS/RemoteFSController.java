@@ -60,13 +60,10 @@ public class RemoteFSController implements Initializable {
         try {
 
             //DELETEME
-            BoxNavigation nav = createSetup();
-           // System.out.print(LocalDateTime.now());
            // uploadFilesAndFolders(nav);
-            System.out.print(LocalDateTime.now());
-            TreeItem rootNodeWithChilds = calculateFolderStructure(nav);
-            System.out.print(LocalDateTime.now());
 
+            BoxNavigation nav = createSetup();
+            TreeItem rootNodeWithChilds = calculateFolderStructure(nav);
             treeTable.setRoot(rootNodeWithChilds);
         } catch (QblStorageException e) {
             e.printStackTrace();
@@ -119,7 +116,6 @@ public class RemoteFSController implements Initializable {
         dateColumn.setCellValueFactory(new BoxObjectCellValueFactory("mtime"));
 
         treeTable.getColumns().setAll(nameColumn, sizeColumn, dateColumn);
-        System.err.println("finish");
 
     }
 
@@ -139,7 +135,6 @@ public class RemoteFSController implements Initializable {
                         BoxNavigation navSubFolder = nav.navigate(subFolder);
                         navSubFolder.upload("File" + i + j + k, file1);
                         navSubFolder.commit();
-                        System.err.println("File" + i + j + k);
                     }
                 }
 
