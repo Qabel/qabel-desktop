@@ -23,7 +23,7 @@ class S3ReadBackend extends StorageReadBackend {
 	// Number of http connections to S3
 	// The default was too low, 20 works. Further testing may be required
 	// to find the best amount of connections.
-	private static final int CONNECTIONS = 20;
+	private static final int CONNECTIONS = 50;
 
 	String root;
 	private final CloseableHttpClient httpclient;
@@ -44,11 +44,11 @@ class S3ReadBackend extends StorageReadBackend {
 		httpclient = HttpClients.custom()
 				.setConnectionManager(connManager).build();
 
-		//logger.info("S3ReadBackend with root address set to " + root);
+		logger.info("S3ReadBackend with root address set to " + root);
 	}
 
 	InputStream download(String name) throws QblStorageException {
-		//logger.info("Downloading " + name);
+		logger.info("Downloading " + name);
 		URI uri;
 		try {
 			uri = new URI(this.root + '/' + name);

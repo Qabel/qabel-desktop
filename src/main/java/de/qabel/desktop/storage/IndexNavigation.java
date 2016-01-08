@@ -30,7 +30,7 @@ public class IndexNavigation extends AbstractNavigation {
 			byte[] encrypted = IOUtils.toByteArray(indexDl);
 			DecryptedPlaintext plaintext = cryptoUtils.readBox(keyPair, encrypted);
 			tmp = File.createTempFile("dir", "db", dm.getTempDir());
-			//logger.info("Using " + tmp.toString() + " for the metadata file");
+			logger.info("Using " + tmp.toString() + " for the metadata file");
 			OutputStream out = new FileOutputStream(tmp);
 			out.write(plaintext.getPlaintext());
 			out.close();
@@ -46,7 +46,7 @@ public class IndexNavigation extends AbstractNavigation {
 			byte[] plaintext = IOUtils.toByteArray(new FileInputStream(dm.path));
 			byte[] encrypted = cryptoUtils.createBox(keyPair, keyPair.getPub(), plaintext, 0);
 			writeBackend.upload(dm.getFileName(), new ByteArrayInputStream(encrypted));
-			//logger.info("Uploading metadata file with name " + dm.getFileName());
+			logger.info("Uploading metadata file with name " + dm.getFileName());
 		} catch (IOException | InvalidKeyException e) {
 			throw new QblStorageException(e);
 		}

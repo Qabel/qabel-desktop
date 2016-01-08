@@ -1,6 +1,10 @@
 package de.qabel.desktop.remoteFS;
 
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.DeleteObjectsRequest;
+import com.amazonaws.services.s3.model.ObjectListing;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.CellValueFactory.BoxObjectCellValueFactory;
@@ -13,15 +17,14 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.spongycastle.util.encoders.Hex;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.UUID;
 
 
 public class RemoteFSController implements Initializable {
@@ -29,6 +32,12 @@ public class RemoteFSController implements Initializable {
     private ImageView folderIcon = new ImageView(
             new Image(getClass().getResourceAsStream("/folder.png"))
     );
+
+    final String bucket = "qabel";
+    final String prefix = "qabelTest";
+    private BoxVolume volume;
+    private List<BoxFolder> folders;
+    public static final String PRIVATE_KEY = "77076d0a7318a57d3c16c17251b26645df4c2f87ebc0992ab177fba51db92c2a";
 
     @FXML
     private TreeTableView treeTable;
@@ -44,9 +53,11 @@ public class RemoteFSController implements Initializable {
 
 
         try {
-            BoxNavigation nav = createSetup();
-            uploadFilesAndFolders(nav);
 
+            //DELETEME
+           // uploadFilesAndFolders(nav);
+
+            BoxNavigation nav = createSetup();
             TreeItem rootNodeWithChilds = calculateFolderStructure(nav);
             treeTable.setRoot(rootNodeWithChilds);
         } catch (QblStorageException e) {
@@ -59,29 +70,29 @@ public class RemoteFSController implements Initializable {
 
     TreeItem calculateFolderStructure(BoxNavigation nav) throws QblStorageException {
 
-      //  BoxFolder rootFolder = new BoxFolder("block", "root Folder", new byte[16]);
-
         TreeItem<BoxObject> rootNode = new TreeItem<>(new BoxFolder("block", "root Folder", new byte[16]));
         TreeItem<BoxObject> parentNode = calculateSubFolderStructure(nav, rootNode, true);
         parentNode.setExpanded(true);
+
+
         return parentNode;
     }
 
     private TreeItem<BoxObject> calculateSubFolderStructure(
             BoxNavigation nav,
-            TreeItem<BoxObject> TreeNode,
+            TreeItem<BoxObject> treeNode,
             boolean first) throws QblStorageException {
 
         BoxNavigation target;
         if (first) {
             target = nav;
         } else {
-            target = nav.navigate((BoxFolder) TreeNode.getValue());
+            target = nav.navigate((BoxFolder) treeNode.getValue());
         }
 
         for (BoxFile file : target.listFiles()) {
             TreeItem<BoxObject> BoxObjectTreeItem = new TreeItem<>((BoxObject) file);
-            TreeNode.getChildren().add(BoxObjectTreeItem);
+            treeNode.getChildren().add(BoxObjectTreeItem);
 
 
 
@@ -92,14 +103,13 @@ public class RemoteFSController implements Initializable {
         for (BoxFolder subFolder : target.listFolders()) {
 
             TreeItem<BoxObject> BoxObjectTreeItem = new TreeItem<>(subFolder);
-
-            TreeNode.getChildren().add(BoxObjectTreeItem);
+            treeNode.getChildren().add(BoxObjectTreeItem);
 
 
             calculateSubFolderStructure(nav, BoxObjectTreeItem, false);
         }
 
-        return TreeNode;
+        return treeNode;
     }
 
     private void calculateTableContent() {
@@ -108,39 +118,29 @@ public class RemoteFSController implements Initializable {
         dateColumn.setCellValueFactory(new BoxObjectCellValueFactory("mtime"));
 
         treeTable.getColumns().setAll(nameColumn, sizeColumn, dateColumn);
+
     }
 
     private void uploadFilesAndFolders(BoxNavigation nav) throws QblStorageException {
-        List<BoxFolder> allFolders = nav.listFolders();
-
-        for (BoxFolder fo : allFolders) {
-            nav.navigate(fo);
-            nav.commit();
-            nav.delete(fo);
-            nav.commit();
-        }
 
         try {
 
+            File file1 = File.createTempFile("File1", ".txt");
+            for (int i = 0; i < 10; i++) {
+                BoxFolder folder = nav.createFolder("folder" + i);
+                nav.commit();
+                for (int j = 0; j < 10; j++) {
+                    BoxNavigation navFolder = nav.navigate(folder);
+                    BoxFolder subFolder = navFolder.createFolder("subFolder" + i + j);
+                    navFolder.commit();
+                    for (int k = 0; k < 10; k++) {
+                        BoxNavigation navSubFolder = nav.navigate(subFolder);
+                        navSubFolder.upload("File" + i + j + k, file1);
+                        navSubFolder.commit();
+                    }
+                }
 
-            BoxFolder folder3 = nav.createFolder("folder3");
-            nav.commit();
-
-            File file1 = File.createTempFile("File0", ".txt", new File(System.getProperty("java.io.tmpdir")));
-
-            BoxNavigation navFolder3 = nav.navigate(folder3);
-            BoxFolder folder4 = navFolder3.createFolder("folder4");
-            navFolder3.commit();
-            navFolder3.upload("File3", file1);
-            navFolder3.commit();
-
-            BoxNavigation navFolder4 = nav.navigate(folder4);
-            navFolder4.upload("File4", file1);
-            navFolder4.commit();
-
-            File file2 = File.createTempFile("File2", ".txt", new File(System.getProperty("java.io.tmpdir")));
-            nav.upload("File0", file2);
-            nav.commit();
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -148,22 +148,34 @@ public class RemoteFSController implements Initializable {
     }
 
     private BoxNavigation createSetup() throws QblStorageException {
-        UUID uuid = UUID.randomUUID();
-        ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
-        bb.putLong(uuid.getMostSignificantBits());
-        bb.putLong(uuid.getLeastSignificantBits());
 
-        QblECKeyPair keyPair = new QblECKeyPair();
         CryptoUtils utils = new CryptoUtils();
         byte[] deviceID = utils.getRandomBytes(16);
         DefaultAWSCredentialsProviderChain chain = new DefaultAWSCredentialsProviderChain();
-        final String bucket = "qabel";
-        final String prefix = "qabelTest";
 
-        BoxVolume volume = new BoxVolume(bucket, prefix, chain.getCredentials(), keyPair, deviceID,
+        QblECKeyPair testKey = new QblECKeyPair(Hex.decode(PRIVATE_KEY));
+
+        this.volume = new BoxVolume(bucket, prefix, chain.getCredentials(), testKey, deviceID,
                 new File(System.getProperty("java.io.tmpdir")));
 
-        volume.createIndex(bucket, prefix);
+       // cleanVolume();
+       // volume.createIndex(bucket, prefix);
+
         return volume.navigate();
+    }
+
+    protected void cleanVolume() {
+        AmazonS3Client client = ((S3WriteBackend) volume.writeBackend).s3Client;
+        ObjectListing listing = client.listObjects(bucket, prefix);
+        List<DeleteObjectsRequest.KeyVersion> keys = new ArrayList<>();
+        for (S3ObjectSummary summary : listing.getObjectSummaries()) {
+            keys.add(new DeleteObjectsRequest.KeyVersion(summary.getKey()));
+        }
+        if (keys.isEmpty()) {
+            return;
+        }
+        DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucket);
+        deleteObjectsRequest.setKeys(keys);
+        client.deleteObjects(deleteObjectsRequest);
     }
 }
