@@ -23,7 +23,7 @@ class S3ReadBackend extends StorageReadBackend {
 	// Number of http connections to S3
 	// The default was too low, 20 works. Further testing may be required
 	// to find the best amount of connections.
-	private static final int CONNECTIONS = 20;
+	private static final int CONNECTIONS = 50;
 
 	String root;
 	private final CloseableHttpClient httpclient;

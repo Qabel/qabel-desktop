@@ -19,7 +19,7 @@ public abstract class AbstractPersistenceRepositoryTest<T> {
 		if (dbFile.exists()) {
 			dbFile.delete();
 		}
-		persistence = new SQLitePersistence(dbFile.getAbsolutePath(), "qabel".toCharArray());
+		persistence = new SQLitePersistence(dbFile.getAbsolutePath(), "qabel".toCharArray(), 65536);
 		repo = createRepository(persistence);
 	}
 

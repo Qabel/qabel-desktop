@@ -26,7 +26,7 @@ public class BoxVolume {
 	private static final Logger logger = LoggerFactory.getLogger(BoxVolume.class.getName());
 
 	StorageReadBackend readBackend;
-	StorageWriteBackend writeBackend;
+	public StorageWriteBackend writeBackend;
 
 	private QblECKeyPair keyPair;
 	private byte[] deviceId;

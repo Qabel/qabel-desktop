@@ -9,11 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 
-class S3WriteBackend extends StorageWriteBackend {
+public class S3WriteBackend extends StorageWriteBackend {
 
 	private static final Logger logger = LoggerFactory.getLogger(FolderNavigation.class.getName());
 
-	final AmazonS3Client s3Client;
+	public final AmazonS3Client s3Client;
 	final String bucket;
 	final String prefix;
 

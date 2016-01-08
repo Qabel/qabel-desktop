@@ -40,6 +40,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 		this.readBackend = readBackend;
 		this.writeBackend = writeBackend;
 		cryptoUtils = new CryptoUtils();
+
 	}
 
 	@Override
