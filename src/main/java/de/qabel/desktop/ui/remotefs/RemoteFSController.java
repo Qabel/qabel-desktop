@@ -1,4 +1,4 @@
-package de.qabel.desktop.remoteFS;
+package de.qabel.desktop.ui.remotefs;
 
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.services.s3.AmazonS3Client;
@@ -10,6 +10,7 @@ import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.cellValueFactory.BoxObjectCellValueFactory;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
+import de.qabel.desktop.ui.AbstractController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TreeItem;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 
-public class RemoteFSController implements Initializable {
+public class RemoteFSController extends AbstractController implements Initializable {
 
     final String bucket = "qabel";
     final String prefix = "qabelTest";
@@ -32,7 +33,7 @@ public class RemoteFSController implements Initializable {
     public static final String PRIVATE_KEY = "77076d0a7318a57d3c16c17251b26645df4c2f87ebc0992ab177fba51db92c2a";
 
     @FXML
-    private TreeTableView treeTable;
+    private TreeTableView<BoxObject> treeTable;
     @FXML
     private TreeTableColumn<BoxObject, String> nameColumn;
     @FXML
@@ -42,73 +43,25 @@ public class RemoteFSController implements Initializable {
 
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
-
-
         try {
             BoxNavigation nav = createSetup();
 
             //DELETEME
             //uploadFilesAndFolders(nav);
 
-            TreeItem rootNodeWithChilds = calculateFolderStructure(nav);
-            treeTable.setRoot(rootNodeWithChilds);
+            LazyBoxFolderTreeItem rootItem = new LazyBoxFolderTreeItem(new BoxFolder("block", "root Folder", new byte[16]), nav);
+            treeTable.setRoot(rootItem);
+            rootItem.setExpanded(true);
         } catch (QblStorageException e) {
             e.printStackTrace();
         }
-        calculateTableContent();
-
-
+        setCellValueFactories();
     }
 
-    TreeItem calculateFolderStructure(BoxNavigation nav) throws QblStorageException {
-
-        TreeItem<BoxObject> rootNode = new TreeItem<>(new BoxFolder("block", "root Folder", new byte[16]));
-        TreeItem<BoxObject> parentNode = calculateSubFolderStructure(nav, rootNode, true);
-        parentNode.setExpanded(true);
-
-
-        return parentNode;
-    }
-
-    private TreeItem<BoxObject> calculateSubFolderStructure(
-            BoxNavigation nav,
-            TreeItem<BoxObject> treeNode,
-            boolean first) throws QblStorageException {
-
-        BoxNavigation target;
-        if (first) {
-            target = nav;
-        } else {
-            target = nav.navigate((BoxFolder) treeNode.getValue());
-        }
-
-        for (BoxFile file : target.listFiles()) {
-            TreeItem<BoxObject> BoxObjectTreeItem = new TreeItem<>((BoxObject) file);
-            treeNode.getChildren().add(BoxObjectTreeItem);
-
-
-
-
-
-
-        }
-        for (BoxFolder subFolder : target.listFolders()) {
-
-            TreeItem<BoxObject> BoxObjectTreeItem = new TreeItem<>(subFolder);
-            treeNode.getChildren().add(BoxObjectTreeItem);
-
-
-            calculateSubFolderStructure(nav, BoxObjectTreeItem, false);
-        }
-
-        return treeNode;
-    }
-
-    private void calculateTableContent() {
+    private void setCellValueFactories() {
         nameColumn.setCellValueFactory(new BoxObjectCellValueFactory(BoxObjectCellValueFactory.NAME));
         sizeColumn.setCellValueFactory(new BoxObjectCellValueFactory(BoxObjectCellValueFactory.SIZE));
         dateColumn.setCellValueFactory(new BoxObjectCellValueFactory(BoxObjectCellValueFactory.MTIME));
-
         treeTable.getColumns().setAll(nameColumn, sizeColumn, dateColumn);
 
     }
