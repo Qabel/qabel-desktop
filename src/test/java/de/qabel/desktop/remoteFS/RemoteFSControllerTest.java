@@ -1,6 +1,5 @@
 package de.qabel.desktop.remoteFS;
 
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.exceptions.QblStorageException;
@@ -9,9 +8,7 @@ import javafx.scene.control.TreeItem;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import java.io.File;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,44 +21,38 @@ import static org.junit.Assert.assertThat;
 public class RemoteFSControllerTest {
 
     private BoxNavigation nav;
-    private BoxVolume volume;
-    private CryptoUtils utils;
-    private QblECKeyPair keyPair;
-    private byte[] deviceID;
-    private Path tempFolder;
-    private LocalReadBackend localRead;
     private LocalWriteBackend localWrite;
     private RemoteFSController controller = new RemoteFSController();
     private UUID uuid = UUID.randomUUID();
-    private final String bucket = "qabel";
     private final String prefix = UUID.randomUUID().toString();
-    private final String testFileName = "src/test/java/de/qabel/desktop/remoteFS/testFile.txt";
     private File file;
     private File localStorageFile;
+
     @Before
     public void setUp() throws Exception {
 
         file = File.createTempFile("File2", ".txt", new File(System.getProperty("java.io.tmpdir")));
-        utils = new CryptoUtils();
-        deviceID = utils.getRandomBytes(16);
-        keyPair = new QblECKeyPair();
-        tempFolder = Files.createTempDirectory("");
+        CryptoUtils utils = new CryptoUtils();
+        byte[] deviceID = utils.getRandomBytes(16);
+        QblECKeyPair keyPair = new QblECKeyPair();
+        Path tempFolder = Files.createTempDirectory("");
 
         ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
         bb.putLong(uuid.getMostSignificantBits());
         bb.putLong(uuid.getLeastSignificantBits());
 
-        localRead = new LocalReadBackend(tempFolder);
+        LocalReadBackend localRead = new LocalReadBackend(tempFolder);
         localWrite = new LocalWriteBackend(tempFolder);
         localStorageFile = new File(System.getProperty("java.io.tmpdir"));
 
-        volume = new BoxVolume(
+        BoxVolume volume = new BoxVolume(
                 localRead,
                 localWrite,
                 keyPair,
                 deviceID,
                 localStorageFile);
 
+        String bucket = "qabel";
         volume.createIndex(bucket, prefix);
         nav = volume.navigate();
     }
@@ -73,7 +64,7 @@ public class RemoteFSControllerTest {
     }
 
     @Test
-    public void testEmpty() {
+    public void showsEmptyStringOnUnknownColumn() {
         try {
 
             TreeItem rootNode = controller.calculateFolderStructure(nav);

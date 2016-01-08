@@ -1,4 +1,4 @@
-package de.qabel.desktop.CellValueFactory;
+package de.qabel.desktop.cellValueFactory;
 
 import javafx.application.Application;
 
