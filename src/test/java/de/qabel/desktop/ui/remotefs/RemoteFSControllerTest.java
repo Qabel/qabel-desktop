@@ -1,9 +1,12 @@
-package de.qabel.desktop.remoteFS;
+package de.qabel.desktop.ui.remotefs;
 
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
+import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.AbstractControllerTest;
+import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import org.junit.After;
 import org.junit.Before;
@@ -18,7 +21,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 
-public class RemoteFSControllerTest {
+public class RemoteFSControllerTest extends AbstractControllerTest {
 
     private BoxNavigation nav;
     private LocalWriteBackend localWrite;
@@ -29,7 +32,7 @@ public class RemoteFSControllerTest {
     private File localStorageFile;
     @Before
     public void setUp() throws Exception {
-
+        super.setUp();
         file = File.createTempFile("File2", ".txt", new File(System.getProperty("java.io.tmpdir")));
         CryptoUtils utils = new CryptoUtils();
         byte[] deviceID = utils.getRandomBytes(16);
@@ -59,30 +62,37 @@ public class RemoteFSControllerTest {
 
     @After
     public void after() throws Exception {
-
         localWrite.delete(localStorageFile.getName());
     }
 
     @Test
     public void showsEmptyStringOnUnknownColumn() {
-        try {
-
-            TreeItem rootNode = controller.calculateFolderStructure(nav);
-            assertThat(rootNode.getChildren().size(), is(0));
-
-        } catch (QblStorageException e) {
-            e.printStackTrace();
-        }
+        TreeItem rootNode = getRoot();
+        assertThat(rootNode.getChildren().size(), is(0));
     }
 
-    @Test
+    private LazyBoxFolderTreeItem getRoot() {
+		LazyBoxFolderTreeItem rootNode = new LazyBoxFolderTreeItem(new BoxFolder("", "root", new byte[0]), nav);
+		loadChildren(rootNode);
+		return rootNode;
+    }
+
+	private ObservableList loadChildren(LazyBoxFolderTreeItem node) {
+		ObservableList children = node.getChildren();
+		while(node.isLoading()) {
+			Thread.yield();
+		}
+		return children;
+	}
+
+	@Test
     public void testCalculateFolderStructure() {
         try {
 
             nav.createFolder("folder");
             nav.commit();
 
-            TreeItem rootNode = controller.calculateFolderStructure(nav);
+            TreeItem rootNode = getRoot();
             assertThat(rootNode.getChildren().size(), is(1));
 
         } catch (QblStorageException e) {
@@ -97,7 +107,7 @@ public class RemoteFSControllerTest {
             nav.upload("File", file);
             nav.commit();
 
-            TreeItem rootNode = controller.calculateFolderStructure(nav);
+            TreeItem rootNode = getRoot();
             assertThat(rootNode.getChildren().size(), is(1));
 
         } catch (QblStorageException e) {
@@ -113,10 +123,10 @@ public class RemoteFSControllerTest {
             navFolder1.upload("File", file);
             navFolder1.commit();
 
-            TreeItem rootNode = controller.calculateFolderStructure(nav);
+            TreeItem rootNode = getRoot();
             assertThat(rootNode.getChildren().size(), is(1));
             TreeItem subnode = (TreeItem) rootNode.getChildren().get(0);
-            assertThat(subnode.getChildren().size(), is(1));
+            assertThat(loadChildren((LazyBoxFolderTreeItem) subnode).size(), is(1));
 
         } catch (QblStorageException e) {
             e.printStackTrace();
@@ -133,10 +143,10 @@ public class RemoteFSControllerTest {
                 navFolder3.createFolder("subFolder");
                 navFolder3.commit();
 
-                TreeItem rootNode = controller.calculateFolderStructure(nav);
+                TreeItem rootNode = getRoot();
                 assertThat(rootNode.getChildren().size(), is(1));
                 TreeItem subnode = (TreeItem) rootNode.getChildren().get(0);
-                assertThat(subnode.getChildren().size(), is(1));
+                assertThat(loadChildren((LazyBoxFolderTreeItem) subnode).size(), is(1));
 
             } catch (QblStorageException e) {
                 e.printStackTrace();

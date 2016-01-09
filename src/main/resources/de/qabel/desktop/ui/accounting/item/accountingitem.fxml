@@ -20,11 +20,11 @@
             <Insets bottom="21.0" left="21.0" right="21.0" top="21.0" />
          </HBox.margin>
                </RadioButton>
-              <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="50.0" minWidth="50.0" prefHeight="50.0" prefWidth="50.0" style="-fx-border-color: black; -fx-border-radius: 25;">
+              <Label fx:id="avatar" styleClass="avatar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="50.0" minWidth="50.0" prefHeight="50.0" prefWidth="50.0">
                  <HBox.margin>
                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                  </HBox.margin>
-              </Pane>
+              </Label>
               <VBox maxWidth="1.7976931348623157E308" prefHeight="65.0" HBox.hgrow="ALWAYS">
                  <children>
                     <BorderPane prefHeight="200.0">
@@ -46,7 +46,7 @@
                           <Button alignment="CENTER" mnemonicParsing="false" onAction="#edit" text="Edit" BorderPane.alignment="CENTER" />
                        </right>
                     </BorderPane>
-                    <BorderPane style="-fx-background-color: orange; -fx-background-radius: 10;">
+                    <BorderPane styleClass="quotaBlock">
                        <right>
                           <Pane minWidth="100.0" BorderPane.alignment="CENTER">
                              <children>

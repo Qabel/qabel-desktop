@@ -6,9 +6,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="accountingroot" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.accounting.AccountingController">
+<VBox fx:id="accountingroot"
+      maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0"
+      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.accounting.AccountingController">
     <children>
-        <VBox fx:id="identityList" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="686.0">
+        <VBox fx:id="identityList">
             <children>
                 <GridPane maxWidth="1.7976931348623157E308" prefHeight="164.0" prefWidth="1000.0">
                     <columnConstraints>
@@ -69,7 +71,7 @@
                                             <center>
                                                 <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                                                     <children>
-                                                        <Label maxWidth="1.7976931348623157E308" minWidth="100.0" style="-fx-border-radius: 10; -fx-background-radius: 10; -fx-background-color: #fefefe;" text="cloud.prae.me">
+                                                        <Label maxWidth="1.7976931348623157E308" minWidth="100.0" style="-fx-background-size: 50px; -fx-border-radius: 10; -fx-background-radius: 10; -fx-background-color: #fefefe;" text="cloud.prae.me">
                                                             <padding>
                                                                 <Insets left="5.0" right="5.0" />
                                                             </padding>

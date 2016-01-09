@@ -1,16 +1,20 @@
 package de.qabel.desktop;
 
 import com.airhacks.afterburner.injection.Injector;
+import com.airhacks.afterburner.views.QabelFXMLView;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Persistence;
 import de.qabel.core.config.SQLitePersistence;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.repository.persistence.PersistenceAccountRepository;
 import de.qabel.desktop.repository.persistence.PersistenceIdentityRepository;
+import de.qabel.desktop.ui.LayoutView;
 import de.qabel.desktop.ui.accounting.AccountingView;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.scene.Scene;
+import javafx.scene.SceneAntialiasing;
 import javafx.stage.Stage;
 
 import java.util.*;
@@ -26,6 +30,7 @@ public class DesktopClient extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		setUserAgentStylesheet(STYLESHEET_MODENA);
+		QabelFXMLView.addGlobalCssFileFromResources("/main.css");
 
 		final Map<String, Object> customProperties = new HashMap<>();
 		Persistence<String> persistence = new SQLitePersistence("qabel-desktop.sqlite", "qabel".toCharArray(), 65536);
@@ -38,7 +43,7 @@ public class DesktopClient extends Application {
 		Injector.setConfigurationSource(customProperties::get);
 		Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(customProperties));
 
-		Scene accountingScene = new Scene(new AccountingView().getView(), 800, 600);
+		Scene accountingScene = new Scene(new LayoutView().getView(), 800, 600, true, SceneAntialiasing.DISABLED);
 		primaryStage.setScene(accountingScene);
 
 		primaryStage.setTitle(TITLE);
