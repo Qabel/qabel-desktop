@@ -4,14 +4,12 @@ import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
-import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -232,7 +230,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
         controller.nav = nav;
         controller.uploadedDirectory(dir, null);
         BoxFolder folder = controller.nav.listFolders().get(0);
-        controller.deleteBoxObject(1, folder);
+        controller.deleteBoxObject(1, folder, null);
         assertThat(controller.nav.listFolders().size(), is(1));
         assertThat(controller.nav.listFiles().size(), is(0));
     }
@@ -244,26 +242,24 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
         controller.uploadedDirectory(dir, null);
 
         BoxFolder folder = controller.nav.listFolders().get(0);
-        controller.deleteBoxObject(0, folder);
+        controller.deleteBoxObject(0, folder, null);
         assertThat(controller.nav.listFolders().size(), is(0));
         assertThat(controller.nav.listFiles().size(), is(0));
     }
 
-
     @Test
-    @Ignore
     public void TestDeleteBoxFile() throws QblStorageException, IOException {
         File dir = craeteFileAndFolder();
         controller.nav = nav;
         controller.uploadedDirectory(dir, null);
 
-        BoxFolder folder = controller.nav.listFolders().get(0);
+        BoxFolder folder = nav.listFolders().get(0);
 
-        BoxNavigation newNav = controller.nav.navigate(folder);
-        BoxFile boxFile = newNav.listFiles().get(0);
-        controller.deleteBoxObject(0, boxFile);
+        BoxNavigation newNav = nav.navigate(folder);
+        BoxObject boxFile = newNav.listFiles().get(0);
+        controller.deleteBoxObject(0, boxFile, folder);
 
-        assertThat(newNav.listFolders().size(), is(0));
+        newNav = nav.navigate(folder);
         assertThat(newNav.listFiles().size(), is(0));
     }
 

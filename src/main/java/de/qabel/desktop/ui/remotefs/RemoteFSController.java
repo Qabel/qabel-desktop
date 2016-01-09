@@ -11,6 +11,8 @@ import de.qabel.desktop.cellValueFactory.BoxObjectCellValueFactory;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
 import de.qabel.desktop.ui.AbstractController;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,6 +23,7 @@ import javafx.scene.control.TreeTableView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import org.spongycastle.util.encoders.Hex;
+
 import javax.swing.*;
 import java.io.File;
 import java.net.URL;
@@ -38,7 +41,7 @@ public class RemoteFSController extends AbstractController implements Initializa
     private final String prefix = "qabelTest";
     private BoxVolume volume;
     BoxNavigation nav;
-
+    LazyBoxFolderTreeItem rootItem;
     TreeItem<BoxObject> selectedFolder;
     @FXML
     private TreeTableView<BoxObject> treeTable;
@@ -55,18 +58,25 @@ public class RemoteFSController extends AbstractController implements Initializa
         try {
             nav = createSetup();
 
-            LazyBoxFolderTreeItem rootItem = new LazyBoxFolderTreeItem(new BoxFolder("block", "root Folder", new byte[16]), nav);
+            rootItem = new LazyBoxFolderTreeItem(new BoxFolder("block", "root Folder", new byte[16]), nav);
             treeTable.setRoot(rootItem);
             rootItem.setExpanded(true);
         } catch (QblStorageException e) {
             e.printStackTrace();
         }
 
-        treeTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
-                selectedFolder = (TreeItem<BoxObject>) newValue);
+        treeTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue,
+                                Object newValue) {
+                TreeItem<BoxObject> selectedItem = (TreeItem<BoxObject>) newValue;
+                selectedFolder = selectedItem;
+            }
+        });
 
         setCellValueFactories();
     }
+
 
     private void setCellValueFactories() {
         nameColumn.setCellValueFactory(new BoxObjectCellValueFactory(BoxObjectCellValueFactory.NAME));
@@ -99,16 +109,19 @@ public class RemoteFSController extends AbstractController implements Initializa
         if (list != null) {
             for (File file : list) {
                 try {
-                    uploadFiles(file, (BoxFolder) selectedFolder.getValue());
+                    if (selectedFolder == null || selectedFolder.getValue().name.equals(ROOT_FOLDER_NAME)) {
+                        uploadFiles(file, null);
+                    } else {
+                        uploadFiles(file, (BoxFolder) selectedFolder.getValue());
+                    }
                 } catch (QblStorageException e) {
                     e.printStackTrace();
                 }
 
             }
         }
+        refreshTreeItem();
     }
-
-
 
     @FXML
     protected void handleUploadFolderButtonAction(ActionEvent event) throws QblStorageException {
@@ -116,6 +129,7 @@ public class RemoteFSController extends AbstractController implements Initializa
         chooser.setTitle("Choose Folder");
         File directory = chooser.showDialog(treeTable.getScene().getWindow());
         chooseUploadDirectory(directory);
+        refreshTreeItem();
     }
 
     @FXML
@@ -128,29 +142,43 @@ public class RemoteFSController extends AbstractController implements Initializa
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(name -> {
             try {
-                createFolder(name, (BoxFolder) selectedFolder.getValue());
+                if (selectedFolder == null || selectedFolder.getValue().name.equals(ROOT_FOLDER_NAME)) {
+                    createFolder(name, null);
+                } else {
+                    createFolder(name, (BoxFolder) selectedFolder.getValue());
+                }
             } catch (QblStorageException e) {
-                alert("Failed to create Folder", e);
+                e.printStackTrace();
             }
         });
+        refreshTreeItem();
     }
 
     @FXML
     protected void handleDeleteButtonAction(ActionEvent event) throws QblStorageException {
         if (selectedFolder.getParent() != null) {
             try {
-
+                LazyBoxFolderTreeItem parent = (LazyBoxFolderTreeItem) selectedFolder.getParent();
                 int n = JOptionPane.showConfirmDialog(
                         null,
                         "Delete " + selectedFolder.getValue().name + " ?",
                         "Delete?",
                         JOptionPane.YES_NO_OPTION);
-
-                deleteBoxObject(n, (BoxObject) selectedFolder.getValue());
+                if (!(selectedFolder == null) || !selectedFolder.getValue().name.equals(ROOT_FOLDER_NAME)) {
+                    if (!selectedFolder.getParent().getValue().name.equals(ROOT_FOLDER_NAME)) {
+                        deleteBoxObject(n, selectedFolder.getValue(), (BoxFolder) parent.getValue());
+                    } else {
+                        deleteBoxObject(n, selectedFolder.getValue(), null);;
+                    }
+                    rootItem.setUpToDate(false);
+                    rootItem.getChildren();
+                }
             } catch (QblStorageException e) {
-                alert("Failed to create Folder", e);
+                e.printStackTrace();
             }
+
         }
+
     }
 
     void chooseUploadDirectory(File directory) {
@@ -161,15 +189,12 @@ public class RemoteFSController extends AbstractController implements Initializa
         }
     }
 
+
     void uploadedDirectory(File directory, BoxFolder parentFolder) {
         File[] directoryFiles = directory.listFiles();
         try {
             BoxNavigation newNav;
-            if (parentFolder == null) {
-                newNav = nav;
-            } else {
-                newNav = nav.navigate(parentFolder);
-            }
+            newNav = getNavigator(parentFolder);
             BoxFolder boxDirectory = newNav.createFolder(directory.getName());
             newNav.commit();
 
@@ -189,25 +214,67 @@ public class RemoteFSController extends AbstractController implements Initializa
 
 
     void createFolder(String name, BoxFolder folder) throws QblStorageException {
-        BoxNavigation newNav = nav.navigate(folder);
+
+        BoxNavigation newNav;
+        newNav = getNavigator(folder);
         newNav.createFolder(name);
         newNav.commit();
     }
 
+
     void uploadFiles(File file, BoxFolder folder) throws QblStorageException {
-        BoxNavigation newNav = nav.navigate(folder);
+        BoxNavigation newNav;
+        newNav = getNavigator(folder);
         newNav.upload(file.getName(), file);
         newNav.commit();
     }
 
-    void deleteBoxObject(int n, BoxObject folder) throws QblStorageException {
+    void deleteBoxObject(int n, BoxObject object, BoxFolder parent) throws QblStorageException {
         if (n == 0) {
-            if (folder instanceof BoxFolder) {
-                nav.delete((BoxFolder) folder);
-                nav.commit();
+            BoxNavigation newNav;
+            if (parent != null) {
+                newNav = nav.navigate(parent);
             } else {
-                nav.delete((BoxFile) folder);
-                nav.commit();
+                newNav = nav;
+            }
+            if (object instanceof BoxFolder) {
+                newNav.delete((BoxFolder) object);
+                newNav.commit();
+            } else {
+                newNav.delete((BoxFile) object);
+                newNav.commit();
+            }
+        }
+    }
+
+    private BoxNavigation getNavigator(BoxFolder folder) throws QblStorageException {
+        BoxNavigation newNav;
+        if (folder == null) {
+            newNav = nav;
+        } else {
+            newNav = nav.navigate(folder);
+        }
+        return newNav;
+    }
+
+    private void refreshTreeItem() {
+
+        if (selectedFolder.getValue() instanceof BoxFolder) {
+            LazyBoxFolderTreeItem currentNode = (LazyBoxFolderTreeItem) selectedFolder;
+            LazyBoxFolderTreeItem parent = (LazyBoxFolderTreeItem) currentNode.getParent();
+
+            currentNode.setUpToDate(false);
+            currentNode.getChildren();
+
+            if (parent != null) {
+                parent.setUpToDate(false);
+                parent.getChildren();
+            }
+        } else {
+            LazyBoxFolderTreeItem parent = (LazyBoxFolderTreeItem) selectedFolder.getParent();
+            if (parent != null) {
+                parent.setUpToDate(false);
+                parent.getChildren();
             }
         }
     }
