@@ -8,10 +8,14 @@ import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+
 import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,6 +34,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
     private final String prefix = UUID.randomUUID().toString();
     private File file;
     private File localStorageFile;
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -63,6 +68,9 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
     @After
     public void after() throws Exception {
         localWrite.delete(localStorageFile.getName());
+        File dir = new File("tmp/testFolder");
+        FileUtils.deleteDirectory(dir);
+
     }
 
     @Test
@@ -72,20 +80,20 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
     }
 
     private LazyBoxFolderTreeItem getRoot() {
-		LazyBoxFolderTreeItem rootNode = new LazyBoxFolderTreeItem(new BoxFolder("", "root", new byte[0]), nav);
-		loadChildren(rootNode);
-		return rootNode;
+        LazyBoxFolderTreeItem rootNode = new LazyBoxFolderTreeItem(new BoxFolder("", "root", new byte[0]), nav);
+        loadChildren(rootNode);
+        return rootNode;
     }
 
-	private ObservableList loadChildren(LazyBoxFolderTreeItem node) {
-		ObservableList children = node.getChildren();
-		while(node.isLoading()) {
-			Thread.yield();
-		}
-		return children;
-	}
+    private ObservableList loadChildren(LazyBoxFolderTreeItem node) {
+        ObservableList children = node.getChildren();
+        while (node.isLoading()) {
+            Thread.yield();
+        }
+        return children;
+    }
 
-	@Test
+    @Test
     public void testCalculateFolderStructure() {
         try {
 
@@ -132,25 +140,146 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
             e.printStackTrace();
         }
     }
-        @Test
-        public void testObserveFoldersSubfolder() {
-            try {
 
-                BoxFolder folder = nav.createFolder("folder");
-                nav.commit();
+    @Test
+    public void testObserveFoldersSubfolder() {
+        try {
 
-                BoxNavigation navFolder3 = nav.navigate(folder);
-                navFolder3.createFolder("subFolder");
-                navFolder3.commit();
+            BoxFolder folder = nav.createFolder("folder");
+            nav.commit();
 
-                TreeItem rootNode = getRoot();
-                assertThat(rootNode.getChildren().size(), is(1));
-                TreeItem subnode = (TreeItem) rootNode.getChildren().get(0);
-                assertThat(loadChildren((LazyBoxFolderTreeItem) subnode).size(), is(1));
+            BoxNavigation navFolder3 = nav.navigate(folder);
+            navFolder3.createFolder("subFolder");
+            navFolder3.commit();
 
-            } catch (QblStorageException e) {
-                e.printStackTrace();
-            }
+            TreeItem rootNode = getRoot();
+            assertThat(rootNode.getChildren().size(), is(1));
+            TreeItem subnode = (TreeItem) rootNode.getChildren().get(0);
+            assertThat(loadChildren((LazyBoxFolderTreeItem) subnode).size(), is(1));
 
+        } catch (QblStorageException e) {
+            e.printStackTrace();
         }
+    }
+
+    @Test
+    public void testUploadedDirectoryInRootNode() throws QblStorageException, IOException {
+
+        File dir = craeteFileAndFolder();
+
+        controller.nav = nav;
+        controller.uploadedDirectory(dir, null);
+        assertThat(controller.nav.listFolders().size(), is(1));
+        assertThat(controller.nav.listFiles().size(), is(0));
+
+        BoxFolder folder = controller.nav.listFolders().get(0);
+        BoxNavigation newNav = nav.navigate(folder);
+
+        assertThat(newNav.listFiles().size(), is(1));
+        assertThat(newNav.listFolders().size(), is(1));
+    }
+
+    @Test
+    public void testUploadedDirectoryInChildNode() throws QblStorageException, IOException {
+
+        File dir = new File("tmp/testFolder");
+        dir.mkdirs();
+        BoxFolder folder = createBoxFolder(dir);
+
+        File subdir = new File(dir, "subFolder");
+        subdir.mkdirs();
+        controller.uploadedDirectory(dir, folder);
+
+        BoxNavigation newNav = nav.navigate(folder);
+        assertThat(newNav.listFiles().size(), is(0));
+        assertThat(newNav.listFolders().size(), is(1));
+
+    }
+
+    @Test
+    public void testCreateFolder() throws QblStorageException {
+
+        File dir = new File("tmp/testFolder");
+        dir.mkdirs();
+
+        BoxFolder folder = createBoxFolder(dir);
+
+        controller.createFolder("NewFolder", folder);
+        BoxNavigation newNav = nav.navigate(folder);
+        assertThat(newNav.listFiles().size(), is(0));
+        assertThat(newNav.listFolders().size(), is(1));
+
+    }
+
+
+    @Test
+    public void TestUploadFiles() throws QblStorageException, IOException {
+        File dir = new File("tmp/testFolder");
+        dir.mkdirs();
+        BoxFolder folder = createBoxFolder(dir);
+        File tmp = new File(dir, "tmp1.txt");
+        tmp.createNewFile();
+        controller.uploadFiles(tmp, folder);
+        BoxNavigation newNav = nav.navigate(folder);
+        assertThat(newNav.listFiles().size(), is(1));
+        assertThat(newNav.listFolders().size(), is(0));
+
+    }
+
+    @Test
+    public void TestDontDeleteBoxFolder() throws QblStorageException, IOException {
+        File dir = craeteFileAndFolder();
+        controller.nav = nav;
+        controller.uploadedDirectory(dir, null);
+        BoxFolder folder = controller.nav.listFolders().get(0);
+        controller.deleteBoxObject(1, folder);
+        assertThat(controller.nav.listFolders().size(), is(1));
+        assertThat(controller.nav.listFiles().size(), is(0));
+    }
+
+    @Test
+    public void TestDeleteBoxFolder() throws QblStorageException, IOException {
+        File dir = craeteFileAndFolder();
+        controller.nav = nav;
+        controller.uploadedDirectory(dir, null);
+
+        BoxFolder folder = controller.nav.listFolders().get(0);
+        controller.deleteBoxObject(0, folder);
+        assertThat(controller.nav.listFolders().size(), is(0));
+        assertThat(controller.nav.listFiles().size(), is(0));
+    }
+
+
+    @Test
+    @Ignore
+    public void TestDeleteBoxFile() throws QblStorageException, IOException {
+        File dir = craeteFileAndFolder();
+        controller.nav = nav;
+        controller.uploadedDirectory(dir, null);
+
+        BoxFolder folder = controller.nav.listFolders().get(0);
+
+        BoxNavigation newNav = controller.nav.navigate(folder);
+        BoxFile boxFile = newNav.listFiles().get(0);
+        controller.deleteBoxObject(0, boxFile);
+
+        assertThat(newNav.listFolders().size(), is(0));
+        assertThat(newNav.listFiles().size(), is(0));
+    }
+
+    private BoxFolder createBoxFolder(File dir) throws QblStorageException {
+        controller.nav = nav;
+        controller.uploadedDirectory(dir, null);
+        return controller.nav.listFolders().get(0);
+    }
+
+    private File craeteFileAndFolder() throws IOException {
+        File dir = new File("tmp/testFolder");
+        dir.mkdirs();
+        File tmp = new File(dir, "tmp1.txt");
+        tmp.createNewFile();
+        File subdir = new File(dir, "subFolder");
+        subdir.mkdirs();
+        return dir;
+    }
 }

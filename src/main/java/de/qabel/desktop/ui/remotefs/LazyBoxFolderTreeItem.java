@@ -86,4 +86,8 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> {
 	public StringProperty getNameProperty() {
 		return nameProperty;
 	}
+
+	public void setUpToDate(Boolean upToDate){
+		this.upToDate = upToDate;
+	}
 }
