@@ -19,10 +19,32 @@
     </children>
 
     <children>
-        <Button mnemonicParsing="false" onAction="#handleSubmitButtonAction" text="Upload">
-         <VBox.margin>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </VBox.margin></Button>
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+              <Button mnemonicParsing="false" onAction="#handleUploadFileButtonAction" text="Upload Files">
+               <HBox.margin>
+                  <Insets bottom="10.0" left="20.0" right="10.0" top="10.0" />
+               </HBox.margin>
+              </Button>
+      
+              <Button mnemonicParsing="false" onAction="#handleUploadFolderButtonAction" text="Upload Folder">
+               <HBox.margin>
+                  <Insets bottom="10.0" left="20.0" right="10.0" top="10.0" />
+               </HBox.margin>
+              </Button>
+      
+              <Button mnemonicParsing="false" onAction="#handleCreateFolderButtonAction" text="Create Folder">
+               <HBox.margin>
+                  <Insets bottom="10.0" left="20.0" right="10.0" top="10.0" />
+               </HBox.margin>
+            </Button>
+             <Button mnemonicParsing="false" onAction="#handleDeleteButtonAction" text="Delete">
+                 <HBox.margin>
+                     <Insets bottom="10.0" left="20.0" right="10.0" top="10.0" />
+                 </HBox.margin>
+             </Button>
+         </children>
+      </HBox>
     </children>
 
     <stylesheets>
