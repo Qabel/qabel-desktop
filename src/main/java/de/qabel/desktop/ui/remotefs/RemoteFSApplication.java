@@ -1,15 +1,11 @@
-package de.qabel.desktop.remoteFS;
+package de.qabel.desktop.ui.remotefs;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
+
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
 
@@ -32,10 +28,10 @@ public class RemoteFSApplication extends Application {
             setTrayIcon(primaryStage);
         }
 
-
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/RemoteFSView.fxml"));
-        final Scene scene = new Scene(root, 600, 600);
-        primaryStage.setScene(scene);
+        new RemoteFSView().getViewAsync(parent -> {
+            final Scene scene = new Scene(parent, 600, 600);
+            primaryStage.setScene(scene);
+        });
         primaryStage.show();
     }
 

@@ -5,7 +5,7 @@
 <?import javafx.scene.control.TreeTableColumn?>
 
     <AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8"
-                fx:controller="de.qabel.desktop.remoteFS.RemoteFSController">
+                fx:controller="de.qabel.desktop.ui.remotefs.RemoteFSController">
 
     <TreeTableView fx:id="treeTable" prefHeight="600.0" prefWidth="600.0">
         <columns>
@@ -15,8 +15,4 @@
 
         </columns>
     </TreeTableView>
-
-    <stylesheets>
-        <URL value="@main.css" />
-    </stylesheets>
 </AnchorPane>
