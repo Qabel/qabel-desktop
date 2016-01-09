@@ -247,10 +247,21 @@ public class RemoteFSController extends AbstractController implements Initializa
     protected void handleDeleteButtonAction(ActionEvent event) throws QblStorageException {
         if (selectedFolder.getParent() != null) {
             try {
-                if (selectedFolder.getValue() instanceof BoxFolder) {
-                    nav.delete((BoxFolder) selectedFolder.getValue());
-                } else {
-                    nav.delete((BoxFile) selectedFolder.getValue());
+
+                int n = JOptionPane.showConfirmDialog(
+                        null,
+                        "Delete " + selectedFolder.getValue().name + " ?",
+                        "Delete?",
+                        JOptionPane.YES_NO_OPTION);
+
+                if (n == 0) {
+                    if (selectedFolder.getValue() instanceof BoxFolder) {
+                        nav.delete((BoxFolder) selectedFolder.getValue());
+                        nav.commit();
+                    } else {
+                        nav.delete((BoxFile) selectedFolder.getValue());
+                        nav.commit();
+                    }
                 }
             } catch (QblStorageException e) {
                 alert("Failed to create Folder", e);
