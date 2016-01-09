@@ -64,7 +64,7 @@ public class RemoteFSController extends AbstractController implements Initializa
     public void initialize(URL location, ResourceBundle resources) {
 
         try {
-            BoxNavigation nav = createSetup();
+            nav = createSetup();
 
             //DELETEME
             //uploadFilesAndFolders(nav);
@@ -72,22 +72,14 @@ public class RemoteFSController extends AbstractController implements Initializa
             LazyBoxFolderTreeItem rootItem = new LazyBoxFolderTreeItem(new BoxFolder("block", "root Folder", new byte[16]), nav);
             treeTable.setRoot(rootItem);
             rootItem.setExpanded(true);
-            nav = createSetup();
-            buildTreeTable();
         } catch (QblStorageException e) {
             e.printStackTrace();
         }
-        calculateTableContent();
 
         treeTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
                 selectedFolder = (TreeItem<BoxObject>) newValue);
 
         setCellValueFactories();
-    }
-
-    private void buildTreeTable() throws QblStorageException {
-        TreeItem rootNodeWithChilds = calculateFolderStructure(nav);
-        treeTable.setRoot(rootNodeWithChilds);
     }
 
     private void setCellValueFactories() {
@@ -142,14 +134,13 @@ public class RemoteFSController extends AbstractController implements Initializa
                     BoxNavigation newNav = nav.navigate((BoxFolder) selectedFolder.getValue());
                     newNav.upload(file.getName(), file);
                     newNav.commit();
-                    buildTreeTable();
-                    treeTable.refresh();
                 } catch (QblStorageException e) {
                     e.printStackTrace();
                 }
 
             }
         }
+        setCellValueFactories();
     }
 
     @FXML
@@ -162,8 +153,6 @@ public class RemoteFSController extends AbstractController implements Initializa
         } else {
             uploadedDirectory(directory, (BoxFolder) selectedFolder.getValue());
         }
-        buildTreeTable();
-        treeTable.refresh();
     }
 
     private void uploadedDirectory(File directory, BoxFolder parentFolder) {
@@ -206,7 +195,6 @@ public class RemoteFSController extends AbstractController implements Initializa
 
                 newNav.createFolder(name);
                 newNav.commit();
-                buildTreeTable();
                 treeTable.refresh();
 
             } catch (QblStorageException e) {
@@ -238,8 +226,6 @@ public class RemoteFSController extends AbstractController implements Initializa
             } catch (QblStorageException e) {
                 alert("Failed to create Folder", e);
             }
-            buildTreeTable();
-            treeTable.refresh();
         }
     }
 }

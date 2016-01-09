@@ -2,6 +2,7 @@ package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.desktop.ui.accounting.AccountingView;
+import de.qabel.desktop.ui.remotefs.RemoteFSView;
 import javafx.application.HostServices;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,6 +22,7 @@ public class LayoutController extends AbstractController implements Initializabl
 	@FXML
 	private VBox content;
 
+	@FXML
 	@Inject
 	private BorderPane window;
 
@@ -30,7 +32,7 @@ public class LayoutController extends AbstractController implements Initializabl
 	public void initialize(URL location, ResourceBundle resources) {
 		navi.getChildren().clear();
 		navi.getChildren().add(createNavItem("Identitäten", new AccountingView()));
-		navi.getChildren().add(createNavItem("Browse", new AccountingView()));
+		navi.getChildren().add(createNavItem("Browse", new RemoteFSView()));
 
 		content.setFillWidth(true);
 	}
