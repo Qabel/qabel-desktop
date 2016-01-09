@@ -1,0 +1,64 @@
+#window {
+    -fx-background-color: white;
+}
+
+
+.selectedIdentity {
+    -fx-padding: 10px;
+}
+
+.navi-container {
+    -fx-text-fill: rgb(77,77,77);
+    -fx-background-color: #fd670d;
+    -fx-pref-width: 220px;
+}
+
+.navi {
+    -fx-font-weight: bold;
+    -fx-padding: 10px 0 0 10px;
+}
+
+.navi .navi-item {
+    -fx-alignment: top-right;
+    -fx-padding: 10px 20px 10px 10px;
+}
+.navi .navi-item.active {
+    -fx-padding: 10px 0px 10px 10px;
+}
+
+.navi .button {
+    -fx-pref-width: 200px;
+    -fx-cursor: hand;
+    -fx-border-radius: 0, 0, 0, 0;
+    -fx-background-color: rgb(252, 204, 177);
+    -fx-padding: 10px 10px 10px 10px;
+    -fx-background-radius: 3 3 3 3;
+}
+
+.navi .button:hover {
+    -fx-focus-traversable: true;
+    -fx-background-color: white;
+}
+
+.button:armed {
+
+}
+
+.navi .navi-item.active .button {
+    -fx-background-radius: 3 0 0 3;
+    -fx-width: 300px;
+    -fx-pref-width: 300px;
+    -fx-max-width: 300px;
+    -fx-padding: 10px 20px 10px 10px;
+    -fx-background-color: white;
+}
+
+.content {
+    -fx-background-color: white;
+    -fx-background-image: url("/logo.png");
+    -fx-background-size: 50px;
+    -fx-background-position: bottom right;
+    -fx-background-repeat: no-repeat;
+    -fx-background-insets: 20px 20px 20px 20px;
+    -fx-padding: 10px 10px 10px 10px;
+}
