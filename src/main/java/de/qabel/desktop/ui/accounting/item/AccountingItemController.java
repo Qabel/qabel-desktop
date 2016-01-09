@@ -19,6 +19,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.Optional;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 public class AccountingItemController extends AbstractController implements Initializable {
@@ -28,6 +29,8 @@ public class AccountingItemController extends AbstractController implements Init
 	Label mail;
 	@FXML
 	Label provider;
+	@FXML
+	Label avatar;
 
 	public static ToggleGroup globalIdentityToggle = new ToggleGroup();
 
@@ -50,6 +53,13 @@ public class AccountingItemController extends AbstractController implements Init
 		alias.setText(identity.getAlias());
 		mail.setText(account.getUser());
 		provider.setText(account.getProvider());
+		avatar.setText(identity.getAlias().substring(0, 1).toUpperCase());
+
+		Random rand = new Random(System.currentTimeMillis());
+		int hue = rand.nextInt(360);
+		int saturation = 80;
+		int brightness = 100;
+		avatar.setStyle("-fx-background-color: hsb(" + hue + "," + saturation + "%," + brightness + "%);");
 	}
 
 	public Identity getIdentity() {
