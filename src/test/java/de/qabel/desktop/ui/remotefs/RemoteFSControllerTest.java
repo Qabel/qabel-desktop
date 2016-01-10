@@ -199,9 +199,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 
         File dir = new File("tmp/testFolder");
         dir.mkdirs();
-
         BoxFolder folder = createBoxFolder(dir);
-
         controller.createFolder("NewFolder", folder);
         BoxNavigation newNav = nav.navigate(folder);
         assertThat(newNav.listFiles().size(), is(0));
@@ -261,6 +259,16 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 
         newNav = nav.navigate(folder);
         assertThat(newNav.listFiles().size(), is(0));
+    }
+
+    @Test
+    public void TestDeleteBoxFileFromRootNode() throws QblStorageException, IOException {
+        File dir = craeteFileAndFolder();
+        controller.nav = nav;
+        controller.uploadedDirectory(dir, null);
+        BoxFolder folder = nav.listFolders().get(0);
+        controller.deleteBoxObject(0, folder, null);
+        assertThat(nav.listFiles().size(), is(0));
     }
 
     private BoxFolder createBoxFolder(File dir) throws QblStorageException {

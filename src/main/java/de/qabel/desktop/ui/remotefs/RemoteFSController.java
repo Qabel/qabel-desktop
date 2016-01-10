@@ -57,8 +57,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 
         try {
             nav = createSetup();
-
-            rootItem = new LazyBoxFolderTreeItem(new BoxFolder("block", "root Folder", new byte[16]), nav);
+            rootItem = new LazyBoxFolderTreeItem(new BoxFolder("block", ROOT_FOLDER_NAME, new byte[16]), nav);
             treeTable.setRoot(rootItem);
             rootItem.setExpanded(true);
         } catch (QblStorageException e) {
@@ -69,8 +68,7 @@ public class RemoteFSController extends AbstractController implements Initializa
             @Override
             public void changed(ObservableValue observable, Object oldValue,
                                 Object newValue) {
-                TreeItem<BoxObject> selectedItem = (TreeItem<BoxObject>) newValue;
-                selectedFolder = selectedItem;
+                selectedFolder = (TreeItem<BoxObject>) newValue;
             }
         });
 
@@ -168,7 +166,8 @@ public class RemoteFSController extends AbstractController implements Initializa
                     if (!selectedFolder.getParent().getValue().name.equals(ROOT_FOLDER_NAME)) {
                         deleteBoxObject(n, selectedFolder.getValue(), (BoxFolder) parent.getValue());
                     } else {
-                        deleteBoxObject(n, selectedFolder.getValue(), null);;
+                        deleteBoxObject(n, selectedFolder.getValue(), null);
+                        ;
                     }
                     rootItem.setUpToDate(false);
                     rootItem.getChildren();
@@ -197,18 +196,20 @@ public class RemoteFSController extends AbstractController implements Initializa
             newNav = getNavigator(parentFolder);
             BoxFolder boxDirectory = newNav.createFolder(directory.getName());
             newNav.commit();
-
-            for (File f : directoryFiles) {
-                if (f.listFiles() == null) {
-                    BoxNavigation subNav = nav.navigate(boxDirectory);
-                    subNav.upload(f.getName(), f);
-                    subNav.commit();
-                } else {
-                    uploadedDirectory(f, boxDirectory);
+            if (directoryFiles != null) {
+                for (File f : directoryFiles) {
+                    if (f.listFiles() == null) {
+                        BoxNavigation subNav = nav.navigate(boxDirectory);
+                        subNav.upload(f.getName(), f);
+                        subNav.commit();
+                    } else {
+                        uploadedDirectory(f, boxDirectory);
+                    }
                 }
             }
         } catch (QblStorageException e) {
             e.printStackTrace();
+
         }
     }
 
