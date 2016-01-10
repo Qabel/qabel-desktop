@@ -59,16 +59,18 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 			}
 
 			ObservableList<BoxSyncConfig> boxSyncConfigs = config.getBoxSyncConfigs();
-			for(PersistentBoxSyncConfig dto : configDto.boxSyncConfigs) {
-				try {
-					boxSyncConfigs.add(new DefaultBoxSyncConfig(
-							Paths.get(dto.localPath),
-							Paths.get(dto.remotePath),
-							identityRepository.find(dto.identity),
-							accountRepository.find(dto.account)
-					));
-				} catch (EntityNotFoundExcepion e) {
-					e.printStackTrace();
+			if (configDto.boxSyncConfigs != null) {
+				for (PersistentBoxSyncConfig dto : configDto.boxSyncConfigs) {
+					try {
+						boxSyncConfigs.add(new DefaultBoxSyncConfig(
+								Paths.get(dto.localPath),
+								Paths.get(dto.remotePath),
+								identityRepository.find(dto.identity),
+								accountRepository.find(dto.account)
+						));
+					} catch (EntityNotFoundExcepion e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
