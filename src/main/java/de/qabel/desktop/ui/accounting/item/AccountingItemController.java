@@ -1,25 +1,29 @@
 package de.qabel.desktop.ui.accounting.item;
 
+import de.qabel.core.accounting.AccountingHTTP;
+import de.qabel.core.accounting.AccountingProfile;
 import de.qabel.core.config.Account;
+import de.qabel.core.config.AccountingServer;
 import de.qabel.core.config.Identity;
+import de.qabel.core.exceptions.QblInvalidCredentials;
+import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.accounting.avatar.AvatarView;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import org.apache.log4j.Logger;
+import javafx.scene.layout.Pane;
 
 import javax.inject.Inject;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
-import java.util.Random;
 import java.util.ResourceBundle;
 
 public class AccountingItemController extends AbstractController implements Initializable {
@@ -29,37 +33,67 @@ public class AccountingItemController extends AbstractController implements Init
 	Label mail;
 	@FXML
 	Label provider;
+
 	@FXML
-	Label avatar;
+	Pane avatarContainer;
 
-	public static ToggleGroup globalIdentityToggle = new ToggleGroup();
-
-	public ToggleGroup identityToggle = globalIdentityToggle;
+	@FXML
+	RadioButton selectedRadio;
 
 	@FXML
 	public Node root;
+
+	@FXML
+	Label quota;
 
 	@Inject
 	private Identity identity;
 
 	@Inject
-	private Account account;
+	private ClientConfiguration clientConfiguration;
 
 	@Inject
 	private IdentityRepository identityRepository;
 
+	TextInputDialog dialog;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		alias.textProperty().addListener((o, a, b) -> updateAvatar());
 		alias.setText(identity.getAlias());
-		mail.setText(account.getUser());
-		provider.setText(account.getProvider());
-		avatar.setText(identity.getAlias().substring(0, 1).toUpperCase());
 
-		Random rand = new Random(System.currentTimeMillis());
-		int hue = rand.nextInt(360);
-		int saturation = 80;
-		int brightness = 100;
-		avatar.setStyle("-fx-background-color: hsb(" + hue + "," + saturation + "%," + brightness + "%);");
+		if (clientConfiguration.hasAccount()) {
+			Account account = clientConfiguration.getAccount();
+			mail.setText(account.getUser());
+			provider.setText(account.getProvider());
+
+			try {
+				AccountingHTTP http = new AccountingHTTP(new AccountingServer(new URL(account.getProvider()).toURI(), account.getUser(), account.getAuth()), new AccountingProfile());
+				http.login();
+				http.updateProfile();
+
+				quota.setText(http.getProfile().getQuota() + " MB");
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (QblInvalidCredentials qblInvalidCredentials) {
+				qblInvalidCredentials.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		updateSelection();
+		clientConfiguration.addObserver((o, arg) -> updateSelection());
+	}
+
+	private void updateAvatar() {
+		new AvatarView(e->identity.getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
+	}
+
+	private void updateSelection() {
+		selectedRadio.setSelected(identity.equals(clientConfiguration.getSelectedIdentity()));
 	}
 
 	public Identity getIdentity() {
@@ -67,7 +101,7 @@ public class AccountingItemController extends AbstractController implements Init
 	}
 
 	public void edit(ActionEvent actionEvent) {
-		TextInputDialog dialog = new TextInputDialog(identity.getAlias());
+		dialog = new TextInputDialog(identity.getAlias());
 		dialog.setHeaderText(null);
 		dialog.setTitle("Change Alias");
 		dialog.setContentText("Please specify an alias for your new Identity");
@@ -82,6 +116,12 @@ public class AccountingItemController extends AbstractController implements Init
 			this.alias.setText(alias);
 		} catch (PersistenceException e) {
 			alert("Failed to save identity", e);
+		}
+	}
+
+	public void selectIdentity(ActionEvent actionEvent) {
+		if (selectedRadio.isSelected()) {
+			clientConfiguration.selectIdentity(identity);
 		}
 	}
 }

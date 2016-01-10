@@ -35,7 +35,6 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        super.setUp();
         file = File.createTempFile("File2", ".txt", new File(System.getProperty("java.io.tmpdir")));
         CryptoUtils utils = new CryptoUtils();
         byte[] deviceID = utils.getRandomBytes(16);

@@ -11,6 +11,9 @@
     -fx-text-fill: rgb(77,77,77);
     -fx-background-color: #fd670d;
     -fx-pref-width: 220px;
+    -fx-background-image: url('/border.png');
+    -fx-background-repeat: repeat-y;
+    -fx-background-position: right;
 }
 
 .navi {

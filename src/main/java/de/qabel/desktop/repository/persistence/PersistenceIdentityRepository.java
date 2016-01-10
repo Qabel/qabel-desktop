@@ -6,25 +6,34 @@ import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
-public class PersistenceIdentityRepository extends AbstractPersistenceRepository implements IdentityRepository {
+public class PersistenceIdentityRepository extends AbstractCachedPersistenceRepository<Identity> implements IdentityRepository {
 	public PersistenceIdentityRepository(Persistence<String> persistence) {
 		super(persistence);
 	}
 
 	@Override
 	public Identity find(String id) throws EntityNotFoundExcepion {
+		if (isCached(id)) {
+			return fromCache(id);
+		}
 		Identity entity = persistence.getEntity(id, Identity.class);
 		if (entity == null) {
 			throw new EntityNotFoundExcepion("No identity found for id " + id);
 		}
+		cache(entity);
 		return entity;
 	}
 
 	@Override
 	public List<Identity> findAll() throws EntityNotFoundExcepion {
-		return persistence.getEntities(Identity.class);
+		List<Identity> entities = persistence.getEntities(Identity.class);
+		syncWithCache(entities);
+		return entities;
 	}
 
 	@Override
@@ -38,5 +47,6 @@ public class PersistenceIdentityRepository extends AbstractPersistenceRepository
 		if (!result) {
 			throw new PersistenceException("Failed to save Entity " + identity + ", reason unknown");
 		}
+		cache(identity);
 	}
 }
