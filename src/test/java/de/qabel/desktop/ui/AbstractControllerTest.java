@@ -68,7 +68,7 @@ public class AbstractControllerTest {
 	}
 
 	protected static void waitUntil(Callable<Boolean> evaluate) {
-		waitUntil(evaluate, 1000L);
+		waitUntil(evaluate, 2000L);
 	}
 
 	protected static void waitUntil(Callable<Boolean> evaluate, long timeout) {

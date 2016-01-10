@@ -3,7 +3,9 @@ package de.qabel.desktop.repository.persistence;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.Persistence;
+import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import de.qabel.desktop.config.DefaultClientConfiguration;
 import de.qabel.desktop.config.factory.ClientConfigurationFactory;
 import de.qabel.desktop.repository.AccountRepository;
@@ -11,8 +13,10 @@ import de.qabel.desktop.repository.ClientConfigurationRepository;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
+import javafx.collections.ObservableList;
 
 import javax.inject.Inject;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class PersistenceClientConfigurationRepository extends AbstractPersistenceRepository implements ClientConfigurationRepository {
@@ -53,6 +57,20 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 					entityNotFoundExcepion.printStackTrace();
 				}
 			}
+
+			ObservableList<BoxSyncConfig> boxSyncConfigs = config.getBoxSyncConfigs();
+			for(PersistentBoxSyncConfig dto : configDto.boxSyncConfigs) {
+				try {
+					boxSyncConfigs.add(new DefaultBoxSyncConfig(
+							Paths.get(dto.localPath),
+							Paths.get(dto.remotePath),
+							identityRepository.find(dto.identity),
+							accountRepository.find(dto.account)
+					));
+				} catch (EntityNotFoundExcepion e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return config;
 	}
@@ -68,6 +86,10 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 		}
 		configDto.accountId = configuration.hasAccount() ? configuration.getAccount().getPersistenceID() : null;
 		configDto.identitiyId = configuration.getSelectedIdentity() != null ? configuration.getSelectedIdentity().getPersistenceID() : null;
+
+		for (BoxSyncConfig boxSyncConfig : configuration.getBoxSyncConfigs()) {
+			configDto.boxSyncConfigs.add(createPersistentBoxSyncConfg(boxSyncConfig));
+		}
 
 		Account account = configuration.getAccount();
 		if (account != null) {
@@ -98,5 +120,14 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 		}
 
 		persistence.updateOrPersistEntity(configDto);
+	}
+
+	private PersistentBoxSyncConfig createPersistentBoxSyncConfg(BoxSyncConfig boxSyncConfig) {
+		PersistentBoxSyncConfig dto = new PersistentBoxSyncConfig();
+		dto.account = boxSyncConfig.getAccount().getPersistenceID();
+		dto.identity = boxSyncConfig.getIdentity().getPersistenceID();
+		dto.localPath = boxSyncConfig.getLocalPath().toString();
+		dto.remotePath = boxSyncConfig.getRemotePath().toString();
+		return dto;
 	}
 }

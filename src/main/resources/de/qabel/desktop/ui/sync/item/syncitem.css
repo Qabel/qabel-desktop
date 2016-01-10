@@ -1,0 +1,9 @@
+.sync-item > .progress {
+}
+
+.progress-indicator .progress, .progress-bar .bar {
+    -fx-background-color: #fd670d;
+}
+.progress-indicator.finished .progress, .progress-bar.finished .bar {
+    -fx-background-color: #1da314;
+}
