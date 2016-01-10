@@ -20,9 +20,7 @@ import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
 import javafx.stage.Stage;
-
 import java.net.URISyntaxException;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -49,12 +47,12 @@ public class DesktopClient extends Application {
 			scene = new Scene(new LoginView().getView(), 370, 530);
 			config.addObserver((o, arg) -> {
 				if (arg instanceof Account) {
-					Scene layoutScene = new Scene(new LayoutView().getView(), 800, 600, true, SceneAntialiasing.BALANCED);
+					Scene layoutScene = new Scene(new LayoutView().getView(), 800, 600);
 					Platform.runLater(() -> primaryStage.setScene(layoutScene));
 				}
 			});
 		} else {
-			scene = new Scene(new LayoutView().getView(), 800, 600, true, SceneAntialiasing.BALANCED);
+			scene = new Scene(new LayoutView().getView(), 800, 600);
 		}
 
 		primaryStage.setScene(scene);
