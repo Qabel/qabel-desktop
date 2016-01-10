@@ -8,9 +8,26 @@ version = '0.1'
 
 repositories {
     mavenCentral()
+    jcenter()
     flatDir {
         dir 'libs'
     }
+}
+
+sourceSets {
+    guiTest {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir file('src/test-gui/java')
+        }
+        resources.srcDir file('src/test-gui/resources')
+    }
+}
+
+configurations {
+    guiTestCompile.extendsFrom testCompile
+    guiTestRuntime.extendsFrom testRuntime
 }
 
 jar.doFirst{
@@ -22,8 +39,10 @@ jar.doFirst{
 }
 
 dependencies {
-    testCompile "junit:junit:4.11"
+    testCompile 'junit:junit:4.11'
     testCompile group: 'org.meanbean', name: 'meanbean', version: '2.+'
+    testCompile 'org.testfx:testfx-core:4.0.+'
+    testCompile 'org.testfx:testfx-junit:4.0.+'
 
     compile 'commons-cli:commons-cli:1.2'
     compile 'com.amazonaws:aws-java-sdk:1.10.32'
@@ -45,6 +64,14 @@ classes {
     }
 }
 
+task guiTest(type: Test) {
+    testClassesDir = sourceSets.guiTest.output.classesDir
+    classpath = sourceSets.guiTest.runtimeClasspath
+    outputs.upToDateWhen { false }
+}
+check.dependsOn guiTest
+guiTest.mustRunAfter test
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.2.1'
 }
@@ -52,6 +79,8 @@ task wrapper(type: Wrapper) {
 tasks.withType(Test) {
     def platform = "${System.properties['os.name'].toLowerCase()}_${System.properties['os.arch']}"
     systemProperty "java.library.path", "./qabel-core/build/binaries/curve25519SharedLibrary/$platform/"
+
+    reports.html.destination = file("${reporting.baseDir}/${name}")
 }
 run {
     def platform = "${System.properties['os.name'].toLowerCase()}_${System.properties['os.arch']}"

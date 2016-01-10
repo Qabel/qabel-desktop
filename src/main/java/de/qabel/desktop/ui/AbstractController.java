@@ -12,10 +12,13 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 public class AbstractController {
+	protected Alert alert;
+	protected Label exceptionLabel;
+
 	protected void alert(String message, Exception e) {
 		Logger.getLogger(getClass().getSimpleName()).error(message, e);
 
-		Alert alert = new Alert(Alert.AlertType.ERROR);
+		alert = new Alert(Alert.AlertType.ERROR);
 		alert.setTitle("Error");
 		alert.setHeaderText(message);
 
@@ -26,9 +29,9 @@ public class AbstractController {
 
 		VBox.setVgrow(textArea, Priority.ALWAYS);
 
-		Label label = new Label(e.getMessage());
+		exceptionLabel = new Label(e.getMessage());
 		VBox expansion = new VBox();
-		expansion.getChildren().add(label);
+		expansion.getChildren().add(exceptionLabel);
 		expansion.getChildren().add(textArea);
 
 		alert.getDialogPane().setContent(expansion);

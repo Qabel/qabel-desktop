@@ -2,6 +2,7 @@ package de.qabel.desktop.ui.accounting;
 
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.repository.exception.PersistenceException;
+import de.qabel.desktop.ui.AbstractControllerTest;
 import de.qabel.desktop.ui.accounting.item.AccountingItemController;
 import org.junit.Test;
 
@@ -10,7 +11,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 
-public class AccountingControllerTest extends de.qabel.desktop.ui.AbstractControllerTest {
+public class AccountingControllerTest extends AbstractControllerTest {
 
 	@Test
 	public void showsIdentities() throws PersistenceException {

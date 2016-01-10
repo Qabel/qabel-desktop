@@ -12,11 +12,13 @@
          <children>
             <HBox fx:id="selectedIdentity" styleClass="selectedIdentity">
                <children>
-               <Label fx:id="avatar" text="G" styleClass="avatar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="50.0" minWidth="50.0" prefHeight="50.0" prefWidth="50.0">
-                  <HBox.margin>
-                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                  </HBox.margin>
-               </Label>
+               <Pane fx:id="avatarContainer">
+                  <Label styleClass="avatar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="50.0" minWidth="50.0" prefHeight="50.0" prefWidth="50.0">
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                  </Label>
+               </Pane>
                   <VBox BorderPane.alignment="CENTER">
                      <children>
                         <Label fx:id="alias" text="Guy Pearce">

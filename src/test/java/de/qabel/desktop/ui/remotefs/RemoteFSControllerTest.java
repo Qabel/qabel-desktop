@@ -4,7 +4,6 @@ import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
-import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
@@ -32,7 +31,6 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
     private File localStorageFile;
     @Before
     public void setUp() throws Exception {
-        super.setUp();
         file = File.createTempFile("File2", ".txt", new File(System.getProperty("java.io.tmpdir")));
         CryptoUtils utils = new CryptoUtils();
         byte[] deviceID = utils.getRandomBytes(16);
