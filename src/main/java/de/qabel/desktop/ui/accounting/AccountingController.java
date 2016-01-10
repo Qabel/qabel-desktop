@@ -1,6 +1,7 @@
 package de.qabel.desktop.ui.accounting;
 
 import de.qabel.core.config.Identity;
+import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.repository.AccountRepository;
 import de.qabel.desktop.repository.IdentityRepository;
@@ -11,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 
 import javax.inject.Inject;
@@ -32,6 +34,9 @@ public class AccountingController extends AbstractController implements Initiali
 
 	@Inject
 	private IdentityBuilderFactory identityBuilderFactory;
+
+	@Inject
+	private ClientConfiguration clientConfiguration;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -62,7 +67,7 @@ public class AccountingController extends AbstractController implements Initiali
 		dialog = new TextInputDialog("My Name");
 		dialog.setHeaderText(null);
 		dialog.setTitle("New Identity");
-		dialog.setContentText("Please specify an alias for your new Identity");
+		dialog.setContentText("Please specify an avatar for your new Identity");
 		Optional<String> result = dialog.showAndWait();
 		result.ifPresent(this::addIdentityWithAlias);
 	}
@@ -75,5 +80,8 @@ public class AccountingController extends AbstractController implements Initiali
 			alert("Failed to save new identity", e);
 		}
 		loadIdentities();
+		if (clientConfiguration.getSelectedIdentity() == null) {
+			clientConfiguration.selectIdentity(identity);
+		}
 	}
 }

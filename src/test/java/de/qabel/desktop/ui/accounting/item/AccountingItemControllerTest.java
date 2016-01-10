@@ -2,6 +2,7 @@ package de.qabel.desktop.ui.accounting.item;
 
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
+import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import org.junit.Test;
 
@@ -13,9 +14,11 @@ import static org.junit.Assert.assertEquals;
 public class AccountingItemControllerTest extends AbstractControllerTest {
 	@Test
 	public void identityLabelsAreFilledCorrectly() throws Exception {
-		diContainer.put("account", new Account("providerName", "userName", "authString"));
+		Account account = new Account("providerName", "userName", "authString");
+		((ClientConfiguration)diContainer.get("clientConfiguration")).setAccount(account);
 		Identity identity = new Identity("my identity", null, null);
 		AccountingItemController controller = getController(identity);
+
 
 		assertEquals("my identity", controller.alias.getText());
 		assertEquals("providerName", controller.provider.getText());

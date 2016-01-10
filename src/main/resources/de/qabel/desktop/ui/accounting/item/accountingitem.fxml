@@ -1,85 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
+<?import javafx.scene.text.Font?>
 <HBox fx:id="root"
       fx:controller="de.qabel.desktop.ui.accounting.item.AccountingItemController"
-      GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-    <fx:define>
-        <ToggleGroup fx:id="identityToggle"/>
-    </fx:define>
+      GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1">
     <children>
-               <RadioButton toggleGroup="$identityToggle" alignment="TOP_LEFT" mnemonicParsing="false" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER">
-                   <GridPane.margin>
-                       <Insets top="20.0" />
-                   </GridPane.margin>
-         <HBox.margin>
-            <Insets bottom="21.0" left="21.0" right="21.0" top="21.0" />
-         </HBox.margin>
-               </RadioButton>
-              <Label fx:id="avatar" styleClass="avatar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="50.0" minWidth="50.0" prefHeight="50.0" prefWidth="50.0">
-                 <HBox.margin>
-                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                 </HBox.margin>
-              </Label>
-              <VBox maxWidth="1.7976931348623157E308" prefHeight="65.0" HBox.hgrow="ALWAYS">
-                 <children>
-                    <BorderPane prefHeight="200.0">
-                       <center>
-                          <VBox minWidth="200.0" prefHeight="30.0" BorderPane.alignment="CENTER">
-                             <children>
+        <RadioButton fx:id="selectedRadio" onAction="#selectIdentity" alignment="TOP_LEFT"
+                     mnemonicParsing="false" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER">
+            <GridPane.margin>
+                <Insets top="20.0"/>
+            </GridPane.margin>
+            <HBox.margin>
+                <Insets bottom="21.0" left="21.0" right="21.0" top="21.0"/>
+            </HBox.margin>
+        </RadioButton>
+        <Pane fx:id="avatarContainer"/>
+        <VBox maxWidth="1.7976931348623157E308" prefHeight="65.0" HBox.hgrow="ALWAYS">
+            <children>
+                <BorderPane prefHeight="200.0">
+                    <center>
+                        <VBox minWidth="200.0" prefHeight="30.0" BorderPane.alignment="CENTER">
+                            <children>
                                 <Label fx:id="alias" text="Guy Pearce">
-                                   <font>
-                                      <Font name="System Bold" size="15.0" />
-                                   </font></Label>
-                                <Label fx:id="mail" text="guy@pearce.com" />
-                             </children>
-                             <padding>
-                                <Insets left="5.0" right="5.0" />
-                             </padding>
-                          </VBox>
-                       </center>
-                       <right>
-                          <Button alignment="CENTER" mnemonicParsing="false" onAction="#edit" text="Edit" BorderPane.alignment="CENTER" />
-                       </right>
-                    </BorderPane>
-                    <BorderPane styleClass="quotaBlock">
-                       <right>
-                          <Pane minWidth="100.0" BorderPane.alignment="CENTER">
-                             <children>
-                                <Label alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="15.0" text="unknown Quota" />
-                             </children>
-                          </Pane>
-                       </right>
-                       <padding>
-                          <Insets bottom="1.0" left="1.0" right="2.0" top="1.0" />
-                       </padding>
-                       <center>
-                          <HBox prefHeight="100.0" BorderPane.alignment="CENTER">
-                             <children>
+                                    <font>
+                                        <Font name="System Bold" size="15.0"/>
+                                    </font>
+                                </Label>
+                                <Label fx:id="mail" text="guy@pearce.com"/>
+                            </children>
+                            <padding>
+                                <Insets left="5.0" right="5.0"/>
+                            </padding>
+                        </VBox>
+                    </center>
+                    <right>
+                        <Button fx:id="edit" alignment="CENTER" mnemonicParsing="false" onAction="#edit" text="Edit"
+                                BorderPane.alignment="CENTER"/>
+                    </right>
+                </BorderPane>
+                <BorderPane styleClass="quotaBlock">
+                    <right>
+                        <Label fx:id="quota" BorderPane.alignment="CENTER" prefHeight="15.0"
+                               text="unknown Quota"/>
+                    </right>
+                    <padding>
+                        <Insets bottom="1.0" left="1.0" right="2.0" top="1.0"/>
+                    </padding>
+                    <center>
+                        <HBox prefHeight="100.0" BorderPane.alignment="CENTER">
+                            <children>
                                 <Label
                                         minWidth="100.0"
                                         style="-fx-border-radius: 10; -fx-background-radius: 10; -fx-background-color: #fefefe;"
                                         fx:id="provider"
                                         text="cloud.prae.me">
-                                   <padding>
-                                      <Insets left="5.0" right="5.0" />
-                                   </padding>
+                                    <padding>
+                                        <Insets left="5.0" right="5.0"/>
+                                    </padding>
                                 </Label>
-                             </children>
-                          </HBox>
-                       </center>
-                       <VBox.margin>
-                          <Insets top="5.0" />
-                       </VBox.margin>
-                    </BorderPane>
-                 </children>
-                 <padding>
-                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                 </padding>
-              </VBox>
-           </children>
-        </HBox>
+                            </children>
+                        </HBox>
+                    </center>
+                    <VBox.margin>
+                        <Insets top="5.0"/>
+                    </VBox.margin>
+                </BorderPane>
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+            </padding>
+        </VBox>
+    </children>
+</HBox>

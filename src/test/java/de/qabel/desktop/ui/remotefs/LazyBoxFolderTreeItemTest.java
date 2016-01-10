@@ -6,7 +6,6 @@ import de.qabel.desktop.ui.AbstractControllerTest;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -20,12 +19,7 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 	private FakeBoxNavigation navigation;
 	private LazyBoxFolderTreeItem item;
 
-	@Before
-	public void setUp() throws Exception {
-		super.setUp();
-	}
-
-	@Test
+	@Test(timeout = 1000)
 	public void adjustsNameProperty() {
 		navigation = new FakeBoxNavigation();
 		item = new LazyBoxFolderTreeItem(createSomeFolder(), navigation);
@@ -44,7 +38,7 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 		assertEquals("name", nameProperty.get());
 	}
 
-	@Test
+	@Test(timeout = 1000)
 	public void isLeafWithoutFiles() {
 		navigation = new FakeBoxNavigation();
 		item = new LazyBoxFolderTreeItem(createSomeFolder(), navigation);
@@ -53,7 +47,7 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 		assertTrue(item.isLeaf());
 	}
 
-	@Test
+	@Test(timeout = 1000)
 	public void synchronouslyReturnsEmptyList() {
 		navigation = new FakeBoxNavigation();
 		item = new LazyBoxFolderTreeItem(createSomeFolder(), navigation);
@@ -62,7 +56,7 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 		assertEquals(0, item.getChildren().size());
 	}
 
-	@Test
+	@Test(timeout = 1000)
 	public void loadsChildrenAsynchonously() throws InterruptedException {
 		navigation = new FakeBoxNavigation();
 		item = new LazyBoxFolderTreeItem(createSomeFolder(), navigation);
@@ -86,7 +80,7 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 		return children;
 	}
 
-	@Test
+	@Test(timeout = 1000)
 	public void loadsFiles() throws Exception {
 		navigation = new FakeBoxNavigation();
 		navigation = new FakeBoxNavigation();

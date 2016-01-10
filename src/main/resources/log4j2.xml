@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Simple Logger with Level all, and appender to console and file -->
  
-<Configuration status="WARN">
+<Configuration>
   <Appenders>
-    <RandomAccessFile name="RandomAccessFile" fileName="log/core.log" immediateFlush="false" append="false">
+    <RandomAccessFile name="RandomAccessFile" fileName="log/desktop.log" immediateFlush="false" append="false">
       <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
     </RandomAccessFile>
     
@@ -12,9 +12,13 @@
     </Console>
   </Appenders>
   <Loggers>
-    <Root level="error" includeLocation="true ">
-      <AppenderRef ref="RandomAccessFile"/>
+    <logger name="de.qabel.desktop" level="ERROR" includeLocation="true ">
+      <level>ERROR</level>
       <AppenderRef ref="Console"/>
-    </Root>
+    </logger>
+    <root>
+      <AppenderRef ref="RandomAccessFile"/>
+    </root>
   </Loggers>
+
 </Configuration>
