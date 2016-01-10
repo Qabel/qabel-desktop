@@ -6,6 +6,7 @@ import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import javafx.collections.ObservableList;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeItem;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -227,7 +228,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
         controller.nav = nav;
         controller.uploadedDirectory(dir, null);
         BoxFolder folder = controller.nav.listFolders().get(0);
-        controller.deleteBoxObject(1, folder, null);
+        controller.deleteBoxObject(ButtonType.NO, folder, null);
         assertThat(controller.nav.listFolders().size(), is(1));
         assertThat(controller.nav.listFiles().size(), is(0));
     }
@@ -239,7 +240,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
         controller.uploadedDirectory(dir, null);
 
         BoxFolder folder = controller.nav.listFolders().get(0);
-        controller.deleteBoxObject(0, folder, null);
+        controller.deleteBoxObject(ButtonType.OK, folder, null);
         assertThat(controller.nav.listFolders().size(), is(0));
         assertThat(controller.nav.listFiles().size(), is(0));
     }
@@ -254,7 +255,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 
         BoxNavigation newNav = nav.navigate(folder);
         BoxObject boxFile = newNav.listFiles().get(0);
-        controller.deleteBoxObject(0, boxFile, folder);
+        controller.deleteBoxObject(ButtonType.OK, boxFile, folder);
 
         newNav = nav.navigate(folder);
         assertThat(newNav.listFiles().size(), is(0));
@@ -266,7 +267,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
         controller.nav = nav;
         controller.uploadedDirectory(dir, null);
         BoxFolder folder = nav.listFolders().get(0);
-        controller.deleteBoxObject(0, folder, null);
+        controller.deleteBoxObject(ButtonType.OK, folder, null);
         assertThat(nav.listFiles().size(), is(0));
     }
 
