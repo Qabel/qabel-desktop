@@ -35,7 +35,7 @@ import java.util.ResourceBundle;
 public class RemoteFSController extends AbstractController implements Initializable {
 
     private String PRIVATE_KEY;
-    public String ROOT_FOLDER_NAME = "root Folder";
+    public String ROOT_FOLDER_NAME = "RootFolder";
     private String bucket = "qabel";
     private String prefix = "qabelTest";
     private BoxVolume volume;
@@ -59,9 +59,12 @@ public class RemoteFSController extends AbstractController implements Initializa
 
         if (clientConfiguration.hasAccount()) {
             PRIVATE_KEY = clientConfiguration.getSelectedIdentity().getPrimaryKeyPair().getPrivateKey().toString();
+            PRIVATE_KEY = "77076d0a7318a57d3c16c17251b26645df4c2f87ebc0992ab177fba51db92c2a";
         } else {
             PRIVATE_KEY = "77076d0a7318a57d3c16c17251b26645df4c2f87ebc0992ab177fba51db92c2a";
         }
+
+        System.out.print(PRIVATE_KEY);
 
         try {
             nav = createSetup();
@@ -145,7 +148,7 @@ public class RemoteFSController extends AbstractController implements Initializa
         File directory = chooser.showDialog(treeTable.getScene().getWindow());
 
         if (selectedFolder == null || selectedFolder.getValue().name.equals(ROOT_FOLDER_NAME)) {
-            downloadBoxObject(selectedFolder.getValue(), null, directory.getPath());
+            downloadBoxObjectRootNode(selectedFolder.getValue(), null, directory.getPath());
         } else {
             LazyBoxFolderTreeItem parent = (LazyBoxFolderTreeItem) selectedFolder.getParent();
             downloadBoxObject(selectedFolder.getValue(), (BoxFolder) parent.getValue(), directory.getPath());
@@ -158,7 +161,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 
         TextInputDialog dialog = new TextInputDialog("name");
         dialog.setHeaderText(null);
-        dialog.setTitle("Change Alias");
+        dialog.setTitle("Create Folder");
         dialog.setContentText("Please specify folder name");
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(name -> {
@@ -186,7 +189,7 @@ public class RemoteFSController extends AbstractController implements Initializa
                 alert.setHeaderText("Delete " + selectedFolder.getValue().name + " ?");
                 Optional<ButtonType> result = alert.showAndWait();
 
-                if (!(selectedFolder == null) || !selectedFolder.getValue().name.equals(ROOT_FOLDER_NAME)) {
+                if (selectedFolder == null || selectedFolder.getValue().name.equals(ROOT_FOLDER_NAME)) {
                     if (!selectedFolder.getParent().getValue().name.equals(ROOT_FOLDER_NAME)) {
                         deleteBoxObject(result.get(), selectedFolder.getValue(), (BoxFolder) parent.getValue());
                     } else {
@@ -267,7 +270,7 @@ public class RemoteFSController extends AbstractController implements Initializa
         }
     }
 
-    private void downloadBoxObject(BoxObject boxObject, BoxFolder parent, String path) throws QblStorageException, IOException {
+    void downloadBoxObject(BoxObject boxObject, BoxFolder parent, String path) throws QblStorageException, IOException {
         if (boxObject instanceof BoxFile) {
             saveFile((BoxFile) boxObject, parent, path);
         } else {
@@ -275,23 +278,39 @@ public class RemoteFSController extends AbstractController implements Initializa
         }
     }
 
+
+    void downloadBoxObjectRootNode(BoxObject boxFolder, BoxFolder parent, String path) throws QblStorageException, IOException {
+        List<BoxFile> files = nav.listFiles();
+        List<BoxFolder> folders = nav.listFolders();
+        File dir = new File(path +"/" +ROOT_FOLDER_NAME);
+
+        reursiveDownload((BoxFolder) boxFolder, parent, files, folders, dir, dir.getPath());
+
+    }
+
+
     private void downloadBoxFolder(BoxFolder boxFolder, BoxFolder parent, String path) throws QblStorageException, IOException {
-        BoxNavigation newNav = getNavigator(parent);
+        BoxNavigation newNav = nav.navigate(boxFolder);
+
         List<BoxFile> files = newNav.listFiles();
         List<BoxFolder> folders = newNav.listFolders();
 
-        File dir = new File(path+"/"+boxFolder.name);
-        if(dir.mkdirs()) {
+        File dir = new File(path + "/" + boxFolder.name);
+        reursiveDownload(boxFolder, parent, files, folders, dir, dir.getPath());
+    }
+
+    private void reursiveDownload(BoxFolder boxFolder, BoxFolder parent, List<BoxFile> files, List<BoxFolder> folders, File dir, String path) throws IOException, QblStorageException {
+        if (dir.mkdirs()) {
 
             for (BoxFile f : files) {
-                saveFile(f, parent, dir.getPath());
+                saveFile(f, parent, path);
             }
+
             for (BoxFolder bf : folders) {
-                downloadBoxFolder(bf, boxFolder, path + "/" + bf.name);
+                downloadBoxFolder(bf, boxFolder, path);
             }
         }
     }
-
     private void saveFile(BoxFile f, BoxFolder parent, String path) throws IOException, QblStorageException {
 
         BoxNavigation newNav = getNavigator(parent);
@@ -300,7 +319,7 @@ public class RemoteFSController extends AbstractController implements Initializa
         byte[] buffer = new byte[file.available()];
         file.read(buffer);
 
-        File targetFile = new File(path+"/"+f.name);
+        File targetFile = new File(path + "/" + f.name);
         OutputStream outStream = new FileOutputStream(targetFile);
         outStream.write(buffer);
     }
@@ -308,7 +327,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 
     private BoxNavigation getNavigator(BoxFolder folder) throws QblStorageException {
         BoxNavigation newNav;
-        if (folder == null) {
+        if (folder == null || folder.name == ROOT_FOLDER_NAME) {
             newNav = nav;
         } else {
             newNav = nav.navigate(folder);
