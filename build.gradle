@@ -53,29 +53,6 @@ jar.doFirst{
 	}
 }
 
-task fatJar(type: Jar) {
-    manifest {
-        attributes 'Implementation-Title': 'Qabel Desktop', 'Implementation-Version': version
-        attributes 'Main-Class': 'de.qabel.desktop.DesktopClient'
-        attributes 'Class-Path': configurations.runtime.collect { it.getName() }.join(' ')
-    }
-
-    baseName = project.name + '-all-' + platform
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
-
-}
-distZip() {
-    baseName = project.name + '-' + platform
-
-    from (configurations.compile) {
-        into baseName + '-' + version + '/lib/'
-    }
-    from ("qabel-core/build/binaries/curve25519SharedLibrary/$platform/") {
-        into baseName + '-' + version + '/lib/'
-    }
-}
-
 dependencies {
     testCompile 'junit:junit:4.11'
     testCompile group: 'org.meanbean', name: 'meanbean', version: '2.+'
@@ -121,4 +98,28 @@ tasks.withType(Test) {
 }
 run {
     systemProperty "java.library.path", "./qabel-core/build/binaries/curve25519SharedLibrary/$platform/"
+}
+
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Qabel Desktop', 'Implementation-Version': version
+        attributes 'Main-Class': 'de.qabel.desktop.DesktopClient'
+        attributes 'Class-Path': configurations.runtime.collect { it.getName() }.join(' ')
+    }
+
+    baseName = project.name + '-all-' + platform
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+
+}
+distZip() {
+    baseName = project.name + '-' + platform
+
+    from (configurations.compile) {
+        into baseName + '-' + version + '/lib/'
+    }
+    from ("qabel-core/build/binaries/curve25519SharedLibrary/$platform/") {
+        into baseName + '-' + version + '/lib/'
+    }
 }
