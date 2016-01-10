@@ -140,11 +140,15 @@ public class RemoteFSController extends AbstractController implements Initializa
 
     @FXML
     protected void handleDownloadButtonAction(ActionEvent event) throws QblStorageException, IOException {
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Choose Download Folder");
+        File directory = chooser.showDialog(treeTable.getScene().getWindow());
+
         if (selectedFolder == null || selectedFolder.getValue().name.equals(ROOT_FOLDER_NAME)) {
-            downloadBoxObject(selectedFolder.getValue(), null);
+            downloadBoxObject(selectedFolder.getValue(), null, directory.getPath());
         } else {
             LazyBoxFolderTreeItem parent = (LazyBoxFolderTreeItem) selectedFolder.getParent();
-            downloadBoxObject(selectedFolder.getValue(), (BoxFolder) parent.getValue());
+            downloadBoxObject(selectedFolder.getValue(), (BoxFolder) parent.getValue(), directory.getPath());
         }
         refreshTreeItem();
     }
@@ -229,7 +233,6 @@ public class RemoteFSController extends AbstractController implements Initializa
             }
         } catch (QblStorageException e) {
             e.printStackTrace();
-
         }
     }
 
@@ -252,12 +255,8 @@ public class RemoteFSController extends AbstractController implements Initializa
 
     void deleteBoxObject(ButtonType confim, BoxObject object, BoxFolder parent) throws QblStorageException {
         if (confim == ButtonType.OK) {
-            BoxNavigation newNav;
-            if (parent != null) {
-                newNav = nav.navigate(parent);
-            } else {
-                newNav = nav;
-            }
+            BoxNavigation newNav = getNavigator(parent);
+
             if (object instanceof BoxFolder) {
                 newNav.delete((BoxFolder) object);
                 newNav.commit();
@@ -268,8 +267,7 @@ public class RemoteFSController extends AbstractController implements Initializa
         }
     }
 
-    private void downloadBoxObject(BoxObject boxObject, BoxFolder parent) throws QblStorageException, IOException {
-        String path = "tmp";
+    private void downloadBoxObject(BoxObject boxObject, BoxFolder parent, String path) throws QblStorageException, IOException {
         if (boxObject instanceof BoxFile) {
             saveFile((BoxFile) boxObject, parent, path);
         } else {
@@ -283,15 +281,15 @@ public class RemoteFSController extends AbstractController implements Initializa
         List<BoxFolder> folders = newNav.listFolders();
 
         File dir = new File(path+"/"+boxFolder.name);
-        dir.mkdirs();
+        if(dir.mkdirs()) {
 
-        for (BoxFile f: files) {
-            saveFile(f, parent, dir.getPath());
+            for (BoxFile f : files) {
+                saveFile(f, parent, dir.getPath());
+            }
+            for (BoxFolder bf : folders) {
+                downloadBoxFolder(bf, boxFolder, path + "/" + bf.name);
+            }
         }
-        for (BoxFolder bf:folders) {
-            downloadBoxFolder(bf, boxFolder, path+"/"+bf.name);
-        }
-
     }
 
     private void saveFile(BoxFile f, BoxFolder parent, String path) throws IOException, QblStorageException {
