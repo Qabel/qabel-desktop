@@ -20,10 +20,11 @@ import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
 import javafx.stage.Stage;
-
 import java.net.URISyntaxException;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.net.URL;
 import java.util.*;
 
 
@@ -46,16 +47,17 @@ public class DesktopClient extends Application {
 			scene = new Scene(new LoginView().getView(), 370, 530);
 			config.addObserver((o, arg) -> {
 				if (arg instanceof Account) {
-					Scene layoutScene = new Scene(new LayoutView().getView(), 800, 600, true, SceneAntialiasing.BALANCED);
+					Scene layoutScene = new Scene(new LayoutView().getView(), 800, 600);
 					Platform.runLater(() -> primaryStage.setScene(layoutScene));
 				}
 			});
 		} else {
-			scene = new Scene(new LayoutView().getView(), 800, 600, true, SceneAntialiasing.BALANCED);
+			scene = new Scene(new LayoutView().getView(), 800, 600);
 		}
 
 		primaryStage.setScene(scene);
 
+		setTrayIcon(primaryStage);
 		primaryStage.setTitle(TITLE);
 		primaryStage.show();
 	}
@@ -88,6 +90,37 @@ public class DesktopClient extends Application {
 			repo.save(config);
 		});
 		return config;
+	}
+
+	private void setTrayIcon(Stage primaryStage) {
+
+		SystemTray sTray = SystemTray.getSystemTray();
+
+		ActionListener listenerShow = e -> Platform.runLater(() -> primaryStage.show());
+		ActionListener listenerClose = e -> System.exit(0);
+		primaryStage.setOnCloseRequest(arg0 -> primaryStage.hide());
+
+		PopupMenu popup = new PopupMenu();
+		MenuItem showItem = new MenuItem("Öffnen");
+		MenuItem exitItem = new MenuItem("Beenden");
+
+		showItem.addActionListener(listenerShow);
+		exitItem.addActionListener(listenerClose);
+
+		popup.add(showItem);
+		popup.add(exitItem);
+
+		URL url = System.class.getResource("/logo.png");
+		Image img = Toolkit.getDefaultToolkit().getImage(url);
+		TrayIcon icon = new TrayIcon(img, "Qabel", popup);
+		icon.setImageAutoSize(true);
+
+		try {
+			sTray.add(icon);
+		} catch (AWTException e) {
+			System.err.println(e);
+		}
+
 	}
 
 	public static Account getBoxAccount() {

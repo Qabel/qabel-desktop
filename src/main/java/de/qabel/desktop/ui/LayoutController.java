@@ -5,6 +5,8 @@ import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.ui.accounting.AccountingView;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
+import de.qabel.desktop.ui.remotefs.RemoteFSView;
+import javafx.application.HostServices;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -46,7 +48,7 @@ public class LayoutController extends AbstractController implements Initializabl
 		navi.getChildren().clear();
 		AccountingView accountingView = new AccountingView();
 		navi.getChildren().add(createNavItem("Identitäten", accountingView));
-		navi.getChildren().add(createNavItem("Browse", new AccountingView()));
+		navi.getChildren().add(createNavItem("Browse", new RemoteFSView()));
 
 		content.setFillWidth(true);
 
