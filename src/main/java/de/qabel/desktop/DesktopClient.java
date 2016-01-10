@@ -19,8 +19,6 @@ import de.qabel.desktop.ui.accounting.login.LoginView;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.application.HostServices;
-import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.stage.Stage;
@@ -61,6 +59,7 @@ public class DesktopClient extends Application {
 
 		primaryStage.setScene(scene);
 
+		setTrayIcon(primaryStage);
 		primaryStage.setTitle(TITLE);
 		primaryStage.show();
 	}
@@ -93,12 +92,6 @@ public class DesktopClient extends Application {
 			repo.save(config);
 		});
 		return config;
-		setTrayIcon(primaryStage);
-		Scene accountingScene = new Scene(new LayoutView().getView(), 800, 600, true, SceneAntialiasing.DISABLED);
-		primaryStage.setScene(accountingScene);
-
-		primaryStage.setTitle(TITLE);
-		primaryStage.show();
 	}
 
 	private void setTrayIcon(Stage primaryStage) {

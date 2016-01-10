@@ -48,7 +48,7 @@ public class LayoutController extends AbstractController implements Initializabl
 		navi.getChildren().clear();
 		AccountingView accountingView = new AccountingView();
 		navi.getChildren().add(createNavItem("Identitäten", accountingView));
-		navi.getChildren().add(createNavItem("Browse", new AccountingView()));
+		navi.getChildren().add(createNavItem("Browse", new RemoteFSView()));
 
 		content.setFillWidth(true);
 
