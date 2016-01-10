@@ -25,7 +25,7 @@ public class AbstractControllerGUITest extends AbstractGuiTest<AlertTestControll
 			assertEquals(Alert.AlertType.ERROR, alert.getAlertType());
 			assertEquals("exceptionmessage", controller.exceptionLabel.getText());
 		} finally {
-			alert.close();
+			runLaterAndWait(alert::close);
 		}
 	}
 }

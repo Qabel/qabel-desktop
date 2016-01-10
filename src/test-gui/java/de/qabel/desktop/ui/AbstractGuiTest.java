@@ -1,8 +1,10 @@
 package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
+import com.sun.javafx.application.PlatformImpl;
 import com.sun.javafx.robot.impl.BaseFXRobot;
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -30,7 +32,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 		Object presenter = view.getPresenter();
 		robot.target(scene);
 
-		Platform.runLater(() ->
+		runLaterAndWait(() ->
 				{
 					stage = new Stage();
 					stage.setScene(scene);
@@ -38,7 +40,14 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 					robot.target(stage);
 				}
 		);
-		new BaseFXRobot(scene).waitForIdle();
+		BaseFXRobot baseFXRobot = new BaseFXRobot(scene);
+		baseFXRobot.waitForIdle();
+		Node sceneNode = robot.rootNode(scene);
+		waitUntil(() -> {
+			int a = (int)Math.round(sceneNode.computeAreaInScreen());
+			int b = Math.round(getWidth() * getHeight());
+			return a >= b;
+		});
 		return presenter;
 	}
 
