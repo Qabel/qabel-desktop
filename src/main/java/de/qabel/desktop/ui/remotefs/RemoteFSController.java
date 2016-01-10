@@ -1,0 +1,127 @@
+package de.qabel.desktop.ui.remotefs;
+
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.DeleteObjectsRequest;
+import com.amazonaws.services.s3.model.ObjectListing;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
+import de.qabel.core.crypto.CryptoUtils;
+import de.qabel.core.crypto.QblECKeyPair;
+import de.qabel.desktop.cellValueFactory.BoxObjectCellValueFactory;
+import de.qabel.desktop.exceptions.QblStorageException;
+import de.qabel.desktop.storage.*;
+import de.qabel.desktop.ui.AbstractController;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableView;
+import org.spongycastle.util.encoders.Hex;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
+
+public class RemoteFSController extends AbstractController implements Initializable {
+
+    final String bucket = "qabel";
+    final String prefix = "qabelTest";
+    private BoxVolume volume;
+    public static final String PRIVATE_KEY = "77076d0a7318a57d3c16c17251b26645df4c2f87ebc0992ab177fba51db92c2a";
+
+    @FXML
+    private TreeTableView<BoxObject> treeTable;
+    @FXML
+    private TreeTableColumn<BoxObject, String> nameColumn;
+    @FXML
+    private TreeTableColumn<BoxObject, String> sizeColumn;
+    @FXML
+    private TreeTableColumn<BoxObject, String> dateColumn;
+
+    @FXML
+    public void initialize(URL location, ResourceBundle resources) {
+        try {
+            BoxNavigation nav = createSetup();
+
+            //DELETEME
+            //uploadFilesAndFolders(nav);
+
+            LazyBoxFolderTreeItem rootItem = new LazyBoxFolderTreeItem(new BoxFolder("block", "root Folder", new byte[16]), nav);
+            treeTable.setRoot(rootItem);
+            rootItem.setExpanded(true);
+        } catch (QblStorageException e) {
+            e.printStackTrace();
+        }
+        setCellValueFactories();
+    }
+
+    private void setCellValueFactories() {
+        nameColumn.setCellValueFactory(new BoxObjectCellValueFactory(BoxObjectCellValueFactory.NAME));
+        sizeColumn.setCellValueFactory(new BoxObjectCellValueFactory(BoxObjectCellValueFactory.SIZE));
+        dateColumn.setCellValueFactory(new BoxObjectCellValueFactory(BoxObjectCellValueFactory.MTIME));
+        treeTable.getColumns().setAll(nameColumn, sizeColumn, dateColumn);
+
+    }
+
+    private void uploadFilesAndFolders(BoxNavigation nav) throws QblStorageException {
+
+        try {
+
+            File file1 = File.createTempFile("File1", ".txt");
+            for (int i = 0; i < 10; i++) {
+                BoxFolder folder = nav.createFolder("folder" + i);
+                nav.commit();
+                for (int j = 0; j < 10; j++) {
+                    BoxNavigation navFolder = nav.navigate(folder);
+                    BoxFolder subFolder = navFolder.createFolder("subFolder" + i + j);
+                    navFolder.commit();
+                    for (int k = 0; k < 10; k++) {
+                        BoxNavigation navSubFolder = nav.navigate(subFolder);
+                        navSubFolder.upload("File" + i + j + k, file1);
+                        navSubFolder.commit();
+                    }
+                }
+
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private BoxNavigation createSetup() throws QblStorageException {
+
+        CryptoUtils utils = new CryptoUtils();
+        byte[] deviceID = utils.getRandomBytes(16);
+        DefaultAWSCredentialsProviderChain chain = new DefaultAWSCredentialsProviderChain();
+
+        QblECKeyPair testKey = new QblECKeyPair(Hex.decode(PRIVATE_KEY));
+
+        this.volume = new BoxVolume(bucket, prefix, chain.getCredentials(), testKey, deviceID,
+                new File(System.getProperty("java.io.tmpdir")));
+
+        //DELETEME
+        //cleanVolume();
+        //volume.createIndex(bucket, prefix);
+
+        return volume.navigate();
+    }
+
+    protected void cleanVolume() {
+        AmazonS3Client client = ((S3WriteBackend) volume.writeBackend).s3Client;
+        ObjectListing listing = client.listObjects(bucket, prefix);
+        List<DeleteObjectsRequest.KeyVersion> keys = new ArrayList<>();
+        for (S3ObjectSummary summary : listing.getObjectSummaries()) {
+            keys.add(new DeleteObjectsRequest.KeyVersion(summary.getKey()));
+        }
+        if (keys.isEmpty()) {
+            return;
+        }
+        DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucket);
+        deleteObjectsRequest.setKeys(keys);
+        client.deleteObjects(deleteObjectsRequest);
+    }
+}

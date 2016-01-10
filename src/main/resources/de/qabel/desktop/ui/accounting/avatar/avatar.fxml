@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<Label
+        fx:controller="de.qabel.desktop.ui.accounting.avatar.AvatarController"
+        xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+        fx:id="avatar" styleClass="avatar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="50.0" minWidth="50.0" prefHeight="50.0" prefWidth="50.0">
+    <HBox.margin>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </HBox.margin>
+</Label>

@@ -1,0 +1,13 @@
+.avatar {
+    -fx-font-size: 3em;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
+
+    -fx-background-size: 50px;
+    -fx-border-color: black;
+    -fx-border-size: 0.1em;
+    -fx-background-color: white;
+    -fx-background-radius: 25;
+    -fx-border-radius: 25;
+    -fx-padding: 0 0 0 0;
+}

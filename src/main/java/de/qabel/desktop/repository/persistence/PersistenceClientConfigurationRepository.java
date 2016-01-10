@@ -1,0 +1,102 @@
+package de.qabel.desktop.repository.persistence;
+
+import de.qabel.core.config.Account;
+import de.qabel.core.config.Identity;
+import de.qabel.core.config.Persistence;
+import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.DefaultClientConfiguration;
+import de.qabel.desktop.config.factory.ClientConfigurationFactory;
+import de.qabel.desktop.repository.AccountRepository;
+import de.qabel.desktop.repository.ClientConfigurationRepository;
+import de.qabel.desktop.repository.IdentityRepository;
+import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.PersistenceException;
+
+import javax.inject.Inject;
+import java.util.List;
+
+public class PersistenceClientConfigurationRepository extends AbstractPersistenceRepository implements ClientConfigurationRepository {
+	private ClientConfigurationFactory fallbackConfigFactory;
+	private AccountRepository accountRepository;
+	private IdentityRepository identityRepository;
+
+	@Inject
+	public PersistenceClientConfigurationRepository(
+			Persistence<String> persistence,
+			ClientConfigurationFactory fallbackConfigFactory,
+			IdentityRepository identityRepository,
+			AccountRepository accountRepository
+	) {
+		super(persistence);
+		this.fallbackConfigFactory = fallbackConfigFactory;
+		this.accountRepository = accountRepository;
+		this.identityRepository = identityRepository;
+	}
+
+	@Override
+	public ClientConfiguration load() {
+		List<PersistentClientConfiguration> configs = persistence.getEntities(PersistentClientConfiguration.class);
+		ClientConfiguration config = fallbackConfigFactory.createClientConfiguration();
+		if (!configs.isEmpty()) {
+			PersistentClientConfiguration configDto = configs.get(0);
+			if (configDto.accountId != null) {
+				try {
+					config.setAccount(accountRepository.find(configDto.accountId));
+				} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
+					entityNotFoundExcepion.printStackTrace();
+				}
+			}
+			if (configDto.identitiyId != null) {
+				try {
+					config.selectIdentity(identityRepository.find(configDto.identitiyId));
+				} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
+					entityNotFoundExcepion.printStackTrace();
+				}
+			}
+		}
+		return config;
+	}
+
+	@Override
+	public void save(ClientConfiguration configuration) {
+		PersistentClientConfiguration configDto;
+		List<PersistentClientConfiguration> configs = persistence.getEntities(PersistentClientConfiguration.class);
+		if (configs.isEmpty()) {
+			configDto = new PersistentClientConfiguration();
+		} else {
+			configDto = configs.get(0);
+		}
+		configDto.accountId = configuration.hasAccount() ? configuration.getAccount().getPersistenceID() : null;
+		configDto.identitiyId = configuration.getSelectedIdentity() != null ? configuration.getSelectedIdentity().getPersistenceID() : null;
+
+		Account account = configuration.getAccount();
+		if (account != null) {
+			try {
+				try {
+					accountRepository.find(account.getPersistenceID());
+				} catch (EntityNotFoundExcepion e) {
+					accountRepository.save(account);
+				}
+				configDto.accountId = account.getPersistenceID();
+			} catch (PersistenceException e) {
+				e.printStackTrace();
+			}
+		}
+
+		Identity identity = configuration.getSelectedIdentity();
+		if (identity != null) {
+			try {
+				try {
+					identityRepository.find(identity.getPersistenceID());
+				} catch (EntityNotFoundExcepion e) {
+					identityRepository.save(identity);
+				}
+				configDto.identitiyId = identity.getPersistenceID();
+			} catch (PersistenceException e) {
+				e.printStackTrace();
+			}
+		}
+
+		persistence.updateOrPersistEntity(configDto);
+	}
+}
