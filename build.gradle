@@ -3,8 +3,9 @@ apply plugin: 'application'
 apply plugin: 'eclipse'
 apply plugin: 'c'
 
-mainClassName = "de.qabel.desktop.QblMain"
+mainClassName = "de.qabel.desktop.DesktopClient"
 version = '0.1'
+def platform = "${System.properties['os.name'].toLowerCase()}_${System.properties['os.arch']}"
 
 repositories {
     mavenCentral()
@@ -28,14 +29,51 @@ sourceSets {
 configurations {
     guiTestCompile.extendsFrom testCompile
     guiTestRuntime.extendsFrom testRuntime
+    compile {
+        description = 'compile classpath'
+        transitive = true
+    }
+    runtime {
+        extendsFrom compile
+    }
+}
+
+startScripts {
+    classpath += configurations.compile
+    doLast{
+        unixScript.text = unixScript.text.replace('DEFAULT_JVM_OPTS=""', 'DEFAULT_JVM_OPTS="-Djava.library.path=\\\$APP_HOME/lib/"')
+    }
 }
 
 jar.doFirst{
 	manifest {
-		attributes 'Implementation-Title': 'Qabel Core', 'Implementation-Version': version
-		attributes 'Main-Class': 'de.qabel.desktop.QblMain'
-	  attributes 'Class-Path': configurations.runtime.collect { it.getName() }.join(' ')
+		attributes 'Implementation-Title': 'Qabel Desktop', 'Implementation-Version': version
+		attributes 'Main-Class': 'de.qabel.desktop.DesktopClient'
+	    attributes 'Class-Path': configurations.runtime.collect { it.getName() }.join(' ')
 	}
+}
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Qabel Desktop', 'Implementation-Version': version
+        attributes 'Main-Class': 'de.qabel.desktop.DesktopClient'
+        attributes 'Class-Path': configurations.runtime.collect { it.getName() }.join(' ')
+    }
+
+    baseName = project.name + '-all-' + platform
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+
+}
+distZip() {
+    baseName = project.name + '-' + platform
+
+    from (configurations.compile) {
+        into baseName + '-' + version + '/lib/'
+    }
+    from ("qabel-core/build/binaries/curve25519SharedLibrary/$platform/") {
+        into baseName + '-' + version + '/lib/'
+    }
 }
 
 dependencies {
@@ -77,12 +115,10 @@ task wrapper(type: Wrapper) {
 }
 
 tasks.withType(Test) {
-    def platform = "${System.properties['os.name'].toLowerCase()}_${System.properties['os.arch']}"
     systemProperty "java.library.path", "./qabel-core/build/binaries/curve25519SharedLibrary/$platform/"
 
     reports.html.destination = file("${reporting.baseDir}/${name}")
 }
 run {
-    def platform = "${System.properties['os.name'].toLowerCase()}_${System.properties['os.arch']}"
     systemProperty "java.library.path", "./qabel-core/build/binaries/curve25519SharedLibrary/$platform/"
 }
