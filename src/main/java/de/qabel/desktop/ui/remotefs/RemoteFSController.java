@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.cellValueFactory.BoxObjectCellValueFactory;
+import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
 import de.qabel.desktop.ui.AbstractController;
@@ -24,8 +25,9 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import org.spongycastle.util.encoders.Hex;
 
+import javax.inject.Inject;
 import javax.swing.*;
-import java.io.File;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,10 +37,10 @@ import java.util.ResourceBundle;
 
 public class RemoteFSController extends AbstractController implements Initializable {
 
-    private static final String PRIVATE_KEY = "77076d0a7318a57d3c16c17251b26645df4c2f87ebc0992ab177fba51db92c2a";
-    public static final String ROOT_FOLDER_NAME = "root Folder";
-    private final String bucket = "qabel";
-    private final String prefix = "qabelTest";
+    private String PRIVATE_KEY;
+    public String ROOT_FOLDER_NAME = "root Folder";
+    private String bucket = "qabel";
+    private String prefix = "qabelTest";
     private BoxVolume volume;
     BoxNavigation nav;
     LazyBoxFolderTreeItem rootItem;
@@ -51,9 +53,18 @@ public class RemoteFSController extends AbstractController implements Initializa
     private TreeTableColumn<BoxObject, String> sizeColumn;
     @FXML
     private TreeTableColumn<BoxObject, String> dateColumn;
+    @Inject
+    ClientConfiguration clientConfiguration;
 
     @FXML
+
     public void initialize(URL location, ResourceBundle resources) {
+
+        if (clientConfiguration.hasAccount()) {
+            PRIVATE_KEY = clientConfiguration.getSelectedIdentity().getPrimaryKeyPair().getPrivateKey().toString();
+        } else {
+            PRIVATE_KEY = "77076d0a7318a57d3c16c17251b26645df4c2f87ebc0992ab177fba51db92c2a";
+        }
 
         try {
             nav = createSetup();
@@ -131,6 +142,17 @@ public class RemoteFSController extends AbstractController implements Initializa
     }
 
     @FXML
+    protected void handleDownloadButtonAction(ActionEvent event) throws QblStorageException, IOException {
+        if (selectedFolder == null || selectedFolder.getValue().name.equals(ROOT_FOLDER_NAME)) {
+            downloadBoxObject(selectedFolder.getValue(), null);
+        } else {
+            LazyBoxFolderTreeItem parent = (LazyBoxFolderTreeItem) selectedFolder.getParent();
+            downloadBoxObject(selectedFolder.getValue(), (BoxFolder) parent.getValue());
+        }
+        refreshTreeItem();
+    }
+
+    @FXML
     protected void handleCreateFolderButtonAction(ActionEvent event) {
 
         TextInputDialog dialog = new TextInputDialog("name");
@@ -179,6 +201,7 @@ public class RemoteFSController extends AbstractController implements Initializa
         }
 
     }
+
 
     void chooseUploadDirectory(File directory) {
         if (selectedFolder == null || selectedFolder.getValue().name.equals(ROOT_FOLDER_NAME)) {
@@ -232,12 +255,8 @@ public class RemoteFSController extends AbstractController implements Initializa
 
     void deleteBoxObject(int n, BoxObject object, BoxFolder parent) throws QblStorageException {
         if (n == 0) {
-            BoxNavigation newNav;
-            if (parent != null) {
-                newNav = nav.navigate(parent);
-            } else {
-                newNav = nav;
-            }
+            BoxNavigation newNav = getNavigator(parent);
+
             if (object instanceof BoxFolder) {
                 newNav.delete((BoxFolder) object);
                 newNav.commit();
@@ -247,6 +266,46 @@ public class RemoteFSController extends AbstractController implements Initializa
             }
         }
     }
+
+    private void downloadBoxObject(BoxObject boxObject, BoxFolder parent) throws QblStorageException, IOException {
+        String path = "tmp";
+        if (boxObject instanceof BoxFile) {
+            saveFile((BoxFile) boxObject, parent, path);
+        } else {
+            downloadBoxFolder((BoxFolder) boxObject, parent, path);
+        }
+    }
+
+    private void downloadBoxFolder(BoxFolder boxFolder, BoxFolder parent, String path) throws QblStorageException, IOException {
+        BoxNavigation newNav = getNavigator(parent);
+        List<BoxFile> files = newNav.listFiles();
+        List<BoxFolder> folders = newNav.listFolders();
+
+        File dir = new File(path+"/"+boxFolder.name);
+        dir.mkdirs();
+
+        for (BoxFile f: files) {
+            saveFile(f, parent, dir.getPath());
+        }
+        for (BoxFolder bf:folders) {
+            downloadBoxFolder(bf, boxFolder, path+"/"+bf.name);
+        }
+
+    }
+
+    private void saveFile(BoxFile f, BoxFolder parent, String path) throws IOException, QblStorageException {
+
+        BoxNavigation newNav = getNavigator(parent);
+        InputStream file = newNav.download(f);
+
+        byte[] buffer = new byte[file.available()];
+        file.read(buffer);
+
+        File targetFile = new File(path+"/"+f.name);
+        OutputStream outStream = new FileOutputStream(targetFile);
+        outStream.write(buffer);
+    }
+
 
     private BoxNavigation getNavigator(BoxFolder folder) throws QblStorageException {
         BoxNavigation newNav;
