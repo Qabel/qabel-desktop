@@ -17,10 +17,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeTableView;
+import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import org.spongycastle.util.encoders.Hex;
@@ -179,17 +176,17 @@ public class RemoteFSController extends AbstractController implements Initializa
         if (selectedFolder.getParent() != null) {
             try {
                 LazyBoxFolderTreeItem parent = (LazyBoxFolderTreeItem) selectedFolder.getParent();
-                int n = JOptionPane.showConfirmDialog(
-                        null,
-                        "Delete " + selectedFolder.getValue().name + " ?",
-                        "Delete?",
-                        JOptionPane.YES_NO_OPTION);
+
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Delete?");
+                alert.setHeaderText("Delete " + selectedFolder.getValue().name + " ?");
+                Optional<ButtonType> result = alert.showAndWait();
+
                 if (!(selectedFolder == null) || !selectedFolder.getValue().name.equals(ROOT_FOLDER_NAME)) {
                     if (!selectedFolder.getParent().getValue().name.equals(ROOT_FOLDER_NAME)) {
-                        deleteBoxObject(n, selectedFolder.getValue(), (BoxFolder) parent.getValue());
+                        deleteBoxObject(result.get(), selectedFolder.getValue(), (BoxFolder) parent.getValue());
                     } else {
-                        deleteBoxObject(n, selectedFolder.getValue(), null);
-                        ;
+                        deleteBoxObject(result.get(), selectedFolder.getValue(), null);
                     }
                     rootItem.setUpToDate(false);
                     rootItem.getChildren();
@@ -253,10 +250,14 @@ public class RemoteFSController extends AbstractController implements Initializa
         newNav.commit();
     }
 
-    void deleteBoxObject(int n, BoxObject object, BoxFolder parent) throws QblStorageException {
-        if (n == 0) {
-            BoxNavigation newNav = getNavigator(parent);
-
+    void deleteBoxObject(ButtonType confim, BoxObject object, BoxFolder parent) throws QblStorageException {
+        if (confim == ButtonType.OK) {
+            BoxNavigation newNav;
+            if (parent != null) {
+                newNav = nav.navigate(parent);
+            } else {
+                newNav = nav;
+            }
             if (object instanceof BoxFolder) {
                 newNav.delete((BoxFolder) object);
                 newNav.commit();
