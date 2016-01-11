@@ -2,24 +2,19 @@ package de.qabel.desktop.config;
 
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
+import java.util.LinkedList;
+import java.util.Observable;
 import java.util.Observer;
 
-public class DefaultClientConfiguration extends ClientConfiguration {
-
-	private ObservableObject observable;
+public class DefaultClientConfiguration extends Observable implements ClientConfiguration {
 	private Account account;
 	private Identity identity;
+	private ObservableList<BoxSyncConfig> boxSyncConfigs = FXCollections.synchronizedObservableList(FXCollections.observableList(new LinkedList<>()));
 
-	public DefaultClientConfiguration() {
-		ensureObservable();
-	}
-
-	private void ensureObservable() {
-		if (observable == null) {
-			observable = new ObservableObject();
-		}
-	}
+	public DefaultClientConfiguration() {}
 
 	@Override
 	public boolean hasAccount() {
@@ -38,8 +33,8 @@ public class DefaultClientConfiguration extends ClientConfiguration {
 		}
 		this.account = account;
 
-		observable.setChanged();
-		observable.notifyObservers(account);
+		setChanged();
+		notifyObservers(account);
 	}
 
 	@Override
@@ -50,22 +45,15 @@ public class DefaultClientConfiguration extends ClientConfiguration {
 	@Override
 	public void selectIdentity(Identity identity) {
 		if (!identity.equals(this.identity)) {
-			observable.setChanged();
+			setChanged();
 		}
 		this.identity = identity;
 
-		observable.notifyObservers(identity);
+		notifyObservers(identity);
 	}
 
 	@Override
-	public void addObserver(Observer o) {
-		ensureObservable();
-		observable.addObserver(o);
-	}
-
-	@Override
-	public void deleteObserver(Observer o) {
-		ensureObservable();
-		observable.deleteObserver(o);
+	public ObservableList<BoxSyncConfig> getBoxSyncConfigs() {
+		return boxSyncConfigs;
 	}
 }

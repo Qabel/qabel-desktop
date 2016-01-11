@@ -2,31 +2,34 @@ package de.qabel.desktop.config;
 
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
+import javafx.collections.ObservableList;
+
 import java.util.Observer;
 
-public abstract class ClientConfiguration {
-	public abstract boolean hasAccount();
-	public abstract Account getAccount();
+public interface ClientConfiguration {
+	boolean hasAccount();
+	Account getAccount();
 
 	/**
 	 * @param account BoxAccount to use
 	 * @throws IllegalStateException when an account already exists
 	 */
-	public abstract void setAccount(Account account) throws IllegalStateException;
+	void setAccount(Account account) throws IllegalStateException;
 
-	public abstract Identity getSelectedIdentity();
-	public abstract void selectIdentity(Identity identity);
+	Identity getSelectedIdentity();
+	void selectIdentity(Identity identity);
 
+	ObservableList<BoxSyncConfig> getBoxSyncConfigs();
 
 	/**
 	 * @see java.util.Observable#addObserver(Observer)
 	 * @param o
 	 */
-	public abstract void addObserver(Observer o);
+	void addObserver(Observer o);
 
 	/**
 	 * @see java.util.Observable#deleteObserver(Observer)
 	 * @param o
 	 */
-	public abstract void deleteObserver(Observer o);
+	void deleteObserver(Observer o);
 }
