@@ -398,21 +398,4 @@ public class RemoteFSController extends AbstractController implements Initializa
             }
         }
     }
-
-    private void cleanVolume() throws QblStorageException {
-        AmazonS3Client client = ((S3WriteBackend) volume.writeBackend).s3Client;
-        ObjectListing listing = client.listObjects(bucket, prefix);
-        List<DeleteObjectsRequest.KeyVersion> keys = new ArrayList<>();
-        for (S3ObjectSummary summary : listing.getObjectSummaries()) {
-            keys.add(new DeleteObjectsRequest.KeyVersion(summary.getKey()));
-        }
-        if (keys.isEmpty()) {
-            return;
-        }
-        DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucket);
-        deleteObjectsRequest.setKeys(keys);
-        client.deleteObjects(deleteObjectsRequest);
-        volume.createIndex(bucket, prefix);
-    }
-
 }
