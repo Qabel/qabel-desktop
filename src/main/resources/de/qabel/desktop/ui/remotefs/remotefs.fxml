@@ -5,43 +5,49 @@
 <?import javafx.scene.control.*?>
 
 
-<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.remotefs.RemoteFSController">
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="de.qabel.desktop.ui.remotefs.RemoteFSController">
     <children>
         <TreeTableView fx:id="treeTable" prefHeight="550.0" prefWidth="600.0">
             <columns>
-                <TreeTableColumn fx:id="nameColumn" prefWidth="250.0" text="Name" />
-                <TreeTableColumn fx:id="sizeColumn" prefWidth="150.0" text="Size" />
-                <TreeTableColumn fx:id="dateColumn" prefWidth="200.0" text="Date" />
+                <TreeTableColumn fx:id="nameColumn" prefWidth="250.0" text="Name"/>
+                <TreeTableColumn fx:id="sizeColumn" prefWidth="150.0" text="Size"/>
+                <TreeTableColumn fx:id="dateColumn" prefWidth="200.0" text="Date"/>
             </columns>
         </TreeTableView>
     </children>
 
     <children>
-      <HBox prefHeight="100.0" prefWidth="200.0">
-         <children>
-              <Button mnemonicParsing="false" onAction="#handleUploadFileButtonAction" text="Upload Files">
-               <HBox.margin>
-                  <Insets bottom="10.0" left="20.0" right="10.0" top="10.0" />
-               </HBox.margin>
-              </Button>
+        <HBox prefHeight="100.0" prefWidth="200.0">
+            <children>
+                <Button mnemonicParsing="false" onAction="#handleDownloadButtonAction" text="Download">
+                    <HBox.margin>
+                        <Insets bottom="10.0" left="20.0" right="10.0" top="10.0"/>
+                    </HBox.margin>
+                </Button>
+                <Button mnemonicParsing="false" onAction="#handleUploadFileButtonAction" text="Upload Files">
+                    <HBox.margin>
+                        <Insets bottom="10.0" left="20.0" right="10.0" top="10.0"/>
+                    </HBox.margin>
+                </Button>
 
-              <Button mnemonicParsing="false" onAction="#handleUploadFolderButtonAction" text="Upload Folder">
-               <HBox.margin>
-                  <Insets bottom="10.0" left="20.0" right="10.0" top="10.0" />
-               </HBox.margin>
-              </Button>
+                <Button mnemonicParsing="false" onAction="#handleUploadFolderButtonAction" text="Upload Folder">
+                    <HBox.margin>
+                        <Insets bottom="10.0" left="20.0" right="10.0" top="10.0"/>
+                    </HBox.margin>
+                </Button>
 
-              <Button mnemonicParsing="false" onAction="#handleCreateFolderButtonAction" text="Create Folder">
-               <HBox.margin>
-                  <Insets bottom="10.0" left="20.0" right="10.0" top="10.0" />
-               </HBox.margin>
-            </Button>
-             <Button mnemonicParsing="false" onAction="#handleDeleteButtonAction" text="Delete">
-                 <HBox.margin>
-                     <Insets bottom="10.0" left="20.0" right="10.0" top="10.0" />
-                 </HBox.margin>
-             </Button>
-         </children>
-      </HBox>
+                <Button mnemonicParsing="false" onAction="#handleCreateFolderButtonAction" text="Create Folder">
+                    <HBox.margin>
+                        <Insets bottom="10.0" left="20.0" right="10.0" top="10.0"/>
+                    </HBox.margin>
+                </Button>
+                <Button mnemonicParsing="false" onAction="#handleDeleteButtonAction" text="Delete">
+                    <HBox.margin>
+                        <Insets bottom="10.0" left="20.0" right="10.0" top="10.0"/>
+                    </HBox.margin>
+                </Button>
+            </children>
+        </HBox>
     </children>
 </VBox>
