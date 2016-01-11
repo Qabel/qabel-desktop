@@ -1,10 +1,6 @@
 package de.qabel.desktop.ui.remotefs;
 
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.DeleteObjectsRequest;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
 import de.qabel.core.accounting.AccountingHTTP;
 import de.qabel.core.accounting.AccountingProfile;
 import de.qabel.core.config.Account;
@@ -33,7 +29,6 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -41,8 +36,9 @@ import java.util.ResourceBundle;
 
 public class RemoteFSController extends AbstractController implements Initializable {
 
-    private QblECKeyPair KEY_PAIR;
-    public String ROOT_FOLDER_NAME = "RootFolder";
+    final String ROOT_FOLDER_NAME = "RootFolder";
+
+    private QblECKeyPair keyPair;
     private String bucket;
     private String prefix;
     private BoxVolume volume;
@@ -91,7 +87,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 
         Account account = clientConfiguration.getAccount();
         AccountingHTTP http = null;
-        KEY_PAIR = clientConfiguration.getSelectedIdentity().getPrimaryKeyPair();
+        keyPair = clientConfiguration.getSelectedIdentity().getPrimaryKeyPair();
         bucket = "qabel";
 
         try {
@@ -103,7 +99,7 @@ public class RemoteFSController extends AbstractController implements Initializa
         try {
             http.login();
             http.updatePrefixes();
-            if(http.getProfile().getPrefixes().size() == 0){
+            if(http.getProfile().getPrefixes().isEmpty()){
                 http.createPrefix();
             }
             prefix = http.getProfile().getPrefixes().get(0);
@@ -138,7 +134,7 @@ public class RemoteFSController extends AbstractController implements Initializa
         DefaultAWSCredentialsProviderChain chain = new DefaultAWSCredentialsProviderChain();
 
 
-        this.volume = new BoxVolume(bucket, prefix, chain.getCredentials(), KEY_PAIR, deviceID,
+        this.volume = new BoxVolume(bucket, prefix, chain.getCredentials(), keyPair, deviceID,
                 new File(System.getProperty("java.io.tmpdir")));
 
         try {

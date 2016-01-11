@@ -95,7 +95,7 @@ public class DesktopClient extends Application {
 	}
 
 	private void setTrayIcon(Stage primaryStage) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
-		
+
 		SystemTray sTray = SystemTray.getSystemTray();
 		primaryStage.setOnCloseRequest(arg0 -> primaryStage.hide());
 		JPopupMenu popup = buildSystemTrayJPopupMenu(primaryStage);
@@ -120,16 +120,13 @@ public class DesktopClient extends Application {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				if (e.getButton() == MouseEvent.BUTTON1) {
-					if (!visible) {
-						popup.setLocation(e.getX(), e.getY());
-						popup.setVisible(true);
-						visible = true;
-					} else {
-						popup.setVisible(false);
-						visible = false;
-					}
+				if (e.getButton() != MouseEvent.BUTTON1) {
+					return;
 				}
+				popup.setLocation(e.getX(), e.getY());
+				visible = !visible;
+				popup.setVisible(visible);
+
 			}
 		});
 	}
@@ -140,15 +137,11 @@ public class DesktopClient extends Application {
 		final JMenuItem exitMenuItem = new JMenuItem("Exit");
 
 		menu.add(showMenuItem);
+		menu.addSeparator();
 		menu.add(exitMenuItem);
 		showMenuItem.addActionListener(ae -> Platform.runLater(primaryStage::show));
 		exitMenuItem.addActionListener(ae -> System.exit(0));
 
-
-		for (JMenuItem item : new JMenuItem[]{showMenuItem, exitMenuItem}) {
-			if (item == exitMenuItem) menu.addSeparator();
-			menu.add(item);
-		}
 		return menu;
 	}
 

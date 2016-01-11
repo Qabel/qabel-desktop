@@ -30,6 +30,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
     public static final String TEST_SUB_FOLDER = "subFolder";
     public static final String SUB_FILE = "tmp1.txt";
     public static final String TMP_DIR = "tmp";
+    public static final String TEST_TMP_DIR = TMP_DIR + "/" + TEST_FOLDER;
     private BoxNavigation nav;
     private LocalWriteBackend localWrite;
     private RemoteFSController controller = new RemoteFSController();
@@ -70,7 +71,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
     @After
     public void after() throws Exception {
         localWrite.delete(localStorageFile.getName());
-        FileUtils.deleteDirectory(new File(TMP_DIR + "/" + TEST_FOLDER));
+        FileUtils.deleteDirectory(new File(TEST_TMP_DIR));
         FileUtils.deleteDirectory(new File(TMP_DIR + "/" + controller.ROOT_FOLDER_NAME ));
         FileUtils.deleteDirectory(new File(TMP_DIR + "/test"));
         File file = new File(TMP_DIR + "/" + "tmp1.txt");
@@ -183,7 +184,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
     @Test
     public void testUploadedDirectoryInChildNode() throws QblStorageException, IOException {
 
-        File dir = new File(TMP_DIR +"/" + TEST_FOLDER);
+        File dir = new File(TEST_TMP_DIR);
         dir.mkdirs();
         BoxFolder folder = createBoxFolder(dir);
 
@@ -200,7 +201,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
     @Test
     public void testCreateFolder() throws QblStorageException {
 
-        File dir = new File(TMP_DIR +"/" + TEST_FOLDER);
+        File dir = new File(TEST_TMP_DIR);
         dir.mkdirs();
         BoxFolder folder = createBoxFolder(dir);
         controller.createFolder("NewFolder", folder);
@@ -213,7 +214,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 
     @Test
     public void TestUploadFiles() throws QblStorageException, IOException {
-        File dir = new File( TMP_DIR +"/" + TEST_FOLDER);
+        File dir = new File(TEST_TMP_DIR);
         dir.mkdirs();
         BoxFolder folder = createBoxFolder(dir);
         File tmp = new File(dir, "tmp1.txt");
@@ -278,7 +279,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
                 TEST_FOLDER);
         File subDir = new File( TMP_DIR + "/" +
                 controller.ROOT_FOLDER_NAME + "/" + 
-                TEST_FOLDER+  "/" +
+                TEST_FOLDER +  "/" +
                 TEST_SUB_FOLDER
         );
 
@@ -293,12 +294,11 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
         BoxFolder root = nav.listFolders().get(0);
         BoxNavigation newNav = nav.navigate(root);
         BoxFolder folder = newNav.listFolders().get(0);
-        controller.downloadBoxObject(folder, root, TMP_DIR + "/test/");
+        controller.downloadBoxObject(folder, root, TEST_TMP_DIR);
 
-        File dir = new File( TMP_DIR + "/test/" +
-                TEST_FOLDER);
-        File subDir = new File( TMP_DIR + "/test/" +
-                TEST_FOLDER+  "/" +
+        File dir = new File( TEST_TMP_DIR);
+        File subDir = new File( TEST_TMP_DIR
+                +  "/" +
                 TEST_SUB_FOLDER
         );
 
@@ -310,7 +310,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
     public void TestDownloadFileFromRootNode() throws QblStorageException, IOException {
         controller.nav = nav;
 
-        File testDir = new File(TMP_DIR +"/"+ TEST_FOLDER);
+        File testDir = new File(TEST_TMP_DIR);
         testDir.mkdirs();
         File tmpFile = new File(testDir, SUB_FILE);
         tmpFile.createNewFile();
@@ -351,7 +351,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
     }
 
     private File craeteFileAndFolder() throws IOException {
-        File dir = new File(TMP_DIR +"/"+ TEST_FOLDER);
+        File dir = new File(TEST_TMP_DIR);
         dir.mkdirs();
         File tmp = new File(dir, SUB_FILE);
         tmp.createNewFile();
