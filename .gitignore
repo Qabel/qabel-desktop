@@ -15,5 +15,4 @@ drop.pid
 qabel-desktop.sqlite
 ScenicView.jar
 scenicView.properties
-hs_err_pid26700.log
-db.sqlite
+hs_err_*
