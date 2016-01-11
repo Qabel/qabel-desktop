@@ -103,8 +103,11 @@ public class RemoteFSController extends AbstractController implements Initializa
         try {
             http.login();
             http.updatePrefixes();
-           // prefix = http.getPrefixes().get(0);
-            prefix = "prefix";
+            if(http.getProfile().getPrefixes().size() == 0){
+                http.createPrefix();
+            }
+            prefix = http.getProfile().getPrefixes().get(0);
+
         } catch (IOException | QblInvalidCredentials e) {
             e.printStackTrace();
         }
