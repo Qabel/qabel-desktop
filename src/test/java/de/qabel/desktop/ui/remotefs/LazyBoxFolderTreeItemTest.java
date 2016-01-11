@@ -52,8 +52,10 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 		navigation = new FakeBoxNavigation();
 		item = new LazyBoxFolderTreeItem(createSomeFolder(), navigation);
 		navigation.folders.add(new BoxFolder("ref2", "name2", new byte[0]));
+		navigation.loading = true;
 
 		assertEquals(0, item.getChildren().size());
+		navigation.loading = false;
 	}
 
 	@Test(timeout = 1000)
