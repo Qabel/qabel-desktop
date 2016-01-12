@@ -8,6 +8,7 @@ import java.util.Observer;
 
 public interface ClientConfiguration {
 	boolean hasAccount();
+
 	Account getAccount();
 
 	/**
@@ -17,19 +18,20 @@ public interface ClientConfiguration {
 	void setAccount(Account account) throws IllegalStateException;
 
 	Identity getSelectedIdentity();
+
 	void selectIdentity(Identity identity);
 
 	ObservableList<BoxSyncConfig> getBoxSyncConfigs();
 
 	/**
-	 * @see java.util.Observable#addObserver(Observer)
 	 * @param o
+	 * @see java.util.Observable#addObserver(Observer)
 	 */
 	void addObserver(Observer o);
 
 	/**
-	 * @see java.util.Observable#deleteObserver(Observer)
 	 * @param o
+	 * @see java.util.Observable#deleteObserver(Observer)
 	 */
 	void deleteObserver(Observer o);
 }

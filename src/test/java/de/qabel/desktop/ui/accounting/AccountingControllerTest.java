@@ -23,7 +23,7 @@ public class AccountingControllerTest extends AbstractControllerTest {
 		assertEquals(1, controller.identityList.getChildren().size());
 		assertEquals(1, controller.itemViews.size());
 
-		assertEquals(identity, ((AccountingItemController)controller.itemViews.get(0).getPresenter()).getIdentity());
+		assertEquals(identity, ((AccountingItemController) controller.itemViews.get(0).getPresenter()).getIdentity());
 	}
 
 	private AccountingController getAccountingController() {

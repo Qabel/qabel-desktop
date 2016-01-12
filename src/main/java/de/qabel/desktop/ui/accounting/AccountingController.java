@@ -3,7 +3,6 @@ package de.qabel.desktop.ui.accounting;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
-import de.qabel.desktop.repository.AccountRepository;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
@@ -12,7 +11,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 
 import javax.inject.Inject;

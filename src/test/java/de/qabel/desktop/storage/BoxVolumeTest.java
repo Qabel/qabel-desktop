@@ -25,7 +25,6 @@ import java.util.UUID;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.meanbean.util.AssertionUtils.fail;
 
 public abstract class BoxVolumeTest {
 	private static final Logger logger = LoggerFactory.getLogger(BoxVolumeTest.class.getName());
@@ -139,15 +138,18 @@ public abstract class BoxVolumeTest {
 		try {
 			nav.download(boxFile);
 			AssertionUtils.fail("Could download file in deleted folder");
-		} catch (QblStorageNotFound e) { }
+		} catch (QblStorageNotFound e) {
+		}
 		try {
 			nav.navigate(boxFolder);
 			AssertionUtils.fail("Could navigate to deleted folder");
-		} catch (QblStorageNotFound e) { }
+		} catch (QblStorageNotFound e) {
+		}
 		try {
 			nav.navigate(subfolder);
 			AssertionUtils.fail("Could navigate to deleted subfolder");
-		} catch (QblStorageNotFound e) { }
+		} catch (QblStorageNotFound e) {
+		}
 	}
 
 	@Test(expected = QblStorageNameConflict.class)

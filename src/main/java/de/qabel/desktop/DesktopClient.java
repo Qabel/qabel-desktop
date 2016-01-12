@@ -23,11 +23,13 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import javax.swing.*;
-import java.awt.event.*;
-import java.net.URISyntaxException;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class DesktopClient extends Application {

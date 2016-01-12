@@ -29,7 +29,7 @@ class S3ReadBackend extends StorageReadBackend {
 	private final CloseableHttpClient httpclient;
 
 	S3ReadBackend(String bucket, String prefix) {
-		 this("https://"+bucket+".s3.amazonaws.com/"+prefix);
+		this("https://" + bucket + ".s3.amazonaws.com/" + prefix);
 	}
 
 	S3ReadBackend(String root) {

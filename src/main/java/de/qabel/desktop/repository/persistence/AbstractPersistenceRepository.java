@@ -4,6 +4,7 @@ import de.qabel.core.config.Persistence;
 
 public abstract class AbstractPersistenceRepository {
 	protected Persistence<String> persistence;
+
 	public AbstractPersistenceRepository(Persistence<String> persistence) {
 		this.persistence = persistence;
 	}
