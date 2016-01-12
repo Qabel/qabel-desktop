@@ -4,31 +4,33 @@
 <?import javafx.scene.layout.*?>
 
 
-<VBox styleClass="dialog" prefWidth="600" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:controller="de.qabel.desktop.ui.sync.setup.SyncSetupController"
+      styleClass="dialog" prefWidth="600"
+      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">
          <children>
             <Label prefWidth="150.0" text="Name" />
-            <TextField maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="descriptive name for the sync configuration" />
+            <TextField fx:id="name" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="descriptive name for the sync configuration" />
          </children>
       </HBox>
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">
          <children>
             <Label prefWidth="150.0" text="Remote Folder" />
-            <TextField maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+            <TextField fx:id="localPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
             <Button styleClass="choose">choose</Button>
          </children>
       </HBox>
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">
          <children>
             <Label prefWidth="150.0" text="Local Folder" />
-            <TextField maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+            <TextField fx:id="remotePath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
             <Button styleClass="choose">choose</Button>
          </children>
       </HBox>
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">
          <children>
-            <Label prefWidth="150.0" text="Local Folder" />
+            <Label prefWidth="150.0" text="Identity" />
             <TextField disable="true" editable="false" text="identity"/>
          </children>
       </HBox>

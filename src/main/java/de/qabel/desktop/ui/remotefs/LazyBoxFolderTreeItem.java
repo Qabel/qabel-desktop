@@ -26,11 +26,16 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> {
 	private StringProperty nameProperty;
 	private boolean isLeaf;
 	private Image fileImg = new Image(getClass().getResourceAsStream("/file.png"));
-	private Image folderImg = new Image(getClass().getResourceAsStream("/folder.png"));
+	private static Image folderImg = new Image(LazyBoxFolderTreeItem.class.getResourceAsStream("/folder.png"));
 
 	public LazyBoxFolderTreeItem(BoxFolder folder, BoxNavigation navigation) {
+		this(folder, navigation, folderImg);
+	}
+
+	public LazyBoxFolderTreeItem(BoxFolder folder, BoxNavigation navigation, Image icon) {
 		super(folder);
-		super.setGraphic(new ImageView(folderImg));
+		ImageView value = new ImageView(icon);
+		super.setGraphic(value);
 
 		this.folder = folder;
 		this.navigation = navigation;

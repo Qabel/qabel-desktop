@@ -17,6 +17,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import org.spongycastle.util.encoders.Hex;
@@ -54,7 +55,6 @@ public class RemoteFSController extends AbstractController implements Initializa
 
         try {
             nav = createSetup();
-            rootItem = new LazyBoxFolderTreeItem(new BoxFolder("block", ROOT_FOLDER_NAME, new byte[16]), nav);
             treeTable.setRoot(rootItem);
             rootItem.setExpanded(true);
         } catch (QblStorageException e) {

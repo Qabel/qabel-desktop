@@ -54,3 +54,6 @@
     -fx-alignment: CENTER-CENTER!important;
     -fx-text-alignment: center!important;
 }
+.text-field.error {
+    -fx-border-color: red;
+}
