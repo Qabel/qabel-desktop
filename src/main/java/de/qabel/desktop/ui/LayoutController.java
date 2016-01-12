@@ -74,7 +74,7 @@ public class LayoutController extends AbstractController implements Initializabl
 			return;
 		}
 
-		new AvatarView(e->identity.getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
+		new AvatarView(e -> identity.getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
 		mail.setText(clientConfiguration.getAccount().getUser());
 		alias.setText(identity.getAlias());
 	}

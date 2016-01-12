@@ -7,14 +7,14 @@ import javafx.collections.ObservableList;
 
 import java.util.LinkedList;
 import java.util.Observable;
-import java.util.Observer;
 
 public class DefaultClientConfiguration extends Observable implements ClientConfiguration {
 	private Account account;
 	private Identity identity;
 	private ObservableList<BoxSyncConfig> boxSyncConfigs = FXCollections.synchronizedObservableList(FXCollections.observableList(new LinkedList<>()));
 
-	public DefaultClientConfiguration() {}
+	public DefaultClientConfiguration() {
+	}
 
 	@Override
 	public boolean hasAccount() {

@@ -27,7 +27,7 @@ public class DirectoryMetadataTest {
 		bb.putLong(uuid.getLeastSignificantBits());
 
 		dm = DirectoryMetadata.newDatabase("https://localhost", bb.array(),
-			new File(System.getProperty("java.io.tmpdir")));
+				new File(System.getProperty("java.io.tmpdir")));
 	}
 
 	@Test
@@ -43,7 +43,7 @@ public class DirectoryMetadataTest {
 
 	@Test
 	public void testFileOperations() throws QblStorageException {
-		BoxFile file = new BoxFile("block", "name", 0L, 0L, new byte[] {1,2,});
+		BoxFile file = new BoxFile("block", "name", 0L, 0L, new byte[]{1, 2,});
 		dm.insertFile(file);
 		assertThat(dm.listFiles().size(), is(1));
 		assertThat(file, equalTo(dm.listFiles().get(0)));
@@ -55,7 +55,7 @@ public class DirectoryMetadataTest {
 
 	@Test
 	public void testFolderOperations() throws QblStorageException {
-		BoxFolder folder = new BoxFolder("block", "name", new byte[] {1,2,});
+		BoxFolder folder = new BoxFolder("block", "name", new byte[]{1, 2,});
 		dm.insertFolder(folder);
 		assertThat(dm.listFolders().size(), is(1));
 		assertThat(folder, equalTo(dm.listFolders().get(0)));
@@ -67,7 +67,7 @@ public class DirectoryMetadataTest {
 	@Test
 	public void testExternalOperations() throws QblStorageException {
 		BoxExternal external = new BoxExternal("https://foobar", "name",
-				new QblECKeyPair().getPub(), new byte[] {1,2,});
+				new QblECKeyPair().getPub(), new byte[]{1, 2,});
 		dm.insertExternal(external);
 		assertThat(dm.listExternals().size(), is(1));
 		assertThat(external, equalTo(dm.listExternals().get(0)));
@@ -78,7 +78,7 @@ public class DirectoryMetadataTest {
 	@Test
 	public void testLastChangedBy() throws SQLException, QblStorageException {
 		assertThat(dm.deviceId, is(dm.getLastChangedBy()));
-		dm.deviceId = new byte[] {1,1};
+		dm.deviceId = new byte[]{1, 1};
 		dm.setLastChangedBy();
 		assertThat(dm.deviceId, is(dm.getLastChangedBy()));
 	}

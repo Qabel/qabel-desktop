@@ -15,7 +15,7 @@ public class AccountingItemControllerTest extends AbstractControllerTest {
 	@Test
 	public void identityLabelsAreFilledCorrectly() throws Exception {
 		Account account = new Account("providerName", "userName", "authString");
-		((ClientConfiguration)diContainer.get("clientConfiguration")).setAccount(account);
+		((ClientConfiguration) diContainer.get("clientConfiguration")).setAccount(account);
 		Identity identity = new Identity("my identity", null, null);
 		AccountingItemController controller = getController(identity);
 
@@ -28,7 +28,7 @@ public class AccountingItemControllerTest extends AbstractControllerTest {
 	private AccountingItemController getController(Identity identity) {
 		AccountingItemView view = new AccountingItemView(createParams(identity)::get);
 		view.getView();
-		return (AccountingItemController)view.getPresenter();
+		return (AccountingItemController) view.getPresenter();
 	}
 
 	private Map<String, Identity> createParams(Identity identity) {

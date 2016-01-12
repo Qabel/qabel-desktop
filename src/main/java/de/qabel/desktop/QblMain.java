@@ -1,22 +1,21 @@
 package de.qabel.desktop;
 
+import de.qabel.ackack.event.EventEmitter;
+import de.qabel.core.config.*;
+import de.qabel.core.crypto.QblECKeyPair;
+import de.qabel.core.drop.DropActor;
+import de.qabel.core.drop.DropURL;
+import de.qabel.core.exceptions.QblDropInvalidURL;
+import de.qabel.core.exceptions.QblInvalidEncryptionKeyException;
+import de.qabel.core.module.ModuleManager;
+import org.apache.commons.cli.*;
+
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import de.qabel.ackack.event.EventEmitter;
-import de.qabel.core.config.*;
-import de.qabel.core.crypto.QblECKeyPair;
-import de.qabel.core.exceptions.QblDropInvalidURL;
-import de.qabel.core.exceptions.QblInvalidEncryptionKeyException;
-import org.apache.commons.cli.*;
-
-import de.qabel.core.drop.DropActor;
-import de.qabel.core.module.ModuleManager;
-import de.qabel.core.drop.DropURL;
 
 public class QblMain {
 	private static final String MODULE_OPT = "module";
@@ -30,6 +29,7 @@ public class QblMain {
 
 	private DropActor dropActor;
 	private Thread resourceActorThread;
+
 	public static void main(String[] args) throws InstantiationException,
 			IllegalAccessException, ClassNotFoundException,
 			InterruptedException, URISyntaxException, QblDropInvalidURL, InvalidKeyException {
@@ -42,10 +42,11 @@ public class QblMain {
 		main.run();
 	}
 
-    /**
-     * Creates global available identities and puts them into contact with each other.
+	/**
+	 * Creates global available identities and puts them into contact with each other.
+	 *
 	 * @throws URISyntaxException, QblDropInvalidURL, InvalidKeyException
-     */
+	 */
 	private void loadContactsAndIdentities() throws URISyntaxException, QblDropInvalidURL, InvalidKeyException {
 		Collection<DropURL> aliceDropURLs = new ArrayList<>();
 		aliceDropURLs.add(new DropURL(ALICE_DROP_URL));
@@ -70,11 +71,12 @@ public class QblMain {
 		this.resourceActor.writeContacts(contacts.getContacts().toArray(new Contact[0]));
 	}
 
-    /**
-     * Generate DropServer instances here and
-     * put them into global available servers.
-     * @throws URISyntaxException
-     */
+	/**
+	 * Generate DropServer instances here and
+	 * put them into global available servers.
+	 *
+	 * @throws URISyntaxException
+	 */
 	private void loadDropServers() throws URISyntaxException {
 		DropServer alicesServer = new DropServer();
 		alicesServer.setUri(new URI(ALICE_DROP_URL));
@@ -89,10 +91,11 @@ public class QblMain {
 		this.resourceActor.writeDropServers(servers.getDropServers().toArray(new DropServer[0]));
 	}
 
-    /**
-     * The application main loop.
-     * @throws InterruptedException
-     */
+	/**
+	 * The application main loop.
+	 *
+	 * @throws InterruptedException
+	 */
 	private void run() throws InterruptedException {
 		dropActorThread.join();
 
@@ -102,26 +105,27 @@ public class QblMain {
 	private ModuleManager moduleManager;
 	private CommandLine commandLine;
 
-    /**
-     * Starts all modules given on the commandline.
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws ClassNotFoundException
-     */
+	/**
+	 * Starts all modules given on the commandline.
+	 *
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws ClassNotFoundException
+	 */
 	private void startModules() throws InstantiationException,
 			IllegalAccessException, ClassNotFoundException {
 
 		String[] moduleStrs = commandLine.getOptionValues(MODULE_OPT);
-		if(moduleStrs == null)
+		if (moduleStrs == null)
 			return;
 		for (String module : moduleStrs) {
 			startModule(module);
 		}
 	}
 
-    /**
-     * Instantiates global DropController and ModuleManager.
-     */
+	/**
+	 * Instantiates global DropController and ModuleManager.
+	 */
 	private QblMain() {
 		Persistence<String> persistence = null;
 		try {
@@ -141,11 +145,12 @@ public class QblMain {
 		moduleManager = new ModuleManager(emitter, resourceActor);
 	}
 
-    /**
-     * Parses commandline arguments.
-     * @param args Which module(s) should be loaded. Usage: "path to jar":"full class name of module"
-     * @return
-     */
+	/**
+	 * Parses commandline arguments.
+	 *
+	 * @param args Which module(s) should be loaded. Usage: "path to jar":"full class name of module"
+	 * @return
+	 */
 	private boolean parse(String... args) {
 		CommandLineParser parser = new GnuParser();
 		try {
@@ -159,13 +164,14 @@ public class QblMain {
 		return true;
 	}
 
-    /**
-     * Uses the module manager to start a module.
-     * @param module The module that gets started.
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws ClassNotFoundException
-     */
+	/**
+	 * Uses the module manager to start a module.
+	 *
+	 * @param module The module that gets started.
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws ClassNotFoundException
+	 */
 	private void startModule(String module) throws InstantiationException,
 			IllegalAccessException, ClassNotFoundException {
 		String[] moduleParts = module.split(":", 2);

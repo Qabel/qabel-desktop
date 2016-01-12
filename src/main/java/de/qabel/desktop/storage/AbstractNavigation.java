@@ -31,9 +31,8 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	private final Set<FileUpdate> updatedFiles = new HashSet<>();
 
 
-
 	AbstractNavigation(DirectoryMetadata dm, QblECKeyPair keyPair, byte[] deviceId,
-	                   StorageReadBackend readBackend, StorageWriteBackend writeBackend) {
+					   StorageReadBackend readBackend, StorageWriteBackend writeBackend) {
 		this.dm = dm;
 		this.keyPair = keyPair;
 		this.deviceId = deviceId;
@@ -67,7 +66,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	public void commit() throws QblStorageException {
 		byte[] version = dm.getVersion();
 		dm.commit();
-		logger.info("Committing version "+ new String(Hex.encodeHex(dm.getVersion()))
+		logger.info("Committing version " + new String(Hex.encodeHex(dm.getVersion()))
 				+ " with device id " + new String(Hex.encodeHex(dm.deviceId)));
 		DirectoryMetadata updatedDM = null;
 		try {
@@ -82,13 +81,13 @@ public abstract class AbstractNavigation implements BoxNavigation {
 			// ignore our local directory metadata
 			// all changes that are not inserted in the new dm are _lost_!
 			dm = updatedDM;
-			for (FileUpdate update: updatedFiles) {
+			for (FileUpdate update : updatedFiles) {
 				handleConflict(update);
 			}
 			dm.commit();
 		}
 		uploadDirectoryMetadata();
-		for (String ref: deleteQueue) {
+		for (String ref : deleteQueue) {
 			writeBackend.delete(ref);
 		}
 		// TODO: make a test fail without these
@@ -228,11 +227,11 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	@Override
 	public void delete(BoxFolder folder) throws QblStorageException {
 		BoxNavigation folderNav = navigate(folder);
-		for (BoxFile file: folderNav.listFiles()) {
+		for (BoxFile file : folderNav.listFiles()) {
 			logger.info("Deleting file " + file.name);
 			folderNav.delete(file);
 		}
-		for (BoxFolder subFolder: folderNav.listFolders()) {
+		for (BoxFolder subFolder : folderNav.listFolders()) {
 			logger.info("Deleting folder " + folder.name);
 			folderNav.delete(subFolder);
 		}

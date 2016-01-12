@@ -1,7 +1,5 @@
 package de.qabel.desktop.exceptions;
 
-import java.sql.SQLException;
-
 public class QblStorageCorruptMetadata extends QblStorageException {
 	public QblStorageCorruptMetadata(Throwable e) {
 		super(e);

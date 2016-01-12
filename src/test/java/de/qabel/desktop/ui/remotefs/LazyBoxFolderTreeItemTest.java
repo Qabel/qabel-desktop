@@ -27,12 +27,12 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 
 		assertEquals("name", nameProperty.get());
 
-		((FakeBoxNavigation)item.getNavigation()).loading = true;
+		((FakeBoxNavigation) item.getNavigation()).loading = true;
 		item.getChildren();
 
 		assertEquals("name (loading)", nameProperty.get());
 
-		((FakeBoxNavigation)item.getNavigation()).loading = false;
+		((FakeBoxNavigation) item.getNavigation()).loading = false;
 		load();
 
 		assertEquals("name", nameProperty.get());
@@ -76,8 +76,8 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 
 	private ObservableList<TreeItem<BoxObject>> load() {
 		ObservableList<TreeItem<BoxObject>> children = item.getChildren();
-		((FakeBoxNavigation)item.getNavigation()).loading = false;
-		while(item.isLoading())
+		((FakeBoxNavigation) item.getNavigation()).loading = false;
+		while (item.isLoading())
 			Thread.yield();
 		return children;
 	}
@@ -121,14 +121,14 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 
 		@Override
 		public List<BoxFile> listFiles() throws QblStorageException {
-			while(loading)
+			while (loading)
 				Thread.yield();
 			return files;
 		}
 
 		@Override
 		public List<BoxFolder> listFolders() throws QblStorageException {
-			while(loading)
+			while (loading)
 				Thread.yield();
 			return folders;
 		}

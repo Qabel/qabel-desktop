@@ -10,9 +10,10 @@ public interface BoxNavigation {
 
 	/**
 	 * Bumps the version and uploads the metadata file
-	 *
+	 * <p/>
 	 * All actions are not guaranteed to be finished before the commit
 	 * method returned.
+	 *
 	 * @throws QblStorageException
 	 */
 	void commit() throws QblStorageException;
@@ -53,6 +54,7 @@ public interface BoxNavigation {
 
 	/**
 	 * Create a list of external shares in the current folder
+	 *
 	 * @return list of external shares
 	 * @throws QblStorageException
 	 */
@@ -60,6 +62,7 @@ public interface BoxNavigation {
 
 	/**
 	 * Upload a new file to the current folder
+	 *
 	 * @param name name of the file, must be unique
 	 * @param file file object that must be readable
 	 * @return the resulting BoxFile object
@@ -69,6 +72,7 @@ public interface BoxNavigation {
 
 	/**
 	 * Overwrite a file in the current folder
+	 *
 	 * @param name name of the file which must already exist
 	 * @param file file object that must be readable
 	 * @return the updated BoxFile object
@@ -78,6 +82,7 @@ public interface BoxNavigation {
 
 	/**
 	 * Create an {@link InputStream} for a {@link BoxFile} in the current folder
+	 *
 	 * @param file file in the current folder
 	 * @return Decrypted stream
 	 * @throws QblStorageException if the download or decryption failed
@@ -87,6 +92,7 @@ public interface BoxNavigation {
 	/**
 	 * Create a subfolder in the current folder. You should commit
 	 * after creating a new subfolder to minimize conflict potential.
+	 *
 	 * @param name name of the folder, must be unique
 	 * @return new folder object
 	 * @throws QblStorageException
@@ -95,6 +101,7 @@ public interface BoxNavigation {
 
 	/**
 	 * Delete a file in the current folder. The block will be deleted when committing
+	 *
 	 * @param file
 	 * @throws QblStorageException if the file does not exist or the deletion failed
 	 */
@@ -102,6 +109,7 @@ public interface BoxNavigation {
 
 	/**
 	 * Delete a subfolder recursively.
+	 *
 	 * @param folder
 	 * @throws QblStorageException
 	 */
@@ -109,6 +117,7 @@ public interface BoxNavigation {
 
 	/**
 	 * Remove a share mount from the current folder
+	 *
 	 * @param external
 	 * @throws QblStorageException
 	 */

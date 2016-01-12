@@ -32,7 +32,7 @@ public class AvatarController extends AbstractController implements Initializabl
 		int avatarIndex = calculateAvatarIndex(alias);
 		if (avatarIndex < 0)
 			avatarIndex = avatarIndex * -1;
-		return avatarIndex%360;
+		return avatarIndex % 360;
 	}
 
 	private String calculateForegroundColor(int hue) {
@@ -44,6 +44,6 @@ public class AvatarController extends AbstractController implements Initializabl
 	}
 
 	private int calculateAvatarIndex(String alias) {
-		return Math.abs(alias.hashCode()) * (int)(Math.PI * 1000);
+		return Math.abs(alias.hashCode()) * (int) (Math.PI * 1000);
 	}
 }

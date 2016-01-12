@@ -9,7 +9,7 @@ public class SomeInjectionClass {
 	SomeDefaultInjecttionClass anotherClass;
 
 	@Inject
-	public  SomeInjectionClass(SomeClass someClass, SomeDefaultInjecttionClass anotherClass) {
+	public SomeInjectionClass(SomeClass someClass, SomeDefaultInjecttionClass anotherClass) {
 		this.someClass = someClass;
 		this.anotherClass = anotherClass;
 	}

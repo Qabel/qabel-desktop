@@ -1,9 +1,11 @@
 package de.qabel.desktop.storage;
 
-public class BoxObject implements Comparable<BoxObject>  {
+public class BoxObject implements Comparable<BoxObject> {
 	public String name;
 
-	public BoxObject(String name) {this.name = name;}
+	public BoxObject(String name) {
+		this.name = name;
+	}
 
 	@Override
 	public int compareTo(BoxObject another) {

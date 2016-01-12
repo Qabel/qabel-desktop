@@ -15,7 +15,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.Pane;
 
 import javax.inject.Inject;
@@ -89,7 +91,7 @@ public class AccountingItemController extends AbstractController implements Init
 	}
 
 	private void updateAvatar() {
-		new AvatarView(e->identity.getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
+		new AvatarView(e -> identity.getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
 	}
 
 	private void updateSelection() {

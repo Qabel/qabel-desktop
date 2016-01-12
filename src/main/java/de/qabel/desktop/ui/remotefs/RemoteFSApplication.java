@@ -12,57 +12,57 @@ import java.net.URL;
 
 public class RemoteFSApplication extends Application {
 
-    private static final String TITLE = "Qabel Desktop Client";
+	private static final String TITLE = "Qabel Desktop Client";
 
-    public static void main(String[] args) throws Exception {
-        Application.launch(RemoteFSApplication.class, args);
-    }
+	public static void main(String[] args) throws Exception {
+		Application.launch(RemoteFSApplication.class, args);
+	}
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
+	@Override
+	public void start(Stage primaryStage) throws Exception {
 
-        primaryStage.setTitle(TITLE);
+		primaryStage.setTitle(TITLE);
 
-        if (SystemTray.isSupported()) {
-            Platform.setImplicitExit(false);
-            setTrayIcon(primaryStage);
-        }
+		if (SystemTray.isSupported()) {
+			Platform.setImplicitExit(false);
+			setTrayIcon(primaryStage);
+		}
 
-        new RemoteFSView().getViewAsync(parent -> {
-            final Scene scene = new Scene(parent, 600, 600);
-            primaryStage.setScene(scene);
-        });
-        primaryStage.show();
-    }
+		new RemoteFSView().getViewAsync(parent -> {
+			final Scene scene = new Scene(parent, 600, 600);
+			primaryStage.setScene(scene);
+		});
+		primaryStage.show();
+	}
 
-    private void setTrayIcon(Stage primaryStage) {
+	private void setTrayIcon(Stage primaryStage) {
 
-        SystemTray sTray = SystemTray.getSystemTray();
+		SystemTray sTray = SystemTray.getSystemTray();
 
-        ActionListener listenerShow = e -> Platform.runLater(() -> primaryStage.show());
-        ActionListener listenerClose = e -> System.exit(0);
-        primaryStage.setOnCloseRequest(arg0 -> primaryStage.hide());
+		ActionListener listenerShow = e -> Platform.runLater(() -> primaryStage.show());
+		ActionListener listenerClose = e -> System.exit(0);
+		primaryStage.setOnCloseRequest(arg0 -> primaryStage.hide());
 
-        PopupMenu popup = new PopupMenu();
-        MenuItem showItem = new MenuItem("Öffnen");
-        MenuItem exitItem = new MenuItem("Beenden");
+		PopupMenu popup = new PopupMenu();
+		MenuItem showItem = new MenuItem("Öffnen");
+		MenuItem exitItem = new MenuItem("Beenden");
 
-        showItem.addActionListener(listenerShow);
-        exitItem.addActionListener(listenerClose);
+		showItem.addActionListener(listenerShow);
+		exitItem.addActionListener(listenerClose);
 
-        popup.add(showItem);
-        popup.add(exitItem);
+		popup.add(showItem);
+		popup.add(exitItem);
 
-        URL url = System.class.getResource("/logo.png");
-        Image img = Toolkit.getDefaultToolkit().getImage(url);
-        TrayIcon icon = new TrayIcon(img, "Qabel", popup);
-        icon.setImageAutoSize(true);
+		URL url = System.class.getResource("/logo.png");
+		Image img = Toolkit.getDefaultToolkit().getImage(url);
+		TrayIcon icon = new TrayIcon(img, "Qabel", popup);
+		icon.setImageAutoSize(true);
 
-        try {
-            sTray.add(icon);
-        } catch (AWTException e) {
-            System.err.println(e);
-        }
+		try {
+			sTray.add(icon);
+		} catch (AWTException e) {
+			System.err.println(e);
+		}
 
-    }
+	}
 }

@@ -7,8 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongycastle.crypto.params.KeyParameter;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +19,7 @@ public class FolderNavigation extends AbstractNavigation {
 	private final byte[] key;
 
 	FolderNavigation(DirectoryMetadata dm, QblECKeyPair keyPair, byte[] key, byte[] deviceId,
-	                 StorageReadBackend readBackend, StorageWriteBackend writeBackend) {
+					 StorageReadBackend readBackend, StorageWriteBackend writeBackend) {
 		super(dm, keyPair, deviceId, readBackend, writeBackend);
 		this.key = key;
 	}
