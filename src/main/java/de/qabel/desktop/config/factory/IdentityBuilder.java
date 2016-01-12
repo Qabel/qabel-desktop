@@ -13,7 +13,7 @@ public class IdentityBuilder {
 
 	private String alias;
 	private QblECKeyPair keyPair;
-	private List<DropURL> dropUrls;
+	private List<DropURL> dropUrls = new LinkedList<>();
 
 	@Inject
 	public IdentityBuilder(DropUrlGenerator dropUrlGenerator) {
@@ -26,10 +26,10 @@ public class IdentityBuilder {
 	}
 
 	public IdentityBuilder dropAt(DropURL dropUrl) {
-		dropUrls = new LinkedList<>();
 		dropUrls.add(dropUrl);
 		return this;
 	}
+
 
 	public IdentityBuilder encryptWith(QblECKeyPair keyPair) {
 		this.keyPair = keyPair;
