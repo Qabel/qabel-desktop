@@ -21,11 +21,13 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import java.net.URISyntaxException;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class DesktopClient extends Application {
@@ -54,6 +56,8 @@ public class DesktopClient extends Application {
 		} else {
 			scene = new Scene(new LayoutView().getView(), 800, 600);
 		}
+
+		primaryStage.getIcons().setAll(new javafx.scene.image.Image(getClass().getResourceAsStream("/logo-invert_small.png")));
 
 		primaryStage.setScene(scene);
 

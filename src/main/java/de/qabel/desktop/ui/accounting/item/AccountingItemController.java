@@ -102,6 +102,7 @@ public class AccountingItemController extends AbstractController implements Init
 
 	public void edit(ActionEvent actionEvent) {
 		dialog = new TextInputDialog(identity.getAlias());
+		dialog.getEditor().setText("asdasd");
 		dialog.setHeaderText(null);
 		dialog.setTitle("Change Alias");
 		dialog.setContentText("Please specify an alias for your new Identity");

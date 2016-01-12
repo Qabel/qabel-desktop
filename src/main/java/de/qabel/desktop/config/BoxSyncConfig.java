@@ -7,23 +7,17 @@ import java.nio.file.Path;
 import java.util.Observer;
 
 public interface BoxSyncConfig {
-	void addObserver(Observer o);
-
-	void setLocalPath(Path localPath);
-
+	String getName();
+	Identity getIdentity();
+	Account getAccount();
 	Path getLocalPath();
-
 	Path getRemotePath();
 
+	void setName(String name);
+	void setLocalPath(Path localPath);
 	void setRemotePath(Path remotePath);
-
 	void pause();
-
 	void unpause();
-
 	boolean isPaused();
-
-	Identity getIdentity();
-
-	Account getAccount();
+	void addObserver(Observer o);
 }

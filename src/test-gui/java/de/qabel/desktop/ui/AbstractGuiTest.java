@@ -1,7 +1,6 @@
 package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
-import com.sun.javafx.application.PlatformImpl;
 import com.sun.javafx.robot.impl.BaseFXRobot;
 import javafx.application.Platform;
 import javafx.scene.Node;

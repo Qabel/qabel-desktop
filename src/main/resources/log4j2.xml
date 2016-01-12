@@ -12,7 +12,11 @@
     </Console>
   </Appenders>
   <Loggers>
-    <logger name="de.qabel.desktop" level="ERROR" includeLocation="true ">
+    <logger name="de.qabel.desktop" includeLocation="true ">
+      <level>WARN</level>
+      <AppenderRef ref="Console"/>
+    </logger>
+    <logger name="org.apache.http" includeLocation="true ">
       <level>ERROR</level>
       <AppenderRef ref="Console"/>
     </logger>
