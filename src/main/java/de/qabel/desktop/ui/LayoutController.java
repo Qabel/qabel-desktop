@@ -5,10 +5,13 @@ import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.ui.accounting.AccountingView;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
+import de.qabel.desktop.ui.remotefs.RemoteFSView;
+import de.qabel.desktop.ui.sync.SyncView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -27,7 +30,7 @@ public class LayoutController extends AbstractController implements Initializabl
 	private VBox navi;
 
 	@FXML
-	private VBox content;
+	private VBox scrollContent;
 
 	@FXML
 	private BorderPane window;
@@ -38,6 +41,9 @@ public class LayoutController extends AbstractController implements Initializabl
 	@FXML
 	private Pane avatarContainer;
 
+	@FXML
+	private ScrollPane scroll;
+
 	@Inject
 	private ClientConfiguration clientConfiguration;
 
@@ -46,12 +52,16 @@ public class LayoutController extends AbstractController implements Initializabl
 		navi.getChildren().clear();
 		AccountingView accountingView = new AccountingView();
 		navi.getChildren().add(createNavItem("Identitäten", accountingView));
-		navi.getChildren().add(createNavItem("Browse", new AccountingView()));
+		navi.getChildren().add(createNavItem("Browse", new RemoteFSView()));
+		navi.getChildren().add(createNavItem("Sync", new SyncView()));
 
-		content.setFillWidth(true);
+		scrollContent.setFillWidth(true);
+		scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+		scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
 
 		if (clientConfiguration.getSelectedIdentity() == null) {
-			accountingView.getView(content.getChildren()::setAll);
+			accountingView.getView(scrollContent.getChildren()::setAll);
 		}
 
 		updateIdentity();
@@ -74,7 +84,7 @@ public class LayoutController extends AbstractController implements Initializabl
 		HBox naviItem = new HBox(button);
 		button.setOnAction(e -> {
 			try {
-				view.getView(content.getChildren()::setAll);
+				view.getView(scrollContent.getChildren()::setAll);
 				setActiveNavItem(naviItem);
 			} catch (Exception exception) {
 				alert(exception.getMessage(), exception);

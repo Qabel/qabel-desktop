@@ -9,7 +9,10 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -22,9 +25,13 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> {
 	private boolean loading;
 	private StringProperty nameProperty;
 	private boolean isLeaf;
+	private Image fileImg = new Image(getClass().getResourceAsStream("/file.png"));
+	private Image folderImg = new Image(getClass().getResourceAsStream("/folder.png"));
 
 	public LazyBoxFolderTreeItem(BoxFolder folder, BoxNavigation navigation) {
 		super(folder);
+		super.setGraphic(new ImageView(folderImg));
+
 		this.folder = folder;
 		this.navigation = navigation;
 		this.nameProperty = new SimpleStringProperty(folder.name);
@@ -66,7 +73,7 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> {
 		}
 
 		for (BoxFile file : navigation.listFiles()) {
-			children.add(new TreeItem<>(file));
+			children.add(new TreeItem<>(file, new ImageView(fileImg)));
 		}
 		return children;
 	}
@@ -78,5 +85,9 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> {
 
 	public StringProperty getNameProperty() {
 		return nameProperty;
+	}
+
+	public void setUpToDate(Boolean upToDate){
+		this.upToDate = upToDate;
 	}
 }

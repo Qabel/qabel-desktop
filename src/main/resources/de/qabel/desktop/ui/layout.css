@@ -13,7 +13,7 @@
     -fx-pref-width: 220px;
     -fx-background-image: url('/border.png');
     -fx-background-repeat: repeat-y;
-    -fx-background-position: right;
+    -fx-background-position: top right;
 }
 
 .navi {
@@ -56,12 +56,16 @@
     -fx-background-color: white;
 }
 
-.content {
+.scroll-pane {
+    -fx-background-color: white!important;
+    -fx-padding: 0;
+}
+
+.scrollContent {
     -fx-background-color: white;
     -fx-background-image: url("/logo.png");
     -fx-background-size: 50px;
     -fx-background-position: bottom right;
     -fx-background-repeat: no-repeat;
-    -fx-background-insets: 20px 20px 20px 20px;
     -fx-padding: 10px 10px 10px 10px;
 }

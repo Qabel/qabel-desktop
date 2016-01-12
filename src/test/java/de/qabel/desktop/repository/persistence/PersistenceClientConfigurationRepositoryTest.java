@@ -3,13 +3,18 @@ package de.qabel.desktop.repository.persistence;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.Persistence;
+import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import de.qabel.desktop.config.DefaultClientConfiguration;
 import de.qabel.desktop.config.factory.ClientConfigurationFactory;
 import de.qabel.desktop.repository.AccountRepository;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import org.junit.Test;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.Assert.*;
 
@@ -77,5 +82,30 @@ public class PersistenceClientConfigurationRepositoryTest extends AbstractPersis
 		config = repo.load();
 		assertSame(identity, config.getSelectedIdentity());
 		assertSame(account, config.getAccount());
+	}
+
+	@Test
+	public void persistsBoxSyncConfig() throws Exception {
+		ClientConfiguration config = new ClientConfigurationFactory().createClientConfiguration();
+		Account account = new Account("a", "b", "c");
+		Identity identity = new Identity("alias", null, null);
+
+		identityRepo.save(identity);
+		accountRepo.save(account);
+
+		Path localPath = Paths.get("some/where");
+		Path remotePath = Paths.get("over/the/rainbow");
+		config.getBoxSyncConfigs().add(new DefaultBoxSyncConfig(localPath, remotePath, identity, account));
+
+		repo.save(config);
+		config = repo.load();
+
+		assertEquals(1, config.getBoxSyncConfigs().size());
+		BoxSyncConfig boxConfig = config.getBoxSyncConfigs().get(0);
+
+		assertSame(identity, boxConfig.getIdentity());
+		assertSame(account, boxConfig.getAccount());
+		assertEquals("some/where", boxConfig.getLocalPath().toString());
+		assertEquals("over/the/rainbow", boxConfig.getRemotePath().toString());
 	}
 }
