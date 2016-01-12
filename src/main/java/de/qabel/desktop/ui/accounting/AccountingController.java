@@ -1,19 +1,12 @@
 package de.qabel.desktop.ui.accounting;
 
-import com.amazonaws.util.json.JSONException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import de.qabel.core.config.Identity;
-import de.qabel.core.drop.DropURL;
 import de.qabel.desktop.config.ClientConfiguration;
-import de.qabel.desktop.config.factory.IdentityBuilder;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.PersistenceException;
-import de.qabel.desktop.storage.BoxFile;
-import de.qabel.desktop.storage.BoxFolder;
-import de.qabel.desktop.storage.BoxNavigation;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.item.AccountingItemView;
 import javafx.event.ActionEvent;
@@ -23,7 +16,6 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import org.apache.commons.io.FileUtils;
 
 import javax.inject.Inject;
 import java.io.*;
