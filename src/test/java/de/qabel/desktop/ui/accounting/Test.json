@@ -1,0 +1,21 @@
+{
+  "alias": "My Name",
+  "keys": {
+    "curve25519": {},
+    "privateKey": [],
+    "pubKey": {
+      "pubKey": []
+    }
+  },
+  "dropUrls": [
+    {
+      "uri": "http://localhost:5000/QiPyg0pVUYKDGcv0TJdwmJ5fZdQ41kVXMd0xuzsC7Ck"
+    }
+  ],
+  "moduleSettings": [],
+  "id": 0,
+  "created": 1452606411699,
+  "updated": 0,
+  "deleted": 0,
+  "persistenceID": "280aa9ca-ce20-4d40-9b86-84b931ac5fe1"
+}

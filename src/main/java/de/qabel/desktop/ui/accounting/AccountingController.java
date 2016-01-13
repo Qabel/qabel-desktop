@@ -38,7 +38,7 @@ public class AccountingController extends AbstractController implements Initiali
 	private IdentityRepository identityRepository;
 
 	@Inject
-	protected IdentityBuilderFactory identityBuilderFactory;
+	private IdentityBuilderFactory identityBuilderFactory;
 
 	@Inject
 	private ClientConfiguration clientConfiguration;
@@ -97,12 +97,16 @@ public class AccountingController extends AbstractController implements Initiali
 		chooser.setTitle("Choose Download Folder");
 		File file = chooser.showOpenDialog(identityList.getScene().getWindow());
 		try {
-			String content = readFile(file);
-			Identity i = gson.fromJson(content, Identity.class);
-			identityRepository.save(i);
+			saveIdentity(file);
 		} catch (IOException | PersistenceException e) {
 			e.printStackTrace();
 		}
+	}
+
+	void saveIdentity(File file) throws IOException, PersistenceException {
+		String content = readFile(file);
+		Identity i = gson.fromJson(content, Identity.class);
+		identityRepository.save(i);
 	}
 
 	@FXML
@@ -111,22 +115,22 @@ public class AccountingController extends AbstractController implements Initiali
 		chooser.setTitle("Choose Download Folder");
 		File dir = chooser.showDialog(identityList.getScene().getWindow());
 		Identity i = clientConfiguration.getSelectedIdentity();
-		String json = gson.toJson(i);
 		try {
-			saveFile(json,i.getAlias(), dir);
+			saveFile(i, dir);
 			loadIdentities();
 		} catch (IOException | QblStorageException e) {
 			e.printStackTrace();
 		}
 	}
 
-	void saveFile(String json,String name, File dir) throws IOException, QblStorageException {
+	void saveFile(Identity i, File dir) throws IOException, QblStorageException {
 
+		String json = gson.toJson(i);
 		InputStream stream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
 		byte[] buffer = new byte[stream.available()];
 		stream.read(buffer);
 
-		File targetFile = new File(dir.getPath() + "/" + name + ".json");
+		File targetFile = new File(dir.getPath() + "/" + i.getAlias() + ".json");
 		OutputStream outStream = new FileOutputStream(targetFile);
 		outStream.write(buffer);
 	}
@@ -143,8 +147,10 @@ public class AccountingController extends AbstractController implements Initiali
 
 			while (line != null) {
 				sb.append(line);
-				sb.append("\n");
 				line = br.readLine();
+				if(line != null){
+					sb.append("\n");
+				}
 			}
 			return sb.toString();
 		} finally {

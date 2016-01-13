@@ -31,6 +31,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 	public static final String SUB_FILE = "tmp1.txt";
 	public static final String TMP_DIR = "tmp";
 	public static final String TEST_TMP_DIR = TMP_DIR + "/" + TEST_FOLDER;
+
 	private BoxNavigation nav;
 	private LocalWriteBackend localWrite;
 	private RemoteFSController controller = new RemoteFSController();
