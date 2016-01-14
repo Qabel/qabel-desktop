@@ -26,7 +26,6 @@ public class AccountingControllerTest extends AbstractControllerTest {
 	private static final String TEST_ALIAS = "TestAlias";
 	private static final String TEST_JSON = "/Test.json";
 
-	private String json;
 	AccountingController controller;
 	Identity identity;
 
@@ -71,6 +70,13 @@ public class AccountingControllerTest extends AbstractControllerTest {
 		controller.saveFile(identity, testDir);
 		File f = new File(TEST_FOLDER + "/" + TEST_ALIAS + ".json");
 		assertEquals(f.getName(), TEST_ALIAS+ ".json");
+
+		String contentNew = controller.readFile(f);
+
+		String contentFixture = controller.readFile(new File(System.class.getResource(TEST_JSON).toURI()));
+		assertEquals(f.getName(), TEST_ALIAS + ".json");
+		System.out.print(contentNew);
+		assertEquals(contentNew.substring(0,30), contentFixture.substring(0,30));
 	}
 
 	@Test
@@ -91,7 +97,9 @@ public class AccountingControllerTest extends AbstractControllerTest {
 		controller.saveFile(identity, testDir);
 		File f = new File(TEST_FOLDER + "/" + TEST_ALIAS + ".json");
 		f.createNewFile();
+
 		controller.saveIdentity(f);
+
 		List<Identity> identities = identityRepository.findAll();
 		Identity newIdentity = identities.get(0);
 		assertEquals(identity.getAlias(), newIdentity.getAlias());
