@@ -13,11 +13,14 @@ Desktop Frontend of Qabel
 * the submodules include two required **servers**: [Qabel Drop Server](https://github.com/Qabel/qabel-drop/blob/master/README.md) and [Qabel Accounting Server](https://github.com/Qabel/qabel-drop/blob/master/README.md) to work. They will be started automatically for you (`start-server.sh`) but have some additional requirements like **postgresql**:
  * install postgresql-server (`apt-get install postgresql` for ubuntu)
  * connect to your postgresql server using a proper client (like psql)
- * run `CREATE DATABASE 'qabel_drop'`, `CREATE USER qabel WITH PASSWORD 'qabel_test'` and `GRANT ALL PRIVILEGES ON DATABASE qabel_drop TO qabel` to create the database, the user and give access permissions
+ * to create the database, the user and give access permissions, run
+    * `CREATE DATABASE 'qabel_drop'`
+    * `CREATE USER qabel WITH PASSWORD 'qabel_test'`
+    * `GRANT ALL PRIVILEGES ON DATABASE qabel_drop TO qabel`
  * for python integration with postgresql, you will need the postgresql-devel libs (`apt-get install libpq-dev` for ubuntu)
 * then, you try out the whole build by running the `build.sh`. It will
  * start both the drop-server and the accounting-server with the script `start-servers.sh`
-  * which installs the servers python dependencies in two virtualenvs and starts both servers 
+   * which installs the servers python dependencies in two virtualenvs and starts both servers 
  * run the gradle-based build with `./gradlew build`
  * stop the started servers with the `stop-servers.sh`
 
