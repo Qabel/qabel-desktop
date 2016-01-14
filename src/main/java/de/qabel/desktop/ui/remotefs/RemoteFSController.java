@@ -159,7 +159,8 @@ public class RemoteFSController extends AbstractController implements Initializa
 	@FXML
 	protected void handleUploadFileButtonAction(ActionEvent event) {
 		FileChooser chooser = new FileChooser();
-		chooser.setTitle(resourceBundel.getString("chooseFile"));
+		String title = resourceBundel.getString("chooseFile");
+		chooser.setTitle(title);
 		List<File> list = chooser.showOpenMultipleDialog(treeTable.getScene().getWindow());
 		for (File file : list) {
 			BoxFolder boxFolder = null;
@@ -179,7 +180,8 @@ public class RemoteFSController extends AbstractController implements Initializa
 	@FXML
 	protected void handleUploadFolderButtonAction(ActionEvent event) throws QblStorageException {
 		DirectoryChooser chooser = new DirectoryChooser();
-		chooser.setTitle(resourceBundel.getString("chooseFolder"));
+		String title = resourceBundel.getString("chooseFolder");
+		chooser.setTitle(title);
 		File directory = chooser.showDialog(treeTable.getScene().getWindow());
 		chooseUploadDirectory(directory);
 		refreshTreeItem();
