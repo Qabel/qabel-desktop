@@ -97,13 +97,13 @@ public class AccountingController extends AbstractController implements Initiali
 		chooser.setTitle("Choose Download Folder");
 		File file = chooser.showOpenDialog(identityList.getScene().getWindow());
 		try {
-			saveIdentity(file);
+			importIdentity(file);
 		} catch (IOException | PersistenceException e) {
 			e.printStackTrace();
 		}
 	}
 
-	void saveIdentity(File file) throws IOException, PersistenceException {
+	void importIdentity(File file) throws IOException, PersistenceException {
 		String content = readFile(file);
 		Identity i = gson.fromJson(content, Identity.class);
 		identityRepository.save(i);
@@ -116,14 +116,14 @@ public class AccountingController extends AbstractController implements Initiali
 		File dir = chooser.showDialog(identityList.getScene().getWindow());
 		Identity i = clientConfiguration.getSelectedIdentity();
 		try {
-			saveFile(i, dir);
+			exportIdentity(i, dir);
 			loadIdentities();
 		} catch (IOException | QblStorageException e) {
 			e.printStackTrace();
 		}
 	}
 
-	void saveFile(Identity i, File dir) throws IOException, QblStorageException {
+	void exportIdentity(Identity i, File dir) throws IOException, QblStorageException {
 
 		String json = gson.toJson(i);
 		InputStream stream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));

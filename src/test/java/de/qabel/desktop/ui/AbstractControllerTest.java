@@ -28,6 +28,7 @@ public class AbstractControllerTest {
 	protected Map<String, Object> diContainer = new HashMap<>();
 	protected IdentityRepository identityRepository = new InMemoryIdentityRepository();
 	protected DefaultClientConfiguration clientConfiguration;
+	protected IdentityBuilderFactory identityBuilderFactory;
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -59,7 +60,8 @@ public class AbstractControllerTest {
 		clientConfiguration = new DefaultClientConfiguration();
 		diContainer.put("clientConfiguration", clientConfiguration);
 		diContainer.put("dropUrlGenerator", new DropUrlGenerator("http://localhost:5000"));
-		diContainer.put("identityBuilderFactory", new IdentityBuilderFactory((DropUrlGenerator) diContainer.get("dropUrlGenerator")));
+		identityBuilderFactory = new IdentityBuilderFactory((DropUrlGenerator) diContainer.get("dropUrlGenerator"));
+		diContainer.put("identityBuilderFactory",identityBuilderFactory);
 		diContainer.put("account", new Account("a", "b", "c"));
 		diContainer.put("identityRepository", identityRepository);
 		Injector.setConfigurationSource(diContainer::get);

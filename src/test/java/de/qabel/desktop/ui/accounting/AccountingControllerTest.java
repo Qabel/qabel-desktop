@@ -1,6 +1,9 @@
 package de.qabel.desktop.ui.accounting;
 
 import de.qabel.core.config.Identity;
+import de.qabel.core.exceptions.QblDropInvalidURL;
+import de.qabel.desktop.config.factory.IdentityBuilder;
+import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
@@ -67,7 +70,7 @@ public class AccountingControllerTest extends AbstractControllerTest {
 	public void exportTest() throws IOException, QblStorageException, URISyntaxException {
 		File testDir = setupImportAndExport();
 		identity = new Identity(TEST_ALIAS, null, null);
-		controller.saveFile(identity, testDir);
+		controller.exportIdentity(identity, testDir);
 		File f = new File(TEST_FOLDER + "/" + TEST_ALIAS + ".json");
 		assertEquals(f.getName(), TEST_ALIAS+ ".json");
 
@@ -82,7 +85,7 @@ public class AccountingControllerTest extends AbstractControllerTest {
 	@Test
 	public void importTest() throws IOException, QblStorageException, PersistenceException, EntityNotFoundExcepion, URISyntaxException {
 		setupImportAndExport();
-		controller.saveIdentity(new File(System.class.getResource(TEST_JSON).toURI()));
+		controller.importIdentity(new File(System.class.getResource(TEST_JSON).toURI()));
 		List<Identity> identities = identityRepository.findAll();
 
 		assertEquals(1, identities.size());
@@ -91,14 +94,13 @@ public class AccountingControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void validateSchemaTest() throws URISyntaxException, IOException, QblStorageException, PersistenceException, EntityNotFoundExcepion {
+	public void validateSchemaTest() throws URISyntaxException, IOException, QblStorageException, PersistenceException, EntityNotFoundExcepion, QblDropInvalidURL {
 		File testDir = setupImportAndExport();
-		identity = new Identity(TEST_ALIAS, null, null);
-		controller.saveFile(identity, testDir);
-		File f = new File(TEST_FOLDER + "/" + TEST_ALIAS + ".json");
-		f.createNewFile();
+		Identity identity = identityBuilderFactory.factory().build();
+		controller.exportIdentity(identity, testDir);
+		File f = new File(TEST_FOLDER + "/" + identity.getAlias() + ".json");
 
-		controller.saveIdentity(f);
+		controller.importIdentity(f);
 
 		List<Identity> identities = identityRepository.findAll();
 		Identity newIdentity = identities.get(0);
