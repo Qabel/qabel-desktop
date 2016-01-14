@@ -29,7 +29,9 @@ import java.awt.event.MouseEvent;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 
 public class DesktopClient extends Application {
@@ -42,6 +44,7 @@ public class DesktopClient extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+
 		setUserAgentStylesheet(STYLESHEET_MODENA);
 
 		final Map<String, Object> customProperties = new HashMap<>();

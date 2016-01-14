@@ -1,10 +1,14 @@
 package de.qabel.desktop.ui.remotefs;
 
+import de.qabel.core.config.Account;
+import de.qabel.core.config.Identity;
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
 import de.qabel.desktop.ui.AbstractControllerTest;
+import de.qabel.desktop.ui.accounting.AccountingController;
+import de.qabel.desktop.ui.accounting.AccountingView;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeItem;
@@ -18,6 +22,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -42,6 +47,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 
 	@Before
 	public void setUp() throws Exception {
+		super.setUp();
 		file = File.createTempFile("File2", ".txt", new File(System.getProperty("java.io.tmpdir")));
 		CryptoUtils utils = new CryptoUtils();
 		byte[] deviceID = utils.getRandomBytes(16);
@@ -97,6 +103,19 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 			Thread.yield();
 		}
 		return children;
+	}
+
+
+	@Test
+	public void injectlTest() {
+		Locale.setDefault(new Locale("en", "EN"));
+		RemoteFSView view = new RemoteFSView();
+		Identity i = new Identity("test", null, new QblECKeyPair());
+		clientConfiguration.selectIdentity(i);
+		clientConfiguration.setAccount(new Account("Provider","user","auth"));
+		controller = (RemoteFSController) view.getPresenter();
+		assertThat(controller.getRessource().getLocale().getCountry(), is("EN"));
+		assertThat(controller.getRessource().getLocale().getLanguage(), is("en"));
 	}
 
 	@Test

@@ -2,15 +2,30 @@ package com.airhacks.afterburner.views;
 
 import javafx.scene.Parent;
 
+import java.io.IOException;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.function.Function;
 
-public abstract class QabelFXMLView extends FXMLView {
+public class QabelFXMLView extends FXMLView {
+
+
 	public QabelFXMLView() {
 		super();
+		this.bundle = ResourceBundle.getBundle("ui", calculateLocale(), new UTF8Converter());
 	}
 
 	public QabelFXMLView(Function<String, Object> injectionContext) {
 		super(injectionContext);
+		this.bundle = ResourceBundle.getBundle("ui", calculateLocale(), new UTF8Converter());
+	}
+
+	private Locale calculateLocale() {
+		if(Locale.getDefault().getLanguage().equals("de")){
+			return new Locale("de", "DE");
+		} else {
+			return new Locale("en", "EN");
+		}
 	}
 
 	@Override
@@ -26,4 +41,5 @@ public abstract class QabelFXMLView extends FXMLView {
 	protected void addCustomCss(Parent view) {
 
 	}
+
 }
