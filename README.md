@@ -21,6 +21,6 @@ Desktop Frontend of Qabel
 
 travis uses the build.sh. it starts the required servers, runs the tests and stops the servers afterwards.
 
-## running Qabel Desktop (under Mac OS)
+## running Qabel Desktop (on Mac OS)
 
 A simple `./gradlew run` does not work. Use `./gradlew distZip` instead, unzip it and copy the curve library file (e.g. `qabel-core/build/binaries/curve25519SharedLibrary/osx_amd64/libcurve25519.dylib`) into the libs folder of the unzipped dist file prior to running the application.
