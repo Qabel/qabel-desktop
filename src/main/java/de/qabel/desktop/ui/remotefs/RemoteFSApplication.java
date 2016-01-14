@@ -21,6 +21,8 @@ public class RemoteFSApplication extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
+
+
 		primaryStage.setTitle(TITLE);
 
 		if (SystemTray.isSupported()) {
