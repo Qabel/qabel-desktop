@@ -93,4 +93,15 @@ public class SyncSetupControllerTest extends AbstractControllerTest {
 		assertSame(account, config.getAccount());
 		waitUntil(() -> !stage[0].isShowing());
 	}
+
+	@Test
+	public void startButtonIsEnabledWhenValidationFails() {
+		assertFalse(controller.start.isDisabled());
+	}
+
+	@Test
+	public void startButtonIsDisabledWhenValidationFails() {
+		controller.setName("");
+		assertTrue(controller.start.isDisabled());
+	}
 }

@@ -14,6 +14,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -36,6 +37,9 @@ public class SyncSetupController extends AbstractController implements Initializ
 	@FXML
 	TextField identity;
 
+	@FXML
+	Button start;
+
 	@Inject
 	private ClientConfiguration clientConfiguration;
 
@@ -53,10 +57,11 @@ public class SyncSetupController extends AbstractController implements Initializ
 
 
 		BooleanProperty nameValid = new SimpleBooleanProperty();
-		nameValid.bind(getNameValidityCondition());
 		BooleanProperty localPathValid = new SimpleBooleanProperty();
-		localPathValid.bind(getLocalPathValidityCondition());
 		BooleanProperty remotePathValid = new SimpleBooleanProperty();
+
+		nameValid.bind(getNameValidityCondition());
+		localPathValid.bind(getLocalPathValidityCondition());
 		remotePathValid.bind(getRemotePathValidityCondition());
 
 		validProperty.bind(
@@ -64,6 +69,8 @@ public class SyncSetupController extends AbstractController implements Initializ
 				.and(localPathValid)
 				.and(remotePathValid)
 		);
+
+		start.disableProperty().bind(validProperty.not());
 
 		nameValid.addListener(createErrorStyleAttacher(name));
 		localPathValid.addListener(createErrorStyleAttacher(localPath));

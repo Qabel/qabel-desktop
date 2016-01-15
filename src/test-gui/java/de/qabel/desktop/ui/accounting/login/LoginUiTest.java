@@ -12,6 +12,7 @@ public class LoginUiTest extends AbstractGuiTest<LoginController> {
 
 	@Test
 	public void showsFailureOnInvalidCredentials() {
+		clickOn("#user");
 		runLaterAndWait(() -> controller.user.clear());
 		clickOn("#user").write("invalid user");
 		clickOn("#loginButton");

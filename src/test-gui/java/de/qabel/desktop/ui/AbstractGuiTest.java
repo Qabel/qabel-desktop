@@ -16,6 +16,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 	protected T controller;
 	protected Stage stage;
 	protected Scene scene;
+	private BaseFXRobot baseFXRobot;
 
 	@Override
 	public void setUp() throws Exception {
@@ -42,7 +43,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 					robot.target(stage);
 				}
 		);
-		BaseFXRobot baseFXRobot = new BaseFXRobot(scene);
+		baseFXRobot = new BaseFXRobot(scene);
 		baseFXRobot.waitForIdle();
 		Node sceneNode = robot.rootNode(scene);
 		waitUntil(() -> {
@@ -70,6 +71,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 	}
 
 	protected FxRobot clickOn(String query) {
+		baseFXRobot.waitForIdle();
 		Node node = getFirstNode(query);
 		double x = -1;
 		double y = -1;
