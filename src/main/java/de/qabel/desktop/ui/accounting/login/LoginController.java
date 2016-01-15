@@ -93,15 +93,11 @@ public class LoginController extends AbstractController implements Initializable
 				http.login();
 				http.updateProfile();
 				config.setAccount(account);
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-			} catch (MalformedURLException e) {
+			} catch (URISyntaxException | IOException e) {
 				e.printStackTrace();
 			} catch (QblInvalidCredentials qblInvalidCredentials) {
 				qblInvalidCredentials.printStackTrace();
 				Platform.runLater(() -> toFailureState(qblInvalidCredentials.getMessage()));
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 			Platform.runLater(() -> buttonBar.setVisible(true));
 		}).start();
