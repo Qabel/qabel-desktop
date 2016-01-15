@@ -32,7 +32,7 @@ public class AccountingController extends AbstractController implements Initiali
 	List<AccountingItemView> itemViews = new LinkedList<>();
 
 	TextInputDialog dialog;
-	ResourceBundle resourceBundel;
+	ResourceBundle resourceBundle;
 
 	@Inject
 	private IdentityRepository identityRepository;
@@ -46,7 +46,7 @@ public class AccountingController extends AbstractController implements Initiali
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		loadIdentities();
-		this.resourceBundel = resources;
+		this.resourceBundle = resources;
 	}
 
 	private void loadIdentities() {
@@ -71,10 +71,10 @@ public class AccountingController extends AbstractController implements Initiali
 	}
 
 	public void addIdentity() {
-		dialog = new TextInputDialog(resourceBundel.getString("newIdentity"));
+		dialog = new TextInputDialog(resourceBundle.getString("newIdentity"));
 		dialog.setHeaderText(null);
-		dialog.setTitle(resourceBundel.getString("newIdentity"));
-		dialog.setContentText(resourceBundel.getString("newIdentity"));
+		dialog.setTitle(resourceBundle.getString("newIdentity"));
+		dialog.setContentText(resourceBundle.getString("newIdentity"));
 		Optional<String> result = dialog.showAndWait();
 		result.ifPresent(this::addIdentityWithAlias);
 	}
@@ -84,7 +84,7 @@ public class AccountingController extends AbstractController implements Initiali
 		try {
 			identityRepository.save(identity);
 		} catch (PersistenceException e) {
-			alert(resourceBundel.getString("saveIdentityFail"), e);
+			alert(resourceBundle.getString("saveIdentityFail"), e);
 		}
 		loadIdentities();
 		if (clientConfiguration.getSelectedIdentity() == null) {
@@ -96,7 +96,7 @@ public class AccountingController extends AbstractController implements Initiali
 	protected void handleImportIdentityButtonAction(ActionEvent event) {
 
 		FileChooser chooser = new FileChooser();
-		chooser.setTitle(resourceBundel.getString("downloadFolder"));
+		chooser.setTitle(resourceBundle.getString("downloadFolder"));
 		File file = chooser.showOpenDialog(identityList.getScene().getWindow());
 		try {
 			saveIdentity(file);
@@ -114,7 +114,7 @@ public class AccountingController extends AbstractController implements Initiali
 	@FXML
 	protected void handleExportIdentityButtonAction(ActionEvent event) {
 		DirectoryChooser chooser = new DirectoryChooser();
-		chooser.setTitle(resourceBundel.getString("downloadFolder"));
+		chooser.setTitle(resourceBundle.getString("downloadFolder"));
 		File dir = chooser.showDialog(identityList.getScene().getWindow());
 		Identity i = clientConfiguration.getSelectedIdentity();
 		try {
@@ -160,6 +160,6 @@ public class AccountingController extends AbstractController implements Initiali
 	}
 
 	ResourceBundle getRessource(){
-		return resourceBundel;
+		return resourceBundle;
 	}
 }

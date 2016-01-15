@@ -29,6 +29,9 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class AccountingItemController extends AbstractController implements Initializable {
+
+	ResourceBundle resourceBundle;
+
 	@FXML
 	Label alias;
 	@FXML
@@ -61,6 +64,8 @@ public class AccountingItemController extends AbstractController implements Init
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		this.resourceBundle = resources;
+
 		alias.textProperty().addListener((o, a, b) -> updateAvatar());
 		alias.setText(identity.getAlias());
 
@@ -99,8 +104,8 @@ public class AccountingItemController extends AbstractController implements Init
 	public void edit(ActionEvent actionEvent) {
 		dialog = new TextInputDialog(identity.getAlias());
 		dialog.setHeaderText(null);
-		dialog.setTitle("%changeAlias");
-		dialog.setContentText("%newAlias");
+		dialog.setTitle(resourceBundle.getString("changeAlias"));
+		dialog.setContentText(resourceBundle.getString("newAlias"));
 		Optional<String> result = dialog.showAndWait();
 		result.ifPresent(this::setAlias);
 	}

@@ -1,8 +1,11 @@
 package com.airhacks.afterburner.views;
 
+import javafx.fxml.LoadException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Locale;
@@ -14,7 +17,7 @@ public class UTF8Converter extends ResourceBundle.Control {
 
 	@Override
 	public ResourceBundle newBundle
-			(String name, Locale locale, String format, ClassLoader loader, boolean reload) {
+			(String name, Locale locale, String format, ClassLoader loader, boolean reload) throws IOException {
 
 		InputStream stream = null;
 		String bundleName = toBundleName(name, locale);
@@ -34,14 +37,12 @@ public class UTF8Converter extends ResourceBundle.Control {
 			}
 
 			if (stream == null) {
-				return null;
+				throw new LoadException("failed to load ResourceBundle " + name + " on locale " + locale);
 			}
-
-			return new PropertyResourceBundle(new InputStreamReader(stream, "UTF-8"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return new PropertyResourceBundle(new InputStreamReader(stream, "UTF-8"));
 	}
 }
 

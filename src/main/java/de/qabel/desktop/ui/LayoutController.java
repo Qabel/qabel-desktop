@@ -22,7 +22,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class LayoutController extends AbstractController implements Initializable {
-	ResourceBundle resourceBundel;
+	ResourceBundle resourceBundle;
 
 	@FXML
 	public Label alias;
@@ -51,13 +51,13 @@ public class LayoutController extends AbstractController implements Initializabl
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		this.resourceBundel = resources;
+		this.resourceBundle = resources;
 
 		navi.getChildren().clear();
 		AccountingView accountingView = new AccountingView();
-		navi.getChildren().add(createNavItem(resourceBundel.getString("identity"), accountingView));
-		navi.getChildren().add(createNavItem(resourceBundel.getString("browse"), new RemoteFSView()));
-		navi.getChildren().add(createNavItem(resourceBundel.getString("sync"), new SyncView()));
+		navi.getChildren().add(createNavItem(resourceBundle.getString("identity"), accountingView));
+		navi.getChildren().add(createNavItem(resourceBundle.getString("browse"), new RemoteFSView()));
+		navi.getChildren().add(createNavItem(resourceBundle.getString("sync"), new SyncView()));
 
 		scrollContent.setFillWidth(true);
 		scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);

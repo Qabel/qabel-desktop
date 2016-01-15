@@ -12,20 +12,12 @@ public class QabelFXMLView extends FXMLView {
 
 	public QabelFXMLView() {
 		super();
-		this.bundle = ResourceBundle.getBundle("ui", calculateLocale(), new UTF8Converter());
+		this.bundle = ResourceBundle.getBundle("ui", Locale.getDefault(), new UTF8Converter());
 	}
 
 	public QabelFXMLView(Function<String, Object> injectionContext) {
 		super(injectionContext);
-		this.bundle = ResourceBundle.getBundle("ui", calculateLocale(), new UTF8Converter());
-	}
-
-	private Locale calculateLocale() {
-		if(Locale.getDefault().getLanguage().equals("de")){
-			return new Locale("de", "DE");
-		} else {
-			return new Locale("en", "EN");
-		}
+		this.bundle = ResourceBundle.getBundle("ui", Locale.getDefault(), new UTF8Converter());
 	}
 
 	@Override

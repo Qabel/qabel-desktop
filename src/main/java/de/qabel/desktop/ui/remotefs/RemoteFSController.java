@@ -45,7 +45,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 	BoxNavigation nav;
 	LazyBoxFolderTreeItem rootItem;
 	TreeItem<BoxObject> selectedFolder;
-	ResourceBundle resourceBundel;
+	ResourceBundle resourceBundle;
 
 	@Inject
 	ClientConfiguration clientConfiguration;
@@ -61,7 +61,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 
 
 	public void initialize(URL location, ResourceBundle resources) {
-		this.resourceBundel = resources;
+		this.resourceBundle = resources;
 		createObserver();
 		initTreeTableView();
 
@@ -159,7 +159,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 	@FXML
 	protected void handleUploadFileButtonAction(ActionEvent event) {
 		FileChooser chooser = new FileChooser();
-		String title = resourceBundel.getString("chooseFile");
+		String title = resourceBundle.getString("chooseFile");
 		chooser.setTitle(title);
 		List<File> list = chooser.showOpenMultipleDialog(treeTable.getScene().getWindow());
 		for (File file : list) {
@@ -180,7 +180,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 	@FXML
 	protected void handleUploadFolderButtonAction(ActionEvent event) throws QblStorageException {
 		DirectoryChooser chooser = new DirectoryChooser();
-		String title = resourceBundel.getString("chooseFolder");
+		String title = resourceBundle.getString("chooseFolder");
 		chooser.setTitle(title);
 		File directory = chooser.showDialog(treeTable.getScene().getWindow());
 		chooseUploadDirectory(directory);
@@ -190,7 +190,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 	@FXML
 	protected void handleDownloadButtonAction(ActionEvent event) throws QblStorageException, IOException {
 		DirectoryChooser chooser = new DirectoryChooser();
-		chooser.setTitle(resourceBundel.getString("downloadFolder"));
+		chooser.setTitle(resourceBundle.getString("downloadFolder"));
 		File directory = chooser.showDialog(treeTable.getScene().getWindow());
 		BoxFolder parent = (BoxFolder) rootItem.getValue();
 		BoxObject boxObject = selectedFolder.getValue();
@@ -206,10 +206,10 @@ public class RemoteFSController extends AbstractController implements Initializa
 	@FXML
 	protected void handleCreateFolderButtonAction(ActionEvent event) {
 
-		TextInputDialog dialog = new TextInputDialog(resourceBundel.getString("name"));
+		TextInputDialog dialog = new TextInputDialog(resourceBundle.getString("name"));
 		dialog.setHeaderText(null);
-		dialog.setTitle(resourceBundel.getString("createFolder"));
-		dialog.setContentText(resourceBundel.getString("folderName"));
+		dialog.setTitle(resourceBundle.getString("createFolder"));
+		dialog.setContentText(resourceBundle.getString("folderName"));
 		Optional<String> result = dialog.showAndWait();
 		result.ifPresent(name -> {
 			BoxFolder boxFolder = null;
@@ -231,8 +231,8 @@ public class RemoteFSController extends AbstractController implements Initializa
 		if (selectedFolder.getParent() != null) {
 
 			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-			alert.setTitle(resourceBundel.getString("deleteQuestion"));
-			alert.setHeaderText(resourceBundel.getString("deleteFolder") + selectedFolder.getValue().name + " ?");
+			alert.setTitle(resourceBundle.getString("deleteQuestion"));
+			alert.setHeaderText(resourceBundle.getString("deleteFolder") + selectedFolder.getValue().name + " ?");
 			Optional<ButtonType> result = alert.showAndWait();
 
 			BoxFolder parent = null;
@@ -396,7 +396,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 	}
 
 	ResourceBundle getRessource(){
-		return resourceBundel;
+		return resourceBundle;
 	}
 
 }

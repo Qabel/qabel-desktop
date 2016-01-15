@@ -34,7 +34,7 @@
             </TextField>
              <HBox fx:id="buttonBar" alignment="CENTER" styleClass="login-button-bar">
                  <children>
-                     <Button mnemonicParsing="false" styleClass="create-account-button" text="createAccount" />
+                     <Button mnemonicParsing="false" styleClass="create-account-button" text="%createAccount" />
                      <Button onAction="#login" fx:id="loginButton" mnemonicParsing="false" styleClass="login-button" text="login" />
                  </children>
                  <VBox.margin>
@@ -50,7 +50,7 @@
                  </VBox.margin>
              </HBox>
             <Separator />
-            <Hyperlink onAction="#recoverPassword" text="forgot password?" />
+            <Hyperlink onAction="#recoverPassword" text="%forgotPassword?" />
          </children>
          <VBox.margin>
             <Insets top="50.0" />
