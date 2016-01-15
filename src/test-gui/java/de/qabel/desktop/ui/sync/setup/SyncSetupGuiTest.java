@@ -2,7 +2,6 @@ package de.qabel.desktop.ui.sync.setup;
 
 import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.desktop.ui.AbstractGuiTest;
-import javafx.scene.control.TextField;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
