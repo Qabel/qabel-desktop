@@ -13,32 +13,32 @@ public class QabelFXMLViewTest extends AbstractControllerTest {
 	public void deLocalTest() {
 		Locale.setDefault(new Locale("de", "DE"));
 		createController();
-		assertThat(controller.getRessource().getLocale().getCountry(), is("DE"));
-		assertThat(controller.getRessource().getLocale().getLanguage(), is("de"));
+		String str = controller.getRessource().getString("size");
+		assertThat(str, is("Größe"));
 	}
 
 	@Test
 	public void enLocalTest() {
 		Locale.setDefault(new Locale("en", "EN"));
 		createController();
-		assertThat(controller.getRessource().getLocale().getCountry(), is(""));
-		assertThat(controller.getRessource().getLocale().getLanguage(), is(""));
+		String str = controller.getRessource().getString("size");
+		assertThat(str, is("Size"));
 	}
 
 	@Test
 	public void chLocalTest() {
 		Locale.setDefault(new Locale("de", "CH"));
 		createController();
-		assertThat(controller.getRessource().getLocale().getCountry(), is(""));
-		assertThat(controller.getRessource().getLocale().getLanguage(), is(""));
+		String str = controller.getRessource().getString("size");
+		assertThat(str, is("Size"));
 	}
 
 	@Test
 	public void rndLocalTest() {
 		Locale.setDefault(new Locale("rd", "DE"));
 		createController();
-		assertThat(controller.getRessource().getLocale().getCountry(), is(""));
-		assertThat(controller.getRessource().getLocale().getLanguage(), is(""));
+		String str = controller.getRessource().getString("size");
+		assertThat(str, is("Size"));
 	}
 
 	private void createController() {
