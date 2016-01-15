@@ -37,7 +37,7 @@ public class UTF8Converter extends ResourceBundle.Control {
 			}
 
 			if (stream == null) {
-				throw new LoadException("failed to load ResourceBundle " + name + " on locale " + locale);
+				return null;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

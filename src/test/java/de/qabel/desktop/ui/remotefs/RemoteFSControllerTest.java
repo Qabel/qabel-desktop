@@ -108,14 +108,14 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 
 	@Test
 	public void injectlTest() {
-		Locale.setDefault(new Locale("en", "EN"));
+		Locale.setDefault(new Locale("de", "DE"));
 		RemoteFSView view = new RemoteFSView();
 		Identity i = new Identity("test", null, new QblECKeyPair());
 		clientConfiguration.selectIdentity(i);
 		clientConfiguration.setAccount(new Account("Provider","user","auth"));
 		controller = (RemoteFSController) view.getPresenter();
-		assertThat(controller.getRessource().getLocale().getCountry(), is("EN"));
-		assertThat(controller.getRessource().getLocale().getLanguage(), is("en"));
+		assertThat(controller.getRessource().getLocale().getCountry(), is("DE"));
+		assertThat(controller.getRessource().getLocale().getLanguage(), is("de"));
 	}
 
 	@Test

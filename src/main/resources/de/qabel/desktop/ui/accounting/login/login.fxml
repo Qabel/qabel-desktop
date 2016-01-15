@@ -50,7 +50,7 @@
                  </VBox.margin>
              </HBox>
             <Separator />
-            <Hyperlink onAction="#recoverPassword" text="%forgotPassword?" />
+            <Hyperlink onAction="#recoverPassword" text="%forgotPassword" />
          </children>
          <VBox.margin>
             <Insets top="50.0" />
