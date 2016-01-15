@@ -89,7 +89,7 @@ public class AccountingControllerTest extends AbstractControllerTest {
 		List<Identity> identities = identityRepository.findAll();
 
 		assertEquals(1, identities.size());
-		assertEquals("My Name", identities.get(0).getAlias());
+		assertEquals("TestAlias", identities.get(0).getAlias());
 
 	}
 
