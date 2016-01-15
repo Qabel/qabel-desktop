@@ -32,7 +32,6 @@ import java.util.ResourceBundle;
 
 
 public class RemoteFSController extends AbstractController implements Initializable {
-
     private static final String PRIVATE_KEY = "77076d0a7318a57d3c16c17251b26645df4c2f87ebc0992ab177fba51db92c2a";
     public static final String ROOT_FOLDER_NAME = "root Folder";
     private final String bucket = "qabel";
@@ -52,7 +51,6 @@ public class RemoteFSController extends AbstractController implements Initializa
 
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
-
         try {
             nav = createSetup();
             treeTable.setRoot(rootItem);
@@ -71,7 +69,6 @@ public class RemoteFSController extends AbstractController implements Initializa
 
         setCellValueFactories();
     }
-
 
     private void setCellValueFactories() {
         nameColumn.setCellValueFactory(new BoxObjectCellValueFactory(BoxObjectCellValueFactory.NAME));

@@ -20,8 +20,11 @@ import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.SceneAntialiasing;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.SystemUtils;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.net.URISyntaxException;
@@ -34,6 +37,7 @@ public class DesktopClient extends Application {
 	private static final String TITLE = "Qabel Desktop Client";
 
 	public static void main(String[] args) throws Exception {
+		UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 		launch(args);
 	}
 
@@ -44,12 +48,13 @@ public class DesktopClient extends Application {
 		final Map<String, Object> customProperties = new HashMap<>();
 		ClientConfiguration config = initDiContainer(customProperties);
 
+		SceneAntialiasing aa = SystemUtils.IS_OS_LINUX ? SceneAntialiasing.DISABLED : SceneAntialiasing.BALANCED;
 		Scene scene;
 		if (!config.hasAccount()) {
-			scene = new Scene(new LoginView().getView(), 370, 530);
+			scene = new Scene(new LoginView().getView(), 370, 530, true, aa);
 			config.addObserver((o, arg) -> {
 				if (arg instanceof Account) {
-					Scene layoutScene = new Scene(new LayoutView().getView(), 800, 600);
+					Scene layoutScene = new Scene(new LayoutView().getView(), 800, 600, true, aa);
 					Platform.runLater(() -> primaryStage.setScene(layoutScene));
 				}
 			});
@@ -64,6 +69,12 @@ public class DesktopClient extends Application {
 		setTrayIcon(primaryStage);
 		primaryStage.setTitle(TITLE);
 		primaryStage.show();
+
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			public void run() {
+				Platform.exit();
+			}
+		});
 	}
 
 	private ClientConfiguration initDiContainer(Map<String, Object> customProperties) throws QblInvalidEncryptionKeyException, URISyntaxException {

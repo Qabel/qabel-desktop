@@ -13,8 +13,8 @@ public class LoginUiTest extends AbstractGuiTest<LoginController> {
 	@Test
 	public void showsFailureOnInvalidCredentials() {
 		runLaterAndWait(() -> controller.user.clear());
-		robot.clickOn("#user").write("invalid user");
-		robot.clickOn("#loginButton");
+		clickOn("#user").write("invalid user");
+		clickOn("#loginButton");
 		waitUntil(() -> controller.loginButton.getStyleClass().contains("error"), 5000L);
 	}
 }

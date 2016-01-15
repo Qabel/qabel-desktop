@@ -1,8 +1,12 @@
 package de.qabel.desktop.ui.sync.setup;
 
+import de.qabel.core.config.Account;
+import de.qabel.core.config.Identity;
+import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 import org.junit.Test;
 
 import java.nio.file.Paths;
@@ -12,10 +16,13 @@ import static org.junit.Assert.*;
 public class SyncSetupControllerTest extends AbstractControllerTest {
 
 	private SyncSetupController controller;
+	private Identity identity;
 
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
+		identity = identityBuilderFactory.factory().withAlias("alias").build();
+		clientConfiguration.selectIdentity(identity);
 		SyncSetupView view = new SyncSetupView();
 		Node node = view.getView();
 		controller = (SyncSetupController) view.getPresenter();
@@ -53,5 +60,35 @@ public class SyncSetupControllerTest extends AbstractControllerTest {
 		controller.setRemotePath("");
 		assertFalse("empty remotePath did not invalidate form", controller.isValid());
 		assertErrorClass(controller.remotePath);
+	}
+
+	@Test
+	public void fillsIdentityWithAlias() {
+		assertEquals("alias", controller.identity.getText());
+	}
+
+	@Test
+	public void createsSyncConfigOnSubmit() {
+		Account account = new Account("a", "b", "c");
+		clientConfiguration.setAccount(account);
+		final Stage[] stage = new Stage[1];
+		runLaterAndWait(() -> stage[0] = new Stage());
+		runLaterAndWait(stage[0]::show);
+		controller.setStage(stage[0]);
+
+		controller.setName("Sync name");
+		String localPath = Paths.get("tmp").toAbsolutePath().toString();
+		controller.setLocalPath(localPath);
+		controller.setRemotePath("/");
+		controller.createSyncConfig();
+
+		assertEquals(1, clientConfiguration.getBoxSyncConfigs().size());
+		BoxSyncConfig config = clientConfiguration.getBoxSyncConfigs().get(0);
+		assertEquals("Sync name", config.getName());
+		assertEquals(localPath, config.getLocalPath().toString());
+		assertEquals("/", config.getRemotePath().toString());
+		assertSame(identity, config.getIdentity());
+		assertSame(account, config.getAccount());
+		waitUntil(() -> !stage[0].isShowing());
 	}
 }

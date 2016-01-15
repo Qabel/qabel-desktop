@@ -31,13 +31,13 @@
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">
          <children>
             <Label prefWidth="150.0" text="Identity" />
-            <TextField disable="true" editable="false" text="identity"/>
+            <TextField fx:id="identity" disable="true" editable="false" text="identity"/>
          </children>
       </HBox>
       <HBox styleClass="button-bar" alignment="TOP_RIGHT">
          <children>
-            <Button cancelButton="true">cancel</Button>
-            <Button defaultButton="true">start sync</Button>
+            <Button fx:id="cancel" onAction="#close" cancelButton="true">cancel</Button>
+            <Button fx:id="start" onAction="#createSyncConfig" defaultButton="true">start sync</Button>
          </children>
       </HBox>
    </children>

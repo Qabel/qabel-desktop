@@ -1,17 +1,26 @@
 package de.qabel.desktop.ui.sync.setup;
 
+import de.qabel.core.config.Account;
+import de.qabel.desktop.config.BoxSyncConfig;
+import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import de.qabel.desktop.ui.AbstractController;
+import javafx.application.Platform;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
+import javax.inject.Inject;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
 public class SyncSetupController extends AbstractController implements Initializable {
@@ -24,20 +33,31 @@ public class SyncSetupController extends AbstractController implements Initializ
 	@FXML
 	TextField remotePath;
 
-	private StringProperty nameProperty = new SimpleStringProperty();
-	private BooleanProperty validProperty = new SimpleBooleanProperty(true);
-	private StringProperty localPathProperty = new SimpleStringProperty();
-	private StringProperty remotePathProperty = new SimpleStringProperty();
+	@FXML
+	TextField identity;
+
+	@Inject
+	private ClientConfiguration clientConfiguration;
+
+	private StringProperty nameProperty;
+	private BooleanProperty validProperty = new SimpleBooleanProperty();
+	private StringProperty localPathProperty;
+	private StringProperty remotePathProperty;
+	private Stage stage;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		nameProperty = name.textProperty();
+		localPathProperty = localPath.textProperty();
+		remotePathProperty = remotePath.textProperty();
 
-		BooleanProperty nameValid = new SimpleBooleanProperty(true);
-		nameValid.bind(nameProperty.isNotEmpty());
-		BooleanProperty localPathValid = new SimpleBooleanProperty(true);
-		localPathValid.bind(localPathProperty.isNotEmpty());
-		BooleanProperty remotePathValid = new SimpleBooleanProperty(true);
-		remotePathValid.bind(remotePathProperty.isNotEmpty());
+
+		BooleanProperty nameValid = new SimpleBooleanProperty();
+		nameValid.bind(getNameValidityCondition());
+		BooleanProperty localPathValid = new SimpleBooleanProperty();
+		localPathValid.bind(getLocalPathValidityCondition());
+		BooleanProperty remotePathValid = new SimpleBooleanProperty();
+		remotePathValid.bind(getRemotePathValidityCondition());
 
 		validProperty.bind(
 				nameValid
@@ -48,20 +68,47 @@ public class SyncSetupController extends AbstractController implements Initializ
 		nameValid.addListener(createErrorStyleAttacher(name));
 		localPathValid.addListener(createErrorStyleAttacher(localPath));
 		remotePathValid.addListener(createErrorStyleAttacher(remotePath));
+		updateErrorState(name, nameValid.get());
+		updateErrorState(localPath, localPathValid.get());
+		updateErrorState(remotePath, remotePathValid.get());
+
+		fixIdentity();
+	}
+
+	private BooleanBinding getRemotePathValidityCondition() {
+		return remotePathProperty.isNotEmpty();
+	}
+
+	private BooleanBinding getLocalPathValidityCondition() {
+		return localPathProperty.isNotEmpty();
+	}
+
+	private BooleanBinding getNameValidityCondition() {
+		return nameProperty.isNotEmpty();
+	}
+
+	private void fixIdentity() {
+		if (clientConfiguration.getSelectedIdentity() != null) {
+			identity.setText(clientConfiguration.getSelectedIdentity().getAlias());
+		}
 	}
 
 	private ChangeListener<Boolean> createErrorStyleAttacher(Node element) {
-		return (observable, oldValue, newValue) -> {
-			if (newValue.equals(oldValue)) {
+		return (observable, oldValue, isValid) -> {
+			if (isValid.equals(oldValue)) {
 				return;
 			}
 
-			if (newValue) {
-				element.getStyleClass().remove("error");
-			} else {
-				element.getStyleClass().add("error");
-			}
+			updateErrorState(element, isValid);
 		};
+	}
+
+	private void updateErrorState(Node element, Boolean newValue) {
+		if (newValue) {
+			element.getStyleClass().remove("error");
+		} else {
+			element.getStyleClass().add("error");
+		}
 	}
 
 	public void setName(String name) {
@@ -78,5 +125,28 @@ public class SyncSetupController extends AbstractController implements Initializ
 
 	public void setRemotePath(String remotePath) {
 		remotePathProperty.set(remotePath);
+	}
+
+	public void createSyncConfig() {
+		Account account = clientConfiguration.getAccount();
+		Path lPath = Paths.get(localPathProperty.get());
+		Path rPath = Paths.get(remotePathProperty.get());
+		BoxSyncConfig config = new DefaultBoxSyncConfig(nameProperty.get(), lPath, rPath, clientConfiguration.getSelectedIdentity(), account);
+		clientConfiguration.getBoxSyncConfigs().add(config);
+		close();
+	}
+
+	public void close() {
+		if (stage != null) {
+			Platform.runLater(stage::close);
+		}
+	}
+
+	public void setStage(Stage stage) {
+		this.stage = stage;
+	}
+
+	public Stage getStage() {
+		return stage;
 	}
 }

@@ -1,6 +1,7 @@
 package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
+import com.google.common.base.Optional;
 import com.sun.javafx.robot.impl.BaseFXRobot;
 import javafx.application.Platform;
 import javafx.scene.Node;
@@ -8,11 +9,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.testfx.api.FxRobot;
+import org.testfx.service.query.NodeQuery;
 
 public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 	protected final FxRobot robot = new FxRobot();
 	protected T controller;
-	private Stage stage;
+	protected Stage stage;
+	protected Scene scene;
 
 	@Override
 	public void setUp() throws Exception {
@@ -27,7 +30,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 
 	private Object launchNode(FXMLView view) {
 		Parent node = view.getView();
-		Scene scene = new Scene(node, getWidth(), getHeight());
+		scene = new Scene(node, getWidth(), getHeight());
 		Object presenter = view.getPresenter();
 		robot.target(scene);
 
@@ -66,4 +69,15 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 		super.tearDown();
 	}
 
+	protected FxRobot clickOn(String query) {
+		return robot.moveTo(query).clickOn(query);
+	}
+
+	protected FxRobot clickOn(Node node) {
+		return robot.moveTo(node).clickOn(node);
+	}
+
+	protected Node getFirstNode(String query) {
+		return robot.lookup(query).tryQueryFirst().get();
+	}
 }

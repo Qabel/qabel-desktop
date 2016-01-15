@@ -3,6 +3,7 @@ package de.qabel.desktop.config;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
 import java.util.LinkedList;
@@ -14,7 +15,14 @@ public class DefaultClientConfiguration extends Observable implements ClientConf
 	private Identity identity;
 	private ObservableList<BoxSyncConfig> boxSyncConfigs = FXCollections.synchronizedObservableList(FXCollections.observableList(new LinkedList<>()));
 
-	public DefaultClientConfiguration() {}
+	public DefaultClientConfiguration() {
+		boxSyncConfigs.addListener((ListChangeListener) c -> boxSyncConfigWasChanged());
+	}
+
+	private void boxSyncConfigWasChanged() {
+		setChanged();
+		notifyObservers(boxSyncConfigs);
+	}
 
 	@Override
 	public boolean hasAccount() {
