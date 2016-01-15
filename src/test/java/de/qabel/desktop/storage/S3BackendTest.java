@@ -4,18 +4,20 @@ import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import de.qabel.desktop.exceptions.QblStorageException;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.UUID;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.fail;
 
 public class S3BackendTest {
 
 	@Test
 	public void testSimple() throws Exception {
 		String prefix = UUID.randomUUID().toString();
-		StorageReadBackend readBackend = new S3ReadBackend("https://qabel.s3.amazonaws.com/"+prefix);
+		StorageReadBackend readBackend = new S3ReadBackend("https://qabel.s3.amazonaws.com/" + prefix);
 		StorageReadBackend bucketReadBackend = new S3ReadBackend("qabel", prefix);
 
 		DefaultAWSCredentialsProviderChain chain = new DefaultAWSCredentialsProviderChain();

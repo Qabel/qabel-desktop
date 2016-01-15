@@ -4,6 +4,7 @@ import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.ui.AbstractControllerTest;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -72,6 +73,7 @@ public class SyncSetupControllerTest extends AbstractControllerTest {
 		Account account = new Account("a", "b", "c");
 		clientConfiguration.setAccount(account);
 		final Stage[] stage = new Stage[1];
+
 		runLaterAndWait(() -> stage[0] = new Stage());
 		runLaterAndWait(stage[0]::show);
 		controller.setStage(stage[0]);

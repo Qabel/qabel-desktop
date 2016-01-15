@@ -9,9 +9,9 @@ import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.exceptions.QblStorageIOFailure;
 import de.qabel.desktop.exceptions.QblStorageInvalidKey;
 import org.apache.commons.io.IOUtils;
-import org.spongycastle.crypto.InvalidCipherTextException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spongycastle.crypto.InvalidCipherTextException;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -35,13 +35,13 @@ public class BoxVolume {
 	private String prefix;
 
 	public BoxVolume(String bucket, String prefix, AWSCredentials credentials,
-	                 QblECKeyPair keyPair, byte[] deviceId, File tempDir) {
+					 QblECKeyPair keyPair, byte[] deviceId, File tempDir) {
 		this(new S3ReadBackend(bucket, prefix), new S3WriteBackend(credentials, bucket, prefix),
 				keyPair, deviceId, tempDir, prefix);
 	}
 
 	public BoxVolume(StorageReadBackend readBackend, StorageWriteBackend writeBackend,
-	                 QblECKeyPair keyPair, byte[] deviceId, File tempDir, String prefix) {
+					 QblECKeyPair keyPair, byte[] deviceId, File tempDir, String prefix) {
 		this.keyPair = keyPair;
 		this.deviceId = deviceId;
 		this.readBackend = readBackend;
@@ -63,10 +63,11 @@ public class BoxVolume {
 
 	/**
 	 * Navigate to the index file of the volume
+	 *
 	 * @return
 	 * @throws QblStorageException
 	 * @throws QblStorageDecryptionFailed if the index file could not be decrypted
-	 * @throws QblStorageIOFailure if the temporary files could not be accessed
+	 * @throws QblStorageIOFailure        if the temporary files could not be accessed
 	 */
 	public BoxNavigation navigate() throws QblStorageException {
 		String rootRef = getRootRef();
@@ -91,6 +92,7 @@ public class BoxVolume {
 
 	/**
 	 * Calculate the filename of the index metadata file
+	 *
 	 * @return
 	 * @throws QblStorageException if the hash algorithm could not be found
 	 */
@@ -112,6 +114,7 @@ public class BoxVolume {
 
 	/**
 	 * Create a new index metadata file
+	 *
 	 * @param bucket
 	 * @param prefix
 	 * @throws QblStorageException
@@ -122,6 +125,7 @@ public class BoxVolume {
 
 	/**
 	 * Create a new index metadata file
+	 *
 	 * @param root
 	 * @throws QblStorageException
 	 */

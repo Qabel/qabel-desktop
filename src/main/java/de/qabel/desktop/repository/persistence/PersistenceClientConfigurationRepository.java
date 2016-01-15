@@ -6,7 +6,6 @@ import de.qabel.core.config.Persistence;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.DefaultBoxSyncConfig;
-import de.qabel.desktop.config.DefaultClientConfiguration;
 import de.qabel.desktop.config.factory.ClientConfigurationFactory;
 import de.qabel.desktop.repository.AccountRepository;
 import de.qabel.desktop.repository.ClientConfigurationRepository;

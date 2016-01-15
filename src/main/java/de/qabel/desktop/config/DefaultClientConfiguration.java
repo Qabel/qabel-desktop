@@ -8,7 +8,6 @@ import javafx.collections.ObservableList;
 
 import java.util.LinkedList;
 import java.util.Observable;
-import java.util.Observer;
 
 public class DefaultClientConfiguration extends Observable implements ClientConfiguration {
 	private Account account;

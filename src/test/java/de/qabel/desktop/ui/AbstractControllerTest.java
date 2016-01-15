@@ -12,11 +12,9 @@ import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import javafx.application.Application;
 import javafx.application.Platform;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import javax.inject.Inject;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,8 +32,10 @@ public class AbstractControllerTest {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
+		Platform.setImplicitExit(false);
 		try {
-			Platform.runLater(() -> {});
+			Platform.runLater(() -> {
+			});
 		} catch (IllegalStateException e) {
 			startPlatform();
 		} catch (Exception e) {

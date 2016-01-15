@@ -14,7 +14,7 @@ public class DefaultBoxSyncConfigTest {
 	private Identity identity = new Identity("alias", null, null);
 	private Account account = new Account("a", "b", "c");
 	private DefaultBoxSyncConfig config;
-	private boolean[] updated = new boolean[]{ false };
+	private boolean[] updated = new boolean[]{false};
 
 	@Before
 	public void setUp() {

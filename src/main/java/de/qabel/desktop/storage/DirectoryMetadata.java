@@ -31,42 +31,42 @@ class DirectoryMetadata {
 	private static final int TYPE_FOLDER = 1;
 	private static final int TYPE_EXTERNAL = 2;
 
-    private final String[] initSql = {
+	private final String[] initSql = {
 			"CREATE TABLE meta (" +
-			" name VARCHAR(24) PRIMARY KEY," +
-			" value TEXT )",
+					" name VARCHAR(24) PRIMARY KEY," +
+					" value TEXT )",
 			"CREATE TABLE spec_version (" +
-			" version INTEGER PRIMARY KEY )",
+					" version INTEGER PRIMARY KEY )",
 			"CREATE TABLE version (" +
-			" id INTEGER PRIMARY KEY," +
-			" version BLOB NOT NULL," +
-			" time LONG NOT NULL )",
+					" id INTEGER PRIMARY KEY," +
+					" version BLOB NOT NULL," +
+					" time LONG NOT NULL )",
 			"CREATE TABLE shares (" +
-			" id INTEGER PRIMARY KEY," +
-			" ref VARCHAR(255)NOT NULL," +
-			" recipient BLOB NOT NULL," +
-			" type INTEGER NOT NULL )",
+					" id INTEGER PRIMARY KEY," +
+					" ref VARCHAR(255)NOT NULL," +
+					" recipient BLOB NOT NULL," +
+					" type INTEGER NOT NULL )",
 			"CREATE TABLE files (" +
-			" block VARCHAR(255)NOT NULL," +
-			" name VARCHAR(255)NOT NULL PRIMARY KEY," +
-			" size LONG NOT NULL," +
-			" mtime LONG NOT NULL," +
-			" key BLOB NOT NULL )",
+					" block VARCHAR(255)NOT NULL," +
+					" name VARCHAR(255)NOT NULL PRIMARY KEY," +
+					" size LONG NOT NULL," +
+					" mtime LONG NOT NULL," +
+					" key BLOB NOT NULL )",
 			"CREATE TABLE folders (" +
-			" ref VARCHAR(255)NOT NULL," +
-			" name VARCHAR(255)NOT NULL PRIMARY KEY," +
-			" key BLOB NOT NULL )",
+					" ref VARCHAR(255)NOT NULL," +
+					" name VARCHAR(255)NOT NULL PRIMARY KEY," +
+					" key BLOB NOT NULL )",
 			"CREATE TABLE externals (" +
-			" owner BLOB NOT NULL," +
-			" name VARCHAR(255)NOT NULL PRIMARY KEY," +
-			" key BLOB NOT NULL," +
-			" url TEXT NOT NULL )",
+					" owner BLOB NOT NULL," +
+					" name VARCHAR(255)NOT NULL PRIMARY KEY," +
+					" key BLOB NOT NULL," +
+					" url TEXT NOT NULL )",
 			"INSERT INTO spec_version (version) VALUES(0)"
 	};
 	private File tempDir;
 
 	public DirectoryMetadata(Connection connection, String root, byte[] deviceId,
-	                         File path, String fileName, File tempDir) {
+							 File path, String fileName, File tempDir) {
 		this.connection = connection;
 		this.root = root;
 		this.deviceId = deviceId;
@@ -76,7 +76,7 @@ class DirectoryMetadata {
 	}
 
 	public DirectoryMetadata(Connection connection, byte[] deviceId, File path, String fileName,
-	                         File tempDir) {
+							 File tempDir) {
 		this.connection = connection;
 		this.deviceId = deviceId;
 		this.path = path;
@@ -86,9 +86,10 @@ class DirectoryMetadata {
 
 	/**
 	 * Create a new database and init it with an sql schema and a metadata
-	 * @param root path to the metadata file
+	 *
+	 * @param root     path to the metadata file
 	 * @param deviceId 16 random bytes that identify the current device
-	 * @param tempDir writable temp directory
+	 * @param tempDir  writable temp directory
 	 * @return
 	 * @throws QblStorageException
 	 */
@@ -111,10 +112,11 @@ class DirectoryMetadata {
 
 	/**
 	 * Open an existing database from a decrypted file
-	 * @param path writable location of the metadata file
+	 *
+	 * @param path     writable location of the metadata file
 	 * @param deviceId 16 random bytes that identify the current device
 	 * @param fileName name of the file on the storage backend
-	 * @param tempDir writable temp directory
+	 * @param tempDir  writable temp directory
 	 * @return
 	 * @throws QblStorageException
 	 */
@@ -131,6 +133,7 @@ class DirectoryMetadata {
 
 	/**
 	 * Path of the metadata file on the local filesystem
+	 *
 	 * @return
 	 */
 	public File getPath() {
@@ -139,6 +142,7 @@ class DirectoryMetadata {
 
 	/**
 	 * Name of the file on the storage backend
+	 *
 	 * @return
 	 */
 	public String getFileName() {
@@ -147,6 +151,7 @@ class DirectoryMetadata {
 
 	/**
 	 * Writable temporary directory which is used for encryption and decryption
+	 *
 	 * @return
 	 */
 	public File getTempDir() {
@@ -154,7 +159,7 @@ class DirectoryMetadata {
 	}
 
 	private void initDatabase() throws SQLException, QblStorageException {
-		for (String q: initSql) {
+		for (String q : initSql) {
 			try (Statement statement = connection.createStatement()) {
 				statement.executeUpdate(q);
 			}

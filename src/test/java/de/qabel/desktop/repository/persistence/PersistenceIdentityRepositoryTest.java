@@ -1,20 +1,15 @@
 package de.qabel.desktop.repository.persistence;
 
 import de.qabel.core.config.Identity;
-import de.qabel.core.config.Persistable;
 import de.qabel.core.config.Persistence;
-import de.qabel.core.config.SQLitePersistence;
-import static org.junit.Assert.*;
-
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
-import org.junit.*;
+import org.junit.Test;
 
-import java.io.File;
-import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
 
 public class PersistenceIdentityRepositoryTest extends AbstractPersistenceRepositoryTest<PersistenceIdentityRepository> {
 

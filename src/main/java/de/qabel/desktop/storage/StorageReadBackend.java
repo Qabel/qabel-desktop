@@ -8,6 +8,7 @@ abstract class StorageReadBackend {
 
 	/**
 	 * Download a file from the storage
+	 *
 	 * @param name
 	 * @return
 	 * @throws QblStorageException

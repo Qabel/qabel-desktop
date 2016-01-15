@@ -28,6 +28,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.net.URISyntaxException;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +38,7 @@ import java.util.Map;
 
 public class DesktopClient extends Application {
 	private static final String TITLE = "Qabel Desktop Client";
+	Scene scene;
 
 	public static void main(String[] args) throws Exception {
 		UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -64,8 +68,8 @@ public class DesktopClient extends Application {
 
 		primaryStage.getIcons().setAll(new javafx.scene.image.Image(getClass().getResourceAsStream("/logo-invert_small.png")));
 
+		Platform.setImplicitExit(false);
 		primaryStage.setScene(scene);
-
 		setTrayIcon(primaryStage);
 		primaryStage.setTitle(TITLE);
 		primaryStage.show();
@@ -107,28 +111,17 @@ public class DesktopClient extends Application {
 		return config;
 	}
 
-	private void setTrayIcon(Stage primaryStage) {
+	private void setTrayIcon(Stage primaryStage) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
 
 		SystemTray sTray = SystemTray.getSystemTray();
-
-		ActionListener listenerShow = e -> Platform.runLater(() -> primaryStage.show());
-		ActionListener listenerClose = e -> System.exit(0);
 		primaryStage.setOnCloseRequest(arg0 -> primaryStage.hide());
-
-		PopupMenu popup = new PopupMenu();
-		MenuItem showItem = new MenuItem("Öffnen");
-		MenuItem exitItem = new MenuItem("Beenden");
-
-		showItem.addActionListener(listenerShow);
-		exitItem.addActionListener(listenerClose);
-
-		popup.add(showItem);
-		popup.add(exitItem);
-
+		JPopupMenu popup = buildSystemTrayJPopupMenu(primaryStage);
 		URL url = System.class.getResource("/logo.png");
 		Image img = Toolkit.getDefaultToolkit().getImage(url);
-		TrayIcon icon = new TrayIcon(img, "Qabel", popup);
+		TrayIcon icon = new TrayIcon(img, "Qabel");
+
 		icon.setImageAutoSize(true);
+		trayIconListener(popup, icon);
 
 		try {
 			sTray.add(icon);
@@ -136,6 +129,37 @@ public class DesktopClient extends Application {
 			System.err.println(e);
 		}
 
+	}
+
+	private void trayIconListener(final JPopupMenu popup, TrayIcon icon) {
+		icon.addMouseListener(new MouseAdapter() {
+			boolean visible = false;
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				if (e.getButton() != MouseEvent.BUTTON1) {
+					return;
+				}
+				popup.setLocation(e.getX(), e.getY());
+				visible = !visible;
+				popup.setVisible(visible);
+
+			}
+		});
+	}
+
+	protected JPopupMenu buildSystemTrayJPopupMenu(Stage primaryStage) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
+		final JPopupMenu menu = new JPopupMenu();
+		final JMenuItem showMenuItem = new JMenuItem("Show");
+		final JMenuItem exitMenuItem = new JMenuItem("Exit");
+
+		menu.add(showMenuItem);
+		menu.addSeparator();
+		menu.add(exitMenuItem);
+		showMenuItem.addActionListener(ae -> Platform.runLater(primaryStage::show));
+		exitMenuItem.addActionListener(ae -> System.exit(0));
+
+		return menu;
 	}
 
 	public static Account getBoxAccount() {

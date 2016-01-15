@@ -23,7 +23,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 
 		Platform.setImplicitExit(false);
 		Object presenter = launchNode(getView());
-		controller = (T)presenter;
+		controller = (T) presenter;
 	}
 
 	protected abstract FXMLView getView();
@@ -46,7 +46,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 		baseFXRobot.waitForIdle();
 		Node sceneNode = robot.rootNode(scene);
 		waitUntil(() -> {
-			int a = (int)Math.round(sceneNode.computeAreaInScreen());
+			int a = (int) Math.round(sceneNode.computeAreaInScreen());
 			int b = Math.round(getWidth() * getHeight());
 			return a >= b;
 		});
@@ -64,7 +64,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 	@Override
 	public void tearDown() {
 		if (stage != null) {
-			Platform.runLater(()-> stage.close());
+			Platform.runLater(() -> stage.close());
 		}
 		super.tearDown();
 	}

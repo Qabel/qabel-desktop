@@ -12,23 +12,23 @@ import java.nio.file.Path;
 
 public class LocalReadBackend extends StorageReadBackend {
 
-    private static final Logger logger = LoggerFactory.getLogger(LocalReadBackend.class.getName());
-    private final Path root;
+	private static final Logger logger = LoggerFactory.getLogger(LocalReadBackend.class.getName());
+	private final Path root;
 
 
-    public LocalReadBackend(Path root) {
-        this.root = root;
-    }
+	public LocalReadBackend(Path root) {
+		this.root = root;
+	}
 
 
-    InputStream download(String name) throws QblStorageException {
-        Path file = root.resolve(name);
-        logger.info("Downloading file path " + file.toString());
-        try {
-            return Files.newInputStream(file);
-        } catch (IOException e) {
-            throw new QblStorageNotFound(e);
-        }
-    }
+	InputStream download(String name) throws QblStorageException {
+		Path file = root.resolve(name);
+		logger.info("Downloading file path " + file.toString());
+		try {
+			return Files.newInputStream(file);
+		} catch (IOException e) {
+			throw new QblStorageNotFound(e);
+		}
+	}
 
 }

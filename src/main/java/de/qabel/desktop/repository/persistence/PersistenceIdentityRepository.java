@@ -6,10 +6,7 @@ import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
 
 public class PersistenceIdentityRepository extends AbstractCachedPersistenceRepository<Identity> implements IdentityRepository {
 	public PersistenceIdentityRepository(Persistence<String> persistence) {

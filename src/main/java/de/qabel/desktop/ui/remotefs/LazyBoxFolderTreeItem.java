@@ -9,7 +9,6 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
-import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -92,7 +91,7 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> {
 		return nameProperty;
 	}
 
-	public void setUpToDate(Boolean upToDate){
+	public void setUpToDate(Boolean upToDate) {
 		this.upToDate = upToDate;
 	}
 }
