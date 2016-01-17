@@ -8,6 +8,7 @@ import de.qabel.core.exceptions.QblInvalidEncryptionKeyException;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.factory.ClientConfigurationFactory;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
+import de.qabel.desktop.daemon.management.DefaultLoadManager;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
 import de.qabel.desktop.repository.AccountRepository;
@@ -72,7 +73,7 @@ public class DesktopClient extends Application {
 		primaryStage.setTitle(TITLE);
 		primaryStage.show();
 
-		new SyncDaemon(config.getBoxSyncConfigs(), new DefaultSyncerFactory()).run();
+		new SyncDaemon(config.getBoxSyncConfigs(), new DefaultSyncerFactory(new DefaultLoadManager())).run();
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {

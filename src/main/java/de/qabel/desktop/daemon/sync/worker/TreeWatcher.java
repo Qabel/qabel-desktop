@@ -39,6 +39,7 @@ public class TreeWatcher extends Thread {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void run() {
 		try {
 			watcher = FileSystems.getDefault().newWatchService();
@@ -52,45 +53,49 @@ public class TreeWatcher extends Thread {
 					continue;
 
 				logger.trace("fs event on " + keys.get(instance));
-
-				for (WatchEvent<?> event : instance.pollEvents()) {
-					WatchEvent.Kind kind = event.kind();
-
-					if (kind == OVERFLOW) {
-						logger.warn("fs overflow on " + keys.get(instance));
-						continue;
-					}
-
-					WatchEvent<Path> ev = cast(event);
-					Path name = ev.context();
-					Path parent = keys.get(instance);
-					Path child = parent.resolve(name);
-					logger.trace("valid fs event on " + child + " @" + name);
-
-					consumer.accept(new DefaultChangeEvent(child, convertType(kind)));
-
-					if (kind == ENTRY_CREATE && Files.isDirectory(child)) {
-						registerRecursive(child);
-					}
-
-
-					// reset key and remove from set if directory no longer accessible
-					boolean valid = instance.reset();
-					if (!valid) {
-						keys.remove(instance);
-
-						// all directories are inaccessible
-						if (keys.isEmpty()) {
-							break;
-						}
-					}
-				}
+				processEvents(instance);
 			}
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
 		} catch (InterruptedException e) {
 			logger.warn(e.getMessage(), e);
 		}
+	}
+
+	protected void processEvents(WatchKey instance) throws IOException {
+		for (WatchEvent<?> event : instance.pollEvents()) {
+			WatchEvent.Kind kind = event.kind();
+
+			if (kind == OVERFLOW) {
+				logger.warn("fs overflow on " + keys.get(instance));
+				continue;
+			}
+
+			WatchEvent<Path> ev = (WatchEvent<Path>) event;
+			Path name = ev.context();
+			Path parent = keys.get(instance);
+			Path child = parent.resolve(name);
+			logger.trace("valid fs event on " + child + " @" + name);
+
+			consumer.accept(new DefaultChangeEvent(child, convertType(kind)));
+
+			if (kind == ENTRY_CREATE && Files.isDirectory(child)) {
+				registerRecursive(child);
+			}
+
+			boolean valid = instance.reset();
+			if (!valid) {
+				keys.remove(instance);
+
+				if (nothingToDo()) {
+					break;
+				}
+			}
+		}
+	}
+
+	protected boolean nothingToDo() {
+		return keys.isEmpty();
 	}
 
 	private ChangeEvent.TYPE convertType(final WatchEvent.Kind kind) {
@@ -123,10 +128,5 @@ public class TreeWatcher extends Thread {
 				return FileVisitResult.CONTINUE;
 			}
 		});
-	}
-
-	@SuppressWarnings("unchecked")
-	static <T> WatchEvent<T> cast(WatchEvent<?> event) {
-		return (WatchEvent<T>) event;
 	}
 }

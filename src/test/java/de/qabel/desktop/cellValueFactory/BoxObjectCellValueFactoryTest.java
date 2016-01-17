@@ -3,6 +3,7 @@ package de.qabel.desktop.cellValueFactory;
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.storage.*;
+import de.qabel.desktop.ui.AbstractControllerTest;
 import javafx.application.Application;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TreeItem;
@@ -24,7 +25,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 
-public class BoxObjectCellValueFactoryTest {
+public class BoxObjectCellValueFactoryTest extends AbstractControllerTest {
 
 	private ObservableValue<String> column;
 	private TreeTableView treeTableFile;
@@ -35,20 +36,9 @@ public class BoxObjectCellValueFactoryTest {
 	private final String prefix = UUID.randomUUID().toString();
 
 
-	@BeforeClass
-	public static void setUpClass() throws InterruptedException {
-		Thread t = new Thread("JavaFX Init Thread") {
-			public void run() {
-				Application.launch(TestApplication.class, new String[0]);
-			}
-		};
-		t.setDaemon(true);
-		t.start();
-		Thread.sleep(500);
-	}
-
 	@Before
 	public void setUp() throws Exception {
+		super.setUp();
 
 		CryptoUtils utils = new CryptoUtils();
 		byte[] deviceID = utils.getRandomBytes(16);

@@ -2,15 +2,13 @@ package de.qabel.desktop.ui.remotefs;
 
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import de.qabel.core.accounting.AccountingHTTP;
-import de.qabel.core.accounting.AccountingProfile;
 import de.qabel.core.config.Account;
-import de.qabel.core.config.AccountingServer;
 import de.qabel.core.config.Identity;
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
-import de.qabel.core.exceptions.QblInvalidCredentials;
 import de.qabel.desktop.cellValueFactory.BoxObjectCellValueFactory;
 import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.daemon.management.MagicEvilPrefixSource;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.exceptions.QblStorageNotFound;
 import de.qabel.desktop.storage.*;
@@ -26,8 +24,6 @@ import javafx.stage.FileChooser;
 
 import javax.inject.Inject;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -90,23 +86,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 		keyPair = clientConfiguration.getSelectedIdentity().getPrimaryKeyPair();
 		bucket = "qabel";
 
-		try {
-			http = new AccountingHTTP(new AccountingServer(new URL(account.getProvider()).toURI(), account.getUser(), account.getAuth()), new AccountingProfile());
-		} catch (URISyntaxException | MalformedURLException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			http.login();
-			http.updatePrefixes();
-			if (http.getProfile().getPrefixes().isEmpty()) {
-				http.createPrefix();
-			}
-			prefix = http.getProfile().getPrefixes().get(0);
-
-		} catch (IOException | QblInvalidCredentials e) {
-			e.printStackTrace();
-		}
+		prefix = MagicEvilPrefixSource.getPrefix(account);
 
 		try {
 			nav = createSetup();
