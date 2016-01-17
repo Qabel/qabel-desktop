@@ -35,9 +35,6 @@ public class DefaultClientConfiguration extends Observable implements ClientConf
 
 	@Override
 	public void setAccount(Account account) throws IllegalStateException {
-		if (hasAccount()) {
-			throw new IllegalStateException("Account already set");
-		}
 		this.account = account;
 
 		setChanged();

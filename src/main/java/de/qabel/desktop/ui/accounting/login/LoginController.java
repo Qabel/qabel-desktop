@@ -1,5 +1,6 @@
 package de.qabel.desktop.ui.accounting.login;
 
+import com.sun.javafx.application.PlatformImpl;
 import com.sun.javafx.collections.ObservableListWrapper;
 import de.qabel.core.accounting.AccountingHTTP;
 import de.qabel.core.accounting.AccountingProfile;
@@ -66,6 +67,14 @@ public class LoginController extends AbstractController implements Initializable
 		progressBar.visibleProperty().bind(buttonBar.visibleProperty().not());
 		progressBar.managedProperty().bind(progressBar.visibleProperty());
 		buttonBar.managedProperty().bind(buttonBar.visibleProperty());
+
+		if (config.hasAccount()) {
+			Account account = config.getAccount();
+			providerChoices.getSelectionModel().select(account.getProvider());
+			user.setText(account.getUser());
+			auth.setText(account.getAuth());
+			Platform.runLater(this::login);
+		}
 	}
 
 	public void recoverPassword(ActionEvent actionEvent) {
@@ -83,11 +92,21 @@ public class LoginController extends AbstractController implements Initializable
 	}
 
 	public void login(ActionEvent actionEvent) {
+		login();
+	}
+
+	public void login() {
 		toProgressState();
 
 		// TODO extract login to daemon
 		new Thread(() -> {
-			Account account = new Account(providerChoices.getValue(), user.getText(), auth.getText());
+			Account account = new Account(null, null, null);
+			if (config.hasAccount()) {
+				account = config.getAccount();
+			}
+			account.setProvider(providerChoices.getValue());
+			account.setUser(user.getText());
+			account.setAuth(auth.getText());
 			try {
 				AccountingHTTP http = new AccountingHTTP(new AccountingServer(new URL(account.getProvider()).toURI(), account.getUser(), account.getAuth()), new AccountingProfile());
 				http.login();

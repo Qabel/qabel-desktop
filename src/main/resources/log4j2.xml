@@ -16,6 +16,10 @@
       <level>WARN</level>
       <AppenderRef ref="Console"/>
     </logger>
+    <logger name="de.qabel.desktop.daemon" includeLocation="true ">
+      <level>TRACE</level>
+      <AppenderRef ref="Console"/>
+    </logger>
     <logger name="org.apache.http" includeLocation="true ">
       <level>ERROR</level>
       <AppenderRef ref="Console"/>

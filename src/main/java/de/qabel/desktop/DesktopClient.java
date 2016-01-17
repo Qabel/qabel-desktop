@@ -8,6 +8,8 @@ import de.qabel.core.exceptions.QblInvalidEncryptionKeyException;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.factory.ClientConfigurationFactory;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
+import de.qabel.desktop.daemon.sync.SyncDaemon;
+import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
 import de.qabel.desktop.repository.AccountRepository;
 import de.qabel.desktop.repository.ClientConfigurationRepository;
 import de.qabel.desktop.repository.IdentityRepository;
@@ -54,17 +56,13 @@ public class DesktopClient extends Application {
 
 		SceneAntialiasing aa = SystemUtils.IS_OS_LINUX ? SceneAntialiasing.DISABLED : SceneAntialiasing.BALANCED;
 		Scene scene;
-		if (!config.hasAccount()) {
-			scene = new Scene(new LoginView().getView(), 370, 530, true, aa);
-			config.addObserver((o, arg) -> {
-				if (arg instanceof Account) {
-					Scene layoutScene = new Scene(new LayoutView().getView(), 800, 600, true, aa);
-					Platform.runLater(() -> primaryStage.setScene(layoutScene));
-				}
-			});
-		} else {
-			scene = new Scene(new LayoutView().getView(), 800, 600);
-		}
+		scene = new Scene(new LoginView().getView(), 370, 530, true, aa);
+		config.addObserver((o, arg) -> {
+			if (arg instanceof Account) {
+				Scene layoutScene = new Scene(new LayoutView().getView(), 800, 600, true, aa);
+				Platform.runLater(() -> primaryStage.setScene(layoutScene));
+			}
+		});
 
 		primaryStage.getIcons().setAll(new javafx.scene.image.Image(getClass().getResourceAsStream("/logo-invert_small.png")));
 
@@ -73,6 +71,8 @@ public class DesktopClient extends Application {
 		setTrayIcon(primaryStage);
 		primaryStage.setTitle(TITLE);
 		primaryStage.show();
+
+		new SyncDaemon(config.getBoxSyncConfigs(), new DefaultSyncerFactory()).run();
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {

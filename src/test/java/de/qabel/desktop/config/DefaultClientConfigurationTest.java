@@ -43,12 +43,6 @@ public class DefaultClientConfigurationTest {
 		assertTrue("setAccount did not trigger an update", wasUpdated());
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void doesNotAcceptAccountChanges() throws Exception {
-		configuration.setAccount(account());
-		configuration.setAccount(account());
-	}
-
 	@Test
 	public void handlesIdentityUpdates() throws Exception {
 		Identity identity = identity();
