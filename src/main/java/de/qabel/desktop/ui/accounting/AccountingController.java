@@ -24,7 +24,6 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-
 import javax.inject.Inject;
 import java.io.*;
 import java.net.URISyntaxException;
@@ -41,6 +40,7 @@ public class AccountingController extends AbstractController implements Initiali
 
 	List<AccountingItemView> itemViews = new LinkedList<>();
 	TextInputDialog dialog;
+	ResourceBundle resourceBundle;
 
 	@Inject
 	private IdentityRepository identityRepository;
@@ -54,6 +54,24 @@ public class AccountingController extends AbstractController implements Initiali
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		loadIdentities();
+		this.resourceBundle = resources;
+	}
+
+	private void loadIdentities() {
+		try {
+			identityList.getChildren().clear();
+			for (Identity identity : identityRepository.findAll()) {
+				final Map<String, Object> injectionContext = new HashMap<>();
+				injectionContext.put("identity", identity);
+				AccountingItemView itemView = new AccountingItemView(injectionContext::get);
+				identityList.getChildren().add(itemView.getView());
+				itemViews.add(itemView);
+			}
+
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getMessage(), e);
+		}
+
 		buildGson();
 	}
 
@@ -62,19 +80,32 @@ public class AccountingController extends AbstractController implements Initiali
 	}
 
 	public void addIdentity() {
-		dialog = new TextInputDialog("My Name");
+		dialog = new TextInputDialog(resourceBundle.getString("newIdentity"));
 		dialog.setHeaderText(null);
-		dialog.setTitle("New Identity");
-		dialog.setContentText("Please specify an avatar for your new Identity");
+		dialog.setTitle(resourceBundle.getString("newIdentity"));
+		dialog.setContentText(resourceBundle.getString("newIdentity"));
 		Optional<String> result = dialog.showAndWait();
 		result.ifPresent(this::addIdentityWithAlias);
+	}
+
+	protected void addIdentityWithAlias(String alias) {
+		Identity identity = identityBuilderFactory.factory().withAlias(alias).build();
+		try {
+			identityRepository.save(identity);
+		} catch (PersistenceException e) {
+			alert(resourceBundle.getString("saveIdentityFail"), e);
+		}
+		loadIdentities();
+		if (clientConfiguration.getSelectedIdentity() == null) {
+			clientConfiguration.selectIdentity(identity);
+		}
 	}
 
 	@FXML
 	protected void handleImportIdentityButtonAction(ActionEvent event) throws URISyntaxException, QblDropInvalidURL {
 
 		FileChooser chooser = new FileChooser();
-		chooser.setTitle("Choose Download Folder");
+		chooser.setTitle(resourceBundle.getString("downloadFolder"));
 		File file = chooser.showOpenDialog(identityList.getScene().getWindow());
 		try {
 			importIdentity(file);
@@ -85,6 +116,10 @@ public class AccountingController extends AbstractController implements Initiali
 
 	@FXML
 	protected void handleExportIdentityButtonAction(ActionEvent event) {
+	protected void handleExportIdentityButtonAction(ActionEvent event) {
+		DirectoryChooser chooser = new DirectoryChooser();
+		chooser.setTitle(resourceBundle.getString("downloadFolder"));
+		File dir = chooser.showDialog(identityList.getScene().getWindow());
 		Identity i = clientConfiguration.getSelectedIdentity();
 		File file = createSaveFileChooser(i.getAlias() + "_Identity.json");
 
@@ -159,6 +194,10 @@ public class AccountingController extends AbstractController implements Initiali
 		} finally {
 			br.close();
 		}
+	}
+
+	ResourceBundle getRessource(){
+		return resourceBundle;
 	}
 
 	Contact gsonContactToContact(GsonContact gc, Identity i) throws URISyntaxException, QblDropInvalidURL {

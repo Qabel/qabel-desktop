@@ -7,10 +7,15 @@ Desktop Frontend of Qabel
 
 ## Quick Start
 
+#### preconditions
+
 * to build the java code, you need an **OracleJDK 1.8** or higher
 * to build the libcurve from the [Qabel Core Project](https://github.com/Qabel/qabel-core) (lib called with JNI) you need a **C-Compiler** (`apt-get install build-essential` for ubuntu)
 * when cloning this repository, make sure to get the **submodules** by cloning recursive or running `gut submodule update --init --recursive` afterwards
-* the submodules include two required **servers**: [Qabel Drop Server](https://github.com/Qabel/qabel-drop/blob/master/README.md) and [Qabel Accounting Server](https://github.com/Qabel/qabel-drop/blob/master/README.md) to work. They will be started automatically for you (`start-server.sh`) but have some additional requirements like **postgresql**:
+ 
+#### server test-instances
+
+* the submodules include two required **servers**: [Qabel Drop Server](https://github.com/Qabel/qabel-drop/blob/master/README.md) and [Qabel Accounting Server](https://github.com/Qabel/qabel-accounting/blob/master/README.md) to work. They will be started automatically for you (`start-server.sh`) but have some additional requirements like **postgresql**:
  * install postgresql-server (`apt-get install postgresql` for ubuntu)
  * connect to your postgresql server using a proper client (like psql)
  * to create the database, the user and give access permissions, run
@@ -18,6 +23,9 @@ Desktop Frontend of Qabel
     * `CREATE USER qabel WITH PASSWORD 'qabel_test'`
     * `GRANT ALL PRIVILEGES ON DATABASE qabel_drop TO qabel`
  * for python integration with postgresql, you will need the postgresql-devel libs (`apt-get install libpq-dev` for ubuntu)
+
+#### first local build
+
 * then, you try out the whole build by running the `build.sh`. It will
  * start both the drop-server and the accounting-server with the script `start-servers.sh`
    * which installs the servers python dependencies in two virtualenvs and starts both servers 
