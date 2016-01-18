@@ -2,8 +2,14 @@ package de.qabel.desktop.ui.accounting;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
+import de.qabel.core.crypto.QblECKeyPair;
+import de.qabel.core.crypto.QblECPublicKey;
+import de.qabel.core.drop.DropURL;
+import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.exceptions.QblStorageException;
@@ -21,6 +27,7 @@ import javafx.stage.FileChooser;
 
 import javax.inject.Inject;
 import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -33,7 +40,6 @@ public class AccountingController extends AbstractController implements Initiali
 	VBox identityList;
 
 	List<AccountingItemView> itemViews = new LinkedList<>();
-
 	TextInputDialog dialog;
 
 	@Inject
@@ -51,29 +57,6 @@ public class AccountingController extends AbstractController implements Initiali
 		buildGson();
 	}
 
-	private void buildGson() {
-		final GsonBuilder builder = new GsonBuilder();
-		builder.serializeNulls();
-		builder.excludeFieldsWithoutExposeAnnotation();
-		gson = builder.create();
-	}
-
-	private void loadIdentities() {
-		try {
-			identityList.getChildren().clear();
-			for (Identity identity : identityRepository.findAll()) {
-				final Map<String, Object> injectionContext = new HashMap<>();
-				injectionContext.put("identity", identity);
-				AccountingItemView itemView = new AccountingItemView(injectionContext::get);
-				identityList.getChildren().add(itemView.getView());
-				itemViews.add(itemView);
-			}
-
-		} catch (Exception e) {
-			throw new IllegalStateException(e.getMessage(), e);
-		}
-	}
-
 	public void addIdentity(ActionEvent actionEvent) {
 		addIdentity();
 	}
@@ -85,6 +68,44 @@ public class AccountingController extends AbstractController implements Initiali
 		dialog.setContentText("Please specify an avatar for your new Identity");
 		Optional<String> result = dialog.showAndWait();
 		result.ifPresent(this::addIdentityWithAlias);
+	}
+
+	@FXML
+	protected void handleImportIdentityButtonAction(ActionEvent event) throws URISyntaxException, QblDropInvalidURL {
+
+		FileChooser chooser = new FileChooser();
+		chooser.setTitle("Choose Download Folder");
+		File file = chooser.showOpenDialog(identityList.getScene().getWindow());
+		try {
+			importIdentity(file);
+		} catch (IOException | PersistenceException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
+	protected void handleExportIdentityButtonAction(ActionEvent event) {
+		Identity i = clientConfiguration.getSelectedIdentity();
+		File file = createSaveFileChooser(i.getAlias() + "_Identity.json");
+
+		try {
+
+			exportIdentity(i, file);
+			loadIdentities();
+		} catch (IOException | QblStorageException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
+	protected void handleExportContactButtonAction(ActionEvent event) {
+		Identity i = clientConfiguration.getSelectedIdentity();
+		File file = createSaveFileChooser(i.getAlias() + "_Identity.json");
+		try {
+			exportContact(i, file);
+		} catch (IOException | QblStorageException e) {
+			e.printStackTrace();
+		}
 	}
 
 	protected void addIdentityWithAlias(String alias) {
@@ -100,79 +121,24 @@ public class AccountingController extends AbstractController implements Initiali
 		}
 	}
 
-	@FXML
-	protected void handleImportIdentityButtonAction(ActionEvent event) {
-
-		FileChooser chooser = new FileChooser();
-		chooser.setTitle("Choose Download Folder");
-		File file = chooser.showOpenDialog(identityList.getScene().getWindow());
-		try {
-			importIdentity(file);
-		} catch (IOException | PersistenceException e) {
-			e.printStackTrace();
-		}
-	}
-
-	void importIdentity(File file) throws IOException, PersistenceException {
+	void importIdentity(File file) throws IOException, PersistenceException, URISyntaxException, QblDropInvalidURL {
 		String content = readFile(file);
-		Identity i = gson.fromJson(content, Identity.class);
+		GsonIdentity gi = gson.fromJson(content, GsonIdentity.class);
+		Identity i = gsonIdentityToIdentiy(gi);
 		identityRepository.save(i);
 	}
 
-	@FXML
-	protected void handleExportIdentityButtonAction(ActionEvent event) {
-		DirectoryChooser chooser = new DirectoryChooser();
-		chooser.setTitle("Choose Download Folder");
-		File dir = chooser.showDialog(identityList.getScene().getWindow());
-		Identity i = clientConfiguration.getSelectedIdentity();
-		try {
-			exportIdentity(i, dir);
-			loadIdentities();
-		} catch (IOException | QblStorageException e) {
-			e.printStackTrace();
-		}
+	void exportIdentity(Identity i, File file) throws IOException, QblStorageException {
+		GsonIdentity gi = createGsonIdentity(i);
+		String json = gson.toJson(gi);
+		writeJsonInFile(json, file);
 	}
 
-	@FXML
-	protected void handleExportContactButtonAction(ActionEvent event) {
-		DirectoryChooser chooser = new DirectoryChooser();
-		chooser.setTitle("Choose Download Folder");
-		File dir = chooser.showDialog(identityList.getScene().getWindow());
-		Identity i = clientConfiguration.getSelectedIdentity();
-		Contact c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getPrimaryKeyPair().getPub());
-		try {
-			exportContact(c, dir);
-		} catch (IOException | QblStorageException e) {
-			e.printStackTrace();
-		}
+	void exportContact(Identity i, File file) throws IOException, QblStorageException {
+		GsonContact gc = createGsonContact(i);
+		String json = gson.toJson(gc);
+		writeJsonInFile(json, file);
 	}
-
-	void exportIdentity(Identity i, File dir) throws IOException, QblStorageException {
-
-
-		String json = gson.toJson(i);
-
-		InputStream stream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
-		byte[] buffer = new byte[stream.available()];
-		stream.read(buffer);
-
-		File targetFile = new File(dir.getPath() + "/" + i.getAlias() + "_Identity.json");
-		OutputStream outStream = new FileOutputStream(targetFile);
-		outStream.write(buffer);
-	}
-
-	void exportContact(Contact c, File dir) throws IOException, QblStorageException {
-
-		String json = gson.toJson(c);
-		InputStream stream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
-		byte[] buffer = new byte[stream.available()];
-		stream.read(buffer);
-
-		File targetFile = new File(dir.getPath() + "/" + c.getAlias() + "_Contact.json");
-		OutputStream outStream = new FileOutputStream(targetFile);
-		outStream.write(buffer);
-	}
-
 
 	String readFile(File f) throws IOException {
 		FileReader fileReader = new FileReader(f);
@@ -194,4 +160,109 @@ public class AccountingController extends AbstractController implements Initiali
 			br.close();
 		}
 	}
+
+	Contact gsonContactToContact(GsonContact gc, Identity i) throws URISyntaxException, QblDropInvalidURL {
+
+		ArrayList<DropURL> collection = generateDropURLs(gc.getDropUrls());
+		QblECPublicKey pubKey = new QblECPublicKey(gc.getPublicKey());
+		Contact c = new Contact(i, gc.getAlias(), collection, pubKey);
+		c.setPhone(gc.getPhone());
+		c.setEmail(gc.getEmail());
+
+		return c;
+	}
+
+	Identity gsonIdentityToIdentiy(GsonIdentity gi) throws URISyntaxException, QblDropInvalidURL {
+
+		gi.buildKeyPair();
+		ArrayList<DropURL> collection = generateDropURLs(gi.getDropUrls());
+		QblECKeyPair qblECKeyPair = new QblECKeyPair(gi.getPrivateKey());
+
+		return new Identity(gi.getAlias(), collection, qblECKeyPair);
+	}
+
+	private GsonContact createGsonContact(Identity identity) {
+		GsonContact gc = new GsonContact();
+		gc.setEmail(identity.getEmail());
+		gc.setPhone(identity.getPhone());
+		gc.setAlias(identity.getAlias());
+		gc.setCreated(identity.getCreated());
+		gc.setUpdated(identity.getUpdated());
+		gc.setDeleted(identity.getDeleted());
+		gc.setPublicKey(identity.getEcPublicKey().getKey());
+		for (DropURL d : identity.getDropUrls()) {
+			gc.addDropUrl(d.getUri().toString());
+		}
+		return gc;
+	}
+
+	private GsonIdentity createGsonIdentity(Identity i) {
+		GsonIdentity gi = new GsonIdentity();
+		gi.setEmail(i.getEmail());
+		gi.setPhone(i.getPhone());
+		gi.setAlias(i.getAlias());
+		gi.setCreated(i.getCreated());
+		gi.setUpdated(i.getUpdated());
+		gi.setDeleted(i.getDeleted());
+		gi.setPublicKey(i.getEcPublicKey().getKey());
+		gi.setPrivateKey(i.getPrimaryKeyPair().getPrivateKey());
+		for (DropURL d : i.getDropUrls()) {
+			gi.addDropUrl(d.getUri().toString());
+		}
+		gi.generateKeyStructure();
+		return gi;
+	}
+
+	private void writeJsonInFile(String json, File dir) throws IOException {
+		InputStream stream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
+		byte[] buffer = new byte[stream.available()];
+		stream.read(buffer);
+
+		File targetFile = new File(dir.getPath());
+		targetFile.createNewFile();
+		OutputStream outStream = new FileOutputStream(targetFile);
+		outStream.write(buffer);
+	}
+
+	private ArrayList<DropURL> generateDropURLs(JsonArray drops) throws URISyntaxException, QblDropInvalidURL {
+		ArrayList<DropURL> collection = new ArrayList<>();
+
+		for (int j = 0; j < drops.size(); j++) {
+			JsonElement uri = drops.get(j);
+			DropURL dropURL = new DropURL(uri.getAsString());
+
+			collection.add(dropURL);
+		}
+		return collection;
+	}
+
+	private void buildGson() {
+		final GsonBuilder builder = new GsonBuilder();
+		builder.serializeNulls();
+		builder.excludeFieldsWithoutExposeAnnotation();
+		gson = builder.create();
+	}
+
+	private void loadIdentities() {
+		try {
+			identityList.getChildren().clear();
+			for (Identity identity : identityRepository.findAll()) {
+				final Map<String, Object> injectionContext = new HashMap<>();
+				injectionContext.put("identity", identity);
+				AccountingItemView itemView = new AccountingItemView(injectionContext::get);
+				identityList.getChildren().add(itemView.getView());
+				itemViews.add(itemView);
+			}
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getMessage(), e);
+		}
+	}
+
+	private File createSaveFileChooser(String defaultName) {
+		FileChooser chooser = new FileChooser();
+		chooser.setTitle("Download");
+		chooser.setInitialFileName(defaultName);
+		return chooser.showSaveDialog(identityList.getScene().getWindow());
+	}
+
 }
