@@ -7,13 +7,20 @@ import java.nio.file.Path;
 import java.util.Observable;
 
 public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig {
+	private static final String DEFAULT_NAME = "New Sync Config";
 	private Path localPath;
 	private Path remotePath;
 	private Identity identity;
 	private Account account;
 	private Boolean paused = false;
+	private String name;
 
 	public DefaultBoxSyncConfig(Path localPath, Path remotePath, Identity identity, Account account) {
+		this(DEFAULT_NAME, localPath, remotePath, identity, account);
+	}
+
+	public DefaultBoxSyncConfig(String name, Path localPath, Path remotePath, Identity identity, Account account) {
+		this.name = name;
 		this.localPath = localPath;
 		this.remotePath = remotePath;
 		this.identity = identity;
@@ -82,5 +89,15 @@ public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig {
 	@Override
 	public Account getAccount() {
 		return account;
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
 	}
 }

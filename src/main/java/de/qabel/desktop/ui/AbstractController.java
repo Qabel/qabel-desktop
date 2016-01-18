@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.function.Function;
 
 public class AbstractController {
 	protected Alert alert;
@@ -44,5 +45,14 @@ public class AbstractController {
 		PrintWriter pw = new PrintWriter(sw);
 		e.printStackTrace(pw);
 		return sw.toString();
+	}
+
+	protected Function<String, Object> singleObjectMap(String key, Object instance) {
+		return s -> {
+			if (s.equals(key)) {
+				return instance;
+			}
+			return null;
+		};
 	}
 }

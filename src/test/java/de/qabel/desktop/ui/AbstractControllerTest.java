@@ -32,6 +32,7 @@ public class AbstractControllerTest {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
+		Platform.setImplicitExit(false);
 		try {
 			Platform.runLater(() -> {
 			});
@@ -61,7 +62,7 @@ public class AbstractControllerTest {
 		diContainer.put("clientConfiguration", clientConfiguration);
 		diContainer.put("dropUrlGenerator", new DropUrlGenerator("http://localhost:5000"));
 		identityBuilderFactory = new IdentityBuilderFactory((DropUrlGenerator) diContainer.get("dropUrlGenerator"));
-		diContainer.put("identityBuilderFactory",identityBuilderFactory);
+		diContainer.put("identityBuilderFactory", identityBuilderFactory);
 		diContainer.put("account", new Account("a", "b", "c"));
 		diContainer.put("identityRepository", identityRepository);
 		Injector.setConfigurationSource(diContainer::get);

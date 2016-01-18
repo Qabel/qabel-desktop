@@ -1,0 +1,60 @@
+.dialog {
+    -fx-spacing: 1em;
+    -fx-padding: 1em;
+    -fx-background-color: white;
+    -fx-min-width: 40em;
+    -fx-min-height: 10em;
+}
+
+* {
+    -fx-highlight-fill: #fd670d;
+}
+
+.dialog .label {
+    -fx-min-width: 10em;
+    -fx-pre-width: 10em;
+    -fx-max-width: 10em;
+}
+
+.row {
+    -fx-spacing: 1em;
+    -fx-pref-height: 1.5em;
+    -fx-alignment: center-left;
+}
+
+.text-field {
+    -fx-pref-width: 40em;
+}
+
+.button.choose {
+    -fx-min-width: 7em;
+}
+
+.button-bar {
+    -fx-spacing: 1em;
+}
+
+.button {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 15;
+    -fx-indent: 20em;
+    -fx-background-color: #fcdcca, #fc7b4c, #fd670d;
+    -fx-pref-width: 10em;
+    -fx-background-insets: 0px, 1px;
+    -fx-cursor: hand;
+}
+.button:hover {
+    -fx-background-color: #fcdcca, #fcdcca;
+}
+
+.text-field {
+    -fx-background-radius: 15;
+    -fx-padding: 5px 15px 5px 15px;
+    -fx-alignment: center;
+    -fx-text-alignment: center!important;
+}
+
+.text-field.error {
+    -fx-background-color:  red, white;
+}

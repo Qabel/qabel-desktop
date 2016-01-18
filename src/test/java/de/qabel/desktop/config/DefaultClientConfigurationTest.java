@@ -2,6 +2,7 @@ package de.qabel.desktop.config;
 
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
+import de.qabel.desktop.ui.sync.DummyBoxSyncConfig;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -66,6 +67,12 @@ public class DefaultClientConfigurationTest {
 		configuration.selectIdentity(identity);
 
 		assertFalse("selectIdentity triggered update even though identity was not changed", wasUpdated());
+	}
+
+	@Test
+	public void notifiesOnSyncConfigChange() {
+		configuration.getBoxSyncConfigs().add(new DummyBoxSyncConfig());
+		assertTrue("boxSyncConfig change did not trigger update", wasUpdated());
 	}
 
 	private void resetUpdates() {

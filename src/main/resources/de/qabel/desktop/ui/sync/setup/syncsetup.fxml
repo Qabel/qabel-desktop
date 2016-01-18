@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<VBox fx:controller="de.qabel.desktop.ui.sync.setup.SyncSetupController"
+      styleClass="dialog" prefWidth="600"
+      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">
+         <children>
+            <Label prefWidth="150.0" text="Name" />
+            <TextField fx:id="name" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="descriptive name for the sync configuration" />
+         </children>
+      </HBox>
+      <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">
+         <children>
+            <Label prefWidth="150.0" text="Remote Folder" />
+            <TextField fx:id="localPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+            <Button styleClass="choose">choose</Button>
+         </children>
+      </HBox>
+      <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">
+         <children>
+            <Label prefWidth="150.0" text="Local Folder" />
+            <TextField fx:id="remotePath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+            <Button styleClass="choose">choose</Button>
+         </children>
+      </HBox>
+      <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">
+         <children>
+            <Label prefWidth="150.0" text="Identity" />
+            <TextField fx:id="identity" disable="true" editable="false" text="identity"/>
+         </children>
+      </HBox>
+      <HBox styleClass="button-bar" alignment="TOP_RIGHT">
+         <children>
+            <Button fx:id="cancel" onAction="#close" cancelButton="true">cancel</Button>
+            <Button fx:id="start" onAction="#createSyncConfig" defaultButton="true">start sync</Button>
+         </children>
+      </HBox>
+   </children>
+</VBox>

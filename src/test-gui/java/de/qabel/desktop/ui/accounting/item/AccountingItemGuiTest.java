@@ -20,7 +20,7 @@ public class AccountingItemGuiTest extends AbstractGuiTest<AccountingItemControl
 
 	@Test
 	public void testEdit() throws Exception {
-		robot.clickOn("#edit");
+		clickOn("#edit");
 		waitUntil(() -> controller.dialog != null);
 		runLaterAndWait(() -> {
 			controller.dialog.getEditor().setText("new alias");
@@ -31,7 +31,7 @@ public class AccountingItemGuiTest extends AbstractGuiTest<AccountingItemControl
 
 	@Test
 	public void selectsIdentity() {
-		robot.clickOn("#selectedRadio");
+		clickOn("#selectedRadio");
 		waitUntil(() -> identity.equals(clientConfiguration.getSelectedIdentity()));
 		assertTrue(controller.selectedRadio.isSelected());
 	}

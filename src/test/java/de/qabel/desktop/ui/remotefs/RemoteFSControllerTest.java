@@ -76,16 +76,17 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 	}
 
 	@After
-	public void after() throws Exception {
+	public void teadDown() throws Exception {
 		localWrite.delete(localStorageFile.getName());
 		FileUtils.deleteDirectory(new File(TEST_TMP_DIR));
 		FileUtils.deleteDirectory(new File(TMP_DIR + "/" + controller.ROOT_FOLDER_NAME));
 		FileUtils.deleteDirectory(new File(TMP_DIR + "/test"));
 		File file = new File(TMP_DIR + "/" + "tmp1.txt");
 		file.delete();
+		super.tearDown();
 	}
 
-	@Test
+	@Test(timeout=1000L)
 	public void showsEmptyStringOnUnknownColumn() {
 		TreeItem rootNode = getRoot();
 		assertThat(rootNode.getChildren().size(), is(0));
@@ -118,7 +119,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		assertThat(controller.getRessource().getLocale().getLanguage(), is("de"));
 	}
 
-	@Test
+	@Test(timeout=1000L)
 	public void testCalculateFolderStructure() {
 		try {
 
@@ -133,7 +134,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		}
 	}
 
-	@Test
+	@Test(timeout=1000L)
 	public void testCalculateFileStructure() {
 		try {
 
@@ -148,7 +149,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		}
 	}
 
-	@Test
+	@Test(timeout=1000L)
 	public void testObserveFilesSubfolder() {
 		try {
 			BoxFolder folder = nav.createFolder("folder");
@@ -166,7 +167,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		}
 	}
 
-	@Test
+	@Test(timeout=1000L)
 	public void testObserveFoldersSubfolder() {
 		try {
 
@@ -187,7 +188,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		}
 	}
 
-	@Test
+	@Test(timeout=1000L)
 	public void testUploadedDirectoryInRootNode() throws QblStorageException, IOException {
 
 		initTreeTable();
@@ -201,7 +202,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		assertThat(newNav.listFolders().size(), is(1));
 	}
 
-	@Test
+	@Test(timeout=1000L)
 	public void testUploadedDirectoryInChildNode() throws QblStorageException, IOException {
 
 		File dir = new File(TEST_TMP_DIR);
@@ -218,7 +219,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 
 	}
 
-	@Test
+	@Test(timeout=1000L)
 	public void testCreateFolder() throws QblStorageException {
 
 		File dir = new File(TEST_TMP_DIR);
@@ -232,7 +233,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 	}
 
 
-	@Test
+	@Test(timeout=1000L)
 	public void TestUploadFiles() throws QblStorageException, IOException {
 		File dir = new File(TEST_TMP_DIR);
 		dir.mkdirs();
@@ -246,7 +247,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 
 	}
 
-	@Test
+	@Test(timeout=1000L)
 	public void TestDontDeleteBoxFolder() throws QblStorageException, IOException {
 		initTreeTable();
 		BoxFolder folder = controller.nav.listFolders().get(0);
@@ -255,7 +256,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		assertThat(controller.nav.listFiles().size(), is(0));
 	}
 
-	@Test
+	@Test(timeout=1000L)
 	public void TestDeleteBoxFolder() throws QblStorageException, IOException {
 		initTreeTable();
 
@@ -265,7 +266,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		assertThat(controller.nav.listFiles().size(), is(0));
 	}
 
-	@Test
+	@Test(timeout=1000L)
 	public void TestDeleteBoxFile() throws QblStorageException, IOException {
 		initTreeTable();
 
@@ -279,7 +280,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		assertThat(newNav.listFiles().size(), is(0));
 	}
 
-	@Test
+	@Test(timeout=1000L)
 	public void TestDeleteBoxFileFromRootNode() throws QblStorageException, IOException {
 		initTreeTable();
 		BoxFolder folder = nav.listFolders().get(0);
@@ -287,7 +288,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		assertThat(nav.listFiles().size(), is(0));
 	}
 
-	@Test
+	@Test(timeout=1000L)
 	public void TestDownloadFolderFromRootNode() throws QblStorageException, IOException {
 		initTreeTable();
 		BoxFolder folder = nav.listFolders().get(0);
@@ -308,7 +309,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		assertThat(TEST_FOLDER, is(dir.getName()));
 	}
 
-	@Test
+	@Test(timeout=1000L)
 	public void TestDownloadFolderFromNode() throws QblStorageException, IOException {
 		initTreeTable();
 		BoxFolder root = nav.listFolders().get(0);
@@ -326,7 +327,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		assertThat(TEST_SUB_FOLDER, is(subDir.getName()));
 	}
 
-	@Test
+	@Test(timeout=1000L)
 	public void TestDownloadFileFromRootNode() throws QblStorageException, IOException {
 		controller.nav = nav;
 
@@ -345,7 +346,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 
 	}
 
-	@Test
+	@Test(timeout=1000L)
 	public void TestDownloadFileFromSubNode() throws QblStorageException, IOException {
 		initTreeTable();
 
