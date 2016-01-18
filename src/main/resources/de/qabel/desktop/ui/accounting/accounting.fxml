@@ -114,7 +114,7 @@
             </children>
         </VBox>
 
-        <Button fx:id="add" mnemonicParsing="false" onAction="#addIdentity" text="Add Identity">
+        <Button fx:id="add" mnemonicParsing="false" onAction="#addIdentity" text="%addIdentity">
             <VBox.margin>
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
             </VBox.margin>
@@ -122,13 +122,13 @@
         <HBox prefHeight="100.0" prefWidth="200.0">
             <children>
                 <Button fx:id="import" mnemonicParsing="false" onAction="#handleImportIdentityButtonAction"
-                        text="Import Identity">
+                        text="%importIdentity">
                     <HBox.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                     </HBox.margin>
                 </Button>
                 <Button fx:id="export" mnemonicParsing="false" onAction="#handleExportIdentityButtonAction"
-                        text="Export Identity">
+                        text="%exportIdentity">
                     <HBox.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                     </HBox.margin>

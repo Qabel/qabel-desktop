@@ -1,6 +1,6 @@
 package de.qabel.desktop.ui.remotefs;
 
-import com.airhacks.afterburner.views.FXMLView;
+import com.airhacks.afterburner.views.QabelFXMLView;
 
-public class RemoteFSView extends FXMLView {
+public class RemoteFSView extends QabelFXMLView {
 }

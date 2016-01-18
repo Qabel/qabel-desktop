@@ -16,25 +16,25 @@
       </ImageView>
       <VBox alignment="TOP_CENTER" styleClass="login-form">
          <children>
-            <Label styleClass="login-title" text="Please login to your Qabel Box Account">
+            <Label styleClass="login-title" text="%loginText">
                <VBox.margin>
                   <Insets bottom="10.0" top="10.0" />
                </VBox.margin>
             </Label>
             <ChoiceBox fx:id="providerChoices" />
-            <TextField fx:id="user" styleClass="user" alignment="CENTER" promptText="Box Account User" text="testuser">
+            <TextField fx:id="user" styleClass="user" alignment="CENTER" promptText="%boxAccountUser" text="testuser">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </TextField>
-            <TextField fx:id="auth" alignment="CENTER" promptText="Box Account Password" text="testuser">
+            <TextField fx:id="auth" alignment="CENTER" promptText="%boxAccountPassword" text="testuser">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </TextField>
              <HBox fx:id="buttonBar" alignment="CENTER" styleClass="login-button-bar">
                  <children>
-                     <Button mnemonicParsing="false" styleClass="create-account-button" text="create account" />
+                     <Button mnemonicParsing="false" styleClass="create-account-button" text="%createAccount" />
                      <Button onAction="#login" fx:id="loginButton" mnemonicParsing="false" styleClass="login-button" text="login" />
                  </children>
                  <VBox.margin>
@@ -50,7 +50,7 @@
                  </VBox.margin>
              </HBox>
             <Separator />
-            <Hyperlink onAction="#recoverPassword" text="forgot password?" />
+            <Hyperlink onAction="#recoverPassword" text="%forgotPassword" />
          </children>
          <VBox.margin>
             <Insets top="50.0" />
