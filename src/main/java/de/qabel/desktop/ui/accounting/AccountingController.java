@@ -54,26 +54,11 @@ public class AccountingController extends AbstractController implements Initiali
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		loadIdentities();
+		buildGson();
 		this.resourceBundle = resources;
 	}
 
-	private void loadIdentities() {
-		try {
-			identityList.getChildren().clear();
-			for (Identity identity : identityRepository.findAll()) {
-				final Map<String, Object> injectionContext = new HashMap<>();
-				injectionContext.put("identity", identity);
-				AccountingItemView itemView = new AccountingItemView(injectionContext::get);
-				identityList.getChildren().add(itemView.getView());
-				itemViews.add(itemView);
-			}
 
-		} catch (Exception e) {
-			throw new IllegalStateException(e.getMessage(), e);
-		}
-
-		buildGson();
-	}
 
 	public void addIdentity(ActionEvent actionEvent) {
 		addIdentity();
@@ -88,19 +73,6 @@ public class AccountingController extends AbstractController implements Initiali
 		result.ifPresent(this::addIdentityWithAlias);
 	}
 
-	protected void addIdentityWithAlias(String alias) {
-		Identity identity = identityBuilderFactory.factory().withAlias(alias).build();
-		try {
-			identityRepository.save(identity);
-		} catch (PersistenceException e) {
-			alert(resourceBundle.getString("saveIdentityFail"), e);
-		}
-		loadIdentities();
-		if (clientConfiguration.getSelectedIdentity() == null) {
-			clientConfiguration.selectIdentity(identity);
-		}
-	}
-
 	@FXML
 	protected void handleImportIdentityButtonAction(ActionEvent event) throws URISyntaxException, QblDropInvalidURL {
 
@@ -109,6 +81,7 @@ public class AccountingController extends AbstractController implements Initiali
 		File file = chooser.showOpenDialog(identityList.getScene().getWindow());
 		try {
 			importIdentity(file);
+			loadIdentities();
 		} catch (IOException | PersistenceException e) {
 			e.printStackTrace();
 		}
@@ -116,13 +89,9 @@ public class AccountingController extends AbstractController implements Initiali
 
 	@FXML
 	protected void handleExportIdentityButtonAction(ActionEvent event) {
-	protected void handleExportIdentityButtonAction(ActionEvent event) {
-		DirectoryChooser chooser = new DirectoryChooser();
-		chooser.setTitle(resourceBundle.getString("downloadFolder"));
-		File dir = chooser.showDialog(identityList.getScene().getWindow());
+
 		Identity i = clientConfiguration.getSelectedIdentity();
 		File file = createSaveFileChooser(i.getAlias() + "_Identity.json");
-
 		try {
 
 			exportIdentity(i, file);
