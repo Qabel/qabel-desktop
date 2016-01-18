@@ -15,7 +15,7 @@ Desktop Frontend of Qabel
  
 #### server test-instances
 
-* the submodules include two required **servers**: [Qabel Drop Server](https://github.com/Qabel/qabel-drop/blob/master/README.md) and [Qabel Accounting Server](https://github.com/Qabel/qabel-drop/blob/master/README.md) to work. They will be started automatically for you (`start-server.sh`) but have some additional requirements like **postgresql**:
+* the submodules include two required **servers**: [Qabel Drop Server](https://github.com/Qabel/qabel-drop/blob/master/README.md) and [Qabel Accounting Server](https://github.com/Qabel/qabel-accounting/blob/master/README.md) to work. They will be started automatically for you (`start-server.sh`) but have some additional requirements like **postgresql**:
  * install postgresql-server (`apt-get install postgresql` for ubuntu)
  * connect to your postgresql server using a proper client (like psql)
  * to create the database, the user and give access permissions, run
