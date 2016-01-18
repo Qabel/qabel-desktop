@@ -1,6 +1,8 @@
 package de.qabel.desktop.ui.accounting;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
@@ -25,7 +27,7 @@ import java.util.*;
 
 public class AccountingController extends AbstractController implements Initializable {
 	private Identity selectedIdentity;
-	private Gson gson = new Gson();
+	private Gson gson;
 
 	@FXML
 	VBox identityList;
@@ -46,6 +48,14 @@ public class AccountingController extends AbstractController implements Initiali
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		loadIdentities();
+		buildGson();
+	}
+
+	private void buildGson() {
+		final GsonBuilder builder = new GsonBuilder();
+		builder.serializeNulls();
+		builder.excludeFieldsWithoutExposeAnnotation();
+		gson = builder.create();
 	}
 
 	private void loadIdentities() {
@@ -110,7 +120,7 @@ public class AccountingController extends AbstractController implements Initiali
 	}
 
 	@FXML
-	protected void handleExportIdentityButtonAction(ActionEvent event)  {
+	protected void handleExportIdentityButtonAction(ActionEvent event) {
 		DirectoryChooser chooser = new DirectoryChooser();
 		chooser.setTitle("Choose Download Folder");
 		File dir = chooser.showDialog(identityList.getScene().getWindow());
@@ -123,18 +133,45 @@ public class AccountingController extends AbstractController implements Initiali
 		}
 	}
 
+	@FXML
+	protected void handleExportContactButtonAction(ActionEvent event) {
+		DirectoryChooser chooser = new DirectoryChooser();
+		chooser.setTitle("Choose Download Folder");
+		File dir = chooser.showDialog(identityList.getScene().getWindow());
+		Identity i = clientConfiguration.getSelectedIdentity();
+		Contact c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getPrimaryKeyPair().getPub());
+		try {
+			exportContact(c, dir);
+		} catch (IOException | QblStorageException e) {
+			e.printStackTrace();
+		}
+	}
+
 	void exportIdentity(Identity i, File dir) throws IOException, QblStorageException {
 
+
 		String json = gson.toJson(i);
+
 		InputStream stream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
 		byte[] buffer = new byte[stream.available()];
 		stream.read(buffer);
 
-		File targetFile = new File(dir.getPath() + "/" + i.getAlias() + ".json");
+		File targetFile = new File(dir.getPath() + "/" + i.getAlias() + "_Identity.json");
 		OutputStream outStream = new FileOutputStream(targetFile);
 		outStream.write(buffer);
 	}
 
+	void exportContact(Contact c, File dir) throws IOException, QblStorageException {
+
+		String json = gson.toJson(c);
+		InputStream stream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
+		byte[] buffer = new byte[stream.available()];
+		stream.read(buffer);
+
+		File targetFile = new File(dir.getPath() + "/" + c.getAlias() + "_Contact.json");
+		OutputStream outStream = new FileOutputStream(targetFile);
+		outStream.write(buffer);
+	}
 
 
 	String readFile(File f) throws IOException {
@@ -148,7 +185,7 @@ public class AccountingController extends AbstractController implements Initiali
 			while (line != null) {
 				sb.append(line);
 				line = br.readLine();
-				if(line != null){
+				if (line != null) {
 					sb.append("\n");
 				}
 			}

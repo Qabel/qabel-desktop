@@ -121,14 +121,21 @@
         </Button>
         <HBox prefHeight="100.0" prefWidth="200.0">
             <children>
-                <Button fx:id="import" mnemonicParsing="false" onAction="#handleImportIdentityButtonAction"
+                <Button fx:id="importIdentity" mnemonicParsing="false" onAction="#handleImportIdentityButtonAction"
                         text="Import Identity">
                     <HBox.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                     </HBox.margin>
                 </Button>
-                <Button fx:id="export" mnemonicParsing="false" onAction="#handleExportIdentityButtonAction"
+                <Button fx:id="exportIdentity" mnemonicParsing="false" onAction="#handleExportIdentityButtonAction"
                         text="Export Identity">
+                    <HBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </HBox.margin>
+                </Button>
+
+                <Button fx:id="exportContact" mnemonicParsing="false" onAction="#handleExportContactButtonAction"
+                        text="Export Contact">
                     <HBox.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                     </HBox.margin>
