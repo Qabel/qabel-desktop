@@ -53,6 +53,7 @@ public class AccountingController extends AbstractController implements Initiali
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		loadIdentities();
+		buildGson();
 		this.resourceBundle = resources;
 	}
 

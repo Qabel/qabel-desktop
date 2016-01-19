@@ -118,7 +118,7 @@ public class ContactController extends AbstractController implements Initializab
 		});
 	}
 
-	private void exportContacts(File file) throws EntityNotFoundExcepion, IOException {
+	void exportContacts(File file) throws EntityNotFoundExcepion, IOException {
 		List<Contact> contacts = contactRepository.findAllContactFormOneIdentity(i);
 		List<GsonContact> list = new LinkedList<>();
 
@@ -132,7 +132,7 @@ public class ContactController extends AbstractController implements Initializab
 		writeJsonInFile(jsonContacts, file);
 	}
 
-	private void importContacts(File file) throws IOException, URISyntaxException, QblDropInvalidURL, PersistenceException {
+	void importContacts(File file) throws IOException, URISyntaxException, QblDropInvalidURL, PersistenceException {
 		String content = readFile(file);
 		JsonArray list = gson.fromJson(content, JsonArray.class);
 
