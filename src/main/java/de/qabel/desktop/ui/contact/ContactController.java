@@ -4,7 +4,10 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
+import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.IdentityRepository;
+import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.contact.item.BlankItemView;
 import de.qabel.desktop.ui.contact.item.ContactItemView;
@@ -12,7 +15,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.Pane;
-
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.*;
@@ -26,18 +28,21 @@ public class ContactController extends AbstractController implements Initializab
 	Pane contactList;
 
 	@Inject
-	private IdentityRepository identityRepository;
-
-	@Inject
-	private IdentityBuilderFactory identityBuilderFactory;
-
-	@Inject
 	private ClientConfiguration clientConfiguration;
+
+	@Inject
+	private ContactRepository contactRepository;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		this.resourceBundle = resources;
-		loadContacts();
+		try {
+			Identity i = clientConfiguration.getSelectedIdentity();
+			setup(i);
+			loadContacts(i);
+		} catch (EntityNotFoundExcepion | PersistenceException entityNotFoundExcepion) {
+			entityNotFoundExcepion.printStackTrace();
+		}
 	}
 
 	@FXML
@@ -48,43 +53,39 @@ public class ContactController extends AbstractController implements Initializab
 	protected void handleExportContactsButtonAction(ActionEvent event) {
 	}
 
-	private void loadContacts() {
+	void loadContacts(Identity i) throws EntityNotFoundExcepion {
 		contactList.getChildren().clear();
 		String old = null;
-		List<Contact> contacts = new ArrayList<>();
-
-		for (int j = 1; j >= 0; j--) {
-			Identity i = identityBuilderFactory.factory().withAlias("Qabel").build();
-			Contact c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
-			c.setEmail("mail.awesome@qabel.de");
-			contacts.add(c);
-
-		}
-
-		for (int j = 1; j >= 0; j--) {
-			Identity i = identityBuilderFactory.factory().withAlias("Mesa").build();
-			Contact c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
-			c.setEmail("mesa@mesa-labs.de");
-			contacts.add(c);
-
-		}
-
-		for (int j = 1; j >= 0; j--) {
-			Identity i = identityBuilderFactory.factory().withAlias("prae").build();
-			Contact c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
-			c.setEmail("mail.awesome@prae.me");
-			contacts.add(c);
-
-		}
+		List<Contact> contacts = contactRepository.findAllContactFormOneIdentity(i);
 
 		contacts.sort((c1, c2) -> c1.getAlias().compareTo(c2.getAlias()));
 
 		for (Contact co : contacts) {
-			if ( old == null || !old.equals(co.getAlias().substring(0, 1).toUpperCase())) {
+			if (old == null || !old.equals(co.getAlias().substring(0, 1).toUpperCase())) {
 				old = createBlankItem(co);
 			}
 			createContactItem(co);
 		}
+	}
+
+	private void setup(Identity i) throws PersistenceException {
+		Contact c;
+		c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
+		c.setAlias("Qabel");
+		c.setEmail("mail.awesome@qabel.de");
+		contactRepository.save(c);
+
+
+		c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
+		c.setAlias("MESA");
+		c.setEmail("mesa@mesa-labs.de");
+		contactRepository.save(c);
+
+
+		c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
+		c.setAlias("preamandatum");
+		c.setEmail("mail.awesome@prae.me");
+		contactRepository.save(c);
 	}
 
 	private void createContactItem(Contact co) {
