@@ -28,22 +28,23 @@ import java.util.Locale;
 import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 
 public class ContactControllerTest extends AbstractControllerTest {
 
 
-	private ContactController controller = new ContactController();
-
 	@Test
-	public void injectlTest() {
+	public void injectTest() {
 		Locale.setDefault(new Locale("de", "DE"));
 		ContactView view = new ContactView();
 		Identity i = new Identity("test", null, new QblECKeyPair());
 		clientConfiguration.selectIdentity(i);
 		clientConfiguration.setAccount(new Account("Provider","user","auth"));
-		controller = (ContactController) view.getPresenter();
+		ContactController controller = (ContactController) view.getPresenter();
+		assertEquals(1,1);
 
 	}
 

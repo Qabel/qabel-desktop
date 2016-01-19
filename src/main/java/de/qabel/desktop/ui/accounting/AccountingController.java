@@ -33,7 +33,6 @@ import java.util.*;
 
 public class AccountingController extends AbstractController implements Initializable {
 	private Identity selectedIdentity;
-	private Gson gson;
 
 	@FXML
 	VBox identityList;
@@ -54,7 +53,6 @@ public class AccountingController extends AbstractController implements Initiali
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		loadIdentities();
-		buildGson();
 		this.resourceBundle = resources;
 	}
 
@@ -104,7 +102,7 @@ public class AccountingController extends AbstractController implements Initiali
 	@FXML
 	protected void handleExportContactButtonAction(ActionEvent event) {
 		Identity i = clientConfiguration.getSelectedIdentity();
-		File file = createSaveFileChooser(i.getAlias() + "_Identity.json");
+		File file = createSaveFileChooser(i.getAlias() + "_Contact.json");
 		try {
 			exportContact(i, file);
 		} catch (IOException | QblStorageException e) {
@@ -139,46 +137,17 @@ public class AccountingController extends AbstractController implements Initiali
 	}
 
 	void exportContact(Identity i, File file) throws IOException, QblStorageException {
-		GsonContact gc = createGsonContact(i);
+		GsonContact gc = createGsonFromEntity(i);
 		String json = gson.toJson(gc);
 		writeJsonInFile(json, file);
 	}
 
-	String readFile(File f) throws IOException {
-		FileReader fileReader = new FileReader(f);
-		BufferedReader br = new BufferedReader(fileReader);
-
-		try {
-			StringBuilder sb = new StringBuilder();
-			String line = br.readLine();
-
-			while (line != null) {
-				sb.append(line);
-				line = br.readLine();
-				if (line != null) {
-					sb.append("\n");
-				}
-			}
-			return sb.toString();
-		} finally {
-			br.close();
-		}
-	}
 
 	ResourceBundle getRessource(){
 		return resourceBundle;
 	}
 
-	Contact gsonContactToContact(GsonContact gc, Identity i) throws URISyntaxException, QblDropInvalidURL {
 
-		ArrayList<DropURL> collection = generateDropURLs(gc.getDropUrls());
-		QblECPublicKey pubKey = new QblECPublicKey(gc.getPublicKey());
-		Contact c = new Contact(i, gc.getAlias(), collection, pubKey);
-		c.setPhone(gc.getPhone());
-		c.setEmail(gc.getEmail());
-
-		return c;
-	}
 
 	Identity gsonIdentityToIdentiy(GsonIdentity gi) throws URISyntaxException, QblDropInvalidURL {
 
@@ -189,20 +158,7 @@ public class AccountingController extends AbstractController implements Initiali
 		return new Identity(gi.getAlias(), collection, qblECKeyPair);
 	}
 
-	private GsonContact createGsonContact(Identity identity) {
-		GsonContact gc = new GsonContact();
-		gc.setEmail(identity.getEmail());
-		gc.setPhone(identity.getPhone());
-		gc.setAlias(identity.getAlias());
-		gc.setCreated(identity.getCreated());
-		gc.setUpdated(identity.getUpdated());
-		gc.setDeleted(identity.getDeleted());
-		gc.setPublicKey(identity.getEcPublicKey().getKey());
-		for (DropURL d : identity.getDropUrls()) {
-			gc.addDropUrl(d.getUri().toString());
-		}
-		return gc;
-	}
+
 
 	private GsonIdentity createGsonIdentity(Identity i) {
 		GsonIdentity gi = new GsonIdentity();
@@ -221,16 +177,7 @@ public class AccountingController extends AbstractController implements Initiali
 		return gi;
 	}
 
-	private void writeJsonInFile(String json, File dir) throws IOException {
-		InputStream stream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
-		byte[] buffer = new byte[stream.available()];
-		stream.read(buffer);
 
-		File targetFile = new File(dir.getPath());
-		targetFile.createNewFile();
-		OutputStream outStream = new FileOutputStream(targetFile);
-		outStream.write(buffer);
-	}
 
 	private ArrayList<DropURL> generateDropURLs(JsonArray drops) throws URISyntaxException, QblDropInvalidURL {
 		ArrayList<DropURL> collection = new ArrayList<>();
@@ -244,12 +191,7 @@ public class AccountingController extends AbstractController implements Initiali
 		return collection;
 	}
 
-	private void buildGson() {
-		final GsonBuilder builder = new GsonBuilder();
-		builder.serializeNulls();
-		builder.excludeFieldsWithoutExposeAnnotation();
-		gson = builder.create();
-	}
+
 
 	private void loadIdentities() {
 		try {

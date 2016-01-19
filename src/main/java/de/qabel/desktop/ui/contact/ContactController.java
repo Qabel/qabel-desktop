@@ -1,21 +1,28 @@
 package de.qabel.desktop.ui.contact;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
+import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.desktop.config.ClientConfiguration;
-import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.repository.ContactRepository;
-import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.accounting.GsonContact;
 import de.qabel.desktop.ui.contact.item.BlankItemView;
 import de.qabel.desktop.ui.contact.item.ContactItemView;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.Pane;
+import javafx.stage.FileChooser;
+
 import javax.inject.Inject;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
@@ -23,6 +30,7 @@ public class ContactController extends AbstractController implements Initializab
 
 	ResourceBundle resourceBundle;
 	List<ContactItemView> itemViews = new LinkedList<>();
+	Identity i;
 
 	@FXML
 	Pane contactList;
@@ -36,24 +44,35 @@ public class ContactController extends AbstractController implements Initializab
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		this.resourceBundle = resources;
+		buildGson();
+		createObserver();
 		try {
-			Identity i = clientConfiguration.getSelectedIdentity();
-			setup(i);
-			loadContacts(i);
-		} catch (EntityNotFoundExcepion | PersistenceException entityNotFoundExcepion) {
+			loadContacts();
+		} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
 			entityNotFoundExcepion.printStackTrace();
 		}
 	}
 
 	@FXML
-	protected void handleImportContactsButtonAction(ActionEvent event) {
+	protected void handleImportContactsButtonAction(ActionEvent event) throws IOException, PersistenceException, URISyntaxException, QblDropInvalidURL, EntityNotFoundExcepion {
+		FileChooser chooser = new FileChooser();
+		chooser.setTitle(resourceBundle.getString("downloadFolder"));
+		File file = chooser.showOpenDialog(contactList.getScene().getWindow());
+		importContacts(file);
+		loadContacts();
 	}
 
 	@FXML
-	protected void handleExportContactsButtonAction(ActionEvent event) {
+	protected void handleExportContactsButtonAction(ActionEvent event) throws EntityNotFoundExcepion, IOException {
+		FileChooser chooser = new FileChooser();
+		chooser.setTitle("Download");
+		chooser.setInitialFileName("Contacts.json");
+		File file = chooser.showSaveDialog(contactList.getScene().getWindow());
+		exportContacts(file);
 	}
 
-	void loadContacts(Identity i) throws EntityNotFoundExcepion {
+	void loadContacts() throws EntityNotFoundExcepion {
+		i = clientConfiguration.getSelectedIdentity();
 		contactList.getChildren().clear();
 		String old = null;
 		List<Contact> contacts = contactRepository.findAllContactFormOneIdentity(i);
@@ -66,26 +85,6 @@ public class ContactController extends AbstractController implements Initializab
 			}
 			createContactItem(co);
 		}
-	}
-
-	private void setup(Identity i) throws PersistenceException {
-		Contact c;
-		c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
-		c.setAlias("Qabel");
-		c.setEmail("mail.awesome@qabel.de");
-		contactRepository.save(c);
-
-
-		c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
-		c.setAlias("MESA");
-		c.setEmail("mesa@mesa-labs.de");
-		contactRepository.save(c);
-
-
-		c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
-		c.setAlias("preamandatum");
-		c.setEmail("mail.awesome@prae.me");
-		contactRepository.save(c);
 	}
 
 	private void createContactItem(Contact co) {
@@ -104,6 +103,44 @@ public class ContactController extends AbstractController implements Initializab
 		contactList.getChildren().add(itemView.getView());
 		itemViews.add(itemView);
 		return old;
+	}
+
+	private void createObserver() {
+		clientConfiguration.addObserver((o, arg) -> {
+			if (!(arg instanceof Identity)) {
+				return;
+			}
+			try {
+				loadContacts();
+			} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
+				entityNotFoundExcepion.printStackTrace();
+			}
+		});
+	}
+
+	private void exportContacts(File file) throws EntityNotFoundExcepion, IOException {
+		List<Contact> contacts = contactRepository.findAllContactFormOneIdentity(i);
+		List<GsonContact> list = new LinkedList<>();
+
+
+		for (Contact c : contacts) {
+			GsonContact gc = createGsonFromEntity(c);
+			list.add(gc);
+		}
+
+		String jsonContacts = gson.toJson(list);
+		writeJsonInFile(jsonContacts, file);
+	}
+
+	private void importContacts(File file) throws IOException, URISyntaxException, QblDropInvalidURL, PersistenceException {
+		String content = readFile(file);
+		JsonArray list = gson.fromJson(content, JsonArray.class);
+
+		for (JsonElement json : list) {
+			GsonContact gc = gson.fromJson(json, GsonContact.class);
+			Contact c = gsonContactToContact(gc, i);
+			contactRepository.save(c);
+		}
 	}
 }
 

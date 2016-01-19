@@ -20,7 +20,8 @@ public class PersistenceContactRepository extends AbstractCachedPersistenceRepos
 		List<Contact> entities = persistence.getEntities(Contact.class);
 		List<Contact> contacts = new LinkedList<>();
 		for (Contact c: entities){
-			if(c.getContactOwner().equals(i)){
+
+			if(c.getContactOwner().getPrimaryKeyPair().hashCode() == i.getPrimaryKeyPair().hashCode()){
 				contacts.add(c);
 			}
 		}

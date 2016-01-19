@@ -1,5 +1,16 @@
 package de.qabel.desktop.ui;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import de.qabel.core.config.Contact;
+import de.qabel.core.config.Entity;
+import de.qabel.core.config.Identity;
+import de.qabel.core.crypto.QblECPublicKey;
+import de.qabel.core.drop.DropURL;
+import de.qabel.core.exceptions.QblDropInvalidURL;
+import de.qabel.desktop.ui.accounting.GsonContact;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
@@ -8,13 +19,16 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.apache.log4j.Logger;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.function.Function;
 
 public class AbstractController {
 	protected Alert alert;
 	protected Label exceptionLabel;
+	protected Gson gson;
 
 	protected void alert(String message, Exception e) {
 		Logger.getLogger(getClass().getSimpleName()).error(message, e);
@@ -54,5 +68,92 @@ public class AbstractController {
 			}
 			return null;
 		};
+	}
+
+	protected GsonContact createGsonFromEntity(Entity entity) {
+		GsonContact gc = new GsonContact();
+
+		if (entity instanceof Contact) {
+			Contact c = (Contact) entity;
+			gc.setEmail(c.getEmail());
+			gc.setPhone(c.getPhone());
+			gc.setAlias(c.getAlias());
+		} else {
+			Identity i = (Identity) entity;
+			gc.setEmail(i.getEmail());
+			gc.setPhone(i.getPhone());
+			gc.setAlias(i.getAlias());
+		}
+
+		gc.setCreated(entity.getCreated());
+		gc.setUpdated(entity.getUpdated());
+		gc.setDeleted(entity.getDeleted());
+		gc.setPublicKey(entity.getEcPublicKey().getKey());
+		for (DropURL d : entity.getDropUrls()) {
+			gc.addDropUrl(d.getUri().toString());
+		}
+		return gc;
+	}
+
+
+	protected void writeJsonInFile(String json, File dir) throws IOException {
+		InputStream stream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
+		byte[] buffer = new byte[stream.available()];
+		stream.read(buffer);
+
+		File targetFile = new File(dir.getPath());
+		targetFile.createNewFile();
+		OutputStream outStream = new FileOutputStream(targetFile);
+		outStream.write(buffer);
+	}
+
+	protected void buildGson() {
+		final GsonBuilder builder = new GsonBuilder();
+		builder.serializeNulls();
+		builder.excludeFieldsWithoutExposeAnnotation();
+		gson = builder.create();
+	}
+
+	public String readFile(File f) throws IOException {
+		FileReader fileReader = new FileReader(f);
+		BufferedReader br = new BufferedReader(fileReader);
+
+		try {
+			StringBuilder sb = new StringBuilder();
+			String line = br.readLine();
+
+			while (line != null) {
+				sb.append(line);
+				line = br.readLine();
+				if (line != null) {
+					sb.append("\n");
+				}
+			}
+			return sb.toString();
+		} finally {
+			br.close();
+		}
+	}
+	public Contact gsonContactToContact(GsonContact gc, Identity i) throws URISyntaxException, QblDropInvalidURL {
+
+		ArrayList<DropURL> collection = generateDropURLs(gc.getDropUrls());
+		QblECPublicKey pubKey = new QblECPublicKey(gc.getPublicKey());
+		Contact c = new Contact(i, gc.getAlias(), collection, pubKey);
+		c.setPhone(gc.getPhone());
+		c.setEmail(gc.getEmail());
+
+		return c;
+	}
+
+	private ArrayList<DropURL> generateDropURLs(JsonArray drops) throws URISyntaxException, QblDropInvalidURL {
+		ArrayList<DropURL> collection = new ArrayList<>();
+
+		for (int j = 0; j < drops.size(); j++) {
+			JsonElement uri = drops.get(j);
+			DropURL dropURL = new DropURL(uri.getAsString());
+
+			collection.add(dropURL);
+		}
+		return collection;
 	}
 }
