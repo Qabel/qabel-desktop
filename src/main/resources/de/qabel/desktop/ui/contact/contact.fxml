@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<VBox fx:id="contactroot" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+      minWidth="-Infinity" prefHeight="576.0" prefWidth="468.0" xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.contact.ContactController">
+    <children>
+        <ScrollPane prefHeight="500.0" prefWidth="400.0">
+            <content>
+                <VBox>
+                    <children>
+                        <VBox prefHeight="350.0" prefWidth="400.0">
+                            <children>
+                                <BorderPane prefHeight="60.0" prefWidth="400.0">
+                                    <center>
+                                        <VBox fx:id="contactList" prefHeight="43.0" prefWidth="347.0" BorderPane.alignment="CENTER">
+                                            <children>
+                                                <Label text="Awesome Alias With A VERY long NAME">
+                                                    <font>
+                                                        <Font name="System Bold" size="15.0"/>
+                                                    </font>
+                                                    <VBox.margin>
+                                                        <Insets bottom="5.0" left="5.0" top="10.0"/>
+                                                    </VBox.margin>
+                                                </Label>
+                                                <Label text="mail@qabel.de">
+                                                    <VBox.margin>
+                                                        <Insets left="5.0"/>
+                                                    </VBox.margin>
+                                                </Label>
+                                            </children>
+                                            <children>
+                                                <Label fx:id="alias" text="Not so Awesome Alias">
+                                                    <font>
+                                                        <Font name="System Bold" size="15.0"/>
+                                                    </font>
+                                                    <VBox.margin>
+                                                        <Insets bottom="5.0" left="5.0" top="10.0"/>
+                                                    </VBox.margin>
+                                                </Label>
+                                                <Label fx:id="email" text="mail@qabel.de">
+                                                    <VBox.margin>
+                                                        <Insets left="5.0"/>
+                                                    </VBox.margin>
+                                                </Label>
+                                            </children>
+                                            <BorderPane.margin>
+                                                <Insets/>
+                                            </BorderPane.margin>
+                                        </VBox>
+                                    </center>
+                                </BorderPane>
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
+        <HBox prefHeight="60.0" prefWidth="400.0">
+            <children>
+                <Button mnemonicParsing="false" onAction="#handleImportContactsButtonAction" text="%importContacts">
+                    <HBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </HBox.margin>
+                </Button>
+                <Button mnemonicParsing="false" onAction="#handleExportContactsButtonAction" text="%exportContacts">
+                    <HBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </HBox.margin>
+                </Button>
+            </children>
+        </HBox>
+    </children>
+</VBox>
