@@ -31,3 +31,7 @@
 .button:hover {
     -fx-background-color: #fcdcca, #fcdcca;
 }
+
+.scroll-pane > .viewport {
+   -fx-background-color: transparent;
+}
