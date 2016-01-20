@@ -2,24 +2,29 @@ package de.qabel.desktop.daemon.management;
 
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.daemon.sync.event.WatchEvent;
-import de.qabel.desktop.storage.BoxVolumeConfig;
+import de.qabel.desktop.storage.BoxVolume;
 
 import java.nio.file.Path;
 
 public class BoxSyncBasedUpload implements Upload {
 	private final BoxSyncConfig boxSyncConfig;
 	private final WatchEvent event;
-	private final BoxVolumeConfig boxVolumeConfig;
+	private final BoxVolume volume;
 
-	public BoxSyncBasedUpload(BoxSyncConfig boxSyncConfig, WatchEvent event) {
-		this.boxSyncConfig = boxSyncConfig;
+	public BoxSyncBasedUpload(BoxVolume volume, BoxSyncConfig boxSyncConfig,  WatchEvent event) {
 		this.event = event;
-		this.boxVolumeConfig = new BoxSyncBasedVolumeConfig(boxSyncConfig);
+		this.volume = volume;
+		this.boxSyncConfig = boxSyncConfig;
 	}
 
 	@Override
-	public BoxVolumeConfig getBoxVolumeConfig() {
-		return boxVolumeConfig;
+	public TYPE getType() {
+		return null;
+	}
+
+	@Override
+	public BoxVolume getBoxVolume() {
+		return volume;
 	}
 
 	@Override
@@ -35,6 +40,11 @@ public class BoxSyncBasedUpload implements Upload {
 
 	@Override
 	public boolean isValid() {
-		return false;
+		return event.isValid();
+	}
+
+	@Override
+	public String toString() {
+		return "Upload[" + getSource() + " to " + getDestination() + "]";
 	}
 }

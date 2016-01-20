@@ -10,7 +10,8 @@ import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.daemon.sync.AbstractSyncTest;
 import de.qabel.desktop.daemon.sync.event.WatchEvent;
 import de.qabel.desktop.daemon.sync.event.WatchRegisteredEvent;
-import de.qabel.desktop.storage.BoxVolumeConfig;
+import de.qabel.desktop.daemon.sync.worker.BoxVolumeStub;
+import de.qabel.desktop.storage.BoxVolume;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,13 +43,11 @@ public class BoxSyncBasedUploadTest extends AbstractSyncTest {
 
 		BoxSyncConfig boxSyncConfig = new DefaultBoxSyncConfig(tmpDir, Paths.get("/tmp"), identity, account);
 		WatchEvent event = new WatchRegisteredEvent(file.toPath());
-		Upload upload = new BoxSyncBasedUpload(boxSyncConfig, event);
+		BoxVolumeStub volume = new BoxVolumeStub();
+		Upload upload = new BoxSyncBasedUpload(volume, boxSyncConfig,event);
 
-		BoxVolumeConfig boxVolumeConfig = upload.getBoxVolumeConfig();
-		assertEquals(identity.getPrimaryKeyPair(), boxVolumeConfig.getKeyPair());
-		assertEquals(new File(System.getProperty("java.io.tmpdir")), boxVolumeConfig.getTmpDir());
-		assertEquals(BoxVolumeConfig.THE_ONE_AND_ONLY_BUCKET_NAME, boxVolumeConfig.getBucket());
-		assertEquals("custom prefix", boxVolumeConfig.getPrefix());
+		BoxVolume boxVolume = upload.getBoxVolume();
+		assertEquals(volume, boxVolume);
 		assertEquals(new File(tmpDir.toFile(), "testfile").toPath(), upload.getSource());
 		assertEquals(Paths.get("/tmp/testfile"), upload.getDestination());
 	}

@@ -41,6 +41,7 @@ public class TreeWatcher extends Thread {
 	@Override
 	@SuppressWarnings("unchecked")
 	public void run() {
+		logger.trace("starting treewatch for " + this.root);
 		try {
 			watcher = FileSystems.getDefault().newWatchService();
 

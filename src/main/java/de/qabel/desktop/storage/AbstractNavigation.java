@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.spongycastle.crypto.params.KeyParameter;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.security.InvalidKeyException;
 import java.util.*;
 
@@ -30,6 +31,8 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	private final Set<String> deleteQueue = new HashSet<>();
 	private final Set<FileUpdate> updatedFiles = new HashSet<>();
 
+	private boolean autocommit = true;
+
 
 	AbstractNavigation(DirectoryMetadata dm, QblECKeyPair keyPair, byte[] deviceId,
 					   StorageReadBackend readBackend, StorageWriteBackend writeBackend) {
@@ -43,7 +46,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	}
 
 	@Override
-	public BoxNavigation navigate(BoxFolder target) throws QblStorageException {
+	public AbstractNavigation navigate(BoxFolder target) throws QblStorageException {
 		try {
 			InputStream indexDl = readBackend.download(target.ref);
 			File tmp = File.createTempFile("dir", "db", dm.getTempDir());
@@ -173,7 +176,16 @@ public abstract class AbstractNavigation implements BoxNavigation {
 		boxFile.mtime = uploadEncrypted(file, key, "blocks/" + block);
 		updatedFiles.add(new FileUpdate(oldFile, boxFile));
 		dm.insertFile(boxFile);
+		autocommit();
 		return boxFile;
+	}
+
+	private void autocommit() throws QblStorageException {
+		if (!autocommit) {
+			return;
+		}
+
+		commit();
 	}
 
 	protected long uploadEncrypted(File file, KeyParameter key, String block) throws QblStorageException {
@@ -215,6 +227,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 		BoxNavigation newFolder = new FolderNavigation(dm, keyPair, secretKey.getKey(),
 				deviceId, readBackend, writeBackend);
 		newFolder.commit();
+		autocommit();
 		return folder;
 	}
 
@@ -222,6 +235,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	public void delete(BoxFile file) throws QblStorageException {
 		dm.deleteFile(file);
 		deleteQueue.add("blocks/" + file.block);
+		autocommit();
 	}
 
 	@Override
@@ -238,6 +252,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 		folderNav.commit();
 		dm.deleteFolder(folder);
 		deleteQueue.add(folder.ref);
+		autocommit();
 	}
 
 	@Override
@@ -260,5 +275,47 @@ public abstract class AbstractNavigation implements BoxNavigation {
 			result = 31 * result + (updated != null ? updated.hashCode() : 0);
 			return result;
 		}
+	}
+
+	@Override
+	public void setAutocommit(boolean autocommit) {
+		this.autocommit = autocommit;
+	}
+
+	@Override
+	public BoxNavigation navigate(String folderName) throws QblStorageException {
+		return navigate(getFolder(folderName));
+	}
+
+	@Override
+	public BoxFolder getFolder(String name) throws QblStorageException {
+		List<BoxFolder> folders = listFolders();
+		for (BoxFolder folder : folders) {
+			if (folder.name.equals(name)) {
+				return folder;
+			}
+		}
+		throw new IllegalArgumentException("no subfolder named " + name);
+	}
+
+	@Override
+	public boolean hasFolder(String name) throws QblStorageException {
+		try {
+			getFolder(name);
+			return true;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
+	}
+
+	@Override
+	public BoxFile getFile(String name) throws QblStorageException {
+		List<BoxFile> files = listFiles();
+		for (BoxFile file : files) {
+			if (file.name.equals(name)) {
+				return file;
+			}
+		}
+		throw new IllegalArgumentException("no file named " + name);
 	}
 }

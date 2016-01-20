@@ -59,21 +59,26 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 
 			ObservableList<BoxSyncConfig> boxSyncConfigs = config.getBoxSyncConfigs();
 			if (configDto.boxSyncConfigs != null) {
-				for (PersistentBoxSyncConfig dto : configDto.boxSyncConfigs) {
-					try {
-						boxSyncConfigs.add(new DefaultBoxSyncConfig(
-								Paths.get(dto.localPath),
-								Paths.get(dto.remotePath),
-								identityRepository.find(dto.identity),
-								accountRepository.find(dto.account)
-						));
-					} catch (EntityNotFoundExcepion e) {
-						e.printStackTrace();
-					}
-				}
+				loadBoxSyncConfigs(configDto, boxSyncConfigs);
 			}
 		}
 		return config;
+	}
+
+	protected void loadBoxSyncConfigs(PersistentClientConfiguration configDto, ObservableList<BoxSyncConfig> boxSyncConfigs) {
+		for (PersistentBoxSyncConfig dto : configDto.boxSyncConfigs) {
+			try {
+				boxSyncConfigs.add(new DefaultBoxSyncConfig(
+						dto.name,
+						Paths.get(dto.localPath),
+						Paths.get(dto.remotePath),
+						identityRepository.find(dto.identity),
+						accountRepository.find(dto.account)
+				));
+			} catch (EntityNotFoundExcepion e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -88,6 +93,7 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 		configDto.accountId = configuration.hasAccount() ? configuration.getAccount().getPersistenceID() : null;
 		configDto.identitiyId = configuration.getSelectedIdentity() != null ? configuration.getSelectedIdentity().getPersistenceID() : null;
 
+		configDto.boxSyncConfigs.clear();
 		for (BoxSyncConfig boxSyncConfig : configuration.getBoxSyncConfigs()) {
 			configDto.boxSyncConfigs.add(createPersistentBoxSyncConfg(boxSyncConfig));
 		}
@@ -125,6 +131,7 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 
 	private PersistentBoxSyncConfig createPersistentBoxSyncConfg(BoxSyncConfig boxSyncConfig) {
 		PersistentBoxSyncConfig dto = new PersistentBoxSyncConfig();
+		dto.name = boxSyncConfig.getName();
 		dto.account = boxSyncConfig.getAccount().getPersistenceID();
 		dto.identity = boxSyncConfig.getIdentity().getPersistenceID();
 		dto.localPath = boxSyncConfig.getLocalPath().toString();

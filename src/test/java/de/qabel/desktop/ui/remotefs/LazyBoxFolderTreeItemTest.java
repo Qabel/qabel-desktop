@@ -172,5 +172,30 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 		public void delete(BoxExternal external) throws QblStorageException {
 
 		}
+
+		@Override
+		public void setAutocommit(boolean autocommit) {
+
+		}
+
+		@Override
+		public BoxNavigation navigate(String folderName) throws QblStorageException {
+			return null;
+		}
+
+		@Override
+		public BoxFolder getFolder(String name) throws QblStorageException {
+			return null;
+		}
+
+		@Override
+		public boolean hasFolder(String name) throws QblStorageException {
+			return false;
+		}
+
+		@Override
+		public BoxFile getFile(String name) throws QblStorageException {
+			return null;
+		}
 	}
 }

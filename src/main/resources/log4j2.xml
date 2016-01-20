@@ -12,12 +12,16 @@
     </Console>
   </Appenders>
   <Loggers>
-    <logger name="de.qabel.desktop" includeLocation="true ">
+    <logger name="de.qabel.desktop.storage" includeLocation="true ">
       <level>WARN</level>
       <AppenderRef ref="Console"/>
     </logger>
     <logger name="de.qabel.desktop.daemon" includeLocation="true ">
       <level>TRACE</level>
+      <AppenderRef ref="Console"/>
+    </logger>
+    <logger name="de.qabel.desktop.ui" includeLocation="true ">
+      <level>WARN</level>
       <AppenderRef ref="Console"/>
     </logger>
     <logger name="org.apache.http" includeLocation="true ">

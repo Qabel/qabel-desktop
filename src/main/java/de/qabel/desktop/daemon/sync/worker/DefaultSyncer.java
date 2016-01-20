@@ -3,13 +3,16 @@ package de.qabel.desktop.daemon.sync.worker;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.daemon.management.BoxSyncBasedUpload;
 import de.qabel.desktop.daemon.management.LoadManager;
+import de.qabel.desktop.storage.BoxVolume;
 
 public class DefaultSyncer implements Syncer {
+	private BoxVolume boxVolume;
 	private BoxSyncConfig config;
 	private LoadManager manager;
 
-	public DefaultSyncer(BoxSyncConfig config, LoadManager manager) {
+	public DefaultSyncer(BoxSyncConfig config, BoxVolume boxVolume, LoadManager manager) {
 		this.config = config;
+		this.boxVolume = boxVolume;
 		this.manager = manager;
 	}
 
@@ -19,7 +22,7 @@ public class DefaultSyncer implements Syncer {
 			if (!watchEvent.isValid()) {
 				return;
 			}
-			manager.addUpload(new BoxSyncBasedUpload(config, watchEvent));
+			manager.addUpload(new BoxSyncBasedUpload(boxVolume, config, watchEvent));
 		});
 		watcher.start();
 	}

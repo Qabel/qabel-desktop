@@ -4,29 +4,35 @@ import de.qabel.desktop.storage.BoxVolume;
 
 import java.nio.file.Path;
 
-public class FakeUpload implements Upload {
+public class UploadStub implements Upload {
+	public BoxVolume volume;
+	public Path source;
+	public Path destination;
+	public boolean valid = true;
+	public TYPE type = TYPE.CREATE;
+
 	@Override
 	public TYPE getType() {
-		return null;
+		return type;
 	}
 
 	@Override
 	public BoxVolume getBoxVolume() {
-		return null;
+		return volume;
 	}
 
 	@Override
 	public Path getSource() {
-		return null;
+		return source;
 	}
 
 	@Override
 	public Path getDestination() {
-		return null;
+		return destination;
 	}
 
 	@Override
 	public boolean isValid() {
-		return false;
+		return valid;
 	}
 }

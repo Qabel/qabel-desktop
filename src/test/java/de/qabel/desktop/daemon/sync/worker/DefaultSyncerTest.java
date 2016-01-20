@@ -49,7 +49,7 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 	public void addsFilesAsUploads() throws IOException {
 		new File(tmpDir.toFile(), "file").createNewFile();
 
-		Syncer syncer = new DefaultSyncer(config, manager);
+		Syncer syncer = new DefaultSyncer(config, new BoxVolumeStub(), manager);
 		syncer.run();
 
 		waitUntil(() -> manager.getUploads().size() == 2);

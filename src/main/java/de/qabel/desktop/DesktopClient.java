@@ -8,6 +8,7 @@ import de.qabel.core.exceptions.QblInvalidEncryptionKeyException;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.factory.ClientConfigurationFactory;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
+import de.qabel.desktop.config.factory.S3BoxVolumeFactory;
 import de.qabel.desktop.daemon.management.DefaultLoadManager;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
@@ -73,13 +74,19 @@ public class DesktopClient extends Application {
 		primaryStage.setTitle(TITLE);
 		primaryStage.show();
 
-		new SyncDaemon(config.getBoxSyncConfigs(), new DefaultSyncerFactory(new DefaultLoadManager())).run();
+		getSyncDaemon(config).run();
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
 				Platform.exit();
 			}
 		});
+	}
+
+	protected SyncDaemon getSyncDaemon(ClientConfiguration config) {
+		DefaultLoadManager loadManager = new DefaultLoadManager();
+		new Thread(loadManager).start();
+		return new SyncDaemon(config.getBoxSyncConfigs(), new DefaultSyncerFactory(new S3BoxVolumeFactory(), loadManager));
 	}
 
 	private ClientConfiguration initDiContainer(Map<String, Object> customProperties) throws QblInvalidEncryptionKeyException, URISyntaxException {

@@ -4,6 +4,7 @@ import de.qabel.desktop.exceptions.QblStorageException;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.List;
 
 public interface BoxNavigation {
@@ -123,4 +124,19 @@ public interface BoxNavigation {
 	 */
 	void delete(BoxExternal external) throws QblStorageException;
 
+	/**
+	 * Enable or disable autocommits. Implicitly commits after each committable action (defaults to true)
+	 */
+	void setAutocommit(boolean autocommit);
+
+	/**
+	 * Navigate to subfolder by name
+	 */
+	BoxNavigation navigate(String folderName) throws QblStorageException;
+
+	BoxFolder getFolder(String name) throws QblStorageException;
+
+	boolean hasFolder(String name) throws QblStorageException;
+
+	BoxFile getFile(String name) throws QblStorageException;
 }
