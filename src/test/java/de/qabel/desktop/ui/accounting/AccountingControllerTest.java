@@ -70,20 +70,6 @@ public class AccountingControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void exportIdentityTest() throws IOException, QblStorageException, URISyntaxException {
-		File file = setupImport(TEST_IDENTITY);
-		Identity identity = identityBuilderFactory.factory().withAlias(TEST_ALIAS).build();
-		identity.setEmail("abc");
-		identity.setPhone("000");
-
-		controller.exportIdentity(identity, file);
-
-		File f = new File(TEST_FOLDER + "/" + TEST_IDENTITY);
-
-		assertEquals(f.getName(), TEST_IDENTITY);
-	}
-
-	@Test
 	public void importIdentityTest() throws IOException, QblStorageException, PersistenceException, EntityNotFoundExcepion, URISyntaxException, QblDropInvalidURL {
 		setupExport();
 		controller.importIdentity(new File(System.class.getResource(TEST_JSON).toURI()));
@@ -95,7 +81,7 @@ public class AccountingControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void validateIdentitySchemaTest() throws URISyntaxException, IOException, QblStorageException, PersistenceException, EntityNotFoundExcepion, QblDropInvalidURL {
+	public void exportIdentityTest() throws URISyntaxException, IOException, QblStorageException, PersistenceException, EntityNotFoundExcepion, QblDropInvalidURL {
 		File file = setupImport(TEST_IDENTITY);
 		Identity identity = identityBuilderFactory.factory().build();
 
