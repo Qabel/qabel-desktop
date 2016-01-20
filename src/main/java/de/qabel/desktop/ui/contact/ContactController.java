@@ -77,7 +77,7 @@ public class ContactController extends AbstractController implements Initializab
 		String old = null;
 		List<Contact> contacts = contactRepository.findAllContactFromOneIdentity(i);
 
-		contacts.sort((c1, c2) -> c1.getAlias().compareTo(c2.getAlias()));
+		contacts.sort((c1, c2) -> c1.getAlias().toLowerCase().compareTo(c2.getAlias().toLowerCase()));
 
 		for (Contact co : contacts) {
 			if (old == null || !old.equals(co.getAlias().substring(0, 1).toUpperCase())) {
@@ -134,10 +134,16 @@ public class ContactController extends AbstractController implements Initializab
 
 	void importContacts(File file) throws IOException, URISyntaxException, QblDropInvalidURL, PersistenceException {
 		String content = readFile(file);
-		JsonArray list = gson.fromJson(content, JsonArray.class);
+		if (content.substring(0, 1).equals("[")) {
+			JsonArray list = gson.fromJson(content, JsonArray.class);
 
-		for (JsonElement json : list) {
-			GsonContact gc = gson.fromJson(json, GsonContact.class);
+			for (JsonElement json : list) {
+				GsonContact gc = gson.fromJson(json, GsonContact.class);
+				Contact c = gsonContactToContact(gc, i);
+				contactRepository.save(c);
+			}
+		} else {
+			GsonContact gc = gson.fromJson(content, GsonContact.class);
 			Contact c = gsonContactToContact(gc, i);
 			contactRepository.save(c);
 		}
