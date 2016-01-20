@@ -8,7 +8,7 @@ import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.IdentityRepository;
-import de.qabel.desktop.repository.inmemory.InMemoryContactRepository;
+import de.qabel.desktop.repository.Stub.StubContactRepository;
 import de.qabel.desktop.repository.inmemory.InMemoryIdentityRepository;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import javafx.application.Application;
@@ -31,7 +31,7 @@ public class AbstractControllerTest {
 	protected IdentityRepository identityRepository = new InMemoryIdentityRepository();
 	protected DefaultClientConfiguration clientConfiguration;
 	protected IdentityBuilderFactory identityBuilderFactory;
-	protected ContactRepository contactRepository = new InMemoryContactRepository();
+	protected ContactRepository contactRepository = new StubContactRepository();
 
 
 	@BeforeClass

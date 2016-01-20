@@ -23,6 +23,7 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 public class AbstractController {
@@ -96,15 +97,11 @@ public class AbstractController {
 	}
 
 
-	protected void writeJsonInFile(String json, File dir) throws IOException {
-		InputStream stream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
-		byte[] buffer = new byte[stream.available()];
-		stream.read(buffer);
-
+	protected void writeStringInFile(String json, File dir) throws IOException {
 		File targetFile = new File(dir.getPath());
 		targetFile.createNewFile();
 		OutputStream outStream = new FileOutputStream(targetFile);
-		outStream.write(buffer);
+		outStream.write(json.getBytes());
 	}
 
 	protected void buildGson() {
@@ -134,6 +131,7 @@ public class AbstractController {
 			br.close();
 		}
 	}
+
 	public Contact gsonContactToContact(GsonContact gc, Identity i) throws URISyntaxException, QblDropInvalidURL {
 
 		ArrayList<DropURL> collection = generateDropURLs(gc.getDropUrls());
@@ -145,12 +143,11 @@ public class AbstractController {
 		return c;
 	}
 
-	private ArrayList<DropURL> generateDropURLs(JsonArray drops) throws URISyntaxException, QblDropInvalidURL {
+	private ArrayList<DropURL> generateDropURLs(List<String> drops) throws URISyntaxException, QblDropInvalidURL {
 		ArrayList<DropURL> collection = new ArrayList<>();
 
-		for (int j = 0; j < drops.size(); j++) {
-			JsonElement uri = drops.get(j);
-			DropURL dropURL = new DropURL(uri.getAsString());
+		for (String uri : drops) {
+			DropURL dropURL = new DropURL(uri);
 
 			collection.add(dropURL);
 		}

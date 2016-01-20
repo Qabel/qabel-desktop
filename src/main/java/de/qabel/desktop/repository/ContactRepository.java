@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ContactRepository {
 
-	List<Contact> findAllContactFormOneIdentity(Identity identity) throws EntityNotFoundExcepion;
+	List<Contact> findAllContactFromOneIdentity(Identity identity) throws EntityNotFoundExcepion;
 
 	void save(Contact contact) throws PersistenceException;
 }

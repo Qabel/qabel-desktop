@@ -41,13 +41,12 @@ public class DesktopClient extends Application {
 	Scene scene;
 
 	public static void main(String[] args) throws Exception {
-		UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 		launch(args);
 	}
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-
+		UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
 		setUserAgentStylesheet(STYLESHEET_MODENA);
 
 		final Map<String, Object> customProperties = new HashMap<>();

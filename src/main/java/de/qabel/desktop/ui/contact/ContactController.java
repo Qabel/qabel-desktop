@@ -75,7 +75,7 @@ public class ContactController extends AbstractController implements Initializab
 		i = clientConfiguration.getSelectedIdentity();
 		contactList.getChildren().clear();
 		String old = null;
-		List<Contact> contacts = contactRepository.findAllContactFormOneIdentity(i);
+		List<Contact> contacts = contactRepository.findAllContactFromOneIdentity(i);
 
 		contacts.sort((c1, c2) -> c1.getAlias().compareTo(c2.getAlias()));
 
@@ -119,7 +119,7 @@ public class ContactController extends AbstractController implements Initializab
 	}
 
 	void exportContacts(File file) throws EntityNotFoundExcepion, IOException {
-		List<Contact> contacts = contactRepository.findAllContactFormOneIdentity(i);
+		List<Contact> contacts = contactRepository.findAllContactFromOneIdentity(i);
 		List<GsonContact> list = new LinkedList<>();
 
 
@@ -129,7 +129,7 @@ public class ContactController extends AbstractController implements Initializab
 		}
 
 		String jsonContacts = gson.toJson(list);
-		writeJsonInFile(jsonContacts, file);
+		writeStringInFile(jsonContacts, file);
 	}
 
 	void importContacts(File file) throws IOException, URISyntaxException, QblDropInvalidURL, PersistenceException {

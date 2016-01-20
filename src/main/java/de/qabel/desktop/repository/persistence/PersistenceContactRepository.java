@@ -16,7 +16,7 @@ public class PersistenceContactRepository extends AbstractCachedPersistenceRepos
 	}
 
 	@Override
-	public List<Contact> findAllContactFormOneIdentity(Identity i) throws EntityNotFoundExcepion {
+	public List<Contact> findAllContactFromOneIdentity(Identity i) throws EntityNotFoundExcepion {
 		List<Contact> entities = persistence.getEntities(Contact.class);
 		List<Contact> contacts = new LinkedList<>();
 		for (Contact c: entities){
@@ -39,6 +39,5 @@ public class PersistenceContactRepository extends AbstractCachedPersistenceRepos
 		if (!result) {
 			throw new PersistenceException("Failed to save Entity " + contact + ", reason unknown");
 		}
-		cache(contact);
 	}
 }

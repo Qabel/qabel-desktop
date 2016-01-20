@@ -8,21 +8,16 @@ import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractControllerTest;
-import de.qabel.desktop.ui.accounting.AccountingView;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Test;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Locale;
-
-import static com.sun.org.apache.xerces.internal.util.PropertyState.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 
 public class ContactControllerTest extends AbstractControllerTest {
 
@@ -34,7 +29,7 @@ public class ContactControllerTest extends AbstractControllerTest {
 
 	@After
 	public void after() throws Exception {
-		//FileUtils.deleteDirectory(new File(TEST_FOLDER));
+		FileUtils.deleteDirectory(new File(TEST_FOLDER));
 	}
 
 	@Test
@@ -63,12 +58,12 @@ public class ContactControllerTest extends AbstractControllerTest {
 		testDir.mkdirs();
 		File file = new File(testDir + "/contacts.json");
 		controller.exportContacts(file);
-		List<Contact> list = contactRepository.findAllContactFormOneIdentity(i);
+		List<Contact> list = contactRepository.findAllContactFromOneIdentity(i);
 		assertEquals(1, list.size());
 
 		controller.importContacts(file);
 
-		list = contactRepository.findAllContactFormOneIdentity(i);
+		list = contactRepository.findAllContactFromOneIdentity(i);
 		assertEquals(2, list.size());
 
 		Contact contact0 = list.get(0);
@@ -93,7 +88,7 @@ public class ContactControllerTest extends AbstractControllerTest {
 
 
 
-		List<Contact> list = contactRepository.findAllContactFormOneIdentity(i);
+		List<Contact> list = contactRepository.findAllContactFromOneIdentity(i);
 		assertEquals(3, list.size());
 
 		Contact c = list.get(0);

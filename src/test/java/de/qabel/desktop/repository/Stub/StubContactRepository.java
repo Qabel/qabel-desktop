@@ -1,4 +1,4 @@
-package de.qabel.desktop.repository.inmemory;
+package de.qabel.desktop.repository.Stub;
 
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
@@ -8,7 +8,7 @@ import de.qabel.desktop.repository.exception.PersistenceException;
 import java.util.LinkedList;
 import java.util.List;
 
-public class InMemoryContactRepository implements ContactRepository {
+public class StubContactRepository implements ContactRepository {
 	private List<Contact> contacts = new LinkedList<>();
 
 
@@ -18,7 +18,7 @@ public class InMemoryContactRepository implements ContactRepository {
 	}
 
 	@Override
-	public List<Contact> findAllContactFormOneIdentity(Identity identity) throws EntityNotFoundExcepion {
+	public List<Contact> findAllContactFromOneIdentity(Identity identity) throws EntityNotFoundExcepion {
 		return contacts;
 	}
 
