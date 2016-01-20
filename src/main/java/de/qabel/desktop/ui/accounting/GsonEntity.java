@@ -3,28 +3,28 @@ package de.qabel.desktop.ui.accounting;
 import com.google.gson.JsonArray;
 import com.google.gson.annotations.Expose;
 
-/**
- * Created by jmt on 18.01.16.
- */
+import java.util.LinkedList;
+import java.util.List;
+
 public abstract class GsonEntity {
 
 	@Expose
-	public String alias;
+	private String alias;
 	@Expose
-	public String email;
+	private String email;
 	@Expose
-	public String phone;
+	private String phone;
 	@Expose
-	public Long created;
+	private Long created;
 	@Expose
-	public Long updated;
+	private Long updated;
 	@Expose
-	public Long deleted;
+	private Long deleted;
 	@Expose
-	public JsonArray dropUrls = new JsonArray();
+	private List dropUrls = new LinkedList();
 
 
-	public JsonArray getDropUrls() {
+	public List<String> getDropUrls() {
 		return dropUrls;
 	}
 
@@ -80,7 +80,7 @@ public abstract class GsonEntity {
 		this.deleted = deleted;
 	}
 
-	public void setDropUrls(JsonArray dropUrls) {
+	public void setDropUrls(List dropUrls) {
 		this.dropUrls = dropUrls;
 	}
 }

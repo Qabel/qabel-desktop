@@ -22,7 +22,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.VBox;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javax.inject.Inject;
 import java.io.*;
@@ -135,13 +134,13 @@ public class AccountingController extends AbstractController implements Initiali
 	void exportIdentity(Identity i, File file) throws IOException, QblStorageException {
 		GsonIdentity gi = createGsonIdentity(i);
 		String json = gson.toJson(gi);
-		writeJsonInFile(json, file);
+		writeStringInFile(json, file);
 	}
 
 	void exportContact(Identity i, File file) throws IOException, QblStorageException {
 		GsonContact gc = createGsonContact(i);
 		String json = gson.toJson(gc);
-		writeJsonInFile(json, file);
+		writeStringInFile(json, file);
 	}
 
 	String readFile(File f) throws IOException {
@@ -182,7 +181,6 @@ public class AccountingController extends AbstractController implements Initiali
 
 	Identity gsonIdentityToIdentiy(GsonIdentity gi) throws URISyntaxException, QblDropInvalidURL {
 
-		gi.buildKeyPair();
 		ArrayList<DropURL> collection = generateDropURLs(gi.getDropUrls());
 		QblECKeyPair qblECKeyPair = new QblECKeyPair(gi.getPrivateKey());
 
@@ -217,28 +215,21 @@ public class AccountingController extends AbstractController implements Initiali
 		for (DropURL d : i.getDropUrls()) {
 			gi.addDropUrl(d.getUri().toString());
 		}
-		gi.generateKeyStructure();
 		return gi;
 	}
 
-	private void writeJsonInFile(String json, File dir) throws IOException {
-		InputStream stream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
-		byte[] buffer = new byte[stream.available()];
-		stream.read(buffer);
-
+	private void writeStringInFile(String json, File dir) throws IOException {
 		File targetFile = new File(dir.getPath());
 		targetFile.createNewFile();
 		OutputStream outStream = new FileOutputStream(targetFile);
-		outStream.write(buffer);
+		outStream.write(json.getBytes());
 	}
 
-	private ArrayList<DropURL> generateDropURLs(JsonArray drops) throws URISyntaxException, QblDropInvalidURL {
+	private ArrayList<DropURL> generateDropURLs(List<String> drops) throws URISyntaxException, QblDropInvalidURL {
 		ArrayList<DropURL> collection = new ArrayList<>();
 
-		for (int j = 0; j < drops.size(); j++) {
-			JsonElement uri = drops.get(j);
-			DropURL dropURL = new DropURL(uri.getAsString());
-
+		for (String uri : drops) {
+			DropURL dropURL = new DropURL(uri);
 			collection.add(dropURL);
 		}
 		return collection;
@@ -268,7 +259,7 @@ public class AccountingController extends AbstractController implements Initiali
 
 	private File createSaveFileChooser(String defaultName) {
 		FileChooser chooser = new FileChooser();
-		chooser.setTitle("Download");
+		chooser.setTitle("Export");
 		chooser.setInitialFileName(defaultName);
 		return chooser.showSaveDialog(identityList.getScene().getWindow());
 	}

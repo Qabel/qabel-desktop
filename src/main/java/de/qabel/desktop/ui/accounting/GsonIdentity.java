@@ -14,30 +14,23 @@ public class GsonIdentity extends GsonEntity {
 
 
 	public byte[] getPublicKey() {
+		publicKey = keys.get("public_key");
 		return publicKey;
 	}
 
 	public void setPublicKey(byte[] publicKey) {
 		this.publicKey = publicKey;
+		keys.put("public_key", publicKey);
+
 	}
 
 	public byte[] getPrivateKey() {
+		privateKey = keys.get("private_key");
 		return privateKey;
 	}
 
 	public void setPrivateKey(byte[] privateKey) {
 		this.privateKey = privateKey;
-	}
-
-	public void generateKeyStructure() {
 		keys.put("private_key", privateKey);
-		keys.put("public_key", publicKey);
 	}
-
-	public void buildKeyPair() {
-
-		privateKey = keys.get("private_key");
-		publicKey = keys.get("public_key");
-	}
-
 }

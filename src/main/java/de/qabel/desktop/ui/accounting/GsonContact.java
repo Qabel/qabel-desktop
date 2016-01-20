@@ -8,8 +8,7 @@ public class GsonContact extends GsonEntity {
 
 
 	@Expose
-	public byte[] publicKey;
-
+	private byte[] publicKey;
 
 	public byte[] getPublicKey() {
 		return publicKey;
