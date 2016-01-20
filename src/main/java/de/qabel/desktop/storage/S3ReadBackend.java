@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-class S3ReadBackend extends StorageReadBackend {
+public class S3ReadBackend implements StorageReadBackend {
 
 	private static final Logger logger = LoggerFactory.getLogger(S3ReadBackend.class.getName());
 
@@ -47,7 +47,7 @@ class S3ReadBackend extends StorageReadBackend {
 		logger.info("S3ReadBackend with root address set to " + root);
 	}
 
-	InputStream download(String name) throws QblStorageException {
+	public InputStream download(String name) throws QblStorageException {
 		logger.info("Downloading " + name);
 		URI uri;
 		try {

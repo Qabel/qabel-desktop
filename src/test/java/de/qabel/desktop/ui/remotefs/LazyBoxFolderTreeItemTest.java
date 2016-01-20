@@ -105,6 +105,16 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 		public List<BoxFolder> folders = new LinkedList<>();
 
 		@Override
+		public DirectoryMetadata reloadMetadata() throws QblStorageException {
+			return null;
+		}
+
+		@Override
+		public void setMetadata(DirectoryMetadata dm) {
+
+		}
+
+		@Override
 		public void commit() throws QblStorageException {
 
 		}
@@ -195,6 +205,11 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 
 		@Override
 		public BoxFile getFile(String name) throws QblStorageException {
+			return null;
+		}
+
+		@Override
+		public DirectoryMetadata getMetadata() {
 			return null;
 		}
 	}

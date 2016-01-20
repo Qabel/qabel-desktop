@@ -21,7 +21,7 @@ public class IndexNavigation extends AbstractNavigation {
 	}
 
 	@Override
-	protected DirectoryMetadata reloadMetadata() throws QblStorageException {
+	public DirectoryMetadata reloadMetadata() throws QblStorageException {
 		// TODO: duplicate with BoxVoume.navigate()
 		String rootRef = dm.getFileName();
 		InputStream indexDl = readBackend.download(rootRef);

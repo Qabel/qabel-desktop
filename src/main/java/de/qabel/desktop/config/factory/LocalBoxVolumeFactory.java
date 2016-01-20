@@ -6,6 +6,7 @@ import de.qabel.desktop.daemon.management.MagicEvilPrefixSource;
 import de.qabel.desktop.storage.BoxVolume;
 import de.qabel.desktop.storage.LocalReadBackend;
 import de.qabel.desktop.storage.LocalWriteBackend;
+import de.qabel.desktop.storage.cache.CachedBoxVolume;
 
 import java.nio.file.Path;
 
@@ -27,7 +28,7 @@ public class LocalBoxVolumeFactory implements BoxVolumeFactory {
 		if (prefix == null) {
 			prefix = MagicEvilPrefixSource.getPrefix(account);
 		}
-		return new BoxVolume(
+		return new CachedBoxVolume(
 				new LocalReadBackend(tmpDir),
 				new LocalWriteBackend(tmpDir),
 				identity.getPrimaryKeyPair(),

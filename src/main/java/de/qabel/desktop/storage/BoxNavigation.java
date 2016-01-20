@@ -9,6 +9,10 @@ import java.util.List;
 
 public interface BoxNavigation {
 
+	DirectoryMetadata reloadMetadata() throws QblStorageException;
+
+	void setMetadata(DirectoryMetadata dm);
+
 	/**
 	 * Bumps the version and uploads the metadata file
 	 * <p/>
@@ -139,4 +143,6 @@ public interface BoxNavigation {
 	boolean hasFolder(String name) throws QblStorageException;
 
 	BoxFile getFile(String name) throws QblStorageException;
+
+	DirectoryMetadata getMetadata();
 }

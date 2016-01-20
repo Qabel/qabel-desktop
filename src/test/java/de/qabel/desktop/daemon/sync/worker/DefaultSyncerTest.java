@@ -9,6 +9,8 @@ import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.daemon.management.DefaultLoadManager;
 import de.qabel.desktop.daemon.management.LoadManager;
 import de.qabel.desktop.daemon.sync.AbstractSyncTest;
+import de.qabel.desktop.daemon.sync.event.ChangeEvent;
+import de.qabel.desktop.daemon.sync.event.DefaultChangeEvent;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,8 +18,8 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
 
@@ -26,6 +28,7 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 	private BoxSyncConfig config;
 	private Identity identity;
 	private Account account;
+	private DefaultSyncer syncer;
 
 	@Before
 	public void setUp() {
@@ -42,6 +45,9 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 
 	@After
 	public void tearDown() throws InterruptedException {
+		if (syncer != null) {
+			syncer.shutdown();
+		}
 		super.tearDown();
 	}
 
@@ -49,9 +55,25 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 	public void addsFilesAsUploads() throws IOException {
 		new File(tmpDir.toFile(), "file").createNewFile();
 
-		Syncer syncer = new DefaultSyncer(config, new BoxVolumeStub(), manager);
+		syncer = new DefaultSyncer(config, new BoxVolumeStub(), manager);
 		syncer.run();
 
-		waitUntil(() -> manager.getUploads().size() == 2);
+		waitUntil(() -> manager.getTransactions().size() == 2);
+	}
+
+	@Test
+	public void addsFoldersAsDownloads() throws Exception {
+		BoxNavigationStub nav = new BoxNavigationStub(null, null);
+		nav.event = new DefaultChangeEvent(Paths.get("/someFolder"), ChangeEvent.TYPE.CREATE);
+		BoxVolumeStub volume = new BoxVolumeStub();
+		volume.rootNavigation = nav;
+		syncer = new DefaultSyncer(config, volume, manager);
+		syncer.setPollInterval(1, TimeUnit.MILLISECONDS);
+		syncer.run();
+
+		waitUntil(syncer::isPolling);
+
+		waitUntil(() -> manager.getTransactions().size() == 2);
+		assertEquals("/someFolder", manager.getTransactions().get(1).getSource().toString());
 	}
 }

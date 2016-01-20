@@ -2,7 +2,6 @@ package de.qabel.desktop.daemon.management;
 
 
 import de.qabel.desktop.exceptions.QblStorageException;
-import de.qabel.desktop.storage.BoxFolder;
 import de.qabel.desktop.storage.BoxNavigation;
 import de.qabel.desktop.storage.BoxVolume;
 import org.slf4j.Logger;
@@ -15,17 +14,23 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class DefaultLoadManager implements LoadManager, Runnable {
 	private final Logger logger = LoggerFactory.getLogger(DefaultLoadManager.class);
-	private final LinkedBlockingQueue<Upload> uploads = new LinkedBlockingQueue<>();
+	private final LinkedBlockingQueue<Transaction> transactions = new LinkedBlockingQueue<>();
 
 	@Override
-	public List<Upload> getUploads() {
-		return Arrays.asList(uploads.toArray(new Upload[uploads.size()]));
+	public List<Transaction> getTransactions() {
+		return Arrays.asList(transactions.toArray(new Transaction[transactions.size()]));
+	}
+
+	@Override
+	public void addDownload(Download download) {
+		logger.trace("download added: " + download.getSource() + " to " + download.getDestination());
+		transactions.add(download);
 	}
 
 	@Override
 	public void addUpload(Upload upload) {
 		logger.trace("upload added: " + upload.getSource() + " to " + upload.getDestination());
-		uploads.add(upload);
+		transactions.add(upload);
 	}
 
 	public void run() {
@@ -39,13 +44,21 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 	}
 
 	void next() throws InterruptedException {
-		Upload upload = uploads.take();
-		logger.trace("handling upload " + upload);
+		Transaction transaction = transactions.take();
+		logger.trace("handling transaction  " + transaction);
 		try {
-			upload(upload);
+			if (transaction instanceof Upload) {
+				upload((Upload) transaction);
+			} else {
+				download((Download) transaction);
+			}
 		} catch (QblStorageException e) {
-			logger.error("Upload failed: " + e.getMessage(), e);
+			logger.error("Transaction failed: " + e.getMessage(), e);
 		}
+	}
+
+	private void download(Download download) throws QblStorageException {
+		logger.trace("skipped download  " + download);
 	}
 
 	void upload(Upload upload) throws QblStorageException {

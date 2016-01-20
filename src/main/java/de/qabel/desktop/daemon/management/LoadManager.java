@@ -3,6 +3,7 @@ package de.qabel.desktop.daemon.management;
 import java.util.List;
 
 public interface LoadManager {
-	List<Upload> getUploads();
+	List<Transaction> getTransactions();
 	void addUpload(Upload upload);
+	void addDownload(Download download);
 }

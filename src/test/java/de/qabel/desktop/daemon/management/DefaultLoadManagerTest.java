@@ -6,7 +6,6 @@ import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilder;
 import de.qabel.desktop.config.factory.LocalBoxVolumeFactory;
 import de.qabel.desktop.daemon.sync.AbstractSyncTest;
-import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.BoxFile;
 import de.qabel.desktop.storage.BoxFolder;
@@ -66,8 +65,8 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 	public void queuesUploads() {
 		Upload upload = new FakeUpload();
 		manager.addUpload(upload);
-		assertEquals(1, manager.getUploads().size());
-		assertSame(upload, manager.getUploads().get(0));
+		assertEquals(1, manager.getTransactions().size());
+		assertSame(upload, manager.getTransactions().get(0));
 	}
 
 	@Test
@@ -128,7 +127,7 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 
 		upload.source = tmpPath("syncRoot/folder");
 		upload.destination = Paths.get("/syncRoot/folder");
-		upload.type = Upload.TYPE.DELETE;
+		upload.type = Transaction.TYPE.DELETE;
 
 		manager.upload(upload);
 
@@ -148,7 +147,7 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 
 		upload.source = tmpPath("file");
 		upload.destination = Paths.get("/syncRoot", "targetFile");
-		upload.type = Upload.TYPE.DELETE;
+		upload.type = Transaction.TYPE.DELETE;
 		manager.upload(upload);
 
 		BoxNavigation syncRoot = nav().navigate("syncRoot");
@@ -164,7 +163,7 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 		write("testcontent", upload.source);
 		manager.upload(upload);
 
-		upload.type = Upload.TYPE.UPDATE;
+		upload.type = Transaction.TYPE.UPDATE;
 		write("content2", upload.source);
 		manager.upload(upload);
 

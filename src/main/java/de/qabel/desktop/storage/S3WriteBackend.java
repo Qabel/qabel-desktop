@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 
-public class S3WriteBackend extends StorageWriteBackend {
+public class S3WriteBackend implements StorageWriteBackend {
 
 	private static final Logger logger = LoggerFactory.getLogger(FolderNavigation.class.getName());
 
@@ -25,7 +25,7 @@ public class S3WriteBackend extends StorageWriteBackend {
 	}
 
 	@Override
-	long upload(String name, InputStream inputStream) throws QblStorageException {
+	public long upload(String name, InputStream inputStream) throws QblStorageException {
 		logger.info("Uploading to name " + name);
 		try {
 			String path = prefix + '/' + name;
@@ -38,7 +38,7 @@ public class S3WriteBackend extends StorageWriteBackend {
 	}
 
 	@Override
-	void delete(String name) throws QblStorageException {
+	public void delete(String name) throws QblStorageException {
 		logger.info("Deleting name " + name);
 		try {
 			s3Client.deleteObject(bucket, prefix + '/' + name);

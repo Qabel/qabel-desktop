@@ -1,6 +1,5 @@
 package de.qabel.desktop.daemon.management;
 
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.BoxSyncConfig;

@@ -3,6 +3,7 @@ package de.qabel.desktop.daemon.sync.worker;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.factory.BoxVolumeFactory;
 import de.qabel.desktop.daemon.management.LoadManager;
+import de.qabel.desktop.storage.cache.CachedBoxVolume;
 
 public class DefaultSyncerFactory implements SyncerFactory {
 	private LoadManager manager;
@@ -16,6 +17,6 @@ public class DefaultSyncerFactory implements SyncerFactory {
 
 	@Override
 	public Syncer factory(BoxSyncConfig config) {
-		return new DefaultSyncer(config, boxVolumeFactory.getVolume(config.getAccount(), config.getIdentity()), manager);
+		return new DefaultSyncer(config, (CachedBoxVolume) boxVolumeFactory.getVolume(config.getAccount(), config.getIdentity()), manager);
 	}
 }

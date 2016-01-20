@@ -14,7 +14,7 @@ import java.util.List;
 
 public class BoxVolumeS3Test extends BoxVolumeTest {
 	@Override
-	void setUpVolume() {
+	protected void setUpVolume() {
 		DefaultAWSCredentialsProviderChain chain = new DefaultAWSCredentialsProviderChain();
 
 		QblECKeyPair keyPair = new QblECKeyPair();

@@ -1,15 +1,5 @@
 package de.qabel.desktop.daemon.management;
 
-import de.qabel.desktop.storage.BoxVolume;
+public interface Upload extends Transaction {
 
-import java.nio.file.Path;
-
-public interface Upload {
-	enum TYPE { CREATE, UPDATE, DELETE }
-
-	TYPE getType();
-	BoxVolume getBoxVolume();
-	Path getSource();
-	Path getDestination();
-	boolean isValid();
 }

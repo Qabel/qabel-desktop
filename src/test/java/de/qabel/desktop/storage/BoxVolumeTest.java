@@ -29,13 +29,13 @@ import static org.junit.Assert.assertThat;
 public abstract class BoxVolumeTest {
 	private static final Logger logger = LoggerFactory.getLogger(BoxVolumeTest.class.getName());
 
-	BoxVolume volume;
-	BoxVolume volume2;
-	byte[] deviceID;
-	byte[] deviceID2;
-	QblECKeyPair keyPair;
-	final String bucket = "qabel";
-	final String prefix = UUID.randomUUID().toString();
+	protected BoxVolume volume;
+	protected BoxVolume volume2;
+	protected byte[] deviceID;
+	protected byte[] deviceID2;
+	protected QblECKeyPair keyPair;
+	protected final String bucket = "qabel";
+	protected final String prefix = UUID.randomUUID().toString();
 	private final String testFileName = "src/test/java/de/qabel/desktop/storage/testFile.txt";
 
 	@Before
@@ -51,7 +51,7 @@ public abstract class BoxVolumeTest {
 		volume.createIndex(bucket, prefix);
 	}
 
-	abstract void setUpVolume() throws IOException;
+	protected abstract void setUpVolume() throws IOException;
 
 	@After
 	public void cleanUp() throws IOException {

@@ -32,7 +32,7 @@ public class FolderNavigation extends AbstractNavigation {
 	}
 
 	@Override
-	protected DirectoryMetadata reloadMetadata() throws QblStorageException {
+	public DirectoryMetadata reloadMetadata() throws QblStorageException {
 		logger.info("Reloading directory metadata");
 		// duplicate of navigate()
 		try {
