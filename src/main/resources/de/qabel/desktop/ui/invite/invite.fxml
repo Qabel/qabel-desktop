@@ -9,7 +9,9 @@
     <center>
         <TextArea fx:id="textarea" prefHeight="550.0" prefWidth="277.0" BorderPane.alignment="CENTER" />
     </center>
+
     <bottom>
+
         <Button mnemonicParsing="false" onAction="#handleInviteButtonAction" text="%mailto" BorderPane.alignment="CENTER">
             <BorderPane.margin>
                 <Insets bottom="20.0" top="20.0" />
