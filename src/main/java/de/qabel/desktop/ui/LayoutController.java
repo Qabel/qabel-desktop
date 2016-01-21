@@ -64,7 +64,7 @@ public class LayoutController extends AbstractController implements Initializabl
 		navi.getChildren().add(createNavItem(resourceBundle.getString("invite"), new InviteView()));
 
 		scrollContent.setFillWidth(true);
-		scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 		scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
 
