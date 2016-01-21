@@ -51,7 +51,6 @@ public class InviteController extends AbstractController implements Initializabl
 			}
 		}
 		).start();
-
 	}
 
 	private String createEMailBody() {
