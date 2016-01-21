@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="invite" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.invite.InviteController">
+    
+    <center>
+        <TextArea fx:id="textarea" prefHeight="550.0" prefWidth="277.0" BorderPane.alignment="CENTER" />
+    </center>
+
+    <bottom>
+
+        <Button mnemonicParsing="false" onAction="#handleInviteButtonAction" text="%mailto" BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets bottom="20.0" top="20.0" />
+            </BorderPane.margin>
+        </Button>
+    </bottom>
+   <top>
+      <Label text="%invite" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="20.0" top="20.0" />
+         </BorderPane.margin></Label>
+   </top>
+</BorderPane>

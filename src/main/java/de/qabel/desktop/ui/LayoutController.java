@@ -6,6 +6,7 @@ import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.ui.accounting.AccountingView;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
 import de.qabel.desktop.ui.contact.ContactView;
+import de.qabel.desktop.ui.invite.InviteView;
 import de.qabel.desktop.ui.remotefs.RemoteFSView;
 import de.qabel.desktop.ui.sync.SyncView;
 import javafx.fxml.FXML;
@@ -60,6 +61,7 @@ public class LayoutController extends AbstractController implements Initializabl
 		navi.getChildren().add(createNavItem(resourceBundle.getString("browse"), new RemoteFSView()));
 		navi.getChildren().add(createNavItem(resourceBundle.getString("contacts"), new ContactView()));
 		navi.getChildren().add(createNavItem(resourceBundle.getString("sync"), new SyncView()));
+		navi.getChildren().add(createNavItem(resourceBundle.getString("invite"), new InviteView()));
 
 		scrollContent.setFillWidth(true);
 		scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
