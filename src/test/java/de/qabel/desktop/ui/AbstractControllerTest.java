@@ -6,7 +6,9 @@ import de.qabel.core.config.Account;
 import de.qabel.desktop.config.DefaultClientConfiguration;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
+import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.IdentityRepository;
+import de.qabel.desktop.repository.Stub.StubContactRepository;
 import de.qabel.desktop.repository.inmemory.InMemoryIdentityRepository;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import javafx.application.Application;
@@ -29,6 +31,8 @@ public class AbstractControllerTest {
 	protected IdentityRepository identityRepository = new InMemoryIdentityRepository();
 	protected DefaultClientConfiguration clientConfiguration;
 	protected IdentityBuilderFactory identityBuilderFactory;
+	protected ContactRepository contactRepository = new StubContactRepository();
+
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -65,6 +69,7 @@ public class AbstractControllerTest {
 		diContainer.put("identityBuilderFactory", identityBuilderFactory);
 		diContainer.put("account", new Account("a", "b", "c"));
 		diContainer.put("identityRepository", identityRepository);
+		diContainer.put("contactRepository", contactRepository);
 		Injector.setConfigurationSource(diContainer::get);
 		Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(diContainer));
 	}

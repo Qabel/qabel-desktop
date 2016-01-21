@@ -1,13 +1,7 @@
 package de.qabel.desktop.ui.accounting;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.crypto.QblECKeyPair;
-import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.drop.DropURL;
 import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.desktop.config.ClientConfiguration;
@@ -27,12 +21,12 @@ import javax.inject.Inject;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
+
+import static de.qabel.desktop.ui.accounting.GsonContact.*;
 
 public class AccountingController extends AbstractController implements Initializable {
 	private Identity selectedIdentity;
-	private Gson gson;
 
 	@FXML
 	VBox identityList;
@@ -56,8 +50,6 @@ public class AccountingController extends AbstractController implements Initiali
 		buildGson();
 		this.resourceBundle = resources;
 	}
-
-
 
 	public void addIdentity(ActionEvent actionEvent) {
 		addIdentity();
@@ -92,7 +84,6 @@ public class AccountingController extends AbstractController implements Initiali
 		Identity i = clientConfiguration.getSelectedIdentity();
 		File file = createSaveFileChooser(i.getAlias() + "_Identity.json");
 		try {
-
 			exportIdentity(i, file);
 			loadIdentities();
 		} catch (IOException | QblStorageException e) {
@@ -103,7 +94,7 @@ public class AccountingController extends AbstractController implements Initiali
 	@FXML
 	protected void handleExportContactButtonAction(ActionEvent event) {
 		Identity i = clientConfiguration.getSelectedIdentity();
-		File file = createSaveFileChooser(i.getAlias() + "_Identity.json");
+		File file = createSaveFileChooser(i.getAlias() + "_Contact.json");
 		try {
 			exportContact(i, file);
 		} catch (IOException | QblStorageException e) {
@@ -132,52 +123,22 @@ public class AccountingController extends AbstractController implements Initiali
 	}
 
 	void exportIdentity(Identity i, File file) throws IOException, QblStorageException {
-		GsonIdentity gi = createGsonIdentity(i);
+		GsonIdentity gi = new GsonIdentity().fromIdentity(i);
 		String json = gson.toJson(gi);
 		writeStringInFile(json, file);
 	}
 
 	void exportContact(Identity i, File file) throws IOException, QblStorageException {
-		GsonContact gc = createGsonContact(i);
+		GsonContact gc = new GsonContact().fromEntity(i);
 		String json = gson.toJson(gc);
 		writeStringInFile(json, file);
 	}
 
-	String readFile(File f) throws IOException {
-		FileReader fileReader = new FileReader(f);
-		BufferedReader br = new BufferedReader(fileReader);
-
-		try {
-			StringBuilder sb = new StringBuilder();
-			String line = br.readLine();
-
-			while (line != null) {
-				sb.append(line);
-				line = br.readLine();
-				if (line != null) {
-					sb.append("\n");
-				}
-			}
-			return sb.toString();
-		} finally {
-			br.close();
-		}
-	}
 
 	ResourceBundle getRessource(){
 		return resourceBundle;
 	}
 
-	Contact gsonContactToContact(GsonContact gc, Identity i) throws URISyntaxException, QblDropInvalidURL {
-
-		ArrayList<DropURL> collection = generateDropURLs(gc.getDropUrls());
-		QblECPublicKey pubKey = new QblECPublicKey(gc.getPublicKey());
-		Contact c = new Contact(i, gc.getAlias(), collection, pubKey);
-		c.setPhone(gc.getPhone());
-		c.setEmail(gc.getEmail());
-
-		return c;
-	}
 
 	Identity gsonIdentityToIdentiy(GsonIdentity gi) throws URISyntaxException, QblDropInvalidURL {
 
@@ -185,44 +146,6 @@ public class AccountingController extends AbstractController implements Initiali
 		QblECKeyPair qblECKeyPair = new QblECKeyPair(gi.getPrivateKey());
 
 		return new Identity(gi.getAlias(), collection, qblECKeyPair);
-	}
-
-	private GsonContact createGsonContact(Identity identity) {
-		GsonContact gc = new GsonContact();
-		gc.setEmail(identity.getEmail());
-		gc.setPhone(identity.getPhone());
-		gc.setAlias(identity.getAlias());
-		gc.setCreated(identity.getCreated());
-		gc.setUpdated(identity.getUpdated());
-		gc.setDeleted(identity.getDeleted());
-		gc.setPublicKey(identity.getEcPublicKey().getKey());
-		for (DropURL d : identity.getDropUrls()) {
-			gc.addDropUrl(d.getUri().toString());
-		}
-		return gc;
-	}
-
-	private GsonIdentity createGsonIdentity(Identity i) {
-		GsonIdentity gi = new GsonIdentity();
-		gi.setEmail(i.getEmail());
-		gi.setPhone(i.getPhone());
-		gi.setAlias(i.getAlias());
-		gi.setCreated(i.getCreated());
-		gi.setUpdated(i.getUpdated());
-		gi.setDeleted(i.getDeleted());
-		gi.setPublicKey(i.getEcPublicKey().getKey());
-		gi.setPrivateKey(i.getPrimaryKeyPair().getPrivateKey());
-		for (DropURL d : i.getDropUrls()) {
-			gi.addDropUrl(d.getUri().toString());
-		}
-		return gi;
-	}
-
-	private void writeStringInFile(String json, File dir) throws IOException {
-		File targetFile = new File(dir.getPath());
-		targetFile.createNewFile();
-		OutputStream outStream = new FileOutputStream(targetFile);
-		outStream.write(json.getBytes());
 	}
 
 	private ArrayList<DropURL> generateDropURLs(List<String> drops) throws URISyntaxException, QblDropInvalidURL {
@@ -233,13 +156,6 @@ public class AccountingController extends AbstractController implements Initiali
 			collection.add(dropURL);
 		}
 		return collection;
-	}
-
-	private void buildGson() {
-		final GsonBuilder builder = new GsonBuilder();
-		builder.serializeNulls();
-		builder.excludeFieldsWithoutExposeAnnotation();
-		gson = builder.create();
 	}
 
 	private void loadIdentities() {
@@ -263,5 +179,4 @@ public class AccountingController extends AbstractController implements Initiali
 		chooser.setInitialFileName(defaultName);
 		return chooser.showSaveDialog(identityList.getScene().getWindow());
 	}
-
 }

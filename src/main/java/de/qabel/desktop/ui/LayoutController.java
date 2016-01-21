@@ -5,6 +5,7 @@ import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.ui.accounting.AccountingView;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
+import de.qabel.desktop.ui.contact.ContactView;
 import de.qabel.desktop.ui.remotefs.RemoteFSView;
 import de.qabel.desktop.ui.sync.SyncView;
 import javafx.fxml.FXML;
@@ -57,6 +58,7 @@ public class LayoutController extends AbstractController implements Initializabl
 		AccountingView accountingView = new AccountingView();
 		navi.getChildren().add(createNavItem(resourceBundle.getString("identity"), accountingView));
 		navi.getChildren().add(createNavItem(resourceBundle.getString("browse"), new RemoteFSView()));
+		navi.getChildren().add(createNavItem(resourceBundle.getString("contacts"), new ContactView()));
 		navi.getChildren().add(createNavItem(resourceBundle.getString("sync"), new SyncView()));
 
 		scrollContent.setFillWidth(true);

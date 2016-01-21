@@ -35,7 +35,6 @@
 }
 
 .button {
-    -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-background-radius: 15;
     -fx-indent: 20em;

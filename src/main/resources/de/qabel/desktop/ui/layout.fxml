@@ -55,6 +55,7 @@
       </VBox>
    </left>
    <center>
+
       <ScrollPane fx:id="scroll" styleClass="edge-to-edge" fitToHeight="true" fitToWidth="true">
          <content>
             <VBox fx:id="scrollContent" maxWidth="Infinity" styleClass="scrollContent" maxHeight="Infinity" BorderPane.alignment="CENTER">
