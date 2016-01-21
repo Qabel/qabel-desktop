@@ -35,13 +35,11 @@ public class InviteController extends AbstractController implements Initializabl
 			if (Desktop.isDesktopSupported()
 					&& (desktop = Desktop.getDesktop()).isSupported(Desktop.Action.MAIL)) {
 
-				String mailTo = "";
 				String subject = createEMailSubject();
 				String body = createEMailBody();
-				String cc = "";
 
 				String mailURIStr = String.format("mailto:%s?subject=%s&cc=%s&body=%s",
-						mailTo, subject, cc, body);
+						"", subject, "", body);
 
 				try {
 					desktop.mail( new URI(mailURIStr));
@@ -53,14 +51,14 @@ public class InviteController extends AbstractController implements Initializabl
 		).start();
 	}
 
-	private String createEMailBody() {
+	String createEMailBody() {
 		String body =  bundle.getString("inviteText");
 		body = body.replace("\n", "%0D%0A");
 		body = body.replace(" ", "%20");
 		return body;
 	}
 
-	private String createEMailSubject() {
+	String createEMailSubject() {
 		String subject = bundle.getString("emailSubjectText");
 		subject = subject.replace(" ", "%20");
 		return subject;
