@@ -7,8 +7,7 @@
 <VBox fx:id="contactroot" xmlns="http://javafx.com/javafx/8"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.contact.ContactController">
     <children>
-        <BorderPane prefHeight="400.0" prefWidth="400.0">
-            <center>
+        <ScrollPane prefHeight="600.0" prefWidth="400.0">
                 <VBox fx:id="contactList" prefHeight="43.0" prefWidth="347.0" BorderPane.alignment="CENTER">
                     <children>
                         <Label text="Awesome Alias With A VERY long NAME">
@@ -44,8 +43,7 @@
                         <Insets/>
                     </BorderPane.margin>
                 </VBox>
-            </center>
-        </BorderPane>
+        </ScrollPane>
     </children>
 
     <children>

@@ -35,3 +35,25 @@
 .scroll-pane > .viewport {
    -fx-background-color: transparent;
 }
+
+#otherActionlog #textlabel {
+    -fx-background-color: #fd670d;
+    -fx-background-radius: 5;
+
+}
+#otherActionlog #shadow {
+    -fx-effect: dropshadow(one-pass-box, grey, 10, -1, 0, 0);
+}
+
+#myActionlog #shadow {
+    -fx-effect: dropshadow(one-pass-box, grey, 10, -1, 0, 0);
+}
+
+#myActionlog .label {
+    -fx-background-color: grey;
+    -fx-background-radius: 5;
+}
+
+#textarea {
+    -fx-border-color: black;
+}

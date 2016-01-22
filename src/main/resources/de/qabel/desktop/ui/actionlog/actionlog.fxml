@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<ScrollPane fx:id="scroller" hbarPolicy="NEVER" vbarPolicy="ALWAYS" xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.actionlog.ActionlogController" fitToWidth="true">
+
+        <VBox>
+            <children>
+                <VBox fx:id="messages" alignment="BOTTOM_LEFT">
+                </VBox>
+            </children>
+            <children>
+                <TextArea fx:id="textarea" prefHeight="68.0" prefWidth="300.0" wrapText="true"
+                          BorderPane.alignment="BOTTOM_CENTER"/>
+            </children>
+        </VBox>
+</ScrollPane>
