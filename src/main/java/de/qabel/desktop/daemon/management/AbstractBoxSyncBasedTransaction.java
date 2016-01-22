@@ -7,12 +7,13 @@ import de.qabel.desktop.storage.BoxVolume;
 
 import java.nio.file.Path;
 
-public abstract class AbstractBoxSyncBasedTransaction {
+public abstract class AbstractBoxSyncBasedTransaction extends AbstractTransaction implements Transaction {
 	protected final BoxSyncConfig boxSyncConfig;
 	protected final WatchEvent event;
 	protected final BoxVolume volume;
 
 	public AbstractBoxSyncBasedTransaction(BoxVolume volume, WatchEvent event, BoxSyncConfig boxSyncConfig) {
+		super(event.getMtime());
 		this.volume = volume;
 		this.event = event;
 		this.boxSyncConfig = boxSyncConfig;
@@ -39,5 +40,9 @@ public abstract class AbstractBoxSyncBasedTransaction {
 
 	public Path getSource() {
 		return event.getPath();
+	}
+
+	public boolean isDir() {
+		return event.isDir();
 	}
 }

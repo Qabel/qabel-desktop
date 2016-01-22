@@ -64,7 +64,7 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 	@Test
 	public void addsFoldersAsDownloads() throws Exception {
 		BoxNavigationStub nav = new BoxNavigationStub(null, null);
-		nav.event = new DefaultChangeEvent(Paths.get("/someFolder"), ChangeEvent.TYPE.CREATE);
+		nav.event = new DefaultChangeEvent(Paths.get("/someFolder"), true, null, ChangeEvent.TYPE.CREATE);
 		BoxVolumeStub volume = new BoxVolumeStub();
 		volume.rootNavigation = nav;
 		syncer = new DefaultSyncer(config, volume, manager);

@@ -78,9 +78,11 @@ public class TreeWatcher extends Thread {
 			Path child = parent.resolve(name);
 			logger.trace("valid fs event on " + child + " @" + name);
 
-			consumer.accept(new DefaultChangeEvent(child, convertType(kind)));
+			boolean isDir = Files.isDirectory(child);
+			long mtime = Files.getLastModifiedTime(child).toMillis();
+			consumer.accept(new DefaultChangeEvent(child, isDir, mtime, convertType(kind)));
 
-			if (kind == ENTRY_CREATE && Files.isDirectory(child)) {
+			if (kind == ENTRY_CREATE && isDir) {
 				registerRecursive(child);
 			}
 
@@ -115,7 +117,14 @@ public class TreeWatcher extends Thread {
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 				consumer.accept(new WatchRegisteredEvent(file));
 				if (watching) {
-					consumer.accept(new DefaultChangeEvent(file, CREATE));
+					consumer.accept(
+							new DefaultChangeEvent(
+									file,
+									Files.isDirectory(file),
+									Files.getLastModifiedTime(file).toMillis(),
+									CREATE
+							)
+					);
 				}
 				return super.visitFile(file, attrs);
 			}

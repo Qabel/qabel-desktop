@@ -4,12 +4,10 @@ import java.nio.file.Path;
 
 public class AbstractChangeEvent extends AbstractWatchEvent {
 	protected final ChangeEvent.TYPE type;
-	protected final long mtime;
 
-	public AbstractChangeEvent(Path path, ChangeEvent.TYPE type) {
-		super(path);
+	public AbstractChangeEvent(Path path, boolean isDirecotry, Long mtime, ChangeEvent.TYPE type) {
+		super(path, isDirecotry, mtime);
 		this.type = type;
-		this.mtime = path.toFile().lastModified();
 	}
 
 	public ChangeEvent.TYPE getType() {
@@ -18,7 +16,7 @@ public class AbstractChangeEvent extends AbstractWatchEvent {
 
 	@Override
 	public boolean isValid() {
-		return getPath().toFile().lastModified() == mtime;
+		return getPath().toFile().lastModified() == getMtime();
 	}
 
 	public boolean isUpdate() {
@@ -32,4 +30,5 @@ public class AbstractChangeEvent extends AbstractWatchEvent {
 	public boolean isDelete() {
 		return type == ChangeEvent.TYPE.DELETE;
 	}
+
 }

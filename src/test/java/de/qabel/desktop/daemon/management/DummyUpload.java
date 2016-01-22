@@ -4,7 +4,7 @@ import de.qabel.desktop.storage.BoxVolume;
 
 import java.nio.file.Path;
 
-public class FakeUpload implements Upload {
+public class DummyUpload implements Upload {
 	@Override
 	public TYPE getType() {
 		return null;
@@ -28,5 +28,25 @@ public class FakeUpload implements Upload {
 	@Override
 	public boolean isValid() {
 		return false;
+	}
+
+	@Override
+	public boolean isDir() {
+		return false;
+	}
+
+	@Override
+	public Long getMtime() {
+		return null;
+	}
+
+	@Override
+	public STATE getState() {
+		return null;
+	}
+
+	@Override
+	public void toState(STATE state) {
+
 	}
 }

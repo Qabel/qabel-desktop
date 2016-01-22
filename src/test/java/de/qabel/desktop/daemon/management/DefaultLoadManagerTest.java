@@ -21,14 +21,22 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
 import java.util.List;
 
+import static de.qabel.desktop.daemon.management.Transaction.STATE.SKIPPED;
+import static de.qabel.desktop.daemon.management.Transaction.TYPE.CREATE;
+import static de.qabel.desktop.daemon.management.Transaction.TYPE.DELETE;
+import static de.qabel.desktop.daemon.management.Transaction.TYPE.UPDATE;
 import static org.junit.Assert.*;
 
 public class DefaultLoadManagerTest extends AbstractSyncTest {
+	public static final long NEWER = 10000L;
+	public static final long OLDER = -10000L;
 	private BoxVolume volume;
 	private UploadStub upload;
 	private DefaultLoadManager manager;
+	private DownloadStub download;
 
 	private Path tmpPath(String dir) {
 		return Paths.get(tmpDir.toString(), dir);
@@ -43,13 +51,16 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 		super.setUp();
 		try {
 			Account account = new Account("a", "b", "c");
-			Identity identity = null;
-				identity = new IdentityBuilder(new DropUrlGenerator("http://localhost")).build();
+			Identity identity = new IdentityBuilder(new DropUrlGenerator("http://localhost")).build();
 			volume = new LocalBoxVolumeFactory(tmpDir, "abc").getVolume(account, identity);
 			volume.createIndex("??");
 
 			upload = new UploadStub();
 			upload.volume = volume;
+
+			download = new DownloadStub();
+			download.volume = volume;
+
 			manager = new DefaultLoadManager();
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -63,7 +74,7 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 
 	@Test
 	public void queuesUploads() {
-		Upload upload = new FakeUpload();
+		Upload upload = new DummyUpload();
 		manager.addUpload(upload);
 		assertEquals(1, manager.getTransactions().size());
 		assertSame(upload, manager.getTransactions().get(0));
@@ -74,6 +85,7 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 		upload.source = tmpPath("/syncRoot");
 		upload.destination = Paths.get("syncRoot");
 		upload.source.toFile().mkdirs();
+		upload.isDir = true;
 
 		manager.upload(upload);
 
@@ -89,6 +101,7 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 		upload.source.toFile().mkdirs();
 		upload.destination = Paths.get("/syncRoot/targetSubdir");
 
+		upload.isDir = true;
 		manager.upload(upload);
 
 		List<BoxFolder> folders = nav().navigate("syncRoot").listFolders();
@@ -104,6 +117,7 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 		File sourceFile = upload.source.toFile();
 		sourceFile.createNewFile();
 		write("testcontent", upload.source);
+		upload.isDir = false;
 
 		manager.upload(upload);
 
@@ -127,7 +141,8 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 
 		upload.source = tmpPath("syncRoot/folder");
 		upload.destination = Paths.get("/syncRoot/folder");
-		upload.type = Transaction.TYPE.DELETE;
+		upload.type = DELETE;
+		upload.isDir = true;
 
 		manager.upload(upload);
 
@@ -147,7 +162,9 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 
 		upload.source = tmpPath("file");
 		upload.destination = Paths.get("/syncRoot", "targetFile");
-		upload.type = Transaction.TYPE.DELETE;
+		upload.type = DELETE;
+		upload.mtime = System.currentTimeMillis() + NEWER;
+		upload.isDir = false;
 		manager.upload(upload);
 
 		BoxNavigation syncRoot = nav().navigate("syncRoot");
@@ -161,7 +178,9 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 		upload.source = tmpPath("file");
 		upload.destination = Paths.get("/syncRoot", "targetFile");
 		write("testcontent", upload.source);
+		upload.mtime = modifyMtime(upload.source, 0L);
 		manager.upload(upload);
+		upload.isDir = false;
 
 		upload.type = Transaction.TYPE.UPDATE;
 		write("content2", upload.source);
@@ -177,5 +196,146 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 
 	private void write(String content, Path file) throws IOException {
 		Files.write(file, content.getBytes());
+	}
+
+	@Test
+	public void downloadsFolders() throws Exception {
+		nav().createFolder("syncRoot");
+		download.source = Paths.get("/syncRoot");
+		download.destination = tmpPath("syncLocal");
+		download.type = Transaction.TYPE.CREATE;
+		download.isDir = true;
+
+		manager.download(download);
+
+		assertTrue(Files.isDirectory(download.destination));
+	}
+
+	@Test
+	public void downloadsFiles() throws Exception {
+		Path downloadPath = tmpPath("testfile");
+		write("testcontent", downloadPath);
+		File file = downloadPath.toFile();
+		lastUpload = nav().upload("testfile", file);
+		download.isDir = true;
+		file.delete();
+
+		setDownload(downloadPath, 0L, CREATE, false);
+		manager.download(download);
+
+		assertTrue(Files.exists(downloadPath));
+		assertEquals("testcontent", new String(Files.readAllBytes(downloadPath)));
+	}
+
+	private BoxFile lastUpload;
+
+	protected Path uploadFile(String content, String filename) throws IOException, QblStorageException {
+		Path downloadPath = tmpPath(filename);
+		write(content, downloadPath);
+		File file = downloadPath.toFile();
+		lastUpload = nav().upload(filename, file);
+		return downloadPath;
+	}
+
+	@Test
+	public void updatesLocalFiles() throws Exception {
+		Path downloadPath = uploadFile("testcontent", "testfile");
+		write("something else", downloadPath);
+		modifyMtime(downloadPath, -10000L);
+
+		setDownload(downloadPath, 0L, UPDATE, false);
+		manager.download(download);
+
+		assertEquals("testcontent", new String(Files.readAllBytes(downloadPath)));
+	}
+
+	protected long modifyMtime(Path downloadPath, long diff) throws IOException {
+		long newMtime = Files.getLastModifiedTime(downloadPath).toMillis() + diff;
+		Files.setLastModifiedTime(downloadPath, FileTime.fromMillis(newMtime));
+		return newMtime;
+	}
+
+	@Test
+	public void doesntDownloadOlderFiles() throws Exception {
+		Path downloadPath = uploadFile("testcontent", "testfile");
+		write("newcontent", downloadPath);
+		modifyMtime(downloadPath, NEWER);
+
+		setDownload(downloadPath, 0L, UPDATE, false);
+		manager.download(download);
+
+		assertEquals(SKIPPED, download.getState());
+		assertEquals("newcontent", new String(Files.readAllBytes(downloadPath)));
+	}
+
+	@Test
+	public void doesntDownloadOnOutdatedDownload() throws Exception {
+		Path downloadPath = uploadFile("testcontent", "testfile");
+		write("not downloaded", downloadPath);
+		modifyMtime(downloadPath, OLDER);
+
+		setDownload(downloadPath, OLDER / 2, UPDATE, false);
+		manager.download(download);
+
+		assertEquals(SKIPPED, download.getState());
+		assertEquals("not downloaded", new String(Files.readAllBytes(downloadPath)));
+	}
+
+	@Test
+	public void deletesFilesLocally() throws Exception {
+		Path downloadPath = tmpPath("testfile");
+		write("content", downloadPath);
+
+		setDownload(downloadPath, NEWER, DELETE, false);
+		manager.download(download);
+
+		assertFalse("local file was not deleted", Files.exists(downloadPath));
+	}
+
+	private void setDownload(Path destination, long mtimeDiff, Transaction.TYPE type, boolean isDir) throws IOException {
+		download.source = Paths.get("/testfile");
+		download.destination = destination;
+		download.mtime = lastUpload != null ? lastUpload.mtime + mtimeDiff : Files.getLastModifiedTime(destination).toMillis() + mtimeDiff;
+		download.type = type;
+		download.isDir = isDir;
+	}
+
+	@Test
+	public void doesntUploadOlderFiles() throws Exception {
+		uploadFile("content", "testfile");
+
+		Path source = tmpPath("testfile");
+		write("newercontent", source);
+		long mtime = modifyMtime(source, OLDER);
+		upload.source = source;
+		upload.destination = Paths.get("/testfile");
+		upload.mtime = mtime;
+		upload.type = UPDATE;
+		upload.isDir = false;
+		manager.upload(upload);
+
+		assertEquals(SKIPPED, upload.getState());
+		assertRemoteExists("content", "testfile");
+	}
+
+	@Test
+	public void doesntDeleteNewerRemote() throws Exception {
+		uploadFile("content", "testfile");
+
+		upload.source = tmpPath("wayne");
+		upload.destination = Paths.get("/testfile");
+		upload.mtime = lastUpload.mtime + OLDER;
+		upload.type = DELETE;
+		upload.isDir = false;
+		manager.upload(upload);
+
+		assertEquals(SKIPPED, upload.getState());
+		assertRemoteExists("content", "testfile");
+	}
+
+	private void assertRemoteExists(String content, String testfile) throws QblStorageException, IOException {
+		BoxNavigation nav = volume.navigate();
+		BoxFile file = nav.getFile(testfile);
+		assertEquals(content, IOUtils.toString(nav.download(file)));
 	}
 }

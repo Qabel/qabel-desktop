@@ -34,6 +34,7 @@ public class BoxSyncBasedUploadTest extends AbstractSyncTest {
 	@Test
 	public void forwardsConfig() throws Exception {
 		File file = new File(tmpDir.toFile(), "testfile");
+		file.createNewFile();
 
 		IdentityBuilderFactory identityBuilderFactory = new IdentityBuilderFactory(new DropUrlGenerator("http://localhost:5000"));
 		Identity identity = identityBuilderFactory.factory().build();

@@ -177,6 +177,8 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 		notifyObservers(
 				new DefaultChangeEvent(
 						getPath(file),
+						file instanceof BoxFolder,
+						file instanceof BoxFile ? ((BoxFile) file).mtime : null,
 						type
 				)
 		);
