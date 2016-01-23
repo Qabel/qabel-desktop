@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
-<VBox fx:id="accountingroot"  xmlns="http://javafx.com/javafx/8"
+<?import javafx.scene.text.Font?>
+<VBox fx:id="accountingroot" xmlns="http://javafx.com/javafx/8"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.accounting.AccountingController">
-    <children>
+    <ScrollPane prefWidth="Infinity" fitToWidth="true" minWidth="400">
         <VBox fx:id="identityList">
             <children>
-                <GridPane maxWidth="1.7976931348623157E308" prefHeight="164.0" prefWidth="1000.0">
+                <GridPane prefHeight="164.0">
                     <columnConstraints>
-                        <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="70.0" minWidth="70.0"
-                                           prefWidth="70.0"/>
-                        <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" minWidth="10.0" prefWidth="1000.0"/>
+                        <ColumnConstraints halignment="CENTER" hgrow="NEVER"
+                        />
+                        <ColumnConstraints halignment="LEFT" hgrow="ALWAYS"/>
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints maxHeight="86.0" valignment="TOP" vgrow="SOMETIMES"/>
@@ -29,24 +27,24 @@
                                 <Insets top="20.0"/>
                             </GridPane.margin>
                         </RadioButton>
-                        <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="1000.0"
+                        <HBox maxHeight="1.7976931348623157E308"
                               GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS">
                             <children>
-                                <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="50.0" minWidth="50.0"
-                                      prefHeight="50.0" prefWidth="50.0"
+                                <Pane maxHeight="-Infinity"  minHeight="50.0"
+                                      prefHeight="50.0"
                                       style="-fx-border-color: black; -fx-border-radius: 25;">
                                     <HBox.margin>
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                                     </HBox.margin>
                                 </Pane>
-                                <VBox maxWidth="1.7976931348623157E308" prefHeight="65.0" prefWidth="800.0"
+                                <VBox maxWidth="-Infinity" prefHeight="65.0"
                                       HBox.hgrow="ALWAYS">
                                     <children>
                                         <BorderPane prefHeight="200.0">
                                             <center>
                                                 <VBox maxHeight="1.7976931348623157E308"
-                                                      maxWidth="1.7976931348623157E308" prefHeight="30.0"
-                                                      prefWidth="900.0" BorderPane.alignment="CENTER">
+                                                      maxWidth="-Infinity" prefHeight="30.0"
+                                                      BorderPane.alignment="CENTER">
                                                     <children>
                                                         <Label text="Guy Pearce">
                                                             <font>
@@ -65,13 +63,14 @@
                                                         BorderPane.alignment="CENTER"/>
                                             </right>
                                         </BorderPane>
-                                        <BorderPane style="-fx-background-color: orange; -fx-background-radius: 10;">
+                                        <BorderPane
+                                                style="-fx-background-color: orange; -fx-background-radius: 10;">
                                             <right>
-                                                <Pane maxWidth="1.7976931348623157E308" minWidth="100.0"
+                                                <Pane
                                                       BorderPane.alignment="CENTER">
                                                     <children>
                                                         <Label alignment="CENTER_RIGHT"
-                                                               maxWidth="1.7976931348623157E308"
+                                                               maxWidth="-Infinity"
                                                                nodeOrientation="LEFT_TO_RIGHT" prefHeight="15.0"
                                                                text="670 MB / 2 GB"/>
                                                     </children>
@@ -81,11 +80,10 @@
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
                                             </padding>
                                             <center>
-                                                <HBox prefHeight="100.0" prefWidth="200.0"
+                                                <HBox prefHeight="100.0"
                                                       BorderPane.alignment="CENTER">
                                                     <children>
-                                                        <Label maxWidth="1.7976931348623157E308" minWidth="100.0"
-                                                               style="-fx-background-size: 50px; -fx-border-radius: 10; -fx-background-radius: 10; -fx-background-color: #fefefe;"
+                                                        <Label style="-fx-background-size: 50px; -fx-border-radius: 10; -fx-background-radius: 10; -fx-background-color: #fefefe;"
                                                                text="cloud.prae.me">
                                                             <padding>
                                                                 <Insets left="5.0" right="5.0"/>
@@ -112,37 +110,36 @@
                 </GridPane>
             </children>
         </VBox>
+    </ScrollPane>
+    <Button fx:id="add" mnemonicParsing="false" onAction="#addIdentity" text="%addIdentity">
+        <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+        </VBox.margin>
+    </Button>
+    <HBox prefHeight="100.0">
+        <children>
+            <Button fx:id="import" mnemonicParsing="false" onAction="#handleImportIdentityButtonAction"
+                    text="%importIdentity">
+                <HBox.margin>
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                </HBox.margin>
+            </Button>
+            <Button fx:id="exportIdentity" mnemonicParsing="false" onAction="#handleExportIdentityButtonAction"
+                    text="%exportIdentity">
+                <HBox.margin>
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                </HBox.margin>
+            </Button>
 
-        <Button fx:id="add" mnemonicParsing="false" onAction="#addIdentity" text="%addIdentity">
-            <VBox.margin>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
-            </VBox.margin>
-        </Button>
-        <HBox prefHeight="100.0" prefWidth="200.0">
-            <children>
-                <Button fx:id="import" mnemonicParsing="false" onAction="#handleImportIdentityButtonAction"
-                        text="%importIdentity">
-                    <HBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
-                    </HBox.margin>
-                </Button>
-                <Button fx:id="exportIdentity" mnemonicParsing="false" onAction="#handleExportIdentityButtonAction"
-                        text="%exportIdentity">
-                    <HBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
-                    </HBox.margin>
-                </Button>
-
-                <Button fx:id="exportContact" mnemonicParsing="false" onAction="#handleExportContactButtonAction"
-                        text="%exportContact">
-                    <HBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
-                    </HBox.margin>
-                </Button>
-            </children>
-            <VBox.margin>
-                <Insets/>
-            </VBox.margin>
-        </HBox>
-    </children>
+            <Button fx:id="exportContact" mnemonicParsing="false" onAction="#handleExportContactButtonAction"
+                    text="%exportContact">
+                <HBox.margin>
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                </HBox.margin>
+            </Button>
+        </children>
+        <VBox.margin>
+            <Insets/>
+        </VBox.margin>
+    </HBox>
 </VBox>

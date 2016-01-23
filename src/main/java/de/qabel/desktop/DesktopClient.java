@@ -16,6 +16,7 @@ import de.qabel.desktop.repository.persistence.PersistenceAccountRepository;
 import de.qabel.desktop.repository.persistence.PersistenceClientConfigurationRepository;
 import de.qabel.desktop.repository.persistence.PersistenceContactRepository;
 import de.qabel.desktop.repository.persistence.PersistenceIdentityRepository;
+import de.qabel.desktop.ui.LayoutController;
 import de.qabel.desktop.ui.LayoutView;
 import de.qabel.desktop.ui.accounting.login.LoginView;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
@@ -39,6 +40,7 @@ import java.util.Map;
 public class DesktopClient extends Application {
 	private static final String TITLE = "Qabel Desktop Client";
 	Scene scene;
+	private LayoutView view;
 
 	public static void main(String[] args) throws Exception {
 		launch(args);
@@ -54,16 +56,19 @@ public class DesktopClient extends Application {
 
 		SceneAntialiasing aa = SystemUtils.IS_OS_LINUX ? SceneAntialiasing.DISABLED : SceneAntialiasing.BALANCED;
 		Scene scene;
+		view = new LayoutView();
+
 		if (!config.hasAccount()) {
-			scene = new Scene(new LoginView().getView(), 370, 530, true, aa);
+
+			scene = new Scene(view.getView(), 370, 530, true, aa);
 			config.addObserver((o, arg) -> {
 				if (arg instanceof Account) {
-					Scene layoutScene = new Scene(new LayoutView().getView(), 800, 600, true, aa);
+					Scene layoutScene = new Scene(view.getView(), 800, 600, true, aa);
 					Platform.runLater(() -> primaryStage.setScene(layoutScene));
 				}
 			});
 		} else {
-			scene = new Scene(new LayoutView().getView(), 800, 600);
+			scene = new Scene(view.getView(), 800, 600);
 		}
 
 		primaryStage.getIcons().setAll(new javafx.scene.image.Image(getClass().getResourceAsStream("/logo-invert_small.png")));
@@ -82,6 +87,7 @@ public class DesktopClient extends Application {
 	}
 
 	private ClientConfiguration initDiContainer(Map<String, Object> customProperties) throws QblInvalidEncryptionKeyException, URISyntaxException {
+
 		Persistence<String> persistence = new SQLitePersistence("db.sqlite", "qabel".toCharArray(), 65536);
 		customProperties.put("persistence", persistence);
 		customProperties.put("dropUrlGenerator", new DropUrlGenerator("http://localhost:5000"));

@@ -7,10 +7,14 @@ import de.qabel.desktop.ui.accounting.AccountingView;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
 import de.qabel.desktop.ui.contact.ContactView;
 import de.qabel.desktop.ui.invite.InviteView;
+import de.qabel.desktop.ui.actionlog.ActionlogView;
 import de.qabel.desktop.ui.remotefs.RemoteFSView;
 import de.qabel.desktop.ui.sync.SyncView;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -25,7 +29,7 @@ import java.util.ResourceBundle;
 
 public class LayoutController extends AbstractController implements Initializable {
 	ResourceBundle resourceBundle;
-
+	ActionlogView actionlogView;
 	@FXML
 	public Label alias;
 	@FXML
@@ -45,6 +49,7 @@ public class LayoutController extends AbstractController implements Initializabl
 	@FXML
 	private Pane avatarContainer;
 
+
 	@FXML
 	private ScrollPane scroll;
 
@@ -57,15 +62,15 @@ public class LayoutController extends AbstractController implements Initializabl
 
 		navi.getChildren().clear();
 		AccountingView accountingView = new AccountingView();
+		actionlogView =  new ActionlogView();
 		navi.getChildren().add(createNavItem(resourceBundle.getString("identity"), accountingView));
 		navi.getChildren().add(createNavItem(resourceBundle.getString("browse"), new RemoteFSView()));
 		navi.getChildren().add(createNavItem(resourceBundle.getString("contacts"), new ContactView()));
+		navi.getChildren().add(createNavItem(resourceBundle.getString("actionlog"),actionlogView));
 		navi.getChildren().add(createNavItem(resourceBundle.getString("sync"), new SyncView()));
 		navi.getChildren().add(createNavItem(resourceBundle.getString("invite"), new InviteView()));
 
 		scrollContent.setFillWidth(true);
-		scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-		scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
 
 		if (clientConfiguration.getSelectedIdentity() == null) {
@@ -75,6 +80,8 @@ public class LayoutController extends AbstractController implements Initializabl
 		updateIdentity();
 		clientConfiguration.addObserver((o, arg) -> updateIdentity());
 	}
+
+
 
 	private void updateIdentity() {
 		Identity identity = clientConfiguration.getSelectedIdentity();
@@ -108,5 +115,9 @@ public class LayoutController extends AbstractController implements Initializabl
 		}
 		naviItem.getStyleClass().add("active");
 		activeNavItem = naviItem;
+	}
+
+	public Object getScroller() {
+		return scroll;
 	}
 }
