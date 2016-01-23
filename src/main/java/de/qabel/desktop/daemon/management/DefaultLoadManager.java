@@ -6,6 +6,7 @@ import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.BoxFile;
 import de.qabel.desktop.storage.BoxNavigation;
 import de.qabel.desktop.storage.BoxVolume;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +14,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.FileTime;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -22,6 +25,7 @@ import static de.qabel.desktop.daemon.management.Transaction.STATE.SKIPPED;
 public class DefaultLoadManager implements LoadManager, Runnable {
 	private final Logger logger = LoggerFactory.getLogger(DefaultLoadManager.class);
 	private final LinkedBlockingQueue<Transaction> transactions = new LinkedBlockingQueue<>();
+	private final List<Transaction> history = new LinkedList<>();
 
 	@Override
 	public List<Transaction> getTransactions() {
@@ -32,12 +36,14 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 	public void addDownload(Download download) {
 		logger.trace("download added: " + download.getSource() + " to " + download.getDestination());
 		transactions.add(download);
+		history.add(download);
 	}
 
 	@Override
 	public void addUpload(Upload upload) {
 		logger.trace("upload added: " + upload.getSource() + " to " + upload.getDestination());
 		transactions.add(upload);
+		history.add(upload);
 	}
 
 	public void run() {
@@ -65,15 +71,14 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 	}
 
 	void download(Download download) throws Exception {
-		if (!download.isValid()) {
-			logger.trace("skipped invalid download " + download);
-			return;
-		}
-
-		Path destination = download.getDestination();
-		Path source = download.getSource();
-
 		try {
+			if (!download.isValid()) {
+				throw new TransferSkippedException("download says it's invalid");
+			}
+
+			Path destination = download.getDestination();
+			Path source = download.getSource();
+
 			switch (download.getType()) {
 				case UPDATE:
 				case CREATE:
@@ -85,21 +90,33 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 					Path parent = source.getParent();
 					BoxNavigation nav = navigate(parent, download.getBoxVolume());
 					BoxFile file = nav.getFile(source.getFileName().toString());
-					if (remoteChanged(download, file) || localIsNewer(destination, file)) {
-						throw new TransferSkippedException();
+					if (remoteChanged(download, file)) {
+						throw new TransferSkippedException("remote has changed");
+					}
+					if (localIsNewer(destination, file)) {
+						throw new TransferSkippedException("local is newer");
 					}
 
 					try (InputStream stream = new BufferedInputStream(nav.download(file))) {
-						Files.copy(stream, destination, StandardCopyOption.REPLACE_EXISTING);
+						Path tmpFile = Files.createTempFile("prefix", "suffix");
+						Files.copy(stream, tmpFile, StandardCopyOption.REPLACE_EXISTING);
+						Files.setLastModifiedTime(tmpFile, FileTime.fromMillis(download.getMtime()));
+						Files.move(tmpFile, destination, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+						Files.deleteIfExists(tmpFile);
 					}
 					break;
 				case DELETE:
-					Files.deleteIfExists(destination);
+					if (download.isDir()) {
+						FileUtils.deleteDirectory(destination.toFile());
+					} else {
+						Files.deleteIfExists(destination);
+					}
 					break;
 			}
 			download.toState(FINISHED);
 		} catch (TransferSkippedException e) {
 			download.toState(SKIPPED);
+			logger.trace("skipped download "  + " (" + e.getMessage() + ")");
 		}
 	}
 
@@ -114,7 +131,7 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 	void upload(Upload upload) throws QblStorageException {
 		try {
 			if (!upload.isValid()) {
-				throw new TransferSkippedException();
+				throw new TransferSkippedException("upload says it's invalid");
 			}
 
 			Path destination = upload.getDestination();
@@ -125,17 +142,18 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 			Path parent = destination;
 			BoxNavigation dir;
 
+			SimpleDateFormat format = new SimpleDateFormat("D.M.Y H:m:s");
 			switch (upload.getType()) {
 				case DELETE:
 					parent = destination.getParent();
 					dir = navigate(parent, volume);
 					String fileName = destination.getFileName().toString();
-					if (upload.isDir()) {
+					if (dir.hasFolder(fileName)) {
 						dir.delete(dir.getFolder(fileName));
 					} else {
 						BoxFile file = dir.getFile(fileName);
 						if (remoteIsNewer(upload, file)) {
-							throw new TransferSkippedException();
+							throw new TransferSkippedException("remote is newer " + format.format(new Date(file.mtime)) + ">" + format.format(new Date(upload.getMtime())));
 						}
 						dir.delete(file);
 					}
@@ -146,7 +164,7 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 					String filename = destination.getFileName().toString();
 					BoxFile file = dir.getFile(filename);
 					if (remoteIsNewer(upload, file)) {
-						throw new TransferSkippedException();
+						throw new TransferSkippedException("remote is newer " + format.format(new Date(file.mtime)) + ">" + format.format(new Date(upload.getMtime())));
 					}
 					dir.overwrite(filename, source.toFile());
 					break;
@@ -156,14 +174,22 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 					}
 					dir = createDirectory(parent, volume);
 					if (!isDir) {
-						uploadFile(dir, source, destination);
+						if (dir.hasFile(destination.getFileName().toString())) {
+							file = dir.getFile(destination.getFileName().toString());
+							if (!remoteIsNewer(upload, file)) {
+								dir.overwrite(destination.getFileName().toString(), source.toFile());
+							}
+						} else {
+							uploadFile(dir, source, destination);
+						}
 					}
 					break;
 			}
 			upload.toState(FINISHED);
+			logger.trace("finished upload " + upload);
 		} catch (TransferSkippedException e) {
 			upload.toState(SKIPPED);
-			logger.trace("skipped invalid upload " + upload);
+			logger.trace("skipped upload " + upload + " (" + e.getMessage() + ")");
 		}
 	}
 

@@ -1,8 +1,10 @@
 package de.qabel.desktop.daemon.sync.event;
 
+import org.slf4j.LoggerFactory;
+
 import java.nio.file.Path;
 
-public class AbstractChangeEvent extends AbstractWatchEvent {
+public abstract class AbstractChangeEvent extends AbstractWatchEvent {
 	protected final ChangeEvent.TYPE type;
 
 	public AbstractChangeEvent(Path path, boolean isDirecotry, Long mtime, ChangeEvent.TYPE type) {
@@ -15,9 +17,7 @@ public class AbstractChangeEvent extends AbstractWatchEvent {
 	}
 
 	@Override
-	public boolean isValid() {
-		return getPath().toFile().lastModified() == getMtime();
-	}
+	public abstract boolean isValid();
 
 	public boolean isUpdate() {
 		return type == ChangeEvent.TYPE.UPDATE;

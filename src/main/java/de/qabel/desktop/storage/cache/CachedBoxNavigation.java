@@ -1,7 +1,7 @@
 package de.qabel.desktop.storage.cache;
 
 import de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE;
-import de.qabel.desktop.daemon.sync.event.DefaultChangeEvent;
+import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
 
@@ -37,7 +37,7 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 	}
 
 	@Override
-	public CachedBoxNavigation navigate(BoxFolder target) throws QblStorageException {
+	public synchronized CachedBoxNavigation navigate(BoxFolder target) throws QblStorageException {
 		if (!cache.has(target)) {
 			CachedBoxNavigation subnav = new CachedBoxNavigation(
 					this.nav.navigate(target),
@@ -135,7 +135,7 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 		return nav.getMetadata();
 	}
 
-	public void refresh() throws QblStorageException {
+	public synchronized void refresh() throws QblStorageException {
 		synchronized (nav) {
 			DirectoryMetadata dm = nav.reloadMetadata();
 			if (!Arrays.equals(nav.getMetadata().getVersion(), dm.getVersion())) {
@@ -155,9 +155,18 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 			}
 		}
 
-		for (CachedBoxNavigation subnav : cache.getAll()) {
-			subnav.refresh();
+		for (BoxFolder folder : listFolders()) {
+			try {
+				navigate(folder).refresh();
+			} catch (QblStorageException e) {
+				System.err.println(path.toString() + "/" + folder.name + ": " + e.getMessage());
+			}
 		}
+	}
+
+	@Override
+	public boolean hasFile(String name) throws QblStorageException {
+		return nav.hasFile(name);
 	}
 
 	protected void findDeletedFiles(Set<BoxFile> oldFiles, Set<BoxFile> newFiles, Set<BoxFile> changedFiles) {
@@ -175,7 +184,7 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 	private void notify(BoxObject file, TYPE type) {
 		setChanged();
 		notifyObservers(
-				new DefaultChangeEvent(
+				new RemoteChangeEvent(
 						getPath(file),
 						file instanceof BoxFolder,
 						file instanceof BoxFile ? ((BoxFile) file).mtime : null,
@@ -208,11 +217,22 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 		}
 	}
 
-	protected void findNewFolders(Set<BoxFolder> oldFolders, Set<BoxFolder> newFolders) {
+	protected void findNewFolders(Set<BoxFolder> oldFolders, Set<BoxFolder> newFolders) throws QblStorageException {
 		for (BoxFolder folder : newFolders) {
 			if (!oldFolders.contains(folder)) {
 				notify(folder, TYPE.CREATE);
+				navigate(folder).notifyAllContents();
 			}
+		}
+	}
+
+	public synchronized void notifyAllContents() throws QblStorageException {
+		for (BoxFolder folder : nav.listFolders()) {
+			notify(folder, TYPE.CREATE);
+			navigate(folder).notifyAllContents();
+		}
+		for (BoxFile file : listFiles()) {
+			notify(file, TYPE.CREATE);
 		}
 	}
 

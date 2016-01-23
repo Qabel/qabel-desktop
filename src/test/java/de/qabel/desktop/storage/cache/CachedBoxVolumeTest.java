@@ -11,9 +11,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.*;
 
 public class CachedBoxVolumeTest extends BoxVolumeTest {
@@ -113,6 +117,30 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 		ChangeEvent event = updates.get(0);
 		assertTrue(event.isCreate());
 		assertEquals("/folder", event.getPath().toString());
+	}
+
+	@Test
+	public void notifiesOnContentOfNewDirectory() throws Exception {
+		observe();
+
+		BoxNavigation nav2 = volume2.navigate();
+		BoxFolder folder = nav2.createFolder("folder");
+		BoxNavigation foldernav2 = nav2.navigate(folder);
+		BoxFolder subfolder = foldernav2.createFolder("subfolder");
+		File file = Paths.get(tempFolder.toAbsolutePath().toString(), "tmpfile").toFile();
+		file.createNewFile();
+		file.deleteOnExit();
+		foldernav2.upload("testfile", file);
+		foldernav2.navigate(subfolder).upload("testfile", file);
+
+		nav.refresh();
+
+		Set<String> foundPaths = new HashSet<>();
+		updates.forEach(changeEvent -> foundPaths.add(changeEvent.getPath().toString()));
+		assertThat(foundPaths, hasItem("/folder"));
+		assertThat(foundPaths, hasItem("/folder/subfolder"));
+		assertThat(foundPaths, hasItem("/folder/testfile"));
+		assertThat(foundPaths, hasItem("/folder/subfolder/testfile"));
 	}
 
 	protected void observe() throws QblStorageException {

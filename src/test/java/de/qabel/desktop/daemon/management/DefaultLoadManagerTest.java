@@ -142,7 +142,7 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 		upload.source = tmpPath("syncRoot/folder");
 		upload.destination = Paths.get("/syncRoot/folder");
 		upload.type = DELETE;
-		upload.isDir = true;
+		upload.isDir = false;	// may not be detectable if folder is already gone
 
 		manager.upload(upload);
 

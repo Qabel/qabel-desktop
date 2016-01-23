@@ -145,4 +145,6 @@ public interface BoxNavigation {
 	BoxFile getFile(String name) throws QblStorageException;
 
 	DirectoryMetadata getMetadata();
+
+	boolean hasFile(String name) throws QblStorageException;
 }

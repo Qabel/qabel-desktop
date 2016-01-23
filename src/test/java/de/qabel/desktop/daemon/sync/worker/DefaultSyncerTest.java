@@ -7,10 +7,12 @@ import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.daemon.management.DefaultLoadManager;
+import de.qabel.desktop.daemon.management.Download;
 import de.qabel.desktop.daemon.management.LoadManager;
+import de.qabel.desktop.daemon.management.Transaction;
 import de.qabel.desktop.daemon.sync.AbstractSyncTest;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
-import de.qabel.desktop.daemon.sync.event.DefaultChangeEvent;
+import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,7 +66,7 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 	@Test
 	public void addsFoldersAsDownloads() throws Exception {
 		BoxNavigationStub nav = new BoxNavigationStub(null, null);
-		nav.event = new DefaultChangeEvent(Paths.get("/someFolder"), true, null, ChangeEvent.TYPE.CREATE);
+		nav.event = new RemoteChangeEvent(Paths.get("/tmp/someFolder"), true, 1000L, ChangeEvent.TYPE.CREATE);
 		BoxVolumeStub volume = new BoxVolumeStub();
 		volume.rootNavigation = nav;
 		syncer = new DefaultSyncer(config, volume, manager);
@@ -74,6 +76,7 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 		waitUntil(syncer::isPolling);
 
 		waitUntil(() -> manager.getTransactions().size() == 2);
-		assertEquals("/someFolder", manager.getTransactions().get(1).getSource().toString());
+		Transaction transaction = manager.getTransactions().get(0) instanceof Download ? manager.getTransactions().get(0) : manager.getTransactions().get(1);
+		assertEquals("/tmp/someFolder", transaction.getSource().toString());
 	}
 }

@@ -311,6 +311,16 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	}
 
 	@Override
+	public boolean hasFile(String name) throws QblStorageException {
+		try {
+			getFile(name);
+			return true;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
+	}
+
+	@Override
 	public BoxFile getFile(String name) throws QblStorageException {
 		List<BoxFile> files = listFiles();
 		for (BoxFile file : files) {

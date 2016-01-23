@@ -43,8 +43,12 @@ import java.util.Map;
 public class DesktopClient extends Application {
 	private static final String TITLE = "Qabel Desktop Client";
 	Scene scene;
+	private static String DATABASE_FILE = "db.sqlite";
 
 	public static void main(String[] args) throws Exception {
+		if (args.length > 0) {
+			DATABASE_FILE = args[0];
+		}
 		UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 		launch(args);
 	}
@@ -56,7 +60,7 @@ public class DesktopClient extends Application {
 		final Map<String, Object> customProperties = new HashMap<>();
 		ClientConfiguration config = initDiContainer(customProperties);
 
-		SceneAntialiasing aa = SystemUtils.IS_OS_LINUX ? SceneAntialiasing.DISABLED : SceneAntialiasing.BALANCED;
+		SceneAntialiasing aa = SceneAntialiasing.DISABLED;
 		Scene scene;
 		scene = new Scene(new LoginView().getView(), 370, 530, true, aa);
 		config.addObserver((o, arg) -> {
@@ -90,7 +94,7 @@ public class DesktopClient extends Application {
 	}
 
 	private ClientConfiguration initDiContainer(Map<String, Object> customProperties) throws QblInvalidEncryptionKeyException, URISyntaxException {
-		Persistence<String> persistence = new SQLitePersistence("db.sqlite", "qabel".toCharArray(), 65536);
+		Persistence<String> persistence = new SQLitePersistence(DATABASE_FILE, "qabel".toCharArray(), 65536);
 		customProperties.put("persistence", persistence);
 		customProperties.put("dropUrlGenerator", new DropUrlGenerator("http://localhost:5000"));
 		PersistenceIdentityRepository identityRepository = new PersistenceIdentityRepository(persistence);

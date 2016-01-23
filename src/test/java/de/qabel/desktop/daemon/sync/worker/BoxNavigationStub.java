@@ -19,6 +19,12 @@ public class BoxNavigationStub extends CachedBoxNavigation {
 		if (event != null) {
 			setChanged();
 			notifyObservers(event);
+			event = null;
 		}
+	}
+
+	@Override
+	public void notifyAllContents() throws QblStorageException {
+
 	}
 }

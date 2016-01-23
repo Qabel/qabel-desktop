@@ -35,6 +35,10 @@ public class DefaultSyncer implements Syncer {
 			if (!watchEvent.isValid()) {
 				return;
 			}
+			String type = "";
+			if (watchEvent instanceof ChangeEvent)
+				type = ((ChangeEvent)watchEvent).getType().toString();
+			System.out.println(this.hashCode() + ": local update " + type + " " + watchEvent.getPath().toString());
 			manager.addUpload(new BoxSyncBasedUpload(boxVolume, config, watchEvent));
 		});
 		watcher.setDaemon(true);
@@ -46,7 +50,9 @@ public class DefaultSyncer implements Syncer {
 					if (!(arg instanceof ChangeEvent)) {
 						return;
 					}
-					manager.addDownload(new BoxSyncBasedDownload(boxVolume, config, (WatchEvent) arg));
+					String type =((ChangeEvent)arg).getType().toString();
+					System.out.println(this.hashCode() + ": remote update " + type + " " + ((ChangeEvent)arg).getPath().toString());
+					manager.addDownload(new BoxSyncBasedDownload(boxVolume, config, (ChangeEvent) arg));
 				});
 			}
 		} catch (QblStorageException e) {
@@ -57,9 +63,6 @@ public class DefaultSyncer implements Syncer {
 			try {
 				while (!Thread.interrupted()) {
 					try {
-						System.out.println(boxVolume);
-						System.out.println(boxVolume.navigate());
-
 						boxVolume.navigate().refresh();
 						polling = true;
 					} catch (QblStorageException e) {
@@ -75,6 +78,11 @@ public class DefaultSyncer implements Syncer {
 		});
 		poller.setDaemon(true);
 		poller.start();
+		try {
+			boxVolume.navigate().notifyAllContents();
+		} catch (QblStorageException e) {
+			org.slf4j.LoggerFactory.getLogger(getClass()).warn(e.getMessage(), e);
+		}
 	}
 
 	@Override
@@ -95,5 +103,11 @@ public class DefaultSyncer implements Syncer {
 
 	public boolean isPolling() {
 		return polling;
+	}
+
+	public void waitFor() {
+		while (!polling && !watcher.isWatching()) {
+			Thread.yield();
+		}
 	}
 }

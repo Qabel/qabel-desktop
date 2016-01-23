@@ -212,5 +212,10 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 		public DirectoryMetadata getMetadata() {
 			return null;
 		}
+
+		@Override
+		public boolean hasFile(String name) throws QblStorageException {
+			return false;
+		}
 	}
 }
