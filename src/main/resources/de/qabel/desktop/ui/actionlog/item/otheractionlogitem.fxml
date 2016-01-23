@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.shape.*?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<HBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.actionlog.item.OtherActionlogItemController">
+    <children>
+        <BorderPane fx:id="otherActionlog">
+            <center>
+                <HBox fx:id="shadow">
+                    <children>
+                  <Polygon fill="#fd670d" rotate="270" strokeType="INSIDE">
+                    <points>
+                      <Double fx:value="-12.5" />
+                      <Double fx:value="10.0" />
+                      <Double fx:value="12.0" />
+                      <Double fx:value="10.0" />
+                      <Double fx:value="0.0" />
+                      <Double fx:value="-12.5" />
+                    </points>
+                     <HBox.margin>
+                        <Insets right="-20.0" top="18.0" />
+                     </HBox.margin>
+                  </Polygon>
+                        <VBox maxWidth="600">
+                            <children>
+                                <Label fx:id="textlabel" text="My Message" textAlignment="RIGHT" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
+                                    <font>
+                                        <Font name="System" size="15.0" />
+                                    </font>
+                                    <VBox.margin>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </VBox.margin>
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
+                                </Label>
+                            </children>
+                            <BorderPane.margin>
+                                <Insets bottom="10.0" left="0" right="10.0" top="10.0" />
+                            </BorderPane.margin>
+                        </VBox>
+                    </children>
+               <BorderPane.margin>
+                  <Insets left="5.0" top="12.0" />
+               </BorderPane.margin>
+                </HBox>
+            </center>
+            <left>
+                <Pane fx:id="avatarContainer">
+                    <BorderPane.margin>
+                        <Insets top="18.0" bottom="5"/>
+                    </BorderPane.margin>
+                </Pane>
+            </left>
+        </BorderPane>
+    </children>
+</HBox>

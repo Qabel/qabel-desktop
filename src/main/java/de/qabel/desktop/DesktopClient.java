@@ -20,6 +20,7 @@ import de.qabel.desktop.repository.persistence.PersistenceAccountRepository;
 import de.qabel.desktop.repository.persistence.PersistenceClientConfigurationRepository;
 import de.qabel.desktop.repository.persistence.PersistenceContactRepository;
 import de.qabel.desktop.repository.persistence.PersistenceIdentityRepository;
+import de.qabel.desktop.ui.LayoutController;
 import de.qabel.desktop.ui.LayoutView;
 import de.qabel.desktop.ui.accounting.login.LoginView;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
@@ -45,6 +46,7 @@ public class DesktopClient extends Application {
 	Scene scene;
 	private static String DATABASE_FILE = "db.sqlite";
 	private final Map<String, Object> customProperties = new HashMap<>();
+	private LayoutView view;
 
 	public static void main(String[] args) throws Exception {
 		if (args.length > 0) {
@@ -62,6 +64,7 @@ public class DesktopClient extends Application {
 
 		SceneAntialiasing aa = SceneAntialiasing.DISABLED;
 		Scene scene;
+		view = new LayoutView();
 		scene = new Scene(new LoginView().getView(), 370, 530, true, aa);
 		config.addObserver((o, arg) -> {
 			if (arg instanceof Account) {
