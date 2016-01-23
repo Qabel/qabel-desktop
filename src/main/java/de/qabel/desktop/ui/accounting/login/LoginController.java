@@ -1,6 +1,5 @@
 package de.qabel.desktop.ui.accounting.login;
 
-import com.sun.javafx.application.PlatformImpl;
 import com.sun.javafx.collections.ObservableListWrapper;
 import de.qabel.core.accounting.AccountingHTTP;
 import de.qabel.core.accounting.AccountingProfile;
@@ -23,7 +22,6 @@ import javafx.scene.layout.Pane;
 import javax.inject.Inject;
 import java.awt.*;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.LinkedList;

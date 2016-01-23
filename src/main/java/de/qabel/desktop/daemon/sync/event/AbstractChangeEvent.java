@@ -1,7 +1,5 @@
 package de.qabel.desktop.daemon.sync.event;
 
-import org.slf4j.LoggerFactory;
-
 import java.nio.file.Path;
 
 public abstract class AbstractChangeEvent extends AbstractWatchEvent {

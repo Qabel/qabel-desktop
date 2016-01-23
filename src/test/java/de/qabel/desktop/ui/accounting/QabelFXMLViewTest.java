@@ -2,7 +2,9 @@ package de.qabel.desktop.ui.accounting;
 
 import de.qabel.desktop.ui.AbstractControllerTest;
 import org.junit.Test;
+
 import java.util.Locale;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 

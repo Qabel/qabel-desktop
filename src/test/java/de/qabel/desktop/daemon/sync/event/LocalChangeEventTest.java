@@ -10,9 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.CREATE;
-import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.DELETE;
-import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.UPDATE;
+import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.*;
 import static org.junit.Assert.*;
 
 public class LocalChangeEventTest extends AbstractSyncTest {

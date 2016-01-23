@@ -23,7 +23,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class DefaultSyncerTest extends AbstractSyncTest {
 	private LoadManager manager;

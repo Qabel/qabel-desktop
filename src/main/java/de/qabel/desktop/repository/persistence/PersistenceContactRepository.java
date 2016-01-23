@@ -6,6 +6,7 @@ import de.qabel.core.config.Persistence;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
+
 import java.util.LinkedList;
 import java.util.List;
 

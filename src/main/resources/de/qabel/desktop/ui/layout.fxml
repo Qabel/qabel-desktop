@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import java.lang.*?>
 <?import javafx.scene.layout.*?>
-
 <?import javafx.scene.text.Font?>
+<?import java.lang.String?>
 <BorderPane fx:id="window" fx:controller="de.qabel.desktop.ui.LayoutController" prefHeight="568.0" prefWidth="842.0" maxWidth="Infinity" maxHeight="Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <left>
       <VBox styleClass="navi-container">

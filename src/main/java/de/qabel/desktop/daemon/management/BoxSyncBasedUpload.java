@@ -1,7 +1,6 @@
 package de.qabel.desktop.daemon.management;
 
 import de.qabel.desktop.config.BoxSyncConfig;
-import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.WatchEvent;
 import de.qabel.desktop.storage.BoxVolume;
 

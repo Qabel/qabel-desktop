@@ -22,7 +22,6 @@ import javafx.scene.layout.Pane;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;

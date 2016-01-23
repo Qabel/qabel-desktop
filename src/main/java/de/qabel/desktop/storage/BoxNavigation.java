@@ -4,7 +4,6 @@ import de.qabel.desktop.exceptions.QblStorageException;
 
 import java.io.File;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.List;
 
 public interface BoxNavigation {

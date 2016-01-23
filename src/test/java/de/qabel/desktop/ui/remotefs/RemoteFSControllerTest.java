@@ -7,8 +7,6 @@ import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
 import de.qabel.desktop.ui.AbstractControllerTest;
-import de.qabel.desktop.ui.accounting.AccountingController;
-import de.qabel.desktop.ui.accounting.AccountingView;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeItem;

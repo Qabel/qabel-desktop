@@ -2,7 +2,6 @@ package com.airhacks.afterburner.views;
 
 import javafx.scene.Parent;
 
-import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.function.Function;

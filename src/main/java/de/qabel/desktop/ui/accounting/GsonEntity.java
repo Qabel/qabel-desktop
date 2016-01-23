@@ -1,6 +1,5 @@
 package de.qabel.desktop.ui.accounting;
 
-import com.google.gson.JsonArray;
 import com.google.gson.annotations.Expose;
 
 import java.util.LinkedList;

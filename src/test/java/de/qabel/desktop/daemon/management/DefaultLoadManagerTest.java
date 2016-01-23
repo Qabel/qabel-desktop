@@ -25,9 +25,7 @@ import java.nio.file.attribute.FileTime;
 import java.util.List;
 
 import static de.qabel.desktop.daemon.management.Transaction.STATE.SKIPPED;
-import static de.qabel.desktop.daemon.management.Transaction.TYPE.CREATE;
-import static de.qabel.desktop.daemon.management.Transaction.TYPE.DELETE;
-import static de.qabel.desktop.daemon.management.Transaction.TYPE.UPDATE;
+import static de.qabel.desktop.daemon.management.Transaction.TYPE.*;
 import static org.junit.Assert.*;
 
 public class DefaultLoadManagerTest extends AbstractSyncTest {

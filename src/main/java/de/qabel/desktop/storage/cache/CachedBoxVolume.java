@@ -3,7 +3,6 @@ package de.qabel.desktop.storage.cache;
 import com.amazonaws.auth.AWSCredentials;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.exceptions.QblStorageException;
-import de.qabel.desktop.storage.BoxNavigation;
 import de.qabel.desktop.storage.BoxVolume;
 import de.qabel.desktop.storage.StorageReadBackend;
 import de.qabel.desktop.storage.StorageWriteBackend;

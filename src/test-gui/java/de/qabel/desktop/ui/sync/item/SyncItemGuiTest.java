@@ -10,8 +10,6 @@ import org.junit.Test;
 
 import java.nio.file.Paths;
 
-import static org.junit.Assert.*;
-
 public class SyncItemGuiTest extends AbstractGuiTest<SyncItemController> {
 	private Identity identity = new Identity("some alias", null, null);
 	private Account account = new Account("provider", "user", "auth");

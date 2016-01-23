@@ -4,7 +4,8 @@ import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class SyncControllerTest extends AbstractControllerTest {
 	@Test

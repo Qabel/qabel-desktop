@@ -7,7 +7,6 @@ import de.qabel.desktop.ui.AbstractController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
 
 import javax.inject.Inject;
 import java.net.URL;

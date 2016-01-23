@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import java.nio.file.Paths;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class SyncItemControllerGuiTest extends AbstractGuiTest<SyncItemController> {
 	private Identity identity;
