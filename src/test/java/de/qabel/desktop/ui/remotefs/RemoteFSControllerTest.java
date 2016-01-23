@@ -113,7 +113,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		RemoteFSView view = new RemoteFSView();
 		Identity i = new Identity("test", null, new QblECKeyPair());
 		clientConfiguration.selectIdentity(i);
-		clientConfiguration.setAccount(new Account("Provider","user","auth"));
+		clientConfiguration.setAccount(new Account("http://localhost:9696","user","auth"));
 		controller = (RemoteFSController) view.getPresenter();
 		assertThat(controller.getRessource().getLocale().getCountry(), is("DE"));
 		assertThat(controller.getRessource().getLocale().getLanguage(), is("de"));

@@ -6,6 +6,7 @@ import de.qabel.core.config.Account;
 import de.qabel.desktop.config.DefaultClientConfiguration;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
+import de.qabel.desktop.daemon.management.BoxVolumeFactoryStub;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.Stub.StubContactRepository;
@@ -70,6 +71,7 @@ public class AbstractControllerTest {
 		diContainer.put("account", new Account("a", "b", "c"));
 		diContainer.put("identityRepository", identityRepository);
 		diContainer.put("contactRepository", contactRepository);
+		diContainer.put("boxVolumeFactory", new BoxVolumeFactoryStub());
 		Injector.setConfigurationSource(diContainer::get);
 		Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(diContainer));
 	}

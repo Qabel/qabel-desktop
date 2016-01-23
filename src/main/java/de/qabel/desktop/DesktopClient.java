@@ -44,6 +44,7 @@ public class DesktopClient extends Application {
 	private static final String TITLE = "Qabel Desktop Client";
 	Scene scene;
 	private static String DATABASE_FILE = "db.sqlite";
+	private final Map<String, Object> customProperties = new HashMap<>();
 
 	public static void main(String[] args) throws Exception {
 		if (args.length > 0) {
@@ -57,8 +58,7 @@ public class DesktopClient extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		setUserAgentStylesheet(STYLESHEET_MODENA);
 
-		final Map<String, Object> customProperties = new HashMap<>();
-		ClientConfiguration config = initDiContainer(customProperties);
+		ClientConfiguration config = initDiContainer();
 
 		SceneAntialiasing aa = SceneAntialiasing.DISABLED;
 		Scene scene;
@@ -89,14 +89,16 @@ public class DesktopClient extends Application {
 
 	protected SyncDaemon getSyncDaemon(ClientConfiguration config) {
 		DefaultLoadManager loadManager = new DefaultLoadManager();
+		customProperties.put("loadManager", loadManager);
 		new Thread(loadManager).start();
 		return new SyncDaemon(config.getBoxSyncConfigs(), new DefaultSyncerFactory(new S3BoxVolumeFactory(), loadManager));
 	}
 
-	private ClientConfiguration initDiContainer(Map<String, Object> customProperties) throws QblInvalidEncryptionKeyException, URISyntaxException {
+	private ClientConfiguration initDiContainer() throws QblInvalidEncryptionKeyException, URISyntaxException {
 		Persistence<String> persistence = new SQLitePersistence(DATABASE_FILE, "qabel".toCharArray(), 65536);
 		customProperties.put("persistence", persistence);
 		customProperties.put("dropUrlGenerator", new DropUrlGenerator("http://localhost:5000"));
+		customProperties.put("boxVolumeFactory", new S3BoxVolumeFactory());
 		PersistenceIdentityRepository identityRepository = new PersistenceIdentityRepository(persistence);
 		customProperties.put("identityRepository", identityRepository);
 		PersistenceAccountRepository accountRepository = new PersistenceAccountRepository(persistence);

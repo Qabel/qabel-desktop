@@ -8,6 +8,8 @@ import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.cellValueFactory.BoxObjectCellValueFactory;
 import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.factory.BoxVolumeFactory;
+import de.qabel.desktop.daemon.management.LoadManager;
 import de.qabel.desktop.daemon.management.MagicEvilPrefixSource;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.exceptions.QblStorageNotFound;
@@ -45,6 +47,9 @@ public class RemoteFSController extends AbstractController implements Initializa
 
 	@Inject
 	ClientConfiguration clientConfiguration;
+
+	@Inject
+	BoxVolumeFactory boxVolumeFactory;
 
 	@FXML
 	private TreeTableView<BoxObject> treeTable;
@@ -84,7 +89,6 @@ public class RemoteFSController extends AbstractController implements Initializa
 	private void initTreeTableView() {
 
 		Account account = clientConfiguration.getAccount();
-		AccountingHTTP http = null;
 		keyPair = clientConfiguration.getSelectedIdentity().getPrimaryKeyPair();
 		bucket = "qabel";
 
@@ -109,14 +113,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 	}
 
 	private BoxNavigation createSetup() throws QblStorageException {
-
-		CryptoUtils utils = new CryptoUtils();
-		byte[] deviceID = utils.getRandomBytes(16);
-		DefaultAWSCredentialsProviderChain chain = new DefaultAWSCredentialsProviderChain();
-
-
-		this.volume = new BoxVolume(bucket, prefix, chain.getCredentials(), keyPair, deviceID,
-				new File(System.getProperty("java.io.tmpdir")));
+		volume = boxVolumeFactory.getVolume(clientConfiguration.getAccount(), clientConfiguration.getSelectedIdentity());
 
 		try {
 			nav = volume.navigate();
