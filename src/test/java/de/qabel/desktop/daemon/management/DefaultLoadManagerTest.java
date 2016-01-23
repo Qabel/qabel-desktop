@@ -194,6 +194,28 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 		assertEquals("content2", IOUtils.toString(syncRoot.download(boxFile)));
 	}
 
+	@Test
+	public void handlesFalseCreatesLikeUpdates() throws Exception {
+		nav().createFolder("syncRoot");
+		upload.source = tmpPath("file");
+		upload.destination = Paths.get("/syncRoot", "targetFile");
+		write("testcontent", upload.source);
+		upload.mtime = modifyMtime(upload.source, 0L);
+		manager.upload(upload);
+		upload.isDir = false;
+
+		upload.type = Transaction.TYPE.CREATE;
+		write("content2", upload.source);
+		manager.upload(upload);
+
+		BoxNavigation syncRoot = nav().navigate("syncRoot");
+		List<BoxFile> files = syncRoot.listFiles();
+		assertEquals(1, files.size());
+		BoxFile boxFile = files.get(0);
+		assertEquals("targetFile", boxFile.name);
+		assertEquals("content2", IOUtils.toString(syncRoot.download(boxFile)));
+	}
+
 	private void write(String content, Path file) throws IOException {
 		Files.write(file, content.getBytes());
 	}

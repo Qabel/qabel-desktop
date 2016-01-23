@@ -17,6 +17,10 @@ public class DefaultSyncerFactory implements SyncerFactory {
 
 	@Override
 	public Syncer factory(BoxSyncConfig config) {
-		return new DefaultSyncer(config, (CachedBoxVolume) boxVolumeFactory.getVolume(config.getAccount(), config.getIdentity()), manager);
+		return new DefaultSyncer(
+				config,
+				(CachedBoxVolume) boxVolumeFactory.getVolume(config.getAccount(), config.getIdentity()),
+				manager
+		);
 	}
 }

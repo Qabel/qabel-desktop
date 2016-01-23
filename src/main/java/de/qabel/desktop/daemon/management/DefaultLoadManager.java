@@ -177,7 +177,7 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 						if (dir.hasFile(destination.getFileName().toString())) {
 							file = dir.getFile(destination.getFileName().toString());
 							if (!remoteIsNewer(upload, file)) {
-								dir.overwrite(destination.getFileName().toString(), source.toFile());
+								overwriteFile(dir, source, destination);
 							}
 						} else {
 							uploadFile(dir, source, destination);
