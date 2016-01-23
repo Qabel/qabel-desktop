@@ -1,9 +1,9 @@
 package de.qabel.desktop.ui.accounting;
 
+import com.google.gson.Gson;
+import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.exceptions.QblDropInvalidURL;
-import de.qabel.desktop.config.factory.IdentityBuilder;
-import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
@@ -19,6 +19,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 
 public class AccountingControllerTest extends AbstractControllerTest {
@@ -27,7 +28,9 @@ public class AccountingControllerTest extends AbstractControllerTest {
 	private static final String TEST_DIR = "test";
 	private static final String TEST_FOLDER = TMP_DIR + "/" + TEST_DIR;
 	private static final String TEST_ALIAS = "TestAlias";
-	private static final String TEST_JSON = "/Test.json";
+	private static final String TEST_JSON = "/TestIdentity.json";
+	private static final String TEST_CONTACT = TEST_ALIAS + "_Contact.json";
+	private static final String TEST_IDENTITY = TEST_ALIAS + "_Identity.json";
 
 	AccountingController controller;
 	Identity identity;
@@ -67,39 +70,23 @@ public class AccountingControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void exportTest() throws IOException, QblStorageException, URISyntaxException {
-		File testDir = setupImportAndExport();
-		identity = new Identity(TEST_ALIAS, null, null);
-		controller.exportIdentity(identity, testDir);
-		File f = new File(TEST_FOLDER + "/" + TEST_ALIAS + ".json");
-		assertEquals(f.getName(), TEST_ALIAS+ ".json");
-
-		String contentNew = controller.readFile(f);
-
-		String contentFixture = controller.readFile(new File(System.class.getResource(TEST_JSON).toURI()));
-		assertEquals(f.getName(), TEST_ALIAS + ".json");
-		System.out.print(contentNew);
-		assertEquals(contentNew.substring(0,30), contentFixture.substring(0,30));
-	}
-
-	@Test
-	public void importTest() throws IOException, QblStorageException, PersistenceException, EntityNotFoundExcepion, URISyntaxException {
-		setupImportAndExport();
+	public void importIdentityTest() throws IOException, QblStorageException, PersistenceException, EntityNotFoundExcepion, URISyntaxException, QblDropInvalidURL {
+		setupExport();
 		controller.importIdentity(new File(System.class.getResource(TEST_JSON).toURI()));
 		List<Identity> identities = identityRepository.findAll();
 
 		assertEquals(1, identities.size());
-		assertEquals("TestAlias", identities.get(0).getAlias());
-
+		Identity i =identities.get(0);
+		assertEquals(TEST_ALIAS, i.getAlias());
 	}
 
 	@Test
-	public void validateSchemaTest() throws URISyntaxException, IOException, QblStorageException, PersistenceException, EntityNotFoundExcepion, QblDropInvalidURL {
-		File testDir = setupImportAndExport();
+	public void exportIdentityTest() throws URISyntaxException, IOException, QblStorageException, PersistenceException, EntityNotFoundExcepion, QblDropInvalidURL {
+		File file = setupImport(TEST_IDENTITY);
 		Identity identity = identityBuilderFactory.factory().build();
-		controller.exportIdentity(identity, testDir);
-		File f = new File(TEST_FOLDER + "/" + identity.getAlias() + ".json");
 
+		controller.exportIdentity(identity, file);
+		File f = new File(TEST_FOLDER + "/" + TEST_IDENTITY);
 		controller.importIdentity(f);
 
 		List<Identity> identities = identityRepository.findAll();
@@ -109,15 +96,50 @@ public class AccountingControllerTest extends AbstractControllerTest {
 		assertEquals(identity.getPrimaryKeyPair(), newIdentity.getPrimaryKeyPair());
 		assertEquals(identity.getPhone(), newIdentity.getPhone());
 		assertEquals(identity.getDropUrls(), newIdentity.getDropUrls());
-		assertEquals(identity.getCreated(), newIdentity.getCreated());
+		assertEquals(identity.getCreated(), newIdentity.getCreated(), 100000);
 		assertEquals(identity.getDeleted(), newIdentity.getDeleted());
 		assertEquals(identity.getId(), newIdentity.getId());
 	}
 
-	private File setupImportAndExport() throws URISyntaxException {
+	@Test
+	public void exportContactTest() throws IOException, QblStorageException, URISyntaxException, QblDropInvalidURL {
+		File file = setupImport(TEST_CONTACT);
+
+		Identity identity = identityBuilderFactory.factory().build();
+		identity.setAlias(TEST_ALIAS);
+		identity.setPhone("000");
+		identity.setEmail("abc");
+
+		controller.exportContact(identity, file);
+
+		File f = new File(TEST_FOLDER + "/" + TEST_CONTACT);
+		assertEquals(f.getName(), TEST_CONTACT);
+
+		String contentNew = controller.readFile(f);
+		Gson gson = new Gson();
+		GsonContact exportGsonContact = gson.fromJson(contentNew, GsonContact.class);
+		Contact exportContact = controller.gsonContactToContact(exportGsonContact, identity);
+
+		assertEquals(exportContact.getAlias(), identity.getAlias());
+		assertEquals(exportContact.getEmail(), identity.getEmail());
+		assertEquals(exportContact.getPhone(), identity.getPhone());
+		assertEquals(exportContact.getEcPublicKey(), identity.getEcPublicKey());
+		assertEquals(exportContact.getDropUrls(), identity.getDropUrls());
+		assertEquals(exportContact.getCreated(), identity.getCreated(), 100000);
+		assertEquals(exportContact.getUpdated(), identity.getUpdated());
+		assertEquals(exportContact.getDeleted(), identity.getDeleted());
+	}
+
+	private File setupExport() throws URISyntaxException {
 		controller = getAccountingController();
 		File testDir = new File(TEST_FOLDER);
 		testDir.mkdirs();
 		return testDir;
+	}
+
+	private File setupImport(String type) throws URISyntaxException {
+		File testDir = setupExport();
+		File file = new File(testDir + "/" + type);
+		return file;
 	}
 }

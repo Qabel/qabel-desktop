@@ -14,9 +14,11 @@ import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
 import de.qabel.desktop.repository.AccountRepository;
 import de.qabel.desktop.repository.ClientConfigurationRepository;
+import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.persistence.PersistenceAccountRepository;
 import de.qabel.desktop.repository.persistence.PersistenceClientConfigurationRepository;
+import de.qabel.desktop.repository.persistence.PersistenceContactRepository;
 import de.qabel.desktop.repository.persistence.PersistenceIdentityRepository;
 import de.qabel.desktop.ui.LayoutView;
 import de.qabel.desktop.ui.accounting.login.LoginView;
@@ -30,8 +32,6 @@ import org.apache.commons.lang3.SystemUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.net.URISyntaxException;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URISyntaxException;
@@ -101,21 +101,28 @@ public class DesktopClient extends Application {
 		customProperties.put("identityRepository", identityRepository);
 		PersistenceAccountRepository accountRepository = new PersistenceAccountRepository(persistence);
 		customProperties.put("accountRepository", accountRepository);
-		ClientConfiguration clientConfig = getClientConfiguration(persistence, identityRepository, accountRepository);
+		PersistenceContactRepository contactRepository = new PersistenceContactRepository(persistence);
+		customProperties.put("contactRepository", contactRepository);
+		ClientConfiguration clientConfig = getClientConfiguration(
+				persistence,
+				identityRepository,
+				accountRepository
+		);
 		customProperties.put("clientConfiguration", clientConfig);
+
 
 		Injector.setConfigurationSource(customProperties::get);
 		Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(customProperties));
 		return clientConfig;
 	}
 
-	private ClientConfiguration getClientConfiguration(Persistence<String> persistence, IdentityRepository identityRepository, AccountRepository accountRepository) {
+	private ClientConfiguration getClientConfiguration(
+			Persistence<String> persistence,
+			IdentityRepository identityRepository,
+			AccountRepository accountRepository) {
 		ClientConfigurationRepository repo = new PersistenceClientConfigurationRepository(
 				persistence,
-				new ClientConfigurationFactory(),
-				identityRepository,
-				accountRepository
-		);
+				new ClientConfigurationFactory(), identityRepository, accountRepository);
 		final ClientConfiguration config = repo.load();
 		config.addObserver((o, arg) -> {
 			repo.save(config);

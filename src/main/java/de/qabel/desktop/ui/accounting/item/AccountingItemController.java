@@ -29,6 +29,9 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class AccountingItemController extends AbstractController implements Initializable {
+
+	ResourceBundle resourceBundle;
+
 	@FXML
 	Label alias;
 	@FXML
@@ -61,6 +64,8 @@ public class AccountingItemController extends AbstractController implements Init
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		this.resourceBundle = resources;
+
 		alias.textProperty().addListener((o, a, b) -> updateAvatar());
 		alias.setText(identity.getAlias());
 
@@ -75,13 +80,7 @@ public class AccountingItemController extends AbstractController implements Init
 				http.updateProfile();
 
 				quota.setText(http.getProfile().getQuota() + " MB");
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			} catch (QblInvalidCredentials qblInvalidCredentials) {
-				qblInvalidCredentials.printStackTrace();
-			} catch (IOException e) {
+			} catch (URISyntaxException | QblInvalidCredentials | IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -105,8 +104,8 @@ public class AccountingItemController extends AbstractController implements Init
 	public void edit(ActionEvent actionEvent) {
 		dialog = new TextInputDialog(identity.getAlias());
 		dialog.setHeaderText(null);
-		dialog.setTitle("Change Alias");
-		dialog.setContentText("Please specify an alias for your new Identity");
+		dialog.setTitle(resourceBundle.getString("changeAlias"));
+		dialog.setContentText(resourceBundle.getString("newAlias"));
 		Optional<String> result = dialog.showAndWait();
 		result.ifPresent(this::setAlias);
 	}
@@ -117,7 +116,7 @@ public class AccountingItemController extends AbstractController implements Init
 			identityRepository.save(identity);
 			this.alias.setText(alias);
 		} catch (PersistenceException e) {
-			alert("Failed to save identity", e);
+			alert("saveIdentityFail", e);
 		}
 	}
 

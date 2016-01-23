@@ -11,3 +11,27 @@
     -fx-border-radius: 25;
     -fx-padding: 0 0 0 0;
 }
+
+.button.choose {
+    -fx-min-width: 7em;
+}
+
+.button-bar {
+    -fx-spacing: 1em;
+}
+
+.button {
+    -fx-font-weight: bold;
+    -fx-background-radius: 15;
+    -fx-indent: 20em;
+    -fx-background-color: #fcdcca, #fc7b4c, #fd670d;
+    -fx-background-insets: 0px, 1px;
+    -fx-cursor: hand;
+}
+.button:hover {
+    -fx-background-color: #fcdcca, #fcdcca;
+}
+
+.scroll-pane > .viewport {
+   -fx-background-color: transparent;
+}

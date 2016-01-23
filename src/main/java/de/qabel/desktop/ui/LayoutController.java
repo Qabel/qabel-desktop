@@ -5,6 +5,8 @@ import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.ui.accounting.AccountingView;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
+import de.qabel.desktop.ui.contact.ContactView;
+import de.qabel.desktop.ui.invite.InviteView;
 import de.qabel.desktop.ui.remotefs.RemoteFSView;
 import de.qabel.desktop.ui.sync.SyncView;
 import javafx.fxml.FXML;
@@ -22,6 +24,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class LayoutController extends AbstractController implements Initializable {
+	ResourceBundle resourceBundle;
+
 	@FXML
 	public Label alias;
 	@FXML
@@ -49,11 +53,15 @@ public class LayoutController extends AbstractController implements Initializabl
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		this.resourceBundle = resources;
+
 		navi.getChildren().clear();
 		AccountingView accountingView = new AccountingView();
-		navi.getChildren().add(createNavItem("Identitäten", accountingView));
-		navi.getChildren().add(createNavItem("Browse", new RemoteFSView()));
-		navi.getChildren().add(createNavItem("Sync", new SyncView()));
+		navi.getChildren().add(createNavItem(resourceBundle.getString("identity"), accountingView));
+		navi.getChildren().add(createNavItem(resourceBundle.getString("browse"), new RemoteFSView()));
+		navi.getChildren().add(createNavItem(resourceBundle.getString("contacts"), new ContactView()));
+		navi.getChildren().add(createNavItem(resourceBundle.getString("sync"), new SyncView()));
+		navi.getChildren().add(createNavItem(resourceBundle.getString("invite"), new InviteView()));
 
 		scrollContent.setFillWidth(true);
 		scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);

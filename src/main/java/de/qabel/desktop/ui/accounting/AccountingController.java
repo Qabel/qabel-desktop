@@ -1,7 +1,9 @@
 package de.qabel.desktop.ui.accounting;
 
-import com.google.gson.Gson;
 import de.qabel.core.config.Identity;
+import de.qabel.core.crypto.QblECKeyPair;
+import de.qabel.core.drop.DropURL;
+import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.exceptions.QblStorageException;
@@ -14,25 +16,24 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.VBox;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-
 import javax.inject.Inject;
 import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
+
+import static de.qabel.desktop.ui.accounting.GsonContact.*;
 
 public class AccountingController extends AbstractController implements Initializable {
 	private Identity selectedIdentity;
-	private Gson gson = new Gson();
 
 	@FXML
 	VBox identityList;
 
 	List<AccountingItemView> itemViews = new LinkedList<>();
-
 	TextInputDialog dialog;
+	ResourceBundle resourceBundle;
 
 	@Inject
 	private IdentityRepository identityRepository;
@@ -46,22 +47,8 @@ public class AccountingController extends AbstractController implements Initiali
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		loadIdentities();
-	}
-
-	private void loadIdentities() {
-		try {
-			identityList.getChildren().clear();
-			for (Identity identity : identityRepository.findAll()) {
-				final Map<String, Object> injectionContext = new HashMap<>();
-				injectionContext.put("identity", identity);
-				AccountingItemView itemView = new AccountingItemView(injectionContext::get);
-				identityList.getChildren().add(itemView.getView());
-				itemViews.add(itemView);
-			}
-
-		} catch (Exception e) {
-			throw new IllegalStateException(e.getMessage(), e);
-		}
+		buildGson();
+		this.resourceBundle = resources;
 	}
 
 	public void addIdentity(ActionEvent actionEvent) {
@@ -69,12 +56,50 @@ public class AccountingController extends AbstractController implements Initiali
 	}
 
 	public void addIdentity() {
-		dialog = new TextInputDialog("My Name");
+		dialog = new TextInputDialog(resourceBundle.getString("newIdentity"));
 		dialog.setHeaderText(null);
-		dialog.setTitle("New Identity");
-		dialog.setContentText("Please specify an avatar for your new Identity");
+		dialog.setTitle(resourceBundle.getString("newIdentity"));
+		dialog.setContentText(resourceBundle.getString("newIdentity"));
 		Optional<String> result = dialog.showAndWait();
 		result.ifPresent(this::addIdentityWithAlias);
+	}
+
+	@FXML
+	protected void handleImportIdentityButtonAction(ActionEvent event) throws URISyntaxException, QblDropInvalidURL {
+
+		FileChooser chooser = new FileChooser();
+		chooser.setTitle(resourceBundle.getString("downloadFolder"));
+		File file = chooser.showOpenDialog(identityList.getScene().getWindow());
+		try {
+			importIdentity(file);
+			loadIdentities();
+		} catch (IOException | PersistenceException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
+	protected void handleExportIdentityButtonAction(ActionEvent event) {
+
+		Identity i = clientConfiguration.getSelectedIdentity();
+		File file = createSaveFileChooser(i.getAlias() + "_Identity.json");
+		try {
+			exportIdentity(i, file);
+			loadIdentities();
+		} catch (IOException | QblStorageException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
+	protected void handleExportContactButtonAction(ActionEvent event) {
+		Identity i = clientConfiguration.getSelectedIdentity();
+		File file = createSaveFileChooser(i.getAlias() + "_Contact.json");
+		try {
+			exportContact(i, file);
+		} catch (IOException | QblStorageException e) {
+			e.printStackTrace();
+		}
 	}
 
 	protected void addIdentityWithAlias(String alias) {
@@ -90,71 +115,68 @@ public class AccountingController extends AbstractController implements Initiali
 		}
 	}
 
-	@FXML
-	protected void handleImportIdentityButtonAction(ActionEvent event) {
-
-		FileChooser chooser = new FileChooser();
-		chooser.setTitle("Choose Download Folder");
-		File file = chooser.showOpenDialog(identityList.getScene().getWindow());
-		try {
-			importIdentity(file);
-		} catch (IOException | PersistenceException e) {
-			e.printStackTrace();
-		}
-	}
-
-	void importIdentity(File file) throws IOException, PersistenceException {
+	void importIdentity(File file) throws IOException, PersistenceException, URISyntaxException, QblDropInvalidURL {
 		String content = readFile(file);
-		Identity i = gson.fromJson(content, Identity.class);
+		GsonIdentity gi = gson.fromJson(content, GsonIdentity.class);
+		Identity i = gsonIdentityToIdentiy(gi);
 		identityRepository.save(i);
 	}
 
-	@FXML
-	protected void handleExportIdentityButtonAction(ActionEvent event)  {
-		DirectoryChooser chooser = new DirectoryChooser();
-		chooser.setTitle("Choose Download Folder");
-		File dir = chooser.showDialog(identityList.getScene().getWindow());
-		Identity i = clientConfiguration.getSelectedIdentity();
-		try {
-			exportIdentity(i, dir);
-			loadIdentities();
-		} catch (IOException | QblStorageException e) {
-			e.printStackTrace();
+	void exportIdentity(Identity i, File file) throws IOException, QblStorageException {
+		GsonIdentity gi = new GsonIdentity().fromIdentity(i);
+		String json = gson.toJson(gi);
+		writeStringInFile(json, file);
+	}
+
+	void exportContact(Identity i, File file) throws IOException, QblStorageException {
+		GsonContact gc = new GsonContact().fromEntity(i);
+		String json = gson.toJson(gc);
+		writeStringInFile(json, file);
+	}
+
+
+	ResourceBundle getRessource(){
+		return resourceBundle;
+	}
+
+
+	Identity gsonIdentityToIdentiy(GsonIdentity gi) throws URISyntaxException, QblDropInvalidURL {
+
+		ArrayList<DropURL> collection = generateDropURLs(gi.getDropUrls());
+		QblECKeyPair qblECKeyPair = new QblECKeyPair(gi.getPrivateKey());
+
+		return new Identity(gi.getAlias(), collection, qblECKeyPair);
+	}
+
+	private ArrayList<DropURL> generateDropURLs(List<String> drops) throws URISyntaxException, QblDropInvalidURL {
+		ArrayList<DropURL> collection = new ArrayList<>();
+
+		for (String uri : drops) {
+			DropURL dropURL = new DropURL(uri);
+			collection.add(dropURL);
 		}
+		return collection;
 	}
 
-	void exportIdentity(Identity i, File dir) throws IOException, QblStorageException {
-
-		String json = gson.toJson(i);
-		InputStream stream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
-		byte[] buffer = new byte[stream.available()];
-		stream.read(buffer);
-
-		File targetFile = new File(dir.getPath() + "/" + i.getAlias() + ".json");
-		OutputStream outStream = new FileOutputStream(targetFile);
-		outStream.write(buffer);
-	}
-
-
-
-	String readFile(File f) throws IOException {
-		FileReader fileReader = new FileReader(f);
-		BufferedReader br = new BufferedReader(fileReader);
-
+	private void loadIdentities() {
 		try {
-			StringBuilder sb = new StringBuilder();
-			String line = br.readLine();
-
-			while (line != null) {
-				sb.append(line);
-				line = br.readLine();
-				if(line != null){
-					sb.append("\n");
-				}
+			identityList.getChildren().clear();
+			for (Identity identity : identityRepository.findAll()) {
+				final Map<String, Object> injectionContext = new HashMap<>();
+				injectionContext.put("identity", identity);
+				AccountingItemView itemView = new AccountingItemView(injectionContext::get);
+				identityList.getChildren().add(itemView.getView());
+				itemViews.add(itemView);
 			}
-			return sb.toString();
-		} finally {
-			br.close();
+		} catch (Exception e) {
+			throw new IllegalStateException(e.getMessage(), e);
 		}
+	}
+
+	private File createSaveFileChooser(String defaultName) {
+		FileChooser chooser = new FileChooser();
+		chooser.setTitle("Export");
+		chooser.setInitialFileName(defaultName);
+		return chooser.showSaveDialog(identityList.getScene().getWindow());
 	}
 }

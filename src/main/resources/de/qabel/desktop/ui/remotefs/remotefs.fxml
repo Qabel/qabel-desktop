@@ -10,9 +10,9 @@
     <children>
         <TreeTableView fx:id="treeTable" prefHeight="550.0" prefWidth="600.0">
             <columns>
-                <TreeTableColumn fx:id="nameColumn" prefWidth="250.0" text="Name"/>
-                <TreeTableColumn fx:id="sizeColumn" prefWidth="150.0" text="Size"/>
-                <TreeTableColumn fx:id="dateColumn" prefWidth="200.0" text="Date"/>
+                <TreeTableColumn fx:id="nameColumn" prefWidth="250.0" text="%name"/>
+                <TreeTableColumn fx:id="sizeColumn" prefWidth="150.0" text="%size"/>
+                <TreeTableColumn fx:id="dateColumn" prefWidth="200.0" text="%date"/>
             </columns>
         </TreeTableView>
     </children>
@@ -20,29 +20,29 @@
     <children>
         <HBox prefHeight="100.0" prefWidth="200.0">
             <children>
-                <Button mnemonicParsing="false" onAction="#handleDownloadButtonAction" text="Download">
+                <Button mnemonicParsing="false" onAction="#handleDownloadButtonAction" text="%download">
                     <HBox.margin>
                         <Insets bottom="10.0" left="20.0" right="10.0" top="10.0"/>
                     </HBox.margin>
                 </Button>
-                <Button mnemonicParsing="false" onAction="#handleUploadFileButtonAction" text="Upload Files">
-                    <HBox.margin>
-                        <Insets bottom="10.0" left="20.0" right="10.0" top="10.0"/>
-                    </HBox.margin>
-                </Button>
-
-                <Button mnemonicParsing="false" onAction="#handleUploadFolderButtonAction" text="Upload Folder">
+                <Button mnemonicParsing="false" onAction="#handleUploadFileButtonAction" text="%uploadFile">
                     <HBox.margin>
                         <Insets bottom="10.0" left="20.0" right="10.0" top="10.0"/>
                     </HBox.margin>
                 </Button>
 
-                <Button mnemonicParsing="false" onAction="#handleCreateFolderButtonAction" text="Create Folder">
+                <Button mnemonicParsing="false" onAction="#handleUploadFolderButtonAction" text="%uploadFolder">
                     <HBox.margin>
                         <Insets bottom="10.0" left="20.0" right="10.0" top="10.0"/>
                     </HBox.margin>
                 </Button>
-                <Button mnemonicParsing="false" onAction="#handleDeleteButtonAction" text="Delete">
+
+                <Button mnemonicParsing="false" onAction="#handleCreateFolderButtonAction" text="%createFolder">
+                    <HBox.margin>
+                        <Insets bottom="10.0" left="20.0" right="10.0" top="10.0"/>
+                    </HBox.margin>
+                </Button>
+                <Button mnemonicParsing="false" onAction="#handleDeleteButtonAction" text="%delete">
                     <HBox.margin>
                         <Insets bottom="10.0" left="20.0" right="10.0" top="10.0"/>
                     </HBox.margin>
