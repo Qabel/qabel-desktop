@@ -67,40 +67,47 @@ public class TreeWatcher extends Thread {
 
 	protected void processEvents(WatchKey instance) throws IOException {
 		for (WatchEvent<?> event : instance.pollEvents()) {
-			WatchEvent.Kind kind = event.kind();
+			try {
+				WatchEvent.Kind kind = event.kind();
 
-			if (kind == OVERFLOW) {
-				logger.warn("fs overflow on " + keys.get(instance));
-				continue;
-			}
-
-			WatchEvent<Path> ev = (WatchEvent<Path>) event;
-			Path name = ev.context();
-			Path parent = keys.get(instance);
-			Path child = parent.resolve(name);
-			logger.trace("valid fs event on " + child + " @" + name);
-
-			boolean isDir = Files.isDirectory(child);
-			long mtime = child.toFile().lastModified();
-			ChangeEvent ce;
-			if (kind == ENTRY_DELETE) {
-				ce = new LocalDeleteEvent(child, isDir, System.currentTimeMillis(), convertType(kind));
-			} else {
-				ce = new LocalChangeEvent(child, isDir, mtime, convertType(kind));
-			}
-			consumer.accept(ce);
-
-			if (kind == ENTRY_CREATE && isDir) {
-				registerRecursive(child);
-			}
-
-			boolean valid = instance.reset();
-			if (!valid) {
-				keys.remove(instance);
-
-				if (nothingToDo()) {
-					break;
+				if (kind == OVERFLOW) {
+					logger.warn("fs overflow on " + keys.get(instance));
+					continue;
 				}
+
+				WatchEvent<Path> ev = (WatchEvent<Path>) event;
+				Path name = ev.context();
+				Path parent = keys.get(instance);
+				Path child = parent.resolve(name);
+				logger.trace("valid fs event on " + child + " @" + name);
+
+				boolean isDir = Files.isDirectory(child);
+				long mtime = child.toFile().lastModified();
+				ChangeEvent ce;
+				if (kind == ENTRY_DELETE) {
+					ce = new LocalDeleteEvent(child, isDir, System.currentTimeMillis(), convertType(kind));
+				} else {
+					ce = new LocalChangeEvent(child, isDir, mtime, convertType(kind));
+				}
+				consumer.accept(ce);
+
+				if (kind == ENTRY_CREATE && isDir) {
+					registerRecursive(child);
+				}
+
+				boolean valid = instance.reset();
+				if (!valid) {
+					keys.remove(instance);
+
+					if (nothingToDo()) {
+						break;
+					}
+				}
+			} catch (Exception e) {
+				if (e instanceof InterruptedException) {
+					throw e;
+				}
+				logger.error("watcher errored: " + e.getMessage(), e);
 			}
 		}
 	}

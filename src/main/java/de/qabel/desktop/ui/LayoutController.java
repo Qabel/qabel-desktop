@@ -78,17 +78,23 @@ public class LayoutController extends AbstractController implements Initializabl
 		clientConfiguration.addObserver((o, arg) -> updateIdentity());
 	}
 
-
+	private String lastAlias;
 
 	private void updateIdentity() {
 		Identity identity = clientConfiguration.getSelectedIdentity();
 		if (identity == null) {
 			return;
 		}
-
-		new AvatarView(e -> identity.getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
 		mail.setText(clientConfiguration.getAccount().getUser());
-		alias.setText(identity.getAlias());
+
+		final String currentAlias = identity.getAlias();
+		if (currentAlias.equals(lastAlias)) {
+			return;
+		}
+
+		new AvatarView(e ->  currentAlias).getViewAsync(avatarContainer.getChildren()::setAll);
+		alias.setText(currentAlias);
+		lastAlias = currentAlias;
 	}
 
 	private HBox createNavItem(String label, FXMLView view) {

@@ -91,7 +91,7 @@ public class DesktopClient extends Application {
 	protected SyncDaemon getSyncDaemon(ClientConfiguration config) {
 		DefaultLoadManager loadManager = new DefaultLoadManager();
 		customProperties.put("loadManager", loadManager);
-		new Thread(loadManager).start();
+		new Thread(loadManager, "TransactionManager").start();
 		return new SyncDaemon(config.getBoxSyncConfigs(), new DefaultSyncerFactory(new S3BoxVolumeFactory(), loadManager));
 	}
 

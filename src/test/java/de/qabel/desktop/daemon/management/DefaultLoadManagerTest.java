@@ -189,12 +189,12 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 	@Test
 	public void updatesFiles() throws Exception {
 		nav().createFolder("syncRoot");
+		upload.isDir = false;
 		upload.source = tmpPath("file");
 		upload.destination = Paths.get("/syncRoot", "targetFile");
 		write("testcontent", upload.source);
 		upload.mtime = modifyMtime(upload.source, NEWER);
 		manager.upload(upload);
-		upload.isDir = false;
 
 		upload.type = Transaction.TYPE.UPDATE;
 		write("content2", upload.source);
@@ -212,14 +212,11 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 	public void handlesFalseCreatesLikeUpdates() throws Exception {
 		nav().createFolder("syncRoot");
 		upload.source = tmpPath("file");
-		upload.destination = Paths.get("/syncRoot", "targetFile");
 		write("testcontent", upload.source);
+		upload.destination = Paths.get("/syncRoot", "targetFile");
 		upload.mtime = modifyMtime(upload.source, NEWER);
-		manager.upload(upload);
 		upload.isDir = false;
-
 		upload.type = Transaction.TYPE.CREATE;
-		write("content2", upload.source);
 		manager.upload(upload);
 
 		BoxNavigation syncRoot = nav().navigate("syncRoot");
@@ -227,12 +224,28 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 		assertEquals(1, files.size());
 		BoxFile boxFile = files.get(0);
 		assertEquals("targetFile", boxFile.name);
-		assertEquals("content2", IOUtils.toString(syncRoot.download(boxFile)));
+		assertEquals("testcontent", IOUtils.toString(syncRoot.download(boxFile)));
 	}
 
 	@Test
 	public void handlesFalseUpdatesLikeCreates() throws Exception {
-		// todo
+		nav().createFolder("syncRoot");
+		upload.type = UPDATE;
+		upload.source = tmpPath("file");
+		upload.destination = Paths.get("/syncRoot", "targetFile");
+		File sourceFile = upload.source.toFile();
+		sourceFile.createNewFile();
+		write("testcontent", upload.source);
+		upload.isDir = false;
+
+		manager.upload(upload);
+
+		BoxNavigation syncRoot = nav().navigate("syncRoot");
+		List<BoxFile> files = syncRoot.listFiles();
+		assertEquals(1, files.size());
+		BoxFile boxFile = files.get(0);
+		assertEquals("targetFile", boxFile.name);
+		assertEquals("testcontent", IOUtils.toString(syncRoot.download(boxFile)));
 	}
 
 	private void write(String content, Path file) throws IOException {
@@ -433,7 +446,7 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 		manager.addDownload(download);
 		managerNext();
 
-		waitUntil(() -> upload.getState() == Transaction.STATE.FAILED);
+		waitUntil(() -> download.getState() == Transaction.STATE.FAILED, () -> download.getState().toString());
 	}
 
 	private void assertRemoteExists(String content, String testfile) throws QblStorageException, IOException {

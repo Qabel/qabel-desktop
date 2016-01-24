@@ -135,23 +135,25 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 		return nav.getMetadata();
 	}
 
-	public synchronized void refresh() throws QblStorageException {
-		synchronized (nav) {
-			DirectoryMetadata dm = nav.reloadMetadata();
-			if (!Arrays.equals(nav.getMetadata().getVersion(), dm.getVersion())) {
-				Set<BoxFolder> oldFolders = new HashSet<>(nav.listFolders());
-				Set<BoxFile> oldFiles = new HashSet<>(nav.listFiles());
+	public void refresh() throws QblStorageException {
+		synchronized (this) {
+			synchronized (nav) {
+				DirectoryMetadata dm = nav.reloadMetadata();
+				if (!Arrays.equals(nav.getMetadata().getVersion(), dm.getVersion())) {
+					Set<BoxFolder> oldFolders = new HashSet<>(nav.listFolders());
+					Set<BoxFile> oldFiles = new HashSet<>(nav.listFiles());
 
-				nav.setMetadata(dm);
+					nav.setMetadata(dm);
 
-				Set<BoxFolder> newFolders = new HashSet<>(nav.listFolders());
-				Set<BoxFile> newFiles = new HashSet<>(nav.listFiles());
-				Set<BoxFile> changedFiles = new HashSet<>();
+					Set<BoxFolder> newFolders = new HashSet<>(nav.listFolders());
+					Set<BoxFile> newFiles = new HashSet<>(nav.listFiles());
+					Set<BoxFile> changedFiles = new HashSet<>();
 
-				findNewFolders(oldFolders, newFolders);
-				findNewFiles(oldFiles, newFiles, changedFiles);
-				findDeletedFolders(oldFolders, newFolders);
-				findDeletedFiles(oldFiles, newFiles, changedFiles);
+					findNewFolders(oldFolders, newFolders);
+					findNewFiles(oldFiles, newFiles, changedFiles);
+					findDeletedFolders(oldFolders, newFolders);
+					findDeletedFiles(oldFiles, newFiles, changedFiles);
+				}
 			}
 		}
 

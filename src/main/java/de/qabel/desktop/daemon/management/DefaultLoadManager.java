@@ -25,6 +25,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import static de.qabel.desktop.daemon.management.Transaction.STATE.*;
+import static de.qabel.desktop.daemon.management.Transaction.TYPE.CREATE;
+import static de.qabel.desktop.daemon.management.Transaction.TYPE.DELETE;
+import static de.qabel.desktop.daemon.management.Transaction.TYPE.UPDATE;
 
 public class DefaultLoadManager implements LoadManager, Runnable {
 	private final Logger logger = LoggerFactory.getLogger(DefaultLoadManager.class);
@@ -170,57 +173,7 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 				throw new TransferSkippedException("upload says it's invalid");
 			}
 
-			Path destination = upload.getDestination();
-			Path source = upload.getSource();
-			boolean isDir = Files.isDirectory(source);
-
-			BoxVolume volume = upload.getBoxVolume();
-			Path parent = destination;
-			BoxNavigation dir;
-
-			SimpleDateFormat format = new SimpleDateFormat("D.M.Y H:m:s");
-			switch (upload.getType()) {
-				case DELETE:
-					parent = destination.getParent();
-					dir = navigate(parent, volume);
-					String fileName = destination.getFileName().toString();
-					if (dir.hasFolder(fileName)) {
-						dir.delete(dir.getFolder(fileName));
-					} else {
-						BoxFile file = dir.getFile(fileName);
-						if (remoteIsNewer(upload, file)) {
-							throw new TransferSkippedException("remote is newer " + format.format(new Date(file.mtime)) + ">" + format.format(new Date(upload.getMtime())));
-						}
-						dir.delete(file);
-					}
-					break;
-				case UPDATE:
-					parent = destination.getParent();
-					dir = navigate(parent, volume);
-					String filename = destination.getFileName().toString();
-					BoxFile file = dir.getFile(filename);
-					if (remoteIsNewer(upload, file)) {
-						throw new TransferSkippedException("remote is newer " + format.format(new Date(file.mtime)) + ">" + format.format(new Date(upload.getMtime())));
-					}
-					dir.overwrite(filename, source.toFile());
-					break;
-				default:
-					if (!isDir) {
-						parent = destination.getParent();
-					}
-					dir = createDirectory(parent, volume);
-					if (!isDir) {
-						if (dir.hasFile(destination.getFileName().toString())) {
-							file = dir.getFile(destination.getFileName().toString());
-							if (!remoteIsNewer(upload, file)) {
-								overwriteFile(dir, source, destination);
-							}
-						} else {
-							uploadFile(dir, source, destination);
-						}
-					}
-					break;
-			}
+			executeUpload(upload);
 			upload.toState(FINISHED);
 			logger.trace("finished upload " + upload);
 		} catch (TransferSkippedException e) {
@@ -230,6 +183,50 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 			upload.toState(FAILED);
 			throw e;
 		}
+	}
+
+	private void executeUpload(Upload upload) throws QblStorageException, TransferSkippedException {
+		Path destination = upload.getDestination();
+		Path source = upload.getSource();
+
+		BoxVolume volume = upload.getBoxVolume();
+		Path parent = destination.getParent();
+		String filename = destination.getFileName().toString();
+		BoxNavigation dir;
+
+		SimpleDateFormat format = new SimpleDateFormat("D.M.Y H:m:s");
+
+		if (upload.isDir() && (upload.getType() == UPDATE || upload.getType() == CREATE)) {
+			createDirectory(destination, volume);
+			return;
+		}
+		if (upload.getType() == DELETE) {
+			dir = navigate(parent, volume);
+			String fileName = destination.getFileName().toString();
+			if (dir.hasFolder(fileName)) {
+				dir.delete(dir.getFolder(fileName));
+			} else {
+				BoxFile file = dir.getFile(fileName);
+				if (remoteIsNewer(upload, file)) {
+					throw new TransferSkippedException("remote is newer " + format.format(new Date(file.mtime)) + ">" + format.format(new Date(upload.getMtime())));
+				}
+				dir.delete(file);
+			}
+			return;
+		}
+
+		dir = createDirectory(parent, volume);
+		if (!dir.hasFile(filename)) {
+			uploadFile(dir, source, destination);
+			return;
+		}
+
+		BoxFile file = dir.getFile(filename);
+		if (remoteIsNewer(upload, file)) {
+			throw new TransferSkippedException("remote is newer " + format.format(new Date(file.mtime)) + ">" + format.format(new Date(upload.getMtime())));
+		}
+
+		overwriteFile(dir, source, destination);
 	}
 
 	private boolean remoteIsNewer(Upload upload, BoxFile file) {

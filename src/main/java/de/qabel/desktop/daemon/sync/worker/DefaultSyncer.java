@@ -25,7 +25,7 @@ public class DefaultSyncer implements Syncer {
 	private CachedBoxVolume boxVolume;
 	private BoxSyncConfig config;
 	private LoadManager manager;
-	private int pollInterval = 2;
+	private int pollInterval = 5;
 	private TimeUnit pollUnit = TimeUnit.SECONDS;
 	private Thread poller;
 	private TreeWatcher watcher;
@@ -141,7 +141,7 @@ public class DefaultSyncer implements Syncer {
 			}
 			String filename = destination.getFileName().toString();
 			exists = upload.isDir() ? nav.hasFolder(filename) : nav.hasFile(filename);
-		} catch (QblStorageException e) {
+		} catch (QblStorageException | IllegalArgumentException e) {
 			logger.warn(e.getMessage(), e);
 			exists = false;
 		}

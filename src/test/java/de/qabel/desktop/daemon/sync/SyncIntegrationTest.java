@@ -65,6 +65,9 @@ public class SyncIntegrationTest {
 			volume1.navigate().createFolder("sync");
 			manager1 = new DefaultLoadManager();
 			manager2 = new DefaultLoadManager();
+			manager1.setStagingDelay(10L, TimeUnit.MILLISECONDS);
+			manager2.setStagingDelay(10L, TimeUnit.MILLISECONDS);
+
 			syncer1 = new DefaultSyncer(config1, volume1, manager1);
 			syncer2 = new DefaultSyncer(config2, volume2, manager2);
 

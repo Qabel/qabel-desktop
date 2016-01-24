@@ -33,17 +33,24 @@ public abstract class AbstractSyncTest {
 	}
 
 	protected static void waitUntil(Callable<Boolean> evaluate) {
-		long timeout = 1000L;
-		waitUntil(evaluate, timeout);
+		waitUntil(evaluate, null);
+	}
+
+	protected static void waitUntil(Callable<Boolean> evaluate, Callable<String> errorMessage) {
+		waitUntil(evaluate, 1000L, errorMessage);
 	}
 
 	protected static void waitUntil(Callable<Boolean> evaluate, long timeout) {
+		waitUntil(evaluate, timeout, null);
+	}
+
+	protected static void waitUntil(Callable<Boolean> evaluate, long timeout, Callable<String> errorMessage) {
 		try {
 			long startTime = System.currentTimeMillis();
 			while (!evaluate.call()) {
 				Thread.yield();
 				if (System.currentTimeMillis() - timeout > startTime) {
-					fail("wait timeout");
+					fail(errorMessage != null ? errorMessage.call() : "wait timeout");
 				}
 			}
 		} catch (Exception e) {
