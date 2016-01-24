@@ -5,16 +5,15 @@ import de.qabel.desktop.daemon.management.BoxSyncBasedDownload;
 import de.qabel.desktop.daemon.management.BoxSyncBasedUpload;
 import de.qabel.desktop.daemon.management.LoadManager;
 import de.qabel.desktop.daemon.management.Transaction;
-import de.qabel.desktop.daemon.sync.event.ChangeEvent;
-import de.qabel.desktop.daemon.sync.event.LocalChangeEvent;
-import de.qabel.desktop.daemon.sync.event.LocalDeleteEvent;
-import de.qabel.desktop.daemon.sync.event.WatchEvent;
+import de.qabel.desktop.daemon.sync.event.*;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndex;
 import de.qabel.desktop.exceptions.QblStorageException;
+import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
 public class DefaultSyncer implements Syncer {
@@ -98,7 +97,7 @@ public class DefaultSyncer implements Syncer {
 					System.currentTimeMillis(),
 					ChangeEvent.TYPE.DELETE
 			);
-			manager.addUpload(new BoxSyncBasedUpload(boxVolume, config, inverseEvent));
+			upload(inverseEvent);
 			return;
 		}
 		download.onSuccess(() -> index.update(download.getDestination(), download.getMtime(), download.getType() != Transaction.TYPE.DELETE));
@@ -108,12 +107,38 @@ public class DefaultSyncer implements Syncer {
 	private void upload(WatchEvent event) {
 		BoxSyncBasedUpload upload = new BoxSyncBasedUpload(boxVolume, config, event);
 		if (index.isUpToDate(upload.getSource(), upload.getMtime(), upload.getType() != Transaction.TYPE.DELETE)) {
+			downloadUnnoticedDelete(upload);
 			return;
 		}
 		upload.onSuccess(() -> {
 			index.update(upload.getSource(), upload.getMtime(), upload.getType() != Transaction.TYPE.DELETE);
 		});
 		manager.addUpload(upload);
+	}
+
+	private void downloadUnnoticedDelete(BoxSyncBasedUpload upload) {
+		Path destination = upload.getDestination();
+		boolean exists;
+		try {
+			CachedBoxNavigation nav = (CachedBoxNavigation) upload.getBoxVolume().navigate();
+			for (int i = 0; i < destination.getNameCount() - 1; i++) {
+				nav = nav.navigate(destination.getName(i).toString());
+			}
+			String filename = destination.getFileName().toString();
+			exists = upload.isDir() ? nav.hasFolder(filename) : nav.hasFile(filename);
+		} catch (QblStorageException e) {
+			logger.warn(e.getMessage(), e);
+			exists = false;
+		}
+		if (!exists) {
+			ChangeEvent inverseEvent = new RemoteChangeEvent(
+					upload.getDestination(),
+					upload.isDir(),
+					System.currentTimeMillis(),
+					ChangeEvent.TYPE.DELETE
+			);
+			download(inverseEvent);
+		}
 	}
 
 	protected void startWatcher() {

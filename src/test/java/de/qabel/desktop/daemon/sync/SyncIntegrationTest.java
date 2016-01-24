@@ -142,13 +142,13 @@ public class SyncIntegrationTest {
 		waitUntil(() -> {
 			final SyncIntegrationTest test2 = test;
 			return Files.isDirectory(dir2);
-		}, 1000000L);
+		});
 
 		Path file1 = Paths.get(dir1.toString(), "file");
 		Files.write(file1, "text".getBytes());
 
 		Path file2 = Paths.get(dir2.toString(), "file");
-		waitUntil(() -> Files.exists(file2), 1000000L);
+		waitUntil(() -> Files.exists(file2));
 		assertEquals("text", new String(Files.readAllBytes(file2)));
 
 		List<Transaction> history = manager2.getHistory();
@@ -176,11 +176,11 @@ public class SyncIntegrationTest {
 	}
 
 	@Test
-	public void syncsDeleteOccuredDuringOfflinePeriod() throws Exception {
+	public void syncsDeleteOccuredLocallyDuringOfflinePeriod() throws Exception {
 		Path path = Paths.get(tmpDir1.toString(), "file");
 		File file = path.toFile();
 		file.createNewFile();
-		waitUntil(() -> manager1.getTransactions().size() == 0, 100000L);
+		waitUntil(() -> manager1.getTransactions().size() == 0);
 
 		// mark file up2date on syncer2
 		waitUntil(() -> volume1.navigate().navigate("sync").hasFile("file"));
@@ -189,6 +189,21 @@ public class SyncIntegrationTest {
 		syncer2.run();
 		syncer2.waitFor();
 
-		waitUntil(() -> !file.exists(), 100000L);
+		waitUntil(() -> !file.exists());
+	}
+
+	@Test
+	public void syncsDeleteOccuredRemotelyDuringOfflinePeriod() throws Exception {
+		Path path = Paths.get(tmpDir2.toString(), "file");
+		File file = path.toFile();
+		file.createNewFile();
+
+		// mark file up2date on syncer2
+		config2.getSyncIndex().update(Paths.get(tmpDir2.toString(), "file"), file.lastModified(), true);
+		syncer2.run();
+		syncer2.waitFor();
+
+		// file is missing remotely but was uploaded (according to index) => it has been deleted remotely
+		waitUntil(() -> !file.exists());
 	}
 }
