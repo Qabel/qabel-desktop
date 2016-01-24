@@ -23,9 +23,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import static de.qabel.desktop.daemon.management.Transaction.STATE.FAILED;
-import static de.qabel.desktop.daemon.management.Transaction.STATE.FINISHED;
-import static de.qabel.desktop.daemon.management.Transaction.STATE.SKIPPED;
+import static de.qabel.desktop.daemon.management.Transaction.STATE.*;
 
 public class DefaultLoadManager implements LoadManager, Runnable {
 	private final Logger logger = LoggerFactory.getLogger(DefaultLoadManager.class);

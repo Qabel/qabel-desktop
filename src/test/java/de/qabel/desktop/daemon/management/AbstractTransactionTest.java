@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static de.qabel.desktop.daemon.management.Transaction.STATE.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class AbstractTransactionTest {
 	private final List<Object> updates = new LinkedList<>();

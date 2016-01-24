@@ -1,6 +1,5 @@
 package de.qabel.desktop.daemon.management;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.factory.DropUrlGenerator;

@@ -10,7 +10,6 @@ import de.qabel.desktop.daemon.management.*;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncer;
 import de.qabel.desktop.storage.LocalReadBackend;
 import de.qabel.desktop.storage.LocalWriteBackend;
-import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -26,9 +25,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class SyncIntegrationTest {
 	protected Path remoteDir;

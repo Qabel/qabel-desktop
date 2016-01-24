@@ -3,9 +3,7 @@ package de.qabel.desktop.daemon.management;
 import java.util.LinkedList;
 import java.util.List;
 
-import static de.qabel.desktop.daemon.management.Transaction.STATE.FAILED;
-import static de.qabel.desktop.daemon.management.Transaction.STATE.FINISHED;
-import static de.qabel.desktop.daemon.management.Transaction.STATE.SKIPPED;
+import static de.qabel.desktop.daemon.management.Transaction.STATE.*;
 
 public abstract class AbstractTransaction implements Transaction {
 	private STATE state = STATE.INITIALIZING;

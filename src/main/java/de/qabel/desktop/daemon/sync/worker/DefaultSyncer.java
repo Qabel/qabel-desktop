@@ -5,7 +5,10 @@ import de.qabel.desktop.daemon.management.BoxSyncBasedDownload;
 import de.qabel.desktop.daemon.management.BoxSyncBasedUpload;
 import de.qabel.desktop.daemon.management.LoadManager;
 import de.qabel.desktop.daemon.management.Transaction;
-import de.qabel.desktop.daemon.sync.event.*;
+import de.qabel.desktop.daemon.sync.event.ChangeEvent;
+import de.qabel.desktop.daemon.sync.event.LocalDeleteEvent;
+import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
+import de.qabel.desktop.daemon.sync.event.WatchEvent;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndex;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
@@ -89,24 +92,31 @@ public class DefaultSyncer implements Syncer {
 
 	private void download(ChangeEvent event) {
 		BoxSyncBasedDownload download = new BoxSyncBasedDownload(boxVolume, config, event);
-		if (download.getType() != Transaction.TYPE.DELETE && index.isUpToDate(download.getDestination(), download.getMtime(), true)) {
-
-			ChangeEvent inverseEvent = new LocalDeleteEvent(
-					download.getDestination(),
-					download.isDir(),
-					System.currentTimeMillis(),
-					ChangeEvent.TYPE.DELETE
-			);
-			upload(inverseEvent);
+		if (download.getType() != Transaction.TYPE.DELETE && isUpToDate(download)) {
+			uploadUnnoticedDelete(download);
 			return;
 		}
 		download.onSuccess(() -> index.update(download.getDestination(), download.getMtime(), download.getType() != Transaction.TYPE.DELETE));
 		manager.addDownload(download);
 	}
 
+	private boolean isUpToDate(BoxSyncBasedDownload download) {
+		return index.isUpToDate(download.getDestination(), download.getMtime(), true);
+	}
+
+	private void uploadUnnoticedDelete(BoxSyncBasedDownload download) {
+		ChangeEvent inverseEvent = new LocalDeleteEvent(
+				download.getDestination(),
+				download.isDir(),
+				System.currentTimeMillis(),
+				ChangeEvent.TYPE.DELETE
+		);
+		upload(inverseEvent);
+	}
+
 	private void upload(WatchEvent event) {
 		BoxSyncBasedUpload upload = new BoxSyncBasedUpload(boxVolume, config, event);
-		if (index.isUpToDate(upload.getSource(), upload.getMtime(), upload.getType() != Transaction.TYPE.DELETE)) {
+		if (isUpToDate(upload)) {
 			downloadUnnoticedDelete(upload);
 			return;
 		}
@@ -114,6 +124,10 @@ public class DefaultSyncer implements Syncer {
 			index.update(upload.getSource(), upload.getMtime(), upload.getType() != Transaction.TYPE.DELETE);
 		});
 		manager.addUpload(upload);
+	}
+
+	private boolean isUpToDate(BoxSyncBasedUpload upload) {
+		return index.isUpToDate(upload.getSource(), upload.getMtime(), upload.getType() != Transaction.TYPE.DELETE);
 	}
 
 	private void downloadUnnoticedDelete(BoxSyncBasedUpload upload) {
