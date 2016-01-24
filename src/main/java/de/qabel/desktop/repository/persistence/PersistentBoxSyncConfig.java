@@ -1,5 +1,7 @@
 package de.qabel.desktop.repository.persistence;
 
+import de.qabel.desktop.daemon.sync.worker.index.SyncIndex;
+
 import java.io.Serializable;
 
 public class PersistentBoxSyncConfig implements Serializable {
@@ -10,4 +12,5 @@ public class PersistentBoxSyncConfig implements Serializable {
 	public String account;
 	public boolean paused;
 	public String name;
+	public SyncIndex syncIndex;
 }

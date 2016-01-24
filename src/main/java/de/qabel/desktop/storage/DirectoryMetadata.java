@@ -97,6 +97,7 @@ public class DirectoryMetadata {
 		File path;
 		try {
 			path = File.createTempFile("dir", "db", tempDir);
+			path.deleteOnExit();
 		} catch (IOException e) {
 			throw new QblStorageIOFailure(e);
 		}
@@ -484,5 +485,10 @@ public class DirectoryMetadata {
 		return TYPE_NONE;
 	}
 
+	@Override
+	protected void finalize() throws Throwable {
+		if (path.exists()) {
+			path.delete();
+		}
+	}
 }
-

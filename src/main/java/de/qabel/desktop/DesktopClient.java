@@ -60,31 +60,32 @@ public class DesktopClient extends Application {
 		ClientConfiguration config = initDiContainer();
 
 		SceneAntialiasing aa = SceneAntialiasing.DISABLED;
+		primaryStage.getIcons().setAll(new javafx.scene.image.Image(getClass().getResourceAsStream("/logo-invert_small.png")));
 		Scene scene;
+
 		view = new LayoutView();
-		scene = new Scene(new LoginView().getView(), 370, 530, true, aa);
 		config.addObserver((o, arg) -> {
 			if (arg instanceof Account) {
-				Scene layoutScene = new Scene(new LayoutView().getView(), 800, 600, true, aa);
+				Scene layoutScene = new Scene(view.getView(), 800, 600, true, aa);
 				Platform.runLater(() -> primaryStage.setScene(layoutScene));
 			}
 		});
 
-		primaryStage.getIcons().setAll(new javafx.scene.image.Image(getClass().getResourceAsStream("/logo-invert_small.png")));
 
 		Platform.setImplicitExit(false);
+		primaryStage.setTitle(TITLE);
+		scene = new Scene(new LoginView().getView(), 370, 530, true, aa);
 		primaryStage.setScene(scene);
 		setTrayIcon(primaryStage);
-		primaryStage.setTitle(TITLE);
-		primaryStage.show();
 
-		getSyncDaemon(config).run();
+		new Thread(getSyncDaemon(config)).start();
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
 				Platform.exit();
 			}
 		});
+		primaryStage.show();
 	}
 
 	protected SyncDaemon getSyncDaemon(ClientConfiguration config) {
@@ -137,7 +138,7 @@ public class DesktopClient extends Application {
 		SystemTray sTray = SystemTray.getSystemTray();
 		primaryStage.setOnCloseRequest(arg0 -> primaryStage.hide());
 		JPopupMenu popup = buildSystemTrayJPopupMenu(primaryStage);
-		URL url = System.class.getResource("/logo.png");
+		URL url = System.class.getResource("/logo-invert_small.png");
 		Image img = Toolkit.getDefaultToolkit().getImage(url);
 		TrayIcon icon = new TrayIcon(img, "Qabel");
 

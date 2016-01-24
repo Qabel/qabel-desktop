@@ -8,10 +8,13 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,6 +35,7 @@ public class BoxObjectCellValueFactoryTest extends AbstractControllerTest {
 	private TreeItem<BoxObject> rootNodeFile = new TreeItem<>(new BoxFolder("block", "root Folder", new byte[16]));
 	private UUID uuid = UUID.randomUUID();
 	private final String prefix = UUID.randomUUID().toString();
+	private Path tempFolder;
 
 
 	@Before
@@ -41,7 +45,7 @@ public class BoxObjectCellValueFactoryTest extends AbstractControllerTest {
 		CryptoUtils utils = new CryptoUtils();
 		byte[] deviceID = utils.getRandomBytes(16);
 		QblECKeyPair keyPair = new QblECKeyPair();
-		Path tempFolder = Files.createTempDirectory("");
+		tempFolder = Files.createTempDirectory("");
 		ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
 		bb.putLong(uuid.getMostSignificantBits());
 		bb.putLong(uuid.getLeastSignificantBits());
@@ -66,6 +70,16 @@ public class BoxObjectCellValueFactoryTest extends AbstractControllerTest {
 		rootNodeFile.getChildren().add(boxFileTreeItem);
 		treeTableFile = new TreeTableView(rootNodeFile);
 
+	}
+
+	@After
+	public void tearDown() {
+		try {
+			FileUtils.deleteDirectory(tempFolder.toFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		super.tearDown();
 	}
 
 	@Test

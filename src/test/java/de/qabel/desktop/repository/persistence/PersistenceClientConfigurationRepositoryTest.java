@@ -94,7 +94,9 @@ public class PersistenceClientConfigurationRepositoryTest extends AbstractPersis
 
 		Path localPath = Paths.get("some/where");
 		Path remotePath = Paths.get("over/the/rainbow");
-		config.getBoxSyncConfigs().add(new DefaultBoxSyncConfig("named", localPath, remotePath, identity, account));
+		DefaultBoxSyncConfig boxSyncConfig = new DefaultBoxSyncConfig("named", localPath, remotePath, identity, account);
+		boxSyncConfig.getSyncIndex().update(localPath, 1000L, true);
+		config.getBoxSyncConfigs().add(boxSyncConfig);
 
 		repo.save(config);
 		config = repo.load();
@@ -109,5 +111,6 @@ public class PersistenceClientConfigurationRepositoryTest extends AbstractPersis
 		assertEquals("some/where", boxConfig.getLocalPath().toString());
 		assertEquals("over/the/rainbow", boxConfig.getRemotePath().toString());
 		assertEquals("named", boxConfig.getName());
+		assertTrue(boxConfig.getSyncIndex().isUpToDate(localPath, 1000L, true));
 	}
 }

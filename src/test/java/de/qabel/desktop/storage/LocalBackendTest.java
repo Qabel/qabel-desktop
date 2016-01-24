@@ -1,7 +1,9 @@
 package de.qabel.desktop.storage;
 
 import de.qabel.desktop.exceptions.QblStorageException;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,10 +21,11 @@ public class LocalBackendTest {
 	private String testFile;
 	private StorageReadBackend readBackend;
 	private StorageWriteBackend writeBackend;
+	private Path temp;
 
 	@Before
 	public void setupTestBackend() throws IOException {
-		Path temp = Files.createTempDirectory(null);
+		temp = Files.createTempDirectory(null);
 		Path tempFile = Files.createTempFile(temp, null, null);
 		bytes = new byte[]{1, 2, 3, 4};
 		Files.write(tempFile, bytes);
@@ -30,6 +33,11 @@ public class LocalBackendTest {
 		testFile = tempFile.getFileName().toString();
 		writeBackend = new LocalWriteBackend(temp);
 
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		FileUtils.deleteDirectory(temp.toFile());
 	}
 
 	@Test

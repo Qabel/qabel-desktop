@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import static de.qabel.desktop.daemon.management.Transaction.STATE.FAILED;
 import static de.qabel.desktop.daemon.management.Transaction.STATE.FINISHED;
 import static de.qabel.desktop.daemon.management.Transaction.STATE.SKIPPED;
 
@@ -41,6 +42,11 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 		logger.trace("download added: " + download.getSource() + " to " + download.getDestination());
 		transactions.add(download);
 		history.add(download);
+	}
+
+	@Override
+	public List<Transaction> getHistory() {
+		return new LinkedList<>(history);
 	}
 
 	@Override
@@ -75,7 +81,7 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 	}
 
 	void download(Download download) throws Exception {
-		try {
+		try (Download ignored = download) {
 			if (!download.isValid()) {
 				throw new TransferSkippedException("download says it's invalid");
 			}
@@ -88,6 +94,7 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 				case CREATE:
 					if (download.isDir()) {
 						Files.createDirectories(destination);
+						download.setMtime(Files.getLastModifiedTime(destination).toMillis());
 						break;
 					}
 
@@ -106,6 +113,9 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 						Files.copy(stream, tmpFile, StandardCopyOption.REPLACE_EXISTING);
 						Files.setLastModifiedTime(tmpFile, FileTime.fromMillis(download.getMtime()));
 						Files.move(tmpFile, destination, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+						if (destination.toFile().lastModified() != download.getMtime()) {
+							Files.setLastModifiedTime(destination, FileTime.fromMillis(download.getMtime()));
+						}
 						Files.deleteIfExists(tmpFile);
 					}
 					break;
@@ -121,6 +131,9 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 		} catch (TransferSkippedException e) {
 			download.toState(SKIPPED);
 			logger.trace("skipped download "  + " (" + e.getMessage() + ")");
+		} catch (Exception e) {
+			download.toState(FAILED);
+			throw e;
 		}
 	}
 
@@ -133,7 +146,7 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 	}
 
 	void upload(Upload upload) throws QblStorageException {
-		try {
+		try (Upload ignored = upload) {
 			if (!upload.isValid()) {
 				throw new TransferSkippedException("upload says it's invalid");
 			}
@@ -194,11 +207,14 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 		} catch (TransferSkippedException e) {
 			upload.toState(SKIPPED);
 			logger.trace("skipped upload " + upload + " (" + e.getMessage() + ")");
+		} catch (Exception e) {
+			upload.toState(FAILED);
+			throw e;
 		}
 	}
 
 	private boolean remoteIsNewer(Upload upload, BoxFile file) {
-		return file.mtime > upload.getMtime();
+		return file.mtime >= upload.getMtime();
 	}
 
 	private BoxNavigation navigate(Path path, BoxVolume volume) throws QblStorageException {

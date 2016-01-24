@@ -66,6 +66,7 @@ public class LoginController extends AbstractController implements Initializable
 		progressBar.managedProperty().bind(progressBar.visibleProperty());
 		buttonBar.managedProperty().bind(buttonBar.visibleProperty());
 
+
 		if (config.hasAccount()) {
 			Account account = config.getAccount();
 			providerChoices.getSelectionModel().select(account.getProvider());

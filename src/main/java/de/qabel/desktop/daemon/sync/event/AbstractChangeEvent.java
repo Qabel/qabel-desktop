@@ -2,7 +2,7 @@ package de.qabel.desktop.daemon.sync.event;
 
 import java.nio.file.Path;
 
-public abstract class AbstractChangeEvent extends AbstractWatchEvent {
+public abstract class AbstractChangeEvent extends AbstractWatchEvent implements ChangeEvent {
 	protected final ChangeEvent.TYPE type;
 
 	public AbstractChangeEvent(Path path, boolean isDirecotry, Long mtime, ChangeEvent.TYPE type) {
@@ -28,5 +28,4 @@ public abstract class AbstractChangeEvent extends AbstractWatchEvent {
 	public boolean isDelete() {
 		return type == ChangeEvent.TYPE.DELETE;
 	}
-
 }

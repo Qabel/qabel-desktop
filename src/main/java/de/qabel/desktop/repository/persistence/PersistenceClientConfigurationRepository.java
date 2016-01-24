@@ -68,13 +68,17 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 	protected void loadBoxSyncConfigs(PersistentClientConfiguration configDto, ObservableList<BoxSyncConfig> boxSyncConfigs) {
 		for (PersistentBoxSyncConfig dto : configDto.boxSyncConfigs) {
 			try {
-				boxSyncConfigs.add(new DefaultBoxSyncConfig(
+				DefaultBoxSyncConfig boxSyncConfig = new DefaultBoxSyncConfig(
 						dto.name,
 						Paths.get(dto.localPath),
 						Paths.get(dto.remotePath),
 						identityRepository.find(dto.identity),
 						accountRepository.find(dto.account)
-				));
+				);
+				if (dto.syncIndex != null) {
+					boxSyncConfig.setSyncIndex(dto.syncIndex);
+				}
+				boxSyncConfigs.add(boxSyncConfig);
 			} catch (EntityNotFoundExcepion e) {
 				e.printStackTrace();
 			}
@@ -136,6 +140,7 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 		dto.identity = boxSyncConfig.getIdentity().getPersistenceID();
 		dto.localPath = boxSyncConfig.getLocalPath().toString();
 		dto.remotePath = boxSyncConfig.getRemotePath().toString();
+		dto.syncIndex = boxSyncConfig.getSyncIndex();
 		return dto;
 	}
 }

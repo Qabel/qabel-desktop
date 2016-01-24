@@ -24,6 +24,7 @@ public class BoxSyncBasedUpload extends AbstractBoxSyncBasedTransaction implemen
 
 	@Override
 	public String toString() {
-		return "Upload[" + getSource() + " to " + getDestination() + "]";
+		String file = isDir() ? "DIR" : "FILE";
+		return "Upload[" + getType() + " " + file + " " + getSource() + " to " + getDestination() + "]";
 	}
 }

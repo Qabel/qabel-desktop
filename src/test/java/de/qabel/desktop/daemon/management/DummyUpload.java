@@ -41,12 +41,32 @@ public class DummyUpload implements Upload {
 	}
 
 	@Override
+	public Transaction onSuccess(Runnable runnable) {
+		return this;
+	}
+
+	@Override
+	public Transaction onFailure(Runnable runnable) {
+		return this;
+	}
+
+	@Override
+	public Transaction onSkipped(Runnable runnable) {
+		return this;
+	}
+
+	@Override
 	public STATE getState() {
 		return null;
 	}
 
 	@Override
 	public void toState(STATE state) {
+
+	}
+
+	@Override
+	public void close() {
 
 	}
 }

@@ -6,11 +6,11 @@ import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilder;
-import de.qabel.desktop.daemon.management.DefaultLoadManager;
-import de.qabel.desktop.daemon.management.LoadManager;
+import de.qabel.desktop.daemon.management.*;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncer;
 import de.qabel.desktop.storage.LocalReadBackend;
 import de.qabel.desktop.storage.LocalWriteBackend;
+import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -22,10 +22,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class SyncIntegrationTest {
@@ -40,6 +42,8 @@ public class SyncIntegrationTest {
 	private CachedBoxVolume volume2;
 	private LoadManager manager1;
 	private LoadManager manager2;
+	private BoxSyncConfig config1;
+	private BoxSyncConfig config2;
 
 	@Before
 	public void setUp() {
@@ -54,8 +58,8 @@ public class SyncIntegrationTest {
 		try {
 			Identity identity = new IdentityBuilder(new DropUrlGenerator("http://localhost:5000")).build();
 			Account account = new Account("a", "b", "c");
-			BoxSyncConfig config1 = new DefaultBoxSyncConfig(tmpDir1, Paths.get("/sync"), identity, account);
-			BoxSyncConfig config2 = new DefaultBoxSyncConfig(tmpDir2, Paths.get("/sync"), identity, account);
+			config1 = new DefaultBoxSyncConfig(tmpDir1, Paths.get("/sync"), identity, account);
+			config2 = new DefaultBoxSyncConfig(tmpDir2, Paths.get("/sync"), identity, account);
 			LocalReadBackend readBackend = new LocalReadBackend(remoteDir);
 			LocalWriteBackend writeBackend = new LocalWriteBackend(remoteDir);
 			volume1 = new CachedBoxVolume(readBackend, writeBackend, identity.getPrimaryKeyPair(), new byte[0], new File(System.getProperty("java.io.tmpdir")), "prefix");
@@ -74,8 +78,6 @@ public class SyncIntegrationTest {
 			managerThread1.start();
 
 			syncer2.setPollInterval(1, TimeUnit.MILLISECONDS);
-			syncer2.run();
-			syncer2.waitFor();
 			managerThread2 = new Thread(manager2);
 			managerThread2.start();
 		} catch (Exception e) {
@@ -129,6 +131,9 @@ public class SyncIntegrationTest {
 
 	@Test
 	public void syncsFileInSubdirectory() throws Exception {
+		syncer2.run();
+		syncer2.waitFor();
+
 		Path dir1 = Paths.get(tmpDir1.toString(), "dir");
 		Files.createDirectories(dir1);
 
@@ -145,5 +150,45 @@ public class SyncIntegrationTest {
 		Path file2 = Paths.get(dir2.toString(), "file");
 		waitUntil(() -> Files.exists(file2), 1000000L);
 		assertEquals("text", new String(Files.readAllBytes(file2)));
+
+		List<Transaction> history = manager2.getHistory();
+
+		// first comes the sync root creation (download OR upload first)
+		int rootSyncUpload = 1;
+		int rootSyncDownload = 0;
+		if (history.get(0) instanceof Upload) {
+			rootSyncUpload = 0;
+			rootSyncDownload = 1;
+		}
+		assertEquals(Paths.get("/sync"), history.get(rootSyncUpload).getDestination());
+
+		assertTrue(history.get(rootSyncDownload) instanceof Download);
+		assertEquals(Paths.get("/sync"), history.get(rootSyncDownload).getSource());
+
+		assertTrue(history.get(2) instanceof Download);
+		assertEquals(Paths.get("/sync/dir"), history.get(2).getSource());
+
+		assertTrue(
+				"an unecpected " + history.get(3) + " occured after DOWNLAOD /sync/dir",
+				history.get(3) instanceof Download
+		);
+		assertEquals(Paths.get("/sync/dir/file"), history.get(3).getSource());
+	}
+
+	@Test
+	public void syncsDeleteOccuredDuringOfflinePeriod() throws Exception {
+		Path path = Paths.get(tmpDir1.toString(), "file");
+		File file = path.toFile();
+		file.createNewFile();
+		waitUntil(() -> manager1.getTransactions().size() == 0, 100000L);
+
+		// mark file up2date on syncer2
+		waitUntil(() -> volume1.navigate().navigate("sync").hasFile("file"));
+		long mtime = volume2.navigate().navigate("sync").getFile("file").mtime;
+		config2.getSyncIndex().update(Paths.get(tmpDir2.toString(), "file"), mtime, true);
+		syncer2.run();
+		syncer2.waitFor();
+
+		waitUntil(() -> !file.exists(), 100000L);
 	}
 }

@@ -15,7 +15,14 @@ public class DefaultClientConfiguration extends Observable implements ClientConf
 	private ObservableList<BoxSyncConfig> boxSyncConfigs = FXCollections.synchronizedObservableList(FXCollections.observableList(new LinkedList<>()));
 
 	public DefaultClientConfiguration() {
-		boxSyncConfigs.addListener((ListChangeListener) c -> boxSyncConfigWasChanged());
+		boxSyncConfigs.addListener((ListChangeListener) c -> {observeBoxSyncConfigs(); boxSyncConfigWasChanged(); });
+		observeBoxSyncConfigs();
+	}
+
+	private void observeBoxSyncConfigs() {
+		for (BoxSyncConfig conf : boxSyncConfigs) {
+			conf.addObserver((o, arg) -> boxSyncConfigWasChanged());
+		}
 	}
 
 	private void boxSyncConfigWasChanged() {

@@ -1,5 +1,6 @@
 package de.qabel.desktop.daemon.management;
 
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
@@ -24,6 +25,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.util.List;
 
+import static de.qabel.desktop.daemon.management.Transaction.STATE.FINISHED;
 import static de.qabel.desktop.daemon.management.Transaction.STATE.SKIPPED;
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.*;
 import static org.junit.Assert.*;
@@ -90,6 +92,19 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 		List<BoxFolder> folders = nav().listFolders();
 		assertEquals(1, folders.size());
 		assertEquals("syncRoot", folders.get(0).name);
+	}
+
+	@Test
+	public void closesUpload() throws Exception {
+		upload.source = tmpPath("/syncRoot");
+		upload.destination = Paths.get("syncRoot");
+		upload.source.toFile().mkdir();
+		upload.isDir = true;
+
+		manager.upload(upload);
+
+		assertEquals(FINISHED, upload.state);
+		assertTrue("upload was not closed", upload.closed);
 	}
 
 	@Test
@@ -176,7 +191,7 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 		upload.source = tmpPath("file");
 		upload.destination = Paths.get("/syncRoot", "targetFile");
 		write("testcontent", upload.source);
-		upload.mtime = modifyMtime(upload.source, 0L);
+		upload.mtime = modifyMtime(upload.source, NEWER);
 		manager.upload(upload);
 		upload.isDir = false;
 
@@ -198,7 +213,7 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 		upload.source = tmpPath("file");
 		upload.destination = Paths.get("/syncRoot", "targetFile");
 		write("testcontent", upload.source);
-		upload.mtime = modifyMtime(upload.source, 0L);
+		upload.mtime = modifyMtime(upload.source, NEWER);
 		manager.upload(upload);
 		upload.isDir = false;
 
@@ -229,6 +244,20 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 		manager.download(download);
 
 		assertTrue(Files.isDirectory(download.destination));
+	}
+
+	@Test
+	public void closesDownload() throws Exception {
+		nav().createFolder("syncRoot");
+		download.source = Paths.get("/syncRoot");
+		download.destination = tmpPath("syncLocal");
+		download.type = CREATE;
+		download.isDir = true;
+
+		manager.download(download);
+
+		assertEquals(FINISHED, download.state);
+		assertTrue("download not closed", download.closed);
 	}
 
 	@Test

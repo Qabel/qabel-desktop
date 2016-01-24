@@ -2,12 +2,15 @@ package de.qabel.desktop.config;
 
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
+import de.qabel.desktop.daemon.sync.worker.index.SyncIndex;
 
 import java.nio.file.Path;
 import java.util.Observable;
+import java.util.Observer;
 
-public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig {
+public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig, Observer {
 	private static final String DEFAULT_NAME = "New Sync Config";
+	private SyncIndex syncIndex = new SyncIndex();
 	private Path localPath;
 	private Path remotePath;
 	private Identity identity;
@@ -99,5 +102,21 @@ public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig {
 	@Override
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Override
+	public SyncIndex getSyncIndex() {
+		syncIndex.addObserver(this);
+		return syncIndex;
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		setChanged();
+		notifyObservers(arg);
+	}
+
+	public void setSyncIndex(SyncIndex syncIndex) {
+		this.syncIndex = syncIndex;
 	}
 }

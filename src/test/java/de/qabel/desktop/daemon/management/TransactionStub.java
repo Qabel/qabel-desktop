@@ -13,6 +13,7 @@ public class TransactionStub implements Transaction {
 	public boolean isDir = true;
 	public STATE state = STATE.INITIALIZING;
 	public Long mtime = 0L;
+	public boolean closed = false;
 
 	@Override
 	public TYPE getType() {
@@ -50,6 +51,21 @@ public class TransactionStub implements Transaction {
 	}
 
 	@Override
+	public Transaction onSuccess(Runnable runnable) {
+		return this;
+	}
+
+	@Override
+	public Transaction onFailure(Runnable runnable) {
+		return this;
+	}
+
+	@Override
+	public Transaction onSkipped(Runnable runnable) {
+		return this;
+	}
+
+	@Override
 	public STATE getState() {
 		return state;
 	}
@@ -57,5 +73,10 @@ public class TransactionStub implements Transaction {
 	@Override
 	public void toState(STATE state) {
 		this.state = state;
+	}
+
+	@Override
+	public void close() {
+		closed = true;
 	}
 }

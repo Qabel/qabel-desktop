@@ -42,6 +42,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 	private final String prefix = UUID.randomUUID().toString();
 	private File file;
 	private File localStorageFile;
+	private Path tempFolder;
 
 	@Before
 	public void setUp() throws Exception {
@@ -50,7 +51,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		CryptoUtils utils = new CryptoUtils();
 		byte[] deviceID = utils.getRandomBytes(16);
 		QblECKeyPair keyPair = new QblECKeyPair();
-		Path tempFolder = Files.createTempDirectory("");
+		tempFolder = Files.createTempDirectory("");
 
 		ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
 		bb.putLong(uuid.getMostSignificantBits());
@@ -81,6 +82,8 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		FileUtils.deleteDirectory(new File(TMP_DIR + "/test"));
 		File file = new File(TMP_DIR + "/" + "tmp1.txt");
 		file.delete();
+
+		FileUtils.deleteDirectory(tempFolder.toFile());
 		super.tearDown();
 	}
 

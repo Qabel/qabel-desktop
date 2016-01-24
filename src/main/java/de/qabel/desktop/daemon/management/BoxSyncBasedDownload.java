@@ -24,6 +24,12 @@ public class BoxSyncBasedDownload extends AbstractBoxSyncBasedTransaction implem
 
 	@Override
 	public String toString() {
-		return "Download[" + getSource() + " to " + getDestination() + "]";
+		String file = isDir() ? "DIR" : "FILE";
+		return "Download[" + getType() + " " + file + " " + getSource() + " to " + getDestination() + "]";
+	}
+
+	@Override
+	public void setMtime(Long mtime) {
+		this.mtime = mtime;
 	}
 }
