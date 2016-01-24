@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static de.qabel.desktop.daemon.management.Transaction.STATE.FINISHED;
 import static de.qabel.desktop.daemon.management.Transaction.STATE.SKIPPED;
@@ -61,6 +62,7 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 			download.volume = volume;
 
 			manager = new DefaultLoadManager();
+			manager.setStagingDelay(10L, TimeUnit.MILLISECONDS);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -228,6 +230,11 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 		assertEquals("content2", IOUtils.toString(syncRoot.download(boxFile)));
 	}
 
+	@Test
+	public void handlesFalseUpdatesLikeCreates() throws Exception {
+		// todo
+	}
+
 	private void write(String content, Path file) throws IOException {
 		Files.write(file, content.getBytes());
 	}
@@ -379,6 +386,54 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 
 		assertEquals(SKIPPED, upload.getState());
 		assertRemoteExists("content", "testfile");
+	}
+
+	@Test
+	public void skipsTempFilesWithStagingArea() throws Exception {
+		manager.setStagingDelay(500L, TimeUnit.MILLISECONDS);
+
+		Path path = tmpPath("file");
+		File file = path.toFile();
+		file.createNewFile();
+		upload.source = path;
+		upload.destination = Paths.get("/testfile");
+		upload.mtime = file.lastModified();
+		upload.type = CREATE;
+		upload.transactionAge = 0L;
+		upload.isDir = false;
+		manager.addUpload(upload);
+		managerNext();
+
+		waitUntil(() -> upload.getState() == Transaction.STATE.WAITING);
+		file.delete();
+		upload.valid = false;
+
+		waitUntil(() -> upload.getState() == Transaction.STATE.SKIPPED);
+	}
+
+	protected void managerNext() {
+		new Thread(() -> {
+			try {
+				manager.next();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}).start();
+	}
+
+	@Test
+	public void downloadsAreNotStaged() throws Exception {
+		manager.setStagingDelay(2000L, TimeUnit.MILLISECONDS);
+
+		download.source = Paths.get("/wayne");
+		download.destination = tmpPath("wayne");
+		download.mtime = 1000L;
+		download.type = CREATE;
+		download.isDir = false;
+		manager.addDownload(download);
+		managerNext();
+
+		waitUntil(() -> upload.getState() == Transaction.STATE.FAILED);
 	}
 
 	private void assertRemoteExists(String content, String testfile) throws QblStorageException, IOException {

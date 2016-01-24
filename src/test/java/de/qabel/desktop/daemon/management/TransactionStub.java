@@ -14,6 +14,12 @@ public class TransactionStub implements Transaction {
 	public STATE state = STATE.INITIALIZING;
 	public Long mtime = 0L;
 	public boolean closed = false;
+	public long transactionAge = 2000L;
+
+	@Override
+	public long transactionAge() {
+		return transactionAge;
+	}
 
 	@Override
 	public TYPE getType() {

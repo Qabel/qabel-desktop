@@ -11,6 +11,7 @@ import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.daemon.sync.event.WatchEvent;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndex;
 import de.qabel.desktop.exceptions.QblStorageException;
+import de.qabel.desktop.storage.BoxNavigation;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
 import org.slf4j.Logger;
@@ -134,7 +135,7 @@ public class DefaultSyncer implements Syncer {
 		Path destination = upload.getDestination();
 		boolean exists;
 		try {
-			CachedBoxNavigation nav = (CachedBoxNavigation) upload.getBoxVolume().navigate();
+			BoxNavigation nav = upload.getBoxVolume().navigate();
 			for (int i = 0; i < destination.getNameCount() - 1; i++) {
 				nav = nav.navigate(destination.getName(i).toString());
 			}

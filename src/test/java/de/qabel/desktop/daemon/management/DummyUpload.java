@@ -6,6 +6,11 @@ import java.nio.file.Path;
 
 public class DummyUpload implements Upload {
 	@Override
+	public long transactionAge() {
+		return 0;
+	}
+
+	@Override
 	public TYPE getType() {
 		return null;
 	}

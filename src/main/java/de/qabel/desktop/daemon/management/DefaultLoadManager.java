@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import static de.qabel.desktop.daemon.management.Transaction.STATE.*;
 
@@ -29,6 +30,8 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 	private final Logger logger = LoggerFactory.getLogger(DefaultLoadManager.class);
 	private final LinkedBlockingQueue<Transaction> transactions = new LinkedBlockingQueue<>();
 	private final List<Transaction> history = new LinkedList<>();
+	private long stagingDelay = 2L;
+	private TimeUnit stagingDelayUnit = TimeUnit.SECONDS;
 
 	@Override
 	public List<Transaction> getTransactions() {
@@ -45,6 +48,12 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 	@Override
 	public List<Transaction> getHistory() {
 		return new LinkedList<>(history);
+	}
+
+	@Override
+	public void setStagingDelay(long amount, TimeUnit unit) {
+		stagingDelay = amount;
+		stagingDelayUnit = unit;
 	}
 
 	@Override
@@ -66,8 +75,16 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 
 	void next() throws InterruptedException {
 		Transaction transaction = transactions.take();
+		if (isStageable(transaction)) {
+			long delay = stagingDelayUnit.toMillis(stagingDelay) - transaction.transactionAge();
+			if (delay > 0) {
+				transaction.toState(WAITING);
+				Thread.sleep(delay);
+			}
+		}
 		logger.trace("handling transaction  " + transaction);
 		try {
+			transaction.toState(RUNNING);
 			if (transaction instanceof Upload) {
 				upload((Upload) transaction);
 			} else {
@@ -76,6 +93,10 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 		} catch (Exception e) {
 			logger.error("Transaction failed: " + e.getMessage(), e);
 		}
+	}
+
+	private boolean isStageable(Transaction transaction) {
+		return transaction instanceof Upload;
 	}
 
 	void download(Download download) throws Exception {

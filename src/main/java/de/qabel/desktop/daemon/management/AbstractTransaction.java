@@ -11,7 +11,7 @@ public abstract class AbstractTransaction implements Transaction {
 	private List<Runnable> successHandler = new LinkedList<>();
 	private List<Runnable> failureHandler = new LinkedList<>();
 	private List<Runnable> skippedHandler = new LinkedList<>();
-
+	private long creationTime = System.currentTimeMillis();
 	public AbstractTransaction(Long mtime) {
 		this.mtime = mtime;
 	}
@@ -58,5 +58,10 @@ public abstract class AbstractTransaction implements Transaction {
 	public Transaction onSkipped(Runnable runnable) {
 		skippedHandler.add(runnable);
 		return this;
+	}
+
+	@Override
+	public long transactionAge() {
+		return System.currentTimeMillis() - creationTime;
 	}
 }

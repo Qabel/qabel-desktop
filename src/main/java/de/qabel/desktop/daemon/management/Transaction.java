@@ -5,6 +5,8 @@ import de.qabel.desktop.storage.BoxVolume;
 import java.nio.file.Path;
 
 public interface Transaction extends AutoCloseable {
+	long transactionAge();
+
 	TYPE getType();
 
 	BoxVolume getBoxVolume();
@@ -26,7 +28,7 @@ public interface Transaction extends AutoCloseable {
 	Transaction onSkipped(Runnable runnable);
 
 	enum TYPE { CREATE, UPDATE, DELETE }
-	enum STATE { INITIALIZING, SCHEDULED, RUNNING, FINISHED, FAILED, SKIPPED }
+	enum STATE { INITIALIZING, SCHEDULED, RUNNING, FINISHED, FAILED, WAITING, SKIPPED }
 
 	STATE getState();
 
