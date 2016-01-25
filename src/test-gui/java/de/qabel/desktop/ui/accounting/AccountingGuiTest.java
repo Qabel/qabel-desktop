@@ -3,7 +3,6 @@ package de.qabel.desktop.ui.accounting;
 import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.ui.AbstractGuiTest;
-import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
 import org.junit.Ignore;
 import org.junit.Test;

@@ -17,13 +17,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+
 import javax.inject.Inject;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
-
-import static de.qabel.desktop.ui.accounting.GsonContact.*;
 
 public class AccountingController extends AbstractController implements Initializable {
 	private Identity selectedIdentity;

@@ -7,8 +7,6 @@ import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
 import de.qabel.desktop.ui.AbstractControllerTest;
-import de.qabel.desktop.ui.accounting.AccountingController;
-import de.qabel.desktop.ui.accounting.AccountingView;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TreeItem;
@@ -44,6 +42,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 	private final String prefix = UUID.randomUUID().toString();
 	private File file;
 	private File localStorageFile;
+	private Path tempFolder;
 
 	@Before
 	public void setUp() throws Exception {
@@ -52,7 +51,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		CryptoUtils utils = new CryptoUtils();
 		byte[] deviceID = utils.getRandomBytes(16);
 		QblECKeyPair keyPair = new QblECKeyPair();
-		Path tempFolder = Files.createTempDirectory("");
+		tempFolder = Files.createTempDirectory("");
 
 		ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
 		bb.putLong(uuid.getMostSignificantBits());
@@ -83,6 +82,8 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		FileUtils.deleteDirectory(new File(TMP_DIR + "/test"));
 		File file = new File(TMP_DIR + "/" + "tmp1.txt");
 		file.delete();
+
+		FileUtils.deleteDirectory(tempFolder.toFile());
 		super.tearDown();
 	}
 
@@ -113,7 +114,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		RemoteFSView view = new RemoteFSView();
 		Identity i = new Identity("test", null, new QblECKeyPair());
 		clientConfiguration.selectIdentity(i);
-		clientConfiguration.setAccount(new Account("Provider","user","auth"));
+		clientConfiguration.setAccount(new Account("http://localhost:9696","user","auth"));
 		controller = (RemoteFSController) view.getPresenter();
 		assertThat(controller.getRessource().getLocale().getCountry(), is("DE"));
 		assertThat(controller.getRessource().getLocale().getLanguage(), is("de"));

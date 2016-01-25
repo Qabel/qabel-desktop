@@ -21,7 +21,7 @@ public class IndexNavigation extends AbstractNavigation {
 	}
 
 	@Override
-	protected DirectoryMetadata reloadMetadata() throws QblStorageException {
+	public DirectoryMetadata reloadMetadata() throws QblStorageException {
 		// TODO: duplicate with BoxVoume.navigate()
 		String rootRef = dm.getFileName();
 		InputStream indexDl = readBackend.download(rootRef);
@@ -30,6 +30,7 @@ public class IndexNavigation extends AbstractNavigation {
 			byte[] encrypted = IOUtils.toByteArray(indexDl);
 			DecryptedPlaintext plaintext = cryptoUtils.readBox(keyPair, encrypted);
 			tmp = File.createTempFile("dir", "db", dm.getTempDir());
+			tmp.deleteOnExit();
 			logger.info("Using " + tmp.toString() + " for the metadata file");
 			OutputStream out = new FileOutputStream(tmp);
 			out.write(plaintext.getPlaintext());

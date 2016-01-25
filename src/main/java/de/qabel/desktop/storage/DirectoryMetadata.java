@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-class DirectoryMetadata {
+public class DirectoryMetadata {
 	private static final Logger logger = LoggerFactory.getLogger(DirectoryMetadata.class.getName());
 	private static final String JDBC_PREFIX = "jdbc:sqlite:";
 	public static final int TYPE_NONE = -1;
@@ -97,6 +97,7 @@ class DirectoryMetadata {
 		File path;
 		try {
 			path = File.createTempFile("dir", "db", tempDir);
+			path.deleteOnExit();
 		} catch (IOException e) {
 			throw new QblStorageIOFailure(e);
 		}
@@ -256,7 +257,7 @@ class DirectoryMetadata {
 		return md.digest();
 	}
 
-	byte[] getVersion() throws QblStorageException {
+	public byte[] getVersion() throws QblStorageException {
 		try (Statement statement = connection.createStatement()) {
 			try (ResultSet rs = statement.executeQuery(
 					"SELECT version FROM version ORDER BY id DESC LIMIT 1")) {
@@ -484,5 +485,10 @@ class DirectoryMetadata {
 		return TYPE_NONE;
 	}
 
+	@Override
+	protected void finalize() throws Throwable {
+		if (path.exists()) {
+			path.delete();
+		}
+	}
 }
-

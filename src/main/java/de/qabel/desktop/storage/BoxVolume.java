@@ -78,6 +78,7 @@ public class BoxVolume {
 			byte[] encrypted = IOUtils.toByteArray(indexDl);
 			DecryptedPlaintext plaintext = cryptoUtils.readBox(keyPair, encrypted);
 			tmp = File.createTempFile("dir", "db", tempDir);
+			tmp.deleteOnExit();
 			OutputStream out = new FileOutputStream(tmp);
 			out.write(plaintext.getPlaintext());
 			out.close();

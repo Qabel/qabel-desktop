@@ -90,6 +90,13 @@ public class DefaultBoxSyncConfigTest {
 	}
 
 	@Test
+	public void notifiesOnSyncIndexUpdate() {
+		config.getSyncIndex().update(Paths.get("tmp"), 1000L, true);
+
+		assertUpdated();
+	}
+
+	@Test
 	public void showsItsIdentits() {
 		assertSame(identity, config.getIdentity());
 	}

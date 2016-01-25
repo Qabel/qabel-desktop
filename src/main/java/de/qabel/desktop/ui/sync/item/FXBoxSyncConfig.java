@@ -11,12 +11,12 @@ public class FXBoxSyncConfig {
 
 	public FXBoxSyncConfig(BoxSyncConfig config) {
 		nameProperty = new SimpleStringProperty(config.getName());
-		localPathProperty = new SimpleStringProperty(config.getLocalPath().toString());
+		localPathProperty = new SimpleStringProperty(config.getLocalPath().toAbsolutePath().toString());
 		remotePathProperty = new SimpleStringProperty(config.getRemotePath().toString());
 
 		config.addObserver((o, arg) -> {
 			nameProperty.set(config.getName());
-			localPathProperty.set(config.getLocalPath().toString());
+			localPathProperty.set(config.getLocalPath().toAbsolutePath().toString());
 			remotePathProperty.set(config.getRemotePath().toString());
 		});
 	}

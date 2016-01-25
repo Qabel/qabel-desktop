@@ -8,6 +8,10 @@ import java.util.List;
 
 public interface BoxNavigation {
 
+	DirectoryMetadata reloadMetadata() throws QblStorageException;
+
+	void setMetadata(DirectoryMetadata dm);
+
 	/**
 	 * Bumps the version and uploads the metadata file
 	 * <p/>
@@ -123,4 +127,23 @@ public interface BoxNavigation {
 	 */
 	void delete(BoxExternal external) throws QblStorageException;
 
+	/**
+	 * Enable or disable autocommits. Implicitly commits after each committable action (defaults to true)
+	 */
+	void setAutocommit(boolean autocommit);
+
+	/**
+	 * Navigate to subfolder by name
+	 */
+	BoxNavigation navigate(String folderName) throws QblStorageException;
+
+	BoxFolder getFolder(String name) throws QblStorageException;
+
+	boolean hasFolder(String name) throws QblStorageException;
+
+	BoxFile getFile(String name) throws QblStorageException;
+
+	DirectoryMetadata getMetadata();
+
+	boolean hasFile(String name) throws QblStorageException;
 }

@@ -3,16 +3,18 @@ package de.qabel.desktop.cellValueFactory;
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.storage.*;
-import javafx.application.Application;
+import de.qabel.desktop.ui.AbstractControllerTest;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,7 +26,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 
-public class BoxObjectCellValueFactoryTest {
+public class BoxObjectCellValueFactoryTest extends AbstractControllerTest {
 
 	private ObservableValue<String> column;
 	private TreeTableView treeTableFile;
@@ -33,27 +35,17 @@ public class BoxObjectCellValueFactoryTest {
 	private TreeItem<BoxObject> rootNodeFile = new TreeItem<>(new BoxFolder("block", "root Folder", new byte[16]));
 	private UUID uuid = UUID.randomUUID();
 	private final String prefix = UUID.randomUUID().toString();
+	private Path tempFolder;
 
-
-	@BeforeClass
-	public static void setUpClass() throws InterruptedException {
-		Thread t = new Thread("JavaFX Init Thread") {
-			public void run() {
-				Application.launch(TestApplication.class, new String[0]);
-			}
-		};
-		t.setDaemon(true);
-		t.start();
-		Thread.sleep(500);
-	}
 
 	@Before
 	public void setUp() throws Exception {
+		super.setUp();
 
 		CryptoUtils utils = new CryptoUtils();
 		byte[] deviceID = utils.getRandomBytes(16);
 		QblECKeyPair keyPair = new QblECKeyPair();
-		Path tempFolder = Files.createTempDirectory("");
+		tempFolder = Files.createTempDirectory("");
 		ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
 		bb.putLong(uuid.getMostSignificantBits());
 		bb.putLong(uuid.getLeastSignificantBits());
@@ -78,6 +70,16 @@ public class BoxObjectCellValueFactoryTest {
 		rootNodeFile.getChildren().add(boxFileTreeItem);
 		treeTableFile = new TreeTableView(rootNodeFile);
 
+	}
+
+	@After
+	public void tearDown() {
+		try {
+			FileUtils.deleteDirectory(tempFolder.toFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		super.tearDown();
 	}
 
 	@Test

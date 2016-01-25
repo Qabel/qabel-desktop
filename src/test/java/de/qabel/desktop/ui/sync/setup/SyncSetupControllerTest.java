@@ -4,9 +4,7 @@ import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.ui.AbstractControllerTest;
-import javafx.application.Platform;
 import javafx.scene.Node;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.junit.Test;
 

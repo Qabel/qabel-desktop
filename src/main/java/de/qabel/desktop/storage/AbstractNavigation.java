@@ -16,7 +16,6 @@ import java.security.InvalidKeyException;
 import java.util.*;
 
 public abstract class AbstractNavigation implements BoxNavigation {
-
 	private static final Logger logger = LoggerFactory.getLogger(AbstractNavigation.class.getName());
 
 	DirectoryMetadata dm;
@@ -29,6 +28,8 @@ public abstract class AbstractNavigation implements BoxNavigation {
 
 	private final Set<String> deleteQueue = new HashSet<>();
 	private final Set<FileUpdate> updatedFiles = new HashSet<>();
+
+	private boolean autocommit = true;
 
 
 	AbstractNavigation(DirectoryMetadata dm, QblECKeyPair keyPair, byte[] deviceId,
@@ -43,10 +44,11 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	}
 
 	@Override
-	public BoxNavigation navigate(BoxFolder target) throws QblStorageException {
+	public synchronized AbstractNavigation navigate(BoxFolder target) throws QblStorageException {
 		try {
 			InputStream indexDl = readBackend.download(target.ref);
 			File tmp = File.createTempFile("dir", "db", dm.getTempDir());
+			tmp.deleteOnExit();
 			KeyParameter key = new KeyParameter(target.key);
 			if (cryptoUtils.decryptFileAuthenticatedSymmetricAndValidateTag(indexDl, tmp, key)) {
 				DirectoryMetadata dm = DirectoryMetadata.openDatabase(
@@ -60,10 +62,13 @@ public abstract class AbstractNavigation implements BoxNavigation {
 		}
 	}
 
-	protected abstract DirectoryMetadata reloadMetadata() throws QblStorageException;
+	@Override
+	public synchronized void setMetadata(DirectoryMetadata dm) {
+		this.dm = dm;
+	}
 
 	@Override
-	public void commit() throws QblStorageException {
+	public synchronized void commit() throws QblStorageException {
 		byte[] version = dm.getVersion();
 		dm.commit();
 		logger.info("Committing version " + new String(Hex.encodeHex(dm.getVersion()))
@@ -148,7 +153,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	}
 
 	@Override
-	public BoxFile upload(String name, File file) throws QblStorageException {
+	public synchronized BoxFile upload(String name, File file) throws QblStorageException {
 		BoxFile oldFile = dm.getFile(name);
 		if (oldFile != null) {
 			throw new QblStorageNameConflict("File already exists");
@@ -157,7 +162,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	}
 
 	@Override
-	public BoxFile overwrite(String name, File file) throws QblStorageException {
+	public synchronized BoxFile overwrite(String name, File file) throws QblStorageException {
 		BoxFile oldFile = dm.getFile(name);
 		if (oldFile == null) {
 			throw new QblStorageNotFound("Could not find file to overwrite");
@@ -173,7 +178,16 @@ public abstract class AbstractNavigation implements BoxNavigation {
 		boxFile.mtime = uploadEncrypted(file, key, "blocks/" + block);
 		updatedFiles.add(new FileUpdate(oldFile, boxFile));
 		dm.insertFile(boxFile);
+		autocommit();
 		return boxFile;
+	}
+
+	private void autocommit() throws QblStorageException {
+		if (!autocommit) {
+			return;
+		}
+
+		commit();
 	}
 
 	protected long uploadEncrypted(File file, KeyParameter key, String block) throws QblStorageException {
@@ -184,7 +198,9 @@ public abstract class AbstractNavigation implements BoxNavigation {
 				throw new QblStorageException("Encryption failed");
 			}
 			outputStream.flush();
-			return writeBackend.upload(block, new FileInputStream(tempFile));
+			long upload = writeBackend.upload(block, new FileInputStream(tempFile));
+			tempFile.delete();
+			return upload;
 		} catch (IOException | InvalidKeyException e) {
 			throw new QblStorageException(e);
 		}
@@ -197,6 +213,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 		KeyParameter key = new KeyParameter(boxFile.key);
 		try {
 			temp = File.createTempFile("upload", "down", dm.getTempDir());
+			temp.deleteOnExit();
 			if (!cryptoUtils.decryptFileAuthenticatedSymmetricAndValidateTag(download, temp, key)) {
 				throw new QblStorageException("Decryption failed");
 			}
@@ -207,7 +224,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	}
 
 	@Override
-	public BoxFolder createFolder(String name) throws QblStorageException {
+	public synchronized BoxFolder createFolder(String name) throws QblStorageException {
 		DirectoryMetadata dm = DirectoryMetadata.newDatabase(null, deviceId, this.dm.getTempDir());
 		KeyParameter secretKey = cryptoUtils.generateSymmetricKey();
 		BoxFolder folder = new BoxFolder(dm.getFileName(), name, secretKey.getKey());
@@ -215,17 +232,19 @@ public abstract class AbstractNavigation implements BoxNavigation {
 		BoxNavigation newFolder = new FolderNavigation(dm, keyPair, secretKey.getKey(),
 				deviceId, readBackend, writeBackend);
 		newFolder.commit();
+		autocommit();
 		return folder;
 	}
 
 	@Override
-	public void delete(BoxFile file) throws QblStorageException {
+	public synchronized void delete(BoxFile file) throws QblStorageException {
 		dm.deleteFile(file);
 		deleteQueue.add("blocks/" + file.block);
+		autocommit();
 	}
 
 	@Override
-	public void delete(BoxFolder folder) throws QblStorageException {
+	public synchronized void delete(BoxFolder folder) throws QblStorageException {
 		BoxNavigation folderNav = navigate(folder);
 		for (BoxFile file : folderNav.listFiles()) {
 			logger.info("Deleting file " + file.name);
@@ -238,6 +257,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 		folderNav.commit();
 		dm.deleteFolder(folder);
 		deleteQueue.add(folder.ref);
+		autocommit();
 	}
 
 	@Override
@@ -260,5 +280,62 @@ public abstract class AbstractNavigation implements BoxNavigation {
 			result = 31 * result + (updated != null ? updated.hashCode() : 0);
 			return result;
 		}
+	}
+
+	@Override
+	public void setAutocommit(boolean autocommit) {
+		this.autocommit = autocommit;
+	}
+
+	@Override
+	public BoxNavigation navigate(String folderName) throws QblStorageException {
+		return navigate(getFolder(folderName));
+	}
+
+	@Override
+	public BoxFolder getFolder(String name) throws QblStorageException {
+		List<BoxFolder> folders = listFolders();
+		for (BoxFolder folder : folders) {
+			if (folder.name.equals(name)) {
+				return folder;
+			}
+		}
+		throw new IllegalArgumentException("no subfolder named " + name);
+	}
+
+	@Override
+	public boolean hasFolder(String name) throws QblStorageException {
+		try {
+			getFolder(name);
+			return true;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean hasFile(String name) throws QblStorageException {
+		try {
+			getFile(name);
+			return true;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
+	}
+
+	@Override
+	public BoxFile getFile(String name) throws QblStorageException {
+		List<BoxFile> files = listFiles();
+		for (BoxFile file : files) {
+			if (file.name.equals(name)) {
+				return file;
+			}
+		}
+		throw new IllegalArgumentException("no file named " + name);
+	}
+
+	@Override
+	public DirectoryMetadata getMetadata() {
+		return dm;
 	}
 }

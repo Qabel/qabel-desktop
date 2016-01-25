@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import java.nio.file.Paths;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class SyncItemControllerGuiTest extends AbstractGuiTest<SyncItemController> {
 	private Identity identity;
@@ -38,18 +38,20 @@ public class SyncItemControllerGuiTest extends AbstractGuiTest<SyncItemControlle
 	@Test
 	public void showsItemsProperties() {
 		assertEquals("testsync", name().getText());
-		assertEquals("tmp", localPath().getText());
+		assertEquals(Paths.get("tmp").toAbsolutePath().toString(), localPath().getText());
 		assertEquals("tmp", remotePath().getText());
 	}
 
 	@Test
 	public void refreshesOnConfigChange() {
-		syncConfig.setName("changed");
-		syncConfig.setLocalPath(Paths.get("to something"));
-		syncConfig.setRemotePath(Paths.get("else"));
+		runLaterAndWait(() -> {
+			syncConfig.setName("changed");
+			syncConfig.setLocalPath(Paths.get("to something"));
+			syncConfig.setRemotePath(Paths.get("else"));
+		});
 
 		assertEquals("changed", name().getText());
-		assertEquals("to something", localPath().getText());
+		assertEquals(Paths.get("to something").toAbsolutePath().toString(), localPath().getText());
 		assertEquals("else", remotePath().getText());
 	}
 

@@ -1,6 +1,5 @@
 package de.qabel.desktop.ui.actionlog.item;
 
-import de.qabel.core.config.Identity;
 import de.qabel.desktop.ui.AbstractController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

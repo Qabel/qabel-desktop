@@ -12,7 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
-public class LocalWriteBackend extends StorageWriteBackend {
+public class LocalWriteBackend implements StorageWriteBackend {
 
 	private static final Logger logger = LoggerFactory.getLogger(LocalReadBackend.class.getName());
 	private Path root;

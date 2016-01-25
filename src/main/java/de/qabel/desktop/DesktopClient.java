@@ -8,15 +8,17 @@ import de.qabel.core.exceptions.QblInvalidEncryptionKeyException;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.factory.ClientConfigurationFactory;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
+import de.qabel.desktop.config.factory.S3BoxVolumeFactory;
+import de.qabel.desktop.daemon.management.DefaultLoadManager;
+import de.qabel.desktop.daemon.sync.SyncDaemon;
+import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
 import de.qabel.desktop.repository.AccountRepository;
 import de.qabel.desktop.repository.ClientConfigurationRepository;
-import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.persistence.PersistenceAccountRepository;
 import de.qabel.desktop.repository.persistence.PersistenceClientConfigurationRepository;
 import de.qabel.desktop.repository.persistence.PersistenceContactRepository;
 import de.qabel.desktop.repository.persistence.PersistenceIdentityRepository;
-import de.qabel.desktop.ui.LayoutController;
 import de.qabel.desktop.ui.LayoutView;
 import de.qabel.desktop.ui.accounting.login.LoginView;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
@@ -25,7 +27,6 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.stage.Stage;
-import org.apache.commons.lang3.SystemUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -40,57 +41,65 @@ import java.util.Map;
 public class DesktopClient extends Application {
 	private static final String TITLE = "Qabel Desktop Client";
 	Scene scene;
+	private static String DATABASE_FILE = "db.sqlite";
+	private final Map<String, Object> customProperties = new HashMap<>();
 	private LayoutView view;
 
 	public static void main(String[] args) throws Exception {
+		if (args.length > 0) {
+			DATABASE_FILE = args[0];
+		}
+		UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 		launch(args);
 	}
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
 		setUserAgentStylesheet(STYLESHEET_MODENA);
 
-		final Map<String, Object> customProperties = new HashMap<>();
-		ClientConfiguration config = initDiContainer(customProperties);
+		ClientConfiguration config = initDiContainer();
 
-		SceneAntialiasing aa = SystemUtils.IS_OS_LINUX ? SceneAntialiasing.DISABLED : SceneAntialiasing.BALANCED;
-		Scene scene;
-		view = new LayoutView();
-
-		if (!config.hasAccount()) {
-
-			scene = new Scene(view.getView(), 370, 530, true, aa);
-			config.addObserver((o, arg) -> {
-				if (arg instanceof Account) {
-					Scene layoutScene = new Scene(view.getView(), 800, 600, true, aa);
-					Platform.runLater(() -> primaryStage.setScene(layoutScene));
-				}
-			});
-		} else {
-			scene = new Scene(view.getView(), 800, 600);
-		}
-
+		SceneAntialiasing aa = SceneAntialiasing.DISABLED;
 		primaryStage.getIcons().setAll(new javafx.scene.image.Image(getClass().getResourceAsStream("/logo-invert_small.png")));
+		Scene scene;
+
+		view = new LayoutView();
+		config.addObserver((o, arg) -> {
+			if (arg instanceof Account) {
+				Scene layoutScene = new Scene(view.getView(), 800, 600, true, aa);
+				Platform.runLater(() -> primaryStage.setScene(layoutScene));
+			}
+		});
+
 
 		Platform.setImplicitExit(false);
+		primaryStage.setTitle(TITLE);
+		scene = new Scene(new LoginView().getView(), 370, 530, true, aa);
 		primaryStage.setScene(scene);
 		setTrayIcon(primaryStage);
-		primaryStage.setTitle(TITLE);
-		primaryStage.show();
+
+		new Thread(getSyncDaemon(config)).start();
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
 				Platform.exit();
 			}
 		});
+		primaryStage.show();
 	}
 
-	private ClientConfiguration initDiContainer(Map<String, Object> customProperties) throws QblInvalidEncryptionKeyException, URISyntaxException {
+	protected SyncDaemon getSyncDaemon(ClientConfiguration config) {
+		DefaultLoadManager loadManager = new DefaultLoadManager();
+		customProperties.put("loadManager", loadManager);
+		new Thread(loadManager, "TransactionManager").start();
+		return new SyncDaemon(config.getBoxSyncConfigs(), new DefaultSyncerFactory(new S3BoxVolumeFactory(), loadManager));
+	}
 
-		Persistence<String> persistence = new SQLitePersistence("db.sqlite", "qabel".toCharArray(), 65536);
+	private ClientConfiguration initDiContainer() throws QblInvalidEncryptionKeyException, URISyntaxException {
+		Persistence<String> persistence = new SQLitePersistence(DATABASE_FILE, "qabel".toCharArray(), 65536);
 		customProperties.put("persistence", persistence);
 		customProperties.put("dropUrlGenerator", new DropUrlGenerator("http://localhost:5000"));
+		customProperties.put("boxVolumeFactory", new S3BoxVolumeFactory());
 		PersistenceIdentityRepository identityRepository = new PersistenceIdentityRepository(persistence);
 		customProperties.put("identityRepository", identityRepository);
 		PersistenceAccountRepository accountRepository = new PersistenceAccountRepository(persistence);
@@ -129,7 +138,7 @@ public class DesktopClient extends Application {
 		SystemTray sTray = SystemTray.getSystemTray();
 		primaryStage.setOnCloseRequest(arg0 -> primaryStage.hide());
 		JPopupMenu popup = buildSystemTrayJPopupMenu(primaryStage);
-		URL url = System.class.getResource("/logo.png");
+		URL url = System.class.getResource("/logo-invert_small.png");
 		Image img = Toolkit.getDefaultToolkit().getImage(url);
 		TrayIcon icon = new TrayIcon(img, "Qabel");
 

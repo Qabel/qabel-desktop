@@ -1,16 +1,12 @@
 package de.qabel.desktop.ui.remotefs;
 
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
-import de.qabel.core.accounting.AccountingHTTP;
-import de.qabel.core.accounting.AccountingProfile;
 import de.qabel.core.config.Account;
-import de.qabel.core.config.AccountingServer;
 import de.qabel.core.config.Identity;
-import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
-import de.qabel.core.exceptions.QblInvalidCredentials;
 import de.qabel.desktop.cellValueFactory.BoxObjectCellValueFactory;
 import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.factory.BoxVolumeFactory;
+import de.qabel.desktop.daemon.management.MagicEvilPrefixSource;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.exceptions.QblStorageNotFound;
 import de.qabel.desktop.storage.*;
@@ -26,8 +22,6 @@ import javafx.stage.FileChooser;
 
 import javax.inject.Inject;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -49,6 +43,9 @@ public class RemoteFSController extends AbstractController implements Initializa
 
 	@Inject
 	ClientConfiguration clientConfiguration;
+
+	@Inject
+	BoxVolumeFactory boxVolumeFactory;
 
 	@FXML
 	private TreeTableView<BoxObject> treeTable;
@@ -88,35 +85,10 @@ public class RemoteFSController extends AbstractController implements Initializa
 	private void initTreeTableView() {
 
 		Account account = clientConfiguration.getAccount();
-		AccountingHTTP http = null;
 		keyPair = clientConfiguration.getSelectedIdentity().getPrimaryKeyPair();
 		bucket = "qabel";
 
-		try {
-			http = new AccountingHTTP(
-					new AccountingServer(
-							new URL(account.getProvider()).toURI(),
-							account.getUser(), account.getAuth()),
-					new AccountingProfile());
-		} catch (URISyntaxException | MalformedURLException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			if(http == null){
-				return;
-			}
-
-			http.login();
-			http.updatePrefixes();
-			if (http.getProfile().getPrefixes().isEmpty()) {
-				http.createPrefix();
-			}
-			prefix = http.getProfile().getPrefixes().get(0);
-
-		} catch (IOException | QblInvalidCredentials e) {
-			e.printStackTrace();
-		}
+		prefix = MagicEvilPrefixSource.getPrefix(account);
 
 		try {
 			nav = createSetup();
@@ -137,14 +109,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 	}
 
 	private BoxNavigation createSetup() throws QblStorageException {
-
-		CryptoUtils utils = new CryptoUtils();
-		byte[] deviceID = utils.getRandomBytes(16);
-		DefaultAWSCredentialsProviderChain chain = new DefaultAWSCredentialsProviderChain();
-
-
-		this.volume = new BoxVolume(bucket, prefix, chain.getCredentials(), keyPair, deviceID,
-				new File(System.getProperty("java.io.tmpdir")));
+		volume = boxVolumeFactory.getVolume(clientConfiguration.getAccount(), clientConfiguration.getSelectedIdentity());
 
 		try {
 			nav = volume.navigate();

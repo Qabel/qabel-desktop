@@ -29,13 +29,13 @@ import static org.junit.Assert.assertThat;
 public abstract class BoxVolumeTest {
 	private static final Logger logger = LoggerFactory.getLogger(BoxVolumeTest.class.getName());
 
-	BoxVolume volume;
-	BoxVolume volume2;
-	byte[] deviceID;
-	byte[] deviceID2;
-	QblECKeyPair keyPair;
-	final String bucket = "qabel";
-	final String prefix = UUID.randomUUID().toString();
+	protected BoxVolume volume;
+	protected BoxVolume volume2;
+	protected byte[] deviceID;
+	protected byte[] deviceID2;
+	protected QblECKeyPair keyPair;
+	protected final String bucket = "qabel";
+	protected final String prefix = UUID.randomUUID().toString();
 	private final String testFileName = "src/test/java/de/qabel/desktop/storage/testFile.txt";
 
 	@Before
@@ -51,7 +51,7 @@ public abstract class BoxVolumeTest {
 		volume.createIndex(bucket, prefix);
 	}
 
-	abstract void setUpVolume() throws IOException;
+	protected abstract void setUpVolume() throws IOException;
 
 	@After
 	public void cleanUp() throws IOException {
@@ -76,14 +76,12 @@ public abstract class BoxVolumeTest {
 		BoxNavigation nav = volume.navigate();
 		BoxFile boxFile = uploadFile(nav);
 		nav.delete(boxFile);
-		nav.commit();
 		nav.download(boxFile);
 	}
 
 	private BoxFile uploadFile(BoxNavigation nav) throws QblStorageException, IOException {
 		File file = new File(testFileName);
 		BoxFile boxFile = nav.upload("foobar", file);
-		nav.commit();
 		BoxNavigation nav_new = volume.navigate();
 		checkFile(boxFile, nav_new);
 		return boxFile;
@@ -101,7 +99,6 @@ public abstract class BoxVolumeTest {
 	public void testCreateFolder() throws QblStorageException, IOException {
 		BoxNavigation nav = volume.navigate();
 		BoxFolder boxFolder = nav.createFolder("foobdir");
-		nav.commit();
 
 		BoxNavigation folder = nav.navigate(boxFolder);
 		assertNotNull(folder);
@@ -120,15 +117,12 @@ public abstract class BoxVolumeTest {
 	public void testDeleteFolder() throws QblStorageException, IOException {
 		BoxNavigation nav = volume.navigate();
 		BoxFolder boxFolder = nav.createFolder("foobdir");
-		nav.commit();
 
 		BoxNavigation folder = nav.navigate(boxFolder);
 		BoxFile boxFile = uploadFile(folder);
 		BoxFolder subfolder = folder.createFolder("subfolder");
-		folder.commit();
 
 		nav.delete(boxFolder);
-		nav.commit();
 		BoxNavigation nav_after = volume.navigate();
 		assertThat(nav_after.listFolders().isEmpty(), is(true));
 		checkDeleted(boxFolder, subfolder, boxFile, nav_after);
@@ -163,24 +157,24 @@ public abstract class BoxVolumeTest {
 	public void testOverwriteFileNotFound() throws QblStorageException, IOException {
 		BoxNavigation nav = volume.navigate();
 		File file = new File(testFileName);
-		BoxFile boxFile = nav.overwrite("foobar", file);
+		nav.overwrite("foobar", file);
 	}
 
 	@Test
 	public void testOverwriteFile() throws QblStorageException, IOException {
 		BoxNavigation nav = volume.navigate();
 		File file = new File(testFileName);
-		BoxFile boxFile = nav.upload("foobar", file);
-		nav.commit();
+		nav.upload("foobar", file);
 		nav.overwrite("foobar", file);
-		nav.commit();
 		assertThat(nav.listFiles().size(), is(1));
 	}
 
 	@Test
 	public void testConflictFileUpdate() throws QblStorageException, IOException {
 		BoxNavigation nav = volume.navigate();
+		nav.setAutocommit(false);
 		BoxNavigation nav2 = volume2.navigate();
+		nav2.setAutocommit(false);
 		File file = new File(testFileName);
 		nav.upload("foobar", file);
 		nav2.upload("foobar", file);
@@ -206,7 +200,9 @@ public abstract class BoxVolumeTest {
 	@Test
 	public void testNameConflictOnDifferentClients() throws QblStorageException, IOException {
 		BoxNavigation nav = volume.navigate();
+		nav.setAutocommit(false);
 		BoxNavigation nav2 = volume2.navigate();
+		nav2.setAutocommit(false);
 		File file = new File(testFileName);
 		nav.upload("foobar", file);
 		nav2.createFolder("foobar");
@@ -224,7 +220,9 @@ public abstract class BoxVolumeTest {
 	@Ignore
 	public void testFolderNameConflictOnDifferentClients() throws QblStorageException, IOException {
 		BoxNavigation nav = volume.navigate();
+		nav.setAutocommit(false);
 		BoxNavigation nav2 = volume2.navigate();
+		nav2.setAutocommit(false);
 		File file = new File(testFileName);
 		nav.createFolder("foobar");
 		nav2.upload("foobar", file);

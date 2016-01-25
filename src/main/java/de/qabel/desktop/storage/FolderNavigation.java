@@ -32,12 +32,13 @@ public class FolderNavigation extends AbstractNavigation {
 	}
 
 	@Override
-	protected DirectoryMetadata reloadMetadata() throws QblStorageException {
+	public DirectoryMetadata reloadMetadata() throws QblStorageException {
 		logger.info("Reloading directory metadata");
 		// duplicate of navigate()
 		try {
 			InputStream indexDl = readBackend.download(dm.getFileName());
 			File tmp = File.createTempFile("dir", "db", dm.getTempDir());
+			tmp.deleteOnExit();
 			KeyParameter key = new KeyParameter(this.key);
 			if (cryptoUtils.decryptFileAuthenticatedSymmetricAndValidateTag(indexDl, tmp, key)) {
 				return DirectoryMetadata.openDatabase(tmp, deviceId, dm.getFileName(), dm.getTempDir());

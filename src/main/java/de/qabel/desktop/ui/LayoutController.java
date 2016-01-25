@@ -5,16 +5,13 @@ import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.ui.accounting.AccountingView;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
+import de.qabel.desktop.ui.actionlog.ActionlogView;
 import de.qabel.desktop.ui.contact.ContactView;
 import de.qabel.desktop.ui.invite.InviteView;
-import de.qabel.desktop.ui.actionlog.ActionlogView;
 import de.qabel.desktop.ui.remotefs.RemoteFSView;
 import de.qabel.desktop.ui.sync.SyncView;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Bounds;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -81,17 +78,23 @@ public class LayoutController extends AbstractController implements Initializabl
 		clientConfiguration.addObserver((o, arg) -> updateIdentity());
 	}
 
-
+	private String lastAlias;
 
 	private void updateIdentity() {
 		Identity identity = clientConfiguration.getSelectedIdentity();
 		if (identity == null) {
 			return;
 		}
-
-		new AvatarView(e -> identity.getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
 		mail.setText(clientConfiguration.getAccount().getUser());
-		alias.setText(identity.getAlias());
+
+		final String currentAlias = identity.getAlias();
+		if (currentAlias.equals(lastAlias)) {
+			return;
+		}
+
+		new AvatarView(e ->  currentAlias).getViewAsync(avatarContainer.getChildren()::setAll);
+		alias.setText(currentAlias);
+		lastAlias = currentAlias;
 	}
 
 	private HBox createNavItem(String label, FXMLView view) {

@@ -10,7 +10,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class LocalReadBackend extends StorageReadBackend {
+public class LocalReadBackend implements StorageReadBackend {
 
 	private static final Logger logger = LoggerFactory.getLogger(LocalReadBackend.class.getName());
 	private final Path root;
@@ -21,7 +21,7 @@ public class LocalReadBackend extends StorageReadBackend {
 	}
 
 
-	InputStream download(String name) throws QblStorageException {
+	public InputStream download(String name) throws QblStorageException {
 		Path file = root.resolve(name);
 		logger.info("Downloading file path " + file.toString());
 		try {
