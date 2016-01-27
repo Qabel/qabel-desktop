@@ -73,15 +73,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 	protected FxRobot clickOn(String query) {
 		baseFXRobot.waitForIdle();
 		Node node = getFirstNode(query);
-		double x = -1;
-		double y = -1;
-		while (hasMoved(node, x, y)) {
-			Point2D position = robot.point(node).getPosition();
-			x = position.getX();
-			y = position.getY();
-			robot.moveTo(query);
-		}
-		return robot.moveTo(query).clickOn(query);
+		return clickOn(node);
 	}
 
 	private boolean hasMoved(Node node, double x, double y) {
@@ -90,6 +82,16 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 	}
 
 	protected FxRobot clickOn(Node node) {
+		baseFXRobot.waitForIdle();
+		double x = -1;
+		double y = -1;
+		while (hasMoved(node, x, y)) {
+			Point2D position = robot.point(node).getPosition();
+			x = position.getX();
+			y = position.getY();
+			robot.moveTo(node);
+			try { Thread.sleep(100); } catch (InterruptedException ignored) {}
+		}
 		return robot.moveTo(node).clickOn(node);
 	}
 

@@ -110,18 +110,26 @@ public class SyncIntegrationTest {
 		}
 	}
 
+	protected static void waitUntil(Callable<Boolean> evaluate, Callable<String> errorMessage) {
+		waitUntil(evaluate, 1000L, errorMessage);
+	}
+
 	protected static void waitUntil(Callable<Boolean> evaluate) {
 		long timeout = 1000L;
 		waitUntil(evaluate, timeout);
 	}
 
 	protected static void waitUntil(Callable<Boolean> evaluate, long timeout) {
+		waitUntil(evaluate, timeout, null);
+	}
+
+	protected static void waitUntil(Callable<Boolean> evaluate, long timeout, Callable<String> errorMessage) {
 		try {
 			long startTime = System.currentTimeMillis();
 			while (!evaluate.call()) {
 				Thread.yield();
 				if (System.currentTimeMillis() - timeout > startTime) {
-					fail("wait timeout");
+					fail("wait timeout: " + (errorMessage == null ? "" : errorMessage.call()));
 				}
 			}
 		} catch (Exception e) {
@@ -168,6 +176,7 @@ public class SyncIntegrationTest {
 		assertTrue(history.get(2) instanceof Download);
 		assertEquals(Paths.get("/sync/dir"), history.get(2).getSource());
 
+		waitUntil(() -> history.size() > 3, () -> "too few events: " + history);
 		assertTrue(
 				"an unecpected " + history.get(3) + " occured after DOWNLAOD /sync/dir",
 				history.get(3) instanceof Download
