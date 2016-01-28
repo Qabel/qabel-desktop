@@ -96,9 +96,9 @@ public class DesktopClient extends Application {
 	}
 
 	private ClientConfiguration initDiContainer() throws QblInvalidEncryptionKeyException, URISyntaxException {
-		Persistence<String> persistence = new SQLitePersistence(DATABASE_FILE, "qabel".toCharArray(), 65536);
+		Persistence<String> persistence = new SQLitePersistence(DATABASE_FILE);
 		customProperties.put("persistence", persistence);
-		customProperties.put("dropUrlGenerator", new DropUrlGenerator("http://localhost:5000"));
+		customProperties.put("dropUrlGenerator", new DropUrlGenerator("https://qdrop.prae.me"));
 		customProperties.put("boxVolumeFactory", new S3BoxVolumeFactory());
 		PersistenceIdentityRepository identityRepository = new PersistenceIdentityRepository(persistence);
 		customProperties.put("identityRepository", identityRepository);

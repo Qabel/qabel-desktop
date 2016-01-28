@@ -1,5 +1,6 @@
 package de.qabel.desktop.ui.actionlog.item;
 
+import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.ui.AbstractController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,12 +19,12 @@ public class MyActionlogItemController extends AbstractController implements Ini
 	Label textlabel;
 
 	@Inject
-	private String text;
+	private DropMessage dropMessage;
 
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		textlabel.setText(text);
+		textlabel.setText(dropMessage.getDropPayload() + " - " + dropMessage.getCreationDate().getTime());
 		textlabel.setWrapText(true);
 		textlabel.setTextAlignment(TextAlignment.JUSTIFY);
 

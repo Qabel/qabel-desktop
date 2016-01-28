@@ -1,5 +1,7 @@
 package de.qabel.desktop.ui.actionlog.item;
 
+import de.qabel.core.config.Contact;
+import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
 import javafx.fxml.FXML;
@@ -22,20 +24,22 @@ public class OtherActionlogItemController extends AbstractController implements 
 	Pane avatarContainer;
 
 	@Inject
-	OtherTextWrapper wrapper;
+	DropMessage dropMessage;
 
+	@Inject
+	Contact contact;
 
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		textlabel.setText(wrapper.getText());
+		textlabel.setText(dropMessage.getDropPayload() + " - " + dropMessage.getCreationDate().getTime());
 		textlabel.setWrapText(true);
 		textlabel.setTextAlignment(TextAlignment.JUSTIFY);
 		updateAvatar();
 	}
 
 	private void updateAvatar() {
-		new AvatarView(e -> wrapper.getContact().getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
+		new AvatarView(e -> contact.getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
 	}
 
 

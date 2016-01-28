@@ -2,16 +2,28 @@ package de.qabel.desktop.ui.actionlog;
 
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
+import de.qabel.core.crypto.AbstractBinaryDropMessage;
+import de.qabel.core.crypto.BinaryDropMessageV0;
+import de.qabel.core.drop.DropMessage;
+import de.qabel.core.drop.DropURL;
+import de.qabel.core.exceptions.QblDropInvalidMessageSizeException;
+import de.qabel.core.exceptions.QblDropPayloadSizeException;
+import de.qabel.core.exceptions.QblSpoofedSenderException;
+import de.qabel.core.exceptions.QblVersionMismatchException;
+import de.qabel.core.http.DropHTTP;
+import de.qabel.core.http.HTTPResult;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.actionlog.item.ActionlogItemView;
 import de.qabel.desktop.ui.actionlog.item.MyActionlogItemView;
 import de.qabel.desktop.ui.actionlog.item.OtherActionlogItemView;
-import de.qabel.desktop.ui.actionlog.item.OtherTextWrapper;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 import javax.inject.Inject;
@@ -21,10 +33,7 @@ import java.util.*;
 
 public class ActionlogController extends AbstractController implements Initializable {
 
-
-	ResourceBundle resourceBundle;
 	List<ActionlogItemView> messageView = new LinkedList<>();
-
 
 	@FXML
 	VBox messages;
@@ -32,64 +41,140 @@ public class ActionlogController extends AbstractController implements Initializ
 	@FXML
 	ScrollPane scroller;
 
+	@FXML
+	TextArea textarea;
+
 	@Inject
 	ClientConfiguration clientConfiguration;
 
 
+	Identity identity;
+	Contact c;
+	Date lastDate;
+	DropHTTP dHTTP = new DropHTTP();
+
 	public void initialize(URL location, ResourceBundle resources) {
 		try {
-			loadMessages();
-		} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
+			identity = clientConfiguration.getSelectedIdentity();
+			c = new Contact(identity, identity.getAlias(), identity.getDropUrls(), identity.getEcPublicKey());
+			receiveDropMessages(null);
+
+			scroller.setVvalue(scroller.getVmax());
+			addChangeListener();
+
+		} catch (QblVersionMismatchException | QblDropInvalidMessageSizeException | QblSpoofedSenderException entityNotFoundExcepion) {
 			entityNotFoundExcepion.printStackTrace();
 		}
 	}
 
-	void loadMessages() throws EntityNotFoundExcepion {
-		messages.getChildren().clear();
-		createMessageItems();
-		if(scroller.getVmax() == scroller.getVvalue()) {
-			scroller.setVvalue(scroller.getVmax());
+	private void addChangeListener() {
+		((Region) scroller.getContent()).heightProperty().addListener((ov, old_val, new_val) -> {
+			if (scroller.getVvalue() != scroller.getVmax()) {
+				scroller.setVvalue(scroller.getVmax());
+			}
+		});
+	}
+
+	@FXML
+	protected void handleSubmitButtonAction(ActionEvent event) throws QblDropPayloadSizeException, EntityNotFoundExcepion {
+		DropMessage d = sendDropMessage(c, textarea.getText());
+		addOwnMessageToActionlog(d);
+	}
+
+	@FXML
+	protected void handleReloadMessagesButtonAction(ActionEvent event) {
+		try {
+			receiveDropMessages(lastDate);
+		} catch (QblDropInvalidMessageSizeException | QblVersionMismatchException | QblSpoofedSenderException e) {
+			e.printStackTrace();
 		}
 	}
 
-	private void createMessageItems() {
-		String text;
+	void receiveDropMessages(Date siceDate) throws QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException {
+		List<DropMessage> dropMessages = getDropMassages(siceDate);
+		for (DropMessage d : dropMessages) {
+			addMessageToActionlog(d);
+		}
+	}
+
+	void addMessageToActionlog(DropMessage dropMessage) {
+		lastDate = dropMessage.getCreationDate();
 		Map<String, Object> injectionContext = new HashMap<>();
-		text = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</html>";
-		injectionContext.put("text", text);
-		MyActionlogItemView myItemView = new MyActionlogItemView(injectionContext::get);
-		messages.getChildren().add(myItemView.getView());
-		messageView.add(myItemView);
-
-		injectionContext = new HashMap<>();
-
-		OtherTextWrapper wrapper = new OtherTextWrapper();
-		wrapper.setText(text);
-		Identity i = clientConfiguration.getSelectedIdentity();
-		Contact contact = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
-		wrapper.setContact(contact);
-		injectionContext.put("wrapper", wrapper);
+		injectionContext.put("dropMessage", dropMessage);
+		injectionContext.put("contact", ((Contact) dropMessage.getSender()).getAlias());
 		OtherActionlogItemView otherItemView = new OtherActionlogItemView(injectionContext::get);
 		messages.getChildren().add(otherItemView.getView());
 		messageView.add(otherItemView);
-		text = "short Text";
-		injectionContext = new HashMap<>();
-		injectionContext.put("text", text);
-		myItemView = new MyActionlogItemView(injectionContext::get);
-		messages.getChildren().add(myItemView.getView());
-		messageView.add(myItemView);
-
-		wrapper = new OtherTextWrapper();
-		wrapper.setText(text);
-		i = clientConfiguration.getSelectedIdentity();
-		contact = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
-		wrapper.setContact(contact);
-		injectionContext.put("wrapper", wrapper);
-		otherItemView = new OtherActionlogItemView(injectionContext::get);
-		messages.getChildren().add(otherItemView.getView());
-		messageView.add(otherItemView);
-
 	}
 
+	void addOwnMessageToActionlog(DropMessage dropMessage) {
+		Map<String, Object> injectionContext = new HashMap<>();
+		injectionContext.put("dropMessage", dropMessage);
+		MyActionlogItemView myItemView = new MyActionlogItemView(injectionContext::get);
+		messages.getChildren().add(myItemView.getView());
+		messageView.add(myItemView);
+		textarea.setText("");
+	}
 
+	DropMessage sendDropMessage(final Contact c, String text) throws QblDropPayloadSizeException {
+		DropMessage d = new DropMessage(identity, text, "dropMessage");
+		final BinaryDropMessageV0 binaryMessage = new BinaryDropMessageV0(d);
+		final byte[] messageByteArray = binaryMessage.assembleMessageFor(c);
+		DropURL dropURL = convertCollectionIntoDropUrl(c.getDropUrls());
+
+		HTTPResult<?> dropResult = dHTTP.send(dropURL.getUri(), messageByteArray);
+
+		if (dropResult.getResponseCode() != 200) {
+			return null;
+		}
+		return d;
+	}
+
+	private DropURL convertCollectionIntoDropUrl(Set<DropURL> dropUrls) {
+		for (DropURL d : dropUrls) {
+			return d;
+		}
+		return null;
+	}
+
+	private List<DropMessage> getDropMassages(Date siceDate) throws QblVersionMismatchException, QblDropInvalidMessageSizeException, QblSpoofedSenderException {
+		DropURL d = convertCollectionIntoDropUrl(identity.getDropUrls());
+		LinkedList<DropMessage> dropMessages = new LinkedList<>();
+
+		if (d == null) {
+			return null;
+		}
+
+		HTTPResult<Collection<byte[]>> result = receiveMessages(siceDate, d);
+		createDropMessagesFromHttpResult(dropMessages, result);
+		return dropMessages;
+	}
+
+	private void createDropMessagesFromHttpResult(LinkedList<DropMessage> dropMessages, HTTPResult<Collection<byte[]>> result) throws QblVersionMismatchException, QblDropInvalidMessageSizeException, QblSpoofedSenderException {
+		for (byte[] message : result.getData()) {
+			AbstractBinaryDropMessage binMessage;
+			byte binaryFormatVersion = message[0];
+
+			if (binaryFormatVersion != 0) {
+				continue;
+			}
+
+			binMessage = new BinaryDropMessageV0(message);
+			DropMessage dropMessage = binMessage.disassembleMessage(identity);
+			if (dropMessage != null) {
+				dropMessages.add(dropMessage);
+				lastDate = dropMessage.getCreationDate();
+			}
+		}
+	}
+
+	private HTTPResult<Collection<byte[]>> receiveMessages(Date siceDate, DropURL d) {
+		HTTPResult<Collection<byte[]>> result;
+		if (siceDate == null) {
+			result = dHTTP.receiveMessages(d.getUri());
+		} else {
+			result = dHTTP.receiveMessages(d.getUri(), siceDate.getTime());
+		}
+		return result;
+	}
 }

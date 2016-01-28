@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
-<ScrollPane fx:id="scroller" hbarPolicy="NEVER" vbarPolicy="ALWAYS" xmlns="http://javafx.com/javafx/8"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.actionlog.ActionlogController" fitToWidth="true">
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-        <VBox>
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.actionlog.ActionlogController" prefWidth="600.0">
+    <center>
+        <ScrollPane fx:id="scroller" fitToWidth="true" prefWidth="600.0" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+           <content>
+               <VBox>
+                   <children>
+                       <VBox fx:id="messages" alignment="BOTTOM_LEFT">
+                    </VBox>
+                   </children>
+               </VBox>
+           </content>
+        </ScrollPane>
+    </center>
+    <bottom>
+        <HBox>
             <children>
-                <VBox fx:id="messages" alignment="BOTTOM_LEFT">
-                </VBox>
+                <TextArea fx:id="textarea" prefHeight="68.0" prefWidth="300.0" wrapText="true" BorderPane.alignment="BOTTOM_CENTER" />
+                <VBox>
+               <children>
+                  <Button mnemonicParsing="false" onAction="#handleSubmitButtonAction" text="sbumit" />
+                  <Button mnemonicParsing="false" onAction="#handleReloadMessagesButtonAction" text="reload" />
+               </children></VBox>
             </children>
-            <children>
-                <TextArea fx:id="textarea" prefHeight="68.0" prefWidth="300.0" wrapText="true"
-                          BorderPane.alignment="BOTTOM_CENTER"/>
-            </children>
-        </VBox>
-</ScrollPane>
+
+        </HBox>
+    </bottom>
+</BorderPane>
