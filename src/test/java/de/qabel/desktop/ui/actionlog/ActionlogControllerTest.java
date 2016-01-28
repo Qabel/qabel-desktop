@@ -6,6 +6,7 @@ import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.drop.DropURL;
 import de.qabel.core.exceptions.*;
+import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import javafx.scene.layout.VBox;
 import org.junit.Before;
@@ -47,7 +48,7 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void sendDropMessageTest() throws QblDropPayloadSizeException {
+	public void sendDropMessageTest() throws QblDropPayloadSizeException, PersistenceException {
 		i = identityBuilderFactory.factory().withAlias("TestAlias").build();
 		c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
 		createController(i, c);
@@ -57,7 +58,7 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void sendDropMessageFailTest() throws QblDropPayloadSizeException, URISyntaxException, QblDropInvalidURL {
+	public void sendDropMessageFailTest() throws QblDropPayloadSizeException, URISyntaxException, QblDropInvalidURL, PersistenceException {
 		Collection<DropURL> collection = new ArrayList<>();
 		DropURL drpoUrl = new DropURL(fakeURL);
 		collection.add(drpoUrl);
@@ -70,7 +71,7 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void receiveMessagesTest() throws QblDropPayloadSizeException, QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException, URISyntaxException, QblDropInvalidURL {
+	public void receiveMessagesTest() throws QblDropPayloadSizeException, QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException, URISyntaxException, QblDropInvalidURL, PersistenceException {
 		String text = "MessageString";
 		Date sinceDate = new Date(0L);
 		Collection<DropURL> collection = new ArrayList<>();
@@ -92,7 +93,7 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void addMessageToActionlogTest() throws QblDropPayloadSizeException {
+	public void addMessageToActionlogTest() throws QblDropPayloadSizeException, PersistenceException {
 		i = identityBuilderFactory.factory().withAlias("TestAlias").build();
 		c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
 		createController(i, c);
@@ -103,7 +104,7 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void addOwnMessageToActionlogTest() throws QblDropPayloadSizeException {
+	public void addOwnMessageToActionlogTest() throws QblDropPayloadSizeException, PersistenceException {
 		i = identityBuilderFactory.factory().withAlias("TestAlias").build();
 		c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
 		createController(i, c);

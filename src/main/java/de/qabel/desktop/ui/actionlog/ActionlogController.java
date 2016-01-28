@@ -14,7 +14,9 @@ import de.qabel.core.http.DropHTTP;
 import de.qabel.core.http.HTTPResult;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.repository.ContactRepository;
+import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.actionlog.item.ActionlogItemView;
 import de.qabel.desktop.ui.actionlog.item.MyActionlogItemView;
@@ -24,6 +26,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
@@ -50,6 +53,8 @@ public class ActionlogController extends AbstractController implements Initializ
 
 	@Inject
 	private ContactRepository contactRepository;
+	@Inject
+	private DropMessageRepository dropMessageRepository;
 
 	Identity identity;
 	Contact c;
@@ -57,43 +62,48 @@ public class ActionlogController extends AbstractController implements Initializ
 	DropHTTP dHTTP = new DropHTTP();
 
 	public void initialize(URL location, ResourceBundle resources) {
-		try {
-			identity = clientConfiguration.getSelectedIdentity();
-			c = new Contact(identity, identity.getAlias(), identity.getDropUrls(), identity.getEcPublicKey());
-			receiveDropMessages(null);
 
-			scroller.setVvalue(scroller.getVmax());
-			addChangeListener();
+		identity = clientConfiguration.getSelectedIdentity();
+		c = new Contact(identity, identity.getAlias(), identity.getDropUrls(), identity.getEcPublicKey());
+		loadMessages(c);
 
-		} catch (QblVersionMismatchException | QblDropInvalidMessageSizeException | QblSpoofedSenderException entityNotFoundExcepion) {
-			entityNotFoundExcepion.printStackTrace();
-		}
+		scroller.setVvalue(scroller.getVmax());
+		addListener();
 	}
 
-	private void addChangeListener() {
+	private void addListener() {
 		((Region) scroller.getContent()).heightProperty().addListener((ov, old_val, new_val) -> {
 			if (scroller.getVvalue() != scroller.getVmax()) {
 				scroller.setVvalue(scroller.getVmax());
 			}
 		});
+		textarea.setOnKeyPressed(keyEvent -> {
+			if (keyEvent.getCode().equals(KeyCode.ENTER) && keyEvent.isControlDown()) {
+
+				try {
+					sendDropMessage(c, textarea.getText());
+					receiveDropMessages(lastDate);
+					loadMessages(c);
+
+				} catch (QblDropPayloadSizeException | PersistenceException | QblDropInvalidMessageSizeException | QblVersionMismatchException | QblSpoofedSenderException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	@FXML
-	protected void handleSubmitButtonAction(ActionEvent event) throws QblDropPayloadSizeException, EntityNotFoundExcepion {
-		DropMessage d = sendDropMessage(c, textarea.getText());
-		addOwnMessageToActionlog(d);
-	}
-
-	@FXML
-	protected void handleReloadMessagesButtonAction(ActionEvent event) {
-		try {
-			receiveDropMessages(lastDate);
-		} catch (QblDropInvalidMessageSizeException | QblVersionMismatchException | QblSpoofedSenderException e) {
-			e.printStackTrace();
+	protected void handleSubmitButtonAction(ActionEvent event) throws QblDropPayloadSizeException, EntityNotFoundExcepion, PersistenceException, QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException {
+		if (textarea.getText() == "") {
+			return;
 		}
+		sendDropMessage(c, textarea.getText());
+		receiveDropMessages(lastDate);
+
+		loadMessages(c);
 	}
 
-	void receiveDropMessages(Date siceDate) throws QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException {
+	void receiveDropMessages(Date siceDate) throws QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException, PersistenceException {
 		List<DropMessage> dropMessages = getDropMassages(siceDate);
 
 		if (dropMessages == null) {
@@ -101,7 +111,13 @@ public class ActionlogController extends AbstractController implements Initializ
 		}
 
 		for (DropMessage d : dropMessages) {
-			addMessageToActionlog(d);
+			Contact contact = findSender(d);
+
+			if (lastDate.getTime() < d.getCreationDate().getTime()) {
+				lastDate = d.getCreationDate();
+				dropMessageRepository.addMessage(d, contact, false);
+				loadMessages(c);
+			}
 		}
 	}
 
@@ -117,6 +133,10 @@ public class ActionlogController extends AbstractController implements Initializ
 	}
 
 	void addOwnMessageToActionlog(DropMessage dropMessage) {
+
+		if (dropMessage.getDropPayload() == null || dropMessage.getDropPayload().equals("")) {
+			return;
+		}
 		Map<String, Object> injectionContext = new HashMap<>();
 		injectionContext.put("dropMessage", dropMessage);
 		MyActionlogItemView myItemView = new MyActionlogItemView(injectionContext::get);
@@ -141,10 +161,15 @@ public class ActionlogController extends AbstractController implements Initializ
 			}
 		}
 
-	return null;
+		return null;
 	}
 
-	DropMessage sendDropMessage(final Contact c, String text) throws QblDropPayloadSizeException {
+	DropMessage sendDropMessage(final Contact c, String text) throws QblDropPayloadSizeException, PersistenceException {
+
+
+		if (text == null || text.equals("")) {
+			return null;
+		}
 		DropMessage d = new DropMessage(identity, text, "dropMessage");
 		final BinaryDropMessageV0 binaryMessage = new BinaryDropMessageV0(d);
 		final byte[] messageByteArray = binaryMessage.assembleMessageFor(c);
@@ -155,7 +180,33 @@ public class ActionlogController extends AbstractController implements Initializ
 		if (dropResult.getResponseCode() != 200) {
 			return null;
 		}
+		dropMessageRepository.addMessage(d, c, true);
+
 		return d;
+	}
+
+
+	void loadMessages(Contact c) {
+		try {
+			messages.getChildren().clear();
+			List<PersitsDropMessage> dropMessages = dropMessageRepository.loadConversation(c);
+			for (PersitsDropMessage d : dropMessages) {
+
+				if (lastDate == null || lastDate.getTime() < d.getDropMessage().getCreationDate().getTime()) {
+					lastDate = d.getDropMessage().getCreationDate();
+				}
+
+				if (d.getSend()) {
+					addOwnMessageToActionlog(d.getDropMessage());
+				} else {
+					addMessageToActionlog(d.getDropMessage());
+				}
+			}
+
+
+		} catch (PersistenceException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private DropURL convertCollectionIntoDropUrl(Set<DropURL> dropUrls) {
@@ -175,6 +226,7 @@ public class ActionlogController extends AbstractController implements Initializ
 
 		HTTPResult<Collection<byte[]>> result = receiveMessages(siceDate, d);
 		createDropMessagesFromHttpResult(dropMessages, result);
+
 		return dropMessages;
 	}
 
@@ -191,7 +243,6 @@ public class ActionlogController extends AbstractController implements Initializ
 			DropMessage dropMessage = binMessage.disassembleMessage(identity);
 			if (dropMessage != null) {
 				dropMessages.add(dropMessage);
-				lastDate = dropMessage.getCreationDate();
 			}
 		}
 	}
@@ -201,7 +252,7 @@ public class ActionlogController extends AbstractController implements Initializ
 		if (siceDate == null) {
 			result = dHTTP.receiveMessages(d.getUri());
 		} else {
-			result = dHTTP.receiveMessages(d.getUri(), siceDate.getTime());
+			result = dHTTP.receiveMessages(d.getUri(), siceDate.getTime() - 1);
 		}
 		return result;
 	}

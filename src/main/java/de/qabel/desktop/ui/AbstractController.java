@@ -165,7 +165,7 @@ public class AbstractController {
 		int hours   = (int) ((diff / (1000*60*60)));
 
 		String text;
-		if (minutes < 10) {
+		if (minutes <= 3) {
 			text = "moments ago";
 		} else if (minutes < 60) {
 			text = String.valueOf(minutes + " minutes ago");
