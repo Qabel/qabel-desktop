@@ -15,10 +15,7 @@ import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
 import de.qabel.desktop.repository.AccountRepository;
 import de.qabel.desktop.repository.ClientConfigurationRepository;
 import de.qabel.desktop.repository.IdentityRepository;
-import de.qabel.desktop.repository.persistence.PersistenceAccountRepository;
-import de.qabel.desktop.repository.persistence.PersistenceClientConfigurationRepository;
-import de.qabel.desktop.repository.persistence.PersistenceContactRepository;
-import de.qabel.desktop.repository.persistence.PersistenceIdentityRepository;
+import de.qabel.desktop.repository.persistence.*;
 import de.qabel.desktop.ui.LayoutView;
 import de.qabel.desktop.ui.accounting.login.LoginView;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
@@ -106,6 +103,8 @@ public class DesktopClient extends Application {
 		customProperties.put("accountRepository", accountRepository);
 		PersistenceContactRepository contactRepository = new PersistenceContactRepository(persistence);
 		customProperties.put("contactRepository", contactRepository);
+		PersistenceDropMessageRepository dropMessageRepository = new PersistenceDropMessageRepository(persistence);
+		customProperties.put("dropMessageRepository", dropMessageRepository);
 		ClientConfiguration clientConfig = getClientConfiguration(
 				persistence,
 				identityRepository,

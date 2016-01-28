@@ -7,6 +7,7 @@ import de.qabel.core.drop.DropMessage;
 import de.qabel.core.drop.DropURL;
 import de.qabel.core.exceptions.*;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import de.qabel.desktop.ui.connector.HttpDropConnector;
 import org.junit.Before;
@@ -48,6 +49,7 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
+	public void sendDropMessageTest() throws QblDropPayloadSizeException, PersistenceException {
 	public void sendDropMessageTest() throws QblDropPayloadSizeException, QblNetworkInvalidResponseException {
 		i = identityBuilderFactory.factory().withAlias("TestAlias").build();
 		c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
@@ -59,6 +61,8 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 
 	@Test(expected = QblNetworkInvalidResponseException.class)
 	public void sendDropMessageFailTest() throws QblDropPayloadSizeException, URISyntaxException, QblDropInvalidURL, QblNetworkInvalidResponseException {
+	@Test
+	public void sendDropMessageFailTest() throws QblDropPayloadSizeException, URISyntaxException, QblDropInvalidURL, PersistenceException {
 		Collection<DropURL> collection = new ArrayList<>();
 		DropURL drpoUrl = new DropURL(fakeURL);
 		collection.add(drpoUrl);
@@ -94,7 +98,7 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void addMessageToActionlogTest() throws QblDropPayloadSizeException, EntityNotFoundExcepion, QblNetworkInvalidResponseException {
+	public void addMessageToActionlogTest() throws QblDropPayloadSizeException, PersistenceException {
 		i = identityBuilderFactory.factory().withAlias("TestAlias").build();
 		c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
 		createController(i);
@@ -105,7 +109,7 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void addOwnMessageToActionlogTest() throws QblDropPayloadSizeException, QblNetworkInvalidResponseException {
+	public void addOwnMessageToActionlogTest() throws QblDropPayloadSizeException, PersistenceException {
 		i = identityBuilderFactory.factory().withAlias("TestAlias").build();
 		c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
 		createController(i);

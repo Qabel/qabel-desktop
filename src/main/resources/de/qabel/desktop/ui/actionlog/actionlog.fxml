@@ -19,11 +19,10 @@
     <bottom>
         <HBox>
             <children>
-                <TextArea fx:id="textarea" prefHeight="68.0" prefWidth="300.0" wrapText="true" BorderPane.alignment="BOTTOM_CENTER" />
+                <TextArea fx:id="textarea" prefHeight="68.0" wrapText="true" BorderPane.alignment="BOTTOM_CENTER" />
                 <VBox>
                <children>
-                  <Button mnemonicParsing="false" onAction="#handleSubmitButtonAction" text="sbumit" />
-                  <Button mnemonicParsing="false" onAction="#handleReloadMessagesButtonAction" text="reload" />
+                  <Button mnemonicParsing="false" minWidth="100" onAction="#handleSubmitButtonAction" text="sbumit" />
                </children></VBox>
             </children>
 
