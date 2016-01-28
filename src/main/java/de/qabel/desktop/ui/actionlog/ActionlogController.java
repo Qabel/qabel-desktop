@@ -2,20 +2,13 @@ package de.qabel.desktop.ui.actionlog;
 
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
-import de.qabel.core.crypto.AbstractBinaryDropMessage;
-import de.qabel.core.crypto.BinaryDropMessageV0;
 import de.qabel.core.drop.DropMessage;
-import de.qabel.core.drop.DropURL;
-import de.qabel.core.exceptions.QblDropInvalidMessageSizeException;
-import de.qabel.core.exceptions.QblDropPayloadSizeException;
-import de.qabel.core.exceptions.QblSpoofedSenderException;
-import de.qabel.core.exceptions.QblVersionMismatchException;
-import de.qabel.core.http.DropHTTP;
-import de.qabel.core.http.HTTPResult;
+import de.qabel.core.exceptions.*;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.connector.HttpDropConnector;
 import de.qabel.desktop.ui.actionlog.item.ActionlogItemView;
 import de.qabel.desktop.ui.actionlog.item.MyActionlogItemView;
 import de.qabel.desktop.ui.actionlog.item.OtherActionlogItemView;
@@ -54,19 +47,18 @@ public class ActionlogController extends AbstractController implements Initializ
 	Identity identity;
 	Contact c;
 	Date lastDate;
-	DropHTTP dHTTP = new DropHTTP();
 
 	public void initialize(URL location, ResourceBundle resources) {
 		try {
 			identity = clientConfiguration.getSelectedIdentity();
 			c = new Contact(identity, identity.getAlias(), identity.getDropUrls(), identity.getEcPublicKey());
-			receiveDropMessages(null);
+			receiveDropMessages();
 
 			scroller.setVvalue(scroller.getVmax());
 			addChangeListener();
 
-		} catch (QblVersionMismatchException | QblDropInvalidMessageSizeException | QblSpoofedSenderException entityNotFoundExcepion) {
-			entityNotFoundExcepion.printStackTrace();
+		} catch (QblVersionMismatchException | QblDropInvalidMessageSizeException | QblSpoofedSenderException | EntityNotFoundExcepion entityNotFoundExcepion) {
+			alert("initialize fail", entityNotFoundExcepion);
 		}
 	}
 
@@ -79,7 +71,7 @@ public class ActionlogController extends AbstractController implements Initializ
 	}
 
 	@FXML
-	protected void handleSubmitButtonAction(ActionEvent event) throws QblDropPayloadSizeException, EntityNotFoundExcepion {
+	protected void handleSubmitButtonAction(ActionEvent event) throws QblDropPayloadSizeException, EntityNotFoundExcepion, QblNetworkInvalidResponseException {
 		DropMessage d = sendDropMessage(c, textarea.getText());
 		addOwnMessageToActionlog(d);
 	}
@@ -87,28 +79,33 @@ public class ActionlogController extends AbstractController implements Initializ
 	@FXML
 	protected void handleReloadMessagesButtonAction(ActionEvent event) {
 		try {
-			receiveDropMessages(lastDate);
-		} catch (QblDropInvalidMessageSizeException | QblVersionMismatchException | QblSpoofedSenderException e) {
+			receiveDropMessages();
+		} catch (QblDropInvalidMessageSizeException | QblVersionMismatchException | QblSpoofedSenderException | EntityNotFoundExcepion e) {
 			e.printStackTrace();
 		}
 	}
 
-	void receiveDropMessages(Date siceDate) throws QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException {
-		List<DropMessage> dropMessages = getDropMassages(siceDate);
-
-		if (dropMessages == null) {
-			return;
-		}
+	void receiveDropMessages() throws QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException, EntityNotFoundExcepion {
+		HttpDropConnector connector = new HttpDropConnector();
+		List<DropMessage> dropMessages = connector.getDropMessages(identity, lastDate);
 
 		for (DropMessage d : dropMessages) {
 			addMessageToActionlog(d);
+			lastDate = d.getCreationDate();
 		}
 	}
 
-	void addMessageToActionlog(DropMessage dropMessage) {
+	DropMessage sendDropMessage(final Contact c, String text) throws QblDropPayloadSizeException, QblNetworkInvalidResponseException {
+		DropMessage d = new DropMessage(identity, text, "dropMessage");
+		HttpDropConnector connector = new HttpDropConnector();
+		connector.send(c,d);
+		return d;
+	}
+
+	void addMessageToActionlog(DropMessage dropMessage) throws EntityNotFoundExcepion {
 		lastDate = dropMessage.getCreationDate();
 		Map<String, Object> injectionContext = new HashMap<>();
-		Contact sender = findSender(dropMessage);
+		Contact sender = contactRepository.findByKeyId(identity, dropMessage.getSenderKeyId());
 		injectionContext.put("dropMessage", dropMessage);
 		injectionContext.put("contact", sender);
 		OtherActionlogItemView otherItemView = new OtherActionlogItemView(injectionContext::get);
@@ -123,86 +120,5 @@ public class ActionlogController extends AbstractController implements Initializ
 		messages.getChildren().add(myItemView.getView());
 		messageView.add(myItemView);
 		textarea.setText("");
-	}
-
-	private Contact findSender(DropMessage dropMessage) {
-
-		List<Contact> contactList = null;
-
-		try {
-			contactList = contactRepository.findAllContactFromOneIdentity(identity);
-		} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
-			entityNotFoundExcepion.printStackTrace();
-		}
-
-		for (Contact c : contactList) {
-			if (dropMessage.getSenderKeyId().equals(c.getEcPublicKey().getReadableKeyIdentifier())) {
-				return c;
-			}
-		}
-
-	return null;
-	}
-
-	DropMessage sendDropMessage(final Contact c, String text) throws QblDropPayloadSizeException {
-		DropMessage d = new DropMessage(identity, text, "dropMessage");
-		final BinaryDropMessageV0 binaryMessage = new BinaryDropMessageV0(d);
-		final byte[] messageByteArray = binaryMessage.assembleMessageFor(c);
-		DropURL dropURL = convertCollectionIntoDropUrl(c.getDropUrls());
-
-		HTTPResult<?> dropResult = dHTTP.send(dropURL.getUri(), messageByteArray);
-
-		if (dropResult.getResponseCode() != 200) {
-			return null;
-		}
-		return d;
-	}
-
-	private DropURL convertCollectionIntoDropUrl(Set<DropURL> dropUrls) {
-		for (DropURL d : dropUrls) {
-			return d;
-		}
-		return null;
-	}
-
-	List<DropMessage> getDropMassages(Date siceDate) throws QblVersionMismatchException, QblDropInvalidMessageSizeException, QblSpoofedSenderException {
-		DropURL d = convertCollectionIntoDropUrl(identity.getDropUrls());
-		LinkedList<DropMessage> dropMessages = new LinkedList<>();
-
-		if (d == null) {
-			return null;
-		}
-
-		HTTPResult<Collection<byte[]>> result = receiveMessages(siceDate, d);
-		createDropMessagesFromHttpResult(dropMessages, result);
-		return dropMessages;
-	}
-
-	private void createDropMessagesFromHttpResult(LinkedList<DropMessage> dropMessages, HTTPResult<Collection<byte[]>> result) throws QblVersionMismatchException, QblDropInvalidMessageSizeException, QblSpoofedSenderException {
-		for (byte[] message : result.getData()) {
-			AbstractBinaryDropMessage binMessage;
-			byte binaryFormatVersion = message[0];
-
-			if (binaryFormatVersion != 0) {
-				continue;
-			}
-
-			binMessage = new BinaryDropMessageV0(message);
-			DropMessage dropMessage = binMessage.disassembleMessage(identity);
-			if (dropMessage != null) {
-				dropMessages.add(dropMessage);
-				lastDate = dropMessage.getCreationDate();
-			}
-		}
-	}
-
-	private HTTPResult<Collection<byte[]>> receiveMessages(Date siceDate, DropURL d) {
-		HTTPResult<Collection<byte[]>> result;
-		if (siceDate == null) {
-			result = dHTTP.receiveMessages(d.getUri());
-		} else {
-			result = dHTTP.receiveMessages(d.getUri(), siceDate.getTime());
-		}
-		return result;
 	}
 }

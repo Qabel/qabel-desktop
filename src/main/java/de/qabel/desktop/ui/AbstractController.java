@@ -168,9 +168,9 @@ public class AbstractController {
 		if (minutes < 10) {
 			text = "moments ago";
 		} else if (minutes < 60) {
-			text = String.valueOf(minutes + " minutes ago");
+			text = minutes + " minutes ago";
 		} else if (hours < 24) {
-			text = String.valueOf(hours + " hours ago");
+			text = hours + " hours ago";
 		} else {
 			text = dropMessage.getCreationDate().toString();
 		}

@@ -19,6 +19,11 @@ public class StubContactRepository implements ContactRepository {
 	}
 
 	@Override
+	public Contact findByKeyId(Identity identity, String keyId) throws EntityNotFoundExcepion {
+		return new Contact(identity, identity.getAlias(), identity.getDropUrls(), identity.getEcPublicKey());
+	}
+
+	@Override
 	public List<Contact> findAllContactFromOneIdentity(Identity identity) throws EntityNotFoundExcepion {
 		return contacts;
 	}
