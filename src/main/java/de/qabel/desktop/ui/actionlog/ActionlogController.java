@@ -13,6 +13,7 @@ import de.qabel.core.exceptions.QblVersionMismatchException;
 import de.qabel.core.http.DropHTTP;
 import de.qabel.core.http.HTTPResult;
 import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.actionlog.item.ActionlogItemView;
@@ -47,6 +48,8 @@ public class ActionlogController extends AbstractController implements Initializ
 	@Inject
 	ClientConfiguration clientConfiguration;
 
+	@Inject
+	private ContactRepository contactRepository;
 
 	Identity identity;
 	Contact c;
@@ -92,6 +95,11 @@ public class ActionlogController extends AbstractController implements Initializ
 
 	void receiveDropMessages(Date siceDate) throws QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException {
 		List<DropMessage> dropMessages = getDropMassages(siceDate);
+
+		if (dropMessages == null) {
+			return;
+		}
+
 		for (DropMessage d : dropMessages) {
 			addMessageToActionlog(d);
 		}
@@ -100,8 +108,9 @@ public class ActionlogController extends AbstractController implements Initializ
 	void addMessageToActionlog(DropMessage dropMessage) {
 		lastDate = dropMessage.getCreationDate();
 		Map<String, Object> injectionContext = new HashMap<>();
+		Contact sender = findSender(dropMessage);
 		injectionContext.put("dropMessage", dropMessage);
-		injectionContext.put("contact", ((Contact) dropMessage.getSender()).getAlias());
+		injectionContext.put("contact", sender);
 		OtherActionlogItemView otherItemView = new OtherActionlogItemView(injectionContext::get);
 		messages.getChildren().add(otherItemView.getView());
 		messageView.add(otherItemView);
@@ -114,6 +123,25 @@ public class ActionlogController extends AbstractController implements Initializ
 		messages.getChildren().add(myItemView.getView());
 		messageView.add(myItemView);
 		textarea.setText("");
+	}
+
+	private Contact findSender(DropMessage dropMessage) {
+
+		List<Contact> contactList = null;
+
+		try {
+			contactList = contactRepository.findAllContactFromOneIdentity(identity);
+		} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
+			entityNotFoundExcepion.printStackTrace();
+		}
+
+		for (Contact c : contactList) {
+			if (dropMessage.getSenderKeyId().equals(c.getEcPublicKey().getReadableKeyIdentifier())) {
+				return c;
+			}
+		}
+
+	return null;
 	}
 
 	DropMessage sendDropMessage(final Contact c, String text) throws QblDropPayloadSizeException {
@@ -137,7 +165,7 @@ public class ActionlogController extends AbstractController implements Initializ
 		return null;
 	}
 
-	private List<DropMessage> getDropMassages(Date siceDate) throws QblVersionMismatchException, QblDropInvalidMessageSizeException, QblSpoofedSenderException {
+	List<DropMessage> getDropMassages(Date siceDate) throws QblVersionMismatchException, QblDropInvalidMessageSizeException, QblSpoofedSenderException {
 		DropURL d = convertCollectionIntoDropUrl(identity.getDropUrls());
 		LinkedList<DropMessage> dropMessages = new LinkedList<>();
 

@@ -6,47 +6,66 @@
 <?import javafx.scene.shape.Polygon?>
 <?import javafx.scene.text.Font?>
 <?import java.lang.*?>
-<HBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.actionlog.item.OtherActionlogItemController">
+<HBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="de.qabel.desktop.ui.actionlog.item.OtherActionlogItemController">
     <children>
         <BorderPane fx:id="otherActionlog">
             <center>
                 <HBox fx:id="shadow">
                     <children>
-                  <Polygon fill="#fd670d" rotate="270" strokeType="INSIDE">
-                    <points>
-                      <Double fx:value="-12.5" />
-                      <Double fx:value="10.0" />
-                      <Double fx:value="12.0" />
-                      <Double fx:value="10.0" />
-                      <Double fx:value="0.0" />
-                      <Double fx:value="-12.5" />
-                    </points>
-                     <HBox.margin>
-                        <Insets right="-20.0" top="18.0" />
-                     </HBox.margin>
-                  </Polygon>
+                        <Polygon fill="#fd670d" rotate="270" strokeType="INSIDE">
+                            <points>
+                                <Double fx:value="-12.5"/>
+                                <Double fx:value="10.0"/>
+                                <Double fx:value="12.0"/>
+                                <Double fx:value="10.0"/>
+                                <Double fx:value="0.0"/>
+                                <Double fx:value="-12.5"/>
+                            </points>
+                            <HBox.margin>
+                                <Insets right="-20.0" top="18.0"/>
+                            </HBox.margin>
+                        </Polygon>
                         <VBox maxWidth="600">
                             <children>
-                                <Label fx:id="textlabel" text="My Message" textAlignment="RIGHT" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
-                                    <font>
-                                        <Font name="System" size="15.0" />
-                                    </font>
+                                <BorderPane fx:id="chatField">
+                                    <center>
+                                        <Label fx:id="textlabel" text="My Message" textAlignment="RIGHT"
+                                               textFill="WHITE"
+                                               BorderPane.alignment="CENTER_LEFT">
+                                            <font>
+                                                <Font name="System" size="15.0"/>
+                                            </font>
+
+                                            <padding>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                                            </padding>
+                                        </Label>
+                                    </center>
+                                    <bottom>
+                                        <Label fx:id="dateLabel" text="My Message" textAlignment="RIGHT"
+                                               textFill="white"
+                                               BorderPane.alignment="CENTER_LEFT">
+                                            <font>
+                                                <Font name="System" size="10.0"/>
+                                            </font>
+                                        </Label>
+                                    </bottom>
                                     <VBox.margin>
-                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                                     </VBox.margin>
-                                    <padding>
-                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                    </padding>
-                                </Label>
+                                </BorderPane>
+
+
                             </children>
                             <BorderPane.margin>
-                                <Insets bottom="10.0" left="0" right="10.0" top="10.0" />
+                                <Insets bottom="10.0" left="0" right="10.0" top="10.0"/>
                             </BorderPane.margin>
                         </VBox>
                     </children>
-               <BorderPane.margin>
-                  <Insets left="5.0" top="12.0" />
-               </BorderPane.margin>
+                    <BorderPane.margin>
+                        <Insets left="5.0" top="12.0"/>
+                    </BorderPane.margin>
                 </HBox>
             </center>
             <left>

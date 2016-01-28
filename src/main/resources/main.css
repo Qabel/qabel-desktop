@@ -36,7 +36,7 @@
    -fx-background-color: transparent;
 }
 
-#otherActionlog #textlabel {
+#otherActionlog #chatField {
     -fx-background-color: #fd670d;
     -fx-background-radius: 5;
 
@@ -49,7 +49,7 @@
     -fx-effect: dropshadow(one-pass-box, grey, 10, -1, 0, 0);
 }
 
-#myActionlog .label {
+#myActionlog #chatField {
     -fx-background-color: grey;
     -fx-background-radius: 5;
 }

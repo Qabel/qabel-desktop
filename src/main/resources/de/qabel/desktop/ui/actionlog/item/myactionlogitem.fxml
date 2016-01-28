@@ -14,17 +14,33 @@
                     <children>
                         <VBox alignment="TOP_RIGHT" BorderPane.alignment="CENTER">
                             <children>
-                                <Label fx:id="textlabel" alignment="CENTER_RIGHT" maxWidth="500" text="My Message" textAlignment="RIGHT" textFill="WHITE">
-                                    <font>
-                                        <Font name="System" size="15.0" />
-                                    </font>
+                                <BorderPane fx:id="chatField">
+                                    <center>
+                                        <Label fx:id="textlabel" text="My Message" textAlignment="RIGHT"
+                                               textFill="WHITE"
+                                               BorderPane.alignment="CENTER_RIGHT">
+                                            <font>
+                                                <Font name="System" size="15.0"/>
+                                            </font>
+
+                                            <padding>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                                            </padding>
+                                        </Label>
+                                    </center>
+                                    <bottom>
+                                        <Label fx:id="dateLabel" text="My Message" textAlignment="RIGHT"
+                                               textFill="white"
+                                               BorderPane.alignment="CENTER_LEFT">
+                                            <font>
+                                                <Font name="System" size="10.0"/>
+                                            </font>
+                                        </Label>
+                                    </bottom>
                                     <VBox.margin>
-                                        <Insets />
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                                     </VBox.margin>
-                                    <padding>
-                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                    </padding>
-                                </Label>
+                                </BorderPane>
                             </children>
                             <BorderPane.margin>
                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

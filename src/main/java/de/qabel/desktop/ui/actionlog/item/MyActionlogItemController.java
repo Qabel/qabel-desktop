@@ -17,6 +17,8 @@ public class MyActionlogItemController extends AbstractController implements Ini
 
 	@FXML
 	Label textlabel;
+	@FXML
+	Label dateLabel;
 
 	@Inject
 	private DropMessage dropMessage;
@@ -24,9 +26,14 @@ public class MyActionlogItemController extends AbstractController implements Ini
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		textlabel.setText(dropMessage.getDropPayload() + " - " + dropMessage.getCreationDate().getTime());
+		textlabel.setText(dropMessage.getDropPayload());
+		dateLabel.setText(calculateTimeString(dropMessage));
+
 		textlabel.setWrapText(true);
+		dateLabel.setWrapText(true);
+
 		textlabel.setTextAlignment(TextAlignment.JUSTIFY);
+		dateLabel.setTextAlignment(TextAlignment.JUSTIFY);
 
 	}
 

@@ -9,9 +9,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Duration;
 
 import javax.inject.Inject;
 import java.net.URL;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 public class OtherActionlogItemController extends AbstractController implements Initializable, ActionlogItem {
@@ -21,26 +24,33 @@ public class OtherActionlogItemController extends AbstractController implements 
 	@FXML
 	Label textlabel;
 	@FXML
+	Label dateLabel;
+	@FXML
 	Pane avatarContainer;
 
 	@Inject
 	DropMessage dropMessage;
-
 	@Inject
 	Contact contact;
 
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		textlabel.setText(dropMessage.getDropPayload() + " - " + dropMessage.getCreationDate().getTime());
+
+		textlabel.setText(dropMessage.getDropPayload());
+
+
+		dateLabel.setText(calculateTimeString(dropMessage));
+
 		textlabel.setWrapText(true);
+		dateLabel.setWrapText(true);
+
 		textlabel.setTextAlignment(TextAlignment.JUSTIFY);
+		dateLabel.setTextAlignment(TextAlignment.JUSTIFY);
 		updateAvatar();
 	}
 
 	private void updateAvatar() {
 		new AvatarView(e -> contact.getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
 	}
-
-
 }

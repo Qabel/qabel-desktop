@@ -6,6 +6,7 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.config.Entity;
 import de.qabel.core.config.Identity;
 import de.qabel.core.crypto.QblECPublicKey;
+import de.qabel.core.drop.DropMessage;
 import de.qabel.core.drop.DropURL;
 import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.desktop.ui.accounting.GsonContact;
@@ -19,6 +20,7 @@ import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.net.URISyntaxException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -149,5 +151,30 @@ public class AbstractController {
 			collection.add(dropURL);
 		}
 		return collection;
+	}
+	protected String calculateTimeString(DropMessage dropMessage) {
+
+		Long messageDate = dropMessage.getCreationDate().getTime();
+
+		java.util.Date date= new java.util.Date();
+		Timestamp currentTimestamp = new Timestamp(date.getTime());
+
+		long diff = currentTimestamp.getTime() - messageDate;
+
+		int minutes = (int) ((diff / (1000*60)));
+		int hours   = (int) ((diff / (1000*60*60)));
+
+		String text;
+		if (minutes < 10) {
+			text = "moments ago";
+		} else if (minutes < 60) {
+			text = String.valueOf(minutes + " minutes ago");
+		} else if (hours < 24) {
+			text = String.valueOf(hours + " hours ago");
+		} else {
+			text = dropMessage.getCreationDate().toString();
+		}
+
+		return text;
 	}
 }
