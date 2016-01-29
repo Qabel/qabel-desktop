@@ -22,11 +22,12 @@ import javafx.stage.FileChooser;
 import javax.inject.Inject;
 import java.io.*;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
 
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.CREATE;
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.DELETE;
@@ -88,15 +89,9 @@ public class RemoteFSController extends AbstractController implements Initializa
 	}
 
 	private void initTreeTableView() {
-		keyPair = clientConfiguration.getSelectedIdentity().getPrimaryKeyPair();
-		bucket = "qabel";
-
 		try {
 			nav = createSetup();
-		} catch (QblStorageException e) {
-			e.printStackTrace();
-		}
-		rootItem = new LazyBoxFolderTreeItem(new BoxFolder("block", ROOT_FOLDER_NAME, new byte[16]), nav);
+		rootItem = new LazyBoxFolderTreeItem(new BoxFolder(volume.getRootRef(), ROOT_FOLDER_NAME, new byte[16]), nav);
 		treeTable.setRoot(rootItem);
 		rootItem.setExpanded(true);
 
@@ -109,7 +104,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 						} catch (QblStorageException e) {
 							e.printStackTrace();
 						}
-						Thread.sleep(1000000);
+						Thread.sleep(TimeUnit.MINUTES.toMillis(1));
 					}
 				} catch (InterruptedException e) {
 				} finally {
@@ -117,6 +112,9 @@ public class RemoteFSController extends AbstractController implements Initializa
 			});
 			poller.setDaemon(true);
 			poller.start();
+		}
+		} catch (QblStorageException e) {
+			alert("failed to load remotefs", e);
 		}
 	}
 
@@ -163,7 +161,11 @@ public class RemoteFSController extends AbstractController implements Initializa
 		String title = resourceBundle.getString("chooseFolder");
 		chooser.setTitle(title);
 		File directory = chooser.showDialog(treeTable.getScene().getWindow());
-		chooseUploadDirectory(directory);
+		try {
+			chooseUploadDirectory(directory);
+		} catch (IOException e) {
+			alert("failed to upload folder", e);
+		}
 	}
 
 	@FXML
@@ -184,7 +186,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 		}
 		ReadOnlyBoxNavigation navigation = folderTreeItem.getNavigation();
 
-		downloadBoxObject(boxObject, navigation, path, directory.toPath().resolve(boxObject.name));
+		downloadBoxObject(boxObject, navigation, path, directory.toPath());
 	}
 
 	@FXML
@@ -224,13 +226,11 @@ public class RemoteFSController extends AbstractController implements Initializa
 			Path path = updateTreeItem.getPath().resolve(selectedItem.getValue().name);
 
 			deleteBoxObject(result.get(), path, selectedItem.getValue());
-			rootItem.setUpToDate(false);
-			rootItem.getChildren();
 		}
 	}
 
 
-	void chooseUploadDirectory(File directory) {
+	void chooseUploadDirectory(File directory) throws IOException {
 
 		if (selectedItem == null || !(selectedItem.getValue() instanceof BoxFolder) || !(selectedItem instanceof LazyBoxFolderTreeItem)) {
 			return;
@@ -239,8 +239,35 @@ public class RemoteFSController extends AbstractController implements Initializa
 		uploadDirectory(directory.toPath(), destination);
 	}
 
-	void uploadDirectory(Path source, Path destination) {
-		loadManager.addUpload(new ManualUpload(CREATE, volume, source, destination));
+	void uploadDirectory(Path source, Path destination) throws IOException {
+
+		Files.walkFileTree(source, new FileVisitor<Path>() {
+			@Override
+			public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+				loadManager.addUpload(new ManualUpload(CREATE, volume, dir, resolveDestination(dir), true));
+				return FileVisitResult.CONTINUE;
+			}
+
+			private Path resolveDestination(Path dir) {
+				return destination.resolve(source.relativize(dir));
+			}
+
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+				loadManager.addUpload(new ManualUpload(CREATE, volume, file, resolveDestination(file), false));
+				return FileVisitResult.CONTINUE;
+			}
+
+			@Override
+			public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+				return FileVisitResult.TERMINATE;
+			}
+
+			@Override
+			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+				return FileVisitResult.CONTINUE;
+			}
+		});
 	}
 
 
@@ -259,6 +286,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 	}
 
 	void downloadBoxObject(BoxObject boxObject, ReadOnlyBoxNavigation nav, Path source, Path destination) throws QblStorageException, IOException {
+		destination = destination.resolve(boxObject.name);
 		if (boxObject instanceof BoxFile) {
 			downloadFile((BoxFile)boxObject, nav, source, destination);
 		} else {

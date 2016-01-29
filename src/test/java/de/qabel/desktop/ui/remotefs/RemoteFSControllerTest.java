@@ -206,13 +206,16 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		BoxFolder folder = createBoxFolder(dir);
 
 		File subdir = new File(dir, "subFolder");
-		subdir.mkdirs();
-		controller.uploadDirectory(dir.toPath(), Paths.get("/" + TEST_FOLDER + "/subFolder"));
+		new File(subdir, "subsubFolder").mkdirs();
+		new File(subdir, "subsubFile").createNewFile();
+		controller.uploadDirectory(dir.toPath(), Paths.get("/", TEST_FOLDER));
 		executeTransactions();
 
 		BoxNavigation newNav = nav.navigate(folder);
 		assertThat(newNav.listFiles().size(), is(0));
 		assertThat(newNav.listFolders().size(), is(1));
+		assertThat(newNav.navigate("subFolder").listFolders().get(0).name, is("subsubFolder"));
+		assertThat(newNav.navigate("subFolder").listFiles().get(0).name, is("subsubFile"));
 	}
 
 	@Test(timeout=1000L)
@@ -303,7 +306,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		controller.downloadBoxObject(folder, nav.navigate("folder"), Paths.get("/folder"), targetDir);
 		executeTransactions();
 
-		assertTrue(Files.isDirectory(targetDir));
+		assertTrue("folder was not downloaded", Files.isDirectory(targetDir));
 	}
 
 	@Test
@@ -313,7 +316,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		BoxFolder folder = nodeNav.createFolder(TEST_SUB_FOLDER);
 		nodeNav.navigate(folder).upload(SUB_FILE, file);
 		Path targetFolder = tempFolder.resolve(folder.name);
-		controller.downloadBoxObject(folder, nodeNav.navigate(folder), Paths.get("/", node.name, folder.name), targetFolder);
+		controller.downloadBoxObject(folder, nodeNav.navigate(folder), Paths.get("/", node.name, folder.name), tempFolder);
 		executeTransactions();
 
 		assertTrue(Files.isDirectory(targetFolder));
@@ -325,8 +328,8 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 	public void testRecursiveDownload() throws Exception {
 		BoxFolder node = nav.createFolder("folder");
 		nav.navigate("folder").createFolder("subfolder");
-		Path targetFolder = tempFolder.resolve("name");
-		controller.downloadBoxObject(node, nav.navigate("folder"), Paths.get("/folder"), targetFolder);
+		Path targetFolder = tempFolder.resolve("folder");
+		controller.downloadBoxObject(node, nav.navigate("folder"), Paths.get("/folder"), tempFolder);
 		executeTransactions();
 
 		assertTrue(Files.isDirectory(targetFolder.resolve("subfolder")));
@@ -346,7 +349,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 
 		BoxFile file = nav.listFiles().get(0);
 
-		controller.downloadBoxObject(file, nav, remotePath, Paths.get(TMP_DIR).resolve(file.name));
+		controller.downloadBoxObject(file, nav, remotePath, Paths.get(TMP_DIR));
 		executeTransactions();
 		File testFile = new File(TMP_DIR + "/" + SUB_FILE);
 
@@ -361,7 +364,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		BoxNavigation newNav = nav.navigate(root);
 		BoxFile file = newNav.listFiles().get(0);
 
-		controller.downloadBoxObject(file, newNav, Paths.get("/", TEST_FOLDER, "/", SUB_FILE), Paths.get(TMP_DIR).resolve(SUB_FILE));
+		controller.downloadBoxObject(file, newNav, Paths.get("/", TEST_FOLDER, "/", SUB_FILE), Paths.get(TMP_DIR));
 		executeTransactions();
 		File testFile = new File(TMP_DIR + "/" + SUB_FILE);
 		assertTrue(testFile.exists());
