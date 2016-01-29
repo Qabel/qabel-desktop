@@ -18,6 +18,7 @@ import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.persistence.*;
 import de.qabel.desktop.ui.LayoutView;
 import de.qabel.desktop.ui.accounting.login.LoginView;
+import de.qabel.desktop.ui.connector.HttpDropConnector;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -105,6 +106,8 @@ public class DesktopClient extends Application {
 		customProperties.put("contactRepository", contactRepository);
 		PersistenceDropMessageRepository dropMessageRepository = new PersistenceDropMessageRepository(persistence);
 		customProperties.put("dropMessageRepository", dropMessageRepository);
+		HttpDropConnector httpDropConnector = new HttpDropConnector();
+		customProperties.put("httpDropConnector", httpDropConnector);
 		ClientConfiguration clientConfig = getClientConfiguration(
 				persistence,
 				identityRepository,

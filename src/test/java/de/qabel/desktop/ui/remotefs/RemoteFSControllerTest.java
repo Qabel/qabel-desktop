@@ -281,7 +281,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		assertThat(newNav.listFiles().size(), is(0));
 	}
 
-	@Test(timeout=1000L)
+	@Test(timeout=2000L)
 	public void TestDeleteBoxFileFromRootNode() throws QblStorageException, IOException {
 		initTreeTable();
 		BoxFolder folder = nav.listFolders().get(0);

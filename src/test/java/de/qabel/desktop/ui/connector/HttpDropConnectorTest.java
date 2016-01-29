@@ -31,7 +31,7 @@ public class HttpDropConnectorTest extends AbstractControllerTest {
 	public void setUp() throws Exception {
 		super.setUp();
 		fakeURL = "http://localhost:12345/abcdefghijklmnopqrstuvwxyzabcdefgworkingUrl";
-		workingURL = "\"http://localhost:5000/abcdefghijklmnopqrstuvwxyzabcdefgworkingUrl";
+		workingURL = "http://localhost:5000/abcdefghijklmnopqrstuvwxyzabcdefgworkingUrl";
 		connector = new HttpDropConnector();
 	}
 
@@ -71,6 +71,4 @@ public class HttpDropConnectorTest extends AbstractControllerTest {
 		assertEquals(type, messages.get(0).getDropPayloadType());
 		assertEquals(c.getEcPublicKey().getReadableKeyIdentifier(), messages.get(0).getSenderKeyId());
 	}
-
-
 }

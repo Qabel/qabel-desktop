@@ -48,6 +48,8 @@ public class ActionlogController extends AbstractController implements Initializ
 	private ContactRepository contactRepository;
 	@Inject
 	private DropMessageRepository dropMessageRepository;
+	@Inject
+	private HttpDropConnector httpDropConnector;
 
 	Identity identity;
 	Contact c;
@@ -100,8 +102,7 @@ public class ActionlogController extends AbstractController implements Initializ
 
 	void receiveDropMessages(Date siceDate) throws QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException, PersistenceException, EntityNotFoundExcepion {
 
-		HttpDropConnector connector = new HttpDropConnector();
-		List<DropMessage> dropMessages = connector.receive(identity, siceDate);
+		List<DropMessage> dropMessages = httpDropConnector.receive(identity, siceDate);
 
 		for (DropMessage d : dropMessages) {
 			Contact contact = contactRepository.findByKeyId(identity, d.getSenderKeyId());
@@ -117,8 +118,7 @@ public class ActionlogController extends AbstractController implements Initializ
 	void sendDropMessage(Contact c, String text) throws QblDropPayloadSizeException, QblNetworkInvalidResponseException, PersistenceException {
 		DropMessage d = new DropMessage(identity, text, "dropMessage");
 		dropMessageRepository.addMessage(d, c, true);
-		HttpDropConnector connector = new HttpDropConnector();
-		connector.send(c, d);
+		httpDropConnector.send(c, d);
 	}
 
 	void loadMessages(Contact c) throws EntityNotFoundExcepion {
@@ -164,5 +164,9 @@ public class ActionlogController extends AbstractController implements Initializ
 		messages.getChildren().add(myItemView.getView());
 		messageView.add(myItemView);
 		textarea.setText("");
+	}
+
+	void setText(String text) {
+		this.textarea.setText(text);
 	}
 }

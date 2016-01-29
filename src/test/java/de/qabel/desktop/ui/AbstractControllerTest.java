@@ -13,6 +13,7 @@ import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.Stub.StubContactRepository;
 import de.qabel.desktop.repository.Stub.StubDropMessageRepository;
 import de.qabel.desktop.repository.inmemory.InMemoryIdentityRepository;
+import de.qabel.desktop.ui.connector.HttpDropConnector;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -36,7 +37,7 @@ public class AbstractControllerTest {
 	protected IdentityBuilderFactory identityBuilderFactory;
 	protected ContactRepository contactRepository = new StubContactRepository();
 	protected DropMessageRepository dropMessageRepository = new StubDropMessageRepository();
-
+	protected HttpDropConnector httpDropConnector = new HttpDropConnector();
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -76,6 +77,7 @@ public class AbstractControllerTest {
 		diContainer.put("contactRepository", contactRepository);
 		diContainer.put("dropMessageRepository", dropMessageRepository);
 		diContainer.put("boxVolumeFactory", new BoxVolumeFactoryStub());
+		diContainer.put("httpDropConnector", httpDropConnector);
 		Injector.setConfigurationSource(diContainer::get);
 		Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(diContainer));
 	}
