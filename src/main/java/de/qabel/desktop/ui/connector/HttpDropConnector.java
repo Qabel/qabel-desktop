@@ -13,13 +13,19 @@ import de.qabel.core.http.HTTPResult;
 
 import java.util.*;
 
-public class HttpDropConnector {
+public class HttpDropConnector implements Connector {
 
 	DropHTTP dHTTP = new DropHTTP();
 
 
-	public void send(Contact c, DropMessage d) throws QblDropPayloadSizeException, QblNetworkInvalidResponseException {
-		final BinaryDropMessageV0 binaryMessage = new BinaryDropMessageV0(d);
+	public void send(Contact c, DropMessage d) throws QblNetworkInvalidResponseException {
+		BinaryDropMessageV0 binaryMessage = null;
+
+		try {
+			binaryMessage = new BinaryDropMessageV0(d);
+		} catch (QblDropPayloadSizeException e) {
+			e.printStackTrace();
+		}
 		final byte[] messageByteArray = binaryMessage.assembleMessageFor(c);
 		DropURL dropURL = convertCollectionIntoDropUrl(c.getDropUrls());
 		HTTPResult<?> dropResult = dHTTP.send(dropURL.getUri(), messageByteArray);
@@ -33,9 +39,10 @@ public class HttpDropConnector {
 		}
 	}
 
-	public List<DropMessage> receive(Identity i, Date siceDate) throws QblVersionMismatchException, QblDropInvalidMessageSizeException, QblSpoofedSenderException {
+	public List<DropMessage> receive(Identity i, Date siceDate) {
 		DropURL d = convertCollectionIntoDropUrl(i.getDropUrls());
 		HTTPResult<Collection<byte[]>> result = receiveMessages(siceDate, d);
+
 		return createDropMessagesFromHttpResult(result, i);
 	}
 
@@ -53,24 +60,32 @@ public class HttpDropConnector {
 
 	private LinkedList<DropMessage> createDropMessagesFromHttpResult(
 			HTTPResult<Collection<byte[]>> result,
-			Identity identity)
-			throws QblVersionMismatchException, QblDropInvalidMessageSizeException, QblSpoofedSenderException {
-
+			Identity identity) {
 		LinkedList<DropMessage> dropMessages = new LinkedList<>();
 
 		for (byte[] message : result.getData()) {
-			AbstractBinaryDropMessage binMessage;
+			AbstractBinaryDropMessage binMessage = null;
 			byte binaryFormatVersion = message[0];
 
 			if (binaryFormatVersion != 0) {
 				continue;
 			}
 
-			binMessage = new BinaryDropMessageV0(message);
-			DropMessage dropMessage = binMessage.disassembleMessage(identity);
-			if (dropMessage != null) {
-				dropMessages.add(dropMessage);
+			try {
+				binMessage = new BinaryDropMessageV0(message);
+			} catch (QblVersionMismatchException | QblDropInvalidMessageSizeException e) {
+				e.printStackTrace();
 			}
+
+			DropMessage dropMessage = null;
+
+			try {
+				dropMessage = binMessage.disassembleMessage(identity);
+			} catch (QblSpoofedSenderException e) {
+				e.printStackTrace();
+			}
+			dropMessages.add(dropMessage);
+
 		}
 		return dropMessages;
 	}

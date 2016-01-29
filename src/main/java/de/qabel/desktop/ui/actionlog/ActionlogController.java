@@ -13,6 +13,7 @@ import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.actionlog.item.ActionlogItemView;
 import de.qabel.desktop.ui.actionlog.item.MyActionlogItemView;
 import de.qabel.desktop.ui.actionlog.item.OtherActionlogItemView;
+import de.qabel.desktop.ui.connector.Connector;
 import de.qabel.desktop.ui.connector.HttpDropConnector;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -49,7 +50,7 @@ public class ActionlogController extends AbstractController implements Initializ
 	@Inject
 	private DropMessageRepository dropMessageRepository;
 	@Inject
-	private HttpDropConnector httpDropConnector;
+	private Connector httpDropConnector;
 
 	Identity identity;
 	Contact c;

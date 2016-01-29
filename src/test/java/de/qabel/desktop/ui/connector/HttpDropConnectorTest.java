@@ -31,7 +31,7 @@ public class HttpDropConnectorTest extends AbstractControllerTest {
 	public void setUp() throws Exception {
 		super.setUp();
 		fakeURL = "http://localhost:12345/abcdefghijklmnopqrstuvwxyzabcdefgworkingUrl";
-		workingURL = "http://localhost:5000/abcdefghijklmnopqrstuvwxyzabcdefgworkingUrl";
+		workingURL = "https://qdrop.prae.me/abcdefghijklmnopqrstuvwxyzabcdefgworkingUrl";
 		connector = new HttpDropConnector();
 	}
 

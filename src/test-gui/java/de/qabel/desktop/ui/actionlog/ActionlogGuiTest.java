@@ -15,6 +15,7 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
 
 	@Test
 	public void testSendMessage() {
+
 		waitUntil(() -> controller.textarea != null);
 		runLaterAndWait(() -> controller.textarea.setText("Test String"));
 		clickOn("#submit");
