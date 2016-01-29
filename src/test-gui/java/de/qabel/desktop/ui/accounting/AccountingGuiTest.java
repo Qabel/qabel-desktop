@@ -16,7 +16,6 @@ public class AccountingGuiTest extends AbstractGuiTest<AccountingController> {
 	}
 
 	@Test
-	@Ignore
 	public void testAddsIdentity() throws EntityNotFoundExcepion {
 		clickOn("#add");
 		waitUntil(() -> controller.dialog != null);

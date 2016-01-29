@@ -228,7 +228,7 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 		}
 	}
 
-	public synchronized void notifyAllContents() throws QblStorageException {
+	public void notifyAllContents() throws QblStorageException {
 		for (BoxFolder folder : nav.listFolders()) {
 			notify(folder, TYPE.CREATE);
 			navigate(folder).notifyAllContents();
