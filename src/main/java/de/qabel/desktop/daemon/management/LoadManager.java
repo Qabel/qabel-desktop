@@ -9,6 +9,4 @@ public interface LoadManager extends Runnable {
 	void addDownload(Download download);
 
 	List<Transaction> getHistory();
-
-	void setStagingDelay(long amount, TimeUnit unit);
 }

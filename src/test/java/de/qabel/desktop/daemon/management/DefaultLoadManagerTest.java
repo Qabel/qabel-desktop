@@ -62,7 +62,6 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 			download.volume = volume;
 
 			manager = new DefaultLoadManager();
-			manager.setStagingDelay(10L, TimeUnit.MILLISECONDS);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -403,7 +402,7 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 
 	@Test
 	public void skipsTempFilesWithStagingArea() throws Exception {
-		manager.setStagingDelay(500L, TimeUnit.MILLISECONDS);
+		upload.stagingDelay = 500L;
 
 		Path path = tmpPath("file");
 		File file = path.toFile();
@@ -436,7 +435,7 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 
 	@Test
 	public void downloadsAreNotStaged() throws Exception {
-		manager.setStagingDelay(2000L, TimeUnit.MILLISECONDS);
+		download.stagingDelay = 2000L;
 
 		download.source = Paths.get("/wayne");
 		download.destination = tmpPath("wayne");

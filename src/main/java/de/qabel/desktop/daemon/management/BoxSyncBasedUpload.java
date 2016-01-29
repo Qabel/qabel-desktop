@@ -5,8 +5,11 @@ import de.qabel.desktop.daemon.sync.event.WatchEvent;
 import de.qabel.desktop.storage.BoxVolume;
 
 import java.nio.file.Path;
+import java.util.concurrent.TimeUnit;
 
 public class BoxSyncBasedUpload extends AbstractBoxSyncBasedTransaction implements Upload {
+	private long stagingDelayMills = TimeUnit.SECONDS.toMillis(2);
+
 	public BoxSyncBasedUpload(BoxVolume volume, BoxSyncConfig boxSyncConfig,  WatchEvent event) {
 		super(volume, event, boxSyncConfig);
 	}
@@ -20,6 +23,15 @@ public class BoxSyncBasedUpload extends AbstractBoxSyncBasedTransaction implemen
 	@Override
 	public boolean isValid() {
 		return event.isValid();
+	}
+
+	@Override
+	public long getStagingDelayMillis() {
+		return stagingDelayMills;
+	}
+
+	public void setStagingDelayMills(long stagingDelayMills) {
+		this.stagingDelayMills = stagingDelayMills;
 	}
 
 	@Override

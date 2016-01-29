@@ -1,10 +1,7 @@
 package de.qabel.desktop.daemon.sync.worker;
 
 import de.qabel.desktop.config.BoxSyncConfig;
-import de.qabel.desktop.daemon.management.BoxSyncBasedDownload;
-import de.qabel.desktop.daemon.management.BoxSyncBasedUpload;
-import de.qabel.desktop.daemon.management.LoadManager;
-import de.qabel.desktop.daemon.management.Transaction;
+import de.qabel.desktop.daemon.management.*;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.LocalDeleteEvent;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
@@ -17,15 +14,17 @@ import de.qabel.desktop.storage.cache.CachedBoxVolume;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
 public class DefaultSyncer implements Syncer {
+	private BoxSyncBasedUploadFactory uploadFactory = new BoxSyncBasedUploadFactory();
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private CachedBoxVolume boxVolume;
 	private BoxSyncConfig config;
 	private LoadManager manager;
-	private int pollInterval = 5;
+	private int pollInterval = 2;
 	private TimeUnit pollUnit = TimeUnit.SECONDS;
 	private Thread poller;
 	private TreeWatcher watcher;
@@ -116,7 +115,7 @@ public class DefaultSyncer implements Syncer {
 	}
 
 	private void upload(WatchEvent event) {
-		BoxSyncBasedUpload upload = new BoxSyncBasedUpload(boxVolume, config, event);
+		BoxSyncBasedUpload upload = uploadFactory.getUpload(boxVolume, config, event);
 		if (isUpToDate(upload)) {
 			downloadUnnoticedDelete(upload);
 			return;
@@ -134,8 +133,9 @@ public class DefaultSyncer implements Syncer {
 	private void downloadUnnoticedDelete(BoxSyncBasedUpload upload) {
 		Path destination = upload.getDestination();
 		boolean exists;
+		BoxNavigation nav = null;
 		try {
-			BoxNavigation nav = upload.getBoxVolume().navigate();
+			nav = upload.getBoxVolume().navigate();
 			for (int i = 0; i < destination.getNameCount() - 1; i++) {
 				nav = nav.navigate(destination.getName(i).toString());
 			}
@@ -150,14 +150,19 @@ public class DefaultSyncer implements Syncer {
 					upload.getDestination(),
 					upload.isDir(),
 					System.currentTimeMillis(),
-					ChangeEvent.TYPE.DELETE
+					ChangeEvent.TYPE.DELETE,
+					null, nav
 			);
 			download(inverseEvent);
 		}
 	}
 
 	protected void startWatcher() {
-		watcher = new TreeWatcher(config.getLocalPath(), watchEvent -> {
+		Path localPath = config.getLocalPath();
+		if (!Files.isDirectory(localPath) || !Files.isReadable(localPath)) {
+			throw new IllegalStateException("local dir " + localPath.toString() + " is not valid");
+		}
+		watcher = new TreeWatcher(localPath, watchEvent -> {
 			if (!watchEvent.isValid()) {
 				return;
 			}
@@ -195,5 +200,13 @@ public class DefaultSyncer implements Syncer {
 		while (!polling && !watcher.isWatching()) {
 			Thread.yield();
 		}
+	}
+
+	public BoxSyncBasedUploadFactory getUploadFactory() {
+		return uploadFactory;
+	}
+
+	public void setUploadFactory(BoxSyncBasedUploadFactory uploadFactory) {
+		this.uploadFactory = uploadFactory;
 	}
 }

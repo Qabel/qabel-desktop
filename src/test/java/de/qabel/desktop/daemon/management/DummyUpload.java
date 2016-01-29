@@ -61,6 +61,11 @@ public class DummyUpload implements Upload {
 	}
 
 	@Override
+	public long getStagingDelayMillis() {
+		return 0;
+	}
+
+	@Override
 	public STATE getState() {
 		return null;
 	}

@@ -15,6 +15,7 @@ public class TransactionStub implements Transaction {
 	public Long mtime = 0L;
 	public boolean closed = false;
 	public long transactionAge = 2000L;
+	public long stagingDelay = 0L;
 
 	@Override
 	public long transactionAge() {
@@ -69,6 +70,11 @@ public class TransactionStub implements Transaction {
 	@Override
 	public Transaction onSkipped(Runnable runnable) {
 		return this;
+	}
+
+	@Override
+	public long getStagingDelayMillis() {
+		return stagingDelay;
 	}
 
 	@Override

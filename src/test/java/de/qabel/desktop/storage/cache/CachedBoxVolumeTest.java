@@ -1,5 +1,6 @@
 package de.qabel.desktop.storage.cache;
 
+import de.qabel.desktop.daemon.sync.SyncUtils;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
@@ -170,6 +171,7 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 		File file = tmpfile.toFile();
 		file.deleteOnExit();
 		nav.upload("testfile", file);
+		clear(1);
 
 		Files.write(tmpfile, "content2".getBytes());
 		volume2.navigate().overwrite("testfile", file);
@@ -185,6 +187,7 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 	public void notifiesOnDeleteFolder() throws Exception {
 		observe();
 		nav.createFolder("testfolder");
+		clear(1);
 
 		BoxNavigation nav2 = volume2.navigate();
 		nav2.delete(nav2.getFolder("testfolder"));
@@ -203,6 +206,7 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 		file.createNewFile();
 		file.deleteOnExit();
 		BoxFile boxFile = nav.upload("testfile", file);
+		clear(1);
 
 		volume2.navigate().delete(boxFile);
 		nav.refresh();
@@ -213,11 +217,17 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 		assertEquals("/testfile", event.getPath().toString());
 	}
 
+	protected void clear(int events) {
+		SyncUtils.waitUntil(() -> updates.size() == events);
+		updates.clear();
+	}
+
 	@Test
 	public void notifiesOnSubnavigationChanges() throws Exception {
 		observe();
-
 		nav.navigate(nav.createFolder("folder"));
+		clear(1);
+
 		volume2.navigate().navigate("folder").createFolder("subchange");
 		nav.refresh();
 

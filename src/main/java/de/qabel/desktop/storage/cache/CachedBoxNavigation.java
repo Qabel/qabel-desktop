@@ -1,5 +1,6 @@
 package de.qabel.desktop.storage.cache;
 
+import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
@@ -10,11 +11,19 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.CREATE;
+import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.DELETE;
+import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.UPDATE;
 
 public class CachedBoxNavigation extends Observable implements BoxNavigation {
 	private final BoxNavigation nav;
 	private final BoxNavigationCache<CachedBoxNavigation> cache = new BoxNavigationCache<>();
 	private final Path path;
+	private static final ExecutorService executor = Executors.newCachedThreadPool();
+	private BoxFolder folder;
 
 	public CachedBoxNavigation(BoxNavigation nav, Path path) {
 		this.nav = nav;
@@ -71,12 +80,20 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 
 	@Override
 	public BoxFile upload(String name, File file) throws QblStorageException {
-		return nav.upload(name, file);
+		BoxFile upload = nav.upload(name, file);
+		notifyAsync(upload, CREATE);
+		return upload;
+	}
+
+	protected void notifyAsync(BoxObject file, TYPE type) {
+		executor.submit(() -> notify(file, type));
 	}
 
 	@Override
 	public BoxFile overwrite(String name, File file) throws QblStorageException {
-		return nav.overwrite(name, file);
+		BoxFile overwrite = nav.overwrite(name, file);
+		notifyAsync(overwrite, UPDATE);
+		return overwrite;
 	}
 
 	@Override
@@ -86,18 +103,22 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 
 	@Override
 	public BoxFolder createFolder(String name) throws QblStorageException {
-		return nav.createFolder(name);
+		BoxFolder folder = nav.createFolder(name);
+		notifyAsync(folder, CREATE);
+		return folder;
 	}
 
 	@Override
 	public void delete(BoxFile file) throws QblStorageException {
 		nav.delete(file);
+		notifyAsync(file, DELETE);
 	}
 
 	@Override
 	public void delete(BoxFolder folder) throws QblStorageException {
 		nav.delete(folder);
 		cache.remove(folder);
+		notifyAsync(folder, DELETE);
 	}
 
 	@Override
@@ -190,7 +211,9 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 						getPath(file),
 						file instanceof BoxFolder,
 						file instanceof BoxFile ? ((BoxFile) file).mtime : null,
-						type
+						type,
+						file,
+						this
 				)
 		);
 	}
@@ -206,10 +229,10 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 	protected void findNewFiles(Set<BoxFile> oldFiles, Set<BoxFile> newFiles, Set<BoxFile> changedFiles) {
 		for (BoxFile file : newFiles) {
 			if (!oldFiles.contains(file)) {
-				TYPE type = TYPE.CREATE;
+				TYPE type = CREATE;
 				for (BoxFile oldFile : oldFiles) {
 					if (oldFile.name.equals(file.name)) {
-						type = TYPE.UPDATE;
+						type = UPDATE;
 						changedFiles.add(oldFile);
 						break;
 					}
@@ -222,7 +245,7 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 	protected void findNewFolders(Set<BoxFolder> oldFolders, Set<BoxFolder> newFolders) throws QblStorageException {
 		for (BoxFolder folder : newFolders) {
 			if (!oldFolders.contains(folder)) {
-				notify(folder, TYPE.CREATE);
+				notify(folder, CREATE);
 				navigate(folder).notifyAllContents();
 			}
 		}
@@ -230,11 +253,11 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 
 	public void notifyAllContents() throws QblStorageException {
 		for (BoxFolder folder : nav.listFolders()) {
-			notify(folder, TYPE.CREATE);
+			notify(folder, CREATE);
 			navigate(folder).notifyAllContents();
 		}
 		for (BoxFile file : listFiles()) {
-			notify(file, TYPE.CREATE);
+			notify(file, CREATE);
 		}
 	}
 

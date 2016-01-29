@@ -27,6 +27,8 @@ public interface Transaction extends AutoCloseable {
 
 	Transaction onSkipped(Runnable runnable);
 
+	long getStagingDelayMillis();
+
 	enum TYPE { CREATE, UPDATE, DELETE }
 	enum STATE { INITIALIZING, SCHEDULED, RUNNING, FINISHED, FAILED, WAITING, SKIPPED }
 

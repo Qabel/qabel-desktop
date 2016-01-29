@@ -17,10 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.FileTime;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -29,12 +26,10 @@ import static de.qabel.desktop.daemon.management.Transaction.TYPE.CREATE;
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.DELETE;
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.UPDATE;
 
-public class DefaultLoadManager implements LoadManager, Runnable {
+public class DefaultLoadManager extends Observable implements LoadManager, Runnable {
 	private final Logger logger = LoggerFactory.getLogger(DefaultLoadManager.class);
 	private final LinkedBlockingQueue<Transaction> transactions = new LinkedBlockingQueue<>();
 	private final List<Transaction> history = new LinkedList<>();
-	private long stagingDelay = 2L;
-	private TimeUnit stagingDelayUnit = TimeUnit.SECONDS;
 
 	@Override
 	public List<Transaction> getTransactions() {
@@ -54,12 +49,6 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 	}
 
 	@Override
-	public void setStagingDelay(long amount, TimeUnit unit) {
-		stagingDelay = amount;
-		stagingDelayUnit = unit;
-	}
-
-	@Override
 	public void addUpload(Upload upload) {
 		logger.trace("upload added: " + upload.getSource() + " to " + upload.getDestination());
 		transactions.add(upload);
@@ -76,12 +65,14 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 		}
 	}
 
-	void next() throws InterruptedException {
+	public void next() throws InterruptedException {
 		Transaction transaction = transactions.take();
+		transaction.toState(WAITING);
+		setChanged();
+		notifyObservers(transaction);
 		if (isStageable(transaction)) {
-			long delay = stagingDelayUnit.toMillis(stagingDelay) - transaction.transactionAge();
+			long delay = transaction.getStagingDelayMillis() - transaction.transactionAge();
 			if (delay > 0) {
-				transaction.toState(WAITING);
 				Thread.sleep(delay);
 			}
 		}
@@ -95,6 +86,9 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 			}
 		} catch (Exception e) {
 			logger.error("Transaction failed: " + e.getMessage(), e);
+		} finally {
+			setChanged();
+			notifyObservers(null);
 		}
 	}
 
