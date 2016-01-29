@@ -8,8 +8,10 @@ import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.daemon.management.BoxVolumeFactoryStub;
 import de.qabel.desktop.repository.ContactRepository;
+import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.Stub.StubContactRepository;
+import de.qabel.desktop.repository.Stub.StubDropMessageRepository;
 import de.qabel.desktop.repository.inmemory.InMemoryIdentityRepository;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import javafx.application.Application;
@@ -33,6 +35,7 @@ public class AbstractControllerTest {
 	protected DefaultClientConfiguration clientConfiguration;
 	protected IdentityBuilderFactory identityBuilderFactory;
 	protected ContactRepository contactRepository = new StubContactRepository();
+	protected DropMessageRepository dropMessageRepository = new StubDropMessageRepository();
 
 
 	@BeforeClass
@@ -71,6 +74,7 @@ public class AbstractControllerTest {
 		diContainer.put("account", new Account("a", "b", "c"));
 		diContainer.put("identityRepository", identityRepository);
 		diContainer.put("contactRepository", contactRepository);
+		diContainer.put("dropMessageRepository", dropMessageRepository);
 		diContainer.put("boxVolumeFactory", new BoxVolumeFactoryStub());
 		Injector.setConfigurationSource(diContainer::get);
 		Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(diContainer));

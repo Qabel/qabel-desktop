@@ -33,7 +33,7 @@ public class HttpDropConnector {
 		}
 	}
 
-	public List<DropMessage> getDropMessages(Identity i, Date siceDate) throws QblVersionMismatchException, QblDropInvalidMessageSizeException, QblSpoofedSenderException {
+	public List<DropMessage> receive(Identity i, Date siceDate) throws QblVersionMismatchException, QblDropInvalidMessageSizeException, QblSpoofedSenderException {
 		DropURL d = convertCollectionIntoDropUrl(i.getDropUrls());
 		HTTPResult<Collection<byte[]>> result = receiveMessages(siceDate, d);
 		return createDropMessagesFromHttpResult(result, i);

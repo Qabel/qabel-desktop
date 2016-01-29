@@ -22,7 +22,7 @@
                 <TextArea fx:id="textarea" prefHeight="68.0" wrapText="true" BorderPane.alignment="BOTTOM_CENTER" />
                 <VBox>
                <children>
-                  <Button mnemonicParsing="false" minWidth="100" onAction="#handleSubmitButtonAction" text="sbumit" />
+                  <Button mnemonicParsing="false" minWidth="100" onAction="#handleSubmitButtonAction" text="%submit" />
                </children></VBox>
             </children>
 

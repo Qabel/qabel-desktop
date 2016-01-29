@@ -10,10 +10,10 @@ import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
-import de.qabel.desktop.ui.connector.HttpDropConnector;
 import de.qabel.desktop.ui.actionlog.item.ActionlogItemView;
 import de.qabel.desktop.ui.actionlog.item.MyActionlogItemView;
 import de.qabel.desktop.ui.actionlog.item.OtherActionlogItemView;
+import de.qabel.desktop.ui.connector.HttpDropConnector;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -57,7 +57,11 @@ public class ActionlogController extends AbstractController implements Initializ
 
 		identity = clientConfiguration.getSelectedIdentity();
 		c = new Contact(identity, identity.getAlias(), identity.getDropUrls(), identity.getEcPublicKey());
-		loadMessages(c);
+		try {
+			loadMessages(c);
+		} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
+			entityNotFoundExcepion.printStackTrace();
+		}
 
 		scroller.setVvalue(scroller.getVmax());
 		addListener();
@@ -77,7 +81,7 @@ public class ActionlogController extends AbstractController implements Initializ
 					receiveDropMessages(lastDate);
 					loadMessages(c);
 
-				} catch (QblDropPayloadSizeException | PersistenceException | QblDropInvalidMessageSizeException | QblVersionMismatchException | QblSpoofedSenderException e) {
+				} catch (QblDropPayloadSizeException | PersistenceException | QblDropInvalidMessageSizeException | QblVersionMismatchException | QblSpoofedSenderException | QblNetworkInvalidResponseException | EntityNotFoundExcepion e) {
 					e.printStackTrace();
 				}
 			}
@@ -85,39 +89,57 @@ public class ActionlogController extends AbstractController implements Initializ
 	}
 
 	@FXML
-	protected void handleSubmitButtonAction(ActionEvent event) throws QblDropPayloadSizeException, EntityNotFoundExcepion, PersistenceException, QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException {
+	protected void handleSubmitButtonAction(ActionEvent event) throws QblDropPayloadSizeException, EntityNotFoundExcepion, PersistenceException, QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException, QblNetworkInvalidResponseException {
 		if (textarea.getText() == "") {
 			return;
 		}
 		sendDropMessage(c, textarea.getText());
 		receiveDropMessages(lastDate);
-
 		loadMessages(c);
 	}
 
-	void receiveDropMessages(Date siceDate) throws QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException, PersistenceException {
-		List<DropMessage> dropMessages = getDropMassages(siceDate);
+	void receiveDropMessages(Date siceDate) throws QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException, PersistenceException, EntityNotFoundExcepion {
 
-		if (dropMessages == null) {
-			return;
-		}
+		HttpDropConnector connector = new HttpDropConnector();
+		List<DropMessage> dropMessages = connector.receive(identity, siceDate);
 
 		for (DropMessage d : dropMessages) {
-			Contact contact = findSender(d);
+			Contact contact = contactRepository.findByKeyId(identity, d.getSenderKeyId());
 
-			if (lastDate.getTime() < d.getCreationDate().getTime()) {
+			if (lastDate == null || lastDate.getTime() < d.getCreationDate().getTime()) {
 				lastDate = d.getCreationDate();
 				dropMessageRepository.addMessage(d, contact, false);
-				loadMessages(c);
 			}
 		}
+		loadMessages(c);
 	}
 
-	DropMessage sendDropMessage(final Contact c, String text) throws QblDropPayloadSizeException, QblNetworkInvalidResponseException {
+	void sendDropMessage(Contact c, String text) throws QblDropPayloadSizeException, QblNetworkInvalidResponseException, PersistenceException {
 		DropMessage d = new DropMessage(identity, text, "dropMessage");
+		dropMessageRepository.addMessage(d, c, true);
 		HttpDropConnector connector = new HttpDropConnector();
-		connector.send(c,d);
-		return d;
+		connector.send(c, d);
+	}
+
+	void loadMessages(Contact c) throws EntityNotFoundExcepion {
+		try {
+			messages.getChildren().clear();
+			List<PersitsDropMessage> dropMessages = dropMessageRepository.loadConversation(c);
+			for (PersitsDropMessage d : dropMessages) {
+
+				if (lastDate == null || lastDate.getTime() < d.getDropMessage().getCreationDate().getTime()) {
+					lastDate = d.getDropMessage().getCreationDate();
+				}
+
+				if (d.getSend()) {
+					addOwnMessageToActionlog(d.getDropMessage());
+				} else {
+					addMessageToActionlog(d.getDropMessage());
+				}
+			}
+		} catch (PersistenceException e) {
+			e.printStackTrace();
+		}
 	}
 
 	void addMessageToActionlog(DropMessage dropMessage) throws EntityNotFoundExcepion {

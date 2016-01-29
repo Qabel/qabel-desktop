@@ -6,8 +6,6 @@ import de.qabel.core.drop.DropMessage;
 import de.qabel.core.drop.DropURL;
 import de.qabel.core.exceptions.*;
 import de.qabel.desktop.ui.AbstractControllerTest;
-import de.qabel.desktop.ui.actionlog.ActionlogController;
-import de.qabel.desktop.ui.actionlog.ActionlogView;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,11 +18,9 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 
-public class ActionlogControllerTest extends AbstractControllerTest {
+public class HttpDropConnectorTest extends AbstractControllerTest {
 
-	ActionlogController controller;
 	Identity i;
-	ActionlogView view;
 	Contact c;
 	String fakeURL;
 	String workingURL;
@@ -54,6 +50,8 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 	@Test
 	public void sendAndReceiveMessagesTest() throws QblDropPayloadSizeException, QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException, URISyntaxException, QblDropInvalidURL, QblNetworkInvalidResponseException {
 		String text = "MessageString";
+		String type = "dropMessage";
+
 		Date sinceDate = new Date(0L);
 		Collection<DropURL> collection = new ArrayList<>();
 		DropURL dropURL = new DropURL(workingURL);
@@ -63,14 +61,15 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 		Identity identity = new Identity("TestAlias", collection, i.getPrimaryKeyPair());
 		c = new Contact(identity, identity.getAlias(), collection, identity.getEcPublicKey());
 
-		DropMessage dropMessage = new DropMessage(identity, text, "dropMessage");
+		DropMessage dropMessage = new DropMessage(identity, text, type);
 
 		connector.send(c, dropMessage);
-
-		List<DropMessage> messages = connector.getDropMessages(i, sinceDate);
+		List<DropMessage> messages = connector.receive(identity, sinceDate);
 
 		assertEquals(1, messages.size());
 		assertEquals(text, messages.get(0).getDropPayload());
+		assertEquals(type, messages.get(0).getDropPayloadType());
+		assertEquals(c.getEcPublicKey().getReadableKeyIdentifier(), messages.get(0).getSenderKeyId());
 	}
 
 

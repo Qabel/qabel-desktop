@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
+import org.ocpsoft.prettytime.PrettyTime;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -39,8 +40,8 @@ public class OtherActionlogItemController extends AbstractController implements 
 
 		textlabel.setText(dropMessage.getDropPayload());
 
-
-		dateLabel.setText(calculateTimeString(dropMessage));
+		PrettyTime p = new PrettyTime(resources.getLocale());
+		dateLabel.setText(p.format(dropMessage.getCreationDate()));
 
 		textlabel.setWrapText(true);
 		dateLabel.setWrapText(true);

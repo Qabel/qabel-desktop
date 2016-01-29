@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.text.TextAlignment;
+import org.ocpsoft.prettytime.PrettyTime;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -27,7 +28,8 @@ public class MyActionlogItemController extends AbstractController implements Ini
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		textlabel.setText(dropMessage.getDropPayload());
-		dateLabel.setText(calculateTimeString(dropMessage));
+		PrettyTime p = new PrettyTime(resources.getLocale());
+		dateLabel.setText(p.format(dropMessage.getCreationDate()));
 
 		textlabel.setWrapText(true);
 		dateLabel.setWrapText(true);

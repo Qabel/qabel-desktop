@@ -152,29 +152,5 @@ public class AbstractController {
 		}
 		return collection;
 	}
-	protected String calculateTimeString(DropMessage dropMessage) {
 
-		Long messageDate = dropMessage.getCreationDate().getTime();
-
-		java.util.Date date= new java.util.Date();
-		Timestamp currentTimestamp = new Timestamp(date.getTime());
-
-		long diff = currentTimestamp.getTime() - messageDate;
-
-		int minutes = (int) ((diff / (1000*60)));
-		int hours   = (int) ((diff / (1000*60*60)));
-
-		String text;
-		if (minutes <= 3) {
-			text = "moments ago";
-		} else if (minutes < 60) {
-			text = minutes + " minutes ago";
-		} else if (hours < 24) {
-			text = hours + " hours ago";
-		} else {
-			text = dropMessage.getCreationDate().toString();
-		}
-
-		return text;
-	}
 }
