@@ -8,6 +8,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 if [ ! -d config.py ]; then
   cp config.py.example config.py
+  sed --in-place "s/'qabel_drop'/'qabel_drop','host':'localhost','port':'5432','username':'qabel','password':'qabel_test'/" config.py
 fi
 python manage.py runserver > ../drop.log 2>&1 &
 echo $! > ../drop.pid
