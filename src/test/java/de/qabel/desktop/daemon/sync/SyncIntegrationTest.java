@@ -37,8 +37,8 @@ public class SyncIntegrationTest {
 	private Thread managerThread2;
 	private CachedBoxVolume volume1;
 	private CachedBoxVolume volume2;
-	private LoadManager manager1;
-	private LoadManager manager2;
+	private TransferManager manager1;
+	private TransferManager manager2;
 	private BoxSyncConfig config1;
 	private BoxSyncConfig config2;
 
@@ -63,8 +63,8 @@ public class SyncIntegrationTest {
 			volume2 = new CachedBoxVolume(readBackend, writeBackend, identity.getPrimaryKeyPair(), new byte[0], new File(System.getProperty("java.io.tmpdir")), "prefix");
 			volume1.createIndex("qabel", "prefix");
 			volume1.navigate().createFolder("sync");
-			manager1 = new DefaultLoadManager();
-			manager2 = new DefaultLoadManager();
+			manager1 = new DefaultTransferManager();
+			manager2 = new DefaultTransferManager();
 
 			syncer1 = new DefaultSyncer(config1, volume1, manager1);
 			syncer1.getUploadFactory().setSyncDelayMills(0L);

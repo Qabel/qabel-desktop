@@ -51,7 +51,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 	BoxVolumeFactory boxVolumeFactory;
 
 	@Inject
-	LoadManager loadManager;
+	TransferManager loadManager;
 
 	@FXML
 	private TreeTableView<BoxObject> treeTable;

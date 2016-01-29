@@ -1,5 +1,8 @@
 package de.qabel.desktop.daemon.sync.worker;
 
+import de.qabel.desktop.daemon.management.BoxSyncBasedUpload;
+import de.qabel.desktop.daemon.management.TransferManager;
+
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.daemon.management.*;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
@@ -9,7 +12,6 @@ import de.qabel.desktop.daemon.sync.event.WatchEvent;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndex;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.BoxNavigation;
-import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +25,7 @@ public class DefaultSyncer implements Syncer {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private CachedBoxVolume boxVolume;
 	private BoxSyncConfig config;
-	private LoadManager manager;
+	private TransferManager manager;
 	private int pollInterval = 2;
 	private TimeUnit pollUnit = TimeUnit.SECONDS;
 	private Thread poller;
@@ -31,7 +33,7 @@ public class DefaultSyncer implements Syncer {
 	private boolean polling = false;
 	private final SyncIndex index;
 
-	public DefaultSyncer(BoxSyncConfig config, CachedBoxVolume boxVolume, LoadManager manager) {
+	public DefaultSyncer(BoxSyncConfig config, CachedBoxVolume boxVolume, TransferManager manager) {
 		this.config = config;
 		this.boxVolume = boxVolume;
 		this.manager = manager;

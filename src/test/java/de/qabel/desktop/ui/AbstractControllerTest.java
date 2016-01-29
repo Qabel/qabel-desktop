@@ -7,7 +7,7 @@ import de.qabel.desktop.config.DefaultClientConfiguration;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.daemon.management.BoxVolumeFactoryStub;
-import de.qabel.desktop.daemon.management.DefaultLoadManager;
+import de.qabel.desktop.daemon.management.DefaultTransferManager;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.Stub.StubContactRepository;
@@ -35,7 +35,7 @@ public class AbstractControllerTest {
 	protected DefaultClientConfiguration clientConfiguration;
 	protected IdentityBuilderFactory identityBuilderFactory;
 	protected ContactRepository contactRepository = new StubContactRepository();
-	protected DefaultLoadManager loadManager;
+	protected DefaultTransferManager loadManager;
 	protected BoxVolumeFactoryStub boxVolumeFactory;
 
 
@@ -77,7 +77,7 @@ public class AbstractControllerTest {
 		diContainer.put("contactRepository", contactRepository);
 		boxVolumeFactory = new BoxVolumeFactoryStub();
 		diContainer.put("boxVolumeFactory", boxVolumeFactory);
-		loadManager = new DefaultLoadManager();
+		loadManager = new DefaultTransferManager();
 		diContainer.put("loadManager", loadManager);
 		Injector.setConfigurationSource(diContainer::get);
 		Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(diContainer));

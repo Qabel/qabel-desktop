@@ -30,12 +30,12 @@ import static de.qabel.desktop.daemon.management.Transaction.STATE.SKIPPED;
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.*;
 import static org.junit.Assert.*;
 
-public class DefaultLoadManagerTest extends AbstractSyncTest {
+public class DefaultTransferManagerTest extends AbstractSyncTest {
 	public static final long NEWER = 10000L;
 	public static final long OLDER = -10000L;
 	private BoxVolume volume;
 	private UploadStub upload;
-	private DefaultLoadManager manager;
+	private DefaultTransferManager manager;
 	private DownloadStub download;
 
 	private Path tmpPath(String dir) {
@@ -57,11 +57,12 @@ public class DefaultLoadManagerTest extends AbstractSyncTest {
 
 			upload = new UploadStub();
 			upload.volume = volume;
+			upload.stagingDelay = 10L;
 
 			download = new DownloadStub();
 			download.volume = volume;
 
-			manager = new DefaultLoadManager();
+			manager = new DefaultTransferManager();
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}

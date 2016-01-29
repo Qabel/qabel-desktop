@@ -2,15 +2,15 @@ package de.qabel.desktop.daemon.sync.worker;
 
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.factory.BoxVolumeFactory;
-import de.qabel.desktop.daemon.management.LoadManager;
+import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
 
 public class DefaultSyncerFactory implements SyncerFactory {
-	private LoadManager manager;
+	private TransferManager manager;
 
 	private BoxVolumeFactory boxVolumeFactory;
 
-	public DefaultSyncerFactory(BoxVolumeFactory boxVolumeFactory, LoadManager manager) {
+	public DefaultSyncerFactory(BoxVolumeFactory boxVolumeFactory, TransferManager manager) {
 		this.boxVolumeFactory = boxVolumeFactory;
 		this.manager = manager;
 	}

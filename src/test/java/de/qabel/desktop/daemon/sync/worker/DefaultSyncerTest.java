@@ -6,9 +6,9 @@ import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
-import de.qabel.desktop.daemon.management.DefaultLoadManager;
+import de.qabel.desktop.daemon.management.DefaultTransferManager;
 import de.qabel.desktop.daemon.management.Download;
-import de.qabel.desktop.daemon.management.LoadManager;
+import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.daemon.management.Transaction;
 import de.qabel.desktop.daemon.sync.AbstractSyncTest;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.assertEquals;
 
 public class DefaultSyncerTest extends AbstractSyncTest {
-	private LoadManager manager;
+	private TransferManager manager;
 	private BoxSyncConfig config;
 	private Identity identity;
 	private Account account;
@@ -42,7 +42,7 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 			throw new IllegalStateException(e.getMessage(), e);
 		}
 		account = new Account("a", "b", "c");
-		manager = new DefaultLoadManager();
+		manager = new DefaultTransferManager();
 		config = new DefaultBoxSyncConfig(tmpDir, Paths.get("/tmp"), identity, account);
 	}
 

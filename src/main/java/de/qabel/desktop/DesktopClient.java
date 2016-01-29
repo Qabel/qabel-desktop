@@ -7,7 +7,7 @@ import de.qabel.core.config.SQLitePersistence;
 import de.qabel.core.exceptions.QblInvalidEncryptionKeyException;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.factory.*;
-import de.qabel.desktop.daemon.management.DefaultLoadManager;
+import de.qabel.desktop.daemon.management.DefaultTransferManager;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
 import de.qabel.desktop.repository.AccountRepository;
@@ -90,7 +90,7 @@ public class DesktopClient extends Application {
 
 	protected SyncDaemon getSyncDaemon(ClientConfiguration config) {
 
-		DefaultLoadManager loadManager = new DefaultLoadManager();
+		DefaultTransferManager loadManager = new DefaultTransferManager();
 		customProperties.put("loadManager", loadManager);
 		new Thread(loadManager, "TransactionManager").start();
 		return new SyncDaemon(config.getBoxSyncConfigs(), new DefaultSyncerFactory(boxVolumeFactory, loadManager));

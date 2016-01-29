@@ -26,8 +26,8 @@ import static de.qabel.desktop.daemon.management.Transaction.TYPE.CREATE;
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.DELETE;
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.UPDATE;
 
-public class DefaultLoadManager extends Observable implements LoadManager, Runnable {
-	private final Logger logger = LoggerFactory.getLogger(DefaultLoadManager.class);
+public class DefaultTransferManager extends Observable implements TransferManager, Runnable {
+	private final Logger logger = LoggerFactory.getLogger(DefaultTransferManager.class);
 	private final LinkedBlockingQueue<Transaction> transactions = new LinkedBlockingQueue<>();
 	private final List<Transaction> history = new LinkedList<>();
 
