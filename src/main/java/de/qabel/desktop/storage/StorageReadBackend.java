@@ -9,5 +9,5 @@ public interface StorageReadBackend {
 	/**
 	 * Download a file from the storage
 	 */
-	InputStream download(String name) throws QblStorageException;
+	StorageDownload download(String name) throws QblStorageException;
 }

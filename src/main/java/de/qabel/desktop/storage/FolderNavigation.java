@@ -14,7 +14,7 @@ import java.security.InvalidKeyException;
 
 public class FolderNavigation extends AbstractNavigation {
 
-	private static final Logger logger = LoggerFactory.getLogger(FolderNavigation.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(FolderNavigation.class.getSimpleName());
 
 	private final byte[] key;
 
@@ -36,7 +36,7 @@ public class FolderNavigation extends AbstractNavigation {
 		logger.info("Reloading directory metadata");
 		// duplicate of navigate()
 		try {
-			InputStream indexDl = readBackend.download(dm.getFileName());
+			InputStream indexDl = readBackend.download(dm.getFileName()).getInputStream();
 			File tmp = File.createTempFile("dir", "db", dm.getTempDir());
 			tmp.deleteOnExit();
 			KeyParameter key = new KeyParameter(this.key);

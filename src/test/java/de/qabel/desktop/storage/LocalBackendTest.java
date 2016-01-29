@@ -42,7 +42,7 @@ public class LocalBackendTest {
 
 	@Test
 	public void testReadTempFile() throws QblStorageException, IOException {
-		assertArrayEquals(bytes, IOUtils.toByteArray(readBackend.download(testFile)));
+		assertArrayEquals(bytes, IOUtils.toByteArray(readBackend.download(testFile).getInputStream()));
 	}
 
 	@Test
@@ -50,7 +50,7 @@ public class LocalBackendTest {
 		byte[] newBytes = bytes.clone();
 		newBytes[0] = 0;
 		writeBackend.upload(testFile, new ByteArrayInputStream(newBytes));
-		assertArrayEquals(newBytes, IOUtils.toByteArray(readBackend.download(testFile)));
+		assertArrayEquals(newBytes, IOUtils.toByteArray(readBackend.download(testFile).getInputStream()));
 		writeBackend.delete(testFile);
 		try {
 			readBackend.download(testFile);

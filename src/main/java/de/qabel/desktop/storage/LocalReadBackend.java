@@ -11,21 +11,22 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class LocalReadBackend implements StorageReadBackend {
-
-	private static final Logger logger = LoggerFactory.getLogger(LocalReadBackend.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(LocalReadBackend.class.getSimpleName());
 	private final Path root;
-
 
 	public LocalReadBackend(Path root) {
 		this.root = root;
 	}
 
-
-	public InputStream download(String name) throws QblStorageException {
+	public StorageDownload download(String name) throws QblStorageException {
 		Path file = root.resolve(name);
 		logger.info("Downloading file path " + file.toString());
 		try {
-			return Files.newInputStream(file);
+			return new StorageDownload(
+					Files.newInputStream(file),
+					Files.getLastModifiedTime(file).toMillis(),
+					Files.size(file)
+			);
 		} catch (IOException e) {
 			throw new QblStorageNotFound(e);
 		}

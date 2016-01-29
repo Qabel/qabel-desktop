@@ -27,6 +27,17 @@ public interface BoxNavigation extends ReadOnlyBoxNavigation {
 	 *
 	 * @param name name of the file, must be unique
 	 * @param file file object that must be readable
+	 * @param listener
+	 * @return the resulting BoxFile object
+	 * @throws QblStorageException if the upload failed or the name is not unique
+	 */
+	BoxFile upload(String name, File file, ProgressListener listener) throws QblStorageException;
+
+	/**
+	 * Upload a new file to the current folder
+	 *
+	 * @param name name of the file, must be unique
+	 * @param file file object that must be readable
 	 * @return the resulting BoxFile object
 	 * @throws QblStorageException if the upload failed or the name is not unique
 	 */
@@ -37,10 +48,31 @@ public interface BoxNavigation extends ReadOnlyBoxNavigation {
 	 *
 	 * @param name name of the file which must already exist
 	 * @param file file object that must be readable
+	 * @param listener
+	 * @return the updated BoxFile object
+	 * @throws QblStorageException if he upload failed or the name does not exist
+	 */
+	BoxFile overwrite(String name, File file, ProgressListener listener) throws QblStorageException;
+
+	/**
+	 * Overwrite a file in the current folder
+	 *
+	 * @param name name of the file which must already exist
+	 * @param file file object that must be readable
 	 * @return the updated BoxFile object
 	 * @throws QblStorageException if he upload failed or the name does not exist
 	 */
 	BoxFile overwrite(String name, File file) throws QblStorageException;
+
+	/**
+	 * Create an {@link InputStream} for a {@link BoxFile} in the current folder
+	 *
+	 * @param file file in the current folder
+	 * @param listener
+	 * @return Decrypted stream
+	 * @throws QblStorageException if the download or decryption failed
+	 */
+	InputStream download(BoxFile file, ProgressListener listener) throws QblStorageException;
 
 	/**
 	 * Create an {@link InputStream} for a {@link BoxFile} in the current folder

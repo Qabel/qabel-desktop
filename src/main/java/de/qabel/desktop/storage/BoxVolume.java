@@ -23,7 +23,7 @@ import java.util.UUID;
 
 public class BoxVolume {
 
-	private static final Logger logger = LoggerFactory.getLogger(BoxVolume.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(BoxVolume.class.getSimpleName());
 
 	StorageReadBackend readBackend;
 	public StorageWriteBackend writeBackend;
@@ -72,7 +72,7 @@ public class BoxVolume {
 	public BoxNavigation navigate() throws QblStorageException {
 		String rootRef = getRootRef();
 		logger.info("Navigating to " + rootRef);
-		InputStream indexDl = readBackend.download(rootRef);
+		InputStream indexDl = readBackend.download(rootRef).getInputStream();
 		File tmp;
 		try {
 			byte[] encrypted = IOUtils.toByteArray(indexDl);

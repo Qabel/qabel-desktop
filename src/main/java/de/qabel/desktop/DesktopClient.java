@@ -58,6 +58,7 @@ public class DesktopClient extends Application {
 
 		boxVolumeFactory = new CachedBoxVolumeFactory(new S3BoxVolumeFactory());
 		ClientConfiguration config = initDiContainer();
+		new Thread(getSyncDaemon(config)).start();
 
 		SceneAntialiasing aa = SceneAntialiasing.DISABLED;
 		primaryStage.getIcons().setAll(new javafx.scene.image.Image(getClass().getResourceAsStream("/logo-invert_small.png")));
@@ -78,7 +79,6 @@ public class DesktopClient extends Application {
 		primaryStage.setScene(scene);
 		setTrayIcon(primaryStage);
 
-		new Thread(getSyncDaemon(config)).start();
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
@@ -90,10 +90,11 @@ public class DesktopClient extends Application {
 
 	protected SyncDaemon getSyncDaemon(ClientConfiguration config) {
 
-		DefaultTransferManager loadManager = new DefaultTransferManager();
-		customProperties.put("loadManager", loadManager);
-		new Thread(loadManager, "TransactionManager").start();
-		return new SyncDaemon(config.getBoxSyncConfigs(), new DefaultSyncerFactory(boxVolumeFactory, loadManager));
+		DefaultTransferManager transferManager = new DefaultTransferManager();
+		customProperties.put("loadManager", transferManager);
+		customProperties.put("transferManager", transferManager);
+		new Thread(transferManager, "TransactionManager").start();
+		return new SyncDaemon(config.getBoxSyncConfigs(), new DefaultSyncerFactory(boxVolumeFactory, transferManager));
 	}
 
 	private ClientConfiguration initDiContainer() throws QblInvalidEncryptionKeyException, URISyntaxException {

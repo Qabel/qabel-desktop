@@ -3,6 +3,7 @@ package de.qabel.desktop.storage;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.exceptions.QblStorageNotFound;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -15,10 +16,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class S3ReadBackend implements StorageReadBackend {
-
-	private static final Logger logger = LoggerFactory.getLogger(S3ReadBackend.class.getName());
+	private static final SimpleDateFormat lastModifiedFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
+	private static final Logger logger = LoggerFactory.getLogger(S3ReadBackend.class.getSimpleName());
 
 	// Number of http connections to S3
 	// The default was too low, 20 works. Further testing may be required
@@ -47,7 +50,7 @@ public class S3ReadBackend implements StorageReadBackend {
 		logger.info("S3ReadBackend with root address set to " + root);
 	}
 
-	public InputStream download(String name) throws QblStorageException {
+	public StorageDownload download(String name) throws QblStorageException {
 		logger.info("Downloading " + name);
 		URI uri;
 		try {
@@ -73,9 +76,15 @@ public class S3ReadBackend implements StorageReadBackend {
 		if (entity == null) {
 			throw new QblStorageException("No content");
 		}
+		long mtime;
+		try {
+			mtime = lastModifiedFormat.parse(response.getFirstHeader(HttpHeaders.LAST_MODIFIED).getValue()).getTime();
+		} catch (ParseException e) {
+			mtime = System.currentTimeMillis();
+		}
 		try {
 			InputStream content = entity.getContent();
-			return content;
+			return new StorageDownload(content, mtime, entity.getContentLength());
 		} catch (IOException e) {
 			throw new QblStorageException(e);
 		}

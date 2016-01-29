@@ -79,6 +79,11 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 	}
 
 	@Override
+	public BoxFile upload(String name, File file, ProgressListener listener) throws QblStorageException {
+		return nav.upload(name, file, listener);
+	}
+
+	@Override
 	public BoxFile upload(String name, File file) throws QblStorageException {
 		BoxFile upload = nav.upload(name, file);
 		notifyAsync(upload, CREATE);
@@ -90,10 +95,22 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 	}
 
 	@Override
+	public BoxFile overwrite(String name, File file, ProgressListener listener) throws QblStorageException {
+		BoxFile overwrite = nav.overwrite(name, file, listener);
+		notifyAsync(overwrite, UPDATE);
+		return overwrite;
+	}
+
+	@Override
 	public BoxFile overwrite(String name, File file) throws QblStorageException {
 		BoxFile overwrite = nav.overwrite(name, file);
 		notifyAsync(overwrite, UPDATE);
 		return overwrite;
+	}
+
+	@Override
+	public InputStream download(BoxFile file, ProgressListener listener) throws QblStorageException {
+		return nav.download(file, listener);
 	}
 
 	@Override

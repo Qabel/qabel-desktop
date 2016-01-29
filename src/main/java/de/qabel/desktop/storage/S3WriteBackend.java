@@ -11,7 +11,7 @@ import java.io.InputStream;
 
 public class S3WriteBackend implements StorageWriteBackend {
 
-	private static final Logger logger = LoggerFactory.getLogger(FolderNavigation.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(FolderNavigation.class.getSimpleName());
 
 	public final AmazonS3Client s3Client;
 	final String bucket;

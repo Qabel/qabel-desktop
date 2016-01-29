@@ -174,12 +174,27 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 		}
 
 		@Override
+		public BoxFile upload(String name, File file, ProgressListener listener) throws QblStorageException {
+			return null;
+		}
+
+		@Override
 		public BoxFile upload(String name, File file) throws QblStorageException {
 			return null;
 		}
 
 		@Override
+		public BoxFile overwrite(String name, File file, ProgressListener listener) throws QblStorageException {
+			return null;
+		}
+
+		@Override
 		public BoxFile overwrite(String name, File file) throws QblStorageException {
+			return null;
+		}
+
+		@Override
+		public InputStream download(BoxFile file, ProgressListener listener) throws QblStorageException {
 			return null;
 		}
 

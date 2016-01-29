@@ -13,7 +13,7 @@ import java.security.InvalidKeyException;
 
 public class IndexNavigation extends AbstractNavigation {
 
-	private static final Logger logger = LoggerFactory.getLogger(IndexNavigation.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(IndexNavigation.class.getSimpleName());
 
 	IndexNavigation(DirectoryMetadata dm, QblECKeyPair keyPair, byte[] deviceId,
 					StorageReadBackend readBackend, StorageWriteBackend writeBackend) {
@@ -24,7 +24,7 @@ public class IndexNavigation extends AbstractNavigation {
 	public DirectoryMetadata reloadMetadata() throws QblStorageException {
 		// TODO: duplicate with BoxVoume.navigate()
 		String rootRef = dm.getFileName();
-		InputStream indexDl = readBackend.download(rootRef);
+		InputStream indexDl = readBackend.download(rootRef).getInputStream();
 		File tmp;
 		try {
 			byte[] encrypted = IOUtils.toByteArray(indexDl);

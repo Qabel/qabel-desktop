@@ -66,6 +66,31 @@ public class DummyUpload implements Upload {
 	}
 
 	@Override
+	public long getSize() {
+		return 0;
+	}
+
+	@Override
+	public boolean hasSize() {
+		return false;
+	}
+
+	@Override
+	public long getProgress() {
+		return 0;
+	}
+
+	@Override
+	public void setProgress(long progress) {
+
+	}
+
+	@Override
+	public void setSize(long size) {
+
+	}
+
+	@Override
 	public STATE getState() {
 		return null;
 	}

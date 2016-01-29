@@ -16,7 +16,7 @@ import java.security.InvalidKeyException;
 import java.util.*;
 
 public abstract class AbstractNavigation implements BoxNavigation {
-	private static final Logger logger = LoggerFactory.getLogger(AbstractNavigation.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(AbstractNavigation.class.getSimpleName());
 
 	DirectoryMetadata dm;
 	final QblECKeyPair keyPair;
@@ -46,7 +46,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	@Override
 	public synchronized AbstractNavigation navigate(BoxFolder target) throws QblStorageException {
 		try {
-			InputStream indexDl = readBackend.download(target.ref);
+			InputStream indexDl = readBackend.download(target.ref).getInputStream();
 			File tmp = File.createTempFile("dir", "db", dm.getTempDir());
 			tmp.deleteOnExit();
 			KeyParameter key = new KeyParameter(target.key);
@@ -154,28 +154,39 @@ public abstract class AbstractNavigation implements BoxNavigation {
 
 	@Override
 	public synchronized BoxFile upload(String name, File file) throws QblStorageException {
+		return upload(name, file, null);
+	}
+
+	@Override
+	public synchronized BoxFile upload(String name, File file, ProgressListener listener) throws QblStorageException {
 		BoxFile oldFile = dm.getFile(name);
 		if (oldFile != null) {
 			throw new QblStorageNameConflict("File already exists");
 		}
-		return uploadFile(name, file, null);
+		return uploadFile(name, file, null, listener);
 	}
 
 	@Override
 	public synchronized BoxFile overwrite(String name, File file) throws QblStorageException {
+		return overwrite(name, file, null);
+	}
+
+	@Override
+	public synchronized BoxFile overwrite(String name, File file, ProgressListener listener) throws QblStorageException {
 		BoxFile oldFile = dm.getFile(name);
 		if (oldFile == null) {
 			throw new QblStorageNotFound("Could not find file to overwrite");
 		}
 		dm.deleteFile(oldFile);
-		return uploadFile(name, file, oldFile);
+		return uploadFile(name, file, oldFile, listener);
 	}
 
-	private BoxFile uploadFile(String name, File file, BoxFile oldFile) throws QblStorageException {
+	private BoxFile uploadFile(String name, File file, BoxFile oldFile, ProgressListener listener) throws QblStorageException {
 		KeyParameter key = cryptoUtils.generateSymmetricKey();
 		String block = UUID.randomUUID().toString();
 		BoxFile boxFile = new BoxFile(block, name, file.length(), 0L, key.getKey());
-		boxFile.mtime = uploadEncrypted(file, key, "blocks/" + block);
+		boxFile.mtime = file.lastModified();
+		uploadEncrypted(file, key, "blocks/" + block, listener);
 		updatedFiles.add(new FileUpdate(oldFile, boxFile));
 		dm.insertFile(boxFile);
 		autocommit();
@@ -191,6 +202,10 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	}
 
 	protected long uploadEncrypted(File file, KeyParameter key, String block) throws QblStorageException {
+		return uploadEncrypted(file, key, block, null);
+	}
+
+	protected long uploadEncrypted(File file, KeyParameter key, String block, ProgressListener listener) throws QblStorageException {
 		try {
 			File tempFile = File.createTempFile("upload", "up", dm.getTempDir());
 			OutputStream outputStream = new FileOutputStream(tempFile);
@@ -198,7 +213,12 @@ public abstract class AbstractNavigation implements BoxNavigation {
 				throw new QblStorageException("Encryption failed");
 			}
 			outputStream.flush();
-			long upload = writeBackend.upload(block, new FileInputStream(tempFile));
+			InputStream encryptedFile = new FileInputStream(tempFile);
+			if (listener != null) {
+				listener.setSize(tempFile.length());
+				encryptedFile = new ProgressInputStream(encryptedFile, listener);
+			}
+			long upload = writeBackend.upload(block, encryptedFile);
 			tempFile.delete();
 			return upload;
 		} catch (IOException | InvalidKeyException e) {
@@ -208,13 +228,23 @@ public abstract class AbstractNavigation implements BoxNavigation {
 
 	@Override
 	public InputStream download(BoxFile boxFile) throws QblStorageException {
-		InputStream download = readBackend.download("blocks/" + boxFile.block);
+		return download(boxFile, null);
+	}
+
+	@Override
+	public InputStream download(BoxFile boxFile, ProgressListener listener) throws QblStorageException {
+		StorageDownload download = readBackend.download("blocks/" + boxFile.block);
+		InputStream content = download.getInputStream();
+		if (listener != null) {
+			listener.setSize(download.getSize());
+			content = new ProgressInputStream(content, listener);
+		}
 		File temp;
 		KeyParameter key = new KeyParameter(boxFile.key);
 		try {
 			temp = File.createTempFile("upload", "down", dm.getTempDir());
 			temp.deleteOnExit();
-			if (!cryptoUtils.decryptFileAuthenticatedSymmetricAndValidateTag(download, temp, key)) {
+			if (!cryptoUtils.decryptFileAuthenticatedSymmetricAndValidateTag(content, temp, key)) {
 				throw new QblStorageException("Decryption failed");
 			}
 			return new FileInputStream(temp);

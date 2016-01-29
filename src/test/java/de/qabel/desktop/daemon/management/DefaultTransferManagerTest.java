@@ -15,6 +15,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.omg.PortableInterceptor.SUCCESSFUL;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +26,7 @@ import java.nio.file.attribute.FileTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static de.qabel.desktop.daemon.management.Transaction.STATE.FAILED;
 import static de.qabel.desktop.daemon.management.Transaction.STATE.FINISHED;
 import static de.qabel.desktop.daemon.management.Transaction.STATE.SKIPPED;
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.*;
@@ -129,7 +131,6 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 		upload.source = tmpPath("file");
 		upload.destination = Paths.get("/syncRoot", "targetFile");
 		File sourceFile = upload.source.toFile();
-		sourceFile.createNewFile();
 		write("testcontent", upload.source);
 		upload.isDir = false;
 
@@ -141,6 +142,10 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 		BoxFile boxFile = files.get(0);
 		assertEquals("targetFile", boxFile.name);
 		assertEquals("testcontent", IOUtils.toString(syncRoot.download(boxFile)));
+
+		assertTrue(upload.getSize() > sourceFile.length());
+		long encryptedSize = upload.getSize();
+		assertEquals(encryptedSize, upload.getProgress());
 	}
 
 	@Test
@@ -193,11 +198,12 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 		upload.source = tmpPath("file");
 		upload.destination = Paths.get("/syncRoot", "targetFile");
 		write("testcontent", upload.source);
-		upload.mtime = modifyMtime(upload.source, NEWER);
+		upload.mtime = modifyMtime(upload.source, OLDER);
 		manager.upload(upload);
 
 		upload.type = Transaction.TYPE.UPDATE;
 		write("content2", upload.source);
+		upload.mtime = modifyMtime(upload.source, NEWER);
 		manager.upload(upload);
 
 		BoxNavigation syncRoot = nav().navigate("syncRoot");
@@ -446,7 +452,45 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 		manager.addDownload(download);
 		managerNext();
 
-		waitUntil(() -> download.getState() == Transaction.STATE.FAILED, () -> download.getState().toString());
+		waitUntil(() -> download.getState() == FAILED, () -> download.getState().toString());
+	}
+
+	@Test
+	public void updatesDownloadSize() throws Exception {
+		Path file = tmpPath("file");
+		Files.write(file, "1234567890".getBytes());
+		volume.navigate().upload("file", file.toFile());
+		download.source = Paths.get("/file");
+		download.destination = tmpPath("wayne");
+		download.mtime = 10L;
+		download.type = CREATE;
+		download.isDir = false;
+		manager.addDownload(download);
+		managerNext();
+
+		waitUntil(
+				() -> download.hasSize() && download.getSize() == 10,
+				() -> download.hasSize() ? download.getSize() + " != 10" : "no size"
+		);
+	}
+
+	@Test
+	public void updatesDownloadProgress() throws Exception {
+		Path file = tmpPath("file");
+		Files.write(file, "1234567890".getBytes());
+		BoxFile remote = volume.navigate().upload("file", file.toFile());
+		download.source = Paths.get("/file");
+		download.destination = tmpPath("wayne");
+		download.mtime = remote.mtime;
+		download.type = CREATE;
+		download.isDir = false;
+		manager.addDownload(download);
+		managerNext();
+
+		waitUntil(() -> download.hasSize());
+		waitUntil(() -> download.getProgress() == download.getSize(), () -> {
+			return download.getProgress() + " != " + download.getSize();
+		});
 	}
 
 	private void assertRemoteExists(String content, String testfile) throws QblStorageException, IOException {

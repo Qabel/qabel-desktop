@@ -3,9 +3,7 @@ package de.qabel.desktop.daemon.management;
 
 import de.qabel.desktop.daemon.management.exception.TransferSkippedException;
 import de.qabel.desktop.exceptions.QblStorageException;
-import de.qabel.desktop.storage.BoxFile;
-import de.qabel.desktop.storage.BoxNavigation;
-import de.qabel.desktop.storage.BoxVolume;
+import de.qabel.desktop.storage.*;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,6 +115,7 @@ public class DefaultTransferManager extends Observable implements TransferManage
 					Path parent = source.getParent();
 					BoxNavigation nav = navigate(parent, download.getBoxVolume());
 					BoxFile file = nav.getFile(source.getFileName().toString());
+					download.setSize(file.size);
 					if (remoteChanged(download, file)) {
 						throw new TransferSkippedException("remote has changed");
 					}
@@ -124,7 +123,8 @@ public class DefaultTransferManager extends Observable implements TransferManage
 						throw new TransferSkippedException("local is newer");
 					}
 
-					try (InputStream stream = new BufferedInputStream(nav.download(file))) {
+					ProgressListener listener = new TransactionRelatedProgressListener(download);
+					try (InputStream stream = new BufferedInputStream(nav.download(file, listener))) {
 						Path tmpFile = Files.createTempFile("prefix", "suffix");
 						Files.copy(stream, tmpFile, StandardCopyOption.REPLACE_EXISTING);
 						Files.setLastModifiedTime(tmpFile, FileTime.fromMillis(download.getMtime()));
@@ -209,9 +209,11 @@ public class DefaultTransferManager extends Observable implements TransferManage
 			return;
 		}
 
+		ProgressListener listener = new TransactionRelatedProgressListener(upload);
+
 		dir = createDirectory(parent, volume);
 		if (!dir.hasFile(filename)) {
-			uploadFile(dir, source, destination);
+			uploadFile(dir, source, destination, listener);
 			return;
 		}
 
@@ -220,7 +222,7 @@ public class DefaultTransferManager extends Observable implements TransferManage
 			throw new TransferSkippedException("remote is newer " + format.format(new Date(file.mtime)) + ">" + format.format(new Date(upload.getMtime())));
 		}
 
-		overwriteFile(dir, source, destination);
+		overwriteFile(dir, source, destination, listener);
 	}
 
 	private boolean remoteIsNewer(Upload upload, BoxFile file) {
@@ -235,12 +237,12 @@ public class DefaultTransferManager extends Observable implements TransferManage
 		return nav;
 	}
 
-	private void uploadFile(BoxNavigation dir, Path source, Path destination) throws QblStorageException {
-		dir.upload(destination.getFileName().toString(), source.toFile());
+	private void uploadFile(BoxNavigation dir, Path source, Path destination, ProgressListener listener) throws QblStorageException {
+		dir.upload(destination.getFileName().toString(), source.toFile(), listener);
 	}
 
-	private void overwriteFile(BoxNavigation dir, Path source, Path destination) throws QblStorageException {
-		dir.overwrite(destination.getFileName().toString(), source.toFile());
+	private void overwriteFile(BoxNavigation dir, Path source, Path destination, ProgressListener listener) throws QblStorageException {
+		dir.overwrite(destination.getFileName().toString(), source.toFile(), listener);
 	}
 
 	private BoxNavigation createDirectory(Path destination, BoxVolume volume) throws QblStorageException {
