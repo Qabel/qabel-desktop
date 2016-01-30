@@ -3,7 +3,9 @@ For the documentation take a look at the [documentation](http://qabel.github.io/
 
 qabel-desktop
 =============
-Desktop Frontend of Qabel
+Desktop Client of Qabel
+
+[![Build Status](https://jenkins.prae.me/job/qabel-desktop/badge/icon)](https://jenkins.prae.me/job/qabel-desktop/)
 
 ## Quick Start
 
