@@ -75,6 +75,11 @@ public class TransactionStub implements Transaction {
 	}
 
 	@Override
+	public Transaction onProgress(Runnable runnable) {
+		return null;
+	}
+
+	@Override
 	public long getStagingDelayMillis() {
 		return stagingDelay;
 	}

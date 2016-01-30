@@ -12,6 +12,7 @@ import static org.junit.Assert.assertTrue;
 
 public class AbstractTransactionTest {
 	private final List<Object> updates = new LinkedList<>();
+	private final List<Object> progress = new LinkedList<>();
 
 	@Test
 	public void notifiesOnSuccessfulClose() {
@@ -51,5 +52,23 @@ public class AbstractTransactionTest {
 		DummyTransaction t = new DummyTransaction();
 		t.setSize(1L);
 		assertTrue(t.hasSize());
+	}
+
+	@Test
+	public void notifiesOnProgress() {
+		Transaction t = new DummyTransaction();
+		t.onProgress(() -> progress.add(null));
+		t.setProgress(10L);
+
+		assertEquals(1, progress.size());
+	}
+
+	@Test
+	public void notifiesOnStateChange() {
+		Transaction t = new DummyTransaction();
+		t.onProgress(() -> progress.add(null));
+		t.toState(FAILED);
+
+		assertEquals(1, progress.size());
 	}
 }

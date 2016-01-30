@@ -27,6 +27,10 @@ import java.net.URL;
 import java.util.Observable;
 import java.util.ResourceBundle;
 
+import static de.qabel.desktop.daemon.management.Transaction.STATE.FAILED;
+import static de.qabel.desktop.daemon.management.Transaction.STATE.FINISHED;
+import static de.qabel.desktop.daemon.management.Transaction.STATE.SKIPPED;
+
 public class LayoutController extends AbstractController implements Initializable {
 	ResourceBundle resourceBundle;
 	ActionlogView actionlogView;
@@ -88,7 +92,6 @@ public class LayoutController extends AbstractController implements Initializabl
 		uploadProgress.setDisable(true);
 		if (transferManager instanceof Observable) {
 			((Observable) transferManager).addObserver((o, arg) -> {
-				System.out.println("update");
 				Platform.runLater(() -> {
 					if (arg == null || !(arg instanceof Transaction)) {
 						uploadProgress.setVisible(false);
@@ -98,11 +101,17 @@ public class LayoutController extends AbstractController implements Initializabl
 
 					Transaction t = (Transaction) arg;
 					uploadProgress.setVisible(true);
-					if (t.hasSize() && t.getSize() != 0) {
-						uploadProgress.setProgress((double) t.getProgress() / (double) t.getSize());
-					} else {
-						uploadProgress.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
-					}
+					t.onProgress(() -> Platform.runLater(() -> {
+						if (t.getState() == FINISHED || t.getState() == SKIPPED || t.getState() == FAILED) {
+							uploadProgress.setProgress(0);
+							uploadProgress.setVisible(false);
+						}
+						if (t.hasSize() && t.getSize() != 0) {
+							uploadProgress.setProgress((double) t.getProgress() / (double) t.getSize());
+						} else {
+							uploadProgress.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
+						}
+					}));
 				});
 			});
 		}

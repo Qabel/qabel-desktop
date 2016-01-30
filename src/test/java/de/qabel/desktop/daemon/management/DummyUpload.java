@@ -61,6 +61,11 @@ public class DummyUpload implements Upload {
 	}
 
 	@Override
+	public Transaction onProgress(Runnable runnable) {
+		return null;
+	}
+
+	@Override
 	public long getStagingDelayMillis() {
 		return 0;
 	}

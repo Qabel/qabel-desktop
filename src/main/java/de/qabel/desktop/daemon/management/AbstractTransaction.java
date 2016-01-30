@@ -12,6 +12,7 @@ public abstract class AbstractTransaction extends Observable implements Transact
 	private List<Runnable> successHandler = new LinkedList<>();
 	private List<Runnable> failureHandler = new LinkedList<>();
 	private List<Runnable> skippedHandler = new LinkedList<>();
+	private List<Runnable> progressHandler = new LinkedList<>();
 	private long creationTime = System.currentTimeMillis();
 	private Long size;
 	private long progress = 0L;
@@ -28,6 +29,7 @@ public abstract class AbstractTransaction extends Observable implements Transact
 	@Override
 	public void toState(STATE state) {
 		this.state = state;
+		progressHandler.forEach(Runnable::run);
 	}
 
 	@Override
@@ -65,6 +67,12 @@ public abstract class AbstractTransaction extends Observable implements Transact
 	}
 
 	@Override
+	public Transaction onProgress(Runnable runnable) {
+		progressHandler.add(runnable);
+		return this;
+	}
+
+	@Override
 	public long transactionAge() {
 		return System.currentTimeMillis() - creationTime;
 	}
@@ -91,5 +99,6 @@ public abstract class AbstractTransaction extends Observable implements Transact
 	@Override
 	public void setProgress(long progress) {
 		this.progress = progress;
+		progressHandler.forEach(Runnable::run);
 	}
 }
