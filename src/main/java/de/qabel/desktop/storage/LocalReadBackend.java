@@ -19,7 +19,24 @@ public class LocalReadBackend implements StorageReadBackend {
 	}
 
 	public StorageDownload download(String name) throws QblStorageException {
+		try {
+			return download(name, null);
+		} catch (UnmodifiedException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	public StorageDownload download(String name, Long ifModifiedSince) throws QblStorageException, UnmodifiedException {
 		Path file = root.resolve(name);
+
+		try {
+			if (ifModifiedSince != null && Files.getLastModifiedTime(file).toMillis() <= ifModifiedSince) {
+				throw new UnmodifiedException();
+			}
+		} catch (IOException e) {
+			// best effort
+		}
+
 		logger.info("Downloading file path " + file.toString());
 		try {
 			return new StorageDownload(

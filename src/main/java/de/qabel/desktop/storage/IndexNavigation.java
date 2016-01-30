@@ -10,8 +10,12 @@ import org.spongycastle.crypto.InvalidCipherTextException;
 
 import java.io.*;
 import java.security.InvalidKeyException;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public class IndexNavigation extends AbstractNavigation {
+	private Map<Integer, Long> directoryMetadataMtimes = new WeakHashMap<>();
 
 	private static final Logger logger = LoggerFactory.getLogger(IndexNavigation.class.getSimpleName());
 
@@ -24,9 +28,11 @@ public class IndexNavigation extends AbstractNavigation {
 	public DirectoryMetadata reloadMetadata() throws QblStorageException {
 		// TODO: duplicate with BoxVoume.navigate()
 		String rootRef = dm.getFileName();
-		InputStream indexDl = readBackend.download(rootRef).getInputStream();
-		File tmp;
+
 		try {
+			StorageDownload download = readBackend.download(rootRef, directoryMetadataMtimes.get(Arrays.hashCode(dm.getVersion())));
+			InputStream indexDl = download.getInputStream();
+			File tmp;
 			byte[] encrypted = IOUtils.toByteArray(indexDl);
 			DecryptedPlaintext plaintext = cryptoUtils.readBox(keyPair, encrypted);
 			tmp = File.createTempFile("dir", "db", dm.getTempDir());
@@ -35,10 +41,14 @@ public class IndexNavigation extends AbstractNavigation {
 			OutputStream out = new FileOutputStream(tmp);
 			out.write(plaintext.getPlaintext());
 			out.close();
+			DirectoryMetadata newDm = DirectoryMetadata.openDatabase(tmp, deviceId, rootRef, dm.getTempDir());
+			directoryMetadataMtimes.put(Arrays.hashCode(newDm.getVersion()), download.getMtime());
+			return newDm;
+		} catch (UnmodifiedException e) {
+			return dm;
 		} catch (IOException | InvalidCipherTextException | InvalidKeyException e) {
 			throw new QblStorageException(e);
 		}
-		return DirectoryMetadata.openDatabase(tmp, deviceId, rootRef, dm.getTempDir());
 	}
 
 	@Override

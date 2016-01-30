@@ -4,6 +4,7 @@ import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.exceptions.QblStorageNotFound;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -18,6 +19,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class S3ReadBackend implements StorageReadBackend {
 	private static final SimpleDateFormat lastModifiedFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
@@ -51,6 +53,14 @@ public class S3ReadBackend implements StorageReadBackend {
 	}
 
 	public StorageDownload download(String name) throws QblStorageException {
+		try {
+			return download(name, null);
+		} catch (UnmodifiedException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	public StorageDownload download(String name, Long ifModifiedSince) throws QblStorageException, UnmodifiedException {
 		logger.info("Downloading " + name);
 		URI uri;
 		try {
@@ -59,6 +69,10 @@ public class S3ReadBackend implements StorageReadBackend {
 			throw new QblStorageException(e);
 		}
 		HttpGet httpGet = new HttpGet(uri);
+		if (ifModifiedSince != null) {
+			httpGet.addHeader(HttpHeaders.IF_NONE_MATCH, "*");
+			httpGet.addHeader(HttpHeaders.IF_MODIFIED_SINCE, lastModifiedFormat.format(new Date(ifModifiedSince)));
+		}
 		CloseableHttpResponse response;
 		try {
 			response = httpclient.execute(httpGet);
@@ -69,18 +83,24 @@ public class S3ReadBackend implements StorageReadBackend {
 		if ((status == 404) || (status == 403)) {
 			throw new QblStorageNotFound("File not found");
 		}
+		if (status == HttpStatus.SC_NOT_MODIFIED) {
+			throw new UnmodifiedException();
+		}
 		if (status != 200) {
 			throw new QblStorageException("Download error");
-		}
-		HttpEntity entity = response.getEntity();
-		if (entity == null) {
-			throw new QblStorageException("No content");
 		}
 		long mtime;
 		try {
 			mtime = lastModifiedFormat.parse(response.getFirstHeader(HttpHeaders.LAST_MODIFIED).getValue()).getTime();
 		} catch (ParseException e) {
 			mtime = System.currentTimeMillis();
+		}
+		if (ifModifiedSince != null && ifModifiedSince <= mtime) {
+			throw new UnmodifiedException();
+		}
+		HttpEntity entity = response.getEntity();
+		if (entity == null) {
+			throw new QblStorageException("No content");
 		}
 		try {
 			InputStream content = entity.getContent();

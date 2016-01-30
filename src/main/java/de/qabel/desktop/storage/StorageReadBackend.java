@@ -10,4 +10,9 @@ public interface StorageReadBackend {
 	 * Download a file from the storage
 	 */
 	StorageDownload download(String name) throws QblStorageException;
+
+	/**
+	 * Download a file from the storage if it was modified
+	 */
+	StorageDownload download(String name, Long ifModifiedSince) throws QblStorageException, UnmodifiedException;
 }

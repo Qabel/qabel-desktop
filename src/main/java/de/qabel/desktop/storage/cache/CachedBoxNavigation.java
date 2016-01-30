@@ -80,7 +80,9 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 
 	@Override
 	public BoxFile upload(String name, File file, ProgressListener listener) throws QblStorageException {
-		return nav.upload(name, file, listener);
+		BoxFile upload = nav.upload(name, file, listener);
+		notifyAsync(upload, CREATE);
+		return upload;
 	}
 
 	@Override
