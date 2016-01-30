@@ -1,7 +1,10 @@
 package de.qabel.desktop;
 
 import com.airhacks.afterburner.injection.Injector;
+import de.qabel.core.accounting.AccountingHTTP;
+import de.qabel.core.accounting.AccountingProfile;
 import de.qabel.core.config.Account;
+import de.qabel.core.config.AccountingServer;
 import de.qabel.core.config.Persistence;
 import de.qabel.core.config.SQLitePersistence;
 import de.qabel.core.exceptions.QblInvalidEncryptionKeyException;
@@ -30,6 +33,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
@@ -56,22 +60,33 @@ public class DesktopClient extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		setUserAgentStylesheet(STYLESHEET_MODENA);
 
-		boxVolumeFactory = new CachedBoxVolumeFactory(new S3BoxVolumeFactory());
 		ClientConfiguration config = initDiContainer();
-		new Thread(getSyncDaemon(config)).start();
 
 		SceneAntialiasing aa = SceneAntialiasing.DISABLED;
 		primaryStage.getIcons().setAll(new javafx.scene.image.Image(getClass().getResourceAsStream("/logo-invert_small.png")));
 		Scene scene;
 
 		view = new LayoutView();
+		final boolean[] initialized = {false};
 		config.addObserver((o, arg) -> {
 			if (arg instanceof Account) {
-				Scene layoutScene = new Scene(view.getView(), 800, 600, true, aa);
-				Platform.runLater(() -> primaryStage.setScene(layoutScene));
+				if (initialized[0]) {
+					return;
+				}
+				initialized[0] = true;
+				try {
+					boxVolumeFactory = new CachedBoxVolumeFactory(new S3BoxVolumeFactory());
+					customProperties.put("boxVolumeFactory", boxVolumeFactory);
+					new Thread(getSyncDaemon(config)).start();
+					view.getViewAsync((parent) -> {
+						Scene layoutScene = new Scene(parent, 800, 600, true, aa);
+						Platform.runLater(() -> primaryStage.setScene(layoutScene));
+					});
+				} catch (Exception e) {
+					throw new IllegalArgumentException("invalid account: " + e.getMessage(), e);
+				}
 			}
 		});
-
 
 		Platform.setImplicitExit(false);
 		primaryStage.setTitle(TITLE);
@@ -88,8 +103,18 @@ public class DesktopClient extends Application {
 		primaryStage.show();
 	}
 
-	protected SyncDaemon getSyncDaemon(ClientConfiguration config) {
+	private AccountingHTTP getAccountingHttp(Account account) throws MalformedURLException, URISyntaxException {
+		return new AccountingHTTP(
+				new AccountingServer(
+						new URL(account.getProvider()).toURI(),
+						account.getUser(),
+						account.getAuth()
+				),
+				new AccountingProfile()
+		);
+	}
 
+	protected SyncDaemon getSyncDaemon(ClientConfiguration config) {
 		DefaultTransferManager transferManager = new DefaultTransferManager();
 		customProperties.put("loadManager", transferManager);
 		customProperties.put("transferManager", transferManager);
@@ -101,7 +126,6 @@ public class DesktopClient extends Application {
 		Persistence<String> persistence = new SQLitePersistence(DATABASE_FILE, "qabel".toCharArray(), 65536);
 		customProperties.put("persistence", persistence);
 		customProperties.put("dropUrlGenerator", new DropUrlGenerator("http://localhost:5000"));
-		customProperties.put("boxVolumeFactory", boxVolumeFactory);
 		PersistenceIdentityRepository identityRepository = new PersistenceIdentityRepository(persistence);
 		customProperties.put("identityRepository", identityRepository);
 		PersistenceAccountRepository accountRepository = new PersistenceAccountRepository(persistence);

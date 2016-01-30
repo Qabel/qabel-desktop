@@ -150,7 +150,7 @@ public class SyncIntegrationTest {
 		waitUntil(() -> {
 			final SyncIntegrationTest test2 = test;
 			return Files.isDirectory(dir2);
-		});
+		}, 2000L);
 
 		Path file1 = Paths.get(dir1.toString(), "file");
 		Files.write(file1, "text".getBytes());

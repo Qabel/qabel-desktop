@@ -60,6 +60,9 @@ dependencies {
     testCompile 'org.testfx:testfx-junit:4.0.+'
 
     compile 'commons-cli:commons-cli:1.2'
+    compile 'org.apache.httpcomponents:httpcore:4.3.+'
+    compile 'org.apache.httpcomponents:httpmime:4.3.+'
+    //compile 'org.apache.httpcomponents:httpclient:4.3.5'
     compile 'com.amazonaws:aws-java-sdk:1.10.32'
     // see https://github.com/AdamBien/afterburner.fx/pull/54 //compile 'com.airhacks:afterburner.fx:1.6.2' // Apache 2.0
     compile 'javax.inject:javax.inject:1'
