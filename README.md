@@ -31,7 +31,7 @@ For the documentation take a look at the [documentation](http://qabel.github.io/
  * run the gradle-based build with `./gradlew build`
  * stop the started servers with the `stop-servers.sh`
 
-## Build targets
+## build targets
 
 `./gradlew` accepts different targets. The (probably) most important ones are:
 * **test**: run the unit tests (Tests that don't start a GUI)
