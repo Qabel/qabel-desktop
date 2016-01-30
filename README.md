@@ -23,6 +23,7 @@ Desktop Frontend of Qabel
     * `CREATE USER qabel WITH PASSWORD 'qabel_test'`
     * `GRANT ALL PRIVILEGES ON DATABASE qabel_drop TO qabel`
  * for python integration with postgresql, you will need the postgresql-devel libs (`apt-get install libpq-dev` for ubuntu)
+ * to connect with an S3 instance, set up an aws config as described [here](https://boto3.readthedocs.org/en/latest/guide/quickstart.html#configuration)
 
 #### first local build
 
