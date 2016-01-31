@@ -219,12 +219,14 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 	}
 
 	@Test(timeout=1000L)
-	public void testCreateFolder() throws QblStorageException {
+	public void testCreateFolder() throws Exception {
 
 		File dir = new File(TEST_TMP_DIR);
 		dir.mkdirs();
 		BoxFolder folder = createBoxFolder(dir);
-		controller.createFolder("NewFolder", folder);
+		controller.createFolder(Paths.get("/", TEST_FOLDER, dir.getName()));
+		executeTransactions();
+
 		BoxNavigation newNav = nav.navigate(folder);
 		assertThat(newNav.listFiles().size(), is(0));
 		assertThat(newNav.listFolders().size(), is(1));

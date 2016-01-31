@@ -136,6 +136,7 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observ
 		}
 
 		upToDate = false;
+		isLeaf = false;
 		if (!isExpanded()) {
 			return;
 		}

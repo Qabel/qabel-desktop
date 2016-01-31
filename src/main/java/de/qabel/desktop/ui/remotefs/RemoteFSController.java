@@ -191,6 +191,9 @@ public class RemoteFSController extends AbstractController implements Initializa
 
 	@FXML
 	protected void handleCreateFolderButtonAction(ActionEvent event) {
+		if (selectedItem == null || !(selectedItem instanceof LazyBoxFolderTreeItem)) {
+			return;
+		}
 
 		TextInputDialog dialog = new TextInputDialog(resourceBundle.getString("name"));
 		dialog.setHeaderText(null);
@@ -199,13 +202,10 @@ public class RemoteFSController extends AbstractController implements Initializa
 		Optional<String> result = dialog.showAndWait();
 		new Thread(() -> {
 			result.ifPresent(name -> {
-				BoxFolder boxFolder = null;
-				if (!(selectedItem == null) && !selectedItem.getValue().name.equals(ROOT_FOLDER_NAME)) {
-					boxFolder = (BoxFolder) selectedItem.getValue();
-				}
+				LazyBoxFolderTreeItem item = (LazyBoxFolderTreeItem) selectedItem;
 
 				try {
-					createFolder(name, boxFolder);
+					createFolder(item.getPath().resolve(name));
 				} catch (QblStorageException e) {
 					e.printStackTrace();
 				}
@@ -271,10 +271,8 @@ public class RemoteFSController extends AbstractController implements Initializa
 	}
 
 
-	void createFolder(String name, BoxFolder folder) throws QblStorageException {
-		BoxNavigation newNav = (BoxNavigation)getNavigator(folder);
-		newNav.createFolder(name);
-		newNav.commit();
+	void createFolder(Path destination) throws QblStorageException {
+		loadManager.addUpload(new ManualUpload(CREATE, volume, null, destination, true));
 	}
 
 	void deleteBoxObject(ButtonType confim, Path path, BoxObject object) throws QblStorageException {
@@ -308,7 +306,6 @@ public class RemoteFSController extends AbstractController implements Initializa
 	private void downloadFile(BoxFile file, ReadOnlyBoxNavigation nav, Path source, Path destination) throws IOException, QblStorageException {
 		loadManager.addDownload(new ManualDownload(file.mtime, CREATE, volume, source, destination, false));
 	}
-
 
 	private ReadOnlyBoxNavigation getNavigator(BoxFolder folder) throws QblStorageException {
 		ReadOnlyBoxNavigation newNav = nav;

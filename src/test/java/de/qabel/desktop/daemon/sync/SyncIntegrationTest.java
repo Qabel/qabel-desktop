@@ -150,13 +150,13 @@ public class SyncIntegrationTest {
 		waitUntil(() -> {
 			final SyncIntegrationTest test2 = test;
 			return Files.isDirectory(dir2);
-		}, 2000L);
+		}, 5000L);
 
 		Path file1 = Paths.get(dir1.toString(), "file");
 		Files.write(file1, "text".getBytes());
 
 		Path file2 = Paths.get(dir2.toString(), "file");
-		waitUntil(() -> Files.exists(file2), 2000L);
+		waitUntil(() -> Files.exists(file2), 5000L);
 		assertEquals("text", new String(Files.readAllBytes(file2)));
 
 		List<Transaction> history = manager2.getHistory();
@@ -176,7 +176,7 @@ public class SyncIntegrationTest {
 		assertTrue(history.get(2) instanceof Download);
 		assertEquals(Paths.get("/sync/dir"), history.get(2).getSource());
 
-		waitUntil(() -> history.size() > 3, () -> "too few events: " + history);
+		waitUntil(() -> history.size() > 3, 5000L, () -> "too few events: " + history);
 		assertTrue(
 				"an unecpected " + history.get(3) + " occured after DOWNLAOD /sync/dir",
 				history.get(3) instanceof Download
