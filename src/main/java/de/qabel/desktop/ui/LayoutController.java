@@ -1,8 +1,11 @@
 package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
+import com.amazonaws.services.s3.transfer.Transfer;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.daemon.management.Transaction;
+import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.ui.accounting.AccountingView;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
 import de.qabel.desktop.ui.actionlog.ActionlogView;
@@ -10,11 +13,10 @@ import de.qabel.desktop.ui.contact.ContactView;
 import de.qabel.desktop.ui.invite.InviteView;
 import de.qabel.desktop.ui.remotefs.RemoteFSView;
 import de.qabel.desktop.ui.sync.SyncView;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -22,7 +24,12 @@ import javafx.scene.layout.VBox;
 
 import javax.inject.Inject;
 import java.net.URL;
+import java.util.Observable;
 import java.util.ResourceBundle;
+
+import static de.qabel.desktop.daemon.management.Transaction.STATE.FAILED;
+import static de.qabel.desktop.daemon.management.Transaction.STATE.FINISHED;
+import static de.qabel.desktop.daemon.management.Transaction.STATE.SKIPPED;
 
 public class LayoutController extends AbstractController implements Initializable {
 	ResourceBundle resourceBundle;
@@ -33,7 +40,6 @@ public class LayoutController extends AbstractController implements Initializabl
 	public Label mail;
 	@FXML
 	private VBox navi;
-
 	@FXML
 	private VBox scrollContent;
 
@@ -46,12 +52,17 @@ public class LayoutController extends AbstractController implements Initializabl
 	@FXML
 	private Pane avatarContainer;
 
-
 	@FXML
 	private ScrollPane scroll;
 
+	@FXML
+	private ProgressBar uploadProgress;
+
 	@Inject
 	private ClientConfiguration clientConfiguration;
+
+	@Inject
+	private TransferManager transferManager;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -76,12 +87,42 @@ public class LayoutController extends AbstractController implements Initializabl
 
 		updateIdentity();
 		clientConfiguration.addObserver((o, arg) -> updateIdentity());
+
+		uploadProgress.setProgress(0);
+		uploadProgress.setDisable(true);
+		if (transferManager instanceof Observable) {
+			((Observable) transferManager).addObserver((o, arg) -> {
+				Platform.runLater(() -> {
+					if (arg == null || !(arg instanceof Transaction)) {
+						uploadProgress.setVisible(false);
+						uploadProgress.setProgress(0);
+						return;
+					}
+
+					Transaction t = (Transaction) arg;
+					uploadProgress.setVisible(true);
+					t.onProgress(() -> Platform.runLater(() -> {
+						if (t.getState() == FINISHED || t.getState() == SKIPPED || t.getState() == FAILED) {
+							uploadProgress.setProgress(0);
+							uploadProgress.setVisible(false);
+						}
+						if (t.hasSize() && t.getSize() != 0) {
+							uploadProgress.setProgress((double) t.getProgress() / (double) t.getSize());
+						} else {
+							uploadProgress.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
+						}
+					}));
+				});
+			});
+		}
 	}
 
 	private String lastAlias;
+	private Identity lastIdentity;
 
 	private void updateIdentity() {
 		Identity identity = clientConfiguration.getSelectedIdentity();
+		avatarContainer.setVisible(identity != null);
 		if (identity == null) {
 			return;
 		}

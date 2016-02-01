@@ -7,6 +7,7 @@ import de.qabel.desktop.config.DefaultClientConfiguration;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.daemon.management.BoxVolumeFactoryStub;
+import de.qabel.desktop.daemon.management.DefaultTransferManager;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.Stub.StubContactRepository;
@@ -22,6 +23,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
@@ -33,6 +35,8 @@ public class AbstractControllerTest {
 	protected DefaultClientConfiguration clientConfiguration;
 	protected IdentityBuilderFactory identityBuilderFactory;
 	protected ContactRepository contactRepository = new StubContactRepository();
+	protected DefaultTransferManager loadManager;
+	protected BoxVolumeFactoryStub boxVolumeFactory;
 
 
 	@BeforeClass
@@ -71,7 +75,10 @@ public class AbstractControllerTest {
 		diContainer.put("account", new Account("a", "b", "c"));
 		diContainer.put("identityRepository", identityRepository);
 		diContainer.put("contactRepository", contactRepository);
-		diContainer.put("boxVolumeFactory", new BoxVolumeFactoryStub());
+		boxVolumeFactory = new BoxVolumeFactoryStub();
+		diContainer.put("boxVolumeFactory", boxVolumeFactory);
+		loadManager = new DefaultTransferManager();
+		diContainer.put("loadManager", loadManager);
 		Injector.setConfigurationSource(diContainer::get);
 		Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(diContainer));
 	}
@@ -95,7 +102,7 @@ public class AbstractControllerTest {
 	}
 
 	@After
-	public void tearDown() {
+	public void tearDown() throws Exception {
 		try {
 			Injector.forgetAll();
 		} catch (Exception e) {

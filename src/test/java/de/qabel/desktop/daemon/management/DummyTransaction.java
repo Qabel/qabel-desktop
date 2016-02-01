@@ -38,4 +38,9 @@ public class DummyTransaction extends AbstractTransaction {
 	public boolean isDir() {
 		return false;
 	}
+
+	@Override
+	public long getStagingDelayMillis() {
+		return 0;
+	}
 }

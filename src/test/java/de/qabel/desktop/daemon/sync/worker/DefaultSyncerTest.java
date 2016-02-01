@@ -6,13 +6,14 @@ import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
-import de.qabel.desktop.daemon.management.DefaultLoadManager;
+import de.qabel.desktop.daemon.management.DefaultTransferManager;
 import de.qabel.desktop.daemon.management.Download;
-import de.qabel.desktop.daemon.management.LoadManager;
+import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.daemon.management.Transaction;
 import de.qabel.desktop.daemon.sync.AbstractSyncTest;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.assertEquals;
 
 public class DefaultSyncerTest extends AbstractSyncTest {
-	private LoadManager manager;
+	private TransferManager manager;
 	private BoxSyncConfig config;
 	private Identity identity;
 	private Account account;
@@ -41,7 +42,7 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 			throw new IllegalStateException(e.getMessage(), e);
 		}
 		account = new Account("a", "b", "c");
-		manager = new DefaultLoadManager();
+		manager = new DefaultTransferManager();
 		config = new DefaultBoxSyncConfig(tmpDir, Paths.get("/tmp"), identity, account);
 	}
 
@@ -66,7 +67,7 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 	@Test
 	public void addsFoldersAsDownloads() throws Exception {
 		BoxNavigationStub nav = new BoxNavigationStub(null, null);
-		nav.event = new RemoteChangeEvent(Paths.get("/tmp/someFolder"), true, 1000L, ChangeEvent.TYPE.CREATE);
+		nav.event = new RemoteChangeEvent(Paths.get("/tmp/someFolder"), true, 1000L, ChangeEvent.TYPE.CREATE, null, nav);
 		BoxVolumeStub volume = new BoxVolumeStub();
 		volume.rootNavigation = nav;
 		syncer = new DefaultSyncer(config, volume, manager);
@@ -78,5 +79,13 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 		waitUntil(() -> manager.getTransactions().size() == 2);
 		Transaction transaction = manager.getTransactions().get(0) instanceof Download ? manager.getTransactions().get(0) : manager.getTransactions().get(1);
 		assertEquals("/tmp/someFolder", transaction.getSource().toString());
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void bootstrappingFailsIfLocalDirDoesNotExist() throws IOException {
+		FileUtils.deleteDirectory(tmpDir.toFile());
+
+		syncer = new DefaultSyncer(config, new BoxVolumeStub(), manager);
+		syncer.run();
 	}
 }

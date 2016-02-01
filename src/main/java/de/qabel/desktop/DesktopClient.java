@@ -6,10 +6,8 @@ import de.qabel.core.config.Persistence;
 import de.qabel.core.config.SQLitePersistence;
 import de.qabel.core.exceptions.QblInvalidEncryptionKeyException;
 import de.qabel.desktop.config.ClientConfiguration;
-import de.qabel.desktop.config.factory.ClientConfigurationFactory;
-import de.qabel.desktop.config.factory.DropUrlGenerator;
-import de.qabel.desktop.config.factory.S3BoxVolumeFactory;
-import de.qabel.desktop.daemon.management.DefaultLoadManager;
+import de.qabel.desktop.config.factory.*;
+import de.qabel.desktop.daemon.management.DefaultTransferManager;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
 import de.qabel.desktop.repository.AccountRepository;
@@ -44,6 +42,7 @@ public class DesktopClient extends Application {
 	private static String DATABASE_FILE = "db.sqlite";
 	private final Map<String, Object> customProperties = new HashMap<>();
 	private LayoutView view;
+	private BoxVolumeFactory boxVolumeFactory;
 
 	public static void main(String[] args) throws Exception {
 		if (args.length > 0) {
@@ -57,7 +56,9 @@ public class DesktopClient extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		setUserAgentStylesheet(STYLESHEET_MODENA);
 
+		boxVolumeFactory = new CachedBoxVolumeFactory(new S3BoxVolumeFactory());
 		ClientConfiguration config = initDiContainer();
+		new Thread(getSyncDaemon(config)).start();
 
 		SceneAntialiasing aa = SceneAntialiasing.DISABLED;
 		primaryStage.getIcons().setAll(new javafx.scene.image.Image(getClass().getResourceAsStream("/logo-invert_small.png")));
@@ -78,7 +79,6 @@ public class DesktopClient extends Application {
 		primaryStage.setScene(scene);
 		setTrayIcon(primaryStage);
 
-		new Thread(getSyncDaemon(config)).start();
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
@@ -89,17 +89,19 @@ public class DesktopClient extends Application {
 	}
 
 	protected SyncDaemon getSyncDaemon(ClientConfiguration config) {
-		DefaultLoadManager loadManager = new DefaultLoadManager();
-		customProperties.put("loadManager", loadManager);
-		new Thread(loadManager, "TransactionManager").start();
-		return new SyncDaemon(config.getBoxSyncConfigs(), new DefaultSyncerFactory(new S3BoxVolumeFactory(), loadManager));
+
+		DefaultTransferManager transferManager = new DefaultTransferManager();
+		customProperties.put("loadManager", transferManager);
+		customProperties.put("transferManager", transferManager);
+		new Thread(transferManager, "TransactionManager").start();
+		return new SyncDaemon(config.getBoxSyncConfigs(), new DefaultSyncerFactory(boxVolumeFactory, transferManager));
 	}
 
 	private ClientConfiguration initDiContainer() throws QblInvalidEncryptionKeyException, URISyntaxException {
 		Persistence<String> persistence = new SQLitePersistence(DATABASE_FILE, "qabel".toCharArray(), 65536);
 		customProperties.put("persistence", persistence);
 		customProperties.put("dropUrlGenerator", new DropUrlGenerator("http://localhost:5000"));
-		customProperties.put("boxVolumeFactory", new S3BoxVolumeFactory());
+		customProperties.put("boxVolumeFactory", boxVolumeFactory);
 		PersistenceIdentityRepository identityRepository = new PersistenceIdentityRepository(persistence);
 		customProperties.put("identityRepository", identityRepository);
 		PersistenceAccountRepository accountRepository = new PersistenceAccountRepository(persistence);
@@ -183,9 +185,4 @@ public class DesktopClient extends Application {
 
 		return menu;
 	}
-
-	public static Account getBoxAccount() {
-		return new Account("http://localhost:9696", "testuser", "testuser");
-	}
-
 }

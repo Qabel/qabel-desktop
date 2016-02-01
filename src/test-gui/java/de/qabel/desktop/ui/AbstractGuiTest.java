@@ -63,7 +63,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 	}
 
 	@Override
-	public void tearDown() {
+	public void tearDown() throws Exception {
 		if (stage != null) {
 			Platform.runLater(() -> stage.close());
 		}

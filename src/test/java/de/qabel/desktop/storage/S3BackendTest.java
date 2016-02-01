@@ -26,9 +26,9 @@ public class S3BackendTest {
 		String name = UUID.randomUUID().toString();
 
 		writeBackend.upload(name, new ByteArrayInputStream(bytes));
-		InputStream bucketDownload = bucketReadBackend.download(name);
+		InputStream bucketDownload = bucketReadBackend.download(name).getInputStream();
 		assertArrayEquals(bytes, IOUtils.toByteArray(bucketDownload));
-		InputStream download = readBackend.download(name);
+		InputStream download = readBackend.download(name).getInputStream();
 		assertArrayEquals(bytes, IOUtils.toByteArray(download));
 		writeBackend.delete(name);
 		try {

@@ -27,7 +27,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 public abstract class BoxVolumeTest {
-	private static final Logger logger = LoggerFactory.getLogger(BoxVolumeTest.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(BoxVolumeTest.class.getSimpleName());
 
 	protected BoxVolume volume;
 	protected BoxVolume volume2;

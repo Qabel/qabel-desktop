@@ -73,7 +73,7 @@ public class BoxObjectCellValueFactoryTest extends AbstractControllerTest {
 	}
 
 	@After
-	public void tearDown() {
+	public void tearDown() throws Exception {
 		try {
 			FileUtils.deleteDirectory(tempFolder.toFile());
 		} catch (IOException e) {

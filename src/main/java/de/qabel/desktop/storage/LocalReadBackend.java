@@ -11,21 +11,39 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class LocalReadBackend implements StorageReadBackend {
-
-	private static final Logger logger = LoggerFactory.getLogger(LocalReadBackend.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(LocalReadBackend.class.getSimpleName());
 	private final Path root;
-
 
 	public LocalReadBackend(Path root) {
 		this.root = root;
 	}
 
+	public StorageDownload download(String name) throws QblStorageException {
+		try {
+			return download(name, null);
+		} catch (UnmodifiedException e) {
+			throw new IllegalStateException(e);
+		}
+	}
 
-	public InputStream download(String name) throws QblStorageException {
+	public StorageDownload download(String name, Long ifModifiedSince) throws QblStorageException, UnmodifiedException {
 		Path file = root.resolve(name);
+
+		try {
+			if (ifModifiedSince != null && Files.getLastModifiedTime(file).toMillis() <= ifModifiedSince) {
+				throw new UnmodifiedException();
+			}
+		} catch (IOException e) {
+			// best effort
+		}
+
 		logger.info("Downloading file path " + file.toString());
 		try {
-			return Files.newInputStream(file);
+			return new StorageDownload(
+					Files.newInputStream(file),
+					Files.getLastModifiedTime(file).toMillis(),
+					Files.size(file)
+			);
 		} catch (IOException e) {
 			throw new QblStorageNotFound(e);
 		}

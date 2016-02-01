@@ -3,9 +3,7 @@ package de.qabel.desktop.daemon.management;
 
 import de.qabel.desktop.daemon.management.exception.TransferSkippedException;
 import de.qabel.desktop.exceptions.QblStorageException;
-import de.qabel.desktop.storage.BoxFile;
-import de.qabel.desktop.storage.BoxNavigation;
-import de.qabel.desktop.storage.BoxVolume;
+import de.qabel.desktop.storage.*;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.FileTime;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -29,12 +24,10 @@ import static de.qabel.desktop.daemon.management.Transaction.TYPE.CREATE;
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.DELETE;
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.UPDATE;
 
-public class DefaultLoadManager implements LoadManager, Runnable {
-	private final Logger logger = LoggerFactory.getLogger(DefaultLoadManager.class);
+public class DefaultTransferManager extends Observable implements TransferManager, Runnable {
+	private final Logger logger = LoggerFactory.getLogger(DefaultTransferManager.class);
 	private final LinkedBlockingQueue<Transaction> transactions = new LinkedBlockingQueue<>();
 	private final List<Transaction> history = new LinkedList<>();
-	private long stagingDelay = 2L;
-	private TimeUnit stagingDelayUnit = TimeUnit.SECONDS;
 
 	@Override
 	public List<Transaction> getTransactions() {
@@ -54,12 +47,6 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 	}
 
 	@Override
-	public void setStagingDelay(long amount, TimeUnit unit) {
-		stagingDelay = amount;
-		stagingDelayUnit = unit;
-	}
-
-	@Override
 	public void addUpload(Upload upload) {
 		logger.trace("upload added: " + upload.getSource() + " to " + upload.getDestination());
 		transactions.add(upload);
@@ -76,12 +63,14 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 		}
 	}
 
-	void next() throws InterruptedException {
+	public void next() throws InterruptedException {
 		Transaction transaction = transactions.take();
+		transaction.toState(WAITING);
+		setChanged();
+		notifyObservers(transaction);
 		if (isStageable(transaction)) {
-			long delay = stagingDelayUnit.toMillis(stagingDelay) - transaction.transactionAge();
+			long delay = transaction.getStagingDelayMillis() - transaction.transactionAge();
 			if (delay > 0) {
-				transaction.toState(WAITING);
 				Thread.sleep(delay);
 			}
 		}
@@ -95,6 +84,9 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 			}
 		} catch (Exception e) {
 			logger.error("Transaction failed: " + e.getMessage(), e);
+		} finally {
+			setChanged();
+			notifyObservers(null);
 		}
 	}
 
@@ -123,6 +115,7 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 					Path parent = source.getParent();
 					BoxNavigation nav = navigate(parent, download.getBoxVolume());
 					BoxFile file = nav.getFile(source.getFileName().toString());
+					download.setSize(file.size);
 					if (remoteChanged(download, file)) {
 						throw new TransferSkippedException("remote has changed");
 					}
@@ -130,7 +123,8 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 						throw new TransferSkippedException("local is newer");
 					}
 
-					try (InputStream stream = new BufferedInputStream(nav.download(file))) {
+					ProgressListener listener = new TransactionRelatedProgressListener(download);
+					try (InputStream stream = new BufferedInputStream(nav.download(file, listener))) {
 						Path tmpFile = Files.createTempFile("prefix", "suffix");
 						Files.copy(stream, tmpFile, StandardCopyOption.REPLACE_EXISTING);
 						Files.setLastModifiedTime(tmpFile, FileTime.fromMillis(download.getMtime()));
@@ -215,9 +209,11 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 			return;
 		}
 
+		ProgressListener listener = new TransactionRelatedProgressListener(upload);
+
 		dir = createDirectory(parent, volume);
 		if (!dir.hasFile(filename)) {
-			uploadFile(dir, source, destination);
+			uploadFile(dir, source, destination, listener);
 			return;
 		}
 
@@ -226,7 +222,7 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 			throw new TransferSkippedException("remote is newer " + format.format(new Date(file.mtime)) + ">" + format.format(new Date(upload.getMtime())));
 		}
 
-		overwriteFile(dir, source, destination);
+		overwriteFile(dir, source, destination, listener);
 	}
 
 	private boolean remoteIsNewer(Upload upload, BoxFile file) {
@@ -241,12 +237,12 @@ public class DefaultLoadManager implements LoadManager, Runnable {
 		return nav;
 	}
 
-	private void uploadFile(BoxNavigation dir, Path source, Path destination) throws QblStorageException {
-		dir.upload(destination.getFileName().toString(), source.toFile());
+	private void uploadFile(BoxNavigation dir, Path source, Path destination, ProgressListener listener) throws QblStorageException {
+		dir.upload(destination.getFileName().toString(), source.toFile(), listener);
 	}
 
-	private void overwriteFile(BoxNavigation dir, Path source, Path destination) throws QblStorageException {
-		dir.overwrite(destination.getFileName().toString(), source.toFile());
+	private void overwriteFile(BoxNavigation dir, Path source, Path destination, ProgressListener listener) throws QblStorageException {
+		dir.overwrite(destination.getFileName().toString(), source.toFile(), listener);
 	}
 
 	private BoxNavigation createDirectory(Path destination, BoxVolume volume) throws QblStorageException {

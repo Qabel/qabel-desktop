@@ -27,6 +27,34 @@ public interface Transaction extends AutoCloseable {
 
 	Transaction onSkipped(Runnable runnable);
 
+	Transaction onProgress(Runnable runnable);
+
+	long getStagingDelayMillis();
+
+	/**
+	 * Get the size of the transaction.
+	 * Please check hasSize() before calling getSize() to ensure a size exists.
+	 *
+	 * @return size in bytes
+	 * @throws NullPointerException if no size is set
+	 */
+	long getSize();
+
+	boolean hasSize();
+
+	/**
+	 * @return progress in bytes
+	 */
+	long getProgress();
+
+	/**
+	 * @param progress in bytes
+	 */
+	void setProgress(long progress);
+
+	void setSize(long size);
+
+
 	enum TYPE { CREATE, UPDATE, DELETE }
 	enum STATE { INITIALIZING, SCHEDULED, RUNNING, FINISHED, FAILED, WAITING, SKIPPED }
 
