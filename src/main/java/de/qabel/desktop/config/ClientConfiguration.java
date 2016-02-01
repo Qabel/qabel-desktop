@@ -4,6 +4,7 @@ import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import javafx.collections.ObservableList;
 
+import java.util.Date;
 import java.util.Observer;
 
 public interface ClientConfiguration {
@@ -34,4 +35,7 @@ public interface ClientConfiguration {
 	 * @see java.util.Observable#deleteObserver(Observer)
 	 */
 	void deleteObserver(Observer o);
+
+	Date getLastUpdate();
+	void setLastUpdate(Date lastUpdate);
 }

@@ -42,23 +42,23 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 
 	@Test
 	public void addMessageToActionlogTest() throws QblDropPayloadSizeException, PersistenceException, QblNetworkInvalidResponseException, EntityNotFoundExcepion {
-		i = identityBuilderFactory.factory().withAlias("TestAlias").build();
-		c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
-		createController(i);
-		controller = (ActionlogController) view.getPresenter();
-		DropMessage dm = new DropMessage(i, text, "dropMessage");
+		DropMessage dm = setup();
 		controller.addMessageToActionlog(dm);
 		assertEquals(1, controller.messages.getChildren().size());
 	}
 
 	@Test
 	public void addOwnMessageToActionlogTest() throws QblDropPayloadSizeException, PersistenceException, QblNetworkInvalidResponseException {
+		DropMessage dm = setup();
+		controller.addOwnMessageToActionlog(dm);
+		assertEquals(1, controller.messages.getChildren().size());
+	}
+
+	private DropMessage setup() {
 		i = identityBuilderFactory.factory().withAlias("TestAlias").build();
 		c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
 		createController(i);
 		controller = (ActionlogController) view.getPresenter();
-		DropMessage dm = new DropMessage(i, text, "dropMessage");
-		controller.addOwnMessageToActionlog(dm);
-		assertEquals(1, controller.messages.getChildren().size());
+		return new DropMessage(i, text, "dropMessage");
 	}
 }

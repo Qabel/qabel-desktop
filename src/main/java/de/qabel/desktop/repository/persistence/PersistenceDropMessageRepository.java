@@ -5,13 +5,14 @@ import de.qabel.core.config.Persistence;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.PersistenceException;
-import de.qabel.desktop.ui.actionlog.PersitsDropMessage;
+import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Observer;
 
 
-public class PersistenceDropMessageRepository extends AbstractCachedPersistenceRepository<Contact> implements DropMessageRepository {
+public class PersistenceDropMessageRepository extends AbstractCachedPersistenceRepository<Contact> implements DropMessageRepository{
 
 	public PersistenceDropMessageRepository(Persistence<String> persistence) {
 		super(persistence);
@@ -20,22 +21,27 @@ public class PersistenceDropMessageRepository extends AbstractCachedPersistenceR
 
 	@Override
 	public void addMessage(DropMessage dropMessage, Contact contact, boolean send) throws PersistenceException {
-		PersitsDropMessage persitsDropMessage = new PersitsDropMessage(dropMessage, contact, send);
-		persistence.updateOrPersistEntity(persitsDropMessage);
+		PersistenceDropMessage persistenceDropMessage = new PersistenceDropMessage(dropMessage, contact, send);
+		persistence.updateOrPersistEntity(persistenceDropMessage);
+		setChanged();
+		notifyObservers();
 	}
 
 	@Override
-	public List<PersitsDropMessage> loadConversation(Contact contact) throws PersistenceException {
-		List<PersitsDropMessage> result = new LinkedList<>();
-		List<PersitsDropMessage> messages = persistence.getEntities(PersitsDropMessage.class);
-		for (PersitsDropMessage d : messages) {
-			if(d.getContact() == null || d.getDropMessage() == null){
-				continue;
-			}
-			if (d.getContact().getEcPublicKey().hashCode() == contact.getEcPublicKey().hashCode()) {
+	public List<PersistenceDropMessage> loadConversation(Contact contact) throws PersistenceException {
+		List<PersistenceDropMessage> result = new LinkedList<>();
+		List<PersistenceDropMessage> messages = persistence.getEntities(PersistenceDropMessage.class);
+		for (PersistenceDropMessage d : messages) {
+			//if (d.getContact().getEcPublicKey() == contact.getEcPublicKey()) {
 				result.add(d);
-			}
+			//}
 		}
+
 		return result;
+	}
+
+	@Override
+	public synchronized void addObserver(Observer o) {
+		super.addObserver(o);
 	}
 }

@@ -5,13 +5,13 @@ import de.qabel.core.config.Persistable;
 import de.qabel.core.drop.DropMessage;
 
 
-public class PersitsDropMessage extends Persistable {
+public class PersistenceDropMessage extends Persistable {
 
 	DropMessage dropMessage;
 	Contact contact;
 	Boolean send;
 
-	public PersitsDropMessage(DropMessage dropMessage, Contact contact, Boolean send) {
+	public PersistenceDropMessage(DropMessage dropMessage, Contact contact, Boolean send) {
 		this.dropMessage = dropMessage;
 		this.contact = contact;
 		this.send = send;

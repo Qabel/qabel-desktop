@@ -1,20 +1,22 @@
 package de.qabel.desktop;
 
 import com.airhacks.afterburner.injection.Injector;
-import de.qabel.core.config.Account;
-import de.qabel.core.config.Persistence;
-import de.qabel.core.config.SQLitePersistence;
+import de.qabel.core.config.*;
+import de.qabel.core.drop.DropMessage;
 import de.qabel.core.exceptions.QblInvalidEncryptionKeyException;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.factory.ClientConfigurationFactory;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.S3BoxVolumeFactory;
+import de.qabel.desktop.daemon.drop.DropDaemon;
 import de.qabel.desktop.daemon.management.DefaultLoadManager;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
 import de.qabel.desktop.repository.AccountRepository;
 import de.qabel.desktop.repository.ClientConfigurationRepository;
 import de.qabel.desktop.repository.IdentityRepository;
+import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.repository.persistence.*;
 import de.qabel.desktop.ui.LayoutView;
 import de.qabel.desktop.ui.accounting.login.LoginView;
@@ -32,8 +34,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 public class DesktopClient extends Application {
@@ -42,6 +43,10 @@ public class DesktopClient extends Application {
 	private static String DATABASE_FILE = "db.sqlite";
 	private final Map<String, Object> customProperties = new HashMap<>();
 	private LayoutView view;
+	private HttpDropConnector httpDropConnector;
+	private Date lastDate = null;
+	private PersistenceDropMessageRepository dropMessageRepository;
+	private PersistenceContactRepository contactRepository;
 
 	public static void main(String[] args) throws Exception {
 		if (args.length > 0) {
@@ -77,6 +82,7 @@ public class DesktopClient extends Application {
 		setTrayIcon(primaryStage);
 
 		new Thread(getSyncDaemon(config)).start();
+		new Thread(getDropDaemon(config)).start();
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
@@ -93,6 +99,10 @@ public class DesktopClient extends Application {
 		return new SyncDaemon(config.getBoxSyncConfigs(), new DefaultSyncerFactory(new S3BoxVolumeFactory(), loadManager));
 	}
 
+	protected DropDaemon getDropDaemon(ClientConfiguration config) throws PersistenceException, EntityNotFoundExcepion {
+		return new DropDaemon(config,httpDropConnector,contactRepository, dropMessageRepository);
+	}
+
 	private ClientConfiguration initDiContainer() throws QblInvalidEncryptionKeyException, URISyntaxException {
 		Persistence<String> persistence = new SQLitePersistence(DATABASE_FILE);
 		customProperties.put("persistence", persistence);
@@ -102,11 +112,11 @@ public class DesktopClient extends Application {
 		customProperties.put("identityRepository", identityRepository);
 		PersistenceAccountRepository accountRepository = new PersistenceAccountRepository(persistence);
 		customProperties.put("accountRepository", accountRepository);
-		PersistenceContactRepository contactRepository = new PersistenceContactRepository(persistence);
+		contactRepository = new PersistenceContactRepository(persistence);
 		customProperties.put("contactRepository", contactRepository);
-		PersistenceDropMessageRepository dropMessageRepository = new PersistenceDropMessageRepository(persistence);
+		dropMessageRepository = new PersistenceDropMessageRepository(persistence);
 		customProperties.put("dropMessageRepository", dropMessageRepository);
-		HttpDropConnector httpDropConnector = new HttpDropConnector();
+		httpDropConnector = new HttpDropConnector();
 		customProperties.put("httpDropConnector", httpDropConnector);
 		ClientConfiguration clientConfig = getClientConfiguration(
 				persistence,

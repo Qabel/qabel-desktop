@@ -45,19 +45,15 @@ public class PersistenceContactRepository extends AbstractCachedPersistenceRepos
 
 	@Override
 	public Contact findByKeyId(Identity identity, String keyId) throws EntityNotFoundExcepion {
-		List<Contact> contactList = null;
 
-		try {
-			contactList = findAllContactFromOneIdentity(identity);
-		} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
-			entityNotFoundExcepion.printStackTrace();
-		}
+		List<Contact> contactList = findAllContactFromOneIdentity(identity);
 
 		for (Contact c : contactList) {
 			if (keyId.equals(c.getEcPublicKey().getReadableKeyIdentifier())) {
 				return c;
 			}
 		}
+
 		throw new EntityNotFoundExcepion("No Contact with public keyID " + keyId);
 
 	}

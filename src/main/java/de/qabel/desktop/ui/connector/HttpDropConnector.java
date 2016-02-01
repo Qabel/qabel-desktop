@@ -10,12 +10,15 @@ import de.qabel.core.drop.DropURL;
 import de.qabel.core.exceptions.*;
 import de.qabel.core.http.DropHTTP;
 import de.qabel.core.http.HTTPResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 public class HttpDropConnector implements Connector {
 
 	DropHTTP dHTTP = new DropHTTP();
+	private final Logger logger = LoggerFactory.getLogger(HttpDropConnector.class);
 
 
 	public void send(Contact c, DropMessage d) throws QblNetworkInvalidResponseException {
@@ -29,12 +32,7 @@ public class HttpDropConnector implements Connector {
 		final byte[] messageByteArray = binaryMessage.assembleMessageFor(c);
 		DropURL dropURL = convertCollectionIntoDropUrl(c.getDropUrls());
 		HTTPResult<?> dropResult = dHTTP.send(dropURL.getUri(), messageByteArray);
-
-		if (dropResult.getResponseCode() != 200 &&
-				dropResult.getResponseCode() != 201 &&
-				dropResult.getResponseCode() != 202 &&
-				dropResult.getResponseCode() != 204
-				) {
+		if (dropResult.getResponseCode() >= 300 || dropResult.getResponseCode() < 200) {
 			throw new QblNetworkInvalidResponseException();
 		}
 	}
@@ -51,7 +49,7 @@ public class HttpDropConnector implements Connector {
 		for (DropURL d : dropUrls) {
 			return d;
 		}
-		throw new NullPointerException();
+		throw new IllegalArgumentException("No drop URL found");
 	}
 
 	private HTTPResult<Collection<byte[]>> receiveMessages(Date sinceDate, DropURL d) {
@@ -73,19 +71,11 @@ public class HttpDropConnector implements Connector {
 
 			try {
 				binMessage = new BinaryDropMessageV0(message);
-			} catch (QblVersionMismatchException | QblDropInvalidMessageSizeException e) {
-				e.printStackTrace();
+				DropMessage dropMessage = binMessage.disassembleMessage(identity);
+				dropMessages.add(dropMessage);
+			} catch (QblSpoofedSenderException | QblDropInvalidMessageSizeException | QblVersionMismatchException e) {
+				logger.trace("loadManager stopped: " + e.getMessage());
 			}
-
-			DropMessage dropMessage = null;
-
-			try {
-				dropMessage = binMessage.disassembleMessage(identity);
-			} catch (QblSpoofedSenderException e) {
-				e.printStackTrace();
-			}
-			dropMessages.add(dropMessage);
-
 		}
 		return dropMessages;
 	}

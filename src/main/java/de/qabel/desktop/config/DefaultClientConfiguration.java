@@ -6,12 +6,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Observable;
 
 public class DefaultClientConfiguration extends Observable implements ClientConfiguration {
 	private Account account;
 	private Identity identity;
+	private Date lastUpdate;
+
 	private ObservableList<BoxSyncConfig> boxSyncConfigs = FXCollections.synchronizedObservableList(FXCollections.observableList(new LinkedList<>()));
 
 	public DefaultClientConfiguration() {
@@ -66,5 +69,15 @@ public class DefaultClientConfiguration extends Observable implements ClientConf
 	@Override
 	public ObservableList<BoxSyncConfig> getBoxSyncConfigs() {
 		return boxSyncConfigs;
+	}
+
+	public Date getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(Date lastUpdate) {
+		this.lastUpdate = lastUpdate;
+		setChanged();
+		notifyObservers();
 	}
 }

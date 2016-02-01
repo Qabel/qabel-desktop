@@ -1,8 +1,13 @@
 package de.qabel.desktop.ui.actionlog;
 
 import com.airhacks.afterburner.views.FXMLView;
+import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Test;
+
+import java.util.Date;
+import java.util.List;
+
 import static junit.framework.TestCase.assertEquals;
 
 
@@ -18,6 +23,7 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
 		waitUntil(() -> controller.textarea != null);
 		clickOn("#textarea").write("Message");
 		clickOn("#submit");
-		assertEquals(2, controller.messages.getChildren().size());
+		List<DropMessage> list = controller.httpDropConnector.receive(controller.identity, new Date(0L));
+		assertEquals(1, list.size());
 	}
 }
