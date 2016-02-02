@@ -12,7 +12,7 @@ public interface StorageReadBackend {
 	StorageDownload download(String name) throws QblStorageException;
 
 	/**
-	 * Download a file from the storage if it was modified
+	 * Download a file from the storage if it was modified (new version / etag / ...)
 	 */
-	StorageDownload download(String name, Long ifModifiedSince) throws QblStorageException, UnmodifiedException;
+	StorageDownload download(String name, String ifModifiedVersion) throws QblStorageException, UnmodifiedException;
 }

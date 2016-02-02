@@ -34,4 +34,10 @@ public interface ClientConfiguration {
 	 * @see java.util.Observable#deleteObserver(Observer)
 	 */
 	void deleteObserver(Observer o);
+
+	boolean hasDeviceId();
+
+	void setDeviceId(String deviceId);
+
+	String getDeviceId();
 }

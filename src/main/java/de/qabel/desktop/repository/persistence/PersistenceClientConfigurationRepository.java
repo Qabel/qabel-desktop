@@ -61,6 +61,7 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 			if (configDto.boxSyncConfigs != null) {
 				loadBoxSyncConfigs(configDto, boxSyncConfigs);
 			}
+			config.setDeviceId(configDto.deviceId);
 		}
 		return config;
 	}
@@ -129,6 +130,8 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 				e.printStackTrace();
 			}
 		}
+
+		configDto.deviceId = configuration.getDeviceId();
 
 		persistence.updateOrPersistEntity(configDto);
 	}

@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 public class IndexNavigation extends AbstractNavigation {
-	private Map<Integer, Long> directoryMetadataMtimes = new WeakHashMap<>();
+	private Map<Integer, String> directoryMetadataMHashes = new WeakHashMap<>();
 
 	private static final Logger logger = LoggerFactory.getLogger(IndexNavigation.class.getSimpleName());
 
@@ -30,7 +30,7 @@ public class IndexNavigation extends AbstractNavigation {
 		String rootRef = dm.getFileName();
 
 		try {
-			StorageDownload download = readBackend.download(rootRef, directoryMetadataMtimes.get(Arrays.hashCode(dm.getVersion())));
+			StorageDownload download = readBackend.download(rootRef, directoryMetadataMHashes.get(Arrays.hashCode(dm.getVersion())));
 			InputStream indexDl = download.getInputStream();
 			File tmp;
 			byte[] encrypted = IOUtils.toByteArray(indexDl);
@@ -42,7 +42,7 @@ public class IndexNavigation extends AbstractNavigation {
 			out.write(plaintext.getPlaintext());
 			out.close();
 			DirectoryMetadata newDm = DirectoryMetadata.openDatabase(tmp, deviceId, rootRef, dm.getTempDir());
-			directoryMetadataMtimes.put(Arrays.hashCode(newDm.getVersion()), download.getMtime());
+			directoryMetadataMHashes.put(Arrays.hashCode(newDm.getVersion()), download.getMHash());
 			return newDm;
 		} catch (UnmodifiedException e) {
 			return dm;

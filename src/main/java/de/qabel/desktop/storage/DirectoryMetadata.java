@@ -227,7 +227,7 @@ public class DirectoryMetadata {
 
 	}
 
-	byte[] getLastChangedBy() throws QblStorageException {
+	public byte[] getLastChangedBy() throws QblStorageException {
 		try (Statement statement = connection.createStatement()) {
 			try (ResultSet rs = statement.executeQuery(
 					"SELECT value FROM meta WHERE name='last_change_by'")) {

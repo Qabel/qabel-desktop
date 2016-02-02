@@ -13,13 +13,15 @@ import java.nio.file.Path;
 public class LocalBoxVolumeFactory implements BoxVolumeFactory {
 	private final Path tmpDir;
 	private String prefix;
+	private String deviceId;
 
-	public LocalBoxVolumeFactory(Path tmpDir) {
+	public LocalBoxVolumeFactory(Path tmpDir, String deviceId) {
 		this.tmpDir = tmpDir;
+		this.deviceId = deviceId;
 	}
 
-	public LocalBoxVolumeFactory(Path tmpDir, String prefix) {
-		this(tmpDir);
+	public LocalBoxVolumeFactory(Path tmpDir, String deviceId, String prefix) {
+		this(tmpDir, deviceId);
 		this.prefix = prefix;
 	}
 
@@ -32,7 +34,7 @@ public class LocalBoxVolumeFactory implements BoxVolumeFactory {
 				new LocalReadBackend(tmpDir),
 				new LocalWriteBackend(tmpDir),
 				identity.getPrimaryKeyPair(),
-				new byte[0],
+				deviceId.getBytes(),
 				tmpDir.toFile(),
 				prefix
 		);

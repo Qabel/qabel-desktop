@@ -57,7 +57,7 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observ
 		return loading;
 	}
 
-	ReadOnlyBoxNavigation getNavigation() {
+	public ReadOnlyBoxNavigation getNavigation() {
 		return navigation;
 	}
 
