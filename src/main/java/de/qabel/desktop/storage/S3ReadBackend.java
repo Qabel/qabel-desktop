@@ -7,6 +7,7 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.DateUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -17,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -60,7 +60,7 @@ public class S3ReadBackend implements StorageReadBackend {
 		}
 	}
 
-	public StorageDownload download(String name, Long ifModifiedSince) throws QblStorageException, UnmodifiedException {
+	public StorageDownload download(String name, String ifModifiedVersion) throws QblStorageException, UnmodifiedException {
 		logger.info("Downloading " + name);
 		URI uri;
 		try {
@@ -69,9 +69,8 @@ public class S3ReadBackend implements StorageReadBackend {
 			throw new QblStorageException(e);
 		}
 		HttpGet httpGet = new HttpGet(uri);
-		if (ifModifiedSince != null) {
-			httpGet.addHeader(HttpHeaders.IF_NONE_MATCH, "*");
-			httpGet.addHeader(HttpHeaders.IF_MODIFIED_SINCE, lastModifiedFormat.format(new Date(ifModifiedSince)));
+		if (ifModifiedVersion != null) {
+			httpGet.addHeader(HttpHeaders.IF_NONE_MATCH, ifModifiedVersion);
 		}
 		CloseableHttpResponse response;
 		try {
@@ -89,13 +88,9 @@ public class S3ReadBackend implements StorageReadBackend {
 		if (status != 200) {
 			throw new QblStorageException("Download error");
 		}
-		long mtime;
-		try {
-			mtime = lastModifiedFormat.parse(response.getFirstHeader(HttpHeaders.LAST_MODIFIED).getValue()).getTime();
-		} catch (ParseException e) {
-			mtime = System.currentTimeMillis();
-		}
-		if (ifModifiedSince != null && ifModifiedSince <= mtime) {
+		String modifiedVersion = response.getFirstHeader(HttpHeaders.ETAG).getValue();
+
+		if (ifModifiedVersion != null && modifiedVersion.equals(ifModifiedVersion)) {
 			throw new UnmodifiedException();
 		}
 		HttpEntity entity = response.getEntity();
@@ -104,7 +99,7 @@ public class S3ReadBackend implements StorageReadBackend {
 		}
 		try {
 			InputStream content = entity.getContent();
-			return new StorageDownload(content, mtime, entity.getContentLength());
+			return new StorageDownload(content, modifiedVersion, entity.getContentLength());
 		} catch (IOException e) {
 			throw new QblStorageException(e);
 		}

@@ -54,7 +54,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 		try {
 			Account account = new Account("a", "b", "c");
 			Identity identity = new IdentityBuilder(new DropUrlGenerator("http://localhost")).build();
-			volume = new LocalBoxVolumeFactory(tmpDir, "abc").getVolume(account, identity);
+			volume = new LocalBoxVolumeFactory(tmpDir, "abc", "prefix").getVolume(account, identity);
 			volume.createIndex("??");
 
 			upload = new UploadStub();

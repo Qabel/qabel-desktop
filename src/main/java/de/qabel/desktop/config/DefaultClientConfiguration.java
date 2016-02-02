@@ -13,6 +13,7 @@ public class DefaultClientConfiguration extends Observable implements ClientConf
 	private Account account;
 	private Identity identity;
 	private ObservableList<BoxSyncConfig> boxSyncConfigs = FXCollections.synchronizedObservableList(FXCollections.observableList(new LinkedList<>()));
+	private String deviceId;
 
 	public DefaultClientConfiguration() {
 		boxSyncConfigs.addListener((ListChangeListener) c -> {observeBoxSyncConfigs(); boxSyncConfigWasChanged(); });
@@ -66,5 +67,20 @@ public class DefaultClientConfiguration extends Observable implements ClientConf
 	@Override
 	public ObservableList<BoxSyncConfig> getBoxSyncConfigs() {
 		return boxSyncConfigs;
+	}
+
+	@Override
+	public boolean hasDeviceId() {
+		return deviceId != null;
+	}
+
+	@Override
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
+	}
+
+	@Override
+	public String getDeviceId() {
+		return deviceId;
 	}
 }
