@@ -4,12 +4,12 @@ import java.io.InputStream;
 
 public class StorageDownload {
 	private InputStream inputStream;
-	private long mtime;
+	private String mHash;
 	private long size;
 
-	public StorageDownload(InputStream inputStream, long mtime, long size) {
+	public StorageDownload(InputStream inputStream, String mHash, long size) {
 		this.inputStream = inputStream;
-		this.mtime = mtime;
+		this.mHash = mHash;
 		this.size = size;
 	}
 
@@ -17,8 +17,8 @@ public class StorageDownload {
 		return inputStream;
 	}
 
-	public long getMtime() {
-		return mtime;
+	public String getMHash() {
+		return mHash;
 	}
 
 	public long getSize() {

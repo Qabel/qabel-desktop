@@ -71,13 +71,13 @@ public class SyncIntegrationTest {
 			syncer2 = new DefaultSyncer(config2, volume2, manager2);
 			syncer2.getUploadFactory().setSyncDelayMills(0L);
 
-			syncer1.setPollInterval(1, TimeUnit.MILLISECONDS);
+			syncer1.setPollInterval(0, TimeUnit.MILLISECONDS);
 			syncer1.run();
 			syncer1.waitFor();
 			managerThread1 = new Thread(manager1);
 			managerThread1.start();
 
-			syncer2.setPollInterval(1, TimeUnit.MILLISECONDS);
+			syncer2.setPollInterval(0, TimeUnit.MILLISECONDS);
 			managerThread2 = new Thread(manager2);
 			managerThread2.start();
 		} catch (Exception e) {
@@ -150,13 +150,13 @@ public class SyncIntegrationTest {
 		waitUntil(() -> {
 			final SyncIntegrationTest test2 = test;
 			return Files.isDirectory(dir2);
-		}, 2000L);
+		}, 5000L);
 
 		Path file1 = Paths.get(dir1.toString(), "file");
 		Files.write(file1, "text".getBytes());
 
 		Path file2 = Paths.get(dir2.toString(), "file");
-		waitUntil(() -> Files.exists(file2));
+		waitUntil(() -> Files.exists(file2), 5000L);
 		assertEquals("text", new String(Files.readAllBytes(file2)));
 
 		List<Transaction> history = manager2.getHistory();
@@ -176,7 +176,7 @@ public class SyncIntegrationTest {
 		assertTrue(history.get(2) instanceof Download);
 		assertEquals(Paths.get("/sync/dir"), history.get(2).getSource());
 
-		waitUntil(() -> history.size() > 3, () -> "too few events: " + history);
+		waitUntil(() -> history.size() > 3, 5000L, () -> "too few events: " + history);
 		assertTrue(
 				"an unecpected " + history.get(3) + " occured after DOWNLAOD /sync/dir",
 				history.get(3) instanceof Download
@@ -198,7 +198,7 @@ public class SyncIntegrationTest {
 		syncer2.run();
 		syncer2.waitFor();
 
-		waitUntil(() -> !file.exists());
+		waitUntil(() -> !file.exists(), 2000L);
 	}
 
 	@Test

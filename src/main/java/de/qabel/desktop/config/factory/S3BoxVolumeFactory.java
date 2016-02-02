@@ -11,6 +11,12 @@ import de.qabel.desktop.storage.cache.CachedBoxVolume;
 import java.io.File;
 
 public class S3BoxVolumeFactory implements BoxVolumeFactory {
+	private String deviceId;
+
+	public S3BoxVolumeFactory(String deviceId) {
+		this.deviceId = deviceId;
+	}
+
 	@Override
 	public BoxVolume getVolume(Account account, Identity identity) {
 		String prefix = MagicEvilPrefixSource.getPrefix(account);
@@ -20,7 +26,7 @@ public class S3BoxVolumeFactory implements BoxVolumeFactory {
 				prefix,
 				new DefaultAWSCredentialsProviderChain().getCredentials(),
 				identity.getPrimaryKeyPair(),
-				new byte[0],
+				deviceId.getBytes(),
 				new File(System.getProperty("java.io.tmpdir"))
 		);
 		return volume;

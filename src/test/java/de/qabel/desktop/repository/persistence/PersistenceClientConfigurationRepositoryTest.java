@@ -54,12 +54,15 @@ public class PersistenceClientConfigurationRepositoryTest extends AbstractPersis
 		Identity identity = new Identity("alias", null, null);
 		config.setAccount(account);
 		config.selectIdentity(identity);
+		config.setDeviceId("dev id");
 
 		repo.save(config);
 
 		ClientConfiguration loadedConfig = repo.load();
 		assertEquals(identity, loadedConfig.getSelectedIdentity());
 		assertEquals(account, loadedConfig.getAccount());
+		assertTrue(loadedConfig.hasDeviceId());
+		assertEquals("dev id", loadedConfig.getDeviceId());
 	}
 
 	@Test

@@ -1,7 +1,8 @@
 package de.qabel.desktop.cellValueFactory;
 
-import de.qabel.desktop.storage.BoxFile;
-import de.qabel.desktop.storage.BoxObject;
+import de.qabel.desktop.exceptions.QblStorageException;
+import de.qabel.desktop.storage.*;
+import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.ui.remotefs.LazyBoxFolderTreeItem;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableValue;
@@ -42,6 +43,20 @@ public class BoxObjectCellValueFactory implements Callback<TreeTableColumn.CellD
 				case MTIME:
 					DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 					return new ReadOnlyStringWrapper(dateFormat.format(((BoxFile) bf).mtime));
+			}
+		} else if (treeItem instanceof LazyBoxFolderTreeItem) {
+			LazyBoxFolderTreeItem folder = (LazyBoxFolderTreeItem) treeItem;
+			ReadOnlyBoxNavigation navigation = folder.getNavigation();
+			if (navigation instanceof CachedBoxNavigation) {
+				DirectoryMetadata dm = ((CachedBoxNavigation) navigation).getMetadata();
+				switch (searchValue) {
+					case SIZE:
+						try {
+							return new ReadOnlyStringWrapper(new String(dm.getLastChangedBy()));
+						} catch (QblStorageException e) {
+							return new ReadOnlyStringWrapper("?");
+						}
+				}
 			}
 		}
 

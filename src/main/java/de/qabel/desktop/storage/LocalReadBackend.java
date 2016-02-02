@@ -26,11 +26,11 @@ public class LocalReadBackend implements StorageReadBackend {
 		}
 	}
 
-	public StorageDownload download(String name, Long ifModifiedSince) throws QblStorageException, UnmodifiedException {
+	public StorageDownload download(String name, String ifModifiedVersion) throws QblStorageException, UnmodifiedException {
 		Path file = root.resolve(name);
 
 		try {
-			if (ifModifiedSince != null && Files.getLastModifiedTime(file).toMillis() <= ifModifiedSince) {
+			if (ifModifiedVersion != null && String.valueOf(Files.getLastModifiedTime(file).toMillis()).equals(ifModifiedVersion)) {
 				throw new UnmodifiedException();
 			}
 		} catch (IOException e) {
@@ -41,7 +41,7 @@ public class LocalReadBackend implements StorageReadBackend {
 		try {
 			return new StorageDownload(
 					Files.newInputStream(file),
-					Files.getLastModifiedTime(file).toMillis(),
+					String.valueOf(Files.getLastModifiedTime(file).toMillis()),
 					Files.size(file)
 			);
 		} catch (IOException e) {

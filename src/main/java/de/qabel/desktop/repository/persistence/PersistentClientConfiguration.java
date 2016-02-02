@@ -10,4 +10,5 @@ public class PersistentClientConfiguration extends Persistable {
 	public String identitiyId;
 	public String accountId;
 	public List<PersistentBoxSyncConfig> boxSyncConfigs = new LinkedList<>();
+	public String deviceId;
 }
