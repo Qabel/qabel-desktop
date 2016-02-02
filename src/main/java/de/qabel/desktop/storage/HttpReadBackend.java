@@ -24,7 +24,6 @@ import java.util.Date;
 
 public class HttpReadBackend extends AbstractHttpBackend implements StorageReadBackend {
 	protected static final Logger logger = LoggerFactory.getLogger(S3ReadBackend.class.getSimpleName());
-	private static final SimpleDateFormat lastModifiedFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
 
 	public HttpReadBackend(String root) {
 		super(root);
@@ -44,7 +43,7 @@ public class HttpReadBackend extends AbstractHttpBackend implements StorageReadB
 
 	}
 
-	public StorageDownload download(String name, Long ifModifiedSince) throws QblStorageException, UnmodifiedException {
+	public StorageDownload download(String name, String ifModifiedVersion) throws QblStorageException, UnmodifiedException {
 		logger.info("Downloading " + name);
 		URI uri;
 		try {
@@ -53,9 +52,8 @@ public class HttpReadBackend extends AbstractHttpBackend implements StorageReadB
 			throw new QblStorageException(e);
 		}
 		HttpGet httpGet = new HttpGet(uri);
-		if (ifModifiedSince != null) {
-			httpGet.addHeader(HttpHeaders.IF_NONE_MATCH, "*");
-			httpGet.addHeader(HttpHeaders.IF_MODIFIED_SINCE, lastModifiedFormat.format(new Date(ifModifiedSince)));
+		if (ifModifiedVersion != null) {
+			httpGet.addHeader(HttpHeaders.IF_NONE_MATCH, ifModifiedVersion);
 		}
 		prepareRequest(httpGet);
 		CloseableHttpResponse response;
@@ -74,13 +72,8 @@ public class HttpReadBackend extends AbstractHttpBackend implements StorageReadB
 		if (status != 200) {
 			throw new QblStorageException("Download error");
 		}
-		long mtime;
-		try {
-			mtime = lastModifiedFormat.parse(response.getFirstHeader(HttpHeaders.LAST_MODIFIED).getValue()).getTime();
-		} catch (ParseException e) {
-			mtime = System.currentTimeMillis();
-		}
-		if (ifModifiedSince != null && ifModifiedSince <= mtime) {
+		String modifiedVersion = response.getFirstHeader(HttpHeaders.ETAG).getValue();
+		if (ifModifiedVersion != null && ifModifiedVersion.equals(modifiedVersion)) {
 			throw new UnmodifiedException();
 		}
 		HttpEntity entity = response.getEntity();
@@ -89,7 +82,7 @@ public class HttpReadBackend extends AbstractHttpBackend implements StorageReadB
 		}
 		try {
 			InputStream content = entity.getContent();
-			return new StorageDownload(content, mtime, entity.getContentLength());
+			return new StorageDownload(content, modifiedVersion, entity.getContentLength());
 		} catch (IOException e) {
 			throw new QblStorageException(e);
 		}

@@ -8,7 +8,9 @@ import org.apache.http.HttpRequest;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ByteArrayBody;
@@ -42,12 +44,7 @@ public class HttpWriteBackend extends AbstractHttpBackend implements StorageWrit
 		System.out.println("Uploading to " + uri.toString());
 		HttpPost httpPost = new HttpPost(uri);
 		prepareRequest(httpPost);
-		HttpEntity entity = null;
-		entity = MultipartEntityBuilder.create()
-				.setMode(HttpMultipartMode.RFC6532)
-				.addPart("file", new InputStreamBody(content,  name))
-				.build();
-		httpPost.setEntity(entity);
+		httpPost.setEntity(new InputStreamEntity(content));
 		CloseableHttpResponse response;
 		try {
 			response = httpclient.execute(httpPost);

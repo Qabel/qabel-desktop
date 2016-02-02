@@ -78,7 +78,11 @@ public class DesktopClient extends Application {
 				}
 				initialized[0] = true;
 				try {
-					boxVolumeFactory = new CachedBoxVolumeFactory(new S3BoxVolumeFactory());
+					if (!config.hasDeviceId()) {
+						config.setDeviceId(generateDeviceId());
+					}
+					String deviceId = config.getDeviceId();
+					boxVolumeFactory = new CachedBoxVolumeFactory(new S3BoxVolumeFactory(deviceId));
 					customProperties.put("boxVolumeFactory", boxVolumeFactory);
 					new Thread(getSyncDaemon(config)).start();
 					view.getViewAsync((parent) -> {
