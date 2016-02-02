@@ -7,9 +7,12 @@ import java.util.List;
 
 import static de.qabel.desktop.daemon.management.Transaction.STATE.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class AbstractTransactionTest {
 	private final List<Object> updates = new LinkedList<>();
+	private final List<Object> progress = new LinkedList<>();
 
 	@Test
 	public void notifiesOnSuccessfulClose() {
@@ -36,5 +39,36 @@ public class AbstractTransactionTest {
 			t.onSkipped(() -> updates.add(SKIPPED));
 		}
 		assertEquals("missing skipped notification", 1, updates.size());
+	}
+
+	@Test
+	public void knowsWhenItHasNoSize() {
+		Transaction t = new DummyTransaction();
+		assertFalse(t.hasSize());
+	}
+
+	@Test
+	public void knowsWhenItHasASize() {
+		DummyTransaction t = new DummyTransaction();
+		t.setSize(1L);
+		assertTrue(t.hasSize());
+	}
+
+	@Test
+	public void notifiesOnProgress() {
+		Transaction t = new DummyTransaction();
+		t.onProgress(() -> progress.add(null));
+		t.setProgress(10L);
+
+		assertEquals(1, progress.size());
+	}
+
+	@Test
+	public void notifiesOnStateChange() {
+		Transaction t = new DummyTransaction();
+		t.onProgress(() -> progress.add(null));
+		t.toState(FAILED);
+
+		assertEquals(1, progress.size());
 	}
 }

@@ -14,7 +14,7 @@ import java.nio.file.Path;
 
 public class LocalWriteBackend implements StorageWriteBackend {
 
-	private static final Logger logger = LoggerFactory.getLogger(LocalReadBackend.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(LocalReadBackend.class.getSimpleName());
 	private Path root;
 
 

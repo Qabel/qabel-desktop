@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
-public interface BoxNavigation {
+public interface BoxNavigation extends ReadOnlyBoxNavigation {
 
 	DirectoryMetadata reloadMetadata() throws QblStorageException;
 
@@ -23,46 +23,15 @@ public interface BoxNavigation {
 	void commit() throws QblStorageException;
 
 	/**
-	 * Create a new navigation object that starts at another {@link BoxFolder}
+	 * Upload a new file to the current folder
 	 *
-	 * @param target Target folder that is a direct subfolder
-	 * @return {@link BoxNavigation} for the subfolder
-	 * @throws QblStorageException
+	 * @param name name of the file, must be unique
+	 * @param file file object that must be readable
+	 * @param listener
+	 * @return the resulting BoxFile object
+	 * @throws QblStorageException if the upload failed or the name is not unique
 	 */
-	BoxNavigation navigate(BoxFolder target) throws QblStorageException;
-
-	/**
-	 * Create a new navigation object that starts at another {@link BoxExternal}
-	 *
-	 * @param target Target shared folder that is mounted in the current folder
-	 * @return {@link BoxNavigation} for the external share
-	 * @throws QblStorageException
-	 */
-	BoxNavigation navigate(BoxExternal target);
-
-	/**
-	 * Create a list of all files in the current folder
-	 *
-	 * @return list of files
-	 * @throws QblStorageException
-	 */
-	List<BoxFile> listFiles() throws QblStorageException;
-
-	/**
-	 * Create a list of all folders in the current folder
-	 *
-	 * @return list of folders
-	 * @throws QblStorageException
-	 */
-	List<BoxFolder> listFolders() throws QblStorageException;
-
-	/**
-	 * Create a list of external shares in the current folder
-	 *
-	 * @return list of external shares
-	 * @throws QblStorageException
-	 */
-	List<BoxExternal> listExternals() throws QblStorageException;
+	BoxFile upload(String name, File file, ProgressListener listener) throws QblStorageException;
 
 	/**
 	 * Upload a new file to the current folder
@@ -79,10 +48,31 @@ public interface BoxNavigation {
 	 *
 	 * @param name name of the file which must already exist
 	 * @param file file object that must be readable
+	 * @param listener
+	 * @return the updated BoxFile object
+	 * @throws QblStorageException if he upload failed or the name does not exist
+	 */
+	BoxFile overwrite(String name, File file, ProgressListener listener) throws QblStorageException;
+
+	/**
+	 * Overwrite a file in the current folder
+	 *
+	 * @param name name of the file which must already exist
+	 * @param file file object that must be readable
 	 * @return the updated BoxFile object
 	 * @throws QblStorageException if he upload failed or the name does not exist
 	 */
 	BoxFile overwrite(String name, File file) throws QblStorageException;
+
+	/**
+	 * Create an {@link InputStream} for a {@link BoxFile} in the current folder
+	 *
+	 * @param file file in the current folder
+	 * @param listener
+	 * @return Decrypted stream
+	 * @throws QblStorageException if the download or decryption failed
+	 */
+	InputStream download(BoxFile file, ProgressListener listener) throws QblStorageException;
 
 	/**
 	 * Create an {@link InputStream} for a {@link BoxFile} in the current folder
@@ -132,18 +122,6 @@ public interface BoxNavigation {
 	 */
 	void setAutocommit(boolean autocommit);
 
-	/**
-	 * Navigate to subfolder by name
-	 */
-	BoxNavigation navigate(String folderName) throws QblStorageException;
-
-	BoxFolder getFolder(String name) throws QblStorageException;
-
-	boolean hasFolder(String name) throws QblStorageException;
-
-	BoxFile getFile(String name) throws QblStorageException;
-
 	DirectoryMetadata getMetadata();
 
-	boolean hasFile(String name) throws QblStorageException;
 }

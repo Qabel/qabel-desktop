@@ -1,11 +1,9 @@
-# Qabel documentation
+# Qabel Desktop Client
 For the documentation take a look at the [documentation](http://qabel.github.io/docs/).
 
-qabel-desktop
-=============
-Desktop Frontend of Qabel
+[![Build Status](https://jenkins.prae.me/job/qabel-desktop/badge/icon)](https://jenkins.prae.me/job/qabel-desktop/)
 
-## Quick Start
+## Quick Start (for developers)
 
 #### preconditions
 
@@ -23,6 +21,7 @@ Desktop Frontend of Qabel
     * `CREATE USER qabel WITH PASSWORD 'qabel_test'`
     * `GRANT ALL PRIVILEGES ON DATABASE qabel_drop TO qabel`
  * for python integration with postgresql, you will need the postgresql-devel libs (`apt-get install libpq-dev` for ubuntu)
+ * to connect with an S3 instance, set up an aws config as described [here](https://boto3.readthedocs.org/en/latest/guide/quickstart.html#configuration)
 
 #### first local build
 
@@ -32,7 +31,7 @@ Desktop Frontend of Qabel
  * run the gradle-based build with `./gradlew build`
  * stop the started servers with the `stop-servers.sh`
 
-## Build targets
+## build targets
 
 `./gradlew` accepts different targets. The (probably) most important ones are:
 * **test**: run the unit tests (Tests that don't start a GUI)

@@ -15,6 +15,9 @@ public class TransactionStub implements Transaction {
 	public Long mtime = 0L;
 	public boolean closed = false;
 	public long transactionAge = 2000L;
+	public Long size;
+	public long progress = 0L;
+	public long stagingDelay = 0L;
 
 	@Override
 	public long transactionAge() {
@@ -72,6 +75,16 @@ public class TransactionStub implements Transaction {
 	}
 
 	@Override
+	public Transaction onProgress(Runnable runnable) {
+		return null;
+	}
+
+	@Override
+	public long getStagingDelayMillis() {
+		return stagingDelay;
+	}
+
+	@Override
 	public STATE getState() {
 		return state;
 	}
@@ -84,5 +97,30 @@ public class TransactionStub implements Transaction {
 	@Override
 	public void close() {
 		closed = true;
+	}
+
+	@Override
+	public long getSize() {
+		return size;
+	}
+
+	@Override
+	public boolean hasSize() {
+		return size != null;
+	}
+
+	@Override
+	public long getProgress() {
+		return progress;
+	}
+
+	@Override
+	public void setProgress(long progress) {
+		this.progress = progress;
+	}
+
+	@Override
+	public void setSize(long size) {
+		this.size = size;
 	}
 }

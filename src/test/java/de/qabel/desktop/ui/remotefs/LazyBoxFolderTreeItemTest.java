@@ -1,5 +1,7 @@
 package de.qabel.desktop.ui.remotefs;
 
+import de.qabel.desktop.daemon.sync.event.ChangeEvent;
+import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
 import de.qabel.desktop.ui.AbstractControllerTest;
@@ -10,8 +12,10 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Observable;
 
 import static org.junit.Assert.*;
 
@@ -35,6 +39,7 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 		((FakeBoxNavigation) item.getNavigation()).loading = false;
 		load();
 
+		waitUntil(() -> nameProperty.get().equals("name"));
 		assertEquals("name", nameProperty.get());
 	}
 
@@ -85,7 +90,6 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 	@Test(timeout = 1000)
 	public void loadsFiles() throws Exception {
 		navigation = new FakeBoxNavigation();
-		navigation = new FakeBoxNavigation();
 		item = new LazyBoxFolderTreeItem(createSomeFolder(), navigation);
 		navigation.files.add(createSomeFile());
 
@@ -94,11 +98,32 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 		assertEquals(1, children.size());
 	}
 
+	@Test
+	public void updatesOnNavChange() throws Exception {
+		navigation = new FakeBoxNavigation();
+		item = new LazyBoxFolderTreeItem(createSomeFolder(), navigation);
+		item.setExpanded(true);
+		List children = load();
+		assertEquals(0, children.size());
+
+		navigation.files.add(createSomeFile());
+		navigation.setChanged();
+		navigation.notifyObservers(new RemoteChangeEvent(
+				Paths.get("/name2"),
+				false,
+				navigation.files.get(0).mtime,
+				ChangeEvent.TYPE.CREATE,
+				navigation.files.get(0),
+				navigation
+		));
+		waitUntil(() -> children.size() == 1);
+	}
+
 	private BoxFile createSomeFile() {
 		return new BoxFile("ref2", "name2", 0L, 0L, new byte[0]);
 	}
 
-	private class FakeBoxNavigation implements BoxNavigation {
+	private class FakeBoxNavigation extends Observable implements BoxNavigation {
 		public boolean loading = false;
 
 		public List<BoxFile> files = new LinkedList<>();
@@ -149,12 +174,27 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 		}
 
 		@Override
+		public BoxFile upload(String name, File file, ProgressListener listener) throws QblStorageException {
+			return null;
+		}
+
+		@Override
 		public BoxFile upload(String name, File file) throws QblStorageException {
 			return null;
 		}
 
 		@Override
+		public BoxFile overwrite(String name, File file, ProgressListener listener) throws QblStorageException {
+			return null;
+		}
+
+		@Override
 		public BoxFile overwrite(String name, File file) throws QblStorageException {
+			return null;
+		}
+
+		@Override
+		public InputStream download(BoxFile file, ProgressListener listener) throws QblStorageException {
 			return null;
 		}
 
@@ -216,6 +256,16 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 		@Override
 		public boolean hasFile(String name) throws QblStorageException {
 			return false;
+		}
+
+		@Override
+		public synchronized void setChanged() {
+			super.setChanged();
+		}
+
+		@Override
+		public void notifyObservers() {
+			super.notifyObservers();
 		}
 	}
 }

@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static org.junit.Assert.assertEquals;
@@ -34,7 +35,7 @@ public class BoxSyncBasedUploadTest extends AbstractSyncTest {
 	@Test
 	public void forwardsConfig() throws Exception {
 		File file = new File(tmpDir.toFile(), "testfile");
-		file.createNewFile();
+		Files.write(file.toPath(), "12345".getBytes());
 
 		IdentityBuilderFactory identityBuilderFactory = new IdentityBuilderFactory(new DropUrlGenerator("http://localhost:5000"));
 		Identity identity = identityBuilderFactory.factory().build();
@@ -50,5 +51,6 @@ public class BoxSyncBasedUploadTest extends AbstractSyncTest {
 		assertEquals(volume, boxVolume);
 		assertEquals(new File(tmpDir.toFile(), "testfile").toPath(), upload.getSource());
 		assertEquals(Paths.get("/tmp/testfile"), upload.getDestination());
+		assertEquals(5, upload.getSize());
 	}
 }

@@ -147,7 +147,11 @@ public class TreeWatcher extends Thread {
 				logger.trace("watching " + dir);
 				WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
 				keys.put(key, dir);
-				consumer.accept(new WatchRegisteredEvent(dir));
+				try {
+					consumer.accept(new WatchRegisteredEvent(dir));
+				} catch (Exception e) {
+					logger.error(e.getMessage(), e);
+				}
 				return FileVisitResult.CONTINUE;
 			}
 		});

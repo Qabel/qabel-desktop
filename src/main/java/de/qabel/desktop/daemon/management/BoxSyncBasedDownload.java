@@ -32,4 +32,9 @@ public class BoxSyncBasedDownload extends AbstractBoxSyncBasedTransaction implem
 	public void setMtime(Long mtime) {
 		this.mtime = mtime;
 	}
+
+	@Override
+	public long getStagingDelayMillis() {
+		return 0;
+	}
 }

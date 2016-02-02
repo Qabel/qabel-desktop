@@ -7,51 +7,66 @@
 <?import java.lang.String?>
 <BorderPane fx:id="window" fx:controller="de.qabel.desktop.ui.LayoutController" prefHeight="568.0" prefWidth="842.0" maxWidth="Infinity" maxHeight="Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <left>
-      <VBox styleClass="navi-container">
-         <children>
-            <HBox fx:id="selectedIdentity" styleClass="selectedIdentity">
+      <BorderPane styleClass="navi-container">
+         <center>
+            <VBox>
                <children>
-               <Pane fx:id="avatarContainer">
-                  <Label styleClass="avatar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="50.0" minWidth="50.0" prefHeight="50.0" prefWidth="50.0">
-                     <HBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </HBox.margin>
-                  </Label>
-               </Pane>
-                  <VBox BorderPane.alignment="CENTER">
+                  <HBox fx:id="selectedIdentity" styleClass="selectedIdentity">
                      <children>
-                        <Label fx:id="alias" text="Guy Pearce">
-                           <font>
-                              <Font name="System Bold" size="15.0" />
-                           </font></Label>
-                        <Label fx:id="mail" text="guy@pearce.com" />
+                     <Pane fx:id="avatarContainer">
+                        <Label styleClass="avatar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="50.0" minWidth="50.0" prefHeight="50.0" prefWidth="50.0">
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                        </Label>
+                     </Pane>
+                        <VBox BorderPane.alignment="CENTER">
+                           <children>
+                              <Label fx:id="alias" text="Guy Pearce">
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font></Label>
+                              <Label fx:id="mail" text="guy@pearce.com" />
+                           </children>
+                           <padding>
+                              <Insets top="10" left="5.0" right="5.0" />
+                           </padding>
+                        </VBox>
                      </children>
-                     <padding>
-                        <Insets top="10" left="5.0" right="5.0" />
-                     </padding>
+                  </HBox>
+                  <VBox fx:id="navi" alignment="TOP_RIGHT" styleClass="navi" BorderPane.alignment="CENTER">
+                     <children>
+                        <HBox>
+                           <children>
+                              <Button text="Button" />
+                           </children>
+                           <styleClass>
+                              <String fx:value="navi-item" />
+                              <String fx:value="active" />
+                           </styleClass>
+                        </HBox>
+                        <HBox styleClass="navi-item">
+                           <children>
+                              <Button text="Button" />
+                           </children>
+                        </HBox>
+                     </children>
                   </VBox>
                </children>
-            </HBox>
-            <VBox fx:id="navi" alignment="TOP_RIGHT" styleClass="navi" BorderPane.alignment="CENTER">
-               <children>
-                  <HBox>
-                     <children>
-                        <Button text="Button" />
-                     </children>
-                     <styleClass>
-                        <String fx:value="navi-item" />
-                        <String fx:value="active" />
-                     </styleClass>
-                  </HBox>
-                  <HBox styleClass="navi-item">
-                     <children>
-                        <Button text="Button" />
-                     </children>
-                  </HBox>
-               </children>
             </VBox>
-         </children>
-      </VBox>
+         </center>
+         <bottom>
+            <VBox fillWidth="true">
+               <children>
+                  <ProgressBar fx:id="uploadProgress" style="-fx-pref-width: 200;"/>
+               </children>
+               <padding>
+                  <Insets top="10" left="10" right="20" bottom="10"/>
+               </padding>
+            </VBox>
+         </bottom>
+      </BorderPane>
+
    </left>
    <center>
 

@@ -5,4 +5,9 @@ public class DownloadStub extends TransactionStub implements Download {
 	public void setMtime(Long mtime) {
 		
 	}
+
+	@Override
+	public void setSize(long size) {
+		this.size = size;
+	}
 }
