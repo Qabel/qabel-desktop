@@ -51,7 +51,6 @@ public class ActionlogController extends AbstractController implements Initializ
 
 	Identity identity;
 	Contact c;
-	Date lastDropPoll;
 
 	public void initialize(URL location, ResourceBundle resources) {
 
@@ -65,7 +64,6 @@ public class ActionlogController extends AbstractController implements Initializ
 
 	private void createActionlogSetup() {
 		identity = clientConfiguration.getSelectedIdentity();
-		lastDropPoll = clientConfiguration.getLastDropPoll(identity);
 		c = new Contact(identity, identity.getAlias(), identity.getDropUrls(), identity.getEcPublicKey());
 		try {
 			loadMessages(c);
@@ -83,7 +81,7 @@ public class ActionlogController extends AbstractController implements Initializ
 		textarea.setOnKeyPressed(keyEvent -> {
 			if (keyEvent.getCode().equals(KeyCode.ENTER) && keyEvent.isControlDown()) {
 				try {
-					handleSubmitButtonAction(new ActionEvent());
+					handleSubmitButtonAction();
 				} catch (QblException | PersistenceException | EntityNotFoundExcepion e) {
 					e.printStackTrace();
 				}
@@ -93,6 +91,10 @@ public class ActionlogController extends AbstractController implements Initializ
 
 	@FXML
 	protected void handleSubmitButtonAction(ActionEvent event) throws QblDropPayloadSizeException, EntityNotFoundExcepion, PersistenceException, QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException, QblNetworkInvalidResponseException {
+		handleSubmitButtonAction();
+	}
+
+	protected void handleSubmitButtonAction() throws QblDropPayloadSizeException, EntityNotFoundExcepion, PersistenceException, QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException, QblNetworkInvalidResponseException {
 		if (textarea.getText().equals("")) {
 			return;
 		}
@@ -124,7 +126,6 @@ public class ActionlogController extends AbstractController implements Initializ
 	}
 
 	void addMessageToActionlog(DropMessage dropMessage) throws EntityNotFoundExcepion {
-		lastDropPoll = dropMessage.getCreationDate();
 		Map<String, Object> injectionContext = new HashMap<>();
 		Contact sender = contactRepository.findByKeyId(identity, dropMessage.getSenderKeyId());
 		injectionContext.put("dropMessage", dropMessage);

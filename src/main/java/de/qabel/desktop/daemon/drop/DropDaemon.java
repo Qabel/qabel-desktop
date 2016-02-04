@@ -41,9 +41,14 @@ public class DropDaemon implements Runnable {
 	public void run() {
 		while (!Thread.interrupted()) {
 			try {
-				receiveMessages();
+				try {
+					receiveMessages();
+				} catch (PersistenceException e) {
+					logger.error("Persitence fail: " + e.getMessage(), e);
+					continue;
+				}
 				Thread.sleep(sleepTime);
-			} catch (InterruptedException | PersistenceException e) {
+			} catch (InterruptedException e) {
 				logger.error("Thread stopped " + e.getMessage(), e);
 				break;
 			}
@@ -63,7 +68,7 @@ public class DropDaemon implements Runnable {
 				continue;
 			}
 			lastDate = config.getLastDropPoll(identity);
-			if (lastDate == null || lastDate.getTime() < d.getCreationDate().getTime()) {
+			if (lastDate.getTime() < d.getCreationDate().getTime()) {
 				dropMessageRepository.addMessage(d, contact, false);
 				config.setLastDropPoll(identity, d.getCreationDate());
 			}
