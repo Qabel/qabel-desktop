@@ -29,6 +29,10 @@ public class InMemoryHttpDropConnector implements Connector{
 
 	@Override
 	public List<DropMessage> receive(Identity i, Date siceDate) {
+		List<DropMessage> lst = contactLists.get(i.getKeyIdentifier());
+		if(lst == null){
+			return new LinkedList<>();
+		}
 		return contactLists.get(i.getKeyIdentifier());
 	}
 }
