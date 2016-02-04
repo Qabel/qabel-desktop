@@ -90,6 +90,20 @@ public class LoginController extends AbstractController implements Initializable
 		}).start();
 	}
 
+	public void createBoxAccount(ActionEvent actionEvent) {
+		new Thread(() -> {
+			try {
+				URL url = new URL(providerChoices.getValue() + "/api/v0/auth/registration/");
+				Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+				if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+					desktop.browse(url.toURI());
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}).start();
+	}
+
 	public void login(ActionEvent actionEvent) {
 		login();
 	}
