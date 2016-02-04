@@ -17,6 +17,7 @@ public class DefaultClientConfiguration extends Observable implements ClientConf
 	private HashMap<String, Date> lastDropMap = new HashMap<>();
 
 	private ObservableList<BoxSyncConfig> boxSyncConfigs = FXCollections.synchronizedObservableList(FXCollections.observableList(new LinkedList<>()));
+	private String deviceId;
 
 	public DefaultClientConfiguration() {
 		boxSyncConfigs.addListener((ListChangeListener) c -> {
@@ -108,4 +109,19 @@ public class DefaultClientConfiguration extends Observable implements ClientConf
 		this.lastDropMap = lastDropMap;
 	}
 
+
+	@Override
+	public boolean hasDeviceId() {
+		return deviceId != null;
+	}
+
+	@Override
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
+	}
+
+	@Override
+	public String getDeviceId() {
+		return deviceId;
+	}
 }

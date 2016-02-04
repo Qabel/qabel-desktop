@@ -62,8 +62,8 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 				loadBoxSyncConfigs(configDto, boxSyncConfigs);
 			}
 			config.setLastDropMap(configDto.lastDropMap);
+			config.setDeviceId(configDto.deviceId);
 		}
-
 		return config;
 	}
 
@@ -132,6 +132,7 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 			}
 		}
 		configDto.lastDropMap = configuration.getLastDropMap();
+		configDto.deviceId = configuration.getDeviceId();
 
 		persistence.updateOrPersistEntity(configDto);
 	}

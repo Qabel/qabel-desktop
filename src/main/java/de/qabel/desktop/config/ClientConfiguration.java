@@ -37,6 +37,12 @@ public interface ClientConfiguration {
 	 */
 	void deleteObserver(Observer o);
 
+	boolean hasDeviceId();
+
+	void setDeviceId(String deviceId);
+
+	String getDeviceId();
+
 	Date getLastDropPoll(Identity identity);
 
 	void setLastDropPoll(Identity identity, Date lastDropPoll);

@@ -27,6 +27,8 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,11 +37,14 @@ import java.awt.event.MouseEvent;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 
 public class DesktopClient extends Application {
+	private static final Logger logger = LoggerFactory.getLogger(DesktopClient.class.getSimpleName());
 	private static final String TITLE = "Qabel Desktop Client";
-	Scene scene;
 	private static String DATABASE_FILE = "db.sqlite";
 	private final Map<String, Object> customProperties = new HashMap<>();
 	private LayoutView view;
@@ -61,7 +66,6 @@ public class DesktopClient extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		setUserAgentStylesheet(STYLESHEET_MODENA);
 
-		boxVolumeFactory = new CachedBoxVolumeFactory(new S3BoxVolumeFactory());
 		ClientConfiguration config = initDiContainer();
 		new Thread(getSyncDaemon(config)).start();
 
@@ -84,8 +88,6 @@ public class DesktopClient extends Application {
 		primaryStage.setScene(scene);
 		setTrayIcon(primaryStage);
 
-		new Thread(getSyncDaemon(config)).start();
-		new Thread(getDropDaemon(config)).start();
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
@@ -128,12 +130,23 @@ public class DesktopClient extends Application {
 				identityRepository,
 				accountRepository
 		);
+		if (!clientConfig.hasDeviceId()) {
+			clientConfig.setDeviceId(generateDeviceId());
+		}
+		boxVolumeFactory = new CachedBoxVolumeFactory(new S3BoxVolumeFactory(clientConfig.getDeviceId()));
+		customProperties.put("boxVolumeFactory", boxVolumeFactory);
+		PersistenceContactRepository contactRepository = new PersistenceContactRepository(persistence);
+		customProperties.put("contactRepository", contactRepository);
 		customProperties.put("clientConfiguration", clientConfig);
 
 
 		Injector.setConfigurationSource(customProperties::get);
 		Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(customProperties));
 		return clientConfig;
+	}
+
+	private String generateDeviceId() {
+		return UUID.randomUUID().toString();
 	}
 
 	private ClientConfiguration getClientConfiguration(
@@ -144,9 +157,7 @@ public class DesktopClient extends Application {
 				persistence,
 				new ClientConfigurationFactory(), identityRepository, accountRepository);
 		final ClientConfiguration config = repo.load();
-		config.addObserver((o, arg) -> {
-			repo.save(config);
-		});
+		config.addObserver((o, arg) -> repo.save(config));
 		return config;
 	}
 
@@ -165,7 +176,7 @@ public class DesktopClient extends Application {
 		try {
 			sTray.add(icon);
 		} catch (AWTException e) {
-			System.err.println(e);
+			logger.error("failed to add tray icon: " + e.getMessage(), e);
 		}
 
 	}
