@@ -2,6 +2,8 @@ package de.qabel.desktop.repository.persistence;
 
 import de.qabel.core.config.Persistable;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,5 +12,6 @@ public class PersistentClientConfiguration extends Persistable {
 	public String identitiyId;
 	public String accountId;
 	public List<PersistentBoxSyncConfig> boxSyncConfigs = new LinkedList<>();
+	public HashMap<String, Date> lastDropMap;
 	public String deviceId;
 }

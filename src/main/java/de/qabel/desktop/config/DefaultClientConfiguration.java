@@ -6,17 +6,24 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Observable;
 
 public class DefaultClientConfiguration extends Observable implements ClientConfiguration {
 	private Account account;
 	private Identity identity;
+	private HashMap<String, Date> lastDropMap = new HashMap<>();
+
 	private ObservableList<BoxSyncConfig> boxSyncConfigs = FXCollections.synchronizedObservableList(FXCollections.observableList(new LinkedList<>()));
 	private String deviceId;
 
 	public DefaultClientConfiguration() {
-		boxSyncConfigs.addListener((ListChangeListener) c -> {observeBoxSyncConfigs(); boxSyncConfigWasChanged(); });
+		boxSyncConfigs.addListener((ListChangeListener) c -> {
+			observeBoxSyncConfigs();
+			boxSyncConfigWasChanged();
+		});
 		observeBoxSyncConfigs();
 	}
 
@@ -68,6 +75,39 @@ public class DefaultClientConfiguration extends Observable implements ClientConf
 	public ObservableList<BoxSyncConfig> getBoxSyncConfigs() {
 		return boxSyncConfigs;
 	}
+
+	@Override
+	public Date getLastDropPoll(Identity identity) {
+
+
+		String key = identity.getKeyIdentifier();
+
+		if (!lastDropMap.containsKey(key)) {
+			lastDropMap.put(key, new Date(0L));
+		}
+		return lastDropMap.get(key);
+	}
+
+	@Override
+	public void setLastDropPoll(Identity identity, Date lastDropPoll) {
+		lastDropMap.put(identity.getKeyIdentifier(), lastDropPoll);
+		setChanged();
+		notifyObservers();
+	}
+
+	@Override
+	public HashMap<String, Date> getLastDropMap() {
+		return lastDropMap;
+	}
+
+	@Override
+	public void setLastDropMap(HashMap<String, Date> lastDropMap) {
+		if (lastDropMap == null) {
+			return;
+		}
+		this.lastDropMap = lastDropMap;
+	}
+
 
 	@Override
 	public boolean hasDeviceId() {

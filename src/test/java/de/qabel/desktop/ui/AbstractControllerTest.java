@@ -3,15 +3,21 @@ package de.qabel.desktop.ui;
 import com.airhacks.afterburner.injection.Injector;
 import com.sun.javafx.application.PlatformImpl;
 import de.qabel.core.config.Account;
+import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.DefaultClientConfiguration;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.daemon.management.BoxVolumeFactoryStub;
 import de.qabel.desktop.daemon.management.DefaultTransferManager;
 import de.qabel.desktop.repository.ContactRepository;
+import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.Stub.StubContactRepository;
+import de.qabel.desktop.repository.Stub.StubDropMessageRepository;
+import de.qabel.desktop.repository.inmemory.InMemoryHttpDropConnector;
 import de.qabel.desktop.repository.inmemory.InMemoryIdentityRepository;
+import de.qabel.desktop.ui.connector.Connector;
+import de.qabel.desktop.ui.connector.HttpDropConnector;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -37,7 +43,8 @@ public class AbstractControllerTest {
 	protected ContactRepository contactRepository = new StubContactRepository();
 	protected DefaultTransferManager loadManager;
 	protected BoxVolumeFactoryStub boxVolumeFactory;
-
+	protected DropMessageRepository dropMessageRepository = new StubDropMessageRepository();
+	protected Connector httpDropConnector = new InMemoryHttpDropConnector();
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -79,8 +86,13 @@ public class AbstractControllerTest {
 		diContainer.put("boxVolumeFactory", boxVolumeFactory);
 		loadManager = new DefaultTransferManager();
 		diContainer.put("loadManager", loadManager);
+		diContainer.put("dropMessageRepository", dropMessageRepository);
+		diContainer.put("httpDropConnector", httpDropConnector);
 		Injector.setConfigurationSource(diContainer::get);
 		Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(diContainer));
+
+		Identity i = identityBuilderFactory.factory().withAlias("TestAlias").build();
+		clientConfiguration.selectIdentity(i);
 	}
 
 	protected static void waitUntil(Callable<Boolean> evaluate) {
