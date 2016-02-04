@@ -36,18 +36,19 @@ public class DropDaemon implements Runnable {
 
 	@Override
 	public void run() {
-		Identity identity = config.getSelectedIdentity();
 		while (!Thread.interrupted()) {
 			try {
-				receiveMessages(identity);
+				receiveMessages();
 				Thread.sleep(sleepTime);
 			} catch (InterruptedException | PersistenceException e) {
 				e.printStackTrace();
+				break;
 			}
 		}
 	}
 
-	void receiveMessages(Identity identity) throws PersistenceException {
+	void receiveMessages() throws PersistenceException {
+		Identity identity = config.getSelectedIdentity();
 		java.util.List<DropMessage> dropMessages = httpDropConnector.receive(identity, lastDate);
 
 		for (DropMessage d : dropMessages) {
@@ -56,11 +57,12 @@ public class DropDaemon implements Runnable {
 				contact = contactRepository.findByKeyId(identity, d.getSenderKeyId());
 			} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
 				entityNotFoundExcepion.printStackTrace();
+				continue;
 			}
-			lastDate = config.getLastUpdate();
+			lastDate = config.getLastDropPoll(identity);
 			if (lastDate == null || lastDate.getTime() < d.getCreationDate().getTime()) {
 				dropMessageRepository.addMessage(d, contact, false);
-				config.setLastUpdate(d.getCreationDate());
+				config.setLastDropPoll(identity, d.getCreationDate());
 			}
 		}
 	}

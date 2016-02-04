@@ -31,7 +31,7 @@
                         </Polygon>
                         <VBox maxWidth="600">
                             <children>
-                                <BorderPane fx:id="chatField">
+                                <BorderPane fx:id="otherMessagebox">
                                     <center>
                                         <Label fx:id="textlabel" text="My Message" textAlignment="RIGHT" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
                                             <font>

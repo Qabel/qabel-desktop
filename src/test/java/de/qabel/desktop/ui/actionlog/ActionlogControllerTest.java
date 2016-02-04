@@ -31,15 +31,6 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 	Contact c;
 	String text = "MessageString";
 
-
-
-	private void createController(Identity i) {
-		view = new ActionlogView();
-		clientConfiguration.selectIdentity(i);
-		clientConfiguration.setAccount(new Account("Provider", "user", "auth"));
-		controller = (ActionlogController) view.getPresenter();
-	}
-
 	@Test
 	public void addMessageToActionlogTest() throws QblDropPayloadSizeException, PersistenceException, QblNetworkInvalidResponseException, EntityNotFoundExcepion {
 		DropMessage dm = setup();
@@ -54,11 +45,35 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 		assertEquals(1, controller.messages.getChildren().size());
 	}
 
+	@Test
+	public void switchBetweenIdentitesTest() throws QblDropPayloadSizeException, PersistenceException, QblNetworkInvalidResponseException, EntityNotFoundExcepion {
+		setup();
+		controller.sendDropMessage(c, "msg1");
+		i = identityBuilderFactory.factory().withAlias("NewIdentity").build();
+		c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
+
+		String msg2 = "msg2";
+		controller.sendDropMessage(c, msg2);
+		clientConfiguration.selectIdentity(i);
+
+		List<PersistenceDropMessage> lst = dropMessageRepository.loadConversation(c);
+
+		assertEquals(1, lst.size());
+		assertEquals(msg2, lst.get(0).dropMessage.getDropPayload());
+	}
+
 	private DropMessage setup() {
 		i = identityBuilderFactory.factory().withAlias("TestAlias").build();
 		c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
 		createController(i);
 		controller = (ActionlogController) view.getPresenter();
 		return new DropMessage(i, text, "dropMessage");
+	}
+
+	private void createController(Identity i) {
+		view = new ActionlogView();
+		clientConfiguration.selectIdentity(i);
+		clientConfiguration.setAccount(new Account("Provider", "user", "auth"));
+		controller = (ActionlogController) view.getPresenter();
 	}
 }

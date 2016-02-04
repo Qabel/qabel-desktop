@@ -2,15 +2,13 @@ package de.qabel.desktop.ui.actionlog;
 
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
-import de.qabel.core.config.Persistence;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.exceptions.*;
 import de.qabel.desktop.config.ClientConfiguration;
-import de.qabel.desktop.config.factory.ClientConfigurationFactory;
-import de.qabel.desktop.repository.*;
+import de.qabel.desktop.repository.ContactRepository;
+import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
-import de.qabel.desktop.repository.persistence.PersistenceClientConfigurationRepository;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.actionlog.item.ActionlogItemView;
 import de.qabel.desktop.ui.actionlog.item.MyActionlogItemView;
@@ -25,8 +23,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -55,20 +51,27 @@ public class ActionlogController extends AbstractController implements Initializ
 
 	Identity identity;
 	Contact c;
-	Date lastUpdate;
+	Date lastDropPoll;
 
 	public void initialize(URL location, ResourceBundle resources) {
-		lastUpdate = clientConfiguration.getLastUpdate();
+
+		createActionlogSetup();
+		dropMessageRepository.addObserver(this);
+		clientConfiguration.addObserver(this);
+
+		scroller.setVvalue(scroller.getVmax());
+		addListener();
+	}
+
+	private void createActionlogSetup() {
 		identity = clientConfiguration.getSelectedIdentity();
+		lastDropPoll = clientConfiguration.getLastDropPoll(identity);
 		c = new Contact(identity, identity.getAlias(), identity.getDropUrls(), identity.getEcPublicKey());
 		try {
 			loadMessages(c);
 		} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
 			entityNotFoundExcepion.printStackTrace();
 		}
-		dropMessageRepository.addObserver(this);
-		scroller.setVvalue(scroller.getVmax());
-		addListener();
 	}
 
 	private void addListener() {
@@ -80,11 +83,10 @@ public class ActionlogController extends AbstractController implements Initializ
 		textarea.setOnKeyPressed(keyEvent -> {
 			if (keyEvent.getCode().equals(KeyCode.ENTER) && keyEvent.isControlDown()) {
 				try {
-					sendDropMessage(c, textarea.getText());
-				} catch (QblDropPayloadSizeException | QblNetworkInvalidResponseException | PersistenceException e) {
+					handleSubmitButtonAction(new ActionEvent());
+				} catch (QblException | PersistenceException | EntityNotFoundExcepion e) {
 					e.printStackTrace();
 				}
-
 			}
 		});
 	}
@@ -122,7 +124,7 @@ public class ActionlogController extends AbstractController implements Initializ
 	}
 
 	void addMessageToActionlog(DropMessage dropMessage) throws EntityNotFoundExcepion {
-		lastUpdate = dropMessage.getCreationDate();
+		lastDropPoll = dropMessage.getCreationDate();
 		Map<String, Object> injectionContext = new HashMap<>();
 		Contact sender = contactRepository.findByKeyId(identity, dropMessage.getSenderKeyId());
 		injectionContext.put("dropMessage", dropMessage);
@@ -151,12 +153,16 @@ public class ActionlogController extends AbstractController implements Initializ
 	@Override
 	public void update(Observable o, Object arg) {
 
-		Platform.runLater(() -> {
-			try {
-				loadMessages(c);
-			} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
-				entityNotFoundExcepion.printStackTrace();
-			}
-		});
+		if (o instanceof DropMessageRepository) {
+			Platform.runLater(() -> {
+				try {
+					loadMessages(c);
+				} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
+					entityNotFoundExcepion.printStackTrace();
+				}
+			});
+		} else if (arg instanceof Identity && o instanceof ClientConfiguration) {
+			createActionlogSetup();
+		}
 	}
 }

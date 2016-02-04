@@ -35,13 +35,14 @@ public class DropDaemonTest extends AbstractControllerTest {
 		DropURL dropURL = new DropURL(fakeURL);
 		collection.add(dropURL);
 		Identity identity = new Identity("TestAlias", collection, new QblECKeyPair());
+		clientConfiguration.selectIdentity(identity);
 		c = new Contact(identity, identity.getAlias(), collection, identity.getEcPublicKey());
 		DropMessage dropMessage = new DropMessage(identity, "Test", "test_message");
 
 		connector.send(c, dropMessage);
 
 		DropDaemon dd = new DropDaemon(clientConfiguration, connector, contactRepository, dropMessageRepository);
-		dd.receiveMessages(identity);
+		dd.receiveMessages();
 
 		List<PersistenceDropMessage> lst = dropMessageRepository.loadConversation(c);
 		assertEquals(1, lst.size());

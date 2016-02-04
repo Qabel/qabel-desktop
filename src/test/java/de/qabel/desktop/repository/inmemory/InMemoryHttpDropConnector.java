@@ -7,21 +7,28 @@ import de.qabel.core.exceptions.QblNetworkInvalidResponseException;
 import de.qabel.desktop.ui.connector.Connector;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 
 public class InMemoryHttpDropConnector implements Connector{
 
-	List<DropMessage> lst = new LinkedList<>();
+	HashMap<String, List<DropMessage>> contactLists = new HashMap<>();
 
 	@Override
 	public void send(Contact c, DropMessage d) throws QblNetworkInvalidResponseException {
-		lst.add(d);
+
+		List lst = contactLists.get(c.getKeyIdentifier());
+		if(lst == null){
+			lst = new LinkedList<DropMessage>();
+			lst.add(d);
+		}
+		contactLists.put(c.getKeyIdentifier(), lst);
 	}
 
 	@Override
 	public List<DropMessage> receive(Identity i, Date siceDate) {
-		return lst;
+		return contactLists.get(i.getKeyIdentifier());
 	}
 }

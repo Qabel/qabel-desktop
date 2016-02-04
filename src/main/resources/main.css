@@ -36,20 +36,16 @@
    -fx-background-color: transparent;
 }
 
-#otherActionlog #chatField {
+#otherMessagebox {
     -fx-background-color: #fd670d;
     -fx-background-radius: 5;
-
 }
-#otherActionlog #shadow {
+
+#shadow {
     -fx-effect: dropshadow(one-pass-box, grey, 10, -1, 0, 0);
 }
 
-#myActionlog #shadow {
-    -fx-effect: dropshadow(one-pass-box, grey, 10, -1, 0, 0);
-}
-
-#myActionlog #chatField {
+#myMessagebox {
     -fx-background-color: grey;
     -fx-background-radius: 5;
 }

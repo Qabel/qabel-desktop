@@ -86,6 +86,8 @@ public class AbstractControllerTest {
 		diContainer.put("boxVolumeFactory", boxVolumeFactory);
 		loadManager = new DefaultTransferManager();
 		diContainer.put("loadManager", loadManager);
+		diContainer.put("dropMessageRepository", dropMessageRepository);
+		diContainer.put("httpDropConnector", httpDropConnector);
 		Injector.setConfigurationSource(diContainer::get);
 		Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(diContainer));
 

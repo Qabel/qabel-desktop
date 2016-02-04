@@ -61,7 +61,7 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 			if (configDto.boxSyncConfigs != null) {
 				loadBoxSyncConfigs(configDto, boxSyncConfigs);
 			}
-			config.setLastUpdate(configDto.lastUpdate);
+			config.setLastDropMap(configDto.lastDropMap);
 		}
 
 		return config;
@@ -131,7 +131,7 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 				e.printStackTrace();
 			}
 		}
-		configDto.lastUpdate = configuration.getLastUpdate();
+		configDto.lastDropMap = configuration.getLastDropMap();
 
 		persistence.updateOrPersistEntity(configDto);
 	}

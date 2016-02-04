@@ -268,7 +268,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 	}
 
 	@Test(timeout=2000L)
-	public void TestDeleteBoxFolder() throws QblStorageException, IOException {
+	public void TestDeleteBoxFolder() throws QblStorageException, IOException, InterruptedException {
 		initTreeTable();
 
 		BoxFolder folder = nav.listFolders().get(0);

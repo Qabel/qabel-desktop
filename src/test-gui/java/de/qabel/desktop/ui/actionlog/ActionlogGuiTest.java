@@ -20,10 +20,22 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
 
 	@Test
 	public void testSendMessage() {
+		String text = "Message";
 		waitUntil(() -> controller.textarea != null);
-		clickOn("#textarea").write("Message");
+		clickOn("#textarea").write(text);
 		clickOn("#submit");
 		List<DropMessage> list = controller.httpDropConnector.receive(controller.identity, new Date(0L));
 		assertEquals(1, list.size());
+		assertEquals(text, list.get(0).getDropPayload());
+		assertEquals(new Date().getTime(), list.get(0).getCreationDate().getTime(), 100000);
+		assertEquals(controller.identity.getId(), list.get(0).getSender().getId());
+	}
+
+	@Test
+	public void testSendMessageWithoutContent() {
+		waitUntil(() -> controller.textarea != null);
+		clickOn("#submit");
+		List<DropMessage> list = controller.httpDropConnector.receive(controller.identity, new Date(0L));
+		assertEquals(0, list.size());
 	}
 }

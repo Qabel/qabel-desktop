@@ -32,9 +32,9 @@ public class PersistenceDropMessageRepository extends AbstractCachedPersistenceR
 		List<PersistenceDropMessage> result = new LinkedList<>();
 		List<PersistenceDropMessage> messages = persistence.getEntities(PersistenceDropMessage.class);
 		for (PersistenceDropMessage d : messages) {
-			//if (d.getContact().getEcPublicKey() == contact.getEcPublicKey()) {
+			if (d.getContact().getContactOwnerKeyId().equals(contact.getContactOwnerKeyId())) {
 				result.add(d);
-			//}
+			}
 		}
 
 		return result;

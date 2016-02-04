@@ -18,7 +18,7 @@
                     <children>
                         <VBox alignment="TOP_RIGHT" BorderPane.alignment="CENTER">
                             <children>
-                                <BorderPane fx:id="chatField">
+                                <BorderPane fx:id="myMessagebox">
                                     <center>
                                         <Label fx:id="textlabel" text="My Message" textAlignment="RIGHT" textFill="WHITE" BorderPane.alignment="CENTER_RIGHT">
                                             <font>

@@ -26,14 +26,14 @@ public class HttpDropConnector implements Connector {
 
 		try {
 			binaryMessage = new BinaryDropMessageV0(d);
+			final byte[] messageByteArray = binaryMessage.assembleMessageFor(c);
+			DropURL dropURL = convertCollectionIntoDropUrl(c.getDropUrls());
+			HTTPResult<?> dropResult = dHTTP.send(dropURL.getUri(), messageByteArray);
+			if (dropResult.getResponseCode() >= 300 || dropResult.getResponseCode() < 200) {
+				throw new QblNetworkInvalidResponseException();
+			}
 		} catch (QblDropPayloadSizeException e) {
 			e.printStackTrace();
-		}
-		final byte[] messageByteArray = binaryMessage.assembleMessageFor(c);
-		DropURL dropURL = convertCollectionIntoDropUrl(c.getDropUrls());
-		HTTPResult<?> dropResult = dHTTP.send(dropURL.getUri(), messageByteArray);
-		if (dropResult.getResponseCode() >= 300 || dropResult.getResponseCode() < 200) {
-			throw new QblNetworkInvalidResponseException();
 		}
 	}
 
@@ -73,8 +73,8 @@ public class HttpDropConnector implements Connector {
 				binMessage = new BinaryDropMessageV0(message);
 				DropMessage dropMessage = binMessage.disassembleMessage(identity);
 				dropMessages.add(dropMessage);
-			} catch (QblSpoofedSenderException | QblDropInvalidMessageSizeException | QblVersionMismatchException e) {
-				logger.trace("loadManager stopped: " + e.getMessage());
+			} catch (QblException e) {
+				logger.trace("can't create Drop Message from HTTP result: " + e.getMessage());
 			}
 		}
 		return dropMessages;

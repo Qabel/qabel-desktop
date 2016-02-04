@@ -2,14 +2,12 @@ package de.qabel.desktop;
 
 import com.airhacks.afterburner.injection.Injector;
 import de.qabel.core.config.*;
-import de.qabel.core.drop.DropMessage;
 import de.qabel.core.exceptions.QblInvalidEncryptionKeyException;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.factory.ClientConfigurationFactory;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.S3BoxVolumeFactory;
 import de.qabel.desktop.daemon.drop.DropDaemon;
-import de.qabel.desktop.daemon.management.DefaultLoadManager;
 import de.qabel.desktop.config.factory.*;
 import de.qabel.desktop.daemon.management.DefaultTransferManager;
 import de.qabel.desktop.daemon.sync.SyncDaemon;

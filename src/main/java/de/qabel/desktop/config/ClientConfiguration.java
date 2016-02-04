@@ -5,6 +5,7 @@ import de.qabel.core.config.Identity;
 import javafx.collections.ObservableList;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Observer;
 
 public interface ClientConfiguration {
@@ -36,6 +37,11 @@ public interface ClientConfiguration {
 	 */
 	void deleteObserver(Observer o);
 
-	Date getLastUpdate();
-	void setLastUpdate(Date lastUpdate);
+	Date getLastDropPoll(Identity identity);
+
+	void setLastDropPoll(Identity identity, Date lastDropPoll);
+
+	HashMap<String, Date> getLastDropMap();
+
+	void setLastDropMap(HashMap<String, Date> lastDropMap);
 }
