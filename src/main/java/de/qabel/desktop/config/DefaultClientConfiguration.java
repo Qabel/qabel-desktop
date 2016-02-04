@@ -25,9 +25,6 @@ public class DefaultClientConfiguration extends Observable implements ClientConf
 			boxSyncConfigWasChanged();
 		});
 		observeBoxSyncConfigs();
-		if (lastDropMap == null) {
-			lastDropMap = new HashMap<>();
-		}
 	}
 
 	private void observeBoxSyncConfigs() {
@@ -82,14 +79,13 @@ public class DefaultClientConfiguration extends Observable implements ClientConf
 	@Override
 	public Date getLastDropPoll(Identity identity) {
 
-		Date dropDate = lastDropMap.get(identity.getKeyIdentifier());
-		if (dropDate != null) {
-			return dropDate;
-		}
-		Date firstDropDate = new Date(0L);
-		setLastDropPoll(identity, firstDropDate);
-		return firstDropDate;
 
+		String key = identity.getKeyIdentifier();
+
+		if (!lastDropMap.containsKey(key)) {
+			lastDropMap.put(key, new Date(0L));
+		}
+		return lastDropMap.get(key);
 	}
 
 	@Override
@@ -106,6 +102,9 @@ public class DefaultClientConfiguration extends Observable implements ClientConf
 
 	@Override
 	public void setLastDropMap(HashMap<String, Date> lastDropMap) {
+		if (lastDropMap == null) {
+			return;
+		}
 		this.lastDropMap = lastDropMap;
 	}
 
