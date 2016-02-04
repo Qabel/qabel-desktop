@@ -10,6 +10,8 @@ import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.connector.Connector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 
@@ -22,6 +24,7 @@ public class DropDaemon implements Runnable {
 	private ContactRepository contactRepository;
 	private DropMessageRepository dropMessageRepository;
 	private long sleepTime = 10000L;
+	private static final Logger logger = LoggerFactory.getLogger(DropDaemon.class.getSimpleName());
 
 	public DropDaemon(ClientConfiguration config,
 					  Connector httpDropConnector,
@@ -41,7 +44,7 @@ public class DropDaemon implements Runnable {
 				receiveMessages();
 				Thread.sleep(sleepTime);
 			} catch (InterruptedException | PersistenceException e) {
-				e.printStackTrace();
+				logger.error("Thread stopped " + e.getMessage(), e);
 				break;
 			}
 		}
@@ -55,8 +58,8 @@ public class DropDaemon implements Runnable {
 			Contact contact = null;
 			try {
 				contact = contactRepository.findByKeyId(identity, d.getSenderKeyId());
-			} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
-				entityNotFoundExcepion.printStackTrace();
+			} catch (EntityNotFoundExcepion e) {
+				logger.error("Contact: with ID: " + d.getSenderKeyId() + " not found " + e.getMessage(), e);
 				continue;
 			}
 			lastDate = config.getLastDropPoll(identity);
