@@ -15,7 +15,6 @@ import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.omg.PortableInterceptor.SUCCESSFUL;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +23,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static de.qabel.desktop.daemon.management.Transaction.STATE.FAILED;
 import static de.qabel.desktop.daemon.management.Transaction.STATE.FINISHED;
@@ -145,7 +143,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 
 		assertTrue(upload.getSize() > sourceFile.length());
 		long encryptedSize = upload.getSize();
-		assertEquals(encryptedSize, upload.getProgress());
+		assertEquals(encryptedSize, upload.getTransferred());
 	}
 
 	@Test
@@ -488,8 +486,8 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 		managerNext();
 
 		waitUntil(() -> download.hasSize());
-		waitUntil(() -> download.getProgress() == download.getSize(), () -> {
-			return download.getProgress() + " != " + download.getSize();
+		waitUntil(() -> download.getTransferred() == download.getSize(), () -> {
+			return download.getTransferred() + " != " + download.getSize();
 		});
 	}
 

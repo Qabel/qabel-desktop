@@ -61,6 +61,11 @@ public class DummyUpload implements Upload {
 	}
 
 	@Override
+	public double getProgress() {
+		return 0;
+	}
+
+	@Override
 	public Transaction onProgress(Runnable runnable) {
 		return null;
 	}
@@ -80,19 +85,22 @@ public class DummyUpload implements Upload {
 		return false;
 	}
 
-	@Override
-	public long getProgress() {
+	public long getTransferred() {
 		return 0;
 	}
 
-	@Override
-	public void setProgress(long progress) {
+	public void setTransferred(long progress) {
 
 	}
 
 	@Override
 	public void setSize(long size) {
 
+	}
+
+	@Override
+	public boolean isDone() {
+		return false;
 	}
 
 	@Override

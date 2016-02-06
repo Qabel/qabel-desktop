@@ -57,3 +57,11 @@
 #textarea {
     -fx-border-color: black;
 }
+
+.progress-bar > *.bar {
+    -fx-background-radius: 10px!important;
+}
+
+.progress-bar > .track {
+    -fx-background-radius: 5em;
+}

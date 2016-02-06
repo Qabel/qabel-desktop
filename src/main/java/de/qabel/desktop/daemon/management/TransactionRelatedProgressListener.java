@@ -11,7 +11,7 @@ public class TransactionRelatedProgressListener extends ProgressListener {
 
 	@Override
 	public void setProgress(long progress) {
-		transaction.setProgress(progress);
+		transaction.setTransferred(progress);
 	}
 
 	@Override

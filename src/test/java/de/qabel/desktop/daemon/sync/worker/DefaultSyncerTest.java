@@ -6,10 +6,7 @@ import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
-import de.qabel.desktop.daemon.management.DefaultTransferManager;
-import de.qabel.desktop.daemon.management.Download;
-import de.qabel.desktop.daemon.management.TransferManager;
-import de.qabel.desktop.daemon.management.Transaction;
+import de.qabel.desktop.daemon.management.*;
 import de.qabel.desktop.daemon.sync.AbstractSyncTest;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
@@ -21,13 +18,16 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 public class DefaultSyncerTest extends AbstractSyncTest {
-	private TransferManager manager;
+	private MonitoredTransferManager manager;
 	private BoxSyncConfig config;
 	private Identity identity;
 	private Account account;
@@ -42,8 +42,8 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 			throw new IllegalStateException(e.getMessage(), e);
 		}
 		account = new Account("a", "b", "c");
-		manager = new DefaultTransferManager();
-		config = new DefaultBoxSyncConfig(tmpDir, Paths.get("/tmp"), identity, account);
+		manager = new MonitoredTransferManager(new DefaultTransferManager());
+		config = new DefaultBoxSyncConfig(tmpDir, Paths.get("/"), identity, account);
 	}
 
 	@After
@@ -79,13 +79,15 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 		waitUntil(() -> manager.getTransactions().size() == 2);
 		Transaction transaction = manager.getTransactions().get(0) instanceof Download ? manager.getTransactions().get(0) : manager.getTransactions().get(1);
 		assertEquals("/tmp/someFolder", transaction.getSource().toString());
+		assertEquals(0.0, syncer.getProgress(), 0.001);
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void bootstrappingFailsIfLocalDirDoesNotExist() throws IOException {
+	@Test
+	public void bootstrappingCreatesDirIfLocalDirDoesNotExist() throws IOException {
 		FileUtils.deleteDirectory(tmpDir.toFile());
 
 		syncer = new DefaultSyncer(config, new BoxVolumeStub(), manager);
 		syncer.run();
+		assertTrue(Files.isDirectory(tmpDir));
 	}
 }

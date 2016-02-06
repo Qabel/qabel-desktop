@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.testfx.api.FxRobot;
+import org.testfx.service.locator.BoundsLocatorException;
 import org.testfx.service.query.PointQuery;
 
 public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
@@ -92,7 +93,11 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 			robot.moveTo(node);
 			try { Thread.sleep(100); } catch (InterruptedException ignored) {}
 		}
-		return robot.moveTo(node).clickOn(node);
+		try {
+			return robot.moveTo(node).clickOn(node);
+		} catch (BoundsLocatorException e) {
+			return robot.moveTo(node).clickOn(node);
+		}
 	}
 
 	protected Node getFirstNode(String query) {

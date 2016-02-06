@@ -55,7 +55,6 @@ public class TreeWatcher extends Thread {
 				if (!instance.isValid())
 					continue;
 
-				logger.trace("fs event on " + keys.get(instance));
 				processEvents(instance);
 			}
 		} catch (IOException e) {
@@ -79,7 +78,6 @@ public class TreeWatcher extends Thread {
 				Path name = ev.context();
 				Path parent = keys.get(instance);
 				Path child = parent.resolve(name);
-				logger.trace("valid fs event on " + child + " @" + name);
 
 				boolean isDir = Files.isDirectory(child);
 				long mtime = child.toFile().lastModified();

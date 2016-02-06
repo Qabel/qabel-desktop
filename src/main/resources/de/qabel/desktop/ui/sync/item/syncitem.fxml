@@ -1,30 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
+<?import java.lang.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<BorderPane
-        fx:controller="de.qabel.desktop.ui.sync.item.SyncItemController"
-        xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-        prefHeight="130.0" prefWidth="600.0" style="-fx-border-color: darkgrey; -fx-border-width: 0 0 1 0;">
+
+<BorderPane prefHeight="130.0" prefWidth="600.0" style="-fx-border-color: darkgrey; -fx-border-width: 1 0 0 0;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.sync.item.SyncItemController">
             <left>
-                <VBox fx:id="avatarContainer" BorderPane.alignment="CENTER">
-                    <children>
-                        <ImageView fitHeight="30.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../../../../../../folder.png" />
-                            </image>
-                            <VBox.margin>
-                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                            </VBox.margin>
-                        </ImageView>
-                        <ProgressIndicator progress="100"/>
-                    </children>
-                </VBox>
+                <VBox fx:id="avatarContainer" BorderPane.alignment="CENTER" />
             </left>
             <padding>
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -39,24 +27,70 @@
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
                                     <children>
-                                        <Label fx:id="name" text="My Documents">
-                                            <font>
-                                                <Font name="System Bold" size="22.0" />
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="localPath" text="local: /home/yourname/Documents" />
-                                        <Label fx:id="remotePath" text="remote: /private/documents" />
+                        <BorderPane nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="200.0">
+                           <right>
+                                            <Button mnemonicParsing="false" text="..." BorderPane.alignment="CENTER" />
+                           </right>
+                           <center>
+                                              <Label fx:id="name" maxWidth="1.7976931348623157E308" text="My Documents" BorderPane.alignment="CENTER">
+                                                  <font>
+                                                      <Font name="System Bold" size="22.0" />
+                                                  </font>
+                                              </Label>
+                           </center>
+                        </BorderPane>
+                        <HBox style="-fx-spacing: 20;">
+                           <children>
+                              <ImageView fx:id="syncImage" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../../../../ic_folder_black_syncing.png" />
+                                 </image>
+                              </ImageView>
+                              <VBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-spacing: 5;">
+                                 <children>
+                                                    <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="online:">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                    </Label>
+                                                    <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="local:">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                                 <opaqueInsets>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="15.0" />
+                                 </opaqueInsets>
+                              </VBox>
+                              <VBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-spacing: 5;">
+                                 <children>
+                                    <Label fx:id="remotePath" text="/private/documents">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                    </Label>
+                                    <Label fx:id="localPath" text="/home/yourname/Documents">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                                 <opaqueInsets>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="15.0" />
+                                 </opaqueInsets>
+                              </VBox>
+                           </children>
+                        </HBox>
                                     </children>
                                 </VBox>
-                                <Label maxWidth="1.7976931348623157E308" text="initializing...">
-                                    <VBox.margin>
-                                        <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                    </VBox.margin>
-                                    <padding>
-                                        <Insets left="3.0" />
-                                    </padding>
-                                </Label>
-                                <ProgressBar maxHeight="11.0" maxWidth="1.7976931348623157E308" prefHeight="0.0" prefWidth="519.0">
+                                <ProgressBar fx:id="progress" maxHeight="11.0" maxWidth="1.7976931348623157E308" prefHeight="0.0" prefWidth="519.0" progress="0.35" style="-fx-border-radius: 50;">
                                     <VBox.margin>
                                         <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                     </VBox.margin>
@@ -66,9 +100,6 @@
                     </center>
                     <right>
                         <VBox alignment="TOP_RIGHT" BorderPane.alignment="CENTER">
-                            <children>
-                                <Button mnemonicParsing="false" text="..." />
-                            </children>
                             <padding>
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                             </padding>
