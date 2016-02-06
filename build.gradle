@@ -59,6 +59,7 @@ dependencies {
     testCompile 'org.testfx:testfx-core:4.0.+'
     testCompile 'org.testfx:testfx-junit:4.0.+'
 
+    compile 'org.ocpsoft.prettytime:prettytime:3.2.7.Final' //Apache License https://github.com/ocpsoft/prettytime/blob/master/LICENSE
     compile 'commons-cli:commons-cli:1.2'
     compile 'com.amazonaws:aws-java-sdk:1.10.32'
     // see https://github.com/AdamBien/afterburner.fx/pull/54 //compile 'com.airhacks:afterburner.fx:1.6.2' // Apache 2.0

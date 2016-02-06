@@ -3,6 +3,7 @@ package de.qabel.desktop.repository.persistence;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.Persistence;
+import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
@@ -40,5 +41,20 @@ public class PersistenceContactRepository extends AbstractCachedPersistenceRepos
 		if (!result) {
 			throw new PersistenceException("Failed to save Entity " + contact + ", reason unknown");
 		}
+	}
+
+	@Override
+	public Contact findByKeyId(Identity identity, String keyId) throws EntityNotFoundExcepion {
+
+		List<Contact> contactList = findAllContactFromOneIdentity(identity);
+
+		for (Contact c : contactList) {
+			if (keyId.equals(c.getEcPublicKey().getReadableKeyIdentifier())) {
+				return c;
+			}
+		}
+
+		throw new EntityNotFoundExcepion("No Contact with public keyID " + keyId);
+
 	}
 }

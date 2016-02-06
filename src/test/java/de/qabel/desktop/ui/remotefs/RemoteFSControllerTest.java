@@ -37,7 +37,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 	public static final String TEST_FOLDER = "testFolder";
 	public static final String TEST_SUB_FOLDER = "subFolder";
 	public static final String SUB_FILE = "tmp1.txt";
-	public static final String TMP_DIR = "tmp";
+	public static final String TMP_DIR = "/tmp/tmpQbl";
 	public static final String TEST_TMP_DIR = TMP_DIR + "/" + TEST_FOLDER;
 
 	private BoxNavigation nav;
@@ -267,8 +267,8 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		assertThat(controller.nav.listFiles().size(), is(0));
 	}
 
-	@Test(timeout=1000L)
-	public void testDeleteBoxFolder() throws Exception {
+	@Test(timeout=2000L)
+	public void TestDeleteBoxFolder() throws QblStorageException, IOException, InterruptedException {
 		initTreeTable();
 
 		BoxFolder folder = nav.listFolders().get(0);
@@ -293,8 +293,8 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		assertThat(newNav.listFiles().size(), is(0));
 	}
 
-	@Test(timeout=1000L)
-	public void testDeleteBoxFileFromRootNode() throws QblStorageException, IOException {
+	@Test(timeout=2000L)
+	public void TestDeleteBoxFileFromRootNode() throws QblStorageException, IOException {
 		initTreeTable();
 		BoxFolder folder = nav.listFolders().get(0);
 		controller.deleteBoxObject(ButtonType.OK, Paths.get("/", TEST_FOLDER), folder);
