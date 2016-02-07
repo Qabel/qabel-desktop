@@ -7,6 +7,7 @@ import java.util.Observable;
 import static de.qabel.desktop.daemon.management.Transaction.STATE.*;
 
 public abstract class AbstractTransaction extends Observable implements Transaction {
+	public static final long METADATA_SIZE = 56320L;
 	private STATE state = STATE.INITIALIZING;
 	protected Long mtime;
 	private List<Runnable> successHandler = new LinkedList<>();
@@ -14,8 +15,8 @@ public abstract class AbstractTransaction extends Observable implements Transact
 	private List<Runnable> skippedHandler = new LinkedList<>();
 	private List<Runnable> progressHandler = new LinkedList<>();
 	private long creationTime = System.currentTimeMillis();
-	private Long size;
-	private long progress = 0L;
+	private Long size = METADATA_SIZE;	// metadata size ... imagine a random number here
+	private long transferred = 0L;
 
 	public AbstractTransaction(Long mtime) {
 		this.mtime = mtime;
@@ -79,7 +80,7 @@ public abstract class AbstractTransaction extends Observable implements Transact
 
 	@Override
 	public long getSize() {
-		return size;
+		return hasSize() ? size : METADATA_SIZE;
 	}
 
 	public void setSize(long size) {
@@ -88,17 +89,25 @@ public abstract class AbstractTransaction extends Observable implements Transact
 
 	@Override
 	public boolean hasSize() {
-		return size != null;
+		return size != null && size != 0;
 	}
 
-	@Override
-	public long getProgress() {
-		return progress;
+	public long getTransferred() {
+		return transferred;
 	}
 
-	@Override
-	public void setProgress(long progress) {
-		this.progress = progress;
+	public void setTransferred(long transferred) {
+		this.transferred = transferred;
 		progressHandler.forEach(Runnable::run);
+	}
+
+	@Override
+	public double getProgress() {
+		return hasSize() ? getTransferred() / getSize() : (isDone() ? 1.0 : 0.0);
+	}
+
+	@Override
+	public boolean isDone() {
+		return state == FINISHED || state == FAILED || state == SKIPPED;
 	}
 }

@@ -11,8 +11,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class AbstractTransactionTest {
+	public static final double PRECISION = 0.001;
 	private final List<Object> updates = new LinkedList<>();
 	private final List<Object> progress = new LinkedList<>();
+	private final Transaction t = new DummyTransaction();
 
 	@Test
 	public void notifiesOnSuccessfulClose() {
@@ -44,6 +46,7 @@ public class AbstractTransactionTest {
 	@Test
 	public void knowsWhenItHasNoSize() {
 		Transaction t = new DummyTransaction();
+		t.setSize(0);
 		assertFalse(t.hasSize());
 	}
 
@@ -58,7 +61,7 @@ public class AbstractTransactionTest {
 	public void notifiesOnProgress() {
 		Transaction t = new DummyTransaction();
 		t.onProgress(() -> progress.add(null));
-		t.setProgress(10L);
+		t.setTransferred(10L);
 
 		assertEquals(1, progress.size());
 	}
@@ -70,5 +73,13 @@ public class AbstractTransactionTest {
 		t.toState(FAILED);
 
 		assertEquals(1, progress.size());
+	}
+
+	@Test
+	public void hasProgressWithoutSize() {
+		t.setSize(0);
+		t.setTransferred(0);
+
+		assertEquals(0.0, t.getProgress(), PRECISION);
 	}
 }

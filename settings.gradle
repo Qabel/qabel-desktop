@@ -16,6 +16,4 @@ include 'api'
 include 'services:webservice'
 */
 
-include ':qabel-core'
-include ':ackack'
 rootProject.name = 'qabel-desktop'

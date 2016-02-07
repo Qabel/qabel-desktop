@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.*;
 
 public class SyncIntegrationTest {
+	public static final long TIMEOUT = 10000L;
 	protected Path remoteDir;
 	protected Path tmpDir1;
 	protected Path tmpDir2;
@@ -37,8 +38,8 @@ public class SyncIntegrationTest {
 	private Thread managerThread2;
 	private CachedBoxVolume volume1;
 	private CachedBoxVolume volume2;
-	private TransferManager manager1;
-	private TransferManager manager2;
+	private MonitoredTransferManager manager1;
+	private MonitoredTransferManager manager2;
 	private BoxSyncConfig config1;
 	private BoxSyncConfig config2;
 
@@ -63,8 +64,8 @@ public class SyncIntegrationTest {
 			volume2 = new CachedBoxVolume(readBackend, writeBackend, identity.getPrimaryKeyPair(), new byte[0], new File(System.getProperty("java.io.tmpdir")), "prefix");
 			volume1.createIndex("qabel", "prefix");
 			volume1.navigate().createFolder("sync");
-			manager1 = new DefaultTransferManager();
-			manager2 = new DefaultTransferManager();
+			manager1 = new MonitoredTransferManager(new DefaultTransferManager());
+			manager2 = new MonitoredTransferManager(new DefaultTransferManager());
 
 			syncer1 = new DefaultSyncer(config1, volume1, manager1);
 			syncer1.getUploadFactory().setSyncDelayMills(0L);
@@ -150,38 +151,33 @@ public class SyncIntegrationTest {
 		waitUntil(() -> {
 			final SyncIntegrationTest test2 = test;
 			return Files.isDirectory(dir2);
-		}, 5000L);
+		}, TIMEOUT);
 
 		Path file1 = Paths.get(dir1.toString(), "file");
 		Files.write(file1, "text".getBytes());
 
 		Path file2 = Paths.get(dir2.toString(), "file");
-		waitUntil(() -> Files.exists(file2), 5000L);
+		waitUntil(() -> Files.exists(file2), TIMEOUT);
 		assertEquals("text", new String(Files.readAllBytes(file2)));
 
 		List<Transaction> history = manager2.getHistory();
 
 		// first comes the sync root creation (download OR upload first)
 		int rootSyncUpload = 1;
-		int rootSyncDownload = 0;
 		if (history.get(0) instanceof Upload) {
 			rootSyncUpload = 0;
-			rootSyncDownload = 1;
 		}
 		assertEquals(Paths.get("/sync"), history.get(rootSyncUpload).getDestination());
 
-		assertTrue(history.get(rootSyncDownload) instanceof Download);
-		assertEquals(Paths.get("/sync"), history.get(rootSyncDownload).getSource());
+		assertTrue(history.get(1) instanceof Download);
+		assertEquals(Paths.get("/sync/dir"), history.get(1).getSource());
 
-		assertTrue(history.get(2) instanceof Download);
-		assertEquals(Paths.get("/sync/dir"), history.get(2).getSource());
-
-		waitUntil(() -> history.size() > 3, 5000L, () -> "too few events: " + history);
+		waitUntil(() -> history.size() > 2, TIMEOUT, () -> "too few events: " + history);
 		assertTrue(
-				"an unecpected " + history.get(3) + " occured after DOWNLAOD /sync/dir",
-				history.get(3) instanceof Download
+				"an unecpected " + history.get(2) + " occured after DOWNLAOD /sync/dir",
+				history.get(2) instanceof Download
 		);
-		assertEquals(Paths.get("/sync/dir/file"), history.get(3).getSource());
+		assertEquals(Paths.get("/sync/dir/file"), history.get(2).getSource());
 	}
 
 	@Test
@@ -198,7 +194,11 @@ public class SyncIntegrationTest {
 		syncer2.run();
 		syncer2.waitFor();
 
-		waitUntil(() -> !file.exists(), 2000L);
+		try {
+			waitUntil(() -> !file.exists(), TIMEOUT);
+		} catch (AssertionError e) {
+			System.out.println(e);
+		}
 	}
 
 	@Test

@@ -10,6 +10,8 @@ import de.qabel.desktop.config.factory.S3BoxVolumeFactory;
 import de.qabel.desktop.daemon.drop.DropDaemon;
 import de.qabel.desktop.config.factory.*;
 import de.qabel.desktop.daemon.management.DefaultTransferManager;
+import de.qabel.desktop.daemon.management.MonitoredTransferManager;
+import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
 import de.qabel.desktop.repository.AccountRepository;
@@ -54,6 +56,8 @@ public class DesktopClient extends Application {
 	private PersistenceContactRepository contactRepository;
 	private BoxVolumeFactory boxVolumeFactory;
 	private Stage primaryStage;
+	private MonitoredTransferManager transferManager;
+
 	public static void main(String[] args) throws Exception {
 		if (args.length > 0) {
 			DATABASE_FILE = args[0];
@@ -68,27 +72,29 @@ public class DesktopClient extends Application {
 		setUserAgentStylesheet(STYLESHEET_MODENA);
 
 		ClientConfiguration config = initDiContainer();
-		new Thread(getSyncDaemon(config)).start();
 
-		SceneAntialiasing aa = SceneAntialiasing.DISABLED;
+		SceneAntialiasing aa = SceneAntialiasing.BALANCED;
 		primaryStage.getIcons().setAll(new javafx.scene.image.Image(getClass().getResourceAsStream("/logo-invert_small.png")));
 		Scene scene;
-
-		view = new LayoutView();
-		config.addObserver((o, arg) -> {
-			if (arg instanceof Account) {
-				Scene layoutScene = new Scene(view.getView(), 800, 600, true, aa);
-				Platform.runLater(() -> primaryStage.setScene(layoutScene));
-			}
-		});
 
 
 		Platform.setImplicitExit(false);
 		primaryStage.setTitle(TITLE);
 		scene = new Scene(new LoginView().getView(), 370, 550, true, aa);
 		primaryStage.setScene(scene);
-		setTrayIcon(primaryStage);
 
+		config.addObserver((o, arg) -> {
+			Platform.runLater(() -> {
+				if (arg instanceof Account) {
+					new Thread(getSyncDaemon(config)).start();
+					view = new LayoutView();
+					Scene layoutScene = new Scene(view.getView(), 800, 600, true, aa);
+					Platform.runLater(() -> primaryStage.setScene(layoutScene));
+				}
+			});
+		});
+
+		setTrayIcon(primaryStage);
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
@@ -99,10 +105,6 @@ public class DesktopClient extends Application {
 	}
 
 	protected SyncDaemon getSyncDaemon(ClientConfiguration config) {
-
-		DefaultTransferManager transferManager = new DefaultTransferManager();
-		customProperties.put("loadManager", transferManager);
-		customProperties.put("transferManager", transferManager);
 		new Thread(transferManager, "TransactionManager").start();
 		return new SyncDaemon(config.getBoxSyncConfigs(), new DefaultSyncerFactory(boxVolumeFactory, transferManager));
 	}
@@ -113,6 +115,9 @@ public class DesktopClient extends Application {
 
 	private ClientConfiguration initDiContainer() throws QblInvalidEncryptionKeyException, URISyntaxException {
 		Persistence<String> persistence = new SQLitePersistence(DATABASE_FILE);
+		transferManager = new MonitoredTransferManager(new DefaultTransferManager());
+		customProperties.put("loadManager", transferManager);
+		customProperties.put("transferManager", transferManager);
 		customProperties.put("persistence", persistence);
 		customProperties.put("dropUrlGenerator", new DropUrlGenerator("https://qdrop.prae.me"));
 		customProperties.put("boxVolumeFactory", boxVolumeFactory);
@@ -126,7 +131,6 @@ public class DesktopClient extends Application {
 		customProperties.put("dropMessageRepository", dropMessageRepository);
 		httpDropConnector = new HttpDropConnector();
 		customProperties.put("httpDropConnector", httpDropConnector);
-		customProperties.put("primaryStage", primaryStage);
 		ClientConfiguration clientConfig = getClientConfiguration(
 				persistence,
 				identityRepository,
