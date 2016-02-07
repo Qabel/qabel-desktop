@@ -70,7 +70,10 @@
                     </VBox.margin>
                 </HBox>
                 <Separator/>
-                <Hyperlink onAction="#recoverPassword" text="%forgotPassword"/>
+                <Button fx:id="recoverPassword" mnemonicParsing="false" onAction="#recoverPassword"
+                        styleClass="newPassword" text="%recoverPassword" managed="true"/>
+                <Button fx:id="newPassword" mnemonicParsing="false" onAction="#newPassword" styleClass="login-button"
+                        text="%newPassword" managed="false"/>
             </children>
             <VBox.margin>
                 <Insets top="50.0"/>

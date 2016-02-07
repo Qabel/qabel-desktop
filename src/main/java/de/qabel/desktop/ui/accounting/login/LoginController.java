@@ -14,20 +14,16 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.*;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import javax.inject.Inject;
-import java.awt.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
-import java.util.List;
 
 public class LoginController extends AbstractController implements Initializable {
 	@FXML
@@ -39,8 +35,12 @@ public class LoginController extends AbstractController implements Initializable
 	@FXML
 	Button openCreateButton;
 	@FXML
-	Button createButton;
+	Button newPassword;
 
+	@FXML
+	Button recoverPassword;
+	@FXML
+	Button createButton;
 
 	@FXML
 	TextField user;
@@ -61,9 +61,10 @@ public class LoginController extends AbstractController implements Initializable
 	@FXML
 	Pane progressBar;
 
-
+	ResourceBundle resourceBundle;
 	private ClientConfiguration config;
 	private Account account;
+
 	@Inject
 	public LoginController(ClientConfiguration config) {
 		this.config = config;
@@ -85,6 +86,7 @@ public class LoginController extends AbstractController implements Initializable
 		progressBar.visibleProperty().bind(buttonBar.visibleProperty().not());
 		progressBar.managedProperty().bind(progressBar.visibleProperty());
 		buttonBar.managedProperty().bind(buttonBar.visibleProperty());
+		this.resourceBundle = resources;
 
 
 		if (config.hasAccount()) {
@@ -96,19 +98,42 @@ public class LoginController extends AbstractController implements Initializable
 		}
 	}
 
-	public void recoverPassword(ActionEvent actionEvent) {
+	public void newPassword(ActionEvent actionEvent) {
+		newPassword();
+	}
+
+	public void newPassword() {
 		new Thread(() -> {
 			try {
-				URL url = new URL(providerChoices.getValue() + "/accounts/password_reset/");
-				Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-				if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-					desktop.browse(url.toURI());
-				}
-			} catch (Exception e) {
+				AccountingHTTP http = createAccount();
+				http.resetPassword(email.getText());
+				toMailSend(resourceBundle.getString("send"));
+				newPassword.disableProperty().set(true);
+			} catch (URISyntaxException | IOException | IllegalArgumentException e) {
+				Platform.runLater(() -> toEMailSendFailureState(resourceBundle.getString("sendFail")));
 				e.printStackTrace();
 			}
 		}).start();
 	}
+
+	public void recoverPassword(ActionEvent actionEvent) {
+		recoverPassword();
+	}
+
+	public void recoverPassword() {
+
+		Platform.runLater(() -> {
+			email.setManaged(true);
+
+			recoverPassword.setManaged(false);
+			recoverPassword.setVisible(false);
+
+			newPassword.setManaged(true);
+			primaryStage.setHeight(600);
+		});
+
+	}
+
 
 	public void openCreateBoxAccountSetup(ActionEvent actionEvent) {
 		openCreateBoxAccountSetup();
@@ -122,6 +147,7 @@ public class LoginController extends AbstractController implements Initializable
 
 			openCreateButton.setManaged(false);
 			primaryStage.setHeight(650);
+
 		});
 	}
 
@@ -132,8 +158,6 @@ public class LoginController extends AbstractController implements Initializable
 
 	private void createBoxAccount() {
 		toProgressState();
-
-
 
 		new Thread(() -> {
 			try {
@@ -228,6 +252,18 @@ public class LoginController extends AbstractController implements Initializable
 		createButton.getStyleClass().add("error");
 		Tooltip t = new Tooltip(message);
 		createButton.setTooltip(t);
+	}
+
+	private void toEMailSendFailureState(String message) {
+		newPassword.getStyleClass().add("error");
+		Tooltip t = new Tooltip(message);
+		newPassword.setTooltip(t);
+	}
+
+	private void toMailSend(String message) {
+		newPassword.getStyleClass().add("check");
+		Tooltip t = new Tooltip(message);
+		newPassword.setTooltip(t);
 	}
 
 	private void toProgressState() {

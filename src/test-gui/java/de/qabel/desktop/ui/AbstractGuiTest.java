@@ -62,7 +62,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 	}
 
 	protected int getHeight() {
-		return 500;
+		return 600;
 	}
 
 	protected int getWidth() {

@@ -149,6 +149,7 @@ public class DesktopClient extends Application {
 		PersistenceContactRepository contactRepository = new PersistenceContactRepository(persistence);
 		customProperties.put("contactRepository", contactRepository);
 		customProperties.put("clientConfiguration", clientConfig);
+		customProperties.put("primaryStage", primaryStage);
 
 
 		Injector.setConfigurationSource(customProperties::get);
