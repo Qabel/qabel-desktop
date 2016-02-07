@@ -4,7 +4,7 @@ import de.qabel.desktop.storage.BoxVolume;
 
 import java.nio.file.Path;
 
-public class TransactionStub implements Transaction {
+public class TransactionStub extends AbstractTransaction implements Transaction {
 	public BoxVolume volume;
 	public Path source;
 	public Path destination;
@@ -15,9 +15,13 @@ public class TransactionStub implements Transaction {
 	public Long mtime = 0L;
 	public boolean closed = false;
 	public long transactionAge = 2000L;
-	public Long size;
+	public Long size = 0L;
 	public long progress = 0L;
 	public long stagingDelay = 0L;
+
+	public TransactionStub() {
+		super(0L);
+	}
 
 	@Override
 	public long transactionAge() {
@@ -60,26 +64,6 @@ public class TransactionStub implements Transaction {
 	}
 
 	@Override
-	public Transaction onSuccess(Runnable runnable) {
-		return this;
-	}
-
-	@Override
-	public Transaction onFailure(Runnable runnable) {
-		return this;
-	}
-
-	@Override
-	public Transaction onSkipped(Runnable runnable) {
-		return this;
-	}
-
-	@Override
-	public Transaction onProgress(Runnable runnable) {
-		return null;
-	}
-
-	@Override
 	public long getStagingDelayMillis() {
 		return stagingDelay;
 	}
@@ -92,6 +76,7 @@ public class TransactionStub implements Transaction {
 	@Override
 	public void toState(STATE state) {
 		this.state = state;
+		super.toState(state);
 	}
 
 	@Override
@@ -110,13 +95,14 @@ public class TransactionStub implements Transaction {
 	}
 
 	@Override
-	public long getProgress() {
+	public long getTransferred() {
 		return progress;
 	}
 
 	@Override
-	public void setProgress(long progress) {
+	public void setTransferred(long progress) {
 		this.progress = progress;
+		super.setTransferred(progress);
 	}
 
 	@Override

@@ -1,12 +1,6 @@
-[submodule "ackack"]
-	path = ackack
-	url = https://github.com/Qabel/ackack.git
 [submodule "qabel-drop"]
 	path = qabel-drop
 	url = https://github.com/Qabel/qabel-drop.git
 [submodule "qabel-accounting"]
 	path = qabel-accounting
 	url = https://github.com/Qabel/qabel-accounting.git
-[submodule "qabel-core"]
-	path = qabel-core
-	url = https://github.com/julianseeger/qabel-core.git

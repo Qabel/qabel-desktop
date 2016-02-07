@@ -2,6 +2,7 @@ package de.qabel.desktop.config;
 
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
+import de.qabel.desktop.daemon.sync.worker.Syncer;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndex;
 
 import java.nio.file.Path;
@@ -17,6 +18,7 @@ public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig, O
 	private Account account;
 	private Boolean paused = false;
 	private String name;
+	private transient Syncer syncer;
 
 	public DefaultBoxSyncConfig(Path localPath, Path remotePath, Identity identity, Account account) {
 		this(DEFAULT_NAME, localPath, remotePath, identity, account);
@@ -108,6 +110,16 @@ public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig, O
 	public SyncIndex getSyncIndex() {
 		syncIndex.addObserver(this);
 		return syncIndex;
+	}
+
+	@Override
+	public void setSyncer(Syncer syncer) {
+		this.syncer = syncer;
+	}
+
+	@Override
+	public Syncer getSyncer() {
+		return syncer;
 	}
 
 	@Override

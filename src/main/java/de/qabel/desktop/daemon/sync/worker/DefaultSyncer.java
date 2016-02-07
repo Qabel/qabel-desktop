@@ -5,22 +5,28 @@ import de.qabel.desktop.daemon.management.TransferManager;
 
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.daemon.management.*;
+import de.qabel.desktop.daemon.sync.BoxSync;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.LocalDeleteEvent;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.daemon.sync.event.WatchEvent;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndex;
+import de.qabel.desktop.daemon.sync.worker.index.SyncIndexEntry;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.BoxNavigation;
+import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
-public class DefaultSyncer implements Syncer {
+import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.UPDATE;
+
+public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 	private BoxSyncBasedUploadFactory uploadFactory = new BoxSyncBasedUploadFactory();
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private CachedBoxVolume boxVolume;
@@ -32,33 +38,37 @@ public class DefaultSyncer implements Syncer {
 	private TreeWatcher watcher;
 	private boolean polling = false;
 	private final SyncIndex index;
+	private WindowedTransactionGroup progress = new WindowedTransactionGroup();
 
 	public DefaultSyncer(BoxSyncConfig config, CachedBoxVolume boxVolume, TransferManager manager) {
 		this.config = config;
 		this.boxVolume = boxVolume;
 		this.manager = manager;
 		index = config.getSyncIndex();
+		config.setSyncer(this);
 	}
 
 	@Override
 	public void run() {
-		startWatcher();
-		registerRemoteChangeHandler();
-		registerRemotePoller();
-
 		try {
+			startWatcher();
+			registerRemoteChangeHandler();
+			registerRemotePoller();
+
 			boxVolume.navigate().notifyAllContents();
-		} catch (QblStorageException e) {
-			logger.warn(e.getMessage(), e);
+		} catch (QblStorageException | IOException e) {
+			logger.error("failed to start sync: " + e.getMessage(), e);
 		}
 	}
 
-	protected void registerRemotePoller() {
+	protected void registerRemotePoller() throws QblStorageException {
+		CachedBoxNavigation nav = navigateToRemoteDir();
+
 		poller = new Thread(() -> {
 			try {
 				while (!Thread.interrupted()) {
 					try {
-						boxVolume.navigate().refresh();
+						nav.refresh();
 						polling = true;
 					} catch (QblStorageException e) {
 						e.printStackTrace();
@@ -75,21 +85,31 @@ public class DefaultSyncer implements Syncer {
 		poller.start();
 	}
 
-	protected void registerRemoteChangeHandler() {
-		try {
-			if (boxVolume.navigate() != null) {
-				boxVolume.navigate().addObserver((o, arg) -> {
-					if (!(arg instanceof ChangeEvent)) {
-						return;
-					}
-					String type =((ChangeEvent)arg).getType().toString();
-					logger.trace("remote update " + type + " " + ((ChangeEvent)arg).getPath().toString());
-					download((ChangeEvent) arg);
-				});
+	protected void registerRemoteChangeHandler() throws QblStorageException {
+		CachedBoxNavigation nav = navigateToRemoteDir();
+
+		nav.addObserver((o, arg) -> {
+			if (!(arg instanceof ChangeEvent)) {
+				return;
 			}
-		} catch (QblStorageException e) {
-			throw new IllegalStateException("Failed to watch remote dir: " + e.getMessage(), e);
+			String type =((ChangeEvent)arg).getType().toString();
+			logger.trace("remote update " + type + " " + ((ChangeEvent)arg).getPath().toString());
+			download((ChangeEvent) arg);
+		});
+	}
+
+	private CachedBoxNavigation navigateToRemoteDir() throws QblStorageException {
+		Path remotePath = config.getRemotePath();
+		CachedBoxNavigation nav = boxVolume.navigate();
+
+		for (int i = 0; i < remotePath.getNameCount(); i++) {
+			String name = remotePath.getName(i).toString();
+			if (!nav.hasFolder(name)) {
+				nav.createFolder(name);
+			}
+			nav = nav.navigate(name);
 		}
+		return nav;
 	}
 
 	private void download(ChangeEvent event) {
@@ -98,7 +118,18 @@ public class DefaultSyncer implements Syncer {
 			uploadUnnoticedDelete(download);
 			return;
 		}
+
+		SyncIndexEntry entry = index.get(download.getDestination());
+		if (entry != null && entry.getLocalMtime() >= download.getMtime()) {
+			return;
+		}
+
 		download.onSuccess(() -> index.update(download.getDestination(), download.getMtime(), download.getType() != Transaction.TYPE.DELETE));
+		addDownload(download);
+	}
+
+	private void addDownload(BoxSyncBasedDownload download) {
+		progress.add(download);
 		manager.addDownload(download);
 	}
 
@@ -107,6 +138,9 @@ public class DefaultSyncer implements Syncer {
 	}
 
 	private void uploadUnnoticedDelete(BoxSyncBasedDownload download) {
+		if (Files.exists(download.getDestination())) {
+			return;
+		}
 		ChangeEvent inverseEvent = new LocalDeleteEvent(
 				download.getDestination(),
 				download.isDir(),
@@ -122,9 +156,22 @@ public class DefaultSyncer implements Syncer {
 			downloadUnnoticedDelete(upload);
 			return;
 		}
+		SyncIndexEntry entry = index.get(upload.getSource());
+		if (entry != null && entry.isExisting() == (upload.getType() != Transaction.TYPE.DELETE) && entry.getLocalMtime() >= upload.getMtime()) {
+			return;
+		}
+		if (event.isDir() && event instanceof ChangeEvent && ((ChangeEvent)event).getType() == UPDATE) {
+			return;
+		}
+
 		upload.onSuccess(() -> {
 			index.update(upload.getSource(), upload.getMtime(), upload.getType() != Transaction.TYPE.DELETE);
 		});
+		addUpload(upload);
+	}
+
+	private void addUpload(BoxSyncBasedUpload upload) {
+		progress.add(upload);
 		manager.addUpload(upload);
 	}
 
@@ -159,9 +206,12 @@ public class DefaultSyncer implements Syncer {
 		}
 	}
 
-	protected void startWatcher() {
+	protected void startWatcher() throws IOException {
 		Path localPath = config.getLocalPath();
-		if (!Files.isDirectory(localPath) || !Files.isReadable(localPath)) {
+		if (!Files.isDirectory(localPath)) {
+			Files.createDirectories(localPath);
+		}
+		if (!Files.isReadable(localPath)) {
 			throw new IllegalStateException("local dir " + localPath.toString() + " is not valid");
 		}
 		watcher = new TreeWatcher(localPath, watchEvent -> {
@@ -210,5 +260,35 @@ public class DefaultSyncer implements Syncer {
 
 	public void setUploadFactory(BoxSyncBasedUploadFactory uploadFactory) {
 		this.uploadFactory = uploadFactory;
+	}
+
+	@Override
+	public boolean isSynced() {
+		return progress.isEmpty();
+	}
+
+	@Override
+	public double getProgress() {
+		return progress.getProgress();
+	}
+
+	@Override
+	public Object onProgress(Runnable runnable) {
+		return progress.onProgress(runnable);
+	}
+
+	@Override
+	public int countFiles() {
+		return 0;
+	}
+
+	@Override
+	public int countFolders() {
+		return 0;
+	}
+
+	@Override
+	public boolean hasError() {
+		return false;
 	}
 }

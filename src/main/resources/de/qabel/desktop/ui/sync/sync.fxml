@@ -7,6 +7,11 @@
 <?import javafx.scene.text.Font?>
 <VBox fx:controller="de.qabel.desktop.ui.sync.SyncController" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
+       <Button fx:id="addSync" onAction="#addSync" mnemonicParsing="false" text="add sync">
+           <VBox.margin>
+               <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+           </VBox.margin>
+       </Button>
       <VBox fx:id="syncItemContainer">
          <children>
             <BorderPane prefHeight="130.0" prefWidth="600.0" style="-fx-border-color: darkgrey; -fx-border-width: 0 0 1 0;">
@@ -212,10 +217,5 @@
             </BorderPane>
          </children>
       </VBox>
-      <Button fx:id="addSync" onAction="#addSync" mnemonicParsing="false" text="add sync">
-         <VBox.margin>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-         </VBox.margin>
-      </Button>
    </children>
 </VBox>

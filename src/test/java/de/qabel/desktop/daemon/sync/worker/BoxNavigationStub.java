@@ -2,6 +2,7 @@ package de.qabel.desktop.daemon.sync.worker;
 
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
+import de.qabel.desktop.storage.BoxFolder;
 import de.qabel.desktop.storage.BoxNavigation;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 
@@ -26,5 +27,15 @@ public class BoxNavigationStub extends CachedBoxNavigation {
 	@Override
 	public void notifyAllContents() throws QblStorageException {
 
+	}
+
+	@Override
+	public boolean hasFolder(String name) throws QblStorageException {
+		return true;
+	}
+
+	@Override
+	public CachedBoxNavigation navigate(String name) throws QblStorageException {
+		return new BoxNavigationStub(null, null);
 	}
 }

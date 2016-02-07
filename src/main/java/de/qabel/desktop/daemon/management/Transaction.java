@@ -4,7 +4,7 @@ import de.qabel.desktop.storage.BoxVolume;
 
 import java.nio.file.Path;
 
-public interface Transaction extends AutoCloseable {
+public interface Transaction extends AutoCloseable, HasProgress<Transaction> {
 	long transactionAge();
 
 	TYPE getType();
@@ -27,8 +27,6 @@ public interface Transaction extends AutoCloseable {
 
 	Transaction onSkipped(Runnable runnable);
 
-	Transaction onProgress(Runnable runnable);
-
 	long getStagingDelayMillis();
 
 	/**
@@ -45,14 +43,16 @@ public interface Transaction extends AutoCloseable {
 	/**
 	 * @return progress in bytes
 	 */
-	long getProgress();
+	long getTransferred();
 
 	/**
 	 * @param progress in bytes
 	 */
-	void setProgress(long progress);
+	void setTransferred(long progress);
 
 	void setSize(long size);
+
+	boolean isDone();
 
 
 	enum TYPE { CREATE, UPDATE, DELETE }

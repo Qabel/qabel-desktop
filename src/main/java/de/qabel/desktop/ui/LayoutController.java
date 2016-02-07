@@ -1,11 +1,12 @@
 package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
-import com.amazonaws.services.s3.transfer.Transfer;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.daemon.management.MonitoredTransferManager;
 import de.qabel.desktop.daemon.management.Transaction;
 import de.qabel.desktop.daemon.management.TransferManager;
+import de.qabel.desktop.daemon.management.WindowedTransactionGroup;
 import de.qabel.desktop.ui.accounting.AccountingView;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
 import de.qabel.desktop.ui.actionlog.ActionlogView;
@@ -13,6 +14,7 @@ import de.qabel.desktop.ui.contact.ContactView;
 import de.qabel.desktop.ui.invite.InviteView;
 import de.qabel.desktop.ui.remotefs.RemoteFSView;
 import de.qabel.desktop.ui.sync.SyncView;
+import de.qabel.desktop.ui.transfer.FxProgressModel;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -90,31 +92,21 @@ public class LayoutController extends AbstractController implements Initializabl
 
 		uploadProgress.setProgress(0);
 		uploadProgress.setDisable(true);
-		if (transferManager instanceof Observable) {
-			((Observable) transferManager).addObserver((o, arg) -> {
-				Platform.runLater(() -> {
-					if (arg == null || !(arg instanceof Transaction)) {
-						uploadProgress.setVisible(false);
-						uploadProgress.setProgress(0);
-						return;
-					}
 
-					Transaction t = (Transaction) arg;
-					uploadProgress.setVisible(true);
-					t.onProgress(() -> Platform.runLater(() -> {
-						if (t.getState() == FINISHED || t.getState() == SKIPPED || t.getState() == FAILED) {
-							uploadProgress.setProgress(0);
-							uploadProgress.setVisible(false);
-						}
-						if (t.hasSize() && t.getSize() != 0) {
-							uploadProgress.setProgress((double) t.getProgress() / (double) t.getSize());
-						} else {
-							uploadProgress.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
-						}
-					}));
-				});
-			});
+		WindowedTransactionGroup progress = new WindowedTransactionGroup();
+		if (transferManager instanceof MonitoredTransferManager) {
+			MonitoredTransferManager tm = (MonitoredTransferManager)transferManager;
+			tm.onAdd(progress::add);
 		}
+		FxProgressModel progressModel = new FxProgressModel(progress);
+		uploadProgress.progressProperty().bind(progressModel.progressProperty());
+		progressModel.progressProperty().addListener((observable, oldValue, newValue) -> {
+			if (progress.isEmpty()) {
+				uploadProgress.setVisible(false);
+			} else {
+				uploadProgress.setVisible(true);
+			}
+		});
 	}
 
 	private String lastAlias;

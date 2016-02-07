@@ -19,10 +19,8 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class S3ReadBackend implements StorageReadBackend {
-	private static final SimpleDateFormat lastModifiedFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
 	private static final Logger logger = LoggerFactory.getLogger(S3ReadBackend.class.getSimpleName());
 
 	// Number of http connections to S3
