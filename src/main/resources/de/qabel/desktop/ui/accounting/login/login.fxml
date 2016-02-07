@@ -1,63 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<VBox fx:controller="de.qabel.desktop.ui.accounting.login.LoginController"
-      alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="530.0" prefWidth="369.0" styleClass="login" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../../../../../../logo-invert.png" />
-         </image>
-      </ImageView>
-      <VBox alignment="TOP_CENTER" styleClass="login-form">
-         <children>
-            <Label styleClass="login-title" text="%loginText">
-               <VBox.margin>
-                  <Insets bottom="10.0" top="10.0" />
-               </VBox.margin>
-            </Label>
-            <ChoiceBox fx:id="providerChoices" />
-            <TextField fx:id="user" styleClass="user" alignment="CENTER" promptText="%boxAccountUser" text="testuser">
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-            </TextField>
-            <TextField fx:id="auth" alignment="CENTER" promptText="%boxAccountPassword" text="testuser">
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-            </TextField>
-             <HBox fx:id="buttonBar" alignment="CENTER" styleClass="login-button-bar">
-                 <children>
-                     <Button mnemonicParsing="false" styleClass="create-account-button" text="%createAccount" />
-                     <Button onAction="#login" fx:id="loginButton" mnemonicParsing="false" styleClass="login-button" text="login" />
-                 </children>
-                 <VBox.margin>
-                     <Insets />
-                 </VBox.margin>
-             </HBox>
-             <HBox fx:id="progressBar" alignment="CENTER" styleClass="login-button-bar">
-                 <children>
-                     <ProgressIndicator prefWidth="30" minWidth="30" prefHeight="30" minHeight="30" />
-                 </children>
-                 <VBox.margin>
-                     <Insets />
-                 </VBox.margin>
-             </HBox>
-            <Separator />
-            <Hyperlink onAction="#recoverPassword" text="%forgotPassword" />
-         </children>
-         <VBox.margin>
-            <Insets top="50.0" />
-         </VBox.margin>
-      </VBox>
-   </children>
-   <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-   </padding>
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="672.0" prefWidth="369.0" styleClass="login" xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.accounting.login.LoginController">
+    <children>
+        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../../../../../../logo-invert.png"/>
+            </image>
+        </ImageView>
+        <VBox alignment="TOP_CENTER" prefHeight="445.0" prefWidth="342.0" styleClass="login-form">
+            <children>
+                <Label styleClass="login-title" text="%loginText">
+                    <VBox.margin>
+                        <Insets bottom="10.0" top="10.0"/>
+                    </VBox.margin>
+                </Label>
+                <ChoiceBox fx:id="providerChoices"/>
+                <TextField fx:id="user" alignment="CENTER" promptText="%boxAccountUser" styleClass="user"
+                           text="testuser">
+                    <VBox.margin>
+                        <Insets/>
+                    </VBox.margin>
+                </TextField>
+
+                <TextField fx:id="email" alignment="CENTER" managed="false" promptText="%yourEMail" styleClass="user">
+                    <VBox.margin>
+                        <Insets/>
+                    </VBox.margin>
+                </TextField>
+
+                <PasswordField fx:id="password" alignment="CENTER" promptText="%boxAccountPassword" text="testuser">
+                    <VBox.margin>
+                        <Insets/>
+                    </VBox.margin>
+                </PasswordField>
+
+                <PasswordField fx:id="confirm" alignment="CENTER" managed="false" promptText="%confirmPassword">
+                    <VBox.margin>
+                        <Insets/>
+                    </VBox.margin>
+                </PasswordField>
+
+                <HBox fx:id="buttonBar" alignment="CENTER" styleClass="login-button-bar">
+                    <children>
+                        <Button fx:id="openCreateButton" mnemonicParsing="false" onAction="#openCreateBoxAccountSetup"
+                                styleClass="create-account-button" text="%createAccount" managed="true"/>
+                        <Button fx:id="createButton" mnemonicParsing="false" onAction="#createBoxAccount"
+                                styleClass="create-account-button" text="%create" managed="false"/>
+                        <Button fx:id="loginButton" mnemonicParsing="false" onAction="#login" styleClass="login-button"
+                                text="%login"/>
+
+                    </children>
+                    <VBox.margin>
+                        <Insets/>
+                    </VBox.margin>
+                </HBox>
+                <HBox fx:id="progressBar" alignment="CENTER" styleClass="login-button-bar">
+                    <children>
+                        <ProgressIndicator minHeight="30" minWidth="30" prefHeight="30" prefWidth="30"/>
+                    </children>
+                    <VBox.margin>
+                        <Insets/>
+                    </VBox.margin>
+                </HBox>
+                <Separator/>
+                <Hyperlink onAction="#recoverPassword" text="%forgotPassword"/>
+            </children>
+            <VBox.margin>
+                <Insets top="50.0"/>
+            </VBox.margin>
+        </VBox>
+    </children>
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+    </padding>
 </VBox>

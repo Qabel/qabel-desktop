@@ -5,9 +5,8 @@
 .login-form .text-field {
     -fx-background-radius: 15;
     -fx-padding: 5px 15px 5px 15px;
-    -fx-alignment: CENTER-CENTER!important;
-    -fx-text-alignment: center!important;
 }
+
 .login-form  .choice-box {
     -fx-background-radius: 15;
     -fx-background-color: #d5d5d5, white;
@@ -51,10 +50,6 @@
 
 .login-button-bar .button:hover {
     -fx-background-color: #fcdcca, #fcdcca;
-}
-
-.create-account-button {
-    -fx-text-fill: #848484 !important;
 }
 
 .login .separator {
