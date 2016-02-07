@@ -87,6 +87,11 @@ public class DesktopClient extends Application {
 			Platform.runLater(() -> {
 				if (arg instanceof Account) {
 					new Thread(getSyncDaemon(config)).start();
+					try {
+						new Thread(getDropDaemon(config)).start();
+					} catch (PersistenceException | EntityNotFoundExcepion e) {
+						e.printStackTrace();
+					}
 					view = new LayoutView();
 					Scene layoutScene = new Scene(view.getView(), 800, 600, true, aa);
 					Platform.runLater(() -> primaryStage.setScene(layoutScene));
