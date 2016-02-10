@@ -129,7 +129,7 @@ public class LoginController extends AbstractController implements Initializable
 			recoverPassword.setVisible(false);
 
 			newPassword.setManaged(true);
-			primaryStage.setHeight(600);
+			primaryStage.setHeight(650);
 		});
 
 	}
@@ -146,6 +146,7 @@ public class LoginController extends AbstractController implements Initializable
 			createButton.setManaged(true);
 
 			openCreateButton.setManaged(false);
+			openCreateButton.setVisible(false);
 			primaryStage.setHeight(650);
 
 		});
