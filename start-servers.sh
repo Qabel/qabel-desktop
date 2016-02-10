@@ -1,8 +1,10 @@
 #!/bin/bash
 set -e
+
+# qabel-drop
 cd qabel-drop
 if [ ! -d venv ]; then
-  virtualenv --python=python3 venv
+  virtualenv --python=python3.5 venv
 fi
 source venv/bin/activate
 pip install -r requirements.txt
@@ -15,14 +17,27 @@ echo $! > ../drop.pid
 deactivate
 cd ..
 
+# qabel-accounting
 cd qabel-accounting
 if [ ! -d venv ]; then
-  virtualenv --python=python3 venv
+  virtualenv --python=python3.5 venv
 fi
 source venv/bin/activate
 pip install -r requirements.txt
 python manage.py testserver testdata.json --addrport 9696 > ../accounting.log 2>&1 &
 echo $! > ../accounting.pid
+deactivate
+cd ..
+
+# qabel-block
+cd qabel-block
+if [ ! -d venv ]; then
+  virtualenv --python=python3.5 venv
+fi
+source venv/bin/activate
+pip install -r requirements.txt
+python src/run.py runserver --addrport 9697 > ../block.log 2>&1 &
+echo $! > ../block.pid
 deactivate
 cd ..
 

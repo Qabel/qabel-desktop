@@ -64,7 +64,7 @@ public class ActionlogController extends AbstractController implements Initializ
 
 	private void createActionlogSetup() {
 		identity = clientConfiguration.getSelectedIdentity();
-		c = new Contact(identity, identity.getAlias(), identity.getDropUrls(), identity.getEcPublicKey());
+		c = new Contact(identity.getAlias(), identity.getDropUrls(), identity.getEcPublicKey());
 		try {
 			loadMessages(c);
 		} catch (EntityNotFoundExcepion entityNotFoundExcepion) {

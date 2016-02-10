@@ -135,7 +135,7 @@ public class AbstractController {
 
 		ArrayList<DropURL> collection = generateDropURLs(gc.getDropUrls());
 		QblECPublicKey pubKey = new QblECPublicKey(gc.getPublicKey());
-		Contact c = new Contact(i, gc.getAlias(), collection, pubKey);
+		Contact c = new Contact(gc.getAlias(), collection, pubKey);
 		c.setPhone(gc.getPhone());
 		c.setEmail(gc.getEmail());
 

@@ -1,6 +1,5 @@
 package de.qabel.desktop.storage.cache;
 
-import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
