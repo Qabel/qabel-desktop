@@ -24,6 +24,12 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 		super.setUp();
 
 		Platform.setImplicitExit(false);
+		runLaterAndWait(() -> {
+			stage = new Stage();
+			diContainer.put("primaryStage", stage);
+		});
+
+
 		Object presenter = launchNode(getView());
 		controller = (T) presenter;
 	}
@@ -38,7 +44,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 
 		runLaterAndWait(() ->
 				{
-					stage = new Stage();
+
 					stage.setScene(scene);
 					stage.show();
 					robot.target(stage);
@@ -56,7 +62,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 	}
 
 	protected int getHeight() {
-		return 500;
+		return 600;
 	}
 
 	protected int getWidth() {
@@ -91,7 +97,10 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 			x = position.getX();
 			y = position.getY();
 			robot.moveTo(node);
-			try { Thread.sleep(100); } catch (InterruptedException ignored) {}
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException ignored) {
+			}
 		}
 		try {
 			return robot.moveTo(node).clickOn(node);

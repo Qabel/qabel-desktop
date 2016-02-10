@@ -56,7 +56,7 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 		controller.sendDropMessage(c, msg2);
 		clientConfiguration.selectIdentity(i);
 
-		List<PersistenceDropMessage> lst = dropMessageRepository.loadConversation(c);
+		List<PersistenceDropMessage> lst = dropMessageRepository.loadConversation(c, i);
 
 		assertEquals(1, lst.size());
 		assertEquals(msg2, lst.get(0).dropMessage.getDropPayload());

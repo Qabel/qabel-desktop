@@ -35,8 +35,9 @@ public class ActionlogController extends AbstractController implements Initializ
 
 	@FXML
 	VBox messages;
-	@FXML
-	ScrollPane scroller;
+
+
+
 	@FXML
 	TextArea textarea;
 	@Inject
@@ -50,34 +51,18 @@ public class ActionlogController extends AbstractController implements Initializ
 	Connector httpDropConnector;
 
 	Identity identity;
-	Contact c;
+	Contact c = null;
 
 	public void initialize(URL location, ResourceBundle resources) {
 
-		createActionlogSetup();
+		identity = clientConfiguration.getSelectedIdentity();
 		dropMessageRepository.addObserver(this);
 		clientConfiguration.addObserver(this);
-
-		scroller.setVvalue(scroller.getVmax());
 		addListener();
 	}
 
-	private void createActionlogSetup() {
-		identity = clientConfiguration.getSelectedIdentity();
-		c = new Contact(identity, identity.getAlias(), identity.getDropUrls(), identity.getEcPublicKey());
-		try {
-			loadMessages(c);
-		} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
-			entityNotFoundExcepion.printStackTrace();
-		}
-	}
-
 	private void addListener() {
-		((Region) scroller.getContent()).heightProperty().addListener((ov, old_val, new_val) -> {
-			if (scroller.getVvalue() != scroller.getVmax()) {
-				scroller.setVvalue(scroller.getVmax());
-			}
-		});
+
 		textarea.setOnKeyPressed(keyEvent -> {
 			if (keyEvent.getCode().equals(KeyCode.ENTER) && keyEvent.isControlDown()) {
 				try {
@@ -104,14 +89,14 @@ public class ActionlogController extends AbstractController implements Initializ
 
 	void sendDropMessage(Contact c, String text) throws QblDropPayloadSizeException, QblNetworkInvalidResponseException, PersistenceException {
 		DropMessage d = new DropMessage(identity, text, "dropMessage");
-		dropMessageRepository.addMessage(d, c, true);
+		dropMessageRepository.addMessage(d, identity, c, true);
 		httpDropConnector.send(c, d);
 	}
 
 	void loadMessages(Contact c) throws EntityNotFoundExcepion {
 		try {
 			messages.getChildren().clear();
-			List<PersistenceDropMessage> dropMessages = dropMessageRepository.loadConversation(c);
+			List<PersistenceDropMessage> dropMessages = dropMessageRepository.loadConversation(c, identity);
 			for (PersistenceDropMessage d : dropMessages) {
 
 				if (d.getSend()) {
@@ -163,7 +148,19 @@ public class ActionlogController extends AbstractController implements Initializ
 				}
 			});
 		} else if (arg instanceof Identity && o instanceof ClientConfiguration) {
-			createActionlogSetup();
+			identity = clientConfiguration.getSelectedIdentity();
 		}
+	}
+
+	public void setContact(Contact contact) {
+		Platform.runLater(() -> {
+			try {
+				this.c = contact;
+				loadMessages(c);
+			} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
+				entityNotFoundExcepion.printStackTrace();
+			}
+		});
+
 	}
 }

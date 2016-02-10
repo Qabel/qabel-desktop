@@ -11,12 +11,21 @@ import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.GsonContact;
+import de.qabel.desktop.ui.accounting.item.SelectionEvent;
+import de.qabel.desktop.ui.actionlog.ActionlogController;
+import de.qabel.desktop.ui.actionlog.ActionlogView;
 import de.qabel.desktop.ui.contact.item.BlankItemView;
+import de.qabel.desktop.ui.contact.item.ContactItemController;
 import de.qabel.desktop.ui.contact.item.ContactItemView;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
 import javax.inject.Inject;
@@ -35,22 +44,47 @@ public class ContactController extends AbstractController implements Initializab
 	@FXML
 	Pane contactList;
 
+	@FXML
+	VBox actionlogViewPane;
+
+	@FXML
+	ScrollPane scroller;
+
 	@Inject
 	private ClientConfiguration clientConfiguration;
 
 	@Inject
 	private ContactRepository contactRepository;
+	private List<ContactItemController> contactItems = new LinkedList<>();
+
+	ActionlogController actionlogController;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		this.resourceBundle = resources;
 		buildGson();
 		createObserver();
+		createActionlog();
+		addListener();
 		try {
 			loadContacts();
 		} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
 			entityNotFoundExcepion.printStackTrace();
 		}
+	}
+
+	private void addListener() {
+		((Region) scroller.getContent()).heightProperty().addListener((ov, old_val, new_val) -> {
+			if (scroller.getVvalue() != scroller.getVmax()) {
+				scroller.setVvalue(scroller.getVmax());
+			}
+		});
+	}
+
+	private void createActionlog() {
+		ActionlogView actionlogView = new ActionlogView();
+		actionlogController = (ActionlogController) actionlogView.getPresenter();
+		actionlogViewPane.getChildren().add(actionlogView.getView());
 	}
 
 	@FXML
@@ -72,8 +106,11 @@ public class ContactController extends AbstractController implements Initializab
 	}
 
 	void loadContacts() throws EntityNotFoundExcepion {
-		i = clientConfiguration.getSelectedIdentity();
 		contactList.getChildren().clear();
+		contactItems.clear();
+
+		i = clientConfiguration.getSelectedIdentity();
+
 		String old = null;
 		List<Contact> contacts = contactRepository.findAllContactFromOneIdentity(i);
 
@@ -91,8 +128,28 @@ public class ContactController extends AbstractController implements Initializab
 		final Map<String, Object> injectionContext = new HashMap<>();
 		injectionContext.put("contact", co);
 		ContactItemView itemView = new ContactItemView(injectionContext::get);
+		ContactItemController controller = (ContactItemController) itemView.getPresenter();
+		controller.addSelectionListener((selectionEvent) -> {
+			unselectAll();
+			select(selectionEvent);
+
+		});
 		contactList.getChildren().add(itemView.getView());
+		contactItems.add(controller);
 		itemViews.add(itemView);
+
+	}
+
+	private void select(SelectionEvent selectionEvent) {
+		selectionEvent.getController().select();
+		actionlogController.setContact(selectionEvent.getContact());
+	}
+
+
+	private void unselectAll() {
+		for (ContactItemController c : contactItems) {
+			c.unselect();
+		}
 	}
 
 	private String createBlankItem(Contact co) {

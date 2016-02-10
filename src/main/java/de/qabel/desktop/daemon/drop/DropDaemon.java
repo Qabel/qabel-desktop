@@ -46,6 +46,8 @@ public class DropDaemon implements Runnable {
 				} catch (PersistenceException e) {
 					logger.error("Persitence fail: " + e.getMessage(), e);
 					continue;
+				} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
+					entityNotFoundExcepion.printStackTrace();
 				}
 				Thread.sleep(sleepTime);
 			} catch (InterruptedException e) {
@@ -55,21 +57,20 @@ public class DropDaemon implements Runnable {
 		}
 	}
 
-	void receiveMessages() throws PersistenceException {
+	void receiveMessages() throws PersistenceException, EntityNotFoundExcepion {
 		Identity identity = config.getSelectedIdentity();
-		java.util.List<DropMessage> dropMessages = httpDropConnector.receive(identity, lastDate);
-
+		java.util.List<DropMessage> dropMessages;
+		try {
+			dropMessages = httpDropConnector.receive(identity, lastDate);
+		} catch (NullPointerException e){
+			return;
+		}
 		for (DropMessage d : dropMessages) {
-			Contact contact = null;
-			try {
-				contact = contactRepository.findByKeyId(identity, d.getSenderKeyId());
-			} catch (EntityNotFoundExcepion e) {
-				logger.error("Contact: with ID: " + d.getSenderKeyId() + " not found " + e.getMessage(), e);
-				continue;
-			}
+
 			lastDate = config.getLastDropPoll(identity);
 			if (lastDate.getTime() < d.getCreationDate().getTime()) {
-				dropMessageRepository.addMessage(d, contact, false);
+				Contact sender = contactRepository.findByKeyId(identity, d.getSenderKeyId());
+				dropMessageRepository.addMessage(d, sender, identity, false);
 				config.setLastDropPoll(identity, d.getCreationDate());
 			}
 		}

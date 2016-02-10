@@ -16,9 +16,7 @@
     -fx-min-width: 7em;
 }
 
-.button-bar {
-    -fx-spacing: 1em;
-}
+
 
 .button {
     -fx-font-weight: bold;
@@ -60,4 +58,8 @@
 
 .progress-bar > .track {
     -fx-background-radius: 5em;
+}
+
+.selected {
+    -fx-background-color: grey;
 }

@@ -76,7 +76,6 @@ public class LayoutController extends AbstractController implements Initializabl
 		navi.getChildren().add(createNavItem(resourceBundle.getString("identity"), accountingView));
 		navi.getChildren().add(createNavItem(resourceBundle.getString("browse"), new RemoteFSView()));
 		navi.getChildren().add(createNavItem(resourceBundle.getString("contacts"), new ContactView()));
-		navi.getChildren().add(createNavItem(resourceBundle.getString("actionlog"),actionlogView));
 		navi.getChildren().add(createNavItem(resourceBundle.getString("sync"), new SyncView()));
 		navi.getChildren().add(createNavItem(resourceBundle.getString("invite"), new InviteView()));
 
