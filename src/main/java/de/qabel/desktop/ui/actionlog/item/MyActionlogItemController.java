@@ -45,4 +45,21 @@ public class MyActionlogItemController extends AbstractController implements Ini
 	public void refreshDate() {
 		Platform.runLater(()-> dateLabel.setText(p.format(dropMessage.getCreationDate())));
 	}
+
+
+	public Label getDateLabel() {
+		return dateLabel;
+	}
+
+	public void setDateLabel(Label dateLabel) {
+		this.dateLabel = dateLabel;
+	}
+
+	public DropMessage getDropMessage() {
+		return dropMessage;
+	}
+
+	public void setDropMessage(DropMessage dropMessage) {
+		this.dropMessage = dropMessage;
+	}
 }

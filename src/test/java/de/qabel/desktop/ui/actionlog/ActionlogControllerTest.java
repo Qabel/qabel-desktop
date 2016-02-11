@@ -9,15 +9,16 @@ import de.qabel.core.exceptions.*;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractControllerTest;
+import de.qabel.desktop.ui.actionlog.item.ActionlogItem;
+import de.qabel.desktop.ui.actionlog.item.MyActionlogItemController;
+import de.qabel.desktop.ui.actionlog.item.MyActionlogItemView;
+import de.qabel.desktop.ui.actionlog.item.OtherActionlogItemView;
 import de.qabel.desktop.ui.connector.HttpDropConnector;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -61,6 +62,33 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 
 		assertEquals(1, lst.size());
 		assertEquals(msg2, lst.get(0).dropMessage.getDropPayload());
+	}
+
+	@Test
+	public void refreshTime() throws EntityNotFoundExcepion {
+		setup();
+		controller.sleepTime = 1;
+		controller.dateRefresher.interrupt();
+		DropMessage d = new DropMessage(i,"payload", "test");
+		Contact sender = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
+
+		Map<String, Object> injectionContext = new HashMap<>();
+		injectionContext.put("dropMessage", d);
+		injectionContext.put("contact", sender);
+
+		MyActionlogItemView my = new MyActionlogItemView(injectionContext::get);
+		MyActionlogItemController messagesController = (MyActionlogItemController) my.getPresenter();
+		controller.messageControllers.add(messagesController);
+
+		messagesController.setDropMessage(d);
+		String old = messagesController.getDateLabel().getText();
+		messagesController.getDateLabel().setText("");
+
+
+		waitUntil(() -> {
+			String newString = messagesController.getDateLabel().getText();
+			return old.equals(newString);
+		});
 	}
 
 	private DropMessage setup() {

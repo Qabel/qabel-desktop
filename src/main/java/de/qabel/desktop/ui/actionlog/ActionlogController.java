@@ -32,12 +32,11 @@ import static java.lang.Thread.*;
 
 public class ActionlogController extends AbstractController implements Initializable, Observer {
 
-	int sleepTime = 10000;
+	int sleepTime = 60000;
 	List<ActionlogItemView> messageView = new LinkedList<>();
 
 	@FXML
 	VBox messages;
-
 
 	@FXML
 	TextArea textarea;
@@ -55,7 +54,7 @@ public class ActionlogController extends AbstractController implements Initializ
 	Contact c = null;
 	List<PersistenceDropMessage> receivedDropMessages;
 	List<ActionlogItem> messageControllers = new LinkedList<>();
-
+	Thread dateRefresher;
 
 	public void initialize(URL location, ResourceBundle resources) {
 
@@ -67,18 +66,17 @@ public class ActionlogController extends AbstractController implements Initializ
 	}
 
 	private void startThreads() {
-		new Thread(() -> {
+		dateRefresher = new Thread(() -> {
 			while (true) {
 				messageControllers.forEach(ActionlogItem::refreshDate);
 				try {
 					sleep(sleepTime);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+				} catch (InterruptedException ignored) {
 				}
 			}
-		}).start();
+		});
+		dateRefresher.start();
 	}
-
 
 	private void addListener() {
 
