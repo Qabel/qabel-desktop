@@ -109,6 +109,7 @@ public class LoginController extends AbstractController implements Initializable
 				http.resetPassword(email.getText());
 				toMailSend(resourceBundle.getString("send"));
 				newPassword.disableProperty().set(true);
+
 			} catch (URISyntaxException | IOException | IllegalArgumentException e) {
 				Platform.runLater(() -> toEMailSendFailureState(resourceBundle.getString("sendFail")));
 				e.printStackTrace();
