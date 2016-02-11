@@ -32,12 +32,8 @@ public class PersistenceDropMessageRepository extends AbstractCachedPersistenceR
 		List<PersistenceDropMessage> result = new LinkedList<>();
 		List<PersistenceDropMessage> messages = persistence.getEntities(PersistenceDropMessage.class);
 
-		String contactKeyIdentifier = contact.getEcPublicKey().getReadableKeyIdentifier();
-		String ownKeyIdentifier = identity.getEcPublicKey().getReadableKeyIdentifier();
-
 		for (PersistenceDropMessage d : messages) {
-
-			if (belongsToConversation(d, contactKeyIdentifier, ownKeyIdentifier)) {
+			if (belongsToConversation(d, contact.hashCode(), identity.hashCode())) {
 				result.add(d);
 			}
 		}
@@ -55,13 +51,10 @@ public class PersistenceDropMessageRepository extends AbstractCachedPersistenceR
 			map.put(m.getPersistenceID(), m);
 		}
 
-		String contactKeyIdentifier = c.getEcPublicKey().getReadableKeyIdentifier();
-		String ownKeyIdentifier = identity.getEcPublicKey().getReadableKeyIdentifier();
-
 		List<PersistenceDropMessage> messages = persistence.getEntities(PersistenceDropMessage.class);
 		for (PersistenceDropMessage m : messages) {
 			if (!map.containsKey(m.getPersistenceID())) {
-				if (belongsToConversation(m, contactKeyIdentifier, ownKeyIdentifier)) {
+				if (belongsToConversation(m, c.hashCode(), identity.hashCode())) {
 					result.add(m);
 				}
 			}
@@ -70,13 +63,13 @@ public class PersistenceDropMessageRepository extends AbstractCachedPersistenceR
 	}
 
 
-	private boolean belongsToConversation(PersistenceDropMessage dropMessage, String contactKeyIdentifier, String ownKeyIdentifier) {
+	private boolean belongsToConversation(PersistenceDropMessage dropMessage, int contactKeyIdentifier, int ownKeyIdentifier) {
 
-		String senderIdentifier = dropMessage.getSender().getEcPublicKey().getReadableKeyIdentifier();
-		String receiverKeyIdentifier = dropMessage.getReceiver().getEcPublicKey().getReadableKeyIdentifier();
+		int senderIdentifier = dropMessage.getSender().hashCode();
+		int receiverKeyIdentifier = dropMessage.getReceiver().hashCode();
 
-		return (senderIdentifier.equals(contactKeyIdentifier) && receiverKeyIdentifier.equals(ownKeyIdentifier)
-				|| (senderIdentifier.equals(ownKeyIdentifier) && receiverKeyIdentifier.equals(contactKeyIdentifier)));
+		return (senderIdentifier == contactKeyIdentifier && receiverKeyIdentifier == ownKeyIdentifier
+				|| (senderIdentifier == ownKeyIdentifier && receiverKeyIdentifier == contactKeyIdentifier));
 	}
 
 	@Override

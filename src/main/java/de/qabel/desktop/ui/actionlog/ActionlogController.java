@@ -97,7 +97,7 @@ public class ActionlogController extends AbstractController implements Initializ
 	}
 
 	protected void handleSubmitButtonAction() throws QblDropPayloadSizeException, EntityNotFoundExcepion, PersistenceException, QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException, QblNetworkInvalidResponseException {
-		if (textarea.getText().equals("")) {
+		if (textarea.getText().equals("") || c == null) {
 			return;
 		}
 		sendDropMessage(c, textarea.getText());
