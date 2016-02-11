@@ -39,6 +39,7 @@ public class PersistenceDropMessageRepository extends AbstractCachedPersistenceR
 				String ownKeyIdentifier = identity.getEcPublicKey().getReadableKeyIdentifier();
 				String senderIdentifier = d.getSender().getEcPublicKey().getReadableKeyIdentifier();
 				String receiverKeyIdentifier = d.getReceiver().getEcPublicKey().getReadableKeyIdentifier();
+
 				if ((senderIdentifier.equals(contactKeyIdentifier) && receiverKeyIdentifier.equals(ownKeyIdentifier) ||
 						(senderIdentifier.equals(ownKeyIdentifier) && receiverKeyIdentifier.equals(contactKeyIdentifier)))) {
 					result.add(d);

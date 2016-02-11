@@ -22,12 +22,12 @@ public class StubDropMessageRepository implements DropMessageRepository {
 	public void addMessage(DropMessage dropMessage, Entity from, Entity to, boolean send) throws PersistenceException {
 		PersistenceDropMessage pdm = new PersistenceDropMessage(dropMessage,from, to,send);
 
-		List<PersistenceDropMessage> lst = messagesMap.get(from.getKeyIdentifier());
+		List<PersistenceDropMessage> lst = messagesMap.get(to.getKeyIdentifier());
 		if(lst == null){
 			lst = new LinkedList<>();
 			lst.add(pdm);
 		}
-		messagesMap.put(from.getKeyIdentifier(), lst);
+		messagesMap.put(to.getKeyIdentifier(), lst);
 	}
 
 	@Override

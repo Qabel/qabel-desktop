@@ -48,6 +48,7 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 	@Test
 	public void switchBetweenIdentitesTest() throws QblDropPayloadSizeException, PersistenceException, QblNetworkInvalidResponseException, EntityNotFoundExcepion {
 		setup();
+		clientConfiguration.selectIdentity(i);
 		controller.sendDropMessage(c, "msg1");
 		i = identityBuilderFactory.factory().withAlias("NewIdentity").build();
 		c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
