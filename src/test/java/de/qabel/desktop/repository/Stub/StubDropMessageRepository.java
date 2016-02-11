@@ -42,4 +42,9 @@ public class StubDropMessageRepository implements DropMessageRepository {
 	@Override
 	public void addObserver(Observer o) {
 	}
+
+	@Override
+	public List<PersistenceDropMessage> loadNewMessagesFromConversation(List<PersistenceDropMessage> dropMessages, Contact c, Identity identity) {
+		return null;
+	}
 }

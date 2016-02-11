@@ -14,4 +14,5 @@ public interface DropMessageRepository{
 	void addMessage(DropMessage dropMessage, Entity from, Entity to, boolean send) throws PersistenceException;
 	List<PersistenceDropMessage> loadConversation(Contact contact, Identity identity) throws PersistenceException;
 	void addObserver(Observer o);
+	List<PersistenceDropMessage> loadNewMessagesFromConversation(List<PersistenceDropMessage> dropMessages, Contact c, Identity identity);
 }

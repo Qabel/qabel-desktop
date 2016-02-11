@@ -9,9 +9,7 @@ import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Observer;
+import java.util.*;
 
 
 public class PersistenceDropMessageRepository extends AbstractCachedPersistenceRepository<Contact> implements DropMessageRepository {
@@ -33,22 +31,52 @@ public class PersistenceDropMessageRepository extends AbstractCachedPersistenceR
 	public List<PersistenceDropMessage> loadConversation(Contact contact, Identity identity) throws PersistenceException {
 		List<PersistenceDropMessage> result = new LinkedList<>();
 		List<PersistenceDropMessage> messages = persistence.getEntities(PersistenceDropMessage.class);
-		for (PersistenceDropMessage d : messages) {
-			try {
-				String contactKeyIdentifier = contact.getEcPublicKey().getReadableKeyIdentifier();
-				String ownKeyIdentifier = identity.getEcPublicKey().getReadableKeyIdentifier();
-				String senderIdentifier = d.getSender().getEcPublicKey().getReadableKeyIdentifier();
-				String receiverKeyIdentifier = d.getReceiver().getEcPublicKey().getReadableKeyIdentifier();
 
-				if ((senderIdentifier.equals(contactKeyIdentifier) && receiverKeyIdentifier.equals(ownKeyIdentifier) ||
-						(senderIdentifier.equals(ownKeyIdentifier) && receiverKeyIdentifier.equals(contactKeyIdentifier)))) {
-					result.add(d);
-				}
-			} catch (NullPointerException e){
-				continue;
+		String contactKeyIdentifier = contact.getEcPublicKey().getReadableKeyIdentifier();
+		String ownKeyIdentifier = identity.getEcPublicKey().getReadableKeyIdentifier();
+
+		for (PersistenceDropMessage d : messages) {
+
+			if (belongsToConversation(d, contactKeyIdentifier, ownKeyIdentifier)) {
+				result.add(d);
 			}
 		}
 		return result;
+	}
+
+
+	@Override
+	public List<PersistenceDropMessage> loadNewMessagesFromConversation(List<PersistenceDropMessage> dropMessages, Contact c, Identity identity) {
+		List<PersistenceDropMessage> result = new LinkedList<>();
+
+		Map<String, PersistenceDropMessage> map = new HashMap<>();
+
+		for (PersistenceDropMessage m : dropMessages) {
+			map.put(m.getPersistenceID(), m);
+		}
+
+		String contactKeyIdentifier = c.getEcPublicKey().getReadableKeyIdentifier();
+		String ownKeyIdentifier = identity.getEcPublicKey().getReadableKeyIdentifier();
+
+		List<PersistenceDropMessage> messages = persistence.getEntities(PersistenceDropMessage.class);
+		for (PersistenceDropMessage m : messages) {
+			if (!map.containsKey(m.getPersistenceID())) {
+				if (belongsToConversation(m, contactKeyIdentifier, ownKeyIdentifier)) {
+					result.add(m);
+				}
+			}
+		}
+		return result;
+	}
+
+
+	private boolean belongsToConversation(PersistenceDropMessage dropMessage, String contactKeyIdentifier, String ownKeyIdentifier) {
+
+		String senderIdentifier = dropMessage.getSender().getEcPublicKey().getReadableKeyIdentifier();
+		String receiverKeyIdentifier = dropMessage.getReceiver().getEcPublicKey().getReadableKeyIdentifier();
+
+		return (senderIdentifier.equals(contactKeyIdentifier) && receiverKeyIdentifier.equals(ownKeyIdentifier)
+				|| (senderIdentifier.equals(ownKeyIdentifier) && receiverKeyIdentifier.equals(contactKeyIdentifier)));
 	}
 
 	@Override

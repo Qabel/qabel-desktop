@@ -62,14 +62,21 @@ public class DropDaemon implements Runnable {
 		java.util.List<DropMessage> dropMessages;
 		try {
 			dropMessages = httpDropConnector.receive(identity, lastDate);
-		} catch (NullPointerException e){
+		} catch (NullPointerException e) {
 			return;
 		}
+		Contact sender = null;
+
 		for (DropMessage d : dropMessages) {
 
 			lastDate = config.getLastDropPoll(identity);
 			if (lastDate.getTime() < d.getCreationDate().getTime()) {
-				Contact sender = contactRepository.findByKeyId(identity, d.getSenderKeyId());
+				try {
+					sender = contactRepository.findByKeyId(identity, d.getSenderKeyId());
+				} catch (EntityNotFoundExcepion e) {
+					logger.error("Contact: with ID: " + d.getSenderKeyId() + " not found " + e.getMessage(), e);
+					continue;
+				}
 				dropMessageRepository.addMessage(d, sender, identity, false);
 				config.setLastDropPoll(identity, d.getCreationDate());
 			}

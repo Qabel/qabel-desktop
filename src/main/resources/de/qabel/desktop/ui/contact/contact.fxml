@@ -6,7 +6,7 @@
 <?import javafx.scene.text.Font?>
 <BorderPane fx:id="contactroot" prefHeight="660.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.contact.ContactController">
     <center>
-        <ScrollPane fx:id="scroller" prefHeight="600.0" hbarPolicy="NEVER"  vbarPolicy="NEVER" fitToWidth="true" prefWidth="250">
+        <ScrollPane fx:id="scroller" prefHeight="600.0" hbarPolicy="NEVER"  fitToWidth="true" prefWidth="250">
             <content>
                 <VBox fx:id="actionlogViewPane" maxWidth="600"/>
             </content>
