@@ -224,11 +224,15 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 
 	private void notify(BoxObject file, TYPE type) {
 		setChanged();
+		Long mtime = file instanceof BoxFile ? ((BoxFile) file).mtime : null;
+		if (type == DELETE) {
+			mtime = System.currentTimeMillis();
+		}
 		notifyObservers(
 				new RemoteChangeEvent(
 						getPath(file),
 						file instanceof BoxFolder,
-						file instanceof BoxFile ? ((BoxFile) file).mtime : null,
+						mtime,
 						type,
 						file,
 						this

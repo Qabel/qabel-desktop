@@ -8,6 +8,7 @@ import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilder;
 import de.qabel.desktop.daemon.management.*;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncer;
+import de.qabel.desktop.daemon.sync.worker.index.SyncIndexEntry;
 import de.qabel.desktop.storage.LocalReadBackend;
 import de.qabel.desktop.storage.LocalWriteBackend;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
@@ -69,22 +70,29 @@ public class SyncIntegrationTest {
 
 			syncer1 = new DefaultSyncer(config1, volume1, manager1);
 			syncer1.getUploadFactory().setSyncDelayMills(0L);
-			syncer2 = new DefaultSyncer(config2, volume2, manager2);
-			syncer2.getUploadFactory().setSyncDelayMills(0L);
 
-			syncer1.setPollInterval(0, TimeUnit.MILLISECONDS);
+			this.syncer2 = syncer2();
+
+			syncer1.setPollInterval(100, TimeUnit.MILLISECONDS);
 			syncer1.run();
 			syncer1.waitFor();
 			managerThread1 = new Thread(manager1);
 			managerThread1.start();
 
-			syncer2.setPollInterval(0, TimeUnit.MILLISECONDS);
 			managerThread2 = new Thread(manager2);
 			managerThread2.start();
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("failed to start sync: " + e.getMessage());
 		}
+	}
+
+	private DefaultSyncer syncer2() {
+		DefaultSyncer syncer2;
+		syncer2 = new DefaultSyncer(config2, volume2, manager2);
+		syncer2.getUploadFactory().setSyncDelayMills(0L);
+		syncer2.setPollInterval(100, TimeUnit.MILLISECONDS);
+		return syncer2;
 	}
 
 	@After
@@ -112,11 +120,11 @@ public class SyncIntegrationTest {
 	}
 
 	protected static void waitUntil(Callable<Boolean> evaluate, Callable<String> errorMessage) {
-		waitUntil(evaluate, 1000L, errorMessage);
+		waitUntil(evaluate, TIMEOUT, errorMessage);
 	}
 
 	protected static void waitUntil(Callable<Boolean> evaluate) {
-		long timeout = 1000L;
+		long timeout = TIMEOUT;
 		waitUntil(evaluate, timeout);
 	}
 
@@ -182,23 +190,33 @@ public class SyncIntegrationTest {
 
 	@Test
 	public void syncsDeleteOccuredLocallyDuringOfflinePeriod() throws Exception {
-		Path path = Paths.get(tmpDir1.toString(), "file");
-		File file = path.toFile();
-		file.createNewFile();
-		waitUntil(() -> manager1.getTransactions().size() == 0);
-
-		// mark file up2date on syncer2
-		waitUntil(() -> volume1.navigate().navigate("sync").hasFile("file"));
-		long mtime = volume2.navigate().navigate("sync").getFile("file").mtime;
-		config2.getSyncIndex().update(Paths.get(tmpDir2.toString(), "file"), mtime, true);
 		syncer2.run();
 		syncer2.waitFor();
 
-		try {
-			waitUntil(() -> !file.exists(), TIMEOUT);
-		} catch (AssertionError e) {
-			System.out.println(e);
-		}
+		Path path1 = Paths.get(tmpDir1.toString(), "file");
+		File file1 = path1.toFile();
+		file1.createNewFile();
+		waitUntil(() -> manager1.getTransactions().size() == 0);
+		waitUntil(() -> volume1.navigate().navigate("sync").hasFile("file"), TIMEOUT);
+
+		Path path2 = Paths.get(tmpDir2.toString(), "file");
+		File file2 = path2.toFile();
+		waitUntil(() -> volume2.navigate().navigate("sync").hasFile("file"));
+		waitUntil(() -> file2.exists());
+		syncer2.shutdown();
+		syncer2.join();
+
+		// delete file while syncer2 is offline
+		file2.delete();
+
+		// (re-)start syncer2 to detect a delete and upload the delete
+		syncer2 = syncer2();
+		syncer2.run();
+		syncer2.waitFor();
+		waitUntil(() -> !volume2.navigate().navigate("sync").hasFile("file"));
+		waitUntil(() -> !volume1.navigate().navigate("sync").hasFile("file"));
+
+		waitUntil(() -> !file1.exists(), TIMEOUT);
 	}
 
 	@Test

@@ -1,6 +1,5 @@
 package de.qabel.desktop.storage;
 
-import com.amazonaws.auth.AWSCredentials;
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.DecryptedPlaintext;
 import de.qabel.core.crypto.QblECKeyPair;
@@ -33,12 +32,6 @@ public class BoxVolume {
 	private CryptoUtils cryptoUtils;
 	private File tempDir;
 	private String prefix;
-
-	public BoxVolume(String bucket, String prefix, AWSCredentials credentials,
-					 QblECKeyPair keyPair, byte[] deviceId, File tempDir) {
-		this(new S3ReadBackend(bucket, prefix), new S3WriteBackend(credentials, bucket, prefix),
-				keyPair, deviceId, tempDir, prefix);
-	}
 
 	public BoxVolume(StorageReadBackend readBackend, StorageWriteBackend writeBackend,
 					 QblECKeyPair keyPair, byte[] deviceId, File tempDir, String prefix) {

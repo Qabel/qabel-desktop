@@ -17,6 +17,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -31,7 +32,7 @@ public class AbstractController {
 	protected Gson gson;
 
 	protected void alert(String message, Exception e) {
-		Logger.getLogger(getClass().getSimpleName()).error(message, e);
+		LoggerFactory.getLogger(getClass().getSimpleName()).error(message, e);
 
 		alert = new Alert(Alert.AlertType.ERROR);
 		alert.setTitle("Error");

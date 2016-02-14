@@ -1,12 +1,13 @@
 package de.qabel.desktop;
 
 import com.airhacks.afterburner.injection.Injector;
+import de.qabel.core.accounting.AccountingHTTP;
+import de.qabel.core.accounting.AccountingProfile;
 import de.qabel.core.config.*;
 import de.qabel.core.exceptions.QblInvalidEncryptionKeyException;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.factory.ClientConfigurationFactory;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
-import de.qabel.desktop.config.factory.S3BoxVolumeFactory;
 import de.qabel.desktop.daemon.drop.DropDaemon;
 import de.qabel.desktop.config.factory.*;
 import de.qabel.desktop.daemon.management.DefaultTransferManager;
@@ -36,6 +37,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
@@ -84,10 +86,25 @@ public class DesktopClient extends Application {
 		config.addObserver((o, arg) -> {
 			Platform.runLater(() -> {
 				if (arg instanceof Account) {
-					new Thread(getSyncDaemon(config)).start();
-					view = new LayoutView();
-					Scene layoutScene = new Scene(view.getView(), 800, 600, true, aa);
-					Platform.runLater(() -> primaryStage.setScene(layoutScene));
+					try {
+						ClientConfiguration configuration = (ClientConfiguration) customProperties.get("clientConfiguration");
+						Account acc = (Account) arg;
+						AccountingServer server = new AccountingServer(new URI(acc.getProvider()), acc.getUser(), acc.getAuth());
+						AccountingHTTP accountingHTTP = new AccountingHTTP(server, new AccountingProfile());
+
+						BoxVolumeFactory factory = new BlockBoxVolumeFactory(configuration.getDeviceId().getBytes(), accountingHTTP);
+						boxVolumeFactory = new CachedBoxVolumeFactory(factory);
+						customProperties.put("boxVolumeFactory", boxVolumeFactory);
+
+						new Thread(getSyncDaemon(config)).start();
+						view = new LayoutView();
+						Scene layoutScene = new Scene(view.getView(), 800, 600, true, aa);
+						Platform.runLater(() -> primaryStage.setScene(layoutScene));
+
+					} catch (Exception e) {
+						logger.error("failed to init boxVolumeFactory: " + e.getMessage(), e);
+						//TODO to something with the fault
+					}
 				}
 			});
 		});
@@ -118,7 +135,6 @@ public class DesktopClient extends Application {
 		customProperties.put("transferManager", transferManager);
 		customProperties.put("persistence", persistence);
 		customProperties.put("dropUrlGenerator", new DropUrlGenerator("https://qdrop.prae.me"));
-		customProperties.put("boxVolumeFactory", boxVolumeFactory);
 		PersistenceIdentityRepository identityRepository = new PersistenceIdentityRepository(persistence);
 		customProperties.put("identityRepository", identityRepository);
 		PersistenceAccountRepository accountRepository = new PersistenceAccountRepository(persistence);
@@ -137,8 +153,6 @@ public class DesktopClient extends Application {
 		if (!clientConfig.hasDeviceId()) {
 			clientConfig.setDeviceId(generateDeviceId());
 		}
-		boxVolumeFactory = new CachedBoxVolumeFactory(new S3BoxVolumeFactory(clientConfig.getDeviceId()));
-		customProperties.put("boxVolumeFactory", boxVolumeFactory);
 		PersistenceContactRepository contactRepository = new PersistenceContactRepository(persistence);
 		customProperties.put("contactRepository", contactRepository);
 		customProperties.put("clientConfiguration", clientConfig);

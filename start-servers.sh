@@ -36,7 +36,7 @@ if [ ! -d venv ]; then
 fi
 source venv/bin/activate
 pip install -r requirements.txt
-python src/run.py runserver --addrport 9697 > ../block.log 2>&1 &
+python src/run.py --debug --dummy --dummy-log --dummy-cache --apisecret=Changeme --accounting-host=http://localhost:9696 --port=9697 > ../block.log 2>&1 &
 echo $! > ../block.pid
 deactivate
 cd ..

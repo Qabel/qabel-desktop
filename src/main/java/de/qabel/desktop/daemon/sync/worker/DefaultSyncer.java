@@ -81,6 +81,7 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 				polling = false;
 			}
 		});
+		poller.setName("DefaultSyncer-" + config.getName() + "#Poller");
 		poller.setDaemon(true);
 		poller.start();
 	}
@@ -224,6 +225,7 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 			logger.trace("local update " + type + " " + watchEvent.getPath().toString());
 			upload(watchEvent);
 		});
+		watcher.setName("DefaultSyncer-" + config.getName() + "#Watcher");
 		watcher.setDaemon(true);
 		watcher.start();
 	}
@@ -236,6 +238,11 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 		if (poller != null && poller.isAlive()) {
 			poller.interrupt();
 		}
+	}
+
+	public void join() throws InterruptedException {
+		watcher.join();
+		poller.join();
 	}
 
 	@Override

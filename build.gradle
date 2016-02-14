@@ -61,7 +61,8 @@ dependencies {
 
     compile 'org.ocpsoft.prettytime:prettytime:3.2.7.Final' //Apache License https://github.com/ocpsoft/prettytime/blob/master/LICENSE
     compile 'commons-cli:commons-cli:1.2'
-    compile 'com.amazonaws:aws-java-sdk:1.10.32'
+    compile 'commons-codec:commons-codec:1.10'
+    compile 'org.apache.httpcomponents:httpclient:4.5.+'
     // see https://github.com/AdamBien/afterburner.fx/pull/54 //compile 'com.airhacks:afterburner.fx:1.6.2' // Apache 2.0
     compile 'javax.inject:javax.inject:1'
     compile name: 'afterburner'
@@ -76,7 +77,6 @@ dependencies {
     compile group: 'org.apache.james', name: 'apache-mime4j', version: '0.7.2'
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.+'
     compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.8.7'
-    compile 'com.amazonaws:aws-java-sdk:1.10.32'
     compile 'com.madgag.spongycastle:prov:1.53.0.0'
 }
 
