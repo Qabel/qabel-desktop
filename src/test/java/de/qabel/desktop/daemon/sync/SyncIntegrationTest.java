@@ -57,8 +57,8 @@ public class SyncIntegrationTest {
 		try {
 			Identity identity = new IdentityBuilder(new DropUrlGenerator("http://localhost:5000")).build();
 			Account account = new Account("a", "b", "c");
-			config1 = new DefaultBoxSyncConfig(tmpDir1, Paths.get("/sync"), identity, account);
-			config2 = new DefaultBoxSyncConfig(tmpDir2, Paths.get("/sync"), identity, account);
+			config1 = new DefaultBoxSyncConfig("config1", tmpDir1, Paths.get("/sync"), identity, account);
+			config2 = new DefaultBoxSyncConfig("config2", tmpDir2, Paths.get("/sync"), identity, account);
 			LocalReadBackend readBackend = new LocalReadBackend(remoteDir);
 			LocalWriteBackend writeBackend = new LocalWriteBackend(remoteDir);
 			volume1 = new CachedBoxVolume(readBackend, writeBackend, identity.getPrimaryKeyPair(), new byte[0], new File(System.getProperty("java.io.tmpdir")), "prefix");
@@ -180,7 +180,10 @@ public class SyncIntegrationTest {
 		assertTrue(history.get(1) instanceof Download);
 		assertEquals(Paths.get("/sync/dir"), history.get(1).getSource());
 
-		waitUntil(() -> history.size() > 2, TIMEOUT, () -> "too few events: " + history);
+		waitUntil(() -> history.size() > 2, () -> {
+			SyncIntegrationTest i = SyncIntegrationTest.this;
+			return "too few events: " + history;
+		});
 		assertTrue(
 				"an unecpected " + history.get(2) + " occured after DOWNLAOD /sync/dir",
 				history.get(2) instanceof Download
@@ -216,7 +219,7 @@ public class SyncIntegrationTest {
 		waitUntil(() -> !volume2.navigate().navigate("sync").hasFile("file"));
 		waitUntil(() -> !volume1.navigate().navigate("sync").hasFile("file"));
 
-		waitUntil(() -> !file1.exists(), TIMEOUT);
+		waitUntil(() -> !file1.exists());
 	}
 
 	@Test

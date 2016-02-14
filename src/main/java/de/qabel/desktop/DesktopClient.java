@@ -105,7 +105,7 @@ public class DesktopClient extends Application {
 						Platform.runLater(() -> primaryStage.setScene(layoutScene));
 
 					} catch (Exception e) {
-						logger.error("failed to init boxVolumeFactory: " + e.getMessage(), e);
+						logger.error("failed to init background services: " + e.getMessage(), e);
 						//TODO to something with the fault
 					}
 				}

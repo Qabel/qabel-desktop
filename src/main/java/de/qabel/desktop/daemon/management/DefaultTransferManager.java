@@ -43,7 +43,7 @@ public class DefaultTransferManager extends Observable implements TransferManage
 
 	@Override
 	public List<Transaction> getHistory() {
-		return new LinkedList<>(history);
+		return Collections.unmodifiableList(history);
 	}
 
 	@Override

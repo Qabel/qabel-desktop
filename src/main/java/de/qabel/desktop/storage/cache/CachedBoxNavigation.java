@@ -283,7 +283,11 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 		}
 	}
 
-	protected Path getPath(BoxObject folder) {
+	public Path getPath() {
+		return path;
+	}
+
+	public Path getPath(BoxObject folder) {
 		return Paths.get(path.toString(), folder.name);
 	}
 }
