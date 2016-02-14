@@ -24,7 +24,16 @@ public class BlockBoxVolumeFactory implements BoxVolumeFactory {
 	public BoxVolume getVolume(Account account, Identity identity) {
 		String prefix = MagicEvilPrefixSource.getPrefix(account);
 
-		String root = "http://localhost:9697/api/v0/files/" + prefix;
+		String root;
+		if (account.getProvider().contains("localhost")) {
+			root = "http://localhost:9697/api/v0/files/" + prefix;
+		} else if (account.getProvider().contains("https://test-accounting.qabel.de")) {
+			root = "https://test-block.qabel.de/api/v0/files/" + prefix;
+		} else if (account.getProvider().contains("https://qaccounting.prae.me")) {
+			root = "https://qblock.prae.me/api/v0/files/" + prefix;
+		} else {
+			throw new IllegalArgumentException("don't know the block server for " + account.getProvider());
+		}
 
 		BlockReadBackend readBackend = new BlockReadBackend(root, accountingHTTP);
 		BlockWriteBackend writeBackend = new BlockWriteBackend(root, accountingHTTP);
