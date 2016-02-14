@@ -57,6 +57,7 @@ public class DesktopClient extends Application {
 	private PersistenceDropMessageRepository dropMessageRepository;
 	private PersistenceContactRepository contactRepository;
 	private BoxVolumeFactory boxVolumeFactory;
+	private Stage primaryStage;
 	private MonitoredTransferManager transferManager;
 
 	public static void main(String[] args) throws Exception {
@@ -68,7 +69,8 @@ public class DesktopClient extends Application {
 	}
 
 	@Override
-	public void start(Stage primaryStage) throws Exception {
+	public void start(Stage stage) throws Exception {
+		primaryStage = stage;
 		setUserAgentStylesheet(STYLESHEET_MODENA);
 
 		ClientConfiguration config = initDiContainer();
@@ -80,7 +82,7 @@ public class DesktopClient extends Application {
 
 		Platform.setImplicitExit(false);
 		primaryStage.setTitle(TITLE);
-		scene = new Scene(new LoginView().getView(), 370, 530, true, aa);
+		scene = new Scene(new LoginView().getView(), 370, 550, true, aa);
 		primaryStage.setScene(scene);
 
 		config.addObserver((o, arg) -> {
@@ -97,6 +99,7 @@ public class DesktopClient extends Application {
 						customProperties.put("boxVolumeFactory", boxVolumeFactory);
 
 						new Thread(getSyncDaemon(config)).start();
+						new Thread(getDropDaemon(config)).start();
 						view = new LayoutView();
 						Scene layoutScene = new Scene(view.getView(), 800, 600, true, aa);
 						Platform.runLater(() -> primaryStage.setScene(layoutScene));
@@ -156,6 +159,7 @@ public class DesktopClient extends Application {
 		PersistenceContactRepository contactRepository = new PersistenceContactRepository(persistence);
 		customProperties.put("contactRepository", contactRepository);
 		customProperties.put("clientConfiguration", clientConfig);
+		customProperties.put("primaryStage", primaryStage);
 
 
 		Injector.setConfigurationSource(customProperties::get);

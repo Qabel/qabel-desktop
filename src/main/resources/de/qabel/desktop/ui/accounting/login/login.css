@@ -5,9 +5,8 @@
 .login-form .text-field {
     -fx-background-radius: 15;
     -fx-padding: 5px 15px 5px 15px;
-    -fx-alignment: CENTER-CENTER!important;
-    -fx-text-alignment: center!important;
 }
+
 .login-form  .choice-box {
     -fx-background-radius: 15;
     -fx-background-color: #d5d5d5, white;
@@ -31,17 +30,16 @@
     -fx-spacing: 3em;
 }
 
-.login-button-bar .button {
+.button {
     -fx-text-fill: #fd670d;
     -fx-font-weight: bold;
     -fx-background-radius: 15;
     -fx-indent: 20em;
     -fx-background-color: #fcdcca, white;
-    -fx-pref-width: 10em;
     -fx-background-insets: 0px, 1px;
     -fx-cursor: hand;
 }
-.login-button-bar .button.error {
+.button.error {
     -fx-border-color: white;
     -fx-background-color: red;
     -fx-border-width: 0.1em;
@@ -49,15 +47,19 @@
     -fx-text-fill: white;
 }
 
-.login-button-bar .button:hover {
+.button.check {
+    -fx-border-color: white;
+    -fx-background-color: green;
+    -fx-border-width: 0.1em;
+    -fx-border-radius: 15;
+    -fx-text-fill: white;
+}
+
+.button:hover {
     -fx-background-color: #fcdcca, #fcdcca;
 }
 
-.create-account-button {
-    -fx-text-fill: #848484 !important;
-}
-
-.login .separator {
+.separator {
     -fx-background-color: white;
     -fx-max-height: 0.001em;
     -fx-min-height: -fx-max-height;
@@ -66,6 +68,6 @@
     -fx-border-width: 0;
 }
 
-.login .hyperlink {
+.hyperlink {
     -fx-text-fill: #c8c8c8;
 }

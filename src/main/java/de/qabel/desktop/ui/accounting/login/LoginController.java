@@ -5,6 +5,7 @@ import de.qabel.core.accounting.AccountingHTTP;
 import de.qabel.core.accounting.AccountingProfile;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.AccountingServer;
+import de.qabel.core.exceptions.QblCreateAccountFailException;
 import de.qabel.core.exceptions.QblInvalidCredentials;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.ui.AbstractController;
@@ -13,20 +14,16 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 
 import javax.inject.Inject;
-import java.awt.*;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class LoginController extends AbstractController implements Initializable {
 	@FXML
@@ -36,10 +33,27 @@ public class LoginController extends AbstractController implements Initializable
 	Button loginButton;
 
 	@FXML
+	Button openCreateButton;
+	@FXML
+	Button newPassword;
+
+	@FXML
+	Button recoverPassword;
+	@FXML
+	Button createButton;
+
+	@FXML
 	TextField user;
 
 	@FXML
-	TextField auth;
+	PasswordField password;
+
+	@FXML
+	PasswordField confirm;
+
+	@FXML
+	TextField email;
+
 
 	@FXML
 	Pane buttonBar;
@@ -47,12 +61,19 @@ public class LoginController extends AbstractController implements Initializable
 	@FXML
 	Pane progressBar;
 
+	ResourceBundle resourceBundle;
 	private ClientConfiguration config;
+	private Account account;
 
 	@Inject
 	public LoginController(ClientConfiguration config) {
 		this.config = config;
 	}
+
+	@Inject
+	private Stage primaryStage;
+	private String accountUrl = "http://localhost:9696";
+	Map map = new HashMap<>();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -62,34 +83,126 @@ public class LoginController extends AbstractController implements Initializable
 		providerList.add("https://qaccounting.prae.me");
 		ObservableList<String> providers = new ObservableListWrapper<>(providerList);
 		providerChoices.setItems(providers);
-		providerChoices.setValue("http://localhost:9696");
+		providerChoices.setValue(accountUrl);
 
 		progressBar.visibleProperty().bind(buttonBar.visibleProperty().not());
 		progressBar.managedProperty().bind(progressBar.visibleProperty());
 		buttonBar.managedProperty().bind(buttonBar.visibleProperty());
+		this.resourceBundle = resources;
 
 
 		if (config.hasAccount()) {
 			Account account = config.getAccount();
 			providerChoices.getSelectionModel().select(account.getProvider());
 			user.setText(account.getUser());
-			auth.setText(account.getAuth());
+			password.setText(account.getAuth());
 			Platform.runLater(this::login);
 		}
 	}
 
-	public void recoverPassword(ActionEvent actionEvent) {
+	public void newPassword(ActionEvent actionEvent) {
+		newPassword();
+	}
+
+	public void newPassword() {
 		new Thread(() -> {
 			try {
-				URL url = new URL(providerChoices.getValue() + "/accounts/password_reset/");
-				Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-				if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-					desktop.browse(url.toURI());
-				}
-			} catch (Exception e) {
+				AccountingHTTP http = createAccount();
+				http.resetPassword(email.getText());
+				toMailSend(resourceBundle.getString("send"));
+				newPassword.disableProperty().set(true);
+			} catch (URISyntaxException | IOException | IllegalArgumentException e) {
+				Platform.runLater(() -> toEMailSendFailureState(resourceBundle.getString("sendFail")));
 				e.printStackTrace();
 			}
 		}).start();
+	}
+
+	public void recoverPassword(ActionEvent actionEvent) {
+		recoverPassword();
+	}
+
+	public void recoverPassword() {
+
+		Platform.runLater(() -> {
+			email.setManaged(true);
+
+			recoverPassword.setManaged(false);
+			recoverPassword.setVisible(false);
+
+			newPassword.setManaged(true);
+			primaryStage.setHeight(650);
+		});
+
+	}
+
+
+	public void openCreateBoxAccountSetup(ActionEvent actionEvent) {
+		openCreateBoxAccountSetup();
+	}
+
+	private void openCreateBoxAccountSetup() {
+		Platform.runLater(() -> {
+			email.setManaged(true);
+			confirm.setManaged(true);
+			createButton.setManaged(true);
+
+			openCreateButton.setManaged(false);
+			openCreateButton.setVisible(false);
+			primaryStage.setHeight(650);
+
+		});
+	}
+
+
+	public void createBoxAccount(ActionEvent actionEvent) {
+		createBoxAccount();
+	}
+
+	private void createBoxAccount() {
+		toProgressState();
+
+		new Thread(() -> {
+			try {
+				if (!password.getText().equals(confirm.getText())) {
+					String text = "Passwords not equals";
+					map.put("password1", text);
+					createFailureState(text);
+					throw new IllegalArgumentException(text);
+				}
+
+				AccountingHTTP http = createAccount();
+				http.createBoxAccount(email.getText());
+				http.login();
+				http.updateProfile();
+				config.setAccount(account);
+
+			} catch (QblCreateAccountFailException e) {
+				e.printStackTrace();
+				map = e.getMap();
+				String text = "";
+				if (map.containsKey("email")) {
+					text = text.concat(((ArrayList) map.get("email")).get(0) + " ");
+				}
+				if (map.containsKey("password1")) {
+					text = text.concat(((ArrayList) map.get("password1")).get(0) + " ");
+				}
+				if (map.containsKey("username")) {
+					text = text.concat(((ArrayList) map.get("username")).get(0) + " ");
+				}
+				createFailureState(text);
+			} catch (QblInvalidCredentials | URISyntaxException | IOException | IllegalArgumentException e) {
+				e.printStackTrace();
+			} finally {
+				Platform.runLater(() -> buttonBar.setVisible(true));
+			}
+		}).start();
+	}
+
+	private void createFailureState(String text) {
+		final String finalText = text;
+		Platform.runLater(() ->
+				toCreateFailureState(finalText));
 	}
 
 	public void login(ActionEvent actionEvent) {
@@ -101,33 +214,59 @@ public class LoginController extends AbstractController implements Initializable
 
 		// TODO extract login to daemon
 		new Thread(() -> {
-			Account account = new Account(null, null, null);
-			if (config.hasAccount()) {
-				account = config.getAccount();
-			}
-			account.setProvider(providerChoices.getValue());
-			account.setUser(user.getText());
-			account.setAuth(auth.getText());
 			try {
-				AccountingHTTP http = new AccountingHTTP(new AccountingServer(new URL(account.getProvider()).toURI(), account.getUser(), account.getAuth()), new AccountingProfile());
+				AccountingHTTP http = createAccount();
 				http.login();
 				http.updateProfile();
 				config.setAccount(account);
+
 			} catch (URISyntaxException | IOException e) {
 				e.printStackTrace();
 			} catch (QblInvalidCredentials qblInvalidCredentials) {
 				qblInvalidCredentials.printStackTrace();
-				Platform.runLater(() -> toFailureState(qblInvalidCredentials.getMessage()));
+				Platform.runLater(() -> toLoginFailureState(qblInvalidCredentials.getMessage()));
 			}
 			Platform.runLater(() -> buttonBar.setVisible(true));
 		}).start();
 	}
 
-	private void toFailureState(String message) {
+	private AccountingHTTP createAccount() throws MalformedURLException, URISyntaxException {
+		account = new Account(null, null, null);
+		if (config.hasAccount()) {
+			account = config.getAccount();
+		}
+		account.setProvider(providerChoices.getValue());
+		account.setUser(user.getText());
+		account.setAuth(password.getText());
+
+		AccountingHTTP http = new AccountingHTTP(new AccountingServer(new URL(account.getProvider()).toURI(), account.getUser(), account.getAuth()), new AccountingProfile());
+
+		return http;
+	}
+
+	private void toLoginFailureState(String message) {
 		buttonBar.setVisible(true);
 		loginButton.getStyleClass().add("error");
 		Tooltip t = new Tooltip(message);
 		loginButton.setTooltip(t);
+	}
+
+	private void toCreateFailureState(String message) {
+		createButton.getStyleClass().add("error");
+		Tooltip t = new Tooltip(message);
+		createButton.setTooltip(t);
+	}
+
+	private void toEMailSendFailureState(String message) {
+		newPassword.getStyleClass().add("error");
+		Tooltip t = new Tooltip(message);
+		newPassword.setTooltip(t);
+	}
+
+	private void toMailSend(String message) {
+		newPassword.getStyleClass().add("check");
+		Tooltip t = new Tooltip(message);
+		newPassword.setTooltip(t);
 	}
 
 	private void toProgressState() {
