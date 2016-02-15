@@ -27,9 +27,11 @@ import de.qabel.desktop.ui.connector.HttpDropConnector;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.stage.Stage;
+import org.scenicview.ScenicView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,7 +103,8 @@ public class DesktopClient extends Application {
 						new Thread(getSyncDaemon(config)).start();
 						new Thread(getDropDaemon(config)).start();
 						view = new LayoutView();
-						Scene layoutScene = new Scene(view.getView(), 800, 600, true, aa);
+						Parent view = this.view.getView();
+						Scene layoutScene = new Scene(view, 800, 600, true, aa);
 						Platform.runLater(() -> primaryStage.setScene(layoutScene));
 
 					} catch (Exception e) {

@@ -35,8 +35,6 @@ public class AccountingItemController extends AbstractController implements Init
 	Label alias;
 	@FXML
 	Label mail;
-	@FXML
-	Label provider;
 
 	@FXML
 	Pane avatarContainer;
@@ -46,9 +44,6 @@ public class AccountingItemController extends AbstractController implements Init
 
 	@FXML
 	public Node root;
-
-	@FXML
-	Label quota;
 
 	@Inject
 	private Identity identity;
@@ -71,17 +66,6 @@ public class AccountingItemController extends AbstractController implements Init
 		if (clientConfiguration.hasAccount()) {
 			Account account = clientConfiguration.getAccount();
 			mail.setText(account.getUser());
-			provider.setText(account.getProvider());
-
-			try {
-				AccountingHTTP http = new AccountingHTTP(new AccountingServer(new URL(account.getProvider()).toURI(), account.getUser(), account.getAuth()), new AccountingProfile());
-				http.login();
-				http.updateProfile();
-
-				quota.setText(http.getProfile().getQuota() + " MB");
-			} catch (URISyntaxException | QblInvalidCredentials | IOException e) {
-				e.printStackTrace();
-			}
 		}
 
 		updateSelection();

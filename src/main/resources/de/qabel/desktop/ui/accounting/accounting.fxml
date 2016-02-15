@@ -118,7 +118,7 @@
     </Button>
     <HBox prefHeight="100.0">
         <children>
-            <Button fx:id="import" mnemonicParsing="false" onAction="#handleImportIdentityButtonAction"
+            <Button fx:id="importIdentity" mnemonicParsing="false" onAction="#handleImportIdentityButtonAction"
                     text="%importIdentity">
                 <HBox.margin>
                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>

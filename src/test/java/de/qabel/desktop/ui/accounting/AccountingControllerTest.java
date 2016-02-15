@@ -19,6 +19,8 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 
 public class AccountingControllerTest extends AbstractControllerTest {
@@ -127,6 +129,32 @@ public class AccountingControllerTest extends AbstractControllerTest {
 		assertEquals(exportContact.getCreated(), identity.getCreated(), 100000);
 		assertEquals(exportContact.getUpdated(), identity.getUpdated());
 		assertEquals(exportContact.getDeleted(), identity.getDeleted());
+	}
+
+	@Test
+	public void givenNoIdentity_unusableButtonsGetDisabled() throws Exception {
+		clientConfiguration.selectIdentity(null);
+
+		controller = getAccountingController();
+		assertTrue(controller.exportIdentity.isDisabled());
+		assertTrue(controller.exportContact.isDisabled());
+	}
+
+	@Test
+	public void givenAnIdentity_usableButtonsAreEnabled() throws Exception {
+		controller = getAccountingController();
+		assertFalse(controller.exportIdentity.isDisabled());
+		assertFalse(controller.exportContact.isDisabled());
+	}
+
+	@Test
+	public void onIdentitySelection_usableButtonsAreEnabled() throws Exception {
+		clientConfiguration.selectIdentity(null);
+
+		controller = getAccountingController();
+		clientConfiguration.selectIdentity(identityBuilderFactory.factory().withAlias("test").build());
+		assertFalse(controller.exportIdentity.isDisabled());
+		assertFalse(controller.exportContact.isDisabled());
 	}
 
 	private File setupExport() throws URISyntaxException {
