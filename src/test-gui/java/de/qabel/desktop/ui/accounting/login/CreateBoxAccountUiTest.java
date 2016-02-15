@@ -82,8 +82,9 @@ public class CreateBoxAccountUiTest extends AbstractGuiTest<LoginController> {
 	@Test
 	public void passwordsNotEqualFail() {
 		clickOn("#openCreateButton");
-		controller.password.clear();
-		controller.user.clear();
+
+		runLaterAndWait(controller.password::clear);
+		runLaterAndWait(controller.user::clear);
 
 		setup();
 		String name = "validUserName";
