@@ -20,7 +20,7 @@ public class StubContactRepository implements ContactRepository {
 
 	@Override
 	public Contact findByKeyId(Identity identity, String keyId) throws EntityNotFoundExcepion {
-		return new Contact(identity, identity.getAlias(), identity.getDropUrls(), identity.getEcPublicKey());
+		return new Contact(identity.getAlias(), identity.getDropUrls(), identity.getEcPublicKey());
 	}
 
 	@Override

@@ -17,14 +17,14 @@
          <children>
             <Label prefWidth="150.0" text="Local Folder" />
             <TextField fx:id="localPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
-            <Button styleClass="choose">choose</Button>
+            <Button fx:id="chooseLocalPath" styleClass="choose">choose</Button>
          </children>
       </HBox>
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">
          <children>
             <Label prefWidth="150.0" text="Remote Folder" />
             <TextField fx:id="remotePath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
-            <Button styleClass="choose">choose</Button>
+            <Button fx:id="chooseRemotePath" styleClass="choose">choose</Button>
          </children>
       </HBox>
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">

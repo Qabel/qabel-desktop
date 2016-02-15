@@ -1,6 +1,5 @@
 package de.qabel.desktop.storage.cache;
 
-import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
@@ -225,11 +224,15 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 
 	private void notify(BoxObject file, TYPE type) {
 		setChanged();
+		Long mtime = file instanceof BoxFile ? ((BoxFile) file).mtime : null;
+		if (type == DELETE) {
+			mtime = System.currentTimeMillis();
+		}
 		notifyObservers(
 				new RemoteChangeEvent(
 						getPath(file),
 						file instanceof BoxFolder,
-						file instanceof BoxFile ? ((BoxFile) file).mtime : null,
+						mtime,
 						type,
 						file,
 						this
@@ -280,7 +283,11 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 		}
 	}
 
-	protected Path getPath(BoxObject folder) {
+	public Path getPath() {
+		return path;
+	}
+
+	public Path getPath(BoxObject folder) {
 		return Paths.get(path.toString(), folder.name);
 	}
 }

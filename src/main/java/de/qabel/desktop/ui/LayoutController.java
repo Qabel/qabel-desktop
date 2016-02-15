@@ -100,7 +100,7 @@ public class LayoutController extends AbstractController implements Initializabl
 		}
 		FxProgressModel progressModel = new FxProgressModel(progress);
 		uploadProgress.progressProperty().bind(progressModel.progressProperty());
-		progressModel.progressProperty().addListener((observable, oldValue, newValue) -> {
+		progress.onProgress(() -> {
 			if (progress.isEmpty()) {
 				uploadProgress.setVisible(false);
 			} else {

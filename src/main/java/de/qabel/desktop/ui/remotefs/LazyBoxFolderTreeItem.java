@@ -1,6 +1,5 @@
 package de.qabel.desktop.ui.remotefs;
 
-import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
@@ -142,5 +141,10 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observ
 		}
 
 		updateAsync();
+	}
+
+	@Override
+	public String toString() {
+		return folder.name;
 	}
 }

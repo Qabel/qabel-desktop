@@ -43,7 +43,7 @@ public class DefaultTransferManager extends Observable implements TransferManage
 
 	@Override
 	public List<Transaction> getHistory() {
-		return new LinkedList<>(history);
+		return Collections.unmodifiableList(history);
 	}
 
 	@Override
@@ -146,7 +146,7 @@ public class DefaultTransferManager extends Observable implements TransferManage
 			download.toState(FINISHED);
 		} catch (TransferSkippedException e) {
 			download.toState(SKIPPED);
-			logger.trace("skipped download "  + " (" + e.getMessage() + ")");
+			logger.debug("skipped download "  + " (" + e.getMessage() + ")");
 		} catch (Exception e) {
 			download.toState(FAILED);
 			throw e;

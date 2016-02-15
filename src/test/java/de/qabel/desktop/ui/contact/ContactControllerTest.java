@@ -50,7 +50,7 @@ public class ContactControllerTest extends AbstractControllerTest {
 		Identity i = identityBuilderFactory.factory().withAlias(TEST_ALIAS).build();
 		clientConfiguration.selectIdentity(i);
 
-		Contact c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
+		Contact c = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
 		c.setPhone("000");
 		c.setEmail("abc");
 		contactRepository.save(c);

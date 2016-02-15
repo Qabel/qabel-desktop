@@ -39,7 +39,7 @@ public class SyncItemControllerGuiTest extends AbstractGuiTest<SyncItemControlle
 	public void showsItemsProperties() {
 		assertEquals("testsync", name().getText());
 		assertEquals(Paths.get("tmp").toAbsolutePath().toString(), localPath().getText());
-		assertEquals("tmp", remotePath().getText());
+		assertEquals("/tmp", remotePath().getText());
 	}
 
 	@Test
@@ -52,7 +52,7 @@ public class SyncItemControllerGuiTest extends AbstractGuiTest<SyncItemControlle
 
 		assertEquals("changed", name().getText());
 		assertEquals(Paths.get("to something").toAbsolutePath().toString(), localPath().getText());
-		assertEquals("else", remotePath().getText());
+		assertEquals("/else", remotePath().getText());
 	}
 
 	private Labeled remotePath() {

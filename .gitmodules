@@ -4,3 +4,6 @@
 [submodule "qabel-accounting"]
 	path = qabel-accounting
 	url = https://github.com/Qabel/qabel-accounting.git
+[submodule "qabel-block"]
+	path = qabel-block
+	url = https://github.com/Qabel/qabel-block.git
