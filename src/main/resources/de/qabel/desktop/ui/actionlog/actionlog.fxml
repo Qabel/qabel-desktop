@@ -5,22 +5,27 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.*?>
-<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="de.qabel.desktop.ui.actionlog.ActionlogController"  >
+<VBox fx:id="chat" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="de.qabel.desktop.ui.actionlog.ActionlogController">
     <children>
-        <ScrollPane fitToWidth="true" >
-            <VBox>
-                <children>
-                    <VBox fx:id="messages" alignment="BOTTOM_LEFT">
-                    </VBox>
-                </children>
-            </VBox>
+        <ScrollPane fitToWidth="true" prefHeight="500">
+            <content>
+                <VBox>
+                    <children>
+                        <VBox fx:id="messages" alignment="BOTTOM_LEFT">
+                        </VBox>
+                    </children>
+                </VBox>
+            </content>
+            <VBox.margin>
+                <Insets left="10.0"/>
+            </VBox.margin>
         </ScrollPane>
         <HBox prefHeight="78.0">
             <children>
                 <TextArea fx:id="textarea" prefHeight="68.0" wrapText="true" BorderPane.alignment="BOTTOM_CENTER">
                     <HBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                        <Insets bottom="5.0" left="10.0" right="5.0" top="5.0"/>
                     </HBox.margin>
                 </TextArea>
                 <VBox>

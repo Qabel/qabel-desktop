@@ -21,7 +21,10 @@ import de.qabel.desktop.ui.contact.item.ContactItemView;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -50,6 +53,16 @@ public class ContactController extends AbstractController implements Initializab
 	@FXML
 	ScrollPane scroller;
 
+
+	@FXML
+	Button importButton;
+
+	@FXML
+	Button exportButton;
+
+	@FXML
+	VBox contacts;
+
 	@Inject
 	private ClientConfiguration clientConfiguration;
 
@@ -71,6 +84,15 @@ public class ContactController extends AbstractController implements Initializab
 		} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
 			entityNotFoundExcepion.printStackTrace();
 		}
+		createButtonGraphics();
+	}
+
+	private void createButtonGraphics() {
+		Image importGraphic = new Image(getClass().getResourceAsStream("/img/import.png"));
+		importButton.setGraphic(new ImageView(importGraphic));
+
+		Image exportGraphic = new Image(getClass().getResourceAsStream("/img/export.png"));
+		exportButton.setGraphic(new ImageView(exportGraphic));
 	}
 
 	private void addListener() {

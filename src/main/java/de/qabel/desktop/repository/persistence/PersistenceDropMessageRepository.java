@@ -68,8 +68,8 @@ public class PersistenceDropMessageRepository extends AbstractCachedPersistenceR
 		int senderIdentifier = dropMessage.getSender().hashCode();
 		int receiverKeyIdentifier = dropMessage.getReceiver().hashCode();
 
-		return (senderIdentifier == contactKeyIdentifier && receiverKeyIdentifier == ownKeyIdentifier
-				|| (senderIdentifier == ownKeyIdentifier && receiverKeyIdentifier == contactKeyIdentifier));
+		return (senderIdentifier == contactKeyIdentifier && receiverKeyIdentifier == ownKeyIdentifier && (!dropMessage.getSend())
+				|| (senderIdentifier == ownKeyIdentifier && receiverKeyIdentifier == contactKeyIdentifier && dropMessage.getSend()));
 	}
 
 	@Override

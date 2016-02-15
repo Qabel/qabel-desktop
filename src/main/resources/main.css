@@ -63,3 +63,8 @@
 .selected {
     -fx-background-color: grey;
 }
+#chat{
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: black;
+    -fx-border-width: 0 0 0 1
+}
