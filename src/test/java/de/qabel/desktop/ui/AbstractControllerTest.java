@@ -87,6 +87,7 @@ public class AbstractControllerTest {
 		diContainer.put("loadManager", loadManager);
 		diContainer.put("dropMessageRepository", dropMessageRepository);
 		diContainer.put("httpDropConnector", httpDropConnector);
+		diContainer.put("transferManager", new DefaultTransferManager());
 		Injector.setConfigurationSource(diContainer::get);
 		Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(diContainer));
 
@@ -131,6 +132,6 @@ public class AbstractControllerTest {
 			runnable.run();
 			hasRun[0] = true;
 		});
-		waitUntil(() -> hasRun[0]);
+		waitUntil(() -> hasRun[0], 5000L);
 	}
 }

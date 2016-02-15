@@ -63,7 +63,7 @@ public class DefaultClientConfiguration extends Observable implements ClientConf
 
 	@Override
 	public void selectIdentity(Identity identity) {
-		if (!identity.equals(this.identity)) {
+		if (identity == null && this.identity != null || identity != null && !identity.equals(this.identity)) {
 			setChanged();
 		}
 		this.identity = identity;
