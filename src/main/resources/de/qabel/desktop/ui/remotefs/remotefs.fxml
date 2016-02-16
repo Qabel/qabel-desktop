@@ -9,9 +9,10 @@
     <children>
         <TreeTableView fx:id="treeTable" prefHeight="550.0" prefWidth="600.0">
             <columns>
-                <TreeTableColumn fx:id="nameColumn" prefWidth="250.0" text="%name"/>
-                <TreeTableColumn fx:id="sizeColumn" prefWidth="150.0" text="%size"/>
-                <TreeTableColumn fx:id="dateColumn" prefWidth="200.0" text="%date"/>
+                <TreeTableColumn fx:id="nameColumn" prefWidth="200.0" minWidth="50" text="%name"/>
+                <TreeTableColumn fx:id="sizeColumn" prefWidth="70.0" text="%size"/>
+                <TreeTableColumn fx:id="dateColumn" prefWidth="120.0" text="%date"/>
+                <TreeTableColumn fx:id="optionsColumn" prefWidth="150.0" minWidth="100"/>
             </columns>
         </TreeTableView>
     </children>
