@@ -31,6 +31,10 @@ public class AbstractController {
 	protected Label exceptionLabel;
 	protected Gson gson;
 
+	protected void alert(Exception e) {
+		alert(e.getMessage(), e);
+	}
+
 	protected void alert(String message, Exception e) {
 		LoggerFactory.getLogger(getClass().getSimpleName()).error(message, e);
 

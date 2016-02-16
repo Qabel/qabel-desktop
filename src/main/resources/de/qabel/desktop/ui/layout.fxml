@@ -13,23 +13,63 @@
                <children>
                   <HBox fx:id="selectedIdentity" styleClass="selectedIdentity">
                      <children>
-                     <Pane fx:id="avatarContainer">
-                        <Label styleClass="avatar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="50.0" minWidth="50.0" prefHeight="50.0" prefWidth="50.0">
-                           <HBox.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </HBox.margin>
-                        </Label>
-                     </Pane>
-                        <VBox BorderPane.alignment="CENTER">
+                         <Pane fx:id="avatarContainer">
+                            <Label styleClass="avatar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="50.0" minWidth="50.0" prefHeight="50.0" prefWidth="50.0">
+                               <HBox.margin>
+                                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                               </HBox.margin>
+                            </Label>
+                         </Pane>
+                        <VBox BorderPane.alignment="CENTER" styleClass="aliasContainer">
                            <children>
-                              <Label fx:id="alias" text="Guy Pearce">
+                              <Label fx:id="alias" text="Guy Pearce Longerman">
                                  <font>
-                                    <Font name="System Bold" size="15.0" />
-                                 </font></Label>
-                              <Label fx:id="mail" text="guy@pearce.com" />
+                                    <Font name="System Bold" size="13.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="mail" text="guy@pearce.com">
+                                  <font>
+                                      <Font name="System" size="9.5" />
+                                  </font>
+                              </Label>
+                               <BorderPane styleClass="quotaBlock">
+                                   <right>
+                                       <Label fx:id="quota" BorderPane.alignment="CENTER"
+                                              text="24%" style="-fx-text-fill: #fd670d; -fx-padding: 0 0.2em 0 0">
+                                       <font>
+                                           <Font name="System" size="9.5" />
+                                       </font>
+                                       </Label>
+                                   </right>
+                                   <center>
+                                       <HBox BorderPane.alignment="CENTER" style="-fx-pref-height: 0.5em">
+                                           <padding>
+                                                   <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                           </padding>
+                                           <children>
+                                               <Label
+                                                       minWidth="50.0"
+                                                       style="-fx-border-radius: 5; -fx-background-radius: 5; -fx-background-color: #fd670d;"
+                                                       fx:id="provider"
+                                                       text="">
+                                                   <font>
+                                                       <Font name="System" size="6" />
+                                                   </font>
+                                                   <padding>
+                                                       <Insets left="5.0" right="5.0"/>
+                                                   </padding>
+                                               </Label>
+                                           </children>
+                                       </HBox>
+                                   </center>
+                                   <VBox.margin>
+                                       <Insets top="5.0"/>
+                                   </VBox.margin>
+                               </BorderPane>
+
                            </children>
                            <padding>
-                              <Insets top="10" left="5.0" right="5.0" />
+                              <Insets top="5" left="5.0" right="5.0" />
                            </padding>
                         </VBox>
                      </children>

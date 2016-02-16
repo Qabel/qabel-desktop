@@ -89,6 +89,19 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 	}
 
 	protected FxRobot clickOn(Node node) {
+		moveTo(node);
+		try {
+			return robot.moveTo(node).clickOn(node);
+		} catch (BoundsLocatorException e) {
+			return robot.moveTo(node).clickOn(node);
+		}
+	}
+
+	protected FxRobot moveTo(String query) {
+		return moveTo(getFirstNode(query));
+	}
+
+	protected FxRobot moveTo(Node node) {
 		baseFXRobot.waitForIdle();
 		double x = -1;
 		double y = -1;
@@ -102,11 +115,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 			} catch (InterruptedException ignored) {
 			}
 		}
-		try {
-			return robot.moveTo(node).clickOn(node);
-		} catch (BoundsLocatorException e) {
-			return robot.moveTo(node).clickOn(node);
-		}
+		return robot.moveTo(node);
 	}
 
 	protected Node getFirstNode(String query) {

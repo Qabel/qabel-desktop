@@ -185,7 +185,6 @@ public class DefaultTransferManager extends Observable implements TransferManage
 
 		BoxVolume volume = upload.getBoxVolume();
 		Path parent = destination.getParent();
-		String filename = destination.getFileName().toString();
 		BoxNavigation dir;
 
 		SimpleDateFormat format = new SimpleDateFormat("D.M.Y H:m:s");
@@ -194,13 +193,14 @@ public class DefaultTransferManager extends Observable implements TransferManage
 			createDirectory(destination, volume);
 			return;
 		}
+
+		String filename = destination.getFileName().toString();
 		if (upload.getType() == DELETE) {
 			dir = navigate(parent, volume);
-			String fileName = destination.getFileName().toString();
-			if (dir.hasFolder(fileName)) {
-				dir.delete(dir.getFolder(fileName));
+			if (dir.hasFolder(filename)) {
+				dir.delete(dir.getFolder(filename));
 			} else {
-				BoxFile file = dir.getFile(fileName);
+				BoxFile file = dir.getFile(filename);
 				if (remoteIsNewer(upload, file)) {
 					throw new TransferSkippedException("remote is newer " + format.format(new Date(file.mtime)) + ">" + format.format(new Date(upload.getMtime())));
 				}

@@ -12,7 +12,6 @@ import de.qabel.desktop.daemon.drop.DropDaemon;
 import de.qabel.desktop.config.factory.*;
 import de.qabel.desktop.daemon.management.DefaultTransferManager;
 import de.qabel.desktop.daemon.management.MonitoredTransferManager;
-import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
 import de.qabel.desktop.repository.AccountRepository;
@@ -27,6 +26,7 @@ import de.qabel.desktop.ui.connector.HttpDropConnector;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.stage.Stage;
@@ -101,7 +101,8 @@ public class DesktopClient extends Application {
 						new Thread(getSyncDaemon(config)).start();
 						new Thread(getDropDaemon(config)).start();
 						view = new LayoutView();
-						Scene layoutScene = new Scene(view.getView(), 800, 600, true, aa);
+						Parent view = this.view.getView();
+						Scene layoutScene = new Scene(view, 800, 600, true, aa);
 						Platform.runLater(() -> primaryStage.setScene(layoutScene));
 
 					} catch (Exception e) {

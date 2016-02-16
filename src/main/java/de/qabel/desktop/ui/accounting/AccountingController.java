@@ -14,6 +14,7 @@ import de.qabel.desktop.ui.accounting.item.AccountingItemView;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -30,6 +31,15 @@ public class AccountingController extends AbstractController implements Initiali
 
 	@FXML
 	VBox identityList;
+
+	@FXML
+	Button importIdentity;
+
+	@FXML
+	Button exportIdentity;
+
+	@FXML
+	Button exportContact;
 
 	List<AccountingItemView> itemViews = new LinkedList<>();
 	TextInputDialog dialog;
@@ -49,6 +59,16 @@ public class AccountingController extends AbstractController implements Initiali
 		loadIdentities();
 		buildGson();
 		this.resourceBundle = resources;
+
+		updateIdentityState();
+		clientConfiguration.addObserver((o, arg) -> { if (arg instanceof Identity) {updateIdentityState();}});
+	}
+
+	private void updateIdentityState() {
+		Identity identity = clientConfiguration.getSelectedIdentity();
+
+		exportIdentity.setDisable(identity == null);
+		exportContact.setDisable(identity == null);
 	}
 
 	public void addIdentity(ActionEvent actionEvent) {

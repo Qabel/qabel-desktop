@@ -24,8 +24,8 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observ
 	private boolean loading;
 	private StringProperty nameProperty;
 	private boolean isLeaf;
-	private Image fileImg = new Image(getClass().getResourceAsStream("/file.png"));
-	private static Image folderImg = new Image(LazyBoxFolderTreeItem.class.getResourceAsStream("/folder.png"));
+	private Image fileImg = new Image(getClass().getResourceAsStream("/icon/file.png"),  18, 18, true, false);
+	private static Image folderImg = new Image(LazyBoxFolderTreeItem.class.getResourceAsStream("/icon/folder.png"), 18, 18, true, true);
 	private static ExecutorService executorService = Executors.newCachedThreadPool();
 
 	public LazyBoxFolderTreeItem(BoxFolder folder, ReadOnlyBoxNavigation navigation) {

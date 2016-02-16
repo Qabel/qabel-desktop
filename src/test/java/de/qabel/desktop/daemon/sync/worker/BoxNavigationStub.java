@@ -36,6 +36,6 @@ public class BoxNavigationStub extends CachedBoxNavigation {
 
 	@Override
 	public CachedBoxNavigation navigate(String name) throws QblStorageException {
-		return new BoxNavigationStub(null, null);
+		return new BoxNavigationStub(null, getPath().resolve(name + "/"));
 	}
 }

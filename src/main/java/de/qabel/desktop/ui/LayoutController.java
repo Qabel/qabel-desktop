@@ -68,6 +68,7 @@ public class LayoutController extends AbstractController implements Initializabl
 
 	@Inject
 	private TransferManager transferManager;
+
 	private HBox browseNav;
 	private HBox contactsNav;
 	private HBox actionlogNav;
