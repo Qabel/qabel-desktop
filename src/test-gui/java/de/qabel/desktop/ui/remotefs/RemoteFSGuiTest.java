@@ -31,29 +31,30 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 
 	@Test
 	public void optionsOnHover() {
-		assertFalse(getFirstNode("#download_0").isVisible());
-		assertFalse(getFirstNode("#upload_file_0").isVisible());
-		assertFalse(getFirstNode("#upload_folder_0").isVisible());
-		assertFalse(getFirstNode("#create_folder_0").isVisible());
-		assertFalse(getFirstNode("#delete_0").isVisible());
-		assertFalse(getFirstNode("#share_0").isVisible());
+		int rootIndex = 1;
+		assertFalse(getFirstNode("#download_" + rootIndex).isVisible());
+		assertFalse(getFirstNode("#upload_file_" + rootIndex).isVisible());
+		assertFalse(getFirstNode("#upload_folder_" + rootIndex).isVisible());
+		assertFalse(getFirstNode("#create_folder_" + rootIndex).isVisible());
+		assertFalse(getFirstNode("#delete_" + rootIndex).isVisible());
+		assertFalse(getFirstNode("#share_" + rootIndex).isVisible());
 
-		moveTo("#download_0");
+		moveTo("#download_" + rootIndex);
 
-		assertTrue(getFirstNode("#download_0").isVisible());
-		assertTrue(getFirstNode("#upload_file_0").isVisible());
-		assertTrue(getFirstNode("#upload_folder_0").isVisible());
-		assertTrue(getFirstNode("#create_folder_0").isVisible());
-		assertTrue(getFirstNode("#delete_0").isVisible());
-		assertTrue(getFirstNode("#share_0").isVisible());
+		assertTrue(getFirstNode("#download_" + rootIndex).isVisible());
+		assertTrue(getFirstNode("#upload_file_" + rootIndex).isVisible());
+		assertTrue(getFirstNode("#upload_folder_" + rootIndex).isVisible());
+		assertTrue(getFirstNode("#create_folder_" + rootIndex).isVisible());
+		assertTrue(getFirstNode("#delete_" + rootIndex).isVisible());
+		assertTrue(getFirstNode("#share_" + rootIndex).isVisible());
 
 		robot.moveTo(stage);
 
-		assertFalse(getFirstNode("#download_0").isVisible());
-		assertFalse(getFirstNode("#upload_file_0").isVisible());
-		assertFalse(getFirstNode("#upload_folder_0").isVisible());
-		assertFalse(getFirstNode("#create_folder_0").isVisible());
-		assertFalse(getFirstNode("#delete_0").isVisible());
-		assertFalse(getFirstNode("#share_0").isVisible());
+		assertFalse(getFirstNode("#download_" + rootIndex).isVisible());
+		assertFalse(getFirstNode("#upload_file_" + rootIndex).isVisible());
+		assertFalse(getFirstNode("#upload_folder_" + rootIndex).isVisible());
+		assertFalse(getFirstNode("#create_folder_" + rootIndex).isVisible());
+		assertFalse(getFirstNode("#delete_" + rootIndex).isVisible());
+		assertFalse(getFirstNode("#share_" + rootIndex).isVisible());
 	}
 }

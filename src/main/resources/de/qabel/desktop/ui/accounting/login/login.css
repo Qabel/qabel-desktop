@@ -1,5 +1,5 @@
 .login {
-    -fx-background-color: #fd670d;
+    -fx-background-color: #ff690f;
 }
 
 .login-form .text-field {
@@ -31,7 +31,7 @@
 }
 
 .button {
-    -fx-text-fill: #fd670d;
+    -fx-text-fill: #ff690f;
     -fx-font-weight: bold;
     -fx-background-radius: 15;
     -fx-indent: 20em;

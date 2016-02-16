@@ -38,7 +38,7 @@ public class AvatarController extends AbstractController implements Initializabl
 	private String calculateForegroundColor(int hue) {
 		String textColor = "white";
 		if (hue > 30 && hue < 190) {
-			textColor = "black";
+			textColor = "#222222";
 		}
 		return textColor;
 	}

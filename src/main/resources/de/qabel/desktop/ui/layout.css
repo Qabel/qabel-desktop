@@ -8,9 +8,9 @@
 
 .navi-container {
     -fx-text-fill: rgb(77,77,77);
-    -fx-background-color: #fd670d;
+    -fx-background-color: #ff690f;
     -fx-pref-width: 220px;
-    -fx-background-image: url('/border.png');
+    -fx-background-image: url('/rough_edgeshadow.png');
     -fx-background-repeat: repeat-y;
     -fx-background-position: top right;
 }
@@ -21,30 +21,47 @@
 
 .navi {
     -fx-font-weight: bold;
-    -fx-padding: 10px 0 0 10px;
+    -fx-padding: 10px 10 0 0px;
 }
 
 .navi .navi-item {
-    -fx-alignment: top-right;
-    -fx-padding: 10px 20px 10px 10px;
+    -fx-alignment: top-left;
+    -fx-padding: 10px 10px 10px 20px;
 }
 
 .navi .navi-item.active {
-    -fx-padding: 10px 0px 10px 10px;
+    -fx-padding: 10px 10px 10px 0px;
 }
 
 .navi .button {
     -fx-pref-width: 200px;
     -fx-cursor: hand;
     -fx-border-radius: 0, 0, 0, 0;
-    -fx-background-color: rgb(252, 204, 177);
     -fx-padding: 10px 10px 10px 10px;
-    -fx-background-radius: 3 3 3 3;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-smoothing-type: lcd;
+    -fx-font-family: Roboto, sans-serif;
+    -fx-font-size: 1.5em;
+}
+
+.navi-container .progress-bar .bar {
+    -fx-background-color: #ff690f;
+}
+.navi-container .progress-bar:disabled .bar {
+    -fx-background-color: #ff690f;
+}
+.navi-container .progress-bar:disabled .track {
+    -fx-background-color: white;
+    -fx-background-insets: 0;
 }
 
 .navi .button:hover {
     -fx-focus-traversable: true;
     -fx-background-color: white;
+    -fx-text-fill: #222222;
 }
 
 .button:armed {
@@ -52,11 +69,12 @@
 }
 
 .navi .navi-item.active .button {
-    -fx-background-radius: 3 0 0 3;
+    -fx-text-fill: #222222;
+    -fx-background-radius: 0;
     -fx-width: 300px;
     -fx-pref-width: 300px;
     -fx-max-width: 300px;
-    -fx-padding: 10px 20px 10px 10px;
+    -fx-padding: 10px 10px 10px 30px;
     -fx-background-color: white;
 }
 

@@ -22,7 +22,7 @@ public class HttpDropConnector implements Connector {
 
 
 	public void send(Contact c, DropMessage d) throws QblNetworkInvalidResponseException {
-		BinaryDropMessageV0 binaryMessage = null;
+		BinaryDropMessageV0 binaryMessage;
 
 		try {
 			binaryMessage = new BinaryDropMessageV0(d);
@@ -37,9 +37,9 @@ public class HttpDropConnector implements Connector {
 		}
 	}
 
-	public List<DropMessage> receive(Identity i, Date siceDate) {
+	public List<DropMessage> receive(Identity i, Date since) {
 		DropURL d = convertCollectionIntoDropUrl(i.getDropUrls());
-		HTTPResult<Collection<byte[]>> result = receiveMessages(siceDate, d);
+		HTTPResult<Collection<byte[]>> result = receiveMessages(since, d);
 
 		return createDropMessagesFromHttpResult(result, i);
 	}
@@ -62,7 +62,7 @@ public class HttpDropConnector implements Connector {
 		LinkedList<DropMessage> dropMessages = new LinkedList<>();
 
 		for (byte[] message : result.getData()) {
-			AbstractBinaryDropMessage binMessage = null;
+			AbstractBinaryDropMessage binMessage;
 			byte binaryFormatVersion = message[0];
 
 			if (binaryFormatVersion != 0) {

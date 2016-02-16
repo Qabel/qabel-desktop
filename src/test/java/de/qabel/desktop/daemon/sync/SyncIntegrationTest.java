@@ -205,7 +205,7 @@ public class SyncIntegrationTest {
 		Path path2 = Paths.get(tmpDir2.toString(), "file");
 		File file2 = path2.toFile();
 		waitUntil(() -> volume2.navigate().navigate("sync").hasFile("file"));
-		waitUntil(() -> file2.exists());
+		waitUntil(file2::exists);
 		syncer2.shutdown();
 		syncer2.join();
 
