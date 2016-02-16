@@ -16,38 +16,4 @@
             </columns>
         </TreeTableView>
     </children>
-
-    <children>
-        <HBox prefHeight="100.0" prefWidth="200.0">
-            <children>
-                <Button mnemonicParsing="false" onAction="#handleDownloadButtonAction" text="%download">
-                    <HBox.margin>
-                        <Insets bottom="10.0" left="20.0" right="10.0" top="10.0"/>
-                    </HBox.margin>
-                </Button>
-                <Button mnemonicParsing="false" onAction="#handleUploadFileButtonAction" text="%uploadFile">
-                    <HBox.margin>
-                        <Insets bottom="10.0" left="20.0" right="10.0" top="10.0"/>
-                    </HBox.margin>
-                </Button>
-
-                <Button mnemonicParsing="false" onAction="#handleUploadFolderButtonAction" text="%uploadFolder">
-                    <HBox.margin>
-                        <Insets bottom="10.0" left="20.0" right="10.0" top="10.0"/>
-                    </HBox.margin>
-                </Button>
-
-                <Button mnemonicParsing="false" onAction="#handleCreateFolderButtonAction" text="%createFolder">
-                    <HBox.margin>
-                        <Insets bottom="10.0" left="20.0" right="10.0" top="10.0"/>
-                    </HBox.margin>
-                </Button>
-                <Button mnemonicParsing="false" onAction="#handleDeleteButtonAction" text="%delete">
-                    <HBox.margin>
-                        <Insets bottom="10.0" left="20.0" right="10.0" top="10.0"/>
-                    </HBox.margin>
-                </Button>
-            </children>
-        </HBox>
-    </children>
 </VBox>

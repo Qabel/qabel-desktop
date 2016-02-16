@@ -186,7 +186,6 @@ public class RemoteFSController extends AbstractController implements Initializa
 		button.setOnMouseClicked(handler);
 		button.visibleProperty().bind(hoveredItem.isEqualTo(item));
 		button.setId(name + "_" + treeTable.getRow(item));
-		System.out.println("added button with id " + button.getId());
 		Tooltip tooltip = new Tooltip(resourceBundle.getString("option_" + name + "_tooltip"));
 		Tooltip.install(button, tooltip);
 		bar.getChildren().add(button);
@@ -197,11 +196,6 @@ public class RemoteFSController extends AbstractController implements Initializa
 		nav = volume.navigate();
 
 		return nav;
-	}
-
-	@FXML
-	protected void handleUploadFileButtonAction(ActionEvent event) {
-		uploadFile(this.selectedItem);
 	}
 
 	private void uploadFile(TreeItem<BoxObject> item) {
@@ -225,11 +219,6 @@ public class RemoteFSController extends AbstractController implements Initializa
 		loadManager.addUpload(upload);
 	}
 
-	@FXML
-	protected void handleUploadFolderButtonAction(ActionEvent event) throws QblStorageException {
-		uploadFolder(selectedItem);
-	}
-
 	private void uploadFolder(TreeItem<BoxObject> item) {
 		if (item == null || !(item.getValue() instanceof BoxFolder) || !(item instanceof LazyBoxFolderTreeItem)) {
 			return;
@@ -244,11 +233,6 @@ public class RemoteFSController extends AbstractController implements Initializa
 		} catch (IOException e) {
 			alert("failed to upload folder", e);
 		}
-	}
-
-	@FXML
-	protected void handleDownloadButtonAction(ActionEvent event) {
-		download(this.selectedItem);
 	}
 
 	private void download(TreeItem<BoxObject> item) {
@@ -275,11 +259,6 @@ public class RemoteFSController extends AbstractController implements Initializa
 		}
 	}
 
-	@FXML
-	protected void handleCreateFolderButtonAction(ActionEvent event) {
-		createFolder(this.selectedItem);
-	}
-
 	private void createFolder(TreeItem<BoxObject> item) {
 		if (item == null || !(item instanceof LazyBoxFolderTreeItem)) {
 			return;
@@ -301,11 +280,6 @@ public class RemoteFSController extends AbstractController implements Initializa
 				}
 			});
 		}).start();
-	}
-
-	@FXML
-	protected void handleDeleteButtonAction(ActionEvent event) throws QblStorageException {
-		deleteItem(this.selectedItem);
 	}
 
 	private void deleteItem(TreeItem<BoxObject> item) {
