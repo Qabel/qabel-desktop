@@ -10,6 +10,7 @@ import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.actionlog.item.ActionlogItem;
 import de.qabel.desktop.ui.actionlog.item.ActionlogItemView;
 import de.qabel.desktop.ui.actionlog.item.MyActionlogItemView;
 import de.qabel.desktop.ui.actionlog.item.OtherActionlogItemView;
@@ -18,25 +19,30 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebView;
 
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.*;
 
+import static java.lang.Thread.*;
+
 
 public class ActionlogController extends AbstractController implements Initializable, Observer {
 
+	int sleepTime = 60000;
 	List<ActionlogItemView> messageView = new LinkedList<>();
 
 	@FXML
 	VBox messages;
-	@FXML
-	ScrollPane scroller;
+
 	@FXML
 	TextArea textarea;
 	@Inject
@@ -50,34 +56,35 @@ public class ActionlogController extends AbstractController implements Initializ
 	Connector httpDropConnector;
 
 	Identity identity;
-	Contact c;
+	Contact c = null;
+	List<PersistenceDropMessage> receivedDropMessages;
+	List<ActionlogItem> messageControllers = new LinkedList<>();
+	Thread dateRefresher;
 
 	public void initialize(URL location, ResourceBundle resources) {
 
-		createActionlogSetup();
+		startThreads();
+		identity = clientConfiguration.getSelectedIdentity();
 		dropMessageRepository.addObserver(this);
 		clientConfiguration.addObserver(this);
-
-		scroller.setVvalue(scroller.getVmax());
 		addListener();
 	}
 
-	private void createActionlogSetup() {
-		identity = clientConfiguration.getSelectedIdentity();
-		c = new Contact(identity.getAlias(), identity.getDropUrls(), identity.getEcPublicKey());
-		try {
-			loadMessages(c);
-		} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
-			entityNotFoundExcepion.printStackTrace();
-		}
+	private void startThreads() {
+		dateRefresher = new Thread(() -> {
+			while (true) {
+				messageControllers.forEach(ActionlogItem::refreshDate);
+				try {
+					sleep(sleepTime);
+				} catch (InterruptedException ignored) {
+				}
+			}
+		});
+		dateRefresher.start();
 	}
 
 	private void addListener() {
-		((Region) scroller.getContent()).heightProperty().addListener((ov, old_val, new_val) -> {
-			if (scroller.getVvalue() != scroller.getVmax()) {
-				scroller.setVvalue(scroller.getVmax());
-			}
-		});
+
 		textarea.setOnKeyPressed(keyEvent -> {
 			if (keyEvent.getCode().equals(KeyCode.ENTER) && keyEvent.isControlDown()) {
 				try {
@@ -95,7 +102,7 @@ public class ActionlogController extends AbstractController implements Initializ
 	}
 
 	protected void handleSubmitButtonAction() throws QblDropPayloadSizeException, EntityNotFoundExcepion, PersistenceException, QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException, QblNetworkInvalidResponseException {
-		if (textarea.getText().equals("")) {
+		if (textarea.getText().equals("") || c == null) {
 			return;
 		}
 		sendDropMessage(c, textarea.getText());
@@ -104,24 +111,41 @@ public class ActionlogController extends AbstractController implements Initializ
 
 	void sendDropMessage(Contact c, String text) throws QblDropPayloadSizeException, QblNetworkInvalidResponseException, PersistenceException {
 		DropMessage d = new DropMessage(identity, text, "dropMessage");
-		dropMessageRepository.addMessage(d, c, true);
+		dropMessageRepository.addMessage(d, identity, c, true);
 		httpDropConnector.send(c, d);
 	}
 
 	void loadMessages(Contact c) throws EntityNotFoundExcepion {
 		try {
-			messages.getChildren().clear();
-			List<PersistenceDropMessage> dropMessages = dropMessageRepository.loadConversation(c);
-			for (PersistenceDropMessage d : dropMessages) {
-
-				if (d.getSend()) {
-					addOwnMessageToActionlog(d.getDropMessage());
-				} else {
-					addMessageToActionlog(d.getDropMessage());
-				}
+			if (receivedDropMessages == null) {
+				messages.getChildren().clear();
+				receivedDropMessages = dropMessageRepository.loadConversation(c, identity);
+				addMessagesToView(receivedDropMessages);
+			} else {
+				List<PersistenceDropMessage> newMessages = dropMessageRepository.loadNewMessagesFromConversation(receivedDropMessages, c, identity);
+				addNewMessagesToReceivedDropMessages(newMessages);
+				addMessagesToView(newMessages);
 			}
+
 		} catch (PersistenceException e) {
 			e.printStackTrace();
+		}
+	}
+
+	private void addNewMessagesToReceivedDropMessages(List<PersistenceDropMessage> newMessages) {
+		for (PersistenceDropMessage d : newMessages) {
+			receivedDropMessages.add(d);
+		}
+	}
+
+	private void addMessagesToView(List<PersistenceDropMessage> dropMessages) throws EntityNotFoundExcepion {
+		for (PersistenceDropMessage d : dropMessages) {
+
+			if (d.getSend()) {
+				addOwnMessageToActionlog(d.getDropMessage());
+			} else {
+				addMessageToActionlog(d.getDropMessage());
+			}
 		}
 	}
 
@@ -133,6 +157,8 @@ public class ActionlogController extends AbstractController implements Initializ
 		OtherActionlogItemView otherItemView = new OtherActionlogItemView(injectionContext::get);
 		messages.getChildren().add(otherItemView.getView());
 		messageView.add(otherItemView);
+		messageControllers.add((ActionlogItem) otherItemView.getPresenter());
+
 	}
 
 	void addOwnMessageToActionlog(DropMessage dropMessage) {
@@ -145,6 +171,8 @@ public class ActionlogController extends AbstractController implements Initializ
 		MyActionlogItemView myItemView = new MyActionlogItemView(injectionContext::get);
 		messages.getChildren().add(myItemView.getView());
 		messageView.add(myItemView);
+		messageControllers.add((ActionlogItem) myItemView.getPresenter());
+
 	}
 
 	void setText(String text) {
@@ -163,7 +191,20 @@ public class ActionlogController extends AbstractController implements Initializ
 				}
 			});
 		} else if (arg instanceof Identity && o instanceof ClientConfiguration) {
-			createActionlogSetup();
+			identity = clientConfiguration.getSelectedIdentity();
 		}
+	}
+
+	public void setContact(Contact contact) {
+		Platform.runLater(() -> {
+			try {
+				receivedDropMessages = null;
+				this.c = contact;
+				loadMessages(c);
+			} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
+				entityNotFoundExcepion.printStackTrace();
+			}
+		});
+
 	}
 }

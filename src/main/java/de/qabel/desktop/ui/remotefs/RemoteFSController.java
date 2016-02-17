@@ -235,7 +235,12 @@ public class RemoteFSController extends AbstractController implements Initializa
 			ShareNotificationMessage share = new ShareNotificationMessage(ref.url, Hex.toHexString(ref.key), "Hey, I got a share for you!");
 			System.out.println(share.toJson());
 			Identity sender = clientConfiguration.getSelectedIdentity();
-			dropMessageRepository.addMessage(new DropMessage(sender, share.toJson(), DropMessageRepository.PAYLOAD_TYPE_SHARE_NOTIFICATION), new Contact("me", sender.getDropUrls(), sender.getEcPublicKey()), false);
+			dropMessageRepository.addMessage(
+					new DropMessage(sender, share.toJson(), DropMessageRepository.PAYLOAD_TYPE_SHARE_NOTIFICATION),
+					sender,
+					new Contact("me", sender.getDropUrls(), sender.getEcPublicKey()),
+					false
+			);
 		} catch (Exception e) {
 			alert(e);
 		}

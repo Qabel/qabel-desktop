@@ -1,6 +1,8 @@
 package de.qabel.desktop.repository.Stub;
 
 import de.qabel.core.config.Contact;
+import de.qabel.core.config.Entity;
+import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.PersistenceException;
@@ -18,19 +20,19 @@ public class StubDropMessageRepository implements DropMessageRepository {
 
 
 	@Override
-	public void addMessage(DropMessage dropMessage, Contact contact, boolean send) throws PersistenceException {
-		PersistenceDropMessage pdm = new PersistenceDropMessage(dropMessage,contact,send);
+	public void addMessage(DropMessage dropMessage, Entity from, Entity to, boolean send) throws PersistenceException {
+		PersistenceDropMessage pdm = new PersistenceDropMessage(dropMessage,from, to,send);
 
-		List<PersistenceDropMessage> lst = messagesMap.get(contact.getKeyIdentifier());
+		List<PersistenceDropMessage> lst = messagesMap.get(to.getKeyIdentifier());
 		if(lst == null){
 			lst = new LinkedList<>();
 			lst.add(pdm);
 		}
-		messagesMap.put(contact.getKeyIdentifier(), lst);
+		messagesMap.put(to.getKeyIdentifier(), lst);
 	}
 
 	@Override
-	public List<PersistenceDropMessage> loadConversation(Contact contact) throws PersistenceException {
+	public List<PersistenceDropMessage> loadConversation(Contact contact, Identity identity) throws PersistenceException {
 		List<PersistenceDropMessage> lst = messagesMap.get(contact.getKeyIdentifier());
 		if(lst == null){
 			return new LinkedList<>();
@@ -40,6 +42,10 @@ public class StubDropMessageRepository implements DropMessageRepository {
 
 	@Override
 	public void addObserver(Observer o) {
+	}
 
+	@Override
+	public List<PersistenceDropMessage> loadNewMessagesFromConversation(List<PersistenceDropMessage> dropMessages, Contact c, Identity identity) {
+		return null;
 	}
 }

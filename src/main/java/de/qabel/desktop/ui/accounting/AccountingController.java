@@ -1,6 +1,8 @@
 package de.qabel.desktop.ui.accounting;
 
-import de.qabel.core.config.Identity;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import de.qabel.core.config.*;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.core.drop.DropURL;
 import de.qabel.core.exceptions.QblDropInvalidURL;
@@ -8,6 +10,7 @@ import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.repository.IdentityRepository;
+import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.item.AccountingItemView;
@@ -52,12 +55,16 @@ public class AccountingController extends AbstractController implements Initiali
 	private IdentityBuilderFactory identityBuilderFactory;
 
 	@Inject
-	private ClientConfiguration clientConfiguration;
+	ClientConfiguration clientConfiguration;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		loadIdentities();
-		buildGson();
+		try {
+			gson = buildGson();
+		} catch (EntityNotFoundExcepion | PersistenceException e) {
+			e.printStackTrace();
+		}
 		this.resourceBundle = resources;
 
 		updateIdentityState();
@@ -137,51 +144,34 @@ public class AccountingController extends AbstractController implements Initiali
 
 	void importIdentity(File file) throws IOException, PersistenceException, URISyntaxException, QblDropInvalidURL {
 		String content = readFile(file);
-		GsonIdentity gi = gson.fromJson(content, GsonIdentity.class);
-		Identity i = gsonIdentityToIdentiy(gi);
+		Gson newGson = new Gson();
+		Identity i = newGson.fromJson(content, Identity.class);
 		identityRepository.save(i);
 	}
 
 	void exportIdentity(Identity i, File file) throws IOException, QblStorageException {
-		GsonIdentity gi = new GsonIdentity().fromIdentity(i);
-		String json = gson.toJson(gi);
+		Gson newGson = new Gson();
+		String json = newGson.toJson(i);
 		writeStringInFile(json, file);
 	}
 
 	void exportContact(Identity i, File file) throws IOException, QblStorageException {
-		GsonContact gc = new GsonContact().fromEntity(i);
-		String json = gson.toJson(gc);
+		Contact c = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
+		c.setEmail(i.getEmail());
+		c.setPhone(i.getPhone());
+		String json = gson.toJson(c);
 		writeStringInFile(json, file);
 	}
-
 
 	ResourceBundle getRessource(){
 		return resourceBundle;
 	}
 
-
-	Identity gsonIdentityToIdentiy(GsonIdentity gi) throws URISyntaxException, QblDropInvalidURL {
-
-		ArrayList<DropURL> collection = generateDropURLs(gi.getDropUrls());
-		QblECKeyPair qblECKeyPair = new QblECKeyPair(gi.getPrivateKey());
-
-		return new Identity(gi.getAlias(), collection, qblECKeyPair);
-	}
-
-	private ArrayList<DropURL> generateDropURLs(List<String> drops) throws URISyntaxException, QblDropInvalidURL {
-		ArrayList<DropURL> collection = new ArrayList<>();
-
-		for (String uri : drops) {
-			DropURL dropURL = new DropURL(uri);
-			collection.add(dropURL);
-		}
-		return collection;
-	}
-
 	private void loadIdentities() {
 		try {
 			identityList.getChildren().clear();
-			for (Identity identity : identityRepository.findAll()) {
+			Identities identities = identityRepository.findAll();
+			for (Identity identity : identities.getIdentities() ) {
 				final Map<String, Object> injectionContext = new HashMap<>();
 				injectionContext.put("identity", identity);
 				AccountingItemView itemView = new AccountingItemView(injectionContext::get);
@@ -199,4 +189,14 @@ public class AccountingController extends AbstractController implements Initiali
 		chooser.setInitialFileName(defaultName);
 		return chooser.showSaveDialog(identityList.getScene().getWindow());
 	}
+
+	Gson buildGson() throws EntityNotFoundExcepion, PersistenceException {
+		final GsonBuilder builder = new GsonBuilder();
+		builder.excludeFieldsWithoutExposeAnnotation();
+		builder.registerTypeAdapter(Contacts.class, new ContactsTypeAdapter(identityRepository.findAll()));
+		builder.registerTypeAdapter(Contact.class, new ContactTypeAdapter());
+		builder.registerTypeAdapter(Identities.class, new IdentitiesTypeAdapter());
+		return builder.create() ;
+	}
+
 }

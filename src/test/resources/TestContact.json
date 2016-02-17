@@ -1,1 +1,10 @@
-{"alias":"TestAlias","dropUrls":[],"moduleSettings":[],"id":0,"created":1452767760125,"updated":0,"deleted":0,"persistenceID":"1c321389-3921-42a3-942b-2c73ed4f0bed"}
+{
+  "alias": "TestAlias",
+  "dropUrls": [],
+  "moduleSettings": [],
+  "id": 0,
+  "created": 1452767760125,
+  "updated": 0,
+  "deleted": 0,
+  "persistenceID": "1c321389-3921-42a3-942b-2c73ed4f0bed"
+}

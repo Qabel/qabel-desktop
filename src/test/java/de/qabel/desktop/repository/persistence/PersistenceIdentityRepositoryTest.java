@@ -1,7 +1,10 @@
 package de.qabel.desktop.repository.persistence;
 
+import de.qabel.core.config.Identities;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.Persistence;
+import de.qabel.desktop.config.factory.DropUrlGenerator;
+import de.qabel.desktop.config.factory.IdentityBuilder;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import org.junit.Test;
@@ -15,18 +18,20 @@ public class PersistenceIdentityRepositoryTest extends AbstractPersistenceReposi
 
 	@Test
 	public void returnsEmptyListWithoutInstances() throws Exception {
-		List<Identity> results = repo.findAll();
-		assertEquals(0, results.size());
+		Identities results = repo.findAll();
+		assertEquals(0, results.getIdentities().size());
 	}
 
 	@Test
 	public void returnsPersistedEntities() throws Exception {
-		Identity identity = new Identity("a", new LinkedList<>(), null);
-		persistence.persistEntity(identity);
-		List<Identity> results = repo.findAll();
+		Identity identity = new IdentityBuilder(new DropUrlGenerator("http://localhost:5000")).withAlias("a").build();
+		Identities identities = new Identities();
+		identities.put(identity);
+		persistence.persistEntity(identities);
+		Identities results = repo.findAll();
 
-		assertEquals(1, results.size());
-		assertEquals(identity, results.get(0));
+		assertEquals(1, results.getIdentities().size());
+		assertEquals(identity, results.getByKeyIdentifier(identity.getKeyIdentifier()));
 	}
 
 	@Test(expected = EntityNotFoundExcepion.class)
@@ -36,10 +41,12 @@ public class PersistenceIdentityRepositoryTest extends AbstractPersistenceReposi
 
 	@Test
 	public void findsPersistedEntity() throws Exception {
-		Identity identity = new Identity("a", new LinkedList<>(), null);
-		persistence.persistEntity(identity);
+		Identity identity = new IdentityBuilder(new DropUrlGenerator("http://localhost:5000")).withAlias("a").build();
+		Identities identities = new Identities();
+		identities.put(identity);
+		persistence.persistEntity(identities);
 
-		Identity id = repo.find(identity.getPersistenceID());
+		Identity id = repo.find(identity.getKeyIdentifier());
 		assertEquals(identity, id);
 	}
 
@@ -50,21 +57,21 @@ public class PersistenceIdentityRepositoryTest extends AbstractPersistenceReposi
 
 	@Test
 	public void savesNewInstances() throws Exception {
-		Identity identity = new Identity("a", null, null);
+		Identity identity = new IdentityBuilder(new DropUrlGenerator("http://localhost:5000")).withAlias("a").build();
 		repo.save(identity);
-		assertEquals(identity, repo.find(identity.getPersistenceID()));
+		assertEquals(identity, repo.find(identity.getKeyIdentifier()));
 	}
 
 	@Test
 	public void updatesExistingInstances() throws Exception {
-		Identity identity = new Identity("a", null, null);
+		Identity identity = new IdentityBuilder(new DropUrlGenerator("http://localhost:5000")).withAlias("a").build();
 		repo.save(identity);
-		String persistenceID = identity.getPersistenceID();
+		String keyId = identity.getKeyIdentifier();
 
 		identity.setAlias("b");
 		repo.save(identity);
 
-		assertEquals(identity, repo.find(persistenceID));
+		assertEquals(identity, repo.find(keyId));
 	}
 
 	@Test(expected = PersistenceException.class)

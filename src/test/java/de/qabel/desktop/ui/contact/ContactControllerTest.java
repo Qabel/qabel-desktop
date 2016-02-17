@@ -2,6 +2,7 @@ package de.qabel.desktop.ui.contact;
 
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Contact;
+import de.qabel.core.config.Contacts;
 import de.qabel.core.config.Identity;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.core.exceptions.QblDropInvalidURL;
@@ -15,6 +16,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -60,24 +62,28 @@ public class ContactControllerTest extends AbstractControllerTest {
 		testDir.mkdirs();
 		File file = new File(testDir + "/contacts.json");
 		controller.exportContacts(file);
-		List<Contact> list = contactRepository.findAllContactFromOneIdentity(i);
-		assertEquals(1, list.size());
+		Contacts contacts = contactRepository.findContactsFromOneIdentity(i);
+		assertEquals(1, contacts.getContacts().size());
+
+		contacts.remove(c);
+		assertEquals(0, contacts.getContacts().size());
 
 		controller.importContacts(file);
 
-		list = contactRepository.findAllContactFromOneIdentity(i);
-		assertEquals(2, list.size());
+		contacts = contactRepository.findContactsFromOneIdentity(i);
+		assertEquals(1, contacts.getContacts().size());
 
-		Contact contact0 = list.get(0);
-		Contact contact1 = list.get(1);
+		List<Contact> l = new LinkedList<>(contacts.getContacts());
 
-		assertEquals(contact0.getAlias(), contact1.getAlias());
-		assertEquals(contact0.getEmail(), contact1.getEmail());
-		assertEquals(contact0.getCreated(), contact1.getCreated(), 100000);
-		assertEquals(contact0.getDeleted(), contact1.getDeleted());
-		assertEquals(contact0.getUpdated(), contact1.getUpdated());
-		assertEquals(contact0.getDropUrls(), contact1.getDropUrls());
-		assertEquals(contact0.getEcPublicKey(), contact1.getEcPublicKey());
+		Contact contact0 = l.get(0);
+
+		assertEquals(contact0.getAlias(), c.getAlias());
+		assertEquals(contact0.getEmail(), c.getEmail());
+		assertEquals(contact0.getCreated(), c.getCreated(), 100000);
+		assertEquals(contact0.getDeleted(), c.getDeleted());
+		assertEquals(contact0.getUpdated(), c.getUpdated());
+		assertEquals(contact0.getDropUrls(), c.getDropUrls());
+		assertEquals(contact0.getEcPublicKey(), c.getEcPublicKey());
 	}
 
 	@Test
@@ -88,14 +94,14 @@ public class ContactControllerTest extends AbstractControllerTest {
 		controller = getController();
 		controller.importContacts(f);
 
+		Contacts contacts = contactRepository.findContactsFromOneIdentity(i);
+		assertEquals(1, contacts.getContacts().size());
 
 
-		List<Contact> list = contactRepository.findAllContactFromOneIdentity(i);
-		assertEquals(3, list.size());
-
-		Contact c = list.get(0);
-		assertEquals(c.getAlias(),"Qabel");
-		assertEquals(c.getEmail(), "mail.awesome@qabel.de");
+		Contact c = contacts.getByKeyIdentifier("fdbe562d7efb67ee634be12244fed172e23290893f67ca2779968f9a3a499755");
+		assertEquals(c.getAlias(),"TestAlias");
+		assertEquals(c.getEmail(), "abc");
+		assertEquals(c.getPhone(), "000");
 		assertEquals(c.getDropUrls().size(), 1);
 		assertNotNull(c.getEcPublicKey());
 	}

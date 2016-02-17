@@ -1,29 +1,40 @@
 package de.qabel.desktop.repository.persistence;
 
 import de.qabel.core.config.Contact;
+import de.qabel.core.config.Contacts;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.Persistence;
-import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class PersistenceContactRepository extends AbstractCachedPersistenceRepository<Contact> implements ContactRepository {
-
 	public PersistenceContactRepository(Persistence<String> persistence) {
 		super(persistence);
 	}
 
+	private Contacts contacts;
+
 	@Override
-	public List<Contact> findAllContactFromOneIdentity(Identity i) throws EntityNotFoundExcepion {
-		List<Contact> entities = persistence.getEntities(Contact.class);
-		List<Contact> contacts = new LinkedList<>();
-		for (Contact c: entities){
-			contacts.add(c);
+	public Contacts findContactsFromOneIdentity(Identity i) throws EntityNotFoundExcepion {
+		if (contacts != null) {
+			return contacts;
 		}
+
+		List<Contacts> cl = persistence.getEntities(Contacts.class);
+		if (cl != null) {
+			for (Contacts c : cl) {
+				if (c.getIdentity().getEcPublicKey().hashCode() == i.getEcPublicKey().hashCode()) {
+					contacts = c;
+					return c;
+				}
+			}
+		}
+
+		contacts = new Contacts(i);
+		persistence.updateOrPersistEntity(contacts);
 		return contacts;
 	}
 
@@ -31,7 +42,8 @@ public class PersistenceContactRepository extends AbstractCachedPersistenceRepos
 	public void save(Contact contact) throws PersistenceException {
 		boolean result;
 		try {
-			result = persistence.updateOrPersistEntity(contact);
+			contacts.put(contact);
+			result = persistence.updateOrPersistEntity(contacts);
 		} catch (Exception e) {
 			throw new PersistenceException("Failed to save Entity " + contact + ": " + e.getMessage(), e);
 		}
@@ -43,15 +55,7 @@ public class PersistenceContactRepository extends AbstractCachedPersistenceRepos
 	@Override
 	public Contact findByKeyId(Identity identity, String keyId) throws EntityNotFoundExcepion {
 
-		List<Contact> contactList = findAllContactFromOneIdentity(identity);
-
-		for (Contact c : contactList) {
-			if (keyId.equals(c.getEcPublicKey().getReadableKeyIdentifier())) {
-				return c;
-			}
-		}
-
-		throw new EntityNotFoundExcepion("No Contact with public keyID " + keyId);
-
+		Contacts contacts = findContactsFromOneIdentity(identity);
+		return contacts.getByKeyIdentifier(keyId);
 	}
 }

@@ -28,9 +28,7 @@
     -fx-min-width: 7em;
 }
 
-.button-bar {
-    -fx-spacing: 1em;
-}
+
 
 .button {
     -fx-font-weight: bold;
@@ -97,4 +95,13 @@
 .browser *.scroll-bar:horizontal *.decrement-arrow {
     -fx-base: transparent;
     -fx-background-color: white;
+}
+
+.selected {
+    -fx-background-color: grey;
+}
+#chat{
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: black;
+    -fx-border-width: 0 0 0 1
 }

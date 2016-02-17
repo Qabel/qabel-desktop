@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
-<HBox prefHeight="31.0" prefWidth="401.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.contact.item.BlankItemController">
+
+<HBox prefHeight="70.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.contact.item.BlankItemController">
     <children>
-        <BorderPane prefHeight="27.0" prefWidth="401.0">
+        <BorderPane prefHeight="27.0" prefWidth="200.0">
             <center>
-                <VBox prefHeight="7.0" prefWidth="401.0" BorderPane.alignment="CENTER">
+                <VBox prefHeight="29.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                     <children>
                         <Label fx:id="firstChar" text="A">
                             <font>
@@ -26,7 +32,7 @@
                 </VBox>
             </center>
             <bottom>
-                <Line endX="200.0" startX="-200.0" BorderPane.alignment="CENTER" />
+                <Line endX="50.0" startX="-200.0" BorderPane.alignment="CENTER" />
             </bottom>
          <HBox.margin>
             <Insets bottom="20.0" />

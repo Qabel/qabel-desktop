@@ -13,7 +13,7 @@ public class RecoverPasswordUiTest extends AbstractGuiTest<LoginController> {
 	}
 
 	@Test
-	public void incorectEMail() {
+	public void incorrectEMail() {
 		clickOn("#recoverPassword");
 		clickOn("#newPassword");
 		waitUntil(() -> controller.newPassword.getStyleClass().contains("error"), 5000L);
@@ -24,6 +24,6 @@ public class RecoverPasswordUiTest extends AbstractGuiTest<LoginController> {
 		clickOn("#recoverPassword");
 		clickOn("#email").write("valid.mail@example.com");
 		clickOn("#newPassword");
-		assertTrue(controller.newPassword.isDisable());
+		waitUntil(controller.newPassword::isDisabled);
 	}
 }

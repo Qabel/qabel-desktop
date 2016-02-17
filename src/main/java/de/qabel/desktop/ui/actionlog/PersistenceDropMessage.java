@@ -1,6 +1,6 @@
 package de.qabel.desktop.ui.actionlog;
 
-import de.qabel.core.config.Contact;
+import de.qabel.core.config.Entity;
 import de.qabel.core.config.Persistable;
 import de.qabel.core.drop.DropMessage;
 
@@ -8,13 +8,23 @@ import de.qabel.core.drop.DropMessage;
 public class PersistenceDropMessage extends Persistable {
 
 	DropMessage dropMessage;
-	Contact contact;
+	Entity receiver;
+	Entity sender;
 	Boolean send;
 
-	public PersistenceDropMessage(DropMessage dropMessage, Contact contact, Boolean send) {
+	public PersistenceDropMessage(DropMessage dropMessage, Entity from,  Entity to, Boolean send) {
 		this.dropMessage = dropMessage;
-		this.contact = contact;
+		this.receiver = to;
 		this.send = send;
+		this.sender = from;
+	}
+
+	public Entity getSender() {
+		return sender;
+	}
+
+	public void setSender(Entity sender) {
+		this.sender = sender;
 	}
 
 	public DropMessage getDropMessage() {
@@ -25,12 +35,12 @@ public class PersistenceDropMessage extends Persistable {
 		this.dropMessage = dropMessage;
 	}
 
-	public Contact getContact() {
-		return contact;
+	public Entity getReceiver() {
+		return receiver;
 	}
 
-	public void setContact(Contact contact) {
-		this.contact = contact;
+	public void setReceiver(Entity receiver) {
+		this.receiver = receiver;
 	}
 
 	public Boolean getSend() {

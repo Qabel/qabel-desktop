@@ -57,7 +57,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 			int a = (int) Math.round(sceneNode.computeAreaInScreen());
 			int b = Math.round(getWidth() * getHeight());
 			return a >= b;
-		});
+		}, 10000L);
 		return presenter;
 	}
 
