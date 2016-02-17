@@ -21,7 +21,6 @@ public class AccountingItemControllerTest extends AbstractControllerTest {
 
 
 		assertEquals("my identity", controller.alias.getText());
-		assertEquals("providerName", controller.provider.getText());
 		assertEquals("userName", controller.mail.getText());
 	}
 

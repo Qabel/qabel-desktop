@@ -1,6 +1,5 @@
 package de.qabel.desktop.ui.remotefs;
 
-import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
@@ -25,8 +24,8 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observ
 	private boolean loading;
 	private StringProperty nameProperty;
 	private boolean isLeaf;
-	private Image fileImg = new Image(getClass().getResourceAsStream("/file.png"));
-	private static Image folderImg = new Image(LazyBoxFolderTreeItem.class.getResourceAsStream("/folder.png"));
+	private Image fileImg = new Image(getClass().getResourceAsStream("/icon/file.png"),  18, 18, true, false);
+	private static Image folderImg = new Image(LazyBoxFolderTreeItem.class.getResourceAsStream("/icon/folder.png"), 18, 18, true, true);
 	private static ExecutorService executorService = Executors.newCachedThreadPool();
 
 	public LazyBoxFolderTreeItem(BoxFolder folder, ReadOnlyBoxNavigation navigation) {
@@ -142,5 +141,10 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observ
 		}
 
 		updateAsync();
+	}
+
+	@Override
+	public String toString() {
+		return folder.name;
 	}
 }

@@ -1,7 +1,6 @@
 package de.qabel.desktop.ui.remotefs;
 
 import de.qabel.core.config.Identity;
-import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.cellValueFactory.BoxObjectCellValueFactory;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.factory.BoxVolumeFactory;
@@ -10,12 +9,21 @@ import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.ui.AbstractController;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
@@ -31,17 +39,24 @@ import java.util.concurrent.TimeUnit;
 
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.CREATE;
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.DELETE;
+import static javafx.scene.Cursor.HAND;
 
 
 public class RemoteFSController extends AbstractController implements Initializable {
 	final String ROOT_FOLDER_NAME = "RootFolder";
+	public static final int OPTION_WIDTH = 16;
+	private static Image uploadFileImage = new Image(RemoteFSController.class.getResourceAsStream("/icon/upload.png"), OPTION_WIDTH, OPTION_WIDTH, true, true);
+	private static Image uploadFolderImage = new Image(RemoteFSController.class.getResourceAsStream("/icon/folder-upload.png"), OPTION_WIDTH, OPTION_WIDTH, true, true);
+	private static Image downloadImage = new Image(RemoteFSController.class.getResourceAsStream("/icon/download.png"), OPTION_WIDTH, OPTION_WIDTH, true, true);
+	private static Image addFolderImage = new Image(RemoteFSController.class.getResourceAsStream("/icon/add_folder.png"), OPTION_WIDTH, OPTION_WIDTH, true, true);
+	private static Image deleteImage = new Image(RemoteFSController.class.getResourceAsStream("/icon/delete.png"), OPTION_WIDTH, OPTION_WIDTH, true, true);
+	private static Image shareImage = new Image(RemoteFSController.class.getResourceAsStream("/icon/share.png"), OPTION_WIDTH, OPTION_WIDTH, true, true);
 
-	private QblECKeyPair keyPair;
-	private String bucket;
 	private BoxVolume volume;
 	ReadOnlyBoxNavigation nav;
 	LazyBoxFolderTreeItem rootItem;
 	TreeItem<BoxObject> selectedItem;
+	ObjectProperty<TreeItem<BoxObject>> hoveredItem = new SimpleObjectProperty<>(null);
 	ResourceBundle resourceBundle;
 
 	@Inject
@@ -61,6 +76,8 @@ public class RemoteFSController extends AbstractController implements Initializa
 	private TreeTableColumn<BoxObject, String> sizeColumn;
 	@FXML
 	private TreeTableColumn<BoxObject, String> dateColumn;
+	@FXML
+	private TreeTableColumn<BoxObject, Node> optionsColumn;
 
 
 	public void initialize(URL location, ResourceBundle resources) {
@@ -91,28 +108,27 @@ public class RemoteFSController extends AbstractController implements Initializa
 	private void initTreeTableView() {
 		try {
 			nav = createSetup();
-		rootItem = new LazyBoxFolderTreeItem(new BoxFolder(volume.getRootRef(), ROOT_FOLDER_NAME, new byte[16]), nav);
-		treeTable.setRoot(rootItem);
-		rootItem.setExpanded(true);
+			rootItem = new LazyBoxFolderTreeItem(new BoxFolder(volume.getRootRef(), ROOT_FOLDER_NAME, new byte[16]), nav);
+			treeTable.setRoot(rootItem);
+			rootItem.setExpanded(true);
 
-		if (nav instanceof CachedBoxNavigation) {
-			Thread poller = new Thread(() -> {
-				try {
-					while (!Thread.interrupted()) {
-						try {
-							((CachedBoxNavigation)nav).refresh();
-						} catch (QblStorageException e) {
-							e.printStackTrace();
+			if (nav instanceof CachedBoxNavigation) {
+				Thread poller = new Thread(() -> {
+					try {
+						while (!Thread.interrupted()) {
+							try {
+								((CachedBoxNavigation)nav).refresh();
+							} catch (QblStorageException e) {
+								e.printStackTrace();
+							}
+							Thread.sleep(TimeUnit.MINUTES.toMillis(1));
 						}
-						Thread.sleep(TimeUnit.MINUTES.toMillis(1));
+					} catch (InterruptedException ignored) {
 					}
-				} catch (InterruptedException e) {
-				} finally {
-				}
-			});
-			poller.setDaemon(true);
-			poller.start();
-		}
+				});
+				poller.setDaemon(true);
+				poller.start();
+			}
 		} catch (QblStorageException e) {
 			alert("failed to load remotefs", e);
 		}
@@ -123,7 +139,56 @@ public class RemoteFSController extends AbstractController implements Initializa
 		nameColumn.setCellValueFactory(new BoxObjectCellValueFactory(BoxObjectCellValueFactory.NAME));
 		sizeColumn.setCellValueFactory(new BoxObjectCellValueFactory(BoxObjectCellValueFactory.SIZE));
 		dateColumn.setCellValueFactory(new BoxObjectCellValueFactory(BoxObjectCellValueFactory.MTIME));
-		treeTable.getColumns().setAll(nameColumn, sizeColumn, dateColumn);
+		treeTable.setRowFactory(param1 -> {
+			TreeTableRow<BoxObject> row = new TreeTableRow<>();
+			row.hoverProperty().addListener((observable, oldValue, newValue) -> {
+				if (newValue) {
+					hoveredItem.set(row.getTreeItem());
+				} else if (oldValue && hoveredItem.get() == row.getTreeItem()) {
+					hoveredItem.set(null);
+				}
+			});
+			return row;
+		});
+		optionsColumn.setCellValueFactory(param -> {
+			TreeItem<BoxObject> item = param.getValue();
+			HBox bar = new HBox(3);
+			SimpleObjectProperty<Node> result = new SimpleObjectProperty<>(bar);
+
+			buttonFromImage(item, bar, downloadImage, event -> download(item), "download");
+
+			if (item.getValue() instanceof BoxFolder) {
+				buttonFromImage(item, bar, uploadFileImage, event -> uploadFile(item), "upload_file");
+				buttonFromImage(item, bar, uploadFolderImage, event -> uploadFolder(item), "upload_folder");
+				buttonFromImage(item, bar, addFolderImage, event -> createFolder(item), "create_folder");
+			} else {
+				spacer(bar);
+				spacer(bar);
+				spacer(bar);
+			}
+
+			buttonFromImage(item, bar, deleteImage, event -> deleteItem(item), "delete");
+			buttonFromImage(item, bar, shareImage, event -> {}, "share");
+
+			return result;
+		});
+	}
+
+	private void spacer(HBox bar) {
+		Label label = new Label();
+		label.setPrefWidth(OPTION_WIDTH);
+		bar.getChildren().add(label);
+	}
+
+	private void buttonFromImage(TreeItem<BoxObject> item, HBox bar, Image image, EventHandler<MouseEvent> handler, String name) {
+		ImageView button = new ImageView(image);
+		button.setCursor(HAND);
+		button.setOnMouseClicked(handler);
+		button.visibleProperty().bind(hoveredItem.isEqualTo(item));
+		button.setId(name + "_" + treeTable.getRow(item));
+		Tooltip tooltip = new Tooltip(resourceBundle.getString("option_" + name + "_tooltip"));
+		Tooltip.install(button, tooltip);
+		bar.getChildren().add(button);
 	}
 
 	private ReadOnlyBoxNavigation createSetup() throws QblStorageException {
@@ -133,9 +198,8 @@ public class RemoteFSController extends AbstractController implements Initializa
 		return nav;
 	}
 
-	@FXML
-	protected void handleUploadFileButtonAction(ActionEvent event) {
-		if (!(selectedItem instanceof LazyBoxFolderTreeItem)) {
+	private void uploadFile(TreeItem<BoxObject> item) {
+		if (!(item instanceof LazyBoxFolderTreeItem)) {
 			return;
 		}
 
@@ -144,7 +208,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 		chooser.setTitle(title);
 		List<File> list = chooser.showOpenMultipleDialog(treeTable.getScene().getWindow());
 		for (File file : list) {
-			Path destination = ((LazyBoxFolderTreeItem) selectedItem).getPath().resolve(file.getName());
+			Path destination = ((LazyBoxFolderTreeItem) item).getPath().resolve(file.getName());
 			Path source = file.toPath();
 			upload(source, destination);
 		}
@@ -155,43 +219,48 @@ public class RemoteFSController extends AbstractController implements Initializa
 		loadManager.addUpload(upload);
 	}
 
-	@FXML
-	protected void handleUploadFolderButtonAction(ActionEvent event) throws QblStorageException {
+	private void uploadFolder(TreeItem<BoxObject> item) {
+		if (item == null || !(item.getValue() instanceof BoxFolder) || !(item instanceof LazyBoxFolderTreeItem)) {
+			return;
+		}
+
 		DirectoryChooser chooser = new DirectoryChooser();
 		String title = resourceBundle.getString("chooseFolder");
 		chooser.setTitle(title);
 		File directory = chooser.showDialog(treeTable.getScene().getWindow());
 		try {
-			chooseUploadDirectory(directory);
+			chooseUploadDirectory(directory, item);
 		} catch (IOException e) {
 			alert("failed to upload folder", e);
 		}
 	}
 
-	@FXML
-	protected void handleDownloadButtonAction(ActionEvent event) throws QblStorageException, IOException {
-		DirectoryChooser chooser = new DirectoryChooser();
-		chooser.setTitle(resourceBundle.getString("downloadFolder"));
-		File directory = chooser.showDialog(treeTable.getScene().getWindow());
-		BoxObject boxObject = selectedItem.getValue();
+	private void download(TreeItem<BoxObject> item) {
+		try {
+			DirectoryChooser chooser = new DirectoryChooser();
+			chooser.setTitle(resourceBundle.getString("downloadFolder"));
+			File directory = chooser.showDialog(treeTable.getScene().getWindow());
+			BoxObject boxObject = item.getValue();
 
-		Path path;
-		LazyBoxFolderTreeItem folderTreeItem;
-		if (selectedItem instanceof LazyBoxFolderTreeItem) {
-			folderTreeItem = (LazyBoxFolderTreeItem) this.selectedItem;
-			path = folderTreeItem.getPath();
-		} else {
-			folderTreeItem = (LazyBoxFolderTreeItem) selectedItem.getParent();
-			path = folderTreeItem.getPath().resolve(boxObject.name);
+			Path path;
+			LazyBoxFolderTreeItem folderTreeItem;
+			if (item instanceof LazyBoxFolderTreeItem) {
+				folderTreeItem = (LazyBoxFolderTreeItem) this.selectedItem;
+				path = folderTreeItem.getPath();
+			} else {
+				folderTreeItem = (LazyBoxFolderTreeItem) item.getParent();
+				path = folderTreeItem.getPath().resolve(boxObject.name);
+			}
+			ReadOnlyBoxNavigation navigation = folderTreeItem.getNavigation();
+
+			downloadBoxObject(boxObject, navigation, path, directory.toPath());
+		} catch (QblStorageException e) {
+			alert(e);
 		}
-		ReadOnlyBoxNavigation navigation = folderTreeItem.getNavigation();
-
-		downloadBoxObject(boxObject, navigation, path, directory.toPath());
 	}
 
-	@FXML
-	protected void handleCreateFolderButtonAction(ActionEvent event) {
-		if (selectedItem == null || !(selectedItem instanceof LazyBoxFolderTreeItem)) {
+	private void createFolder(TreeItem<BoxObject> item) {
+		if (item == null || !(item instanceof LazyBoxFolderTreeItem)) {
 			return;
 		}
 
@@ -202,10 +271,10 @@ public class RemoteFSController extends AbstractController implements Initializa
 		Optional<String> result = dialog.showAndWait();
 		new Thread(() -> {
 			result.ifPresent(name -> {
-				LazyBoxFolderTreeItem item = (LazyBoxFolderTreeItem) selectedItem;
+				LazyBoxFolderTreeItem lazyItem = (LazyBoxFolderTreeItem) item;
 
 				try {
-					createFolder(item.getPath().resolve(name));
+					createFolder(lazyItem.getPath().resolve(name));
 				} catch (QblStorageException e) {
 					e.printStackTrace();
 				}
@@ -213,29 +282,28 @@ public class RemoteFSController extends AbstractController implements Initializa
 		}).start();
 	}
 
-	@FXML
-	protected void handleDeleteButtonAction(ActionEvent event) throws QblStorageException {
-		if (selectedItem.getParent() != null) {
+	private void deleteItem(TreeItem<BoxObject> item) {
+		try {
+			if (item.getParent() != null) {
 
-			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-			alert.setTitle(resourceBundle.getString("deleteQuestion"));
-			alert.setHeaderText(resourceBundle.getString("deleteFolder") + selectedItem.getValue().name + " ?");
-			Optional<ButtonType> result = alert.showAndWait();
+				Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+				alert.setTitle(resourceBundle.getString("deleteQuestion"));
+				alert.setHeaderText(resourceBundle.getString("deleteFolder") + item.getValue().name + " ?");
+				Optional<ButtonType> result = alert.showAndWait();
 
-			LazyBoxFolderTreeItem updateTreeItem = (LazyBoxFolderTreeItem) selectedItem.getParent();
-			Path path = updateTreeItem.getPath().resolve(selectedItem.getValue().name);
+				LazyBoxFolderTreeItem updateTreeItem = (LazyBoxFolderTreeItem) item.getParent();
+				Path path = updateTreeItem.getPath().resolve(item.getValue().name);
 
-			deleteBoxObject(result.get(), path, selectedItem.getValue());
+				deleteBoxObject(result.get(), path, item.getValue());
+			}
+		} catch (QblStorageException e) {
+			alert(e);
 		}
 	}
 
 
-	void chooseUploadDirectory(File directory) throws IOException {
-
-		if (selectedItem == null || !(selectedItem.getValue() instanceof BoxFolder) || !(selectedItem instanceof LazyBoxFolderTreeItem)) {
-			return;
-		}
-		Path destination = Paths.get(((LazyBoxFolderTreeItem)selectedItem).getPath().toString(), directory.getName());
+	void chooseUploadDirectory(File directory, TreeItem<BoxObject> item) throws IOException {
+		Path destination = Paths.get(((LazyBoxFolderTreeItem) item).getPath().toString(), directory.getName());
 		uploadDirectory(directory.toPath(), destination);
 	}
 
@@ -283,7 +351,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 		loadManager.addUpload(new ManualUpload(DELETE, volume, null, path, object instanceof BoxFolder));
 	}
 
-	void downloadBoxObject(BoxObject boxObject, ReadOnlyBoxNavigation nav, Path source, Path destination) throws QblStorageException, IOException {
+	void downloadBoxObject(BoxObject boxObject, ReadOnlyBoxNavigation nav, Path source, Path destination) throws QblStorageException {
 		destination = destination.resolve(boxObject.name);
 		if (boxObject instanceof BoxFile) {
 			downloadFile((BoxFile)boxObject, nav, source, destination);
@@ -292,7 +360,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 		}
 	}
 
-	private void downloadBoxFolder(ReadOnlyBoxNavigation nav, Path source, Path destination) throws QblStorageException, IOException {
+	private void downloadBoxFolder(ReadOnlyBoxNavigation nav, Path source, Path destination) throws QblStorageException {
 		loadManager.addDownload(new ManualDownload(CREATE, volume, source, destination, true));
 
 		for (BoxFile file : nav.listFiles()) {
@@ -303,7 +371,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 		}
 	}
 
-	private void downloadFile(BoxFile file, ReadOnlyBoxNavigation nav, Path source, Path destination) throws IOException, QblStorageException {
+	private void downloadFile(BoxFile file, ReadOnlyBoxNavigation nav, Path source, Path destination) {
 		loadManager.addDownload(new ManualDownload(file.mtime, CREATE, volume, source, destination, false));
 	}
 

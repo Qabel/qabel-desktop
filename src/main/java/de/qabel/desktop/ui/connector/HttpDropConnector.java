@@ -26,7 +26,7 @@ public class HttpDropConnector implements Connector {
 
 		try {
 			binaryMessage = new BinaryDropMessageV0(d);
-			final byte[] messageByteArray = binaryMessage.assembleMessageFor(c);
+			final byte[] messageByteArray = binaryMessage.assembleMessageFor(c, (Identity)d.getSender());
 			DropURL dropURL = convertCollectionIntoDropUrl(c.getDropUrls());
 			HTTPResult<?> dropResult = dHTTP.send(dropURL.getUri(), messageByteArray);
 			if (dropResult.getResponseCode() >= 300 || dropResult.getResponseCode() < 200) {

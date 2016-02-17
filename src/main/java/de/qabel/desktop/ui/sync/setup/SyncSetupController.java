@@ -4,7 +4,10 @@ import de.qabel.core.config.Account;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.DefaultBoxSyncConfig;
+import de.qabel.desktop.config.factory.BoxVolumeFactory;
+import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.remotefs.dialog.RemoteFSDirectoryChooser;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
@@ -16,9 +19,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,6 +45,15 @@ public class SyncSetupController extends AbstractController implements Initializ
 
 	@FXML
 	Button start;
+
+	@FXML
+	Button chooseLocalPath;
+
+	@FXML
+	Button chooseRemotePath;
+
+	@Inject
+	BoxVolumeFactory boxVolumeFactory;
 
 	@Inject
 	private ClientConfiguration clientConfiguration;
@@ -80,6 +95,30 @@ public class SyncSetupController extends AbstractController implements Initializ
 		updateErrorState(remotePath, remotePathValid.get());
 
 		fixIdentity();
+
+		chooseLocalPath.onActionProperty().setValue(event -> {
+			File localPath = new DirectoryChooser().showDialog(null);
+			if (localPath == null) {
+				return;
+			}
+			localPathProperty.setValue(localPath.getAbsolutePath());
+		});
+
+		chooseRemotePath.onActionProperty().setValue(event -> {
+			try {
+				new RemoteFSDirectoryChooser(
+						resources,
+						boxVolumeFactory.getVolume(
+								clientConfiguration.getAccount(),
+								clientConfiguration.getSelectedIdentity()
+						)
+				).showAndWait()
+				.filter(path -> path != null)
+				.ifPresent(path1 -> remotePathProperty.setValue(path1.toString()));
+			} catch (QblStorageException e) {
+				alert("failed to open RemoteFS directory chooser", e);
+			}
+		});
 	}
 
 	private BooleanBinding getRemotePathValidityCondition() {

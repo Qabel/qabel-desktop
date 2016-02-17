@@ -70,6 +70,14 @@ public class ActionlogController extends AbstractController implements Initializ
 		addListener();
 	}
 
+	private void createActionlogSetup() {
+		identity = clientConfiguration.getSelectedIdentity();
+		c = new Contact(identity.getAlias(), identity.getDropUrls(), identity.getEcPublicKey());
+		try {
+			loadMessages(c);
+		} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
+			entityNotFoundExcepion.printStackTrace();
+		}
 	private void startThreads() {
 		dateRefresher = new Thread(() -> {
 			while (true) {

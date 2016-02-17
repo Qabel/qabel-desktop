@@ -41,7 +41,7 @@ public class LayoutController extends AbstractController implements Initializabl
 	@FXML
 	public Label mail;
 	@FXML
-	private VBox navi;
+	VBox navi;
 	@FXML
 	private VBox scrollContent;
 
@@ -55,6 +55,9 @@ public class LayoutController extends AbstractController implements Initializabl
 	private Pane avatarContainer;
 
 	@FXML
+	private Pane selectedIdentity;
+
+	@FXML
 	private ScrollPane scroll;
 
 	@FXML
@@ -66,6 +69,13 @@ public class LayoutController extends AbstractController implements Initializabl
 	@Inject
 	private TransferManager transferManager;
 
+	private HBox browseNav;
+	private HBox contactsNav;
+	private HBox actionlogNav;
+	private HBox syncNav;
+	private HBox inviteNav;
+	private HBox accountingNav;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		this.resourceBundle = resources;
@@ -73,17 +83,26 @@ public class LayoutController extends AbstractController implements Initializabl
 		navi.getChildren().clear();
 		AccountingView accountingView = new AccountingView();
 		actionlogView =  new ActionlogView();
-		navi.getChildren().add(createNavItem(resourceBundle.getString("identity"), accountingView));
-		navi.getChildren().add(createNavItem(resourceBundle.getString("browse"), new RemoteFSView()));
-		navi.getChildren().add(createNavItem(resourceBundle.getString("contacts"), new ContactView()));
-		navi.getChildren().add(createNavItem(resourceBundle.getString("sync"), new SyncView()));
-		navi.getChildren().add(createNavItem(resourceBundle.getString("invite"), new InviteView()));
+		accountingNav = createNavItem(resourceBundle.getString("identity"), accountingView);
+		navi.getChildren().add(accountingNav);
+
+		browseNav = createNavItem(resourceBundle.getString("browse"), new RemoteFSView());
+		contactsNav = createNavItem(resourceBundle.getString("contacts"), new ContactView());
+		syncNav = createNavItem(resourceBundle.getString("sync"), new SyncView());
+		inviteNav = createNavItem(resourceBundle.getString("invite"), new InviteView());
+
+		navi.getChildren().add(browseNav);
+		navi.getChildren().add(contactsNav);
+		navi.getChildren().add(actionlogNav);
+		navi.getChildren().add(syncNav);
+		navi.getChildren().add(inviteNav);
 
 		scrollContent.setFillWidth(true);
 
 
 		if (clientConfiguration.getSelectedIdentity() == null) {
 			accountingView.getView(scrollContent.getChildren()::setAll);
+			setActiveNavItem(accountingNav);
 		}
 
 		updateIdentity();
@@ -99,7 +118,7 @@ public class LayoutController extends AbstractController implements Initializabl
 		}
 		FxProgressModel progressModel = new FxProgressModel(progress);
 		uploadProgress.progressProperty().bind(progressModel.progressProperty());
-		progressModel.progressProperty().addListener((observable, oldValue, newValue) -> {
+		progress.onProgress(() -> {
 			if (progress.isEmpty()) {
 				uploadProgress.setVisible(false);
 			} else {
@@ -113,11 +132,18 @@ public class LayoutController extends AbstractController implements Initializabl
 
 	private void updateIdentity() {
 		Identity identity = clientConfiguration.getSelectedIdentity();
+
+		browseNav.setManaged(identity != null);
+		contactsNav.setManaged(identity != null);
+		actionlogNav.setManaged(identity != null);
+		syncNav.setManaged(identity != null);
+		inviteNav.setManaged(identity != null);
+		selectedIdentity.setVisible(identity != null);
+
 		avatarContainer.setVisible(identity != null);
 		if (identity == null) {
 			return;
 		}
-		mail.setText(clientConfiguration.getAccount().getUser());
 
 		final String currentAlias = identity.getAlias();
 		if (currentAlias.equals(lastAlias)) {
@@ -127,6 +153,11 @@ public class LayoutController extends AbstractController implements Initializabl
 		new AvatarView(e ->  currentAlias).getViewAsync(avatarContainer.getChildren()::setAll);
 		alias.setText(currentAlias);
 		lastAlias = currentAlias;
+
+		if (clientConfiguration.getAccount() == null) {
+			return;
+		}
+		mail.setText(clientConfiguration.getAccount().getUser());
 	}
 
 	private HBox createNavItem(String label, FXMLView view) {

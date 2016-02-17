@@ -1,12 +1,12 @@
 package de.qabel.desktop.storage;
 
 
-import com.amazonaws.util.IOUtils;
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.exceptions.QblStorageNameConflict;
 import de.qabel.desktop.exceptions.QblStorageNotFound;
+import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -35,7 +35,7 @@ public abstract class BoxVolumeTest {
 	protected byte[] deviceID2;
 	protected QblECKeyPair keyPair;
 	protected final String bucket = "qabel";
-	protected final String prefix = UUID.randomUUID().toString();
+	protected String prefix = UUID.randomUUID().toString();
 	private final String testFileName = "src/test/java/de/qabel/desktop/storage/testFile.txt";
 
 	@Before

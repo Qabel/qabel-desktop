@@ -10,7 +10,7 @@ public class BoxVolumeStub extends CachedBoxVolume {
 	public CachedBoxNavigation rootNavigation = new BoxNavigationStub(null, null);
 
 	public BoxVolumeStub() {
-		super(null, null, null, null, new byte[0], null);
+		super(null, null, null, null, null, null);
 	}
 
 	@Override

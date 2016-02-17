@@ -4,10 +4,10 @@ import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.exceptions.QblStorageNotFound;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.DateUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -18,36 +18,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
 
-public class S3ReadBackend implements StorageReadBackend {
-	private static final Logger logger = LoggerFactory.getLogger(S3ReadBackend.class.getSimpleName());
+public class HttpReadBackend extends AbstractHttpStorageBackend implements StorageReadBackend {
 
-	// Number of http connections to S3
-	// The default was too low, 20 works. Further testing may be required
-	// to find the best amount of connections.
-	private static final int CONNECTIONS = 50;
-
-	String root;
-	private final CloseableHttpClient httpclient;
-
-	S3ReadBackend(String bucket, String prefix) {
-		this("https://" + bucket + ".s3.amazonaws.com/" + prefix);
-	}
-
-	S3ReadBackend(String root) {
-		this.root = root;
-		// Increase max total connection
-		PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
-		connManager.setMaxTotal(CONNECTIONS);
-		// Increase default max connection per route
-		// Set to the max total because we only have 1 route
-		connManager.setDefaultMaxPerRoute(CONNECTIONS);
-
-		httpclient = HttpClients.custom()
-				.setConnectionManager(connManager).build();
-
-		logger.info("S3ReadBackend with root address set to " + root);
+	public HttpReadBackend(String root) {
+		super(root);
 	}
 
 	public StorageDownload download(String name) throws QblStorageException {
@@ -62,7 +37,7 @@ public class S3ReadBackend implements StorageReadBackend {
 		logger.info("Downloading " + name);
 		URI uri;
 		try {
-			uri = new URI(this.root + '/' + name);
+			uri = new URI(this.root).resolve(name);
 		} catch (URISyntaxException e) {
 			throw new QblStorageException(e);
 		}
@@ -70,6 +45,8 @@ public class S3ReadBackend implements StorageReadBackend {
 		if (ifModifiedVersion != null) {
 			httpGet.addHeader(HttpHeaders.IF_NONE_MATCH, ifModifiedVersion);
 		}
+		prepareRequest(httpGet);
+
 		CloseableHttpResponse response;
 		try {
 			response = httpclient.execute(httpGet);

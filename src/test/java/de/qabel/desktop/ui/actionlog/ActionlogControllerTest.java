@@ -52,7 +52,7 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 		clientConfiguration.selectIdentity(i);
 		controller.sendDropMessage(c, "msg1");
 		i = identityBuilderFactory.factory().withAlias("NewIdentity").build();
-		c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
+		c = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
 
 		String msg2 = "msg2";
 		controller.sendDropMessage(c, msg2);
@@ -93,7 +93,7 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 
 	private DropMessage setup() {
 		i = identityBuilderFactory.factory().withAlias("TestAlias").build();
-		c = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
+		c = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
 		createController(i);
 		controller = (ActionlogController) view.getPresenter();
 		return new DropMessage(i, text, "dropMessage");

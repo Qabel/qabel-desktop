@@ -1,15 +1,23 @@
 .avatar {
     -fx-font-size: 3em;
-    -fx-font-weight: bold;
     -fx-alignment: CENTER;
 
+    -fx-text-fill: #343434;
     -fx-background-size: 50px;
-    -fx-border-color: black;
-    -fx-border-size: 0.1em;
     -fx-background-color: white;
     -fx-background-radius: 25;
     -fx-border-radius: 25;
     -fx-padding: 0 0 0 0;
+    -fx-margin: 3px;
+    -fx-effect: dropshadow(gaussian, grey, 8, 0, 0, 5);
+}
+
+.quotaBlock {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 10px;
+    -fx-text-alignment: RIGHT!important;
+    -fx-alignment: TOP-RIGHT!important;
+    -fx-pref-width: 100px;
 }
 
 .button.choose {

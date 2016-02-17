@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
+import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.DELETE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -80,6 +81,25 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 		Transaction transaction = manager.getTransactions().get(0) instanceof Download ? manager.getTransactions().get(0) : manager.getTransactions().get(1);
 		assertEquals("/tmp/someFolder", transaction.getSource().toString());
 		assertEquals(0.0, syncer.getProgress(), 0.001);
+	}
+
+	@Test
+	public void addsRemoteDeletesAsDownload() throws Exception {
+		BoxNavigationStub nav = new BoxNavigationStub(null, null);
+		nav.event = new RemoteChangeEvent(Paths.get("/tmp/someFile"), false, 1000L, DELETE, null, nav);
+		BoxVolumeStub volume = new BoxVolumeStub();
+		volume.rootNavigation = nav;
+
+		syncer = new DefaultSyncer(config, volume, manager);
+		syncer.setPollInterval(1, TimeUnit.MILLISECONDS);
+		syncer.run();
+
+		waitUntil(syncer::isPolling);
+
+		waitUntil(() -> manager.getTransactions().size() == 2);
+		Transaction transaction = manager.getTransactions().get(0) instanceof Download ? manager.getTransactions().get(0) : manager.getTransactions().get(1);
+		assertEquals("/tmp/someFile", transaction.getSource().toString());
+		assertEquals(Transaction.TYPE.DELETE, transaction.getType());
 	}
 
 	@Test

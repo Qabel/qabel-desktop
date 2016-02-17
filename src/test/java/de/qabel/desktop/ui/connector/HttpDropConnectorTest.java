@@ -43,7 +43,7 @@ public class HttpDropConnectorTest extends AbstractControllerTest {
 		DropURL drpoUrl = new DropURL(fakeURL);
 		collection.add(drpoUrl);
 		i = identityBuilderFactory.factory().withAlias("TestAlias").build();
-		c = new Contact(i, i.getAlias(), collection, i.getEcPublicKey());
+		c = new Contact(i.getAlias(), collection, i.getEcPublicKey());
 		DropMessage dropMessage = new DropMessage(i, text, "dropMessage");
 
 		connector.send(c, dropMessage);
@@ -61,7 +61,7 @@ public class HttpDropConnectorTest extends AbstractControllerTest {
 
 		i = identityBuilderFactory.factory().withAlias("TestAlias").build();
 		Identity identity = new Identity("TestAlias", collection, i.getPrimaryKeyPair());
-		c = new Contact(identity, identity.getAlias(), collection, identity.getEcPublicKey());
+		c = new Contact(identity.getAlias(), collection, identity.getEcPublicKey());
 
 		DropMessage dropMessage = new DropMessage(identity, text, type);
 		List<DropMessage> oldMessages = connector.receive(identity, sinceDate);

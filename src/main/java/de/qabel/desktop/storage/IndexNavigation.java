@@ -1,9 +1,9 @@
 package de.qabel.desktop.storage;
 
-import com.amazonaws.util.IOUtils;
 import de.qabel.core.crypto.DecryptedPlaintext;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.exceptions.QblStorageException;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongycastle.crypto.InvalidCipherTextException;
