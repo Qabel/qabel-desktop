@@ -93,7 +93,6 @@ public class LayoutController extends AbstractController implements Initializabl
 
 		navi.getChildren().add(browseNav);
 		navi.getChildren().add(contactsNav);
-		navi.getChildren().add(actionlogNav);
 		navi.getChildren().add(syncNav);
 		navi.getChildren().add(inviteNav);
 
@@ -135,7 +134,6 @@ public class LayoutController extends AbstractController implements Initializabl
 
 		browseNav.setManaged(identity != null);
 		contactsNav.setManaged(identity != null);
-		actionlogNav.setManaged(identity != null);
 		syncNav.setManaged(identity != null);
 		inviteNav.setManaged(identity != null);
 		selectedIdentity.setVisible(identity != null);

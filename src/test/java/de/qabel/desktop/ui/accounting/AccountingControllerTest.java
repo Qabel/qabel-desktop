@@ -2,7 +2,9 @@ package de.qabel.desktop.ui.accounting;
 
 import com.google.gson.Gson;
 import de.qabel.core.config.Contact;
+import de.qabel.core.config.Identities;
 import de.qabel.core.config.Identity;
+import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
@@ -44,7 +46,7 @@ public class AccountingControllerTest extends AbstractControllerTest {
 
 	@Test
 	public void showsIdentities() throws PersistenceException {
-		Identity identity = new Identity("alias", null, null);
+		Identity identity = new Identity("alias", null, new QblECKeyPair());
 		identityRepository.save(identity);
 
 		AccountingController controller = getAccountingController();
@@ -64,34 +66,36 @@ public class AccountingControllerTest extends AbstractControllerTest {
 	@Test
 	public void addsIdentitiesWithAlias() throws Exception {
 		AccountingController controller = getAccountingController();
+		controller.clientConfiguration.selectIdentity(null);
 		controller.addIdentityWithAlias("my ident");
-		List<Identity> identities = identityRepository.findAll();
-		assertEquals(1, identities.size());
-		assertEquals("my ident", identities.get(0).getAlias());
+		Identities identities = identityRepository.findAll();
+		assertEquals(1, identities.getIdentities().size());
+		identity = controller.clientConfiguration.getSelectedIdentity();
+		assertEquals("my ident", identities.getByKeyIdentifier(identity.getKeyIdentifier()).getAlias());
 	}
 
 	@Test
 	public void importIdentityTest() throws IOException, QblStorageException, PersistenceException, EntityNotFoundExcepion, URISyntaxException, QblDropInvalidURL {
 		setupExport();
 		controller.importIdentity(new File(System.class.getResource(TEST_JSON).toURI()));
-		List<Identity> identities = identityRepository.findAll();
+		Identities identities = identityRepository.findAll();
 
-		assertEquals(1, identities.size());
-		Identity i =identities.get(0);
-		assertEquals(TEST_ALIAS, i.getAlias());
+		assertEquals(1, identities.getIdentities().size());
+		Identity i = identities.getByKeyIdentifier("c82a034cd74f631339b6c8d02f32980a96093322273c42297f11bda945b12f61");
+		assertEquals("Test", i.getAlias());
 	}
 
 	@Test
 	public void exportIdentityTest() throws URISyntaxException, IOException, QblStorageException, PersistenceException, EntityNotFoundExcepion, QblDropInvalidURL {
 		File file = setupImport(TEST_IDENTITY);
-		Identity identity = identityBuilderFactory.factory().build();
+		Identity identity = identityBuilderFactory.factory().withAlias("Test").build();
 
 		controller.exportIdentity(identity, file);
 		File f = new File(TEST_FOLDER + "/" + TEST_IDENTITY);
 		controller.importIdentity(f);
 
-		List<Identity> identities = identityRepository.findAll();
-		Identity newIdentity = identities.get(0);
+		Identities identities = identityRepository.findAll();
+		Identity newIdentity = identities.getByKeyIdentifier(identity.getKeyIdentifier());
 		assertEquals(identity.getAlias(), newIdentity.getAlias());
 		assertEquals(identity.getEmail(), newIdentity.getEmail());
 		assertEquals(identity.getPrimaryKeyPair(), newIdentity.getPrimaryKeyPair());
@@ -103,7 +107,7 @@ public class AccountingControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void exportContactTest() throws IOException, QblStorageException, URISyntaxException, QblDropInvalidURL {
+	public void exportContactTest() throws IOException, QblStorageException, URISyntaxException, QblDropInvalidURL, EntityNotFoundExcepion, PersistenceException {
 		File file = setupImport(TEST_CONTACT);
 
 		Identity identity = identityBuilderFactory.factory().build();
@@ -117,9 +121,8 @@ public class AccountingControllerTest extends AbstractControllerTest {
 		assertEquals(f.getName(), TEST_CONTACT);
 
 		String contentNew = controller.readFile(f);
-		Gson gson = new Gson();
-		GsonContact exportGsonContact = gson.fromJson(contentNew, GsonContact.class);
-		Contact exportContact = controller.gsonContactToContact(exportGsonContact, identity);
+		Gson gson = controller.buildGson();
+		Contact exportContact = gson.fromJson(contentNew, Contact.class);
 
 		assertEquals(exportContact.getAlias(), identity.getAlias());
 		assertEquals(exportContact.getEmail(), identity.getEmail());

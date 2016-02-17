@@ -52,7 +52,7 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 			if (configDto.identitiyId != null) {
 				try {
 					config.selectIdentity(identityRepository.find(configDto.identitiyId));
-				} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
+				} catch (EntityNotFoundExcepion | PersistenceException entityNotFoundExcepion) {
 					entityNotFoundExcepion.printStackTrace();
 				}
 			}
@@ -81,7 +81,7 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 					boxSyncConfig.setSyncIndex(dto.syncIndex);
 				}
 				boxSyncConfigs.add(boxSyncConfig);
-			} catch (EntityNotFoundExcepion e) {
+			} catch (EntityNotFoundExcepion | PersistenceException e) {
 				e.printStackTrace();
 			}
 		}
@@ -97,7 +97,7 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 			configDto = configs.get(0);
 		}
 		configDto.accountId = configuration.hasAccount() ? configuration.getAccount().getPersistenceID() : null;
-		configDto.identitiyId = configuration.getSelectedIdentity() != null ? configuration.getSelectedIdentity().getPersistenceID() : null;
+		configDto.identitiyId = configuration.getSelectedIdentity() != null ? configuration.getSelectedIdentity().getKeyIdentifier() : null;
 
 		configDto.boxSyncConfigs.clear();
 		for (BoxSyncConfig boxSyncConfig : configuration.getBoxSyncConfigs()) {
@@ -126,7 +126,7 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 				} catch (EntityNotFoundExcepion e) {
 					identityRepository.save(identity);
 				}
-				configDto.identitiyId = identity.getPersistenceID();
+				configDto.identitiyId = identity.getKeyIdentifier();
 			} catch (PersistenceException e) {
 				e.printStackTrace();
 			}

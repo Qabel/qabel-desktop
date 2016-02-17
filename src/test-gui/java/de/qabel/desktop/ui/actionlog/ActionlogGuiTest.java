@@ -25,7 +25,7 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
 		String text = "Message";
 		waitUntil(() -> controller.textarea != null);
 		Identity i = controller.identity;
-		controller.c = new Contact(i,i.getAlias(),i.getDropUrls(), i.getEcPublicKey());
+		controller.c = new Contact(i.getAlias(),i.getDropUrls(), i.getEcPublicKey());
 		clickOn("#textarea").write(text);
 		clickOn("#submit");
 		List<DropMessage> list = controller.httpDropConnector.receive(controller.identity, new Date(0L));

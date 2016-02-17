@@ -70,7 +70,7 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 		controller.sleepTime = 1;
 		controller.dateRefresher.interrupt();
 		DropMessage d = new DropMessage(i,"payload", "test");
-		Contact sender = new Contact(i, i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
+		Contact sender = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
 
 		Map<String, Object> injectionContext = new HashMap<>();
 		injectionContext.put("dropMessage", d);
