@@ -71,9 +71,4 @@ public class PersistenceDropMessageRepository extends AbstractCachedPersistenceR
 		return (senderIdentifier == contactKeyIdentifier && receiverKeyIdentifier == ownKeyIdentifier && (!dropMessage.getSend())
 				|| (senderIdentifier == ownKeyIdentifier && receiverKeyIdentifier == contactKeyIdentifier && dropMessage.getSend()));
 	}
-
-	@Override
-	public synchronized void addObserver(Observer o) {
-		super.addObserver(o);
-	}
 }
