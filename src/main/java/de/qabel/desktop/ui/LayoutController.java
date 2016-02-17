@@ -88,13 +88,11 @@ public class LayoutController extends AbstractController implements Initializabl
 
 		browseNav = createNavItem(resourceBundle.getString("browse"), new RemoteFSView());
 		contactsNav = createNavItem(resourceBundle.getString("contacts"), new ContactView());
-		actionlogNav = createNavItem(resourceBundle.getString("actionlog"), actionlogView);
 		syncNav = createNavItem(resourceBundle.getString("sync"), new SyncView());
 		inviteNav = createNavItem(resourceBundle.getString("invite"), new InviteView());
 
 		navi.getChildren().add(browseNav);
 		navi.getChildren().add(contactsNav);
-		navi.getChildren().add(actionlogNav);
 		navi.getChildren().add(syncNav);
 		navi.getChildren().add(inviteNav);
 
@@ -135,7 +133,6 @@ public class LayoutController extends AbstractController implements Initializabl
 
 		browseNav.setManaged(identity != null);
 		contactsNav.setManaged(identity != null);
-		actionlogNav.setManaged(identity != null);
 		syncNav.setManaged(identity != null);
 		inviteNav.setManaged(identity != null);
 		selectedIdentity.setVisible(identity != null);

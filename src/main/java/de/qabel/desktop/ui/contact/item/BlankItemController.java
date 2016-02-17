@@ -12,9 +12,6 @@ import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/**
- * Created by jmt on 19.01.16.
- */
 public class BlankItemController extends AbstractController implements Initializable {
 
 	ResourceBundle resourceBundle;

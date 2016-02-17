@@ -1,5 +1,6 @@
 package de.qabel.desktop.repository.persistence;
 
+import de.qabel.core.config.Identities;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.Persistence;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
@@ -15,18 +16,18 @@ public class PersistenceIdentityRepositoryTest extends AbstractPersistenceReposi
 
 	@Test
 	public void returnsEmptyListWithoutInstances() throws Exception {
-		List<Identity> results = repo.findAll();
-		assertEquals(0, results.size());
+		Identities results = repo.findAll();
+		assertEquals(0, results.getIdentities().size());
 	}
 
 	@Test
 	public void returnsPersistedEntities() throws Exception {
 		Identity identity = new Identity("a", new LinkedList<>(), null);
 		persistence.persistEntity(identity);
-		List<Identity> results = repo.findAll();
+		Identities results = repo.findAll();
 
-		assertEquals(1, results.size());
-		assertEquals(identity, results.get(0));
+		assertEquals(1, results.getIdentities().size());
+		assertEquals(identity, results.getByKeyIdentifier(identity.getKeyIdentifier()));
 	}
 
 	@Test(expected = EntityNotFoundExcepion.class)

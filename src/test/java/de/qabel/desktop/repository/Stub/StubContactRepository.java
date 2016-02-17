@@ -1,21 +1,21 @@
 package de.qabel.desktop.repository.Stub;
 
 import de.qabel.core.config.Contact;
+import de.qabel.core.config.Contacts;
 import de.qabel.core.config.Identity;
+import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 
-import java.util.LinkedList;
-import java.util.List;
 
 public class StubContactRepository implements ContactRepository {
-	private List<Contact> contacts = new LinkedList<>();
+	private Contacts contacts = new Contacts(new Identity("i", null, new QblECKeyPair()));
 
 
 	@Override
 	public void save(Contact contact) throws PersistenceException {
-		contacts.add(contact);
+		contacts.put(contact);
 	}
 
 	@Override
@@ -24,8 +24,9 @@ public class StubContactRepository implements ContactRepository {
 	}
 
 	@Override
-	public List<Contact> findAllContactFromOneIdentity(Identity identity) throws EntityNotFoundExcepion {
+	public Contacts findContactsFromOneIdentity(Identity identity) throws EntityNotFoundExcepion {
 		return contacts;
 	}
+
 
 }

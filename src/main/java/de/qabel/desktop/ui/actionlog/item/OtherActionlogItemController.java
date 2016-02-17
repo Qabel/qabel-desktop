@@ -4,6 +4,7 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -33,14 +34,14 @@ public class OtherActionlogItemController extends AbstractController implements 
 	DropMessage dropMessage;
 	@Inject
 	Contact contact;
-
+	PrettyTime p;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
 		textlabel.setText(dropMessage.getDropPayload());
 
-		PrettyTime p = new PrettyTime(resources.getLocale());
+		p = new PrettyTime(resources.getLocale());
 		dateLabel.setText(p.format(dropMessage.getCreationDate()));
 
 		textlabel.setWrapText(true);
@@ -53,5 +54,11 @@ public class OtherActionlogItemController extends AbstractController implements 
 
 	private void updateAvatar() {
 		new AvatarView(e -> contact.getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
+	}
+
+
+	@Override
+	public void refreshDate() {
+		Platform.runLater(()-> dateLabel.setText(p.format(dropMessage.getCreationDate())));
 	}
 }

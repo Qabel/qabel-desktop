@@ -1,6 +1,8 @@
 package de.qabel.desktop.ui.actionlog;
 
 import com.airhacks.afterburner.views.FXMLView;
+import de.qabel.core.config.Contact;
+import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Test;
@@ -22,6 +24,8 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
 	public void testSendMessage() {
 		String text = "Message";
 		waitUntil(() -> controller.textarea != null);
+		Identity i = controller.identity;
+		controller.c = new Contact(i.getAlias(),i.getDropUrls(), i.getEcPublicKey());
 		clickOn("#textarea").write(text);
 		clickOn("#submit");
 		List<DropMessage> list = controller.httpDropConnector.receive(controller.identity, new Date(0L));

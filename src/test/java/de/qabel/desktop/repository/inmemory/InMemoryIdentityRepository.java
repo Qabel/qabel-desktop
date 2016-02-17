@@ -1,35 +1,32 @@
 package de.qabel.desktop.repository.inmemory;
 
+import de.qabel.core.config.Identities;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class InMemoryIdentityRepository implements IdentityRepository {
-	private Map<String, Identity> identities = new HashMap<>();
+	private Identities identities = new Identities();
 
 	@Override
 	public Identity find(String id) throws EntityNotFoundExcepion {
-		if (!identities.containsKey(id)) {
+		if (identities.getByKeyIdentifier(id) == null) {
 			throw new EntityNotFoundExcepion("id " + id + " not found");
 		}
-		return identities.get(id);
+		return identities.getByKeyIdentifier(id);
 	}
 
 	@Override
-	public List<Identity> findAll() throws EntityNotFoundExcepion {
-		List<Identity> result = new ArrayList<>();
-		result.addAll(identities.values());
-		return result;
+	public Identities findAll() throws EntityNotFoundExcepion {
+		return identities;
 	}
 
 	@Override
 	public void save(Identity identity) throws PersistenceException {
-		identities.put(identity.getPersistenceID(), identity);
+		identities.put(identity);
 	}
 }

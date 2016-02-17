@@ -1,7 +1,9 @@
 package de.qabel.desktop.ui.accounting.item;
 
 import de.qabel.core.config.Account;
+import de.qabel.core.config.Identities;
 import de.qabel.core.config.Identity;
+import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import org.junit.Test;
@@ -38,10 +40,12 @@ public class AccountingItemControllerTest extends AbstractControllerTest {
 
 	@Test
 	public void savesAlias() throws Exception {
-		AccountingItemController controller = getController(new Identity("alias", null, null));
+		Identity i = new Identity("alias", null, new QblECKeyPair());
+		AccountingItemController controller = getController(i);
 		controller.setAlias("new alias");
 		assertEquals("new alias", controller.alias.getText());
-
-		assertEquals("new alias", identityRepository.findAll().get(0).getAlias());
+		Identities results = identityRepository.findAll();
+		Identity identity = results.getByKeyIdentifier(i.getKeyIdentifier());
+		assertEquals("new alias", identity.getAlias());
 	}
 }

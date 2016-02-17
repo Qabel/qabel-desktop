@@ -1,5 +1,6 @@
 package de.qabel.desktop.repository.persistence;
 
+import de.qabel.core.config.Identities;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.Persistence;
 import de.qabel.desktop.repository.IdentityRepository;
@@ -13,37 +14,50 @@ public class PersistenceIdentityRepository extends AbstractCachedPersistenceRepo
 		super(persistence);
 	}
 
+	private Identities identities;
+
 	@Override
-	public Identity find(String id) throws EntityNotFoundExcepion {
-		if (isCached(id)) {
-			return fromCache(id);
-		}
-		Identity entity = persistence.getEntity(id, Identity.class);
+	public Identity find(String id) throws EntityNotFoundExcepion, PersistenceException {
+		Identities identities = findAll();
+		Identity entity = identities.getByKeyIdentifier(id);
+
 		if (entity == null) {
 			throw new EntityNotFoundExcepion("No identity found for id " + id);
 		}
-		cache(entity);
 		return entity;
 	}
 
 	@Override
-	public List<Identity> findAll() throws EntityNotFoundExcepion {
-		List<Identity> entities = persistence.getEntities(Identity.class);
-		syncWithCache(entities);
-		return entities;
+	public synchronized Identities findAll() throws EntityNotFoundExcepion, PersistenceException {
+		if (identities == null) {
+			List<Identities> identitiesList = persistence.getEntities(Identities.class);
+			try {
+				identities = identitiesList.get(0);
+			} catch (Exception e) {
+				identities = new Identities();
+				if (persistence.updateOrPersistEntity(identities)) {
+					return identities;
+				} else {
+					throw new PersistenceException("Failed to save Entity " + identities + ", reason unknown");
+				}
+
+			}
+		}
+		return identities;
 	}
+
 
 	@Override
 	public void save(Identity identity) throws PersistenceException {
 		boolean result;
 		try {
-			result = persistence.updateOrPersistEntity(identity);
+			findAll().put(identity);
+			result = persistence.updateOrPersistEntity(identities);
 		} catch (Exception e) {
-			throw new PersistenceException("Failed to save Entity " + identity + ": " + e.getMessage(), e);
+			throw new PersistenceException("Failed to save Entity " + identities + ": " + e.getMessage(), e);
 		}
 		if (!result) {
-			throw new PersistenceException("Failed to save Entity " + identity + ", reason unknown");
+			throw new PersistenceException("Failed to save Entity " + identities + ", reason unknown");
 		}
-		cache(identity);
 	}
 }
