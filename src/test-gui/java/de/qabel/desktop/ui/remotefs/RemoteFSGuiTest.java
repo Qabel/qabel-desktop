@@ -37,7 +37,6 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 		assertFalse(getFirstNode("#upload_folder_" + rootIndex).isVisible());
 		assertFalse(getFirstNode("#create_folder_" + rootIndex).isVisible());
 		assertFalse(getFirstNode("#delete_" + rootIndex).isVisible());
-		assertFalse(getFirstNode("#share_" + rootIndex).isVisible());
 
 		moveTo("#download_" + rootIndex);
 
@@ -46,7 +45,6 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 		assertTrue(getFirstNode("#upload_folder_" + rootIndex).isVisible());
 		assertTrue(getFirstNode("#create_folder_" + rootIndex).isVisible());
 		assertTrue(getFirstNode("#delete_" + rootIndex).isVisible());
-		assertTrue(getFirstNode("#share_" + rootIndex).isVisible());
 
 		robot.moveTo(stage);
 
@@ -55,6 +53,5 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 		assertFalse(getFirstNode("#upload_folder_" + rootIndex).isVisible());
 		assertFalse(getFirstNode("#create_folder_" + rootIndex).isVisible());
 		assertFalse(getFirstNode("#delete_" + rootIndex).isVisible());
-		assertFalse(getFirstNode("#share_" + rootIndex).isVisible());
 	}
 }

@@ -4,8 +4,6 @@ import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.exceptions.*;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,25 +11,21 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-public class DirectoryMetadata {
-	private static final Logger logger = LoggerFactory.getLogger(DirectoryMetadata.class.getSimpleName());
-	private static final String JDBC_PREFIX = "jdbc:sqlite:";
-	public static final int TYPE_NONE = -1;
-	private final Connection connection;
+public class DirectoryMetadata extends AbstractMetadata {
 
 	private final String fileName;
 	byte[] deviceId;
 	String root;
-	File path;
 
 	private static final int TYPE_FILE = 0;
 	private static final int TYPE_FOLDER = 1;
 	private static final int TYPE_EXTERNAL = 2;
 
-	private final String[] initSql = {
+	private static final String[] initSql = {
 			"CREATE TABLE meta (" +
 					" name VARCHAR(24) PRIMARY KEY," +
 					" value TEXT )",
@@ -57,29 +51,24 @@ public class DirectoryMetadata {
 					" name VARCHAR(255)NOT NULL PRIMARY KEY," +
 					" key BLOB NOT NULL )",
 			"CREATE TABLE externals (" +
+					" is_folder BOOLEAN NOT NULL," +
 					" owner BLOB NOT NULL," +
 					" name VARCHAR(255)NOT NULL PRIMARY KEY," +
 					" key BLOB NOT NULL," +
 					" url TEXT NOT NULL )",
 			"INSERT INTO spec_version (version) VALUES(0)"
 	};
-	private File tempDir;
 
 	public DirectoryMetadata(Connection connection, String root, byte[] deviceId,
 							 File path, String fileName, File tempDir) {
-		this.connection = connection;
+		this(connection, deviceId, path, fileName, tempDir);
 		this.root = root;
-		this.deviceId = deviceId;
-		this.path = path;
-		this.fileName = fileName;
-		this.tempDir = tempDir;
 	}
 
 	public DirectoryMetadata(Connection connection, byte[] deviceId, File path, String fileName,
 							 File tempDir) {
-		this.connection = connection;
+		super(connection, path);
 		this.deviceId = deviceId;
-		this.path = path;
 		this.fileName = fileName;
 		this.tempDir = tempDir;
 	}
@@ -133,15 +122,6 @@ public class DirectoryMetadata {
 	}
 
 	/**
-	 * Path of the metadata file on the local filesystem
-	 *
-	 * @return
-	 */
-	public File getPath() {
-		return path;
-	}
-
-	/**
 	 * Name of the file on the storage backend
 	 *
 	 * @return
@@ -150,21 +130,9 @@ public class DirectoryMetadata {
 		return fileName;
 	}
 
-	/**
-	 * Writable temporary directory which is used for encryption and decryption
-	 *
-	 * @return
-	 */
-	public File getTempDir() {
-		return tempDir;
-	}
-
-	private void initDatabase() throws SQLException, QblStorageException {
-		for (String q : initSql) {
-			try (Statement statement = connection.createStatement()) {
-				statement.executeUpdate(q);
-			}
-		}
+	@Override
+	protected void initDatabase() throws SQLException, QblStorageException {
+		super.initDatabase();
 		try (PreparedStatement statement = connection.prepareStatement(
 				"INSERT INTO version (version, time) VALUES (?, ?)")) {
 			statement.setBytes(1, initVersion());
@@ -177,6 +145,11 @@ public class DirectoryMetadata {
 		if (root != null) {
 			setRoot(root);
 		}
+	}
+
+	@Override
+	protected String[] getInitSql() {
+		return initSql;
 	}
 
 	private void setRoot(String root) throws SQLException {
@@ -195,21 +168,6 @@ public class DirectoryMetadata {
 					return rs.getString(1);
 				} else {
 					throw new QblStorageNotFound("No root found!");
-				}
-			}
-		} catch (SQLException e) {
-			throw new QblStorageException(e);
-		}
-	}
-
-	Integer getSpecVersion() throws QblStorageException {
-		try (Statement statement = connection.createStatement()) {
-			try (ResultSet rs = statement.executeQuery(
-					"SELECT version FROM spec_version")) {
-				if (rs.next()) {
-					return rs.getInt(1);
-				} else {
-					throw new QblStorageCorruptMetadata("No version found!");
 				}
 			}
 		} catch (SQLException e) {
@@ -400,18 +358,19 @@ public class DirectoryMetadata {
 		}
 	}
 
-	void insertExternal(BoxExternal external) throws QblStorageException {
+	void insertExternal(BoxExternalReference external) throws QblStorageException {
 		int type = isA(external.name);
 		if ((type != TYPE_NONE) && (type != TYPE_EXTERNAL)) {
 			throw new QblStorageNameConflict(external.name);
 		}
 		try {
 			PreparedStatement st = connection.prepareStatement(
-					"INSERT INTO externals (url, name, owner, key) VALUES(?, ?, ?, ?)");
-			st.setString(1, external.url);
-			st.setString(2, external.name);
-			st.setBytes(3, external.owner.getKey());
-			st.setBytes(4, external.key);
+					"INSERT INTO externals (is_folder, url, name, owner, key) VALUES(?, ?, ?, ?, ?)");
+			st.setBoolean(1, external.isFolder);
+			st.setString(2, external.url);
+			st.setString(3, external.name);
+			st.setBytes(4, external.owner.getKey());
+			st.setBytes(5, external.key);
 			if (st.executeUpdate() != 1) {
 				throw new QblStorageException("Failed to insert external");
 			}
@@ -421,7 +380,7 @@ public class DirectoryMetadata {
 		}
 	}
 
-	void deleteExternal(BoxExternal external) throws QblStorageException {
+	void deleteExternal(BoxExternalReference external) throws QblStorageException {
 		try {
 			PreparedStatement st = connection.prepareStatement(
 					"DELETE FROM externals WHERE name=?");
@@ -436,19 +395,7 @@ public class DirectoryMetadata {
 	}
 
 	List<BoxExternal> listExternals() throws QblStorageException {
-		try (Statement statement = connection.createStatement()) {
-			try (ResultSet rs = statement.executeQuery(
-					"SELECT url, name, owner, key FROM externals")) {
-				List<BoxExternal> externals = new ArrayList<>();
-				while (rs.next()) {
-					externals.add(new BoxExternal(rs.getString(1), rs.getString(2),
-							new QblECPublicKey(rs.getBytes(3)), rs.getBytes(4)));
-				}
-				return externals;
-			}
-		} catch (SQLException e) {
-			throw new QblStorageException(e);
-		}
+		return new LinkedList<>();
 	}
 
 	BoxFile getFile(String name) throws QblStorageException {
@@ -487,8 +434,8 @@ public class DirectoryMetadata {
 
 	@Override
 	protected void finalize() throws Throwable {
-		if (path.exists()) {
-			path.delete();
+		if (getPath().exists()) {
+			getPath().delete();
 		}
 	}
 }

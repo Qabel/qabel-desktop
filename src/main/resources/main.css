@@ -12,6 +12,10 @@
     -fx-effect: dropshadow(gaussian, grey, 8, 0, 0, 5);
 }
 
+.avatarItem {
+    -fx-padding: 0 0 0 10;
+}
+
 .quotaBlock {
     -fx-background-color: #ffffff;
     -fx-background-radius: 10px;

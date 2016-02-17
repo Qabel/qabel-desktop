@@ -19,9 +19,9 @@ public class IndexNavigation extends AbstractNavigation {
 
 	private static final Logger logger = LoggerFactory.getLogger(IndexNavigation.class.getSimpleName());
 
-	IndexNavigation(DirectoryMetadata dm, QblECKeyPair keyPair, byte[] deviceId,
+	IndexNavigation(String prefix, DirectoryMetadata dm, QblECKeyPair keyPair, byte[] deviceId,
 					StorageReadBackend readBackend, StorageWriteBackend writeBackend) {
-		super(dm, keyPair, deviceId, readBackend, writeBackend);
+		super(prefix, dm, keyPair, deviceId, readBackend, writeBackend);
 	}
 
 	@Override

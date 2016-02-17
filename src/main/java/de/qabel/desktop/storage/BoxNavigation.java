@@ -1,9 +1,13 @@
 package de.qabel.desktop.storage;
 
+import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.exceptions.QblStorageException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.security.InvalidKeyException;
 import java.util.List;
 
 public interface BoxNavigation extends ReadOnlyBoxNavigation {
@@ -124,4 +128,19 @@ public interface BoxNavigation extends ReadOnlyBoxNavigation {
 
 	DirectoryMetadata getMetadata();
 
+	/**
+	 * Creates and uploads a FileMetadata object for a BoxFile. FileMetadata location is written to BoxFile.meta
+	 * and encryption key to BoxFile.metakey. If BoxFile.meta or BoxFile.metakey is not null, BoxFile will not be
+	 * modified and no FileMetadata will be created.
+	 * @param boxFile BoxFile to create FileMetadata from.
+	 * @return True if FileMetadata has successfully created and uploaded.
+	 */
+	BoxExternalReference createFileMetadata(QblECPublicKey owner, BoxFile boxFile) throws QblStorageException;
+
+	/**
+	 * Updates and uploads a FileMetadata object for a BoxFile.
+	 * @param boxFile BoxFile to create FileMetadata from.
+	 * @return True if FileMetadata has successfully created and uploaded.
+	 */
+	void updateFileMetadata(BoxFile boxFile) throws QblStorageException, IOException, InvalidKeyException;
 }

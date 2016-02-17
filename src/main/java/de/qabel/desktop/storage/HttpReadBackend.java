@@ -21,7 +21,7 @@ import java.net.URISyntaxException;
 
 public class HttpReadBackend extends AbstractHttpStorageBackend implements StorageReadBackend {
 
-	public HttpReadBackend(String root) {
+	public HttpReadBackend(String root) throws URISyntaxException {
 		super(root);
 	}
 
@@ -35,12 +35,7 @@ public class HttpReadBackend extends AbstractHttpStorageBackend implements Stora
 
 	public StorageDownload download(String name, String ifModifiedVersion) throws QblStorageException, UnmodifiedException {
 		logger.info("Downloading " + name);
-		URI uri;
-		try {
-			uri = new URI(this.root).resolve(name);
-		} catch (URISyntaxException e) {
-			throw new QblStorageException(e);
-		}
+		URI uri = this.root.resolve(name);
 		HttpGet httpGet = new HttpGet(uri);
 		if (ifModifiedVersion != null) {
 			httpGet.addHeader(HttpHeaders.IF_NONE_MATCH, ifModifiedVersion);
@@ -78,5 +73,10 @@ public class HttpReadBackend extends AbstractHttpStorageBackend implements Stora
 		} catch (IOException e) {
 			throw new QblStorageException(e);
 		}
+	}
+
+	@Override
+	public String getUrl(String meta) {
+		return root.resolve(meta).toString();
 	}
 }

@@ -1,14 +1,17 @@
 package de.qabel.desktop.storage.cache;
 
+import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.InvalidKeyException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -172,6 +175,16 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 	@Override
 	public DirectoryMetadata getMetadata() {
 		return nav.getMetadata();
+	}
+
+	@Override
+	public BoxExternalReference createFileMetadata(QblECPublicKey owner, BoxFile boxFile) throws QblStorageException {
+		return nav.createFileMetadata(owner, boxFile);
+	}
+
+	@Override
+	public void updateFileMetadata(BoxFile boxFile) throws QblStorageException, IOException, InvalidKeyException {
+		nav.updateFileMetadata(boxFile);
 	}
 
 	public void refresh() throws QblStorageException {

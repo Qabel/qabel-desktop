@@ -30,6 +30,11 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observ
 
 	public LazyBoxFolderTreeItem(BoxFolder folder, ReadOnlyBoxNavigation navigation) {
 		this(folder, navigation, folderImg);
+		getGraphic().focusedProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue) {
+				setExpanded(true);
+			}
+		});
 	}
 
 	public LazyBoxFolderTreeItem(BoxFolder folder, ReadOnlyBoxNavigation navigation, Image icon) {
@@ -93,6 +98,12 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observ
 					nameProperty.set(folder.name + " (" + finalUpdateError + ")");
 				} else {
 					nameProperty.set(folder.name);
+				}
+				if (!isLeaf && isExpanded() && getChildren().size() == 1) {
+					TreeItem<BoxObject> child = getChildren().get(0);
+					if (child.getValue() instanceof BoxFolder) {
+						child.setExpanded(true);
+					}
 				}
 			});
 		};

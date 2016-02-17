@@ -65,17 +65,6 @@ public class DirectoryMetadataTest {
 	}
 
 	@Test
-	public void testExternalOperations() throws QblStorageException {
-		BoxExternal external = new BoxExternal("https://foobar", "name",
-				new QblECKeyPair().getPub(), new byte[]{1, 2,});
-		dm.insertExternal(external);
-		assertThat(dm.listExternals().size(), is(1));
-		assertThat(external, equalTo(dm.listExternals().get(0)));
-		dm.deleteExternal(external);
-		assertThat(dm.listExternals().size(), is(0));
-	}
-
-	@Test
 	public void testLastChangedBy() throws SQLException, QblStorageException {
 		assertThat(dm.deviceId, is(dm.getLastChangedBy()));
 		dm.deviceId = new byte[]{1, 1};

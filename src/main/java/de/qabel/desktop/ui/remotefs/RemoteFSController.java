@@ -1,11 +1,17 @@
 package de.qabel.desktop.ui.remotefs;
 
+import de.qabel.core.config.Contact;
+import de.qabel.core.config.Contacts;
+import de.qabel.core.config.Entity;
 import de.qabel.core.config.Identity;
+import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.cellValueFactory.BoxObjectCellValueFactory;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.factory.BoxVolumeFactory;
+import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.daemon.management.*;
 import de.qabel.desktop.exceptions.QblStorageException;
+import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.storage.*;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.ui.AbstractController;
@@ -25,6 +31,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import org.spongycastle.util.encoders.Hex;
 
 import javax.inject.Inject;
 import java.io.*;
@@ -66,6 +73,9 @@ public class RemoteFSController extends AbstractController implements Initializa
 
 	@Inject
 	TransferManager loadManager;
+
+	@Inject
+	DropMessageRepository dropMessageRepository;
 
 	@FXML
 	private TreeTableView<BoxObject> treeTable;
@@ -196,10 +206,39 @@ public class RemoteFSController extends AbstractController implements Initializa
 			}
 
 			buttonFromImage(item, bar, deleteImage, this::deleteItem, "delete");
-			buttonFromImage(item, bar, shareImage, event -> {}, "share");
+			if (item.getValue() instanceof BoxFolder) {
+				spacer(bar);
+			} else {
+				buttonFromImage(item, bar, shareImage, this::share, "share");
+			}
 
 			return result;
 		});
+	}
+
+	void share(TreeItem<BoxObject> item) {
+		if (!(item.getValue() instanceof BoxFile)) {
+			return;
+		}
+
+		if (!(item.getParent() instanceof LazyBoxFolderTreeItem)) {
+			return;
+		}
+		LazyBoxFolderTreeItem folder = (LazyBoxFolderTreeItem) item.getParent();
+		if (!(folder.getNavigation() instanceof BoxNavigation)) {
+			return;
+		}
+
+		try {
+			BoxExternalReference ref = ((BoxNavigation) folder.getNavigation()).createFileMetadata(clientConfiguration.getSelectedIdentity().getEcPublicKey(), (BoxFile) item.getValue());
+
+			ShareNotificationMessage share = new ShareNotificationMessage(ref.url, Hex.toHexString(ref.key), "Hey, I got a share for you!");
+			System.out.println(share.toJson());
+			Identity sender = clientConfiguration.getSelectedIdentity();
+			dropMessageRepository.addMessage(new DropMessage(sender, share.toJson(), DropMessageRepository.PAYLOAD_TYPE_SHARE_NOTIFICATION), new Contact("me", sender.getDropUrls(), sender.getEcPublicKey()), false);
+		} catch (Exception e) {
+			alert(e);
+		}
 	}
 
 	private void spacer(HBox bar) {

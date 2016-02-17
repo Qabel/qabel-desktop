@@ -81,7 +81,7 @@ public class BoxVolume {
 			throw new QblStorageIOFailure(e);
 		}
 		DirectoryMetadata dm = DirectoryMetadata.openDatabase(tmp, deviceId, rootRef, tempDir);
-		return new IndexNavigation(dm, keyPair, deviceId, readBackend, writeBackend);
+		return new IndexNavigation(prefix, dm, keyPair, deviceId, readBackend, writeBackend);
 	}
 
 	/**
