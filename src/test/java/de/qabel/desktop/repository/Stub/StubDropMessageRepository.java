@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observer;
+import java.util.function.Consumer;
 
 public class StubDropMessageRepository implements DropMessageRepository {
 

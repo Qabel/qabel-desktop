@@ -30,7 +30,7 @@
     -fx-font-weight: bold;
     -fx-background-radius: 15;
     -fx-indent: 20em;
-    -fx-background-color: #fcdcca, #fc7b4c, #fd670d;
+    -fx-background-color: #fcdcca, #fc7b4c, #ff690f;
     -fx-background-insets: 0px, 1px;
     -fx-cursor: hand;
 }
@@ -43,7 +43,7 @@
 }
 
 #otherMessagebox {
-    -fx-background-color: #fd670d;
+    -fx-background-color: #ff690f;
     -fx-background-radius: 5;
 }
 
@@ -57,7 +57,7 @@
 }
 
 #textarea {
-    -fx-border-color: black;
+    -fx-border-color: #222222;
 }
 
 .progress-bar > *.bar {
@@ -66,6 +66,31 @@
 
 .progress-bar > .track {
     -fx-background-radius: 5em;
+}
+
+
+.browser *.column-header-background *.show-hide-columns-button,
+.browser *.scroll-bar:vertical *.increment-button,
+.browser *.scroll-bar:vertical *.decrement-button,
+.browser *.scroll-bar:vertical *.increment-arrow,
+.browser *.scroll-bar:vertical *.decrement-arrow {
+    -fx-background-color: null;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-shape: null;
+}
+
+.browser *.scroll-bar:horizontal,
+.browser *.scroll-bar:horizontal *.track,
+.browser *.scroll-bar:horizontal *.track-background,
+.browser *.scroll-bar:horizontal *.thumb,
+.browser *.scroll-bar:horizontal *.increment-button,
+.browser *.scroll-bar:horizontal *.decrement-button,
+.browser *.scroll-bar:horizontal *.increment-arrow,modena
+.browser *.scroll-bar:horizontal *.decrement-arrow {
+    -fx-base: transparent;
+    -fx-background-color: white;
 }
 
 .selected {

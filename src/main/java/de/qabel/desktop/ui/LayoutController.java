@@ -98,7 +98,6 @@ public class LayoutController extends AbstractController implements Initializabl
 
 		scrollContent.setFillWidth(true);
 
-
 		if (clientConfiguration.getSelectedIdentity() == null) {
 			accountingView.getView(scrollContent.getChildren()::setAll);
 			setActiveNavItem(accountingNav);

@@ -9,10 +9,15 @@ import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 
 import java.util.List;
 import java.util.Observer;
+import java.util.function.Consumer;
 
 public interface DropMessageRepository{
-	void addMessage(DropMessage dropMessage, Entity from, Entity to, boolean send) throws PersistenceException;
-	List<PersistenceDropMessage> loadConversation(Contact contact, Identity identity) throws PersistenceException;
+	String PAYLOAD_TYPE_MESSAGE = "box_message";
+	String PAYLOAD_TYPE_SHARE_NOTIFICATION = "box_share_notification";
+
+	void addMessage(DropMessage dropMessage, Contact contact, boolean send) throws PersistenceException;
+	List<PersistenceDropMessage> loadConversation(Contact contact) throws PersistenceException;
+
 	void addObserver(Observer o);
 	List<PersistenceDropMessage> loadNewMessagesFromConversation(List<PersistenceDropMessage> dropMessages, Contact c, Identity identity);
 }

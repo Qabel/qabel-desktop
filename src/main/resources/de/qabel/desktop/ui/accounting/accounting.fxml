@@ -32,7 +32,7 @@
                             <children>
                                 <Pane maxHeight="-Infinity"  minHeight="50.0"
                                       prefHeight="50.0"
-                                      style="-fx-border-color: black; -fx-border-radius: 25;">
+                                      style="-fx-border-color: #222222; -fx-border-radius: 25;">
                                     <HBox.margin>
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                                     </HBox.margin>

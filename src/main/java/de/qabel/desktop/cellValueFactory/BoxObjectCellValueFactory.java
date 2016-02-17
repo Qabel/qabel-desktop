@@ -27,6 +27,10 @@ public class BoxObjectCellValueFactory implements Callback<TreeTableColumn.CellD
 		TreeItem<BoxObject> treeItem = p.getValue();
 		BoxObject bf = treeItem.getValue();
 
+		if (bf == null) {
+			return new ReadOnlyStringWrapper("-");
+		}
+
 		if (searchValue.equals(NAME)) {
 			if (treeItem instanceof LazyBoxFolderTreeItem) {
 				return ((LazyBoxFolderTreeItem) treeItem).getNameProperty();

@@ -7,8 +7,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class BoxObjectTreeCell extends TreeCell<BoxObject> {
-	private static Image fileImg = new Image(BoxObjectTreeCell.class.getResourceAsStream("/file.png"));
-	private static Image folderImg = new Image(BoxObjectTreeCell.class.getResourceAsStream("/folder.png"));
+	private static Image fileImg = new Image(BoxObjectTreeCell.class.getResourceAsStream("/icon/file.png"), 16, 16, true, true);
+	private static Image folderImg = new Image(BoxObjectTreeCell.class.getResourceAsStream("/icon/folder.png"), 16, 16, true, true);
 
 	public BoxObjectTreeCell() {
 		super();
