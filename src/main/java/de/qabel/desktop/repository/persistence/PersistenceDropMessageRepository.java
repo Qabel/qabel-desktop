@@ -10,6 +10,7 @@ import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observer;
+import java.util.function.Consumer;
 
 
 public class PersistenceDropMessageRepository extends AbstractCachedPersistenceRepository<Contact> implements DropMessageRepository{
