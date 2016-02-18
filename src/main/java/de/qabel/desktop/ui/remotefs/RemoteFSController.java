@@ -1,9 +1,8 @@
 package de.qabel.desktop.ui.remotefs;
 
 import de.qabel.core.config.Contact;
-import de.qabel.core.config.Contacts;
-import de.qabel.core.config.Entity;
 import de.qabel.core.config.Identity;
+import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.cellValueFactory.BoxObjectCellValueFactory;
 import de.qabel.desktop.config.ClientConfiguration;
@@ -12,23 +11,26 @@ import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.daemon.management.*;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.repository.DropMessageRepository;
+import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.storage.*;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.DetailsController;
+import de.qabel.desktop.ui.DetailsView;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import org.spongycastle.util.encoders.Hex;
@@ -87,9 +89,15 @@ public class RemoteFSController extends AbstractController implements Initializa
 	private TreeTableColumn<BoxObject, String> dateColumn;
 	@FXML
 	private TreeTableColumn<BoxObject, Node> optionsColumn;
+	@FXML
+	private StackPane stack;
+
+	private DetailsController details;
 
 
 	public void initialize(URL location, ResourceBundle resources) {
+		Cursor oldCursor = stack.getCursor();
+		stack.setCursor(Cursor.WAIT);
 		this.resourceBundle = resources;
 		createObserver();
 		initTreeTableView();
@@ -106,9 +114,28 @@ public class RemoteFSController extends AbstractController implements Initializa
 		treeTable.getSelectionModel().clearSelection();
 		treeTable.getSelectionModel().selectedItemProperty().addListener((o, x1, value) -> {
 			if (value != null) {
-				Platform.runLater(treeTable.getSelectionModel()::clearSelection);
+				showDetails(value);
+			} else {
+				Platform.runLater(details::hide);
 			}
 		});
+
+		DetailsView detailsView = new DetailsView();
+		details = (DetailsController) detailsView.getPresenter();
+		detailsView.getViewAsync(stack.getChildren()::add);
+		stack.setCursor(oldCursor);
+	}
+
+	private void showDetails(TreeItem<BoxObject> value) {
+		new RemoteFileDetailsView(getNavigation(value), value.getValue()).getViewAsync(details::show);
+	}
+
+	private BoxNavigation getNavigation(TreeItem<BoxObject> value) {
+		if (value instanceof LazyBoxFolderTreeItem) {
+			return (BoxNavigation) ((LazyBoxFolderTreeItem) value).getNavigation();
+		} else {
+			return (BoxNavigation) ((LazyBoxFolderTreeItem)value.getParent()).getNavigation();
+		}
 	}
 
 	private void createObserver() {
@@ -135,7 +162,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 			treeTable.setShowRoot(false);
 			treeTable.setRoot(virtualRoot);
 
-			if (nav instanceof CachedBoxNavigation) {
+			if (nav instanceof PathNavigation) {
 				Thread poller = new Thread(() -> {
 					try {
 						while (!Thread.interrupted()) {
@@ -230,20 +257,29 @@ public class RemoteFSController extends AbstractController implements Initializa
 		}
 
 		try {
-			BoxExternalReference ref = ((BoxNavigation) folder.getNavigation()).createFileMetadata(clientConfiguration.getSelectedIdentity().getEcPublicKey(), (BoxFile) item.getValue());
-
-			ShareNotificationMessage share = new ShareNotificationMessage(ref.url, Hex.toHexString(ref.key), "Hey, I got a share for you!");
-			System.out.println(share.toJson());
 			Identity sender = clientConfiguration.getSelectedIdentity();
-			dropMessageRepository.addMessage(
-					new DropMessage(sender, share.toJson(), DropMessageRepository.PAYLOAD_TYPE_SHARE_NOTIFICATION),
-					sender,
-					new Contact("me", sender.getDropUrls(), sender.getEcPublicKey()),
-					false
-			);
+			Contact receiver = new Contact("me", sender.getDropUrls(), sender.getEcPublicKey());
+			BoxFile objectToShare = (BoxFile) item.getValue();
+			String message = "Hey, I got a share for you!";
+			BoxNavigation navigation = (BoxNavigation) folder.getNavigation();
+
+			shareAndSendMessage(sender, receiver, objectToShare, message, navigation);
 		} catch (Exception e) {
 			alert(e);
 		}
+	}
+
+	private void shareAndSendMessage(Identity sender, Contact receiver, BoxFile objectToShare, String message, BoxNavigation navigation) throws QblStorageException, PersistenceException {
+		QblECPublicKey owner = sender.getEcPublicKey();
+		BoxExternalReference ref = navigation.createFileMetadata(owner, objectToShare);
+		ShareNotificationMessage share = new ShareNotificationMessage(ref.url, Hex.toHexString(ref.key), message);
+		System.out.println(share.toJson());
+		dropMessageRepository.addMessage(
+				new DropMessage(sender, share.toJson(), DropMessageRepository.PAYLOAD_TYPE_SHARE_NOTIFICATION),
+				sender,
+				receiver,
+				false
+		);
 	}
 
 	private void spacer(HBox bar) {
@@ -254,8 +290,8 @@ public class RemoteFSController extends AbstractController implements Initializa
 
 	private void buttonFromImage(TreeItem<BoxObject> item, HBox bar, Image image, Consumer<TreeItem<BoxObject>> handler, String name) {
 		ImageView buttonIcon = new ImageView(image);
-		buttonIcon.setOpacity(0.7);
 		Pane button = new Pane(buttonIcon);
+		button.getStyleClass().add("inline-button");
 		button.setCursor(HAND);
 		button.setOnMouseClicked(event -> handler.accept(item));
 		button.visibleProperty().bind(hoveredItem.isEqualTo(item));

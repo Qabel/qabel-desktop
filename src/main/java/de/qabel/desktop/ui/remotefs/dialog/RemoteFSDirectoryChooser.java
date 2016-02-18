@@ -2,11 +2,7 @@ package de.qabel.desktop.ui.remotefs.dialog;
 
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
-import de.qabel.desktop.storage.cache.CachedBoxNavigation;
-import de.qabel.desktop.ui.remotefs.BoxObjectTreeCell;
 import de.qabel.desktop.ui.remotefs.LazyBoxFolderTreeItem;
-import javafx.beans.property.ObjectPropertyBase;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.*;
 
@@ -27,11 +23,11 @@ public class RemoteFSDirectoryChooser extends RemoteFSChooser {
 		}
 		LazyBoxFolderTreeItem folderItem = (LazyBoxFolderTreeItem)newValue;
 		ReadOnlyBoxNavigation navigation = folderItem.getNavigation();
-		if (!(navigation instanceof CachedBoxNavigation)) {
+		if (!(navigation instanceof PathNavigation)) {
 			selectedProperty.setValue(null);
 			return;
 		}
-		Path result = ((CachedBoxNavigation) navigation).getPath();
+		Path result = ((PathNavigation) navigation).getPath();
 		selectedProperty.setValue(result);
 	}
 }

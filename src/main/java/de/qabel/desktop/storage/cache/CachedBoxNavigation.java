@@ -20,12 +20,11 @@ import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.CREATE;
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.DELETE;
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.UPDATE;
 
-public class CachedBoxNavigation extends Observable implements BoxNavigation {
+public class CachedBoxNavigation extends Observable implements BoxNavigation, PathNavigation {
 	private final BoxNavigation nav;
 	private final BoxNavigationCache<CachedBoxNavigation> cache = new BoxNavigationCache<>();
 	private final Path path;
 	private static final ExecutorService executor = Executors.newCachedThreadPool();
-	private BoxFolder folder;
 
 	public CachedBoxNavigation(BoxNavigation nav, Path path) {
 		this.nav = nav;
@@ -296,10 +295,12 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation {
 		}
 	}
 
+	@Override
 	public Path getPath() {
 		return path;
 	}
 
+	@Override
 	public Path getPath(BoxObject folder) {
 		return Paths.get(path.toString(), folder.name);
 	}

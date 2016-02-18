@@ -19,14 +19,9 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.web.WebView;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -56,7 +51,7 @@ public class ActionlogController extends AbstractController implements Initializ
 	Connector httpDropConnector;
 
 	Identity identity;
-	Contact c = null;
+	Contact contact = null;
 	List<PersistenceDropMessage> receivedDropMessages;
 	List<ActionlogItem> messageControllers = new LinkedList<>();
 	Thread dateRefresher;
@@ -102,15 +97,15 @@ public class ActionlogController extends AbstractController implements Initializ
 	}
 
 	protected void handleSubmitButtonAction() throws QblDropPayloadSizeException, EntityNotFoundExcepion, PersistenceException, QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException, QblNetworkInvalidResponseException {
-		if (textarea.getText().equals("") || c == null) {
+		if (textarea.getText().equals("") || contact == null) {
 			return;
 		}
-		sendDropMessage(c, textarea.getText());
+		sendDropMessage(contact, textarea.getText());
 		textarea.setText("");
 	}
 
 	void sendDropMessage(Contact c, String text) throws QblDropPayloadSizeException, QblNetworkInvalidResponseException, PersistenceException {
-		DropMessage d = new DropMessage(identity, text, "dropMessage");
+		DropMessage d = new DropMessage(identity, text, DropMessageRepository.PAYLOAD_TYPE_MESSAGE);
 		dropMessageRepository.addMessage(d, identity, c, true);
 		httpDropConnector.send(c, d);
 	}
@@ -185,7 +180,7 @@ public class ActionlogController extends AbstractController implements Initializ
 		if (o instanceof DropMessageRepository) {
 			Platform.runLater(() -> {
 				try {
-					loadMessages(c);
+					loadMessages(contact);
 				} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
 					entityNotFoundExcepion.printStackTrace();
 				}
@@ -199,8 +194,8 @@ public class ActionlogController extends AbstractController implements Initializ
 		Platform.runLater(() -> {
 			try {
 				receivedDropMessages = null;
-				this.c = contact;
-				loadMessages(c);
+				this.contact = contact;
+				loadMessages(this.contact);
 			} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
 				entityNotFoundExcepion.printStackTrace();
 			}

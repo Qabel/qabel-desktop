@@ -72,36 +72,22 @@
     -fx-background-radius: 5em;
 }
 
-
-.browser *.column-header-background *.show-hide-columns-button,
-.browser *.scroll-bar:vertical *.increment-button,
-.browser *.scroll-bar:vertical *.decrement-button,
-.browser *.scroll-bar:vertical *.increment-arrow,
-.browser *.scroll-bar:vertical *.decrement-arrow {
-    -fx-background-color: null;
-    -fx-background-radius: 0;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
-    -fx-shape: null;
-}
-
-.browser *.scroll-bar:horizontal,
-.browser *.scroll-bar:horizontal *.track,
-.browser *.scroll-bar:horizontal *.track-background,
-.browser *.scroll-bar:horizontal *.thumb,
-.browser *.scroll-bar:horizontal *.increment-button,
-.browser *.scroll-bar:horizontal *.decrement-button,
-.browser *.scroll-bar:horizontal *.increment-arrow,modena
-.browser *.scroll-bar:horizontal *.decrement-arrow {
-    -fx-base: transparent;
-    -fx-background-color: white;
-}
-
 .selected {
-    -fx-background-color: grey;
+    -fx-background-color: grey!important;
 }
 #chat{
     -fx-border-style: solid solid solid solid;
     -fx-border-color: black;
     -fx-border-width: 0 0 0 1
+}
+
+.inline-button {
+    -fx-cursor: hand;
+    -fx-opacity: 0.7;
+}
+.inline-button:hover {
+    -fx-opacity: 1.0;
+}
+.inline-button:pressed {
+    -fx-opacity: 0.5;
 }

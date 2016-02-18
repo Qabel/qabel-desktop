@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
+<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="de.qabel.desktop.ui.remotefs.RemoteFSController" style="-fx-background-color: red;">
-    <center>
-        <TreeTableView fx:id="treeTable" styleClass="browser" prefHeight="600"  maxHeight="Infinity" maxWidth="Infinity">
-            <columns>
-                <TreeTableColumn fx:id="nameColumn" prefWidth="200.0" minWidth="50" text="%name"/>
-                <TreeTableColumn fx:id="sizeColumn" prefWidth="70.0" text="%size"/>
-                <TreeTableColumn fx:id="dateColumn" prefWidth="120.0" text="%date"/>
-                <TreeTableColumn fx:id="optionsColumn" prefWidth="130.0" minWidth="100"/>
-            </columns>
-        </TreeTableView>
-    </center>
-</BorderPane>
+
+<StackPane fx:id="stack" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.remotefs.RemoteFSController">
+   <children>
+      <BorderPane style="-fx-background-color: red;">
+          <center>
+              <TreeTableView fx:id="treeTable" maxHeight="Infinity" maxWidth="Infinity" prefHeight="600" styleClass="browser">
+                  <columns>
+                      <TreeTableColumn fx:id="nameColumn" minWidth="50" prefWidth="200.0" text="%name" />
+                      <TreeTableColumn fx:id="sizeColumn" prefWidth="70.0" text="%size" />
+                      <TreeTableColumn fx:id="dateColumn" prefWidth="120.0" text="%date" />
+                      <TreeTableColumn fx:id="optionsColumn" minWidth="100" prefWidth="130.0" />
+                  </columns>
+              </TreeTableView>
+          </center>
+      </BorderPane>
+   </children>
+</StackPane>
