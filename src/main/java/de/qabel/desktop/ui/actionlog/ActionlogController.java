@@ -22,8 +22,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
@@ -45,6 +47,10 @@ public class ActionlogController extends AbstractController implements Initializ
 
 	@FXML
 	TextArea textarea;
+
+	@FXML
+	ScrollPane scroller;
+
 	@Inject
 	ClientConfiguration clientConfiguration;
 
@@ -94,7 +100,14 @@ public class ActionlogController extends AbstractController implements Initializ
 				}
 			}
 		});
+
+		((Region) scroller.getContent()).heightProperty().addListener((ov, old_val, new_val) -> {
+			if (scroller.getVvalue() != scroller.getVmax()) {
+				scroller.setVvalue(scroller.getVmax());
+			}
+		});
 	}
+
 
 	@FXML
 	protected void handleSubmitButtonAction(ActionEvent event) throws QblDropPayloadSizeException, EntityNotFoundExcepion, PersistenceException, QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException, QblNetworkInvalidResponseException {
