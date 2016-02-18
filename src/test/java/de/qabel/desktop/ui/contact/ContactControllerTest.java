@@ -55,7 +55,7 @@ public class ContactControllerTest extends AbstractControllerTest {
 		Contact c = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
 		c.setPhone("000");
 		c.setEmail("abc");
-		contactRepository.save(c);
+		contactRepository.save(c, i);
 
 		controller = getController();
 		File testDir = new File(TEST_FOLDER);

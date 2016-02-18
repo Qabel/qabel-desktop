@@ -68,6 +68,15 @@
     -fx-background-radius: 5em;
 }
 
+.selected {
+    -fx-background-color: grey;
+}
+
+#chat{
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: black;
+    -fx-border-width: 0 0 0 1
+}
 
 .browser *.column-header-background *.show-hide-columns-button,
 .browser *.scroll-bar:vertical *.increment-button,
@@ -93,11 +102,3 @@
     -fx-background-color: white;
 }
 
-.selected {
-    -fx-background-color: grey;
-}
-#chat{
-    -fx-border-style: solid solid solid solid;
-    -fx-border-color: black;
-    -fx-border-width: 0 0 0 1
-}
