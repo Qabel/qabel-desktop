@@ -73,7 +73,7 @@
 }
 
 .selected {
-    -fx-background-color: grey!important;
+    -fx-background-color: grey;
 }
 #chat{
     -fx-border-style: solid solid solid solid;

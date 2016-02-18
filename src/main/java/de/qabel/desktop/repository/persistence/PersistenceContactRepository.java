@@ -8,42 +8,46 @@ import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PersistenceContactRepository extends AbstractCachedPersistenceRepository<Contact> implements ContactRepository {
 	public PersistenceContactRepository(Persistence<String> persistence) {
 		super(persistence);
 	}
 
-	private Contacts contacts;
+	private Map<String, Contacts> contacts = new HashMap<>();
 
 	@Override
-	public Contacts findContactsFromOneIdentity(Identity i) throws EntityNotFoundExcepion {
-		if (contacts != null) {
-			return contacts;
+	public synchronized Contacts findContactsFromOneIdentity(Identity i) throws EntityNotFoundExcepion {
+
+		if (contacts.containsKey(i.getKeyIdentifier())) {
+			return contacts.get(i.getKeyIdentifier());
 		}
 
 		List<Contacts> cl = persistence.getEntities(Contacts.class);
-		if (cl != null) {
-			for (Contacts c : cl) {
-				if (c.getIdentity().getEcPublicKey().hashCode() == i.getEcPublicKey().hashCode()) {
-					contacts = c;
-					return c;
-				}
+		for (Contacts c : cl) {
+			if (c.getIdentity().getKeyIdentifier().equals(i.getKeyIdentifier())) {
+				contacts.put(i.getKeyIdentifier(), c);
+				return contacts.get(i.getKeyIdentifier());
+
 			}
 		}
 
-		contacts = new Contacts(i);
-		persistence.updateOrPersistEntity(contacts);
-		return contacts;
+		Contacts newContacts = new Contacts(i);
+		contacts.put(i.getKeyIdentifier(), newContacts);
+		return contacts.get(i.getKeyIdentifier());
+
 	}
 
 	@Override
-	public void save(Contact contact) throws PersistenceException {
+	public void save(Contact contact, Identity identity) throws PersistenceException {
 		boolean result;
 		try {
-			contacts.put(contact);
-			result = persistence.updateOrPersistEntity(contacts);
+			Contacts personalContacts = contacts.get(identity.getKeyIdentifier());
+			personalContacts.put(contact);
+			result = persistence.updateOrPersistEntity(personalContacts);
 		} catch (Exception e) {
 			throw new PersistenceException("Failed to save Entity " + contact + ": " + e.getMessage(), e);
 		}

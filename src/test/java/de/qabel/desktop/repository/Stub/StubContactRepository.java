@@ -14,7 +14,7 @@ public class StubContactRepository implements ContactRepository {
 
 
 	@Override
-	public void save(Contact contact) throws PersistenceException {
+	public void save(Contact contact, Identity identity) throws PersistenceException {
 		contacts.put(contact);
 	}
 

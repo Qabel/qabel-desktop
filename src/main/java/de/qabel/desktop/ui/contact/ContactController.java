@@ -46,8 +46,7 @@ public class ContactController extends AbstractController implements Initializab
 	@FXML
 	VBox actionlogViewPane;
 
-	@FXML
-	ScrollPane scroller;
+
 
 
 	@FXML
@@ -77,7 +76,6 @@ public class ContactController extends AbstractController implements Initializab
 		this.resourceBundle = resources;
 		createObserver();
 		createActionlog();
-		addListener();
 		try {
 			buildGson();
 			loadContacts();
@@ -95,13 +93,7 @@ public class ContactController extends AbstractController implements Initializab
 		exportButton.setGraphic(new ImageView(exportGraphic));
 	}
 
-	private void addListener() {
-		((Region) scroller.getContent()).heightProperty().addListener((ov, old_val, new_val) -> {
-			if (scroller.getVvalue() != scroller.getVmax()) {
-				scroller.setVvalue(scroller.getVmax());
-			}
-		});
-	}
+
 
 	private void createActionlog() {
 		ActionlogView actionlogView = new ActionlogView();
@@ -207,15 +199,15 @@ public class ContactController extends AbstractController implements Initializab
 
 	void importContacts(File file) throws IOException, URISyntaxException, QblDropInvalidURL, PersistenceException {
 		String content = readFile(file);
-
+		Identity i = clientConfiguration.getSelectedIdentity();
 		try {
 			Contacts contacts = gson.fromJson(content, Contacts.class);
 			for (Contact c : contacts.getContacts()) {
-				contactRepository.save(c);
+				contactRepository.save(c, i);
 			}
 		} catch (Exception e){
 			Contact contact = gson.fromJson(content, Contact.class);
-			contactRepository.save(contact);
+			contactRepository.save(contact, i);
 		}
 	}
 

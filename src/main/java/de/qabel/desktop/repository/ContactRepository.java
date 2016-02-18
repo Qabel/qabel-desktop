@@ -13,7 +13,7 @@ public interface ContactRepository {
 
 	Contacts findContactsFromOneIdentity(Identity identity) throws EntityNotFoundExcepion;
 
-	void save(Contact contact) throws PersistenceException;
+	void save(Contact contact, Identity identity) throws PersistenceException;
 
 	Contact findByKeyId(Identity identity, String keyId) throws EntityNotFoundExcepion;
 }

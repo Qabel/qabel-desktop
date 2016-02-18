@@ -33,7 +33,7 @@ public class PersistenceDropMessageRepository extends AbstractCachedPersistenceR
 		List<PersistenceDropMessage> messages = persistence.getEntities(PersistenceDropMessage.class);
 
 		for (PersistenceDropMessage d : messages) {
-			if (d.getSender() == contact || d.getReceiver() == contact) {
+			if (d.getSender().hashCode() == contact.hashCode() || d.getReceiver().hashCode() == contact.hashCode()) {
 				result.add(d);
 			}
 		}

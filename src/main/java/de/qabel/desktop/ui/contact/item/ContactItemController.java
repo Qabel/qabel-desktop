@@ -65,7 +65,6 @@ public class ContactItemController extends AbstractController implements Initial
 		consumers.add(consumer);
 	}
 	public void select(){
-
 		contactRootItem.getStyleClass().add("selected");
 	}
 
