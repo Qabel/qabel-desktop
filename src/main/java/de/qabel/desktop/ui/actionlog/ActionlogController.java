@@ -54,7 +54,7 @@ public class ActionlogController extends AbstractController implements Initializ
 	@Inject
 	private DropMessageRepository dropMessageRepository;
 	@Inject
-	DropConnector httpDropConnector;
+	DropConnector dropConnector;
 
 	Identity identity;
 	Contact contact = null;
@@ -120,7 +120,7 @@ public class ActionlogController extends AbstractController implements Initializ
 	void sendDropMessage(Contact c, String text) throws QblDropPayloadSizeException, QblNetworkInvalidResponseException, PersistenceException {
 		DropMessage d = new DropMessage(identity, text, DropMessageRepository.PAYLOAD_TYPE_MESSAGE);
 		dropMessageRepository.addMessage(d, identity, c, true);
-		httpDropConnector.send(c, d);
+		dropConnector.send(c, d);
 	}
 
 	void loadMessages(Contact c) throws EntityNotFoundExcepion {
@@ -158,6 +158,7 @@ public class ActionlogController extends AbstractController implements Initializ
 	}
 
 	void addMessageToActionlog(DropMessage dropMessage) throws EntityNotFoundExcepion {
+		System.out.println("Message of type " + dropMessage.getDropPayloadType());
 		Map<String, Object> injectionContext = new HashMap<>();
 		Contact sender = contactRepository.findByKeyId(identity, dropMessage.getSenderKeyId());
 		injectionContext.put("dropMessage", dropMessage);

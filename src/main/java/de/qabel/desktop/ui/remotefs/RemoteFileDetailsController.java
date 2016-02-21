@@ -47,9 +47,6 @@ public class RemoteFileDetailsController extends AbstractController implements I
 	private BoxNavigation navigation;
 
 	@Inject
-	DropConnector httpDropConnector;
-
-	@Inject
 	DropMessageRepository dropMessageRepository;
 
 	@Inject

@@ -343,7 +343,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 		BoxFolder folder = new BoxFolder(dm.getFileName(), name, secretKey.getKey());
 		this.dm.insertFolder(folder);
 		BoxNavigation newFolder = new FolderNavigation(prefix, dm, keyPair, secretKey.getKey(),
-				deviceId, readBackend, writeBackend, indexNavigation);
+				deviceId, readBackend, writeBackend, getIndexNavigation());
 		newFolder.commit();
 		autocommit();
 		return folder;
@@ -456,7 +456,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	public BoxExternalReference share(QblECPublicKey owner, BoxFile file, String recipient) throws QblStorageException {
 		BoxExternalReference ref = createFileMetadata(owner, file);
 		BoxShare share = new BoxShare(file.getMeta().split("/")[1], recipient);
-		indexNavigation.insertShare(share);
+		getIndexNavigation().insertShare(share);
 		return ref;
 	}
 }

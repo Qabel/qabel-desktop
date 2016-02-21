@@ -2,18 +2,14 @@ package de.qabel.desktop.ui.remotefs;
 
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
-import de.qabel.core.crypto.QblECPublicKey;
-import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.SharingService;
 import de.qabel.desktop.cellValueFactory.BoxObjectCellValueFactory;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.ShareNotifications;
 import de.qabel.desktop.config.factory.BoxVolumeFactory;
-import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.daemon.management.*;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.repository.DropMessageRepository;
-import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.storage.*;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.ui.AbstractController;
@@ -35,7 +31,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import org.spongycastle.util.encoders.Hex;
 
 import javax.inject.Inject;
 import java.io.*;

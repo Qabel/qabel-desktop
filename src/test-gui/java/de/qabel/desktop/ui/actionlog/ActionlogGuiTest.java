@@ -28,7 +28,7 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
 		controller.contact = new Contact(i.getAlias(),i.getDropUrls(), i.getEcPublicKey());
 		clickOn("#textarea").write(text);
 		clickOn("#submit");
-		List<DropMessage> list = controller.httpDropConnector.receive(controller.identity, new Date(0L));
+		List<DropMessage> list = controller.dropConnector.receive(controller.identity, new Date(0L));
 		assertEquals(1, list.size());
 		assertEquals(text, list.get(0).getDropPayload());
 		assertEquals(new Date().getTime(), list.get(0).getCreationDate().getTime(), 100000);
@@ -39,7 +39,7 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
 	public void testSendMessageWithoutContent() {
 		waitUntil(() -> controller.textarea != null);
 		clickOn("#submit");
-		List<DropMessage> list = controller.httpDropConnector.receive(controller.identity, new Date(0L));
+		List<DropMessage> list = controller.dropConnector.receive(controller.identity, new Date(0L));
 		assertEquals(0, list.size());
 	}
 }

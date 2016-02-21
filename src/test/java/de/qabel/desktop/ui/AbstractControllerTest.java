@@ -89,7 +89,7 @@ public class AbstractControllerTest {
 		loadManager = new DefaultTransferManager();
 		diContainer.put("loadManager", loadManager);
 		diContainer.put("dropMessageRepository", dropMessageRepository);
-		diContainer.put("httpDropConnector", httpDropConnector);
+		diContainer.put("dropConnector", httpDropConnector);
 		diContainer.put("transferManager", new DefaultTransferManager());
 		diContainer.put("sharingService", sharingService);
 		Injector.setConfigurationSource(diContainer::get);
