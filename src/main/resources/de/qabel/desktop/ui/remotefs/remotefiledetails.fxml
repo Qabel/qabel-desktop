@@ -4,9 +4,12 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
-<BorderPane fx:controller="de.qabel.desktop.ui.remotefs.RemoteFileDetailsController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="470.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane style="-fx-background-color: green; -fx-max-width: 1000" styleClass="detailsContainer" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.remotefs.RemoteFileDetailsController">
    <center>
-      <ListView fx:id="shareReceiverList" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <ComboBox fx:id="shareReceiver" editable="true" promptText="Share with users or groups" />
+         </children>
+      </VBox>
    </center>
 </BorderPane>

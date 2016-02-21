@@ -4,7 +4,7 @@ import de.qabel.desktop.exceptions.QblStorageException;
 
 import java.util.List;
 
-public interface ReadOnlyBoxNavigation {
+public interface ReadableBoxNavigation {
 	/**
 	 * Create a new navigation object that starts at another {@link BoxFolder}
 	 *

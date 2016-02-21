@@ -3,7 +3,7 @@ package de.qabel.desktop.storage;
 import java.util.Arrays;
 
 public class BoxFolder extends BoxObject {
-	public String ref;
+	protected String ref;
 
 	public BoxFolder(String ref, String name, byte[] key) {
 		super(name);
@@ -33,4 +33,7 @@ public class BoxFolder extends BoxObject {
 		return result;
 	}
 
+	public String getRef() {
+		return ref;
+	}
 }

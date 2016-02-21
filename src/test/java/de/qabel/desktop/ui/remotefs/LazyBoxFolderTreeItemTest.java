@@ -114,7 +114,7 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 		navigation.notifyObservers(new RemoteChangeEvent(
 				Paths.get("/name2"),
 				false,
-				navigation.files.get(0).mtime,
+				navigation.files.get(0).getMtime(),
 				ChangeEvent.TYPE.CREATE,
 				navigation.files.get(0),
 				navigation
@@ -264,6 +264,11 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 		@Override
 		public void updateFileMetadata(BoxFile boxFile) throws QblStorageException, IOException, InvalidKeyException {
 
+		}
+
+		@Override
+		public BoxExternalReference share(QblECPublicKey owner, BoxFile file, String receiver) throws QblStorageException {
+			return null;
 		}
 
 		@Override

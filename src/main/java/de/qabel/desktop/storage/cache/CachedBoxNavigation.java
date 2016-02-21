@@ -20,13 +20,13 @@ import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.CREATE;
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.DELETE;
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.UPDATE;
 
-public class CachedBoxNavigation extends Observable implements BoxNavigation, PathNavigation {
-	private final BoxNavigation nav;
+public class CachedBoxNavigation<T extends BoxNavigation> extends Observable implements BoxNavigation, PathNavigation {
+	protected final T nav;
 	private final BoxNavigationCache<CachedBoxNavigation> cache = new BoxNavigationCache<>();
 	private final Path path;
 	private static final ExecutorService executor = Executors.newCachedThreadPool();
 
-	public CachedBoxNavigation(BoxNavigation nav, Path path) {
+	public CachedBoxNavigation(T nav, Path path) {
 		this.nav = nav;
 		this.path = path;
 	}
@@ -51,7 +51,7 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation, Pa
 		if (!cache.has(target)) {
 			CachedBoxNavigation subnav = new CachedBoxNavigation(
 					this.nav.navigate(target),
-					Paths.get(path.toString(), target.name)
+					Paths.get(path.toString(), target.getName())
 			);
 			cache.cache(target, subnav);
 			subnav.addObserver((o, arg) -> {setChanged(); notifyObservers(arg);});
@@ -186,6 +186,11 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation, Pa
 		nav.updateFileMetadata(boxFile);
 	}
 
+	@Override
+	public BoxExternalReference share(QblECPublicKey owner, BoxFile file, String receiver) throws QblStorageException {
+		return nav.share(owner, file, receiver);
+	}
+
 	public void refresh() throws QblStorageException {
 		synchronized (this) {
 			synchronized (nav) {
@@ -212,7 +217,7 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation, Pa
 			try {
 				navigate(folder).refresh();
 			} catch (QblStorageException e) {
-				System.err.println(path.toString() + "/" + folder.name + ": " + e.getMessage());
+				System.err.println(path.toString() + "/" + folder.getName() + ": " + e.getMessage());
 			}
 		}
 	}
@@ -236,7 +241,7 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation, Pa
 
 	private void notify(BoxObject file, TYPE type) {
 		setChanged();
-		Long mtime = file instanceof BoxFile ? ((BoxFile) file).mtime : null;
+		Long mtime = file instanceof BoxFile ? ((BoxFile) file).getMtime() : null;
 		if (type == DELETE) {
 			mtime = System.currentTimeMillis();
 		}
@@ -265,7 +270,7 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation, Pa
 			if (!oldFiles.contains(file)) {
 				TYPE type = CREATE;
 				for (BoxFile oldFile : oldFiles) {
-					if (oldFile.name.equals(file.name)) {
+					if (oldFile.getName().equals(file.getName())) {
 						type = UPDATE;
 						changedFiles.add(oldFile);
 						break;
@@ -302,6 +307,6 @@ public class CachedBoxNavigation extends Observable implements BoxNavigation, Pa
 
 	@Override
 	public Path getPath(BoxObject folder) {
-		return Paths.get(path.toString(), folder.name);
+		return Paths.get(path.toString(), folder.getName());
 	}
 }

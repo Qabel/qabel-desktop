@@ -115,7 +115,7 @@ public class DefaultTransferManager extends Observable implements TransferManage
 					Path parent = source.getParent();
 					BoxNavigation nav = navigate(parent, download.getBoxVolume());
 					BoxFile file = nav.getFile(source.getFileName().toString());
-					download.setSize(file.size);
+					download.setSize(file.getSize());
 					if (remoteChanged(download, file)) {
 						throw new TransferSkippedException("remote has changed");
 					}
@@ -154,11 +154,11 @@ public class DefaultTransferManager extends Observable implements TransferManage
 	}
 
 	private boolean localIsNewer(Path destination, BoxFile file) {
-		return file.mtime < destination.toFile().lastModified();
+		return file.getMtime() < destination.toFile().lastModified();
 	}
 
 	private boolean remoteChanged(Download download, BoxFile file) {
-		return !Objects.equals(file.mtime, download.getMtime());
+		return !Objects.equals(file.getMtime(), download.getMtime());
 	}
 
 	void upload(Upload upload) throws QblStorageException {
@@ -202,7 +202,7 @@ public class DefaultTransferManager extends Observable implements TransferManage
 			} else {
 				BoxFile file = dir.getFile(filename);
 				if (remoteIsNewer(upload, file)) {
-					throw new TransferSkippedException("remote is newer " + format.format(new Date(file.mtime)) + ">" + format.format(new Date(upload.getMtime())));
+					throw new TransferSkippedException("remote is newer " + format.format(new Date(file.getMtime())) + ">" + format.format(new Date(upload.getMtime())));
 				}
 				dir.delete(file);
 			}
@@ -219,14 +219,14 @@ public class DefaultTransferManager extends Observable implements TransferManage
 
 		BoxFile file = dir.getFile(filename);
 		if (remoteIsNewer(upload, file)) {
-			throw new TransferSkippedException("remote is newer " + format.format(new Date(file.mtime)) + ">" + format.format(new Date(upload.getMtime())));
+			throw new TransferSkippedException("remote is newer " + format.format(new Date(file.getMtime())) + ">" + format.format(new Date(upload.getMtime())));
 		}
 
 		overwriteFile(dir, source, destination, listener);
 	}
 
 	private boolean remoteIsNewer(Upload upload, BoxFile file) {
-		return file.mtime >= upload.getMtime();
+		return file.getMtime() >= upload.getMtime();
 	}
 
 	private BoxNavigation navigate(Path path, BoxVolume volume) throws QblStorageException {

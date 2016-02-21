@@ -1,8 +1,8 @@
 package de.qabel.desktop.storage;
 
 public abstract class BoxObject implements Comparable<BoxObject> {
-	public String name;
-	public byte[] key;
+	protected String name;
+	protected byte[] key;
 
 	public BoxObject(String name) {
 		this.name = name;

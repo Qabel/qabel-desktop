@@ -13,8 +13,7 @@ import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.repository.inmemory.InMemoryHttpDropConnector;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
-import de.qabel.desktop.ui.connector.Connector;
-import org.junit.Before;
+import de.qabel.desktop.ui.connector.DropConnector;
 import org.junit.Test;
 
 import java.net.URISyntaxException;
@@ -26,7 +25,7 @@ import static org.junit.Assert.assertEquals;
 
 public class DropDaemonTest extends AbstractControllerTest {
 
-	Connector connector = new InMemoryHttpDropConnector();;
+	DropConnector dropConnector = new InMemoryHttpDropConnector();;
 	Contact c;
 	String fakeURL = "http://localhost:12345/abcdefghijklmnopqrstuvwxyzabcdefgworkingUrl";
 
@@ -40,9 +39,9 @@ public class DropDaemonTest extends AbstractControllerTest {
 		c = new Contact(identity.getAlias(), collection, identity.getEcPublicKey());
 		DropMessage dropMessage = new DropMessage(identity, "Test", "test_message");
 
-		connector.send(c, dropMessage);
+		dropConnector.send(c, dropMessage);
 
-		DropDaemon dd = new DropDaemon(clientConfiguration, connector, contactRepository, dropMessageRepository);
+		DropDaemon dd = new DropDaemon(clientConfiguration, dropConnector, contactRepository, dropMessageRepository);
 		dd.receiveMessages();
 
 		List<PersistenceDropMessage> lst = dropMessageRepository.loadConversation(c, identity);

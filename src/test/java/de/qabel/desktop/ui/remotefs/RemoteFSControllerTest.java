@@ -214,8 +214,8 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		BoxNavigation newNav = nav.navigate(folder);
 		assertThat(newNav.listFiles().size(), is(0));
 		assertThat(newNav.listFolders().size(), is(1));
-		assertThat(newNav.navigate("subFolder").listFolders().get(0).name, is("subsubFolder"));
-		assertThat(newNav.navigate("subFolder").listFiles().get(0).name, is("subsubFile"));
+		assertThat(newNav.navigate("subFolder").listFolders().get(0).getName(), is("subsubFolder"));
+		assertThat(newNav.navigate("subFolder").listFiles().get(0).getName(), is("subsubFile"));
 	}
 
 	@Test(timeout=1000L)
@@ -317,8 +317,8 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		BoxNavigation nodeNav = nav.navigate(node);
 		BoxFolder folder = nodeNav.createFolder(TEST_SUB_FOLDER);
 		nodeNav.navigate(folder).upload(SUB_FILE, file);
-		Path targetFolder = tempFolder.resolve(folder.name);
-		controller.downloadBoxObject(folder, nodeNav.navigate(folder), Paths.get("/", node.name, folder.name), tempFolder);
+		Path targetFolder = tempFolder.resolve(folder.getName());
+		controller.downloadBoxObject(folder, nodeNav.navigate(folder), Paths.get("/", node.getName(), folder.getName()), tempFolder);
 		executeTransactions();
 
 		assertTrue(Files.isDirectory(targetFolder));

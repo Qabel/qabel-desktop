@@ -12,6 +12,10 @@ import org.testfx.api.FxRobot;
 import org.testfx.service.locator.BoundsLocatorException;
 import org.testfx.service.query.PointQuery;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 	protected final FxRobot robot = new FxRobot();
 	protected T controller;
@@ -120,5 +124,11 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 
 	protected Node getFirstNode(String query) {
 		return robot.lookup(query).tryQueryFirst().get();
+	}
+
+	protected List<Node> getNodes(String query) {
+		List<Node> nodes = new LinkedList<>();
+		nodes.addAll(robot.lookup(query).queryAll());
+		return nodes;
 	}
 }

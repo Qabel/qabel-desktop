@@ -66,11 +66,11 @@ public class FileMetadata extends AbstractMetadata {
 		try (PreparedStatement statement = connection.prepareStatement(
 				"INSERT INTO file (owner, block, name, size, mtime, key) VALUES(?, ?, ?, ?, ?, ?)")) {
 			statement.setBytes(1, owner.getKey());
-			statement.setString(2, boxFile.block);
-			statement.setString(3, boxFile.name);
-			statement.setLong(4, boxFile.size);
-			statement.setLong(5, boxFile.mtime);
-			statement.setBytes(6, boxFile.key);
+			statement.setString(2, boxFile.getBlock());
+			statement.setString(3, boxFile.getName());
+			statement.setLong(4, boxFile.getSize());
+			statement.setLong(5, boxFile.getMtime());
+			statement.setBytes(6, boxFile.getKey());
 			if (statement.executeUpdate() != 1) {
 				throw new QblStorageException("Failed to insert file");
 			}
@@ -81,7 +81,7 @@ public class FileMetadata extends AbstractMetadata {
 		}
 	}
 
-	BoxExternalFile getFile() throws QblStorageException {
+	public BoxExternalFile getFile() throws QblStorageException {
 		try (Statement statement = connection.createStatement()) {
 			ResultSet rs = statement.executeQuery("SELECT owner, block, name, size, mtime, key FROM file LIMIT 1");
 			if (rs.next()) {

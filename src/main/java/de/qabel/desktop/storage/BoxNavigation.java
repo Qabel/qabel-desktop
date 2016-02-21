@@ -4,13 +4,11 @@ import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.exceptions.QblStorageException;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
-import java.util.List;
 
-public interface BoxNavigation extends ReadOnlyBoxNavigation {
+public interface BoxNavigation extends ReadableBoxNavigation {
 
 	DirectoryMetadata reloadMetadata() throws QblStorageException;
 
@@ -36,7 +34,6 @@ public interface BoxNavigation extends ReadOnlyBoxNavigation {
 	 * @throws QblStorageException if the upload failed or the name is not unique
 	 */
 	BoxFile upload(String name, File file, ProgressListener listener) throws QblStorageException;
-
 	/**
 	 * Upload a new file to the current folder
 	 *
@@ -143,4 +140,6 @@ public interface BoxNavigation extends ReadOnlyBoxNavigation {
 	 * @return True if FileMetadata has successfully created and uploaded.
 	 */
 	void updateFileMetadata(BoxFile boxFile) throws QblStorageException, IOException, InvalidKeyException;
+
+	BoxExternalReference share(QblECPublicKey owner, BoxFile file, String receiver) throws QblStorageException;
 }

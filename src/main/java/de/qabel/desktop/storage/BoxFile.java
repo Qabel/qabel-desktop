@@ -3,11 +3,11 @@ package de.qabel.desktop.storage;
 import java.util.Arrays;
 
 public class BoxFile extends BoxObject {
-	public String block;
-	public Long size;
-	public Long mtime;
-	public String meta;
-	public byte[] metakey;
+	protected String block;
+	protected Long size;
+	protected Long mtime;
+	protected String meta;
+	protected byte[] metakey;
 
 	@Override
 	public boolean equals(Object o) {
@@ -67,5 +67,37 @@ public class BoxFile extends BoxObject {
 	 */
 	public boolean isShared() {
 		return meta != null && metakey != null;
+	}
+
+	public String getBlock() {
+		return block;
+	}
+
+	public Long getSize() {
+		return size;
+	}
+
+	public Long getMtime() {
+		return mtime;
+	}
+
+	public String getMeta() {
+		return meta;
+	}
+
+	public byte[] getMetakey() {
+		return metakey;
+	}
+
+	public void setMtime(long mtime) {
+		this.mtime = mtime;
+	}
+
+	public void setMeta(String meta) {
+		this.meta = meta;
+	}
+
+	public void setMetakey(byte[] metakey) {
+		this.metakey = metakey;
 	}
 }

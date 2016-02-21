@@ -1,10 +1,14 @@
 package de.qabel.desktop.daemon.drop;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
 import de.qabel.core.crypto.QblECPublicKey;
 import org.spongycastle.util.encoders.Hex;
 
-public class ShareNotificationMessage {
+import java.io.Serializable;
+
+public class ShareNotificationMessage implements Serializable {
+	private static final long serialVersionUID = -3612862422477244263L;
 	private String url;
 	private String key;
 	private String message;

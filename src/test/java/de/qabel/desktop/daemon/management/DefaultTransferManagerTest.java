@@ -92,7 +92,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 
 		List<BoxFolder> folders = nav().listFolders();
 		assertEquals(1, folders.size());
-		assertEquals("syncRoot", folders.get(0).name);
+		assertEquals("syncRoot", folders.get(0).getName());
 	}
 
 	@Test
@@ -120,7 +120,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 
 		List<BoxFolder> folders = nav().navigate("syncRoot").listFolders();
 		assertEquals(1, folders.size());
-		assertEquals("targetSubdir", folders.get(0).name);
+		assertEquals("targetSubdir", folders.get(0).getName());
 	}
 
 	@Test
@@ -138,7 +138,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 		List<BoxFile> files = syncRoot.listFiles();
 		assertEquals(1, files.size());
 		BoxFile boxFile = files.get(0);
-		assertEquals("targetFile", boxFile.name);
+		assertEquals("targetFile", boxFile.getName());
 		assertEquals("testcontent", IOUtils.toString(syncRoot.download(boxFile)));
 
 		assertTrue(upload.getSize() > sourceFile.length());
@@ -208,7 +208,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 		List<BoxFile> files = syncRoot.listFiles();
 		assertEquals(1, files.size());
 		BoxFile boxFile = files.get(0);
-		assertEquals("targetFile", boxFile.name);
+		assertEquals("targetFile", boxFile.getName());
 		assertEquals("content2", IOUtils.toString(syncRoot.download(boxFile)));
 	}
 
@@ -227,7 +227,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 		List<BoxFile> files = syncRoot.listFiles();
 		assertEquals(1, files.size());
 		BoxFile boxFile = files.get(0);
-		assertEquals("targetFile", boxFile.name);
+		assertEquals("targetFile", boxFile.getName());
 		assertEquals("testcontent", IOUtils.toString(syncRoot.download(boxFile)));
 	}
 
@@ -248,7 +248,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 		List<BoxFile> files = syncRoot.listFiles();
 		assertEquals(1, files.size());
 		BoxFile boxFile = files.get(0);
-		assertEquals("targetFile", boxFile.name);
+		assertEquals("targetFile", boxFile.getName());
 		assertEquals("testcontent", IOUtils.toString(syncRoot.download(boxFile)));
 	}
 
@@ -367,7 +367,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 	private void setDownload(Path destination, long mtimeDiff, Transaction.TYPE type, boolean isDir) throws IOException {
 		download.source = Paths.get("/testfile");
 		download.destination = destination;
-		download.mtime = lastUpload != null ? lastUpload.mtime + mtimeDiff : Files.getLastModifiedTime(destination).toMillis() + mtimeDiff;
+		download.mtime = lastUpload != null ? lastUpload.getMtime() + mtimeDiff : Files.getLastModifiedTime(destination).toMillis() + mtimeDiff;
 		download.type = type;
 		download.isDir = isDir;
 	}
@@ -396,7 +396,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 
 		upload.source = tmpPath("wayne");
 		upload.destination = Paths.get("/testfile");
-		upload.mtime = lastUpload.mtime + OLDER;
+		upload.mtime = lastUpload.getMtime() + OLDER;
 		upload.type = DELETE;
 		upload.isDir = false;
 		manager.upload(upload);
@@ -479,7 +479,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 		BoxFile remote = volume.navigate().upload("file", file.toFile());
 		download.source = Paths.get("/file");
 		download.destination = tmpPath("wayne");
-		download.mtime = remote.mtime;
+		download.mtime = remote.getMtime();
 		download.type = CREATE;
 		download.isDir = false;
 		manager.addDownload(download);

@@ -3,18 +3,19 @@ package de.qabel.desktop.daemon.sync.worker;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
+import de.qabel.desktop.storage.cache.CachedIndexNavigation;
 
 public class BoxVolumeStub extends CachedBoxVolume {
 	public boolean indexCreated = false;
 	public String rootRef = "/root/";
-	public CachedBoxNavigation rootNavigation = new BoxNavigationStub(null, null);
+	public CachedIndexNavigation rootNavigation = new BoxNavigationStub(null, null);
 
 	public BoxVolumeStub() {
 		super(null, null, null, null, null, null);
 	}
 
 	@Override
-	public CachedBoxNavigation navigate() throws QblStorageException {
+	public CachedIndexNavigation navigate() throws QblStorageException {
  		return rootNavigation;
 	}
 

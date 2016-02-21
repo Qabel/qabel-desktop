@@ -57,7 +57,7 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 
 		assertTrue(subnav instanceof PathNavigation);
 		assertTrue(nav.navigate("subfolder") instanceof PathNavigation);
-		assertEquals("marker", subnav.listFolders().get(0).name);
+		assertEquals("marker", subnav.listFolders().get(0).getName());
 		assertSame(subnav, nav.navigate("subfolder"));
 	}
 

@@ -4,8 +4,10 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.drop.DropMessage;
+import de.qabel.desktop.SharingService;
 import de.qabel.desktop.cellValueFactory.BoxObjectCellValueFactory;
 import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.ShareNotifications;
 import de.qabel.desktop.config.factory.BoxVolumeFactory;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.daemon.management.*;
@@ -53,31 +55,36 @@ import static javafx.scene.Cursor.HAND;
 
 public class RemoteFSController extends AbstractController implements Initializable {
 	final String ROOT_FOLDER_NAME = "/";
-	public static final int OPTION_WIDTH = 16;
-	private static Image uploadFileImage = new Image(RemoteFSController.class.getResourceAsStream("/icon/upload.png"), OPTION_WIDTH, OPTION_WIDTH, true, true);
-	private static Image uploadFolderImage = new Image(RemoteFSController.class.getResourceAsStream("/icon/folder-upload.png"), OPTION_WIDTH, OPTION_WIDTH, true, true);
-	private static Image downloadImage = new Image(RemoteFSController.class.getResourceAsStream("/icon/download.png"), OPTION_WIDTH, OPTION_WIDTH, true, true);
-	private static Image addFolderImage = new Image(RemoteFSController.class.getResourceAsStream("/icon/add_folder.png"), OPTION_WIDTH, OPTION_WIDTH, true, true);
-	private static Image deleteImage = new Image(RemoteFSController.class.getResourceAsStream("/icon/delete.png"), OPTION_WIDTH, OPTION_WIDTH, true, true);
-	private static Image shareImage = new Image(RemoteFSController.class.getResourceAsStream("/icon/share.png"), OPTION_WIDTH, OPTION_WIDTH, true, true);
+	public static final int OPTION_EDGE_SIZE = 16;
+	private static Image uploadFileImage = optionImage("/icon/upload.png");
+	private static Image uploadFolderImage = optionImage("/icon/folder-upload.png");
+	private static Image downloadImage = optionImage("/icon/download.png");
+	private static Image addFolderImage = optionImage("/icon/add_folder.png");
+	private static Image deleteImage = optionImage("/icon/delete.png");
+	private static Image shareImage = optionImage("/icon/share.png");
+
+	private static Image optionImage(String resourcePath) {
+		return new Image(RemoteFSController.class.getResourceAsStream(resourcePath), OPTION_EDGE_SIZE, OPTION_EDGE_SIZE, true, true);
+	}
 
 	private BoxVolume volume;
-	ReadOnlyBoxNavigation nav;
+	ReadableBoxNavigation nav;
 	LazyBoxFolderTreeItem rootItem;
+	StaticTreeItemContainer virtualRoot;
+	VirtualShareTreeItem shareRoot;
 	ObjectProperty<TreeItem<BoxObject>> hoveredItem = new SimpleObjectProperty<>(null);
 	ResourceBundle resourceBundle;
 
 	@Inject
 	ClientConfiguration clientConfiguration;
-
 	@Inject
 	BoxVolumeFactory boxVolumeFactory;
-
 	@Inject
 	TransferManager loadManager;
-
 	@Inject
 	DropMessageRepository dropMessageRepository;
+	@Inject
+	SharingService sharingService;
 
 	@FXML
 	private TreeTableView<BoxObject> treeTable;
@@ -92,14 +99,17 @@ public class RemoteFSController extends AbstractController implements Initializa
 	@FXML
 	private StackPane stack;
 
-	private DetailsController details;
+	DetailsController details;
+	RemoteFileDetailsController fileDetails;
 
+	private Identity identity;
+	private ShareNotifications notifications;
 
 	public void initialize(URL location, ResourceBundle resources) {
 		Cursor oldCursor = stack.getCursor();
 		stack.setCursor(Cursor.WAIT);
 		this.resourceBundle = resources;
-		createObserver();
+		observeIdentityChanges();
 		initTreeTableView();
 
 
@@ -127,7 +137,9 @@ public class RemoteFSController extends AbstractController implements Initializa
 	}
 
 	private void showDetails(TreeItem<BoxObject> value) {
-		new RemoteFileDetailsView(getNavigation(value), value.getValue()).getViewAsync(details::show);
+		RemoteFileDetailsView view = new RemoteFileDetailsView(getNavigation(value), value.getValue());
+		fileDetails = (RemoteFileDetailsController) view.getPresenter();
+		view.getViewAsync(details::show);
 	}
 
 	private BoxNavigation getNavigation(TreeItem<BoxObject> value) {
@@ -138,7 +150,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 		}
 	}
 
-	private void createObserver() {
+	private void observeIdentityChanges() {
 		clientConfiguration.addObserver((o, arg) -> {
 			if (!(arg instanceof Identity)) {
 				return;
@@ -149,15 +161,26 @@ public class RemoteFSController extends AbstractController implements Initializa
 
 	private void initTreeTableView() {
 		try {
+			identity = clientConfiguration.getSelectedIdentity();
+			notifications = clientConfiguration.getShareNotification(identity);
 			nav = createSetup();
-			StaticTreeItemContainer virtualRoot = new StaticTreeItemContainer(new FakeBoxObject("virtualRoot"), null);
-			StaticTreeItemContainer shareRoot = new StaticTreeItemContainer(new FakeBoxObject("Shares"), new ImageView(shareImage));
-			rootItem = new LazyBoxFolderTreeItem(new BoxFolder(volume.getRootRef(), ROOT_FOLDER_NAME, new byte[16]), nav);
-			rootItem.setExpanded(true);
+			virtualRoot = new StaticTreeItemContainer(new FakeBoxObject("virtualRoot"), null);
+
+			shareRoot = new VirtualShareTreeItem(
+					sharingService,
+					volume.getReadBackend(),
+					notifications,
+					new FakeBoxObject("Shares"),
+					new ImageView(shareImage)
+			);
 
 			virtualRoot.getChildren().add(shareRoot);
+
+			rootItem = new LazyBoxFolderTreeItem(new BoxFolder(volume.getRootRef(), ROOT_FOLDER_NAME, new byte[16]), nav);
+			rootItem.setExpanded(true);
 			virtualRoot.getChildren().add(rootItem);
 			virtualRoot.setExpanded(true);
+
 
 			treeTable.setShowRoot(false);
 			treeTable.setRoot(virtualRoot);
@@ -201,11 +224,16 @@ public class RemoteFSController extends AbstractController implements Initializa
 
 			row.treeItemProperty().addListener((observable, oldValue, newValue) -> {
 				ObservableList<String> styleClass = row.getStyleClass();
+
+				styleClass.remove("child");
+				styleClass.remove("share-root");
+				styleClass.remove("share-root");
+
 				if (newValue == rootItem) {
-					styleClass.remove("child");
 					styleClass.add("root");
+				} else if (newValue == shareRoot) {
+					styleClass.add("share-root");
 				} else {
-					styleClass.remove("root");
 					styleClass.add("child");
 				}
 			});
@@ -218,7 +246,6 @@ public class RemoteFSController extends AbstractController implements Initializa
 			if (!(item.getValue() instanceof BoxFolder) && !(item.getValue() instanceof BoxFile)) {
 				return result;
 			}
-
 
 			buttonFromImage(item, bar, downloadImage, this::download, "download");
 
@@ -235,7 +262,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 			buttonFromImage(item, bar, deleteImage, this::deleteItem, "delete");
 			if (item.getValue() instanceof BoxFolder) {
 				spacer(bar);
-			} else {
+			} else if (!(item.getValue() instanceof BoxExternal)) {
 				buttonFromImage(item, bar, shareImage, this::share, "share");
 			}
 
@@ -263,28 +290,16 @@ public class RemoteFSController extends AbstractController implements Initializa
 			String message = "Hey, I got a share for you!";
 			BoxNavigation navigation = (BoxNavigation) folder.getNavigation();
 
-			shareAndSendMessage(sender, receiver, objectToShare, message, navigation);
+			sharingService.shareAndSendMessage(sender, receiver, objectToShare, message, navigation);
 		} catch (Exception e) {
 			alert(e);
 		}
 	}
 
-	private void shareAndSendMessage(Identity sender, Contact receiver, BoxFile objectToShare, String message, BoxNavigation navigation) throws QblStorageException, PersistenceException {
-		QblECPublicKey owner = sender.getEcPublicKey();
-		BoxExternalReference ref = navigation.createFileMetadata(owner, objectToShare);
-		ShareNotificationMessage share = new ShareNotificationMessage(ref.url, Hex.toHexString(ref.key), message);
-		System.out.println(share.toJson());
-		dropMessageRepository.addMessage(
-				new DropMessage(sender, share.toJson(), DropMessageRepository.PAYLOAD_TYPE_SHARE_NOTIFICATION),
-				sender,
-				receiver,
-				false
-		);
-	}
 
 	private void spacer(HBox bar) {
 		Label label = new Label();
-		label.setPrefWidth(OPTION_WIDTH);
+		label.setPrefWidth(OPTION_EDGE_SIZE);
 		bar.getChildren().add(label);
 	}
 
@@ -301,7 +316,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 		bar.getChildren().add(button);
 	}
 
-	private ReadOnlyBoxNavigation createSetup() throws QblStorageException {
+	private ReadableBoxNavigation createSetup() throws QblStorageException {
 		volume = boxVolumeFactory.getVolume(clientConfiguration.getAccount(), clientConfiguration.getSelectedIdentity());
 		nav = volume.navigate();
 
@@ -345,25 +360,43 @@ public class RemoteFSController extends AbstractController implements Initializa
 		}
 	}
 
+	DirectoryChooser directoryChooser;
 	private void download(TreeItem<BoxObject> item) {
 		try {
-			DirectoryChooser chooser = new DirectoryChooser();
-			chooser.setTitle(resourceBundle.getString("downloadFolder"));
-			File directory = chooser.showDialog(treeTable.getScene().getWindow());
+			directoryChooser = new DirectoryChooser();
+			directoryChooser.setTitle(resourceBundle.getString("downloadFolder"));
+			File directory = directoryChooser.showDialog(treeTable.getScene().getWindow());
 			BoxObject boxObject = item.getValue();
 
-			Path path;
-			LazyBoxFolderTreeItem folderTreeItem;
-			if (item instanceof LazyBoxFolderTreeItem) {
-				folderTreeItem = (LazyBoxFolderTreeItem) item;
-				path = folderTreeItem.getPath();
-			} else {
-				folderTreeItem = (LazyBoxFolderTreeItem) item.getParent();
-				path = folderTreeItem.getPath().resolve(boxObject.name);
-			}
-			ReadOnlyBoxNavigation navigation = folderTreeItem.getNavigation();
+			if (item instanceof ExternalTreeItem) {
+				try {
+					if (!(boxObject instanceof BoxFile)) {	//TODO implement directory shares
+						return;
+					}
+					sharingService.downloadShare(
+							(BoxExternalFile)boxObject,
+							((ExternalTreeItem) item).getNotification(),
+							directory.toPath().resolve(boxObject.getName()),
+							volume.getReadBackend()
+					);
+				} catch (Exception e) {
+					alert(e);
+				}
 
-			downloadBoxObject(boxObject, navigation, path, directory.toPath());
+			} else {
+				Path path;
+				LazyBoxFolderTreeItem folderTreeItem;
+				if (item.getValue() instanceof BoxFolder) {
+					folderTreeItem = (LazyBoxFolderTreeItem) item;
+					path = folderTreeItem.getPath();
+				} else {
+					folderTreeItem = (LazyBoxFolderTreeItem) item.getParent();
+					path = folderTreeItem.getPath().resolve(boxObject.getName());
+				}
+				ReadableBoxNavigation navigation = folderTreeItem.getNavigation();
+
+				downloadBoxObject(boxObject, navigation, path, directory.toPath());
+			}
 		} catch (QblStorageException e) {
 			alert(e);
 		}
@@ -394,15 +427,20 @@ public class RemoteFSController extends AbstractController implements Initializa
 
 	private void deleteItem(TreeItem<BoxObject> item) {
 		try {
+			if (item instanceof ExternalTreeItem) {
+				clientConfiguration.getShareNotification(clientConfiguration.getSelectedIdentity())
+						.remove(((ExternalTreeItem) item).getNotification());
+				return;
+			}
 			if (item.getParent() != null) {
 
 				Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 				alert.setTitle(resourceBundle.getString("deleteQuestion"));
-				alert.setHeaderText(resourceBundle.getString("deleteFolder") + item.getValue().name + " ?");
+				alert.setHeaderText(resourceBundle.getString("deleteFolder") + item.getValue().getName() + " ?");
 				Optional<ButtonType> result = alert.showAndWait();
 
 				LazyBoxFolderTreeItem updateTreeItem = (LazyBoxFolderTreeItem) item.getParent();
-				Path path = updateTreeItem.getPath().resolve(item.getValue().name);
+				Path path = updateTreeItem.getPath().resolve(item.getValue().getName());
 
 				deleteBoxObject(result.get(), path, item.getValue());
 			}
@@ -461,8 +499,8 @@ public class RemoteFSController extends AbstractController implements Initializa
 		loadManager.addUpload(new ManualUpload(DELETE, volume, null, path, object instanceof BoxFolder));
 	}
 
-	void downloadBoxObject(BoxObject boxObject, ReadOnlyBoxNavigation nav, Path source, Path destination) throws QblStorageException {
-		destination = destination.resolve(boxObject.name);
+	void downloadBoxObject(BoxObject boxObject, ReadableBoxNavigation nav, Path source, Path destination) throws QblStorageException {
+		destination = destination.resolve(boxObject.getName());
 		if (boxObject instanceof BoxFile) {
 			downloadFile((BoxFile)boxObject, nav, source, destination);
 		} else {
@@ -470,25 +508,25 @@ public class RemoteFSController extends AbstractController implements Initializa
 		}
 	}
 
-	private void downloadBoxFolder(ReadOnlyBoxNavigation nav, Path source, Path destination) throws QblStorageException {
+	private void downloadBoxFolder(ReadableBoxNavigation nav, Path source, Path destination) throws QblStorageException {
 		loadManager.addDownload(new ManualDownload(CREATE, volume, source, destination, true));
 
 		for (BoxFile file : nav.listFiles()) {
-			downloadFile(file, nav, source.resolve(file.name), destination.resolve(file.name));
+			downloadFile(file, nav, source.resolve(file.getName()), destination.resolve(file.getName()));
 		}
 		for (BoxFolder folder : nav.listFolders()) {
-			downloadBoxFolder(nav.navigate(folder), source.resolve(folder.name), destination.resolve(folder.name));
+			downloadBoxFolder(nav.navigate(folder), source.resolve(folder.getName()), destination.resolve(folder.getName()));
 		}
 	}
 
-	private void downloadFile(BoxFile file, ReadOnlyBoxNavigation nav, Path source, Path destination) {
-		loadManager.addDownload(new ManualDownload(file.mtime, CREATE, volume, source, destination, false));
+	private void downloadFile(BoxFile file, ReadableBoxNavigation nav, Path source, Path destination) {
+		loadManager.addDownload(new ManualDownload(file.getMtime(), CREATE, volume, source, destination, false));
 	}
 
-	private ReadOnlyBoxNavigation getNavigator(BoxFolder folder) throws QblStorageException {
-		ReadOnlyBoxNavigation newNav = nav;
+	private ReadableBoxNavigation getNavigator(BoxFolder folder) throws QblStorageException {
+		ReadableBoxNavigation newNav = nav;
 
-		if (!(folder == null) && !folder.name.equals(ROOT_FOLDER_NAME)) {
+		if (!(folder == null) && !folder.getName().equals(ROOT_FOLDER_NAME)) {
 			newNav = nav.navigate(folder);
 		}
 

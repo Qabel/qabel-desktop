@@ -23,8 +23,8 @@ public class FolderNavigation extends AbstractNavigation {
 	private final byte[] key;
 
 	FolderNavigation(String prefix, DirectoryMetadata dm, QblECKeyPair keyPair, byte[] key, byte[] deviceId,
-					 StorageReadBackend readBackend, StorageWriteBackend writeBackend) {
-		super(prefix, dm, keyPair, deviceId, readBackend, writeBackend);
+					 StorageReadBackend readBackend, StorageWriteBackend writeBackend, IndexNavigation indexNavigation) {
+		super(prefix, dm, keyPair, deviceId, readBackend, writeBackend, indexNavigation);
 		this.key = key;
 	}
 

@@ -25,12 +25,12 @@ public class RemoteFSFileChooser extends RemoteFSChooser {
 		}
 
 		LazyBoxFolderTreeItem folderItem = (LazyBoxFolderTreeItem)newValue.getParent();
-		ReadOnlyBoxNavigation navigation = folderItem.getNavigation();
+		ReadableBoxNavigation navigation = folderItem.getNavigation();
 		if (!(navigation instanceof PathNavigation)) {
 			selectedProperty.setValue(null);
 			return;
 		}
-		Path result = ((PathNavigation) navigation).getPath().resolve(newValue.getValue().name);
+		Path result = ((PathNavigation) navigation).getPath().resolve(newValue.getValue().getName());
 		selectedProperty.setValue(result);
 	}
 }

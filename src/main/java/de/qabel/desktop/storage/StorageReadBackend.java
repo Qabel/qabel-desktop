@@ -4,7 +4,7 @@ import de.qabel.desktop.exceptions.QblStorageException;
 
 import java.io.InputStream;
 
-public interface StorageReadBackend {
+public interface StorageReadBackend extends AuthenticatedDownloader {
 
 	/**
 	 * Download a file from the storage

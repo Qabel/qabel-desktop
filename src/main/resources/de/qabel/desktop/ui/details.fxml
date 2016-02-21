@@ -21,7 +21,7 @@
               style="-fx-background-color: white; -fx-border-width: 0 0 0 1; -fx-effect: dropshadow(gaussian, black, 8, 0, 0, 5);"
               GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" alignment="TOP_RIGHT">
             <children>
-                <Pane fx:id="detailsContainer"/>
+                <VBox fx:id="detailsContainer"/>
                 <Label fx:id="closeDetails" text="X" alignment="TOP_RIGHT"
                        style="-fx-alignment: top-right; -fx-padding: 10px 10px 10px 10px;" styleClass="inline-button"/>
             </children>

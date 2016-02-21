@@ -1,6 +1,5 @@
 package de.qabel.desktop.storage;
 
-import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.exceptions.*;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
@@ -14,6 +13,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 
 public class DirectoryMetadata extends AbstractMetadata {
 
@@ -36,10 +36,10 @@ public class DirectoryMetadata extends AbstractMetadata {
 					" version BLOB NOT NULL," +
 					" time LONG NOT NULL )",
 			"CREATE TABLE shares (" +
-					" id INTEGER PRIMARY KEY," +
 					" ref VARCHAR(255)NOT NULL," +
 					" recipient BLOB NOT NULL," +
 					" type INTEGER NOT NULL )",
+			"CREATE UNIQUE INDEX uniqueShares ON shares(ref, recipient, type)",
 			"CREATE TABLE files (" +
 					" block VARCHAR(255)NOT NULL," +
 					" name VARCHAR(255)NOT NULL PRIMARY KEY," +
@@ -280,11 +280,11 @@ public class DirectoryMetadata extends AbstractMetadata {
 		try {
 			PreparedStatement st = connection.prepareStatement(
 					"INSERT INTO files (block, name, size, mtime, key) VALUES(?, ?, ?, ?, ?)");
-			st.setString(1, file.block);
-			st.setString(2, file.name);
-			st.setLong(3, file.size);
-			st.setLong(4, file.mtime);
-			st.setBytes(5, file.key);
+			st.setString(1, file.getBlock());
+			st.setString(2, file.getName());
+			st.setLong(3, file.getSize());
+			st.setLong(4, file.getMtime());
+			st.setBytes(5, file.getKey());
 			if (st.executeUpdate() != 1) {
 				throw new QblStorageException("Failed to insert file");
 			}
@@ -314,33 +314,23 @@ public class DirectoryMetadata extends AbstractMetadata {
 		if ((type != TYPE_NONE) && (type != TYPE_FOLDER)) {
 			throw new QblStorageNameConflict(folder.name);
 		}
-		try {
+		executeStatement(() -> {
 			PreparedStatement st = connection.prepareStatement(
 					"INSERT INTO folders (ref, name, key) VALUES(?, ?, ?)");
 			st.setString(1, folder.ref);
 			st.setString(2, folder.name);
 			st.setBytes(3, folder.key);
-			if (st.executeUpdate() != 1) {
-				throw new QblStorageException("Failed to insert folder");
-			}
-
-		} catch (SQLException e) {
-			throw new QblStorageException(e);
-		}
+			return st;
+		});
 	}
 
 	void deleteFolder(BoxFolder folder) throws QblStorageException {
-		try {
+		executeStatement(() -> {
 			PreparedStatement st = connection.prepareStatement(
 					"DELETE FROM folders WHERE name=?");
 			st.setString(1, folder.name);
-			if (st.executeUpdate() != 1) {
-				throw new QblStorageException("Failed to insert folder");
-			}
-
-		} catch (SQLException e) {
-			throw new QblStorageException(e);
-		}
+			return st;
+		});
 	}
 
 	List<BoxFolder> listFolders() throws QblStorageException {
@@ -353,6 +343,57 @@ public class DirectoryMetadata extends AbstractMetadata {
 				}
 				return folders;
 			}
+		} catch (SQLException e) {
+			throw new QblStorageException(e);
+		}
+	}
+
+	void insertShare(BoxShare share) throws QblStorageException {
+		executeStatement(() -> {
+			PreparedStatement statement = connection.prepareStatement(
+					"INSERT INTO shares (ref, recipient, type) VALUES (?, ?, ?)"
+			);
+			statement.setString(1, share.getRef());
+			statement.setString(2, share.getRecipient());
+			statement.setString(3, share.getType());
+			return statement;
+		});
+	}
+
+	private void executeStatement(Callable<PreparedStatement> statementCallable) throws QblStorageException {
+		try {
+			PreparedStatement statement = statementCallable.call();
+			if (statement.executeUpdate() != 1) {
+				throw new QblStorageException("Failed to execute statement");
+			}
+		} catch (Exception e) {
+			throw new QblStorageException(e);
+		}
+	}
+
+	void deleteShare(BoxShare share) throws QblStorageException {
+		executeStatement(() -> {
+			PreparedStatement statement = connection.prepareStatement(
+					"DELETE FROM shares WHERE ref = ? AND recipient = ? AND type = ?"
+			);
+			statement.setString(1, share.getRef());
+			statement.setString(2, share.getRecipient());
+			statement.setString(3, share.getType());
+			return statement;
+		});
+	}
+
+	List<BoxShare> listShares() throws QblStorageException {
+		List<BoxShare> shares = new LinkedList<>();
+		try {
+			PreparedStatement statement = connection.prepareStatement(
+					"SELECT ref, recipient, type FROM shares"
+			);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				shares.add(new BoxShare(rs.getString(1), rs.getString(2), rs.getString(3)));
+			}
+			return shares;
 		} catch (SQLException e) {
 			throw new QblStorageException(e);
 		}
@@ -381,17 +422,12 @@ public class DirectoryMetadata extends AbstractMetadata {
 	}
 
 	void deleteExternal(BoxExternalReference external) throws QblStorageException {
-		try {
+		executeStatement(() -> {
 			PreparedStatement st = connection.prepareStatement(
 					"DELETE FROM externals WHERE name=?");
 			st.setString(1, external.name);
-			if (st.executeUpdate() != 1) {
-				throw new QblStorageException("Failed to insert external");
-			}
-
-		} catch (SQLException e) {
-			throw new QblStorageException(e);
-		}
+			return st;
+		});
 	}
 
 	List<BoxExternal> listExternals() throws QblStorageException {
