@@ -44,7 +44,7 @@ public class InviteController extends AbstractController implements Initializabl
 				try {
 					desktop.mail( new URI(mailURIStr));
 				} catch (URISyntaxException | IOException e) {
-					alert("can not open mail client", e);
+					alert("Failt to open mail client", e);
 				}
 			}
 		}

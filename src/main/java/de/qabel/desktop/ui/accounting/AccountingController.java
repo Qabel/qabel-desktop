@@ -184,7 +184,7 @@ public class AccountingController extends AbstractController implements Initiali
 				itemViews.add(itemView);
 			}
 		} catch (Exception e) {
-			alert("load identities fail", e);
+			alert("Failed to load identities", e);
 
 		}
 	}

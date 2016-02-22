@@ -414,7 +414,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 				try {
 					createFolder(lazyItem.getPath().resolve(name));
 				} catch (QblStorageException e) {
-					alert("can not create Folder", e);
+					alert("Failed to create Folder", e);
 				}
 			});
 		}).start();

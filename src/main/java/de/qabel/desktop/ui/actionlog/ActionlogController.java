@@ -136,7 +136,7 @@ public class ActionlogController extends AbstractController implements Initializ
 			}
 
 		} catch (PersistenceException e) {
-			alert("can not load messages", e);
+			alert("Failed to load messages", e);
 		}
 	}
 
@@ -211,7 +211,7 @@ public class ActionlogController extends AbstractController implements Initializ
 				this.contact = contact;
 				loadMessages(this.contact);
 			} catch (EntityNotFoundExcepion e) {
-				alert("can not select Contact", e);
+				alert("Failed to select Contact", e);
 			}
 		});
 

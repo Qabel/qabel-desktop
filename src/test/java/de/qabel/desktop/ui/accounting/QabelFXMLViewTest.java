@@ -15,7 +15,7 @@ public class QabelFXMLViewTest extends AbstractControllerTest {
 	public void deLocalTest() {
 		Locale.setDefault(new Locale("de", "DE"));
 		createController();
-		String str = controller.getRessource().getString("size");
+		String str = controller.getRessource().getString("remoteFsSize");
 		assertThat(str, is("Größe"));
 	}
 
@@ -23,7 +23,7 @@ public class QabelFXMLViewTest extends AbstractControllerTest {
 	public void enLocalTest() {
 		Locale.setDefault(new Locale("en", "EN"));
 		createController();
-		String str = controller.getRessource().getString("size");
+		String str = controller.getRessource().getString("remoteFsSize");
 		assertThat(str, is("Size"));
 	}
 
@@ -31,7 +31,7 @@ public class QabelFXMLViewTest extends AbstractControllerTest {
 	public void chLocalTest() {
 		Locale.setDefault(new Locale("de", "CH"));
 		createController();
-		String str = controller.getRessource().getString("size");
+		String str = controller.getRessource().getString("remoteFsSize");
 		assertThat(str, is("Size"));
 	}
 
@@ -39,7 +39,7 @@ public class QabelFXMLViewTest extends AbstractControllerTest {
 	public void rndLocalTest() {
 		Locale.setDefault(new Locale("rd", "DE"));
 		createController();
-		String str = controller.getRessource().getString("size");
+		String str = controller.getRessource().getString("remoteFsSize");
 		assertThat(str, is("Size"));
 	}
 

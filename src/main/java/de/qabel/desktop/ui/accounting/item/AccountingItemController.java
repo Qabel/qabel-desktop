@@ -99,7 +99,7 @@ public class AccountingItemController extends AbstractController implements Init
 			identityRepository.save(identity);
 			this.alias.setText(alias);
 		} catch (PersistenceException e) {
-			alert("save identity fail", e);
+			alert("Failed to save identity", e);
 		}
 	}
 
