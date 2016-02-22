@@ -100,4 +100,13 @@ public class BoxFile extends BoxObject {
 	public void setMetakey(byte[] metakey) {
 		this.metakey = metakey;
 	}
+
+	@Override
+	public String getRef() {
+		String meta = getMeta();
+		if (meta == null || !meta.contains("/")) {
+			return meta;
+		}
+		return meta.split("/")[1];
+	}
 }

@@ -106,6 +106,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 
 		waitUntil(() -> getNodes(".cell").size() > 2);
 		clickOn(getFirstNode(".child"));
+		waitForNode(".detailsContainer");
 		waitUntil(() -> getFirstNode(".detailsContainer").isVisible(), 5000L);
 
 		clickOn(getFirstNode("#shareReceiver")).write("tto").push(KeyCode.ENTER);

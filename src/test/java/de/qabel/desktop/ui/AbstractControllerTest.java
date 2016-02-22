@@ -113,6 +113,7 @@ public class AbstractControllerTest {
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			fail(e.getMessage());
 		}
 	}

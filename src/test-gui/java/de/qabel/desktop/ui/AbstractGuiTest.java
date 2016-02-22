@@ -15,6 +15,7 @@ import org.testfx.service.query.PointQuery;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 	protected final FxRobot robot = new FxRobot();
@@ -58,9 +59,13 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 		baseFXRobot.waitForIdle();
 		Node sceneNode = robot.rootNode(scene);
 		waitUntil(() -> {
-			int a = (int) Math.round(sceneNode.computeAreaInScreen());
-			int b = Math.round(getWidth() * getHeight());
-			return a >= b;
+			try {
+				int a = (int) Math.round(sceneNode.computeAreaInScreen());
+				int b = Math.round(getWidth() * getHeight());
+				return a >= b;
+			} catch (Exception e) {
+				return false;
+			}
 		}, 10000L);
 		return presenter;
 	}
@@ -120,6 +125,14 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 			}
 		}
 		return robot.moveTo(node);
+	}
+
+	protected static void waitUntil(Callable<Boolean> evaluate) {
+		waitUntil(evaluate, 10000L);
+	}
+
+	protected void waitForNode(String query) {
+		waitUntil(() -> robot.lookup(query).tryQueryFirst().isPresent());
 	}
 
 	protected Node getFirstNode(String query) {

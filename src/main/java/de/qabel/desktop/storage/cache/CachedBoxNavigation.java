@@ -188,7 +188,12 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 
 	@Override
 	public BoxExternalReference share(QblECPublicKey owner, BoxFile file, String receiver) throws QblStorageException {
-		return nav.share(owner, file, receiver);
+		return  nav.share(owner, file, receiver);
+	}
+
+	@Override
+	public List<BoxShare> getSharesOf(BoxObject object) throws QblStorageException {
+		return nav.getSharesOf(object);
 	}
 
 	public void refresh() throws QblStorageException {

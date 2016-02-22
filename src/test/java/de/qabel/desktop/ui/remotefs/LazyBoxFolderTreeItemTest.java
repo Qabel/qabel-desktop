@@ -272,6 +272,11 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 		}
 
 		@Override
+		public List<BoxShare> getSharesOf(BoxObject object) throws QblStorageException {
+			return null;
+		}
+
+		@Override
 		public boolean hasFile(String name) throws QblStorageException {
 			return false;
 		}
