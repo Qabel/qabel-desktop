@@ -163,3 +163,14 @@
     -fx-background-color: #9b9b9b;
     -fx-text-fill: -fx-text-inner-color;
 }
+
+.message-text {
+    -fx-padding: 1em 1em 1em 1em;
+    -fx-text-alignment: justify;
+    -fx-wrap-text: true;
+}
+
+.message-text .label {
+    -fx-text-alignment: justify;
+    -fx-wrap-text: true;
+}
