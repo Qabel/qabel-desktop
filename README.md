@@ -79,3 +79,33 @@ Because of the gui tests, you can't run all tests headless, so at least a virtua
 One syncer is started per BoxSyncConfig. Both, the local and the remote filesystem send notifications of changed files to the syncer. Remotely, a poller let's the BoxNavigations update itself every few seconds and they will notify the syncer if a change happened.
 The syncer checks it's SyncIndex for information about the changed file (to prevent event loops, like a download triggering a local fs event). If everything is fine, the Syncer schedules a transaction (up- or download) at the central LoadManager that executes these transactions synchronously. Once finished, the LoadManager updates the SyncIndex (per callback) to store the current state of synchronization.
 The SyncIndex is persisted on change to allow detection of events that occured during a clients offline period.
+
+## Installer
+
+The `installer` dir includes two scripts to create an installer for Windows:
+ 1. `launch4j.xml` which can be used with launch4j to create the `desktopLaunch4j.exe` (launcher)
+ 2. `config.iss` which can be used with Inno Setup to create the `QabelSetup.exe` (setup)
+
+ To do so, you need to prepare the following directory structure:
+
+```
+installer
+├───dist        (extracted content from `build/distributions/*.zip` after `gradlew distZip`
+│   ├───bin
+│   └───lib
+├───jre         (jre folder, >= Java8u67)
+│   ├───bin
+│   └───lib
+└───launch4j    (extracted launch4j windows zip distribution)
+     ├───bin
+     ├───...
+```
+
+And you need to install Inno Setup 5.
+Then you can do the following steps to create your setup:
+
+ - `java -jar launch4j/launch4j.jar launch4j.xml`  to create the launcher
+ - `ISCC config.iss` to create the setup containing the launcher, the jre and the Qabel distribution
+
+ If you haven't configured your PATH to include ISCC, you need to use the full path to the ISCC.exe. For example:
+ `"C:\Program Files (x86)\Inno Setup 5\ISCC.exe" config.iss`
