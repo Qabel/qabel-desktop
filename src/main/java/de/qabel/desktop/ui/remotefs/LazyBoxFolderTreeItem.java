@@ -19,7 +19,7 @@ import java.util.concurrent.Executors;
 
 public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observer {
 	private BoxFolder folder;
-	private ReadOnlyBoxNavigation navigation;
+	private ReadableBoxNavigation navigation;
 	private boolean upToDate;
 	private boolean loading;
 	private StringProperty nameProperty;
@@ -28,17 +28,22 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observ
 	private static Image folderImg = new Image(LazyBoxFolderTreeItem.class.getResourceAsStream("/icon/folder.png"), 18, 18, true, true);
 	private static ExecutorService executorService = Executors.newCachedThreadPool();
 
-	public LazyBoxFolderTreeItem(BoxFolder folder, ReadOnlyBoxNavigation navigation) {
+	public LazyBoxFolderTreeItem(BoxFolder folder, ReadableBoxNavigation navigation) {
 		this(folder, navigation, folderImg);
+		getGraphic().focusedProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue) {
+				setExpanded(true);
+			}
+		});
 	}
 
-	public LazyBoxFolderTreeItem(BoxFolder folder, ReadOnlyBoxNavigation navigation, Image icon) {
+	public LazyBoxFolderTreeItem(BoxFolder folder, ReadableBoxNavigation navigation, Image icon) {
 		super(folder);
 		ImageView value = new ImageView(icon);
 		super.setGraphic(value);
 		this.folder = folder;
 		this.navigation = navigation;
-		this.nameProperty = new SimpleStringProperty(folder.name);
+		this.nameProperty = new SimpleStringProperty(folder.getName());
 
 		if (navigation instanceof Observable) {
 			((Observable) navigation).addObserver(this);
@@ -47,7 +52,7 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observ
 
 	public Path getPath() {
 		if (getParent() != null && getParent() instanceof LazyBoxFolderTreeItem) {
-			return ((LazyBoxFolderTreeItem) getParent()).getPath().resolve(folder.name);
+			return ((LazyBoxFolderTreeItem) getParent()).getPath().resolve(folder.getName());
 		}
 		return Paths.get("/");
 	}
@@ -56,7 +61,7 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observ
 		return loading;
 	}
 
-	public ReadOnlyBoxNavigation getNavigation() {
+	public ReadableBoxNavigation getNavigation() {
 		return navigation;
 	}
 
@@ -70,7 +75,7 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observ
 
 	protected void updateAsync() {
 		loading = true;
-		nameProperty.set(folder.name + " (loading)");
+		nameProperty.set(folder.getName() + " (loading)");
 		upToDate = true;
 
 		Runnable updater = () -> {
@@ -90,9 +95,15 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observ
 			final String finalUpdateError = updateError;
 			Platform.runLater(() -> {
 				if (finalCol == null) {
-					nameProperty.set(folder.name + " (" + finalUpdateError + ")");
+					nameProperty.set(folder.getName() + " (" + finalUpdateError + ")");
 				} else {
-					nameProperty.set(folder.name);
+					nameProperty.set(folder.getName());
+				}
+				if (!isLeaf && isExpanded() && getChildren().size() == 1) {
+					TreeItem<BoxObject> child = getChildren().get(0);
+					if (child.getValue() instanceof BoxFolder) {
+						child.setExpanded(true);
+					}
 				}
 			});
 		};
@@ -145,6 +156,6 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observ
 
 	@Override
 	public String toString() {
-		return folder.name;
+		return folder.getName();
 	}
 }

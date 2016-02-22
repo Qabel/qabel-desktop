@@ -4,7 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<HBox fx:id="contactRootItem" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+<HBox fx:id="contactRootItem" styleClass="avatarItem" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="de.qabel.desktop.ui.contact.item.ContactItemController">
     <children>
         <BorderPane prefHeight="60.0" prefWidth="400.0">

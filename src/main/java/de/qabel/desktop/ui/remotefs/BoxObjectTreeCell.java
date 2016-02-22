@@ -13,7 +13,7 @@ public class BoxObjectTreeCell extends TreeCell<BoxObject> {
 	public BoxObjectTreeCell() {
 		super();
 		itemProperty().addListener((observable, oldValue, newValue) -> {
-			setText(newValue == null ? "?" : newValue.name);
+			setText(newValue == null ? "?" : newValue.getName());
 			setGraphic(new ImageView(newValue instanceof BoxFolder ? folderImg : fileImg));
 		});
 	}

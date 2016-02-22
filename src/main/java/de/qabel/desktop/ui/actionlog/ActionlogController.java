@@ -14,21 +14,16 @@ import de.qabel.desktop.ui.actionlog.item.ActionlogItem;
 import de.qabel.desktop.ui.actionlog.item.ActionlogItemView;
 import de.qabel.desktop.ui.actionlog.item.MyActionlogItemView;
 import de.qabel.desktop.ui.actionlog.item.OtherActionlogItemView;
-import de.qabel.desktop.ui.connector.Connector;
+import de.qabel.desktop.ui.connector.DropConnector;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.web.WebView;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -59,10 +54,10 @@ public class ActionlogController extends AbstractController implements Initializ
 	@Inject
 	private DropMessageRepository dropMessageRepository;
 	@Inject
-	Connector httpDropConnector;
+	DropConnector dropConnector;
 
 	Identity identity;
-	Contact c = null;
+	Contact contact = null;
 	List<PersistenceDropMessage> receivedDropMessages;
 	List<ActionlogItem> messageControllers = new LinkedList<>();
 	Thread dateRefresher;
@@ -115,17 +110,17 @@ public class ActionlogController extends AbstractController implements Initializ
 	}
 
 	protected void handleSubmitButtonAction() throws QblDropPayloadSizeException, EntityNotFoundExcepion, PersistenceException, QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException, QblNetworkInvalidResponseException {
-		if (textarea.getText().equals("") || c == null) {
+		if (textarea.getText().equals("") || contact == null) {
 			return;
 		}
-		sendDropMessage(c, textarea.getText());
+		sendDropMessage(contact, textarea.getText());
 		textarea.setText("");
 	}
 
 	void sendDropMessage(Contact c, String text) throws QblDropPayloadSizeException, QblNetworkInvalidResponseException, PersistenceException {
-		DropMessage d = new DropMessage(identity, text, "dropMessage");
+		DropMessage d = new DropMessage(identity, text, DropMessageRepository.PAYLOAD_TYPE_MESSAGE);
 		dropMessageRepository.addMessage(d, identity, c, true);
-		httpDropConnector.send(c, d);
+		dropConnector.send(c, d);
 	}
 
 	void loadMessages(Contact c) throws EntityNotFoundExcepion {
@@ -163,6 +158,7 @@ public class ActionlogController extends AbstractController implements Initializ
 	}
 
 	void addMessageToActionlog(DropMessage dropMessage) throws EntityNotFoundExcepion {
+		System.out.println("Message of type " + dropMessage.getDropPayloadType());
 		Map<String, Object> injectionContext = new HashMap<>();
 		Contact sender = contactRepository.findByKeyId(identity, dropMessage.getSenderKeyId());
 		injectionContext.put("dropMessage", dropMessage);
@@ -198,7 +194,7 @@ public class ActionlogController extends AbstractController implements Initializ
 		if (o instanceof DropMessageRepository) {
 			Platform.runLater(() -> {
 				try {
-					loadMessages(c);
+					loadMessages(contact);
 				} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
 					entityNotFoundExcepion.printStackTrace();
 				}
@@ -212,8 +208,8 @@ public class ActionlogController extends AbstractController implements Initializ
 		Platform.runLater(() -> {
 			try {
 				receivedDropMessages = null;
-				this.c = contact;
-				loadMessages(c);
+				this.contact = contact;
+				loadMessages(this.contact);
 			} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
 				entityNotFoundExcepion.printStackTrace();
 			}

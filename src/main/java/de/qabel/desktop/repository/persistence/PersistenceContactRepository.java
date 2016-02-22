@@ -23,7 +23,7 @@ public class PersistenceContactRepository extends AbstractCachedPersistenceRepos
 	public synchronized Contacts findContactsFromOneIdentity(Identity i) throws EntityNotFoundExcepion {
 
 		if (contacts.containsKey(i.getKeyIdentifier())) {
-			contacts.get(i.getKeyIdentifier());
+			return contacts.get(i.getKeyIdentifier());
 		}
 
 		List<Contacts> cl = persistence.getEntities(Contacts.class);

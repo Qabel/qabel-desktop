@@ -12,6 +12,7 @@ import de.qabel.desktop.daemon.drop.DropDaemon;
 import de.qabel.desktop.config.factory.*;
 import de.qabel.desktop.daemon.management.DefaultTransferManager;
 import de.qabel.desktop.daemon.management.MonitoredTransferManager;
+import de.qabel.desktop.daemon.share.ShareNotificationHandler;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
 import de.qabel.desktop.repository.AccountRepository;
@@ -40,7 +41,6 @@ import java.awt.event.MouseEvent;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -52,8 +52,7 @@ public class DesktopClient extends Application {
 	private static String DATABASE_FILE = "db.sqlite";
 	private final Map<String, Object> customProperties = new HashMap<>();
 	private LayoutView view;
-	private HttpDropConnector httpDropConnector;
-	private Date lastDate = null;
+	private HttpDropConnector dropConnector = new HttpDropConnector();
 	private PersistenceDropMessageRepository dropMessageRepository;
 	private PersistenceContactRepository contactRepository;
 	private BoxVolumeFactory boxVolumeFactory;
@@ -97,6 +96,7 @@ public class DesktopClient extends Application {
 						BoxVolumeFactory factory = new BlockBoxVolumeFactory(configuration.getDeviceId().getBytes(), accountingHTTP);
 						boxVolumeFactory = new CachedBoxVolumeFactory(factory);
 						customProperties.put("boxVolumeFactory", boxVolumeFactory);
+						customProperties.put("sharingService",  new BlockSharingService(dropMessageRepository, dropConnector));
 
 						new Thread(getSyncDaemon(config)).start();
 						new Thread(getDropDaemon(config)).start();
@@ -112,6 +112,8 @@ public class DesktopClient extends Application {
 				}
 			});
 		});
+
+		dropMessageRepository.addObserver(new ShareNotificationHandler(config));
 
 		setTrayIcon(primaryStage);
 
@@ -129,7 +131,7 @@ public class DesktopClient extends Application {
 	}
 
 	protected DropDaemon getDropDaemon(ClientConfiguration config) throws PersistenceException, EntityNotFoundExcepion {
-		return new DropDaemon(config,httpDropConnector,contactRepository, dropMessageRepository);
+		return  new DropDaemon(config, dropConnector,contactRepository, dropMessageRepository);
 	}
 
 	private ClientConfiguration initDiContainer() throws QblInvalidEncryptionKeyException, URISyntaxException {
@@ -147,8 +149,7 @@ public class DesktopClient extends Application {
 		customProperties.put("contactRepository", contactRepository);
 		dropMessageRepository = new PersistenceDropMessageRepository(persistence);
 		customProperties.put("dropMessageRepository", dropMessageRepository);
-		httpDropConnector = new HttpDropConnector();
-		customProperties.put("httpDropConnector", httpDropConnector);
+		customProperties.put("dropConnector", dropConnector);
 		ClientConfiguration clientConfig = getClientConfiguration(
 				persistence,
 				identityRepository,

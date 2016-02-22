@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane style="-fx-max-width: 1000" styleClass="detailsContainer" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.remotefs.RemoteFileDetailsController">
+   <center>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <ComboBox fx:id="shareReceiver" editable="true" promptText="Share with users or groups" />
+         </children>
+      </VBox>
+   </center>
+</BorderPane>

@@ -8,11 +8,14 @@ import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 
 public class PersistenceDropMessageRepository extends AbstractCachedPersistenceRepository<Contact> implements DropMessageRepository {
+	private static final Logger logger = LoggerFactory.getLogger(PersistenceDropMessageRepository.class.getSimpleName());
 
 	public PersistenceDropMessageRepository(Persistence<String> persistence) {
 		super(persistence);
@@ -24,7 +27,7 @@ public class PersistenceDropMessageRepository extends AbstractCachedPersistenceR
 		PersistenceDropMessage persistenceDropMessage = new PersistenceDropMessage(dropMessage, from, to, send);
 		persistence.updateOrPersistEntity(persistenceDropMessage);
 		setChanged();
-		notifyObservers();
+		notifyObservers(persistenceDropMessage);
 	}
 
 	@Override
@@ -33,8 +36,12 @@ public class PersistenceDropMessageRepository extends AbstractCachedPersistenceR
 		List<PersistenceDropMessage> messages = persistence.getEntities(PersistenceDropMessage.class);
 
 		for (PersistenceDropMessage d : messages) {
-			if (d.getSender().hashCode() == contact.hashCode() || d.getReceiver().hashCode() == contact.hashCode()) {
-				result.add(d);
+			try {
+				if (d.getSender().hashCode() == contact.hashCode() || d.getReceiver().hashCode() == contact.hashCode()) {
+					result.add(d);
+				}
+			} catch (Exception e) {
+				logger.error("failed to load message from conversation: " + d.getSender() + " to " + d.getReceiver());
 			}
 		}
 		return result;

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane fx:id="detailsPane" fx:controller="de.qabel.desktop.ui.DetailsController"
+          pickOnBounds="false" style="-fx-background-color: null"
+          xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            visible="false">
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="0.0" minWidth="0.0" percentWidth="30" prefWidth="0.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="246.0" minWidth="10.0" percentWidth="70" prefWidth="246.0" />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+    </rowConstraints>
+    <children>
+        <StackPane
+              style="-fx-background-color: white; -fx-border-width: 0 0 0 1; -fx-effect: dropshadow(gaussian, black, 8, 0, 0, 5);"
+              GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" alignment="TOP_RIGHT">
+            <children>
+                <VBox fx:id="detailsContainer"/>
+                <Label fx:id="closeDetails" text="X" alignment="TOP_RIGHT"
+                       style="-fx-alignment: top-right; -fx-padding: 10px 10px 10px 10px;" styleClass="inline-button"/>
+            </children>
+        </StackPane>
+    </children>
+</GridPane>

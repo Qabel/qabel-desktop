@@ -7,6 +7,8 @@ import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import de.qabel.desktop.config.factory.ClientConfigurationFactory;
+import de.qabel.desktop.config.factory.DropUrlGenerator;
+import de.qabel.desktop.config.factory.IdentityBuilder;
 import de.qabel.desktop.repository.AccountRepository;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.PersistenceException;
@@ -20,17 +22,19 @@ import static org.junit.Assert.*;
 public class PersistenceClientConfigurationRepositoryTest extends AbstractPersistenceRepositoryTest<PersistenceClientConfigurationRepository> {
 	private IdentityRepository identityRepo;
 	private AccountRepository accountRepo;
+	private Identity identity;
 
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
+		identity = new IdentityBuilder(new DropUrlGenerator("http://localhost:5000")).withAlias("wayne").build();
 		for (PersistentClientConfiguration config : persistence.getEntities(PersistentClientConfiguration.class)) {
 			persistence.removeEntity(config.getPersistenceID(), PersistentClientConfiguration.class);
 		}
 	}
 
 	@Override
-	protected PersistenceClientConfigurationRepository createRepository(Persistence persistence) {
+	protected PersistenceClientConfigurationRepository createRepository(Persistence<String> persistence) {
 		identityRepo = new PersistenceIdentityRepository(persistence);
 		accountRepo = new PersistenceAccountRepository(persistence);
 
@@ -51,7 +55,6 @@ public class PersistenceClientConfigurationRepositoryTest extends AbstractPersis
 	public void storesConfig() {
 		ClientConfiguration config = new ClientConfigurationFactory().createClientConfiguration();
 		Account account = new Account("a", "b", "c");
-		Identity identity = new Identity("alias", null, null);
 		config.setAccount(account);
 		config.selectIdentity(identity);
 		config.setDeviceId("dev id");
@@ -69,7 +72,6 @@ public class PersistenceClientConfigurationRepositoryTest extends AbstractPersis
 	public void holdsReferenceToNewestEntities() throws PersistenceException {
 		ClientConfiguration config = new ClientConfigurationFactory().createClientConfiguration();
 		Account account = new Account("a", "b", "c");
-		Identity identity = new Identity("alias", null, null);
 		config.setAccount(account);
 		config.selectIdentity(identity);
 
@@ -90,7 +92,6 @@ public class PersistenceClientConfigurationRepositoryTest extends AbstractPersis
 	public void persistsBoxSyncConfig() throws Exception {
 		ClientConfiguration config = new ClientConfigurationFactory().createClientConfiguration();
 		Account account = new Account("a", "b", "c");
-		Identity identity = new Identity("alias", null, null);
 
 		identityRepo.save(identity);
 		accountRepo.save(account);

@@ -6,15 +6,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Observable;
+import java.util.*;
 
 public class DefaultClientConfiguration extends Observable implements ClientConfiguration {
 	private Account account;
 	private Identity identity;
 	private HashMap<String, Date> lastDropMap = new HashMap<>();
+	private Map<String, ShareNotifications> shareNotifications = new HashMap<>();
 
 	private ObservableList<BoxSyncConfig> boxSyncConfigs = FXCollections.synchronizedObservableList(FXCollections.observableList(new LinkedList<>()));
 	private String deviceId;
@@ -108,6 +106,33 @@ public class DefaultClientConfiguration extends Observable implements ClientConf
 		this.lastDropMap = lastDropMap;
 	}
 
+	@Override
+	public synchronized ShareNotifications getShareNotification(Identity identity) {
+		ShareNotifications shareNotifications = this.shareNotifications.get(identity.getKeyIdentifier());
+		if (shareNotifications == null) {
+			shareNotifications = new ShareNotifications();
+			this.shareNotifications.put(identity.getKeyIdentifier(), shareNotifications);
+			observeShare(shareNotifications);
+		}
+		return shareNotifications;
+	}
+
+	public void setShareNotifications(Map<String, ShareNotifications> shareNotifications) {
+		this.shareNotifications = shareNotifications;
+		shareNotifications.values().forEach(this::observeShare);
+	}
+
+	@Override
+	public Map<String, ShareNotifications> getShareNotifications() {
+		return shareNotifications;
+	}
+
+	private void observeShare(ShareNotifications notifications) {
+		notifications.addObserver((o, arg) -> {
+			setChanged();
+			notifyObservers();
+		});
+	}
 
 	@Override
 	public boolean hasDeviceId() {

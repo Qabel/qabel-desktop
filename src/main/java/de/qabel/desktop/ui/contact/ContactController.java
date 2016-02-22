@@ -155,7 +155,7 @@ public class ContactController extends AbstractController implements Initializab
 	private void select(SelectionEvent selectionEvent) {
 		selectionEvent.getController().select();
 		actionlogController.setContact(selectionEvent.getContact());
-
+		System.out.println("Selected contact: " + selectionEvent.getContact());
 	}
 
 

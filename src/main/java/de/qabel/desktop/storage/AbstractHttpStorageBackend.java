@@ -8,6 +8,9 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 public class AbstractHttpStorageBackend {
 	protected static final Logger logger = LoggerFactory.getLogger(AbstractHttpStorageBackend.class.getSimpleName());
 	// Number of http connections to S3
@@ -15,13 +18,13 @@ public class AbstractHttpStorageBackend {
 	// to find the best amount of connections.
 	protected static final int CONNECTIONS = 50;
 	protected final CloseableHttpClient httpclient;
-	String root;
+	URI root;
 
-	public AbstractHttpStorageBackend(String root) {
+	public AbstractHttpStorageBackend(String root) throws URISyntaxException {
 		if (!root.endsWith("/")) {
 			root += "/";
 		}
-		this.root = root;
+		this.root = new URI(root);
 
 		// Increase max total connection
 		PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();

@@ -46,9 +46,9 @@
                                     <Image url="@../../../../../../ic_folder_black_syncing.png" />
                                  </image>
                               </ImageView>
-                              <VBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-spacing: 5;">
+                              <VBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-spacing: 5; -fx-min-width: 7em;">
                                  <children>
-                                                    <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="online:">
+                                    <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="online:">
                                        <font>
                                           <Font size="18.0" />
                                        </font>
@@ -56,7 +56,7 @@
                                           <Insets />
                                        </opaqueInsets>
                                     </Label>
-                                                    <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="local:">
+                                    <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="local:">
                                        <font>
                                           <Font size="18.0" />
                                        </font>

@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-public class HttpDropConnector implements Connector {
+public class HttpDropConnector implements DropConnector {
 
 	DropHTTP dHTTP = new DropHTTP();
 	private final Logger logger = LoggerFactory.getLogger(HttpDropConnector.class);

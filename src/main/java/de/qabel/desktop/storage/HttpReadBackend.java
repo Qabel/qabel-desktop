@@ -4,24 +4,17 @@ import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.exceptions.QblStorageNotFound;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
-import org.apache.http.HttpRequest;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class HttpReadBackend extends AbstractHttpStorageBackend implements StorageReadBackend {
-
-	public HttpReadBackend(String root) {
+public class HttpReadBackend extends AbstractHttpStorageBackend implements StorageReadBackend, AuthenticatedDownloader {
+	public HttpReadBackend(String root) throws URISyntaxException {
 		super(root);
 	}
 
@@ -33,14 +26,10 @@ public class HttpReadBackend extends AbstractHttpStorageBackend implements Stora
 		}
 	}
 
+	@Override
 	public StorageDownload download(String name, String ifModifiedVersion) throws QblStorageException, UnmodifiedException {
 		logger.info("Downloading " + name);
-		URI uri;
-		try {
-			uri = new URI(this.root).resolve(name);
-		} catch (URISyntaxException e) {
-			throw new QblStorageException(e);
-		}
+		URI uri = this.root.resolve(name);
 		HttpGet httpGet = new HttpGet(uri);
 		if (ifModifiedVersion != null) {
 			httpGet.addHeader(HttpHeaders.IF_NONE_MATCH, ifModifiedVersion);
@@ -78,5 +67,10 @@ public class HttpReadBackend extends AbstractHttpStorageBackend implements Stora
 		} catch (IOException e) {
 			throw new QblStorageException(e);
 		}
+	}
+
+	@Override
+	public String getUrl(String meta) {
+		return root.resolve(meta).toString();
 	}
 }

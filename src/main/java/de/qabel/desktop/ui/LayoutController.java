@@ -162,9 +162,10 @@ public class LayoutController extends AbstractController implements Initializabl
 		HBox naviItem = new HBox(button);
 		button.setOnAction(e -> {
 			try {
-				view.getView(scrollContent.getChildren()::setAll);
+				scrollContent.getChildren().setAll(view.getView());
 				setActiveNavItem(naviItem);
 			} catch (Exception exception) {
+				exception.printStackTrace();
 				alert(exception.getMessage(), exception);
 			}
 		});

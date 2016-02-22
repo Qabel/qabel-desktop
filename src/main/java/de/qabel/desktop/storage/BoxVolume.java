@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.UUID;
 
 public class BoxVolume {
-
 	private static final Logger logger = LoggerFactory.getLogger(BoxVolume.class.getSimpleName());
 
 	StorageReadBackend readBackend;
@@ -57,12 +56,11 @@ public class BoxVolume {
 	/**
 	 * Navigate to the index file of the volume
 	 *
-	 * @return
 	 * @throws QblStorageException
 	 * @throws QblStorageDecryptionFailed if the index file could not be decrypted
 	 * @throws QblStorageIOFailure        if the temporary files could not be accessed
 	 */
-	public BoxNavigation navigate() throws QblStorageException {
+	public IndexNavigation navigate() throws QblStorageException {
 		String rootRef = getRootRef();
 		logger.info("Navigating to " + rootRef);
 		InputStream indexDl = readBackend.download(rootRef).getInputStream();
@@ -81,7 +79,7 @@ public class BoxVolume {
 			throw new QblStorageIOFailure(e);
 		}
 		DirectoryMetadata dm = DirectoryMetadata.openDatabase(tmp, deviceId, rootRef, tempDir);
-		return new IndexNavigation(dm, keyPair, deviceId, readBackend, writeBackend);
+		return new DefaultIndexNavigation(prefix, dm, keyPair, deviceId, readBackend, writeBackend);
 	}
 
 	/**
@@ -137,5 +135,14 @@ public class BoxVolume {
 		}
 
 
+	}
+
+	/**
+	 * @TODO remove this capsulation violation and implement more sensefull ways to handle authenticated downloads
+	 * @return
+	 */
+	@Deprecated
+	public StorageReadBackend getReadBackend() {
+		return readBackend;
 	}
 }

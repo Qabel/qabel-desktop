@@ -21,20 +21,20 @@
 
 .navi {
     -fx-font-weight: bold;
-    -fx-padding: 10px 10 0 0px;
+    -fx-padding: 10px 0 0 0px;
 }
 
 .navi .navi-item {
     -fx-alignment: top-left;
-    -fx-padding: 10px 10px 10px 20px;
+    -fx-padding: 1px 20px 1px 20px;
 }
 
 .navi .navi-item.active {
-    -fx-padding: 10px 10px 10px 0px;
+    -fx-padding: 1px 0px 1px 0px;
 }
 
 .navi .button {
-    -fx-pref-width: 200px;
+    -fx-pref-width: 220px;
     -fx-cursor: hand;
     -fx-border-radius: 0, 0, 0, 0;
     -fx-padding: 10px 10px 10px 10px;
@@ -42,7 +42,6 @@
     -fx-background-color: transparent;
     -fx-text-fill: white;
     -fx-font-weight: bold;
-    -fx-font-smoothing-type: lcd;
     -fx-font-family: Roboto, sans-serif;
     -fx-font-size: 1.5em;
 }
@@ -71,10 +70,10 @@
 .navi .navi-item.active .button {
     -fx-text-fill: #222222;
     -fx-background-radius: 0;
-    -fx-width: 300px;
-    -fx-pref-width: 300px;
-    -fx-max-width: 300px;
-    -fx-padding: 10px 10px 10px 30px;
+    -fx-width: 220px;
+    -fx-pref-width: 220px;
+    -fx-max-width: 220px;
+    -fx-padding: 10px 30px 10px 30px;
     -fx-background-color: white;
 }
 
@@ -89,5 +88,5 @@
     -fx-background-size: 50px;
     -fx-background-position: bottom right;
     -fx-background-repeat: no-repeat;
-    -fx-padding: 10px 10px 10px 10px;
+    -fx-padding: 0 0 0 10px;
 }

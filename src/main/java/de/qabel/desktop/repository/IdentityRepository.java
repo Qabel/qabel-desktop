@@ -8,6 +8,11 @@ import de.qabel.desktop.repository.exception.PersistenceException;
 import java.util.List;
 
 public interface IdentityRepository {
+	/**
+	 * @param id KeyIdentifier of the Identities public key
+	 * @throws EntityNotFoundExcepion
+	 * @throws PersistenceException
+	 */
 	Identity find(String id) throws EntityNotFoundExcepion, PersistenceException;
 
 	Identities findAll() throws EntityNotFoundExcepion, PersistenceException;

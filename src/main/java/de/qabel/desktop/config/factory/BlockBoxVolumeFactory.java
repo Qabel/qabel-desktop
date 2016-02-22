@@ -10,6 +10,7 @@ import de.qabel.desktop.storage.BoxVolume;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
 
 import java.io.File;
+import java.net.URISyntaxException;
 
 public class BlockBoxVolumeFactory implements BoxVolumeFactory {
 	private byte[] deviceId;
@@ -35,16 +36,20 @@ public class BlockBoxVolumeFactory implements BoxVolumeFactory {
 			throw new IllegalArgumentException("don't know the block server for " + account.getProvider());
 		}
 
-		BlockReadBackend readBackend = new BlockReadBackend(root, accountingHTTP);
-		BlockWriteBackend writeBackend = new BlockWriteBackend(root, accountingHTTP);
+		try {
+			BlockReadBackend readBackend = new BlockReadBackend(root, accountingHTTP);
+			BlockWriteBackend writeBackend = new BlockWriteBackend(root, accountingHTTP);
 
-		return new CachedBoxVolume(
-				readBackend,
-				writeBackend,
-				identity.getPrimaryKeyPair(),
-				deviceId,
-				new File(System.getProperty("java.io.tmpdir")),
-				prefix
-		);
+			return new CachedBoxVolume(
+					readBackend,
+					writeBackend,
+					identity.getPrimaryKeyPair(),
+					deviceId,
+					new File(System.getProperty("java.io.tmpdir")),
+					prefix
+			);
+		} catch (URISyntaxException e) {
+			throw new IllegalStateException("couldn't create a valid block url: " + root);
+		}
 	}
 }

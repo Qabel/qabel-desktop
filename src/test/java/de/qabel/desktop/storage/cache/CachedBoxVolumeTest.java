@@ -44,7 +44,7 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 
 	@Test
 	public void providesCachedNavigations() throws Exception {
-		assertTrue(volume.navigate() instanceof CachedBoxNavigation);
+		assertTrue(volume.navigate() instanceof PathNavigation);
 		assertSame(volume.navigate(), volume.navigate());
 	}
 
@@ -55,9 +55,9 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 		BoxNavigation subnav = nav.navigate(subfolder);
 		subnav.createFolder("marker");
 
-		assertTrue(subnav instanceof CachedBoxNavigation);
-		assertTrue(nav.navigate("subfolder") instanceof CachedBoxNavigation);
-		assertEquals("marker", subnav.listFolders().get(0).name);
+		assertTrue(subnav instanceof PathNavigation);
+		assertTrue(nav.navigate("subfolder") instanceof PathNavigation);
+		assertEquals("marker", subnav.listFolders().get(0).getName());
 		assertSame(subnav, nav.navigate("subfolder"));
 	}
 
