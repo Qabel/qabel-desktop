@@ -46,9 +46,6 @@ public class ContactController extends AbstractController implements Initializab
 	@FXML
 	VBox actionlogViewPane;
 
-
-
-
 	@FXML
 	Button importButton;
 

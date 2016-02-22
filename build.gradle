@@ -56,8 +56,8 @@ jar.doFirst{
 dependencies {
     testCompile 'junit:junit:4.+'
     testCompile group: 'org.meanbean', name: 'meanbean', version: '2.+'
-    testCompile 'org.testfx:testfx-core:4.0.+'
-    testCompile 'org.testfx:testfx-junit:4.0.+'
+    testCompile 'org.testfx:testfx-core:4.+'
+    testCompile 'org.testfx:testfx-junit:4.+'
 
     compile 'org.ocpsoft.prettytime:prettytime:3.2.7.Final' //Apache License https://github.com/ocpsoft/prettytime/blob/master/LICENSE
     compile 'commons-cli:commons-cli:1.2'

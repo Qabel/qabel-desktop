@@ -12,7 +12,6 @@ import org.testfx.api.FxRobot;
 import org.testfx.service.locator.BoundsLocatorException;
 import org.testfx.service.query.PointQuery;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -45,14 +44,14 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 		Parent node = view.getView();
 		scene = new Scene(node, getWidth(), getHeight());
 		Object presenter = view.getPresenter();
-		robot.target(scene);
+		robot.targetWindow(scene);
 
 		runLaterAndWait(() ->
 				{
 
 					stage.setScene(scene);
 					stage.show();
-					robot.target(stage);
+					robot.targetWindow(stage);
 				}
 		);
 		baseFXRobot = new BaseFXRobot(scene);
