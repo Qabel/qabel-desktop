@@ -78,7 +78,7 @@ public class ContactController extends AbstractController implements Initializab
 			buildGson();
 			loadContacts();
 		} catch (EntityNotFoundExcepion | PersistenceException e) {
-			e.printStackTrace();
+			alert(e);
 		}
 		createButtonGraphics();
 	}
@@ -155,7 +155,6 @@ public class ContactController extends AbstractController implements Initializab
 	private void select(SelectionEvent selectionEvent) {
 		selectionEvent.getController().select();
 		actionlogController.setContact(selectionEvent.getContact());
-		System.out.println("Selected contact: " + selectionEvent.getContact());
 	}
 
 
