@@ -361,9 +361,11 @@ public class RemoteFSController extends AbstractController implements Initializa
 			directoryChooser.setTitle(resourceBundle.getString("remoteFsDownloadFolder"));
 			File directory = directoryChooser.showDialog(treeTable.getScene().getWindow());
 			BoxObject boxObject = item.getValue();
+			if (directory == null) {
+				return;
+			}
 
 			if (item instanceof ExternalTreeItem) {
-				try {
 					if (!(boxObject instanceof BoxFile)) {	//TODO implement directory shares
 						return;
 					}
@@ -373,10 +375,6 @@ public class RemoteFSController extends AbstractController implements Initializa
 							directory.toPath().resolve(boxObject.getName()),
 							volume.getReadBackend()
 					);
-				} catch (Exception e) {
-					alert(e);
-				}
-
 			} else {
 				Path path;
 				LazyBoxFolderTreeItem folderTreeItem;
@@ -391,7 +389,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 
 				downloadBoxObject(boxObject, navigation, path, directory.toPath());
 			}
-		} catch (QblStorageException e) {
+		} catch (Exception e) {
 			alert(e);
 		}
 	}
