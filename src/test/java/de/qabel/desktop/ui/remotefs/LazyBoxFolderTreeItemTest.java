@@ -1,5 +1,6 @@
 package de.qabel.desktop.ui.remotefs;
 
+import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
@@ -11,8 +12,10 @@ import javafx.scene.control.TreeItem;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
+import java.security.InvalidKeyException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
@@ -111,7 +114,7 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 		navigation.notifyObservers(new RemoteChangeEvent(
 				Paths.get("/name2"),
 				false,
-				navigation.files.get(0).mtime,
+				navigation.files.get(0).getMtime(),
 				ChangeEvent.TYPE.CREATE,
 				navigation.files.get(0),
 				navigation
@@ -250,6 +253,21 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 
 		@Override
 		public DirectoryMetadata getMetadata() {
+			return null;
+		}
+
+		@Override
+		public BoxExternalReference createFileMetadata(QblECPublicKey owner, BoxFile boxFile) throws QblStorageException {
+			return null;
+		}
+
+		@Override
+		public void updateFileMetadata(BoxFile boxFile) throws QblStorageException, IOException, InvalidKeyException {
+
+		}
+
+		@Override
+		public BoxExternalReference share(QblECPublicKey owner, BoxFile file, String receiver) throws QblStorageException {
 			return null;
 		}
 

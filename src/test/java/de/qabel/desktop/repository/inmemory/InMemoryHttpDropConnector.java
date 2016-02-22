@@ -4,7 +4,7 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.exceptions.QblNetworkInvalidResponseException;
-import de.qabel.desktop.ui.connector.Connector;
+import de.qabel.desktop.ui.connector.DropConnector;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -12,7 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class InMemoryHttpDropConnector implements Connector{
+public class InMemoryHttpDropConnector implements DropConnector {
 
 	HashMap<String, List<DropMessage>> contactLists = new HashMap<>();
 

@@ -63,15 +63,6 @@ public class AbstractController {
 		return sw.toString();
 	}
 
-	protected Function<String, Object> singleObjectMap(String key, Object instance) {
-		return s -> {
-			if (s.equals(key)) {
-				return instance;
-			}
-			return null;
-		};
-	}
-
 
 
 	protected void writeStringInFile(String json, File dir) throws IOException {

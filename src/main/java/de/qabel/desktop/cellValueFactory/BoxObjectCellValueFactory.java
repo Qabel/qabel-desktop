@@ -35,16 +35,16 @@ public class BoxObjectCellValueFactory implements Callback<TreeTableColumn.CellD
 			if (treeItem instanceof LazyBoxFolderTreeItem) {
 				return ((LazyBoxFolderTreeItem) treeItem).getNameProperty();
 			}
-			return new ReadOnlyStringWrapper(bf.name);
+			return new ReadOnlyStringWrapper(bf.getName());
 		}
 
 		if (bf instanceof BoxFile) {
 			switch (searchValue) {
 				case SIZE:
-					return new ReadOnlyStringWrapper(((BoxFile) bf).size.toString());
+					return new ReadOnlyStringWrapper(((BoxFile) bf).getSize().toString());
 				case MTIME:
 					DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-					return new ReadOnlyStringWrapper(dateFormat.format(((BoxFile) bf).mtime));
+					return new ReadOnlyStringWrapper(dateFormat.format(((BoxFile) bf).getMtime()));
 			}
 		}
 		return new ReadOnlyStringWrapper("");

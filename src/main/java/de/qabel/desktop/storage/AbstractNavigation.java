@@ -2,6 +2,7 @@ package de.qabel.desktop.storage;
 
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
+import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.exceptions.QblStorageNameConflict;
 import de.qabel.desktop.exceptions.QblStorageNotFound;
@@ -17,6 +18,7 @@ import java.util.*;
 
 public abstract class AbstractNavigation implements BoxNavigation {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractNavigation.class.getSimpleName());
+	public static final String BLOCKS_PREFIX = "blocks/";
 
 	DirectoryMetadata dm;
 	final QblECKeyPair keyPair;
@@ -28,19 +30,27 @@ public abstract class AbstractNavigation implements BoxNavigation {
 
 	private final Set<String> deleteQueue = new HashSet<>();
 	private final Set<FileUpdate> updatedFiles = new HashSet<>();
+	private final String prefix;
+	private IndexNavigation indexNavigation = null;
 
 	private boolean autocommit = true;
 
 
-	AbstractNavigation(DirectoryMetadata dm, QblECKeyPair keyPair, byte[] deviceId,
+	AbstractNavigation(String prefix, DirectoryMetadata dm, QblECKeyPair keyPair, byte[] deviceId,
 					   StorageReadBackend readBackend, StorageWriteBackend writeBackend) {
+		this.prefix = prefix;
 		this.dm = dm;
 		this.keyPair = keyPair;
 		this.deviceId = deviceId;
 		this.readBackend = readBackend;
 		this.writeBackend = writeBackend;
 		cryptoUtils = new CryptoUtils();
+	}
 
+	AbstractNavigation(String prefix, DirectoryMetadata dm, QblECKeyPair keyPair, byte[] deviceId,
+					   StorageReadBackend readBackend, StorageWriteBackend writeBackend, IndexNavigation indexNavigation) {
+		this(prefix, dm, keyPair, deviceId, readBackend, writeBackend);
+		this.indexNavigation = indexNavigation;
 	}
 
 	@Override
@@ -53,13 +63,17 @@ public abstract class AbstractNavigation implements BoxNavigation {
 			if (cryptoUtils.decryptFileAuthenticatedSymmetricAndValidateTag(indexDl, tmp, key)) {
 				DirectoryMetadata dm = DirectoryMetadata.openDatabase(
 						tmp, deviceId, target.ref, this.dm.getTempDir());
-				return new FolderNavigation(dm, keyPair, target.key, deviceId, readBackend, writeBackend);
+				return new FolderNavigation(prefix, dm, keyPair, target.key, deviceId, readBackend, writeBackend, getIndexNavigation());
 			} else {
 				throw new QblStorageNotFound("Invalid key");
 			}
 		} catch (IOException | InvalidKeyException e) {
 			throw new QblStorageException(e);
 		}
+	}
+
+	protected IndexNavigation getIndexNavigation() {
+		return indexNavigation;
 	}
 
 	@Override
@@ -127,7 +141,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	}
 
 	private String conflictName(BoxFile local) {
-		return local.name + "_conflict_" + local.mtime.toString();
+		return local.name + "_conflict_" + local.getMtime().toString();
 	}
 
 	protected abstract void uploadDirectoryMetadata() throws QblStorageException;
@@ -140,6 +154,20 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	@Override
 	public List<BoxFile> listFiles() throws QblStorageException {
 		return dm.listFiles();
+	}
+
+	public List<BoxShare> listShares() throws QblStorageException {
+		return dm.listShares();
+	}
+
+	public void insertShare(BoxShare share) throws QblStorageException {
+		dm.insertShare(share);
+		autocommit();
+	}
+
+	public void deleteShare(BoxShare share) throws QblStorageException {
+		dm.deleteShare(share);
+		autocommit();
 	}
 
 	@Override
@@ -185,7 +213,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 		KeyParameter key = cryptoUtils.generateSymmetricKey();
 		String block = UUID.randomUUID().toString();
 		BoxFile boxFile = new BoxFile(block, name, file.length(), 0L, key.getKey());
-		boxFile.mtime = file.lastModified();
+		boxFile.setMtime(file.lastModified());
 		uploadEncrypted(file, key, "blocks/" + block, listener);
 		updatedFiles.add(new FileUpdate(oldFile, boxFile));
 		dm.insertFile(boxFile);
@@ -233,7 +261,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 
 	@Override
 	public InputStream download(BoxFile boxFile, ProgressListener listener) throws QblStorageException {
-		StorageDownload download = readBackend.download("blocks/" + boxFile.block);
+		StorageDownload download = readBackend.download("blocks/" + boxFile.getBlock());
 		InputStream content = download.getInputStream();
 		if (listener != null) {
 			listener.setSize(download.getSize());
@@ -254,13 +282,68 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	}
 
 	@Override
+	public BoxExternalReference createFileMetadata(QblECPublicKey owner, BoxFile boxFile) throws QblStorageException {
+		String block = UUID.randomUUID().toString();
+		boxFile.setMeta(prefix + '/' + block);
+		KeyParameter key = cryptoUtils.generateSymmetricKey();
+		boxFile.setMetakey(key.getKey());
+
+		try {
+			FileMetadata fileMetadata = FileMetadata.openNew(owner, boxFile, dm.getTempDir());
+			uploadEncrypted(fileMetadata.getPath(), key, block, null);
+
+			// Overwrite = delete old file, upload new file
+			BoxFile oldFile = dm.getFile(boxFile.getName());
+			if (oldFile != null) {
+				dm.deleteFile(oldFile);
+			}
+			dm.insertFile(boxFile);
+			autocommit();
+			return new BoxExternalReference(false, readBackend.getUrl(block), boxFile.getName(), owner, boxFile.getMetakey());
+		} catch (QblStorageException e) {
+			throw new QblStorageException("Could not create or upload FileMetadata", e);
+		}
+	}
+
+	@Override
+	public void updateFileMetadata(BoxFile boxFile) throws QblStorageException, IOException, InvalidKeyException {
+		if (boxFile.getMeta() == null || boxFile.getMetakey() == null) {
+			throw new IllegalArgumentException("BoxFile without FileMetadata cannot be updated");
+		}
+		try {
+			File out = getMetadataFile(boxFile.getMeta(), boxFile.getMetakey());
+			FileMetadata fileMetadataOld = FileMetadata.openExisting(out);
+			FileMetadata fileMetadataNew = FileMetadata.openNew(fileMetadataOld.getFile().getOwner(), boxFile, dm.getTempDir());
+			String[] splitURL = boxFile.getMeta().split("/");
+			uploadEncrypted(fileMetadataNew.getPath(), new KeyParameter(boxFile.getMetakey()), splitURL[1]);
+		} catch (QblStorageException | FileNotFoundException e) {
+			logger.error("Could not create or upload FileMetadata", e);
+			throw e;
+		}
+	}
+
+	private File getMetadataFile(String url, byte[] key) throws QblStorageException, IOException, InvalidKeyException {
+		String[] splitURL = url.split("/");
+		InputStream encryptedMetadata = readBackend.download(splitURL[1]).getInputStream();
+
+		File tmp = File.createTempFile("dir", "db", dm.getTempDir());
+		tmp.deleteOnExit();
+		KeyParameter keyParameter = new KeyParameter(key);
+		if (cryptoUtils.decryptFileAuthenticatedSymmetricAndValidateTag(encryptedMetadata, tmp, keyParameter)) {
+			return tmp;
+		} else {
+			throw new QblStorageNotFound("Invalid key");
+		}
+	}
+
+	@Override
 	public synchronized BoxFolder createFolder(String name) throws QblStorageException {
 		DirectoryMetadata dm = DirectoryMetadata.newDatabase(null, deviceId, this.dm.getTempDir());
 		KeyParameter secretKey = cryptoUtils.generateSymmetricKey();
 		BoxFolder folder = new BoxFolder(dm.getFileName(), name, secretKey.getKey());
 		this.dm.insertFolder(folder);
-		BoxNavigation newFolder = new FolderNavigation(dm, keyPair, secretKey.getKey(),
-				deviceId, readBackend, writeBackend);
+		BoxNavigation newFolder = new FolderNavigation(prefix, dm, keyPair, secretKey.getKey(),
+				deviceId, readBackend, writeBackend, getIndexNavigation());
 		newFolder.commit();
 		autocommit();
 		return folder;
@@ -269,7 +352,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	@Override
 	public synchronized void delete(BoxFile file) throws QblStorageException {
 		dm.deleteFile(file);
-		deleteQueue.add("blocks/" + file.block);
+		deleteQueue.add("blocks/" + file.getBlock());
 		autocommit();
 	}
 
@@ -277,16 +360,16 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	public synchronized void delete(BoxFolder folder) throws QblStorageException {
 		BoxNavigation folderNav = navigate(folder);
 		for (BoxFile file : folderNav.listFiles()) {
-			logger.info("Deleting file " + file.name);
+			logger.info("Deleting file " + file.getName());
 			folderNav.delete(file);
 		}
 		for (BoxFolder subFolder : folderNav.listFolders()) {
-			logger.info("Deleting folder " + folder.name);
+			logger.info("Deleting folder " + folder.getName());
 			folderNav.delete(subFolder);
 		}
 		folderNav.commit();
 		dm.deleteFolder(folder);
-		deleteQueue.add(folder.ref);
+		deleteQueue.add(folder.getRef());
 		autocommit();
 	}
 
@@ -357,7 +440,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	public BoxFile getFile(String name) throws QblStorageException {
 		List<BoxFile> files = listFiles();
 		for (BoxFile file : files) {
-			if (file.name.equals(name)) {
+			if (file.getName().equals(name)) {
 				return file;
 			}
 		}
@@ -367,5 +450,13 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	@Override
 	public DirectoryMetadata getMetadata() {
 		return dm;
+	}
+
+	@Override
+	public BoxExternalReference share(QblECPublicKey owner, BoxFile file, String recipient) throws QblStorageException {
+		BoxExternalReference ref = createFileMetadata(owner, file);
+		BoxShare share = new BoxShare(file.getMeta().split("/")[1], recipient);
+		getIndexNavigation().insertShare(share);
+		return ref;
 	}
 }

@@ -49,4 +49,9 @@ public class LocalReadBackend implements StorageReadBackend {
 		}
 	}
 
+	@Override
+	public String getUrl(String meta) {
+		return root.resolve(meta).toString();
+	}
+
 }

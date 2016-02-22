@@ -106,13 +106,15 @@ public class SyncSetupController extends AbstractController implements Initializ
 
 		chooseRemotePath.onActionProperty().setValue(event -> {
 			try {
-				new RemoteFSDirectoryChooser(
+				RemoteFSDirectoryChooser directoryChooser = new RemoteFSDirectoryChooser(
 						resources,
 						boxVolumeFactory.getVolume(
 								clientConfiguration.getAccount(),
 								clientConfiguration.getSelectedIdentity()
 						)
-				).showAndWait()
+				);
+				directoryChooser.getDialogPane().getStylesheets().addAll(stage.getScene().getRoot().getStylesheets());
+				directoryChooser.showAndWait()
 				.filter(path -> path != null)
 				.ifPresent(path1 -> remotePathProperty.setValue(path1.toString()));
 			} catch (QblStorageException e) {

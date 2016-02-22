@@ -213,6 +213,18 @@ public abstract class BoxVolumeTest {
 		assertThat(nav.listFiles().get(0).name, startsWith("foobar_conflict"));
 	}
 
+	@Test
+	public void testAddsShareToIndexWhenShareIsCreated() throws Exception {
+		IndexNavigation index = volume.navigate();
+		index.createFolder("subfolder");
+		BoxNavigation nav = index.navigate("subfolder");
+		BoxFile file = nav.upload("foobar", new File(testFileName));
+
+		nav.share(keyPair.getPub(), file, "receiverId");
+
+		assertThat(index.listShares().size(), is(1));
+	}
+
 	/**
 	 * Currently a folder with a name conflict just disappears and all is lost.
 	 */

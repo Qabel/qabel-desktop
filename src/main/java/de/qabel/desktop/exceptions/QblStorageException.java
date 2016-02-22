@@ -10,4 +10,8 @@ public class QblStorageException extends QblException {
 	public QblStorageException(String s) {
 		super(s);
 	}
+
+	public QblStorageException(String s, Exception e) {
+		super(s, e);
+	}
 }

@@ -12,9 +12,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 
-/**
- * @TODO replace the accounting stuff with the new TBD version that handles all the AWS stuff itself. Then no prefix should be required anymore.
- */
 @Deprecated
 public class MagicEvilPrefixSource {
 	private static HashMap<Account, String> prefixes = new HashMap<>();

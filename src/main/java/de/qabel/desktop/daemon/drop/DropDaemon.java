@@ -9,7 +9,7 @@ import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
-import de.qabel.desktop.ui.connector.Connector;
+import de.qabel.desktop.ui.connector.DropConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,14 +20,14 @@ public class DropDaemon implements Runnable {
 
 	private ClientConfiguration config;
 	private Date lastDate = null;
-	private Connector httpDropConnector;
+	private DropConnector httpDropConnector;
 	private ContactRepository contactRepository;
 	private DropMessageRepository dropMessageRepository;
 	private long sleepTime = 10000L;
 	private static final Logger logger = LoggerFactory.getLogger(DropDaemon.class.getSimpleName());
 
 	public DropDaemon(ClientConfiguration config,
-					  Connector httpDropConnector,
+					  DropConnector httpDropConnector,
 					  ContactRepository contactRepository,
 					  DropMessageRepository dropMessageRepository
 	) {
@@ -59,6 +59,9 @@ public class DropDaemon implements Runnable {
 
 	void receiveMessages() throws PersistenceException, EntityNotFoundExcepion {
 		Identity identity = config.getSelectedIdentity();
+		if (identity == null) {
+			return;
+		}
 		java.util.List<DropMessage> dropMessages;
 		try {
 			dropMessages = httpDropConnector.receive(identity, lastDate);

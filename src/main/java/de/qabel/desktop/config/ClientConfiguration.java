@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Observer;
 
 public interface ClientConfiguration {
@@ -50,4 +51,10 @@ public interface ClientConfiguration {
 	HashMap<String, Date> getLastDropMap();
 
 	void setLastDropMap(HashMap<String, Date> lastDropMap);
+
+	ShareNotifications getShareNotification(Identity identity);
+
+	void setShareNotifications(Map<String, ShareNotifications> shareNotifications);
+
+	Map<String,ShareNotifications> getShareNotifications();
 }

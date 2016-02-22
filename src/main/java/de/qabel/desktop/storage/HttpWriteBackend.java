@@ -17,24 +17,23 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class HttpWriteBackend extends AbstractHttpStorageBackend implements StorageWriteBackend {
-	public HttpWriteBackend(String root) {
+	public HttpWriteBackend(String root) throws URISyntaxException {
 		super(root);
 	}
 
 	@Override
 	public long upload(String name, InputStream content) throws QblStorageException {
 		logger.info("Uploading " + name);
-		URI uri;
 		CloseableHttpResponse response;
 		HttpPost httpPost;
 		try {
-			uri = new URI(this.root).resolve(name);
+			URI uri = this.root.resolve(name);
 			httpPost = new HttpPost(uri);
 			prepareRequest(httpPost);
 			httpPost.setEntity(new InputStreamEntity(content));
 
 			response = httpclient.execute(httpPost);
-		} catch (URISyntaxException | IOException e) {
+		} catch (IOException e) {
 			throw new QblStorageException(e);
 		}
 		int status = response.getStatusLine().getStatusCode();
@@ -54,12 +53,12 @@ public class HttpWriteBackend extends AbstractHttpStorageBackend implements Stor
 		CloseableHttpResponse response;
 
 		try {
-			uri = new URI(this.root).resolve(name);
+			uri = this.root.resolve(name);
 			HttpDelete httpDelete = new HttpDelete(uri);
 			prepareRequest(httpDelete);
 
 			response = httpclient.execute(httpDelete);
-		} catch (URISyntaxException | IOException e) {
+		} catch (IOException e) {
 			throw new QblStorageException(e);
 		}
 		int status = response.getStatusLine().getStatusCode();

@@ -6,6 +6,7 @@ import de.qabel.core.config.Persistence;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.DefaultBoxSyncConfig;
+import de.qabel.desktop.config.ShareNotifications;
 import de.qabel.desktop.config.factory.ClientConfigurationFactory;
 import de.qabel.desktop.repository.AccountRepository;
 import de.qabel.desktop.repository.ClientConfigurationRepository;
@@ -16,6 +17,7 @@ import javafx.collections.ObservableList;
 
 import javax.inject.Inject;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 
 public class PersistenceClientConfigurationRepository extends AbstractPersistenceRepository implements ClientConfigurationRepository {
@@ -63,6 +65,7 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 			}
 			config.setLastDropMap(configDto.lastDropMap);
 			config.setDeviceId(configDto.deviceId);
+			config.setShareNotifications(configDto.shareNotifications == null ? new HashMap<>() : configDto.shareNotifications);
 		}
 		return config;
 	}
@@ -133,6 +136,7 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 		}
 		configDto.lastDropMap = configuration.getLastDropMap();
 		configDto.deviceId = configuration.getDeviceId();
+		configDto.shareNotifications = configuration.getShareNotifications();
 
 		persistence.updateOrPersistEntity(configDto);
 	}
@@ -141,7 +145,7 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 		PersistentBoxSyncConfig dto = new PersistentBoxSyncConfig();
 		dto.name = boxSyncConfig.getName();
 		dto.account = boxSyncConfig.getAccount().getPersistenceID();
-		dto.identity = boxSyncConfig.getIdentity().getPersistenceID();
+		dto.identity = boxSyncConfig.getIdentity().getKeyIdentifier();
 		dto.localPath = boxSyncConfig.getLocalPath().toString();
 		dto.remotePath = boxSyncConfig.getRemotePath().toString();
 		dto.syncIndex = boxSyncConfig.getSyncIndex();

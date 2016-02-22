@@ -1,11 +1,9 @@
 package de.qabel.desktop.repository.persistence;
 
 import de.qabel.core.config.Persistable;
+import de.qabel.desktop.config.ShareNotifications;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class PersistentClientConfiguration extends Persistable {
 	private static final long serialVersionUID = 253036267706808630L;
@@ -14,4 +12,5 @@ public class PersistentClientConfiguration extends Persistable {
 	public List<PersistentBoxSyncConfig> boxSyncConfigs = new LinkedList<>();
 	public HashMap<String, Date> lastDropMap;
 	public String deviceId;
+	public Map<String, ShareNotifications> shareNotifications = new HashMap<>();
 }
