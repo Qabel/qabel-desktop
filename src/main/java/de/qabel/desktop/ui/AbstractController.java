@@ -63,16 +63,12 @@ public class AbstractController {
 		return sw.toString();
 	}
 
-
-
 	protected void writeStringInFile(String json, File dir) throws IOException {
 		File targetFile = new File(dir.getPath());
 		targetFile.createNewFile();
 		OutputStream outStream = new FileOutputStream(targetFile);
 		outStream.write(json.getBytes());
 	}
-
-
 
 	public String readFile(File f) throws IOException {
 		FileReader fileReader = new FileReader(f);

@@ -17,12 +17,16 @@ import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
 import de.qabel.desktop.repository.AccountRepository;
 import de.qabel.desktop.repository.ClientConfigurationRepository;
+import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.repository.persistence.*;
 import de.qabel.desktop.ui.LayoutView;
 import de.qabel.desktop.ui.accounting.login.LoginView;
+import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory;
+import de.qabel.desktop.ui.actionlog.item.renderer.PlaintextMessageRenderer;
+import de.qabel.desktop.ui.actionlog.item.renderer.ShareNotificationRenderer;
 import de.qabel.desktop.ui.connector.HttpDropConnector;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import javafx.application.Application;
@@ -44,6 +48,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class DesktopClient extends Application {
@@ -58,6 +64,10 @@ public class DesktopClient extends Application {
 	private BoxVolumeFactory boxVolumeFactory;
 	private Stage primaryStage;
 	private MonitoredTransferManager transferManager;
+	private MessageRendererFactory rendererFactory = new MessageRendererFactory();
+	private BlockSharingService sharingService;
+	private ExecutorService executorService = Executors.newCachedThreadPool();
+	private ClientConfiguration config;
 
 	public static void main(String[] args) throws Exception {
 		if (args.length > 0) {
@@ -72,7 +82,7 @@ public class DesktopClient extends Application {
 		primaryStage = stage;
 		setUserAgentStylesheet(STYLESHEET_MODENA);
 
-		ClientConfiguration config = initDiContainer();
+		config = initDiContainer();
 
 		SceneAntialiasing aa = SceneAntialiasing.BALANCED;
 		primaryStage.getIcons().setAll(new javafx.scene.image.Image(getClass().getResourceAsStream("/logo-invert_small.png")));
@@ -96,7 +106,8 @@ public class DesktopClient extends Application {
 						BoxVolumeFactory factory = new BlockBoxVolumeFactory(configuration.getDeviceId().getBytes(), accountingHTTP);
 						boxVolumeFactory = new CachedBoxVolumeFactory(factory);
 						customProperties.put("boxVolumeFactory", boxVolumeFactory);
-						customProperties.put("sharingService",  new BlockSharingService(dropMessageRepository, dropConnector));
+						sharingService = new BlockSharingService(dropMessageRepository, dropConnector);
+						customProperties.put("sharingService", sharingService);
 
 						new Thread(getSyncDaemon(config)).start();
 						new Thread(getDropDaemon(config)).start();
@@ -105,10 +116,15 @@ public class DesktopClient extends Application {
 						Scene layoutScene = new Scene(view, 800, 600, true, aa);
 						Platform.runLater(() -> primaryStage.setScene(layoutScene));
 
+						if (config.getSelectedIdentity() != null) {
+							addShareMessageRenderer(config.getSelectedIdentity());
+						}
 					} catch (Exception e) {
 						logger.error("failed to init background services: " + e.getMessage(), e);
 						//TODO to something with the fault
 					}
+				} else if (arg instanceof Identity) {
+					addShareMessageRenderer((Identity) arg);
 				}
 			});
 		});
@@ -123,6 +139,13 @@ public class DesktopClient extends Application {
 			}
 		});
 		primaryStage.show();
+	}
+
+	private void addShareMessageRenderer(Identity arg) {
+		executorService.submit(() -> {
+			ShareNotificationRenderer renderer = new ShareNotificationRenderer(((BoxVolumeFactory) customProperties.get("boxVolumeFactory")).getVolume(config.getAccount(), arg).getReadBackend(), sharingService);
+			rendererFactory.addRenderer(DropMessageRepository.PAYLOAD_TYPE_SHARE_NOTIFICATION, renderer);
+		});
 	}
 
 	protected SyncDaemon getSyncDaemon(ClientConfiguration config) {
@@ -163,6 +186,8 @@ public class DesktopClient extends Application {
 		customProperties.put("clientConfiguration", clientConfig);
 		customProperties.put("primaryStage", primaryStage);
 
+		rendererFactory.setFallbackRenderer(new PlaintextMessageRenderer());
+		customProperties.put("messageRendererFactory", rendererFactory);
 
 		Injector.setConfigurationSource(customProperties::get);
 		Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(customProperties));

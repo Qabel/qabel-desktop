@@ -2,10 +2,7 @@ package de.qabel.desktop.daemon.sync.worker;
 
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
-import de.qabel.desktop.storage.BoxFile;
-import de.qabel.desktop.storage.BoxFolder;
-import de.qabel.desktop.storage.BoxNavigation;
-import de.qabel.desktop.storage.IndexNavigation;
+import de.qabel.desktop.storage.*;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.storage.cache.CachedIndexNavigation;
 
@@ -17,6 +14,7 @@ public class BoxNavigationStub extends CachedIndexNavigation {
 	public ChangeEvent event;
 	public List<BoxFolder> folders = new LinkedList<>();
 	public List<BoxFile> files = new LinkedList<>();
+	public List<BoxShare> shares = new LinkedList<>();
 
 	public BoxNavigationStub(IndexNavigation nav, Path path) {
 		super(nav, path);
@@ -54,5 +52,10 @@ public class BoxNavigationStub extends CachedIndexNavigation {
 	@Override
 	public List<BoxFolder> listFolders() throws QblStorageException {
 		return folders;
+	}
+
+	@Override
+	public List<BoxShare> getSharesOf(BoxObject object) throws QblStorageException {
+		return shares;
 	}
 }

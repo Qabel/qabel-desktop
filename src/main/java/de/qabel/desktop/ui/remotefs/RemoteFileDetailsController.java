@@ -14,17 +14,18 @@ import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
-import de.qabel.desktop.storage.BoxExternalReference;
-import de.qabel.desktop.storage.BoxFile;
-import de.qabel.desktop.storage.BoxNavigation;
-import de.qabel.desktop.storage.BoxObject;
+import de.qabel.desktop.storage.*;
+import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.connector.DropConnector;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 import javafx.util.StringConverter;
 import org.spongycastle.util.encoders.Hex;
 
@@ -55,6 +56,9 @@ public class RemoteFileDetailsController extends AbstractController implements I
 	@FXML
 	ComboBox<Contact> shareReceiver;
 
+	@FXML
+	VBox currentShares;
+
 	TextInputDialog dialog;
 
 	@Override
@@ -64,16 +68,32 @@ public class RemoteFileDetailsController extends AbstractController implements I
 				updateContacts();
 			}
 		});
-		shareReceiver.setCellFactory(param -> {
-			ListCell<Contact> cell = new ListCell<>();
-			cell.itemProperty().addListener((observable, oldValue, newValue) -> {
-				if (newValue != null) {
-					cell.setText(newValue.getAlias());
-				}
-			});
-			return cell;
-		});
-		shareReceiver.setConverter(new StringConverter<Contact>() {
+		shareReceiver.setCellFactory(contactAliasCellFactory());
+		shareReceiver.setConverter(contactAutocomleteResultConverter());
+
+		shareReceiver.getSelectionModel().selectedItemProperty().addListener(showShareMessageDialog());
+		shareReceiver.getEditor().textProperty().addListener(filterContacts());
+
+		updateContacts();
+		loadShares();
+	}
+
+	private void loadShares() {
+		ObservableList<Node> shares = currentShares.getChildren();
+		shares.clear();
+		try {
+			Contacts contacts = contactRepository.findContactsFromOneIdentity(clientConfiguration.getSelectedIdentity());
+			for (BoxShare share : navigation.getSharesOf(boxObject)) {
+				String recipientKeyId = share.getRecipient();
+				shares.add(new Label(contacts.getByKeyIdentifier(recipientKeyId).getAlias()));
+			}
+		} catch (Exception e) {
+			alert(e);
+		}
+	}
+
+	private StringConverter<Contact> contactAutocomleteResultConverter() {
+		return new StringConverter<Contact>() {
 			@Override
 			public String toString(Contact contact) {
 				if (contact == null) {
@@ -95,9 +115,24 @@ public class RemoteFileDetailsController extends AbstractController implements I
 				}
 				return shareReceiver.getItems().size() > 0 ? shareReceiver.getItems().get(0) : null;
 			}
-		});
+		};
+	}
 
-		shareReceiver.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+	private ChangeListener<String> filterContacts() {
+		return (observable, oldValue, newValue) -> {
+			Contact selectedItem = shareReceiver.getSelectionModel().getSelectedItem();
+			if (newValue == null || selectedItem != null && newValue.equals(selectedItem.getAlias())) {
+				return;
+			}
+
+			shareReceiver.hide();
+			filter(newValue);
+			shareReceiver.show();
+		};
+	}
+
+	private ChangeListener<Contact> showShareMessageDialog() {
+		return (observable, oldValue, newValue) -> {
 			if (boxObject == null || newValue == null) {
 				return;
 			}
@@ -107,20 +142,19 @@ public class RemoteFileDetailsController extends AbstractController implements I
 			dialog.showAndWait().ifPresent(message -> {
 				share(newValue, message);
 			});
-		});
-		shareReceiver.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
-			Contact selectedItem = shareReceiver.getSelectionModel().getSelectedItem();
-			if (newValue == null || selectedItem != null && newValue.equals(selectedItem.getAlias())) {
-				return;
-			}
+		};
+	}
 
-			shareReceiver.hide();
-			filter(newValue);
-			shareReceiver.show();
-		});
-		System.out.println(shareReceiver.getEditor().getStyleClass());
-
-		updateContacts();
+	private static Callback<ListView<Contact>, ListCell<Contact>> contactAliasCellFactory() {
+		return param -> {
+			ListCell<Contact> cell = new ListCell<>();
+			cell.itemProperty().addListener((observable, oldValue, newValue) -> {
+				if (newValue != null) {
+					cell.setText(newValue.getAlias());
+				}
+			});
+			return cell;
+		};
 	}
 
 	private void filter(String text) {
@@ -138,6 +172,10 @@ public class RemoteFileDetailsController extends AbstractController implements I
 	private void share(Contact contact, String message) {
 		try {
 			sharingService.shareAndSendMessage(clientConfiguration.getSelectedIdentity(), contact, (BoxFile)boxObject, message, navigation);
+			if (navigation instanceof CachedBoxNavigation) {
+				((CachedBoxNavigation) navigation).refresh();
+				loadShares();
+			}
 		} catch (Exception e) {
 			alert(e);
 		}

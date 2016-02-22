@@ -29,4 +29,6 @@ public abstract class BoxObject implements Comparable<BoxObject> {
 	public byte[] getKey() {
 		return key;
 	}
+
+	public abstract String getRef();
 }

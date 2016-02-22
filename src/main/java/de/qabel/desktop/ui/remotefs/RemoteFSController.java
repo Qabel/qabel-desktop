@@ -16,8 +16,12 @@ import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.DetailsController;
 import de.qabel.desktop.ui.DetailsView;
 import javafx.application.Platform;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.binding.When;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -31,6 +35,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.util.Callback;
 
 import javax.inject.Inject;
 import java.io.*;
@@ -42,6 +47,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.CREATE;
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.DELETE;
@@ -110,17 +116,15 @@ public class RemoteFSController extends AbstractController implements Initializa
 
 		setCellValueFactories();
 		nameColumn.prefWidthProperty().bind(
-				treeTable.widthProperty()
-						.subtract(sizeColumn.widthProperty())
-						.subtract(dateColumn.widthProperty())
-						.subtract(optionsColumn.widthProperty())
+			treeTable.widthProperty()
+				.subtract(sizeColumn.widthProperty())
+				.subtract(dateColumn.widthProperty())
+				.subtract(optionsColumn.widthProperty())
 		);
 
 		treeTable.getSelectionModel().clearSelection();
 		treeTable.getSelectionModel().selectedItemProperty().addListener((o, x1, value) -> {
-			if (value != null) {
-				showDetails(value);
-			} else {
+			if (value == null) {
 				Platform.runLater(details::hide);
 			}
 		});
@@ -207,7 +211,53 @@ public class RemoteFSController extends AbstractController implements Initializa
 		sizeColumn.setCellValueFactory(new BoxObjectCellValueFactory(BoxObjectCellValueFactory.SIZE));
 		dateColumn.setCellValueFactory(new BoxObjectCellValueFactory(BoxObjectCellValueFactory.MTIME));
 
-		treeTable.setRowFactory(param1 -> {
+		treeTable.setRowFactory(sharingRowFactory());
+		optionsColumn.setCellValueFactory(inlineOptionsCellValueFactory());
+	}
+
+	private Callback<TreeTableColumn.CellDataFeatures<BoxObject, Node>, ObservableValue<Node>> inlineOptionsCellValueFactory() {
+		return param -> {
+			TreeItem<BoxObject> item = param.getValue();
+			HBox bar = new HBox(3);
+			SimpleObjectProperty<Node> result = new SimpleObjectProperty<>(bar);
+			if (!(item.getValue() instanceof BoxFolder) && !(item.getValue() instanceof BoxFile)) {
+				return result;
+			}
+
+			buttonFromImage(item, bar, downloadImage, this::download, "download");
+
+			if (item.getValue() instanceof BoxFolder) {
+				buttonFromImage(item, bar, uploadFileImage, this::uploadFile, "upload_file");
+				buttonFromImage(item, bar, uploadFolderImage, this::uploadFolder, "upload_folder");
+				buttonFromImage(item, bar, addFolderImage, this::createFolder, "create_folder");
+			} else {
+				spacer(bar);
+				spacer(bar);
+				spacer(bar);
+			}
+
+			buttonFromImage(item, bar, deleteImage, this::deleteItem, "delete");
+			if (item.getValue() instanceof BoxFolder) {
+				spacer(bar);
+			} else if (!(item.getValue() instanceof BoxExternal)) {
+				if (((BoxFile)item.getValue()).isShared()) {
+					buttonFromImage(item, bar, shareImage, this::showDetails, "share", new BooleanBinding() {
+						@Override
+						protected boolean computeValue() {
+							return true;
+						}
+					}).getStyleClass().add("highlighted");
+				} else {
+					buttonFromImage(item, bar, shareImage, this::showDetails, "share");
+				}
+			}
+
+			return result;
+		};
+	}
+
+	private Callback<TreeTableView<BoxObject>, TreeTableRow<BoxObject>> sharingRowFactory() {
+		return param1 -> {
 			TreeTableRow<BoxObject> row = new TreeTableRow<>();
 			row.hoverProperty().addListener((observable, oldValue, newValue) -> {
 				if (newValue) {
@@ -233,40 +283,11 @@ public class RemoteFSController extends AbstractController implements Initializa
 				}
 			});
 			return row;
-		});
-		optionsColumn.setCellValueFactory(param -> {
-			TreeItem<BoxObject> item = param.getValue();
-			HBox bar = new HBox(3);
-			SimpleObjectProperty<Node> result = new SimpleObjectProperty<>(bar);
-			if (!(item.getValue() instanceof BoxFolder) && !(item.getValue() instanceof BoxFile)) {
-				return result;
-			}
-
-			buttonFromImage(item, bar, downloadImage, this::download, "download");
-
-			if (item.getValue() instanceof BoxFolder) {
-				buttonFromImage(item, bar, uploadFileImage, this::uploadFile, "upload_file");
-				buttonFromImage(item, bar, uploadFolderImage, this::uploadFolder, "upload_folder");
-				buttonFromImage(item, bar, addFolderImage, this::createFolder, "create_folder");
-			} else {
-				spacer(bar);
-				spacer(bar);
-				spacer(bar);
-			}
-
-			buttonFromImage(item, bar, deleteImage, this::deleteItem, "delete");
-			if (item.getValue() instanceof BoxFolder) {
-				spacer(bar);
-			} else if (!(item.getValue() instanceof BoxExternal)) {
-				buttonFromImage(item, bar, shareImage, this::share, "share");
-			}
-
-			return result;
-		});
+		};
 	}
 
 	void share(TreeItem<BoxObject> item) {
-		if (!(item.getValue() instanceof BoxFile)) {
+		/*if (!(item.getValue() instanceof BoxFile)) {
 			return;
 		}
 
@@ -288,7 +309,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 			sharingService.shareAndSendMessage(sender, receiver, objectToShare, message, navigation);
 		} catch (Exception e) {
 			alert(e);
-		}
+		}*/
 	}
 
 
@@ -299,16 +320,21 @@ public class RemoteFSController extends AbstractController implements Initializa
 	}
 
 	private void buttonFromImage(TreeItem<BoxObject> item, HBox bar, Image image, Consumer<TreeItem<BoxObject>> handler, String name) {
+		buttonFromImage(item, bar, image, handler, name, hoveredItem.isEqualTo(item));
+	}
+
+	private Pane buttonFromImage(TreeItem<BoxObject> item, HBox bar, Image image, Consumer<TreeItem<BoxObject>> handler, String name, BooleanBinding showIf) {
 		ImageView buttonIcon = new ImageView(image);
 		Pane button = new Pane(buttonIcon);
 		button.getStyleClass().add("inline-button");
 		button.setCursor(HAND);
 		button.setOnMouseClicked(event -> handler.accept(item));
-		button.visibleProperty().bind(hoveredItem.isEqualTo(item));
+		button.visibleProperty().bind(showIf);
 		button.setId(name + "_" + treeTable.getRow(item));
 		Tooltip tooltip = new Tooltip(resourceBundle.getString("option_" + name + "_tooltip"));
 		Tooltip.install(button, tooltip);
 		bar.getChildren().add(button);
+		return button;
 	}
 
 	private ReadableBoxNavigation createSetup() throws QblStorageException {
