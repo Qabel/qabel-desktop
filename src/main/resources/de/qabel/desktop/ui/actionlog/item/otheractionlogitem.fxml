@@ -33,15 +33,8 @@
                             <children>
                                 <BorderPane fx:id="otherMessagebox">
                                     <center>
-                                        <Label fx:id="textlabel" text="My Message" textAlignment="RIGHT" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
-                                            <font>
-                                                <Font name="System" size="15.0" />
-                                            </font>
-
-                                            <padding>
-                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                            </padding>
-                                        </Label>
+                                        <VBox fx:id="messageContainer" BorderPane.alignment="CENTER_LEFT">
+                                        </VBox>
                                     </center>
                                     <bottom>
                                         <Label fx:id="dateLabel" text="My Message" textAlignment="RIGHT" textFill="white" BorderPane.alignment="CENTER_LEFT">

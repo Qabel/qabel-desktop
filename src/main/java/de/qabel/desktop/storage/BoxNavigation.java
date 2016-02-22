@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
+import java.util.List;
 
 public interface BoxNavigation extends ReadableBoxNavigation {
 
@@ -130,16 +131,31 @@ public interface BoxNavigation extends ReadableBoxNavigation {
 	 * and encryption key to BoxFile.metakey. If BoxFile.meta or BoxFile.metakey is not null, BoxFile will not be
 	 * modified and no FileMetadata will be created.
 	 * @param boxFile BoxFile to create FileMetadata from.
-	 * @return True if FileMetadata has successfully created and uploaded.
+	 * @return BoxExternalReference if FileMetadata has been successfully created and uploaded.
+	 * @deprecated should only be called internally (to ensure an index entry)
 	 */
+	@Deprecated
 	BoxExternalReference createFileMetadata(QblECPublicKey owner, BoxFile boxFile) throws QblStorageException;
 
 	/**
 	 * Updates and uploads a FileMetadata object for a BoxFile.
 	 * @param boxFile BoxFile to create FileMetadata from.
-	 * @return True if FileMetadata has successfully created and uploaded.
+	 * @deprecated should only be called internally (on update)
 	 */
+	@Deprecated
 	void updateFileMetadata(BoxFile boxFile) throws QblStorageException, IOException, InvalidKeyException;
 
+	/**
+	 * Makes the BoxFile shareable. Creates FileMetadata for the file and a share entry in the IndexNavigation.
+	 * @param owner owner of the share
+	 * @param file file to share
+	 * @param receiver KeyId of the receivers (Contact) public key
+	 * @throws QblStorageException
+	 */
 	BoxExternalReference share(QblECPublicKey owner, BoxFile file, String receiver) throws QblStorageException;
+
+	/**
+	 * List all created (and not yet deleted) shares for the given BoxObject
+	 */
+	List<BoxShare> getSharesOf(BoxObject object) throws QblStorageException;
 }

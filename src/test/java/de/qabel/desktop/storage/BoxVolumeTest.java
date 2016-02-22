@@ -1,8 +1,10 @@
 package de.qabel.desktop.storage;
 
 
+import de.qabel.core.config.Contact;
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
+import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.exceptions.QblStorageNameConflict;
 import de.qabel.desktop.exceptions.QblStorageNotFound;
@@ -19,12 +21,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public abstract class BoxVolumeTest {
 	private static final Logger logger = LoggerFactory.getLogger(BoxVolumeTest.class.getSimpleName());
@@ -37,6 +40,7 @@ public abstract class BoxVolumeTest {
 	protected final String bucket = "qabel";
 	protected String prefix = UUID.randomUUID().toString();
 	private final String testFileName = "src/test/java/de/qabel/desktop/storage/testFile.txt";
+	protected Contact contact;
 
 	@Before
 	public void setUp() throws IOException, QblStorageException {
@@ -45,6 +49,7 @@ public abstract class BoxVolumeTest {
 		deviceID2 = utils.getRandomBytes(16);
 
 		keyPair = new QblECKeyPair();
+		contact = new Contact("contact", new LinkedList<>(), new QblECKeyPair().getPub());
 
 		setUpVolume();
 
@@ -243,5 +248,24 @@ public abstract class BoxVolumeTest {
 		assertThat(nav.listFiles().size(), is(1));
 		assertThat(nav.listFolders().size(), is(1));
 		assertThat(nav.listFiles().get(0).name, startsWith("foobar_conflict"));
+	}
+
+	@Test
+	public void testShare() throws Exception {
+		BoxNavigation nav = volume.navigate();
+		File file = new File(testFileName);
+		BoxFile boxFile = nav.upload("file1", file);
+		nav.share(keyPair.getPub(), boxFile, contact.getKeyIdentifier());
+
+		BoxNavigation nav2 = volume2.navigate();
+		BoxFile boxFile2 = nav2.getFile("file1");
+		assertNotNull(boxFile2.getMeta());
+		assertNotNull(boxFile2.getMetakey());
+		assertEquals(boxFile.getMeta(), boxFile2.getMeta());
+		assertTrue(Arrays.equals(boxFile.getMetakey(), boxFile2.getMetakey()));
+		assertTrue(boxFile2.isShared());
+		assertEquals(1, nav2.getSharesOf(boxFile2).size());
+		assertEquals(contact.getKeyIdentifier(), nav2.getSharesOf(boxFile2).get(0).getRecipient());
+		assertEquals(boxFile.getRef(), nav2.getSharesOf(boxFile2).get(0).getRef());
 	}
 }

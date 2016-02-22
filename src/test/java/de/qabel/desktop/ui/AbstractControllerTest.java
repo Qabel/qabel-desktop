@@ -18,6 +18,8 @@ import de.qabel.desktop.repository.Stub.StubContactRepository;
 import de.qabel.desktop.repository.Stub.StubDropMessageRepository;
 import de.qabel.desktop.repository.inmemory.InMemoryHttpDropConnector;
 import de.qabel.desktop.repository.inmemory.InMemoryIdentityRepository;
+import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory;
+import de.qabel.desktop.ui.actionlog.item.renderer.PlaintextMessageRenderer;
 import de.qabel.desktop.ui.connector.DropConnector;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import javafx.application.Application;
@@ -92,6 +94,9 @@ public class AbstractControllerTest {
 		diContainer.put("dropConnector", httpDropConnector);
 		diContainer.put("transferManager", new DefaultTransferManager());
 		diContainer.put("sharingService", sharingService);
+		MessageRendererFactory messageRendererFactory = new MessageRendererFactory();
+		messageRendererFactory.setFallbackRenderer(new PlaintextMessageRenderer());
+		diContainer.put("messageRendererFactory", messageRendererFactory);
 		Injector.setConfigurationSource(diContainer::get);
 		Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(diContainer));
 
@@ -113,6 +118,7 @@ public class AbstractControllerTest {
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			fail(e.getMessage());
 		}
 	}

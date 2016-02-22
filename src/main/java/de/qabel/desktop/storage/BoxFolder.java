@@ -33,6 +33,7 @@ public class BoxFolder extends BoxObject {
 		return result;
 	}
 
+	@Override
 	public String getRef() {
 		return ref;
 	}

@@ -15,6 +15,7 @@ import org.spongycastle.crypto.params.KeyParameter;
 import java.io.*;
 import java.security.InvalidKeyException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class AbstractNavigation implements BoxNavigation {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractNavigation.class.getSimpleName());
@@ -36,7 +37,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	private boolean autocommit = true;
 
 
-	AbstractNavigation(String prefix, DirectoryMetadata dm, QblECKeyPair keyPair, byte[] deviceId,
+	protected AbstractNavigation(String prefix, DirectoryMetadata dm, QblECKeyPair keyPair, byte[] deviceId,
 					   StorageReadBackend readBackend, StorageWriteBackend writeBackend) {
 		this.prefix = prefix;
 		this.dm = dm;
@@ -458,5 +459,12 @@ public abstract class AbstractNavigation implements BoxNavigation {
 		BoxShare share = new BoxShare(file.getMeta().split("/")[1], recipient);
 		getIndexNavigation().insertShare(share);
 		return ref;
+	}
+
+	@Override
+	public List<BoxShare> getSharesOf(BoxObject object) throws QblStorageException {
+		return getIndexNavigation().listShares().stream()
+				.filter(share -> share.getRef().equals(object.getRef()))
+				.collect(Collectors.toCollection(LinkedList::new));
 	}
 }

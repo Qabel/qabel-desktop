@@ -45,7 +45,9 @@ public class DirectoryMetadata extends AbstractMetadata {
 					" name VARCHAR(255)NOT NULL PRIMARY KEY," +
 					" size LONG NOT NULL," +
 					" mtime LONG NOT NULL," +
-					" key BLOB NOT NULL )",
+					" key BLOB NOT NULL," +
+					" meta VARCAHR(255)," +
+					" metakey BLOB)",
 			"CREATE TABLE folders (" +
 					" ref VARCHAR(255)NOT NULL," +
 					" name VARCHAR(255)NOT NULL PRIMARY KEY," +
@@ -258,11 +260,18 @@ public class DirectoryMetadata extends AbstractMetadata {
 	List<BoxFile> listFiles() throws QblStorageException {
 		try (Statement statement = connection.createStatement()) {
 			try (ResultSet rs = statement.executeQuery(
-					"SELECT block, name, size, mtime, key FROM files")) {
+					"SELECT block, name, size, mtime, key, meta, metakey FROM files")) {
 				List<BoxFile> files = new ArrayList<>();
 				while (rs.next()) {
-					files.add(new BoxFile(rs.getString(1),
-							rs.getString(2), rs.getLong(3), rs.getLong(4), rs.getBytes(5)));
+					files.add(new BoxFile(
+							rs.getString(1),
+							rs.getString(2),
+							rs.getLong(3),
+							rs.getLong(4),
+							rs.getBytes(5),
+							rs.getString(6),
+							rs.getBytes(7)
+					));
 				}
 				return files;
 			}
@@ -279,12 +288,14 @@ public class DirectoryMetadata extends AbstractMetadata {
 		}
 		try {
 			PreparedStatement st = connection.prepareStatement(
-					"INSERT INTO files (block, name, size, mtime, key) VALUES(?, ?, ?, ?, ?)");
+					"INSERT INTO files (block, name, size, mtime, key, meta, metakey) VALUES(?, ?, ?, ?, ?, ?, ?)");
 			st.setString(1, file.getBlock());
 			st.setString(2, file.getName());
 			st.setLong(3, file.getSize());
 			st.setLong(4, file.getMtime());
 			st.setBytes(5, file.getKey());
+			st.setString(6, file.getMeta());
+			st.setBytes(7, file.getMetakey());
 			if (st.executeUpdate() != 1) {
 				throw new QblStorageException("Failed to insert file");
 			}
@@ -436,12 +447,19 @@ public class DirectoryMetadata extends AbstractMetadata {
 
 	BoxFile getFile(String name) throws QblStorageException {
 		try (PreparedStatement statement = connection.prepareStatement(
-				"SELECT block, name, size, mtime, key FROM files WHERE name=?")) {
+				"SELECT block, name, size, mtime, key, meta, metakey FROM files WHERE name=?")) {
 			statement.setString(1, name);
 			try (ResultSet rs = statement.executeQuery()) {
 				if (rs.next()) {
-					return new BoxFile(rs.getString(1),
-							rs.getString(2), rs.getLong(3), rs.getLong(4), rs.getBytes(5));
+					return new BoxFile(
+							rs.getString(1),
+							rs.getString(2),
+							rs.getLong(3),
+							rs.getLong(4),
+							rs.getBytes(5),
+							rs.getString(6),
+							rs.getBytes(7)
+					);
 				}
 				return null;
 			}
