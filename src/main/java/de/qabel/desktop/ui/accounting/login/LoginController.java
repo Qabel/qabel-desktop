@@ -114,7 +114,7 @@ public class LoginController extends AbstractController implements Initializable
 
 			} catch (URISyntaxException | IOException | IllegalArgumentException e) {
 				Platform.runLater(() -> toEMailSendFailureState(resourceBundle.getString("loginSendFail")));
-				e.printStackTrace();
+				alert(e);
 			}
 		}).start();
 	}
@@ -194,7 +194,7 @@ public class LoginController extends AbstractController implements Initializable
 				}
 				createFailureState(text);
 			} catch (QblInvalidCredentials | URISyntaxException | IOException | IllegalArgumentException e) {
-				e.printStackTrace();
+				alert("create box account failed", e);
 			} finally {
 				Platform.runLater(() -> buttonBar.setVisible(true));
 			}

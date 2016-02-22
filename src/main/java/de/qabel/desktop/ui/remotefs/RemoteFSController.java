@@ -286,32 +286,6 @@ public class RemoteFSController extends AbstractController implements Initializa
 		};
 	}
 
-	void share(TreeItem<BoxObject> item) {
-		/*if (!(item.getValue() instanceof BoxFile)) {
-			return;
-		}
-
-		if (!(item.getParent() instanceof LazyBoxFolderTreeItem)) {
-			return;
-		}
-		LazyBoxFolderTreeItem folder = (LazyBoxFolderTreeItem) item.getParent();
-		if (!(folder.getNavigation() instanceof BoxNavigation)) {
-			return;
-		}
-
-		try {
-			Identity sender = clientConfiguration.getSelectedIdentity();
-			Contact receiver = new Contact("me", sender.getDropUrls(), sender.getEcPublicKey());
-			BoxFile objectToShare = (BoxFile) item.getValue();
-			String message = "Hey, I got a share for you!";
-			BoxNavigation navigation = (BoxNavigation) folder.getNavigation();
-
-			sharingService.shareAndSendMessage(sender, receiver, objectToShare, message, navigation);
-		} catch (Exception e) {
-			alert(e);
-		}*/
-	}
-
 
 	private void spacer(HBox bar) {
 		Label label = new Label();
@@ -440,7 +414,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 				try {
 					createFolder(lazyItem.getPath().resolve(name));
 				} catch (QblStorageException e) {
-					e.printStackTrace();
+					alert("can not create Folder", e);
 				}
 			});
 		}).start();
