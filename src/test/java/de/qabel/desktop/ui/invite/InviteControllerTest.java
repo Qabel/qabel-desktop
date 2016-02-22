@@ -22,7 +22,7 @@ public class InviteControllerTest extends AbstractControllerTest {
 	public void createEMailSubjectTest() {
 		createController();
 		String subject = controller.createEMailSubject();
-		assertEquals("Qabel%20Einladung", subject);
+		assertEquals("Invation%20to%20Qabel", subject);
 
 	}
 
