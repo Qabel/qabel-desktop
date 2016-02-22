@@ -109,11 +109,11 @@ public class LoginController extends AbstractController implements Initializable
 			try {
 				AccountingHTTP http = createAccount();
 				http.resetPassword(email.getText());
-				toMailSend(resourceBundle.getString("send"));
+				toMailSend(resourceBundle.getString("loginSend"));
 				newPassword.disableProperty().set(true);
 
 			} catch (URISyntaxException | IOException | IllegalArgumentException e) {
-				Platform.runLater(() -> toEMailSendFailureState(resourceBundle.getString("sendFail")));
+				Platform.runLater(() -> toEMailSendFailureState(resourceBundle.getString("loginSendFail")));
 				e.printStackTrace();
 			}
 		}).start();

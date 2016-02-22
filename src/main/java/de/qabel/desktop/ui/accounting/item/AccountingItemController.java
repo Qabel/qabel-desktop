@@ -87,8 +87,8 @@ public class AccountingItemController extends AbstractController implements Init
 	public void edit(ActionEvent actionEvent) {
 		dialog = new TextInputDialog(identity.getAlias());
 		dialog.setHeaderText(null);
-		dialog.setTitle(resourceBundle.getString("changeAlias"));
-		dialog.setContentText(resourceBundle.getString("newAlias"));
+		dialog.setTitle(resourceBundle.getString("accountingItemChangeAlias"));
+		dialog.setContentText(resourceBundle.getString("accountingItemNewAlias"));
 		Optional<String> result = dialog.showAndWait();
 		result.ifPresent(this::setAlias);
 	}

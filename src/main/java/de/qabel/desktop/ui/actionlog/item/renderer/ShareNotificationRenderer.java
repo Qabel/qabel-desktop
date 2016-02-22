@@ -33,7 +33,7 @@ public class ShareNotificationRenderer implements MessageRenderer {
 			Label label = new Label("Datei: " + file.getName());
 			result.getChildren().add(label);
 		} catch (Exception e) {
-			result.getChildren().add(new Label("%failed_to_fetch_share_metadata"));
+			result.getChildren().add(new Label("%remoteFileFailedToFetchShareMetadata"));
 		}
 
 		return result;

@@ -83,10 +83,10 @@ public class AccountingController extends AbstractController implements Initiali
 	}
 
 	public void addIdentity() {
-		dialog = new TextInputDialog(resourceBundle.getString("newIdentity"));
+		dialog = new TextInputDialog(resourceBundle.getString("accountingNewIdentity"));
 		dialog.setHeaderText(null);
-		dialog.setTitle(resourceBundle.getString("newIdentity"));
-		dialog.setContentText(resourceBundle.getString("newIdentity"));
+		dialog.setTitle(resourceBundle.getString("accountingNewIdentity"));
+		dialog.setContentText(resourceBundle.getString("accountingNewIdentity"));
 		Optional<String> result = dialog.showAndWait();
 		result.ifPresent(this::addIdentityWithAlias);
 	}
@@ -95,7 +95,7 @@ public class AccountingController extends AbstractController implements Initiali
 	protected void handleImportIdentityButtonAction(ActionEvent event) throws URISyntaxException, QblDropInvalidURL {
 
 		FileChooser chooser = new FileChooser();
-		chooser.setTitle(resourceBundle.getString("downloadFolder"));
+		chooser.setTitle(resourceBundle.getString("accountingDownloadFolder"));
 		File file = chooser.showOpenDialog(identityList.getScene().getWindow());
 		try {
 			importIdentity(file);
@@ -185,7 +185,7 @@ public class AccountingController extends AbstractController implements Initiali
 
 	private File createSaveFileChooser(String defaultName) {
 		FileChooser chooser = new FileChooser();
-		chooser.setTitle("Export");
+		chooser.setTitle(resourceBundle.getString("accountingExport"));
 		chooser.setInitialFileName(defaultName);
 		return chooser.showSaveDialog(identityList.getScene().getWindow());
 	}

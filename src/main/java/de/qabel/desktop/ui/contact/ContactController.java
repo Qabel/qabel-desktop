@@ -47,8 +47,6 @@ public class ContactController extends AbstractController implements Initializab
 	VBox actionlogViewPane;
 
 
-
-
 	@FXML
 	Button importButton;
 
@@ -94,7 +92,6 @@ public class ContactController extends AbstractController implements Initializab
 	}
 
 
-
 	private void createActionlog() {
 		ActionlogView actionlogView = new ActionlogView();
 		actionlogController = (ActionlogController) actionlogView.getPresenter();
@@ -104,7 +101,7 @@ public class ContactController extends AbstractController implements Initializab
 	@FXML
 	protected void handleImportContactsButtonAction(ActionEvent event) throws IOException, PersistenceException, URISyntaxException, QblDropInvalidURL, EntityNotFoundExcepion {
 		FileChooser chooser = new FileChooser();
-		chooser.setTitle(resourceBundle.getString("downloadFolder"));
+		chooser.setTitle(resourceBundle.getString("contactDownloadFolder"));
 		File file = chooser.showOpenDialog(contactList.getScene().getWindow());
 		importContacts(file);
 		loadContacts();
@@ -113,7 +110,7 @@ public class ContactController extends AbstractController implements Initializab
 	@FXML
 	protected void handleExportContactsButtonAction(ActionEvent event) throws EntityNotFoundExcepion, IOException {
 		FileChooser chooser = new FileChooser();
-		chooser.setTitle("Download");
+		chooser.setTitle(resourceBundle.getString("contactDownload"));
 		chooser.setInitialFileName("Contacts.json");
 		File file = chooser.showSaveDialog(contactList.getScene().getWindow());
 		exportContacts(file);

@@ -22,26 +22,26 @@
                     </VBox.margin>
                 </Label>
                 <ChoiceBox fx:id="providerChoices"/>
-                <TextField fx:id="user" alignment="CENTER" promptText="%boxAccountUser" styleClass="user"
+                <TextField fx:id="user" alignment="CENTER" promptText="%loginBoxAccountUserName" styleClass="user"
                            text="testuser">
                     <VBox.margin>
                         <Insets/>
                     </VBox.margin>
                 </TextField>
 
-                <TextField fx:id="email" alignment="CENTER" managed="false" promptText="%yourEMail" styleClass="user">
+                <TextField fx:id="email" alignment="CENTER" managed="false" promptText="%loginUserEMail" styleClass="user">
                     <VBox.margin>
                         <Insets/>
                     </VBox.margin>
                 </TextField>
 
-                <PasswordField fx:id="password" alignment="CENTER" promptText="%boxAccountPassword" text="testuser">
+                <PasswordField fx:id="password" alignment="CENTER" promptText="%loginBoxAccountUserPassword" text="testuser">
                     <VBox.margin>
                         <Insets/>
                     </VBox.margin>
                 </PasswordField>
 
-                <PasswordField fx:id="confirm" alignment="CENTER" managed="false" promptText="%confirmPassword">
+                <PasswordField fx:id="confirm" alignment="CENTER" managed="false" promptText="%loginConfirmPassword">
                     <VBox.margin>
                         <Insets/>
                     </VBox.margin>
@@ -50,11 +50,11 @@
                 <HBox fx:id="buttonBar" alignment="CENTER" styleClass="login-button-bar">
                     <children>
                         <Button fx:id="openCreateButton" mnemonicParsing="false" onAction="#openCreateBoxAccountSetup"
-                                styleClass="create-account-button" text="%createAccount" managed="true"/>
+                                styleClass="create-account-button" text="%loginOpenCreateBoxAccountDialog" managed="true"/>
                         <Button fx:id="createButton" mnemonicParsing="false" onAction="#createBoxAccount"
-                                styleClass="create-account-button" text="%create" managed="false"/>
+                                styleClass="create-account-button" text="%loginCreateBoxAccount" managed="false"/>
                         <Button fx:id="loginButton" mnemonicParsing="false" onAction="#login" styleClass="login-button"
-                                text="%login"/>
+                                text="%loginLogin"/>
 
                     </children>
                     <VBox.margin>
@@ -71,9 +71,9 @@
                 </HBox>
                 <Separator/>
                 <Button fx:id="recoverPassword" mnemonicParsing="false" onAction="#recoverPassword"
-                        styleClass="newPassword" text="%recoverPassword" managed="true"/>
+                        styleClass="newPassword" text="%loginRecoverPassword" managed="true"/>
                 <Button fx:id="newPassword" mnemonicParsing="false" onAction="#newPassword" styleClass="login-button"
-                        text="%newPassword" managed="false"/>
+                        text="%loginNewPassword" managed="false"/>
             </children>
             <VBox.margin>
                 <Insets top="50.0"/>
