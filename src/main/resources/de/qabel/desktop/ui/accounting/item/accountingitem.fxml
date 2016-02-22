@@ -38,7 +38,7 @@
                         </VBox>
                     </center>
                     <right>
-                        <Button fx:id="edit" alignment="CENTER" mnemonicParsing="false" onAction="#edit" text="%edit"
+                        <Button fx:id="edit" alignment="CENTER" mnemonicParsing="false" onAction="#edit" text="%accountItemEdit"
                                 BorderPane.alignment="CENTER"/>
                     </right>
                 </BorderPane>

@@ -10,33 +10,33 @@
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">
          <children>
             <Label prefWidth="150.0" text="Name" />
-            <TextField fx:id="name" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="descriptive name for the sync configuration" />
+            <TextField fx:id="name" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%syncSetupText" />
          </children>
       </HBox>
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">
          <children>
-            <Label prefWidth="150.0" text="Local Folder" />
+            <Label prefWidth="150.0" text="%syncSetupLocalFolder" />
             <TextField fx:id="localPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
-            <Button fx:id="chooseLocalPath" styleClass="choose">choose</Button>
+            <Button fx:id="chooseLocalPath" styleClass="choose" text="%syncSetupChooseLocalPath"/>
          </children>
       </HBox>
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">
          <children>
-            <Label prefWidth="150.0" text="Remote Folder" />
+            <Label prefWidth="150.0" text="%syncSetupRemoteFolder" />
             <TextField fx:id="remotePath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
-            <Button fx:id="chooseRemotePath" styleClass="choose">choose</Button>
+            <Button fx:id="chooseRemotePath" styleClass="choose" text="%syncSetupChooseRemotePath"/>
          </children>
       </HBox>
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">
          <children>
-            <Label prefWidth="150.0" text="Identity" />
-            <TextField fx:id="identity" disable="true" editable="false" text="identity"/>
+            <Label prefWidth="150.0" text="%syncSetupIdentity" />
+            <TextField fx:id="identity" disable="true" editable="false" text="%syncSetupIdentity"/>
          </children>
       </HBox>
       <HBox styleClass="button-bar" alignment="TOP_RIGHT">
          <children>
-            <Button fx:id="cancel" onAction="#close" cancelButton="true">cancel</Button>
-            <Button fx:id="start" onAction="#createSyncConfig" defaultButton="true">start sync</Button>
+            <Button fx:id="cancel" onAction="#close" cancelButton="true" text="%syncSetupCancel"/>
+            <Button fx:id="start" onAction="#createSyncConfig" defaultButton="true"  text="%syncSetupStartSync"/>
          </children>
       </HBox>
    </children>

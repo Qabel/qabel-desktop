@@ -59,7 +59,7 @@ public class InviteController extends AbstractController implements Initializabl
 	}
 
 	String createEMailSubject() {
-		String subject = bundle.getString("emailSubjectText");
+		String subject = bundle.getString("inviteEmailSubjectText");
 		subject = subject.replace(" ", "%20");
 		return subject;
 	}
