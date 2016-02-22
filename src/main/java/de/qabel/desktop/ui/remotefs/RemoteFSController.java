@@ -285,32 +285,6 @@ public class RemoteFSController extends AbstractController implements Initializa
 		};
 	}
 
-	void share(TreeItem<BoxObject> item) {
-		/*if (!(item.getValue() instanceof BoxFile)) {
-			return;
-		}
-
-		if (!(item.getParent() instanceof LazyBoxFolderTreeItem)) {
-			return;
-		}
-		LazyBoxFolderTreeItem folder = (LazyBoxFolderTreeItem) item.getParent();
-		if (!(folder.getNavigation() instanceof BoxNavigation)) {
-			return;
-		}
-
-		try {
-			Identity sender = clientConfiguration.getSelectedIdentity();
-			Contact receiver = new Contact("me", sender.getDropUrls(), sender.getEcPublicKey());
-			BoxFile objectToShare = (BoxFile) item.getValue();
-			String message = "Hey, I got a share for you!";
-			BoxNavigation navigation = (BoxNavigation) folder.getNavigation();
-
-			sharingService.shareAndSendMessage(sender, receiver, objectToShare, message, navigation);
-		} catch (Exception e) {
-			alert(e);
-		}*/
-	}
-
 
 	private void spacer(HBox bar) {
 		Label label = new Label();
@@ -349,7 +323,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 		}
 
 		FileChooser chooser = new FileChooser();
-		String title = resourceBundle.getString("chooseFile");
+		String title = resourceBundle.getString("remoteFsChooseFile");
 		chooser.setTitle(title);
 		List<File> list = chooser.showOpenMultipleDialog(treeTable.getScene().getWindow());
 		for (File file : list) {
@@ -384,7 +358,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 	private void download(TreeItem<BoxObject> item) {
 		try {
 			directoryChooser = new DirectoryChooser();
-			directoryChooser.setTitle(resourceBundle.getString("downloadFolder"));
+			directoryChooser.setTitle(resourceBundle.getString("remoteFsDownloadFolder"));
 			File directory = directoryChooser.showDialog(treeTable.getScene().getWindow());
 			BoxObject boxObject = item.getValue();
 
@@ -427,10 +401,10 @@ public class RemoteFSController extends AbstractController implements Initializa
 			return;
 		}
 
-		TextInputDialog dialog = new TextInputDialog(resourceBundle.getString("name"));
+		TextInputDialog dialog = new TextInputDialog(resourceBundle.getString("remoteFsName"));
 		dialog.setHeaderText(null);
-		dialog.setTitle(resourceBundle.getString("createFolder"));
-		dialog.setContentText(resourceBundle.getString("folderName"));
+		dialog.setTitle(resourceBundle.getString("remoteFsCreateFolder"));
+		dialog.setContentText(resourceBundle.getString("remoteFsFolderName"));
 		Optional<String> result = dialog.showAndWait();
 		new Thread(() -> {
 			result.ifPresent(name -> {
@@ -439,7 +413,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 				try {
 					createFolder(lazyItem.getPath().resolve(name));
 				} catch (QblStorageException e) {
-					e.printStackTrace();
+					alert("Failed to create Folder", e);
 				}
 			});
 		}).start();
@@ -455,8 +429,8 @@ public class RemoteFSController extends AbstractController implements Initializa
 			if (item.getParent() != null) {
 
 				Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-				alert.setTitle(resourceBundle.getString("deleteQuestion"));
-				alert.setHeaderText(resourceBundle.getString("deleteFolder") + item.getValue().getName() + " ?");
+				alert.setTitle(resourceBundle.getString("remoteFsDeleteQuestion"));
+				alert.setHeaderText(resourceBundle.getString("remoteFsDeleteFolder") + item.getValue().getName() + " ?");
 				Optional<ButtonType> result = alert.showAndWait();
 
 				LazyBoxFolderTreeItem updateTreeItem = (LazyBoxFolderTreeItem) item.getParent();

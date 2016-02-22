@@ -31,7 +31,7 @@
                 <VBox>
                     <children>
                         <Button fx:id="submit" minWidth="100" mnemonicParsing="false"
-                                onAction="#handleSubmitButtonAction" text="%submit"/>
+                                onAction="#handleSubmitButtonAction" text="%actionlogSubmit"/>
                     </children>
                 </VBox>
             </children>

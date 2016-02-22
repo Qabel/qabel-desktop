@@ -13,14 +13,14 @@
 
     <bottom>
 
-        <Button mnemonicParsing="false" onAction="#handleInviteButtonAction" text="%mailto" BorderPane.alignment="CENTER">
+        <Button mnemonicParsing="false" onAction="#handleInviteButtonAction" text="%inviteMailTo" BorderPane.alignment="CENTER">
             <BorderPane.margin>
                 <Insets bottom="20.0" top="20.0" />
             </BorderPane.margin>
         </Button>
     </bottom>
    <top>
-      <Label text="%invite" BorderPane.alignment="CENTER">
+      <Label text="%inviteInvite" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="20.0" top="20.0" />
          </BorderPane.margin></Label>

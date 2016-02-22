@@ -3,8 +3,6 @@ package de.qabel.desktop.ui.accounting;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.qabel.core.config.*;
-import de.qabel.core.crypto.QblECKeyPair;
-import de.qabel.core.drop.DropURL;
 import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
@@ -63,12 +61,16 @@ public class AccountingController extends AbstractController implements Initiali
 		try {
 			gson = buildGson();
 		} catch (EntityNotFoundExcepion | PersistenceException e) {
-			e.printStackTrace();
+			alert(e);
 		}
 		this.resourceBundle = resources;
 
 		updateIdentityState();
-		clientConfiguration.addObserver((o, arg) -> { if (arg instanceof Identity) {updateIdentityState();}});
+		clientConfiguration.addObserver((o, arg) -> {
+			if (arg instanceof Identity) {
+				updateIdentityState();
+			}
+		});
 	}
 
 	private void updateIdentityState() {
@@ -83,10 +85,10 @@ public class AccountingController extends AbstractController implements Initiali
 	}
 
 	public void addIdentity() {
-		dialog = new TextInputDialog(resourceBundle.getString("newIdentity"));
+		dialog = new TextInputDialog(resourceBundle.getString("accountingNewIdentity"));
 		dialog.setHeaderText(null);
-		dialog.setTitle(resourceBundle.getString("newIdentity"));
-		dialog.setContentText(resourceBundle.getString("newIdentity"));
+		dialog.setTitle(resourceBundle.getString("accountingNewIdentity"));
+		dialog.setContentText(resourceBundle.getString("accountingNewIdentity"));
 		Optional<String> result = dialog.showAndWait();
 		result.ifPresent(this::addIdentityWithAlias);
 	}
@@ -95,13 +97,14 @@ public class AccountingController extends AbstractController implements Initiali
 	protected void handleImportIdentityButtonAction(ActionEvent event) throws URISyntaxException, QblDropInvalidURL {
 
 		FileChooser chooser = new FileChooser();
-		chooser.setTitle(resourceBundle.getString("downloadFolder"));
+		chooser.setTitle(resourceBundle.getString("accountingDownloadFolder"));
 		File file = chooser.showOpenDialog(identityList.getScene().getWindow());
 		try {
 			importIdentity(file);
 			loadIdentities();
 		} catch (IOException | PersistenceException e) {
-			e.printStackTrace();
+			alert("Import identity fail",e);
+		} catch (NullPointerException ignored) {
 		}
 	}
 
@@ -114,7 +117,8 @@ public class AccountingController extends AbstractController implements Initiali
 			exportIdentity(i, file);
 			loadIdentities();
 		} catch (IOException | QblStorageException e) {
-			e.printStackTrace();
+			alert("Export identity fail", e);
+		} catch (NullPointerException ignored) {
 		}
 	}
 
@@ -125,7 +129,8 @@ public class AccountingController extends AbstractController implements Initiali
 		try {
 			exportContact(i, file);
 		} catch (IOException | QblStorageException e) {
-			e.printStackTrace();
+			alert("Export contact fail",e);
+		} catch (NullPointerException ignored) {
 		}
 	}
 
@@ -163,7 +168,7 @@ public class AccountingController extends AbstractController implements Initiali
 		writeStringInFile(json, file);
 	}
 
-	ResourceBundle getRessource(){
+	ResourceBundle getRessource() {
 		return resourceBundle;
 	}
 
@@ -171,7 +176,7 @@ public class AccountingController extends AbstractController implements Initiali
 		try {
 			identityList.getChildren().clear();
 			Identities identities = identityRepository.findAll();
-			for (Identity identity : identities.getIdentities() ) {
+			for (Identity identity : identities.getIdentities()) {
 				final Map<String, Object> injectionContext = new HashMap<>();
 				injectionContext.put("identity", identity);
 				AccountingItemView itemView = new AccountingItemView(injectionContext::get);
@@ -179,13 +184,14 @@ public class AccountingController extends AbstractController implements Initiali
 				itemViews.add(itemView);
 			}
 		} catch (Exception e) {
-			throw new IllegalStateException(e.getMessage(), e);
+			alert("Failed to load identities", e);
+
 		}
 	}
 
 	private File createSaveFileChooser(String defaultName) {
 		FileChooser chooser = new FileChooser();
-		chooser.setTitle("Export");
+		chooser.setTitle(resourceBundle.getString("accountingExport"));
 		chooser.setInitialFileName(defaultName);
 		return chooser.showSaveDialog(identityList.getScene().getWindow());
 	}
@@ -196,7 +202,7 @@ public class AccountingController extends AbstractController implements Initiali
 		builder.registerTypeAdapter(Contacts.class, new ContactsTypeAdapter(identityRepository.findAll()));
 		builder.registerTypeAdapter(Contact.class, new ContactTypeAdapter());
 		builder.registerTypeAdapter(Identities.class, new IdentitiesTypeAdapter());
-		return builder.create() ;
+		return builder.create();
 	}
 
 }

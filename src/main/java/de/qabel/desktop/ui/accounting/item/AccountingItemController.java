@@ -87,8 +87,8 @@ public class AccountingItemController extends AbstractController implements Init
 	public void edit(ActionEvent actionEvent) {
 		dialog = new TextInputDialog(identity.getAlias());
 		dialog.setHeaderText(null);
-		dialog.setTitle(resourceBundle.getString("changeAlias"));
-		dialog.setContentText(resourceBundle.getString("newAlias"));
+		dialog.setTitle(resourceBundle.getString("accountingItemChangeAlias"));
+		dialog.setContentText(resourceBundle.getString("accountingItemNewAlias"));
 		Optional<String> result = dialog.showAndWait();
 		result.ifPresent(this::setAlias);
 	}
@@ -99,7 +99,7 @@ public class AccountingItemController extends AbstractController implements Init
 			identityRepository.save(identity);
 			this.alias.setText(alias);
 		} catch (PersistenceException e) {
-			alert("saveIdentityFail", e);
+			alert("Failed to save identity", e);
 		}
 	}
 

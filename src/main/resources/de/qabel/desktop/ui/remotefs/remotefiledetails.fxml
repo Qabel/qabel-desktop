@@ -8,8 +8,8 @@
    <center>
       <VBox BorderPane.alignment="CENTER" style="-fx-spacing: 1em;">
          <children>
-            <ComboBox fx:id="shareReceiver" editable="true" promptText="%share_with" />
-             <Label text="%currently_shared_with"/>
+            <ComboBox fx:id="shareReceiver" editable="true" promptText="%remoteFileShareWith" />
+             <Label text="%remoteFileCurrentlySharedWith"/>
             <VBox fx:id="currentShares">
 
             </VBox>

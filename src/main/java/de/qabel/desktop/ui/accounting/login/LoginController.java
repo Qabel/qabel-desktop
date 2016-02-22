@@ -109,12 +109,11 @@ public class LoginController extends AbstractController implements Initializable
 			try {
 				AccountingHTTP http = createAccount();
 				http.resetPassword(email.getText());
-				toMailSend(resourceBundle.getString("send"));
+				toMailSend(resourceBundle.getString("loginSend"));
 				newPassword.disableProperty().set(true);
 
 			} catch (URISyntaxException | IOException | IllegalArgumentException e) {
-				Platform.runLater(() -> toEMailSendFailureState(resourceBundle.getString("sendFail")));
-				e.printStackTrace();
+				Platform.runLater(() -> toEMailSendFailureState(resourceBundle.getString("loginSendFail")));
 			}
 		}).start();
 	}
@@ -194,7 +193,7 @@ public class LoginController extends AbstractController implements Initializable
 				}
 				createFailureState(text);
 			} catch (QblInvalidCredentials | URISyntaxException | IOException | IllegalArgumentException e) {
-				e.printStackTrace();
+				alert("Failed to create box account", e);
 			} finally {
 				Platform.runLater(() -> buttonBar.setVisible(true));
 			}

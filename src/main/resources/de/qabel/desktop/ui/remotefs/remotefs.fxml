@@ -11,9 +11,9 @@
           <center>
               <TreeTableView fx:id="treeTable" maxHeight="Infinity" maxWidth="Infinity" prefHeight="600" styleClass="browser">
                   <columns>
-                      <TreeTableColumn fx:id="nameColumn" minWidth="50" prefWidth="200.0" text="%name" />
-                      <TreeTableColumn fx:id="sizeColumn" prefWidth="70.0" text="%size" />
-                      <TreeTableColumn fx:id="dateColumn" prefWidth="120.0" text="%date" />
+                      <TreeTableColumn fx:id="nameColumn" minWidth="50" prefWidth="200.0" text="%remoteFsName" />
+                      <TreeTableColumn fx:id="sizeColumn" prefWidth="70.0" text="%remoteFsSize" />
+                      <TreeTableColumn fx:id="dateColumn" prefWidth="120.0" text="%remoteFsDate" />
                       <TreeTableColumn fx:id="optionsColumn" minWidth="100" prefWidth="130.0" />
                   </columns>
               </TreeTableView>

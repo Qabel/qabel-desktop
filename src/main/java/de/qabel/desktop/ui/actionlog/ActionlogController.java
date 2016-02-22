@@ -91,7 +91,7 @@ public class ActionlogController extends AbstractController implements Initializ
 				try {
 					handleSubmitButtonAction();
 				} catch (QblException | PersistenceException | EntityNotFoundExcepion e) {
-					e.printStackTrace();
+					alert(e);
 				}
 			}
 		});
@@ -136,7 +136,7 @@ public class ActionlogController extends AbstractController implements Initializ
 			}
 
 		} catch (PersistenceException e) {
-			e.printStackTrace();
+			alert("Failed to load messages", e);
 		}
 	}
 
@@ -195,8 +195,8 @@ public class ActionlogController extends AbstractController implements Initializ
 			Platform.runLater(() -> {
 				try {
 					loadMessages(contact);
-				} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
-					entityNotFoundExcepion.printStackTrace();
+				} catch (EntityNotFoundExcepion e) {
+					alert(e);
 				}
 			});
 		} else if (arg instanceof Identity && o instanceof ClientConfiguration) {
@@ -210,8 +210,8 @@ public class ActionlogController extends AbstractController implements Initializ
 				receivedDropMessages = null;
 				this.contact = contact;
 				loadMessages(this.contact);
-			} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
-				entityNotFoundExcepion.printStackTrace();
+			} catch (EntityNotFoundExcepion e) {
+				alert("Failed to select Contact", e);
 			}
 		});
 
