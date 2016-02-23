@@ -272,6 +272,22 @@ public abstract class BoxVolumeTest {
 	}
 
 	@Test
+	public void testUnshare() throws Exception {
+		BoxNavigation nav = volume.navigate();
+		File file = new File(testFileName);
+		BoxFile boxFile = nav.upload("file1", file);
+		nav.share(keyPair.getPub(), boxFile, contact.getKeyIdentifier());
+		nav.unshare(boxFile);
+
+		BoxNavigation nav2 = volume2.navigate();
+		BoxFile boxFile2 = nav2.getFile("file1");
+		assertNull(boxFile2.getMeta());
+		assertNull(boxFile2.getMetakey());
+		assertFalse(boxFile2.isShared());
+		assertEquals(0, nav2.getSharesOf(boxFile2).size());
+	}
+
+	@Test
 	public void deleteCleansShares() throws Exception {BoxNavigation nav = volume.navigate();
 		File file = new File(testFileName);
 		BoxFile boxFile = nav.upload("file1", file);

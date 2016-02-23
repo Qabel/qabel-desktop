@@ -217,6 +217,11 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 		}
 
 		@Override
+		public void unshare(BoxObject boxObject) throws QblStorageException {
+
+		}
+
+		@Override
 		public void delete(BoxFolder folder) throws QblStorageException {
 
 		}

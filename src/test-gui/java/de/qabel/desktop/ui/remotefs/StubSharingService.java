@@ -35,6 +35,7 @@ public class StubSharingService implements SharingService {
 
 	@Override
 	public void shareAndSendMessage(Identity sender, Contact receiver, BoxFile objectToShare, String message, BoxNavigation navigation) throws QblStorageException, PersistenceException, QblNetworkInvalidResponseException {
+		navigation.share(sender.getEcPublicKey(), objectToShare, receiver.getKeyIdentifier());
 		shared = new ShareRequest(
 				sender,
 				receiver,

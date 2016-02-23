@@ -35,7 +35,7 @@ public class LayoutControllerTest extends AbstractControllerTest {
 
 		LayoutController controller = createController();
 		clientConfiguration.selectIdentity(identityBuilderFactory.factory().withAlias("bob").build());
-		assertTrue("nav items are not shown when identity is selected", countManagedNaviItems(controller) > MIN_ITEM_COUNT);
+		waitUntil(() -> countManagedNaviItems(controller) > MIN_ITEM_COUNT, () -> "nav items are not shown when identity is selected");
 	}
 
 	private int countManagedNaviItems(LayoutController controller) {

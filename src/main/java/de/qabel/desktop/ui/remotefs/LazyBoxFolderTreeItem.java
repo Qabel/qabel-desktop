@@ -83,7 +83,20 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observ
 			String updateError = null;
 			try {
 				col = calculateChildren();
-				LazyBoxFolderTreeItem.super.getChildren().setAll(col);
+				synchronized (this) {
+					Map<BoxObject, TreeItem<BoxObject>> newObjects = new HashMap<>();
+					col.stream().forEach(item -> newObjects.put(item.getValue(), item));
+					Map<BoxObject, TreeItem<BoxObject>> oldObjects = new HashMap<>();
+					ObservableList<TreeItem<BoxObject>> children = LazyBoxFolderTreeItem.super.getChildren();
+					children.stream().forEach(item -> oldObjects.put(item.getValue(), item));
+
+					oldObjects.keySet().stream()
+							.filter(object -> !newObjects.containsKey(object))
+							.forEach(object -> children.remove(oldObjects.get(object)));
+					newObjects.keySet().stream()
+							.filter(object -> !oldObjects.containsKey(object))
+							.forEach(object -> children.add(newObjects.get(object)));
+				}
 			} catch (QblStorageException e) {
 				updateError = e.getMessage();
 			} finally {

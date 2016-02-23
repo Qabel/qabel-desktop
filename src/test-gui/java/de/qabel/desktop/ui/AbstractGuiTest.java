@@ -1,6 +1,7 @@
 package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
+import com.google.common.base.Optional;
 import com.sun.javafx.robot.impl.BaseFXRobot;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
@@ -126,12 +127,21 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 		return robot.moveTo(node);
 	}
 
-	protected static void waitUntil(Callable<Boolean> evaluate) {
+	public static void waitUntil(Callable<Boolean> evaluate) {
 		waitUntil(evaluate, 10000L);
 	}
 
-	protected void waitForNode(String query) {
-		waitUntil(() -> robot.lookup(query).tryQueryFirst().isPresent());
+	protected Node waitForNode(String query) {
+		Node[] nodes = new Node[1];
+		waitUntil(() -> {
+			Optional<Node> node = robot.lookup(query).tryQueryFirst();
+			boolean present = node.isPresent();
+			if (present) {
+				nodes[0] = node.get();
+			}
+			return present;
+		});
+		return nodes[0];
 	}
 
 	protected Node getFirstNode(String query) {

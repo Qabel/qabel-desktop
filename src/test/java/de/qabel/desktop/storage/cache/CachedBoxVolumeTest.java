@@ -1,9 +1,11 @@
 package de.qabel.desktop.storage.cache;
 
+import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.daemon.sync.SyncUtils;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
+import de.qabel.desktop.ui.AbstractControllerTest;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
@@ -134,9 +136,7 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 		BoxFolder folder = nav2.createFolder("folder");
 		BoxNavigation foldernav2 = nav2.navigate(folder);
 		BoxFolder subfolder = foldernav2.createFolder("subfolder");
-		File file = Paths.get(tempFolder.toAbsolutePath().toString(), "tmpfile").toFile();
-		file.createNewFile();
-		file.deleteOnExit();
+		File file = createTmpFile();
 		foldernav2.upload("testfile", file);
 		foldernav2.navigate(subfolder).upload("testfile", file);
 
@@ -151,6 +151,7 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 	}
 
 	protected void observe() throws QblStorageException {
+		updates.clear();
 		nav = (CachedBoxNavigation) volume.navigate();
 		nav.addObserver((o, arg) -> updates.add((ChangeEvent) arg));
 	}
@@ -158,15 +159,54 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 	@Test
 	public void notifiesOnNewFile() throws Exception {
 		observe();
-		File file = Paths.get(tempFolder.toAbsolutePath().toString(), "tmpfile").toFile();
-		file.createNewFile();
-		file.deleteOnExit();
+		File file = createTmpFile();
 		volume2.navigate().upload("testfile", file);
 		nav.refresh();
 
 		assertFalse(updates.isEmpty());
 		ChangeEvent event = updates.get(0);
 		assertTrue(event.isCreate());
+		assertEquals("/testfile", event.getPath().toString());
+	}
+
+	public File createTmpFile() throws IOException {
+		File file = Paths.get(tempFolder.toAbsolutePath().toString(), "tmpfile").toFile();
+		file.createNewFile();
+		file.deleteOnExit();
+		return file;
+	}
+
+	@Test
+	public void notifiesOnShare() throws Exception {
+		File file = createTmpFile();
+		BoxFile boxFile = volume2.navigate().upload("testfile", file);
+		((CachedBoxVolume)volume).navigate().refresh();
+
+		observe();
+		nav.share(new QblECKeyPair().getPub(), boxFile, "receiver");
+
+		ChangeEvent event = waitForEvent();
+		assertTrue("expected SHARE but got " + event.getType(), event.isShare());
+		assertEquals("/testfile", event.getPath().toString());
+	}
+
+	private ChangeEvent waitForEvent() {
+		AbstractControllerTest.waitUntil(() -> !updates.isEmpty());
+		return updates.get(0);
+	}
+
+	@Test
+	public void notifiesOnUnshare() throws Exception {
+		File file = createTmpFile();
+		BoxFile boxFile = volume2.navigate().upload("testfile", file);
+		volume2.navigate().share(new QblECKeyPair().getPub(), boxFile, "receiver");
+		((CachedBoxVolume)volume).navigate().refresh();
+		observe();
+
+		nav.unshare(nav.getFile("testfile"));
+
+		ChangeEvent event = waitForEvent();
+		assertTrue("expected UNSHARE but got " + event.getType(), event.isUnshare());
 		assertEquals("/testfile", event.getPath().toString());
 	}
 
@@ -209,9 +249,7 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 	@Test
 	public void notifiesOnDeleteFile() throws Exception {
 		observe();
-		File file = Paths.get(tempFolder.toAbsolutePath().toString(), "tmpfile").toFile();
-		file.createNewFile();
-		file.deleteOnExit();
+		File file = createTmpFile();
 		BoxFile boxFile = nav.upload("testfile", file);
 		clear(1);
 

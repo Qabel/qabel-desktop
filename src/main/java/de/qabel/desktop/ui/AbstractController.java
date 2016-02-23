@@ -19,8 +19,10 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.function.Function;
 
 public class AbstractController {
@@ -32,8 +34,26 @@ public class AbstractController {
 		alert(e.getMessage(), e);
 	}
 
+	protected void tryOrAlert(CheckedRunnable runnable) {
+		try {
+			runnable.run();
+		} catch (Exception e) {
+			alert(e);
+		}
+	}
+
+	protected String getString(ResourceBundle resources, String message, Object... params) {
+		return MessageFormat.format(resources.getString(message), params);
+	}
+
+	@FunctionalInterface
+	public interface CheckedRunnable {
+		void run() throws Exception;
+	}
+
 	protected void alert(String message, Exception e) {
 		LoggerFactory.getLogger(getClass().getSimpleName()).error(message, e);
+		e.printStackTrace();
 
 		alert = new Alert(Alert.AlertType.ERROR);
 		alert.setTitle("Error");

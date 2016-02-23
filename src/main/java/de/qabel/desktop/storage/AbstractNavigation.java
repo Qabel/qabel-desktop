@@ -354,15 +354,24 @@ public abstract class AbstractNavigation implements BoxNavigation {
 		deleteQueue.add("blocks/" + file.getBlock());
 
 		if (file.isShared()) {
-			getIndexNavigation().getSharesOf(file).stream().forEach(share -> {
-				try {
-					getIndexNavigation().deleteShare(share);
-				} catch (QblStorageException e) {
-					logger.error(e.getMessage(), e);
-				}
-			});
-			removeFileMetadata(file);
+			unshare(file);
 		}
+		autocommit();
+	}
+
+	@Override
+	public synchronized void unshare(BoxObject boxObject) throws QblStorageException {
+		getIndexNavigation().getSharesOf(boxObject).stream().forEach(share -> {
+			try {
+				getIndexNavigation().deleteShare(share);
+			} catch (QblStorageException e) {
+				logger.error(e.getMessage(), e);
+			}
+		});
+		if (!(boxObject instanceof BoxFile)) {
+			throw new NotImplementedException("unshare not implemented for " + boxObject.getClass().getSimpleName());
+		}
+		removeFileMetadata((BoxFile) boxObject);
 		autocommit();
 	}
 
@@ -372,8 +381,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	 * @param boxFile BoxFile to remove FileMetadata from.
 	 * @return True if FileMetadata has been deleted. False if meta information is missing.
 	 */
-	@Deprecated
-	public boolean removeFileMetadata(BoxFile boxFile) throws QblStorageException {
+	protected boolean removeFileMetadata(BoxFile boxFile) throws QblStorageException {
 		if (boxFile.meta == null || boxFile.metakey == null) {
 			return false;
 		}
@@ -381,6 +389,13 @@ public abstract class AbstractNavigation implements BoxNavigation {
 		writeBackend.delete(boxFile.meta);
 		boxFile.meta = null;
 		boxFile.metakey = null;
+
+		// Overwrite = delete old file, upload new file
+		BoxFile oldFile = dm.getFile(boxFile.getName());
+		if (oldFile != null) {
+			dm.deleteFile(oldFile);
+		}
+		dm.insertFile(boxFile);
 
 		return true;
 	}

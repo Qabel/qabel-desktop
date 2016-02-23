@@ -7,6 +7,7 @@
 
 <GridPane fx:id="detailsPane" fx:controller="de.qabel.desktop.ui.DetailsController"
           pickOnBounds="false" style="-fx-background-color: null"
+          styleClass="details"
           xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             visible="false">
     <columnConstraints>
@@ -23,7 +24,7 @@
             <children>
                 <VBox fx:id="detailsContainer"/>
                 <Label fx:id="closeDetails" text="X" alignment="TOP_RIGHT"
-                       style="-fx-alignment: top-right; -fx-padding: 10px 10px 10px 10px;" styleClass="inline-button"/>
+                       style="-fx-alignment: top-right; -fx-padding: 10px 10px 10px 10px;" styleClass="inline-button,close"/>
             </children>
         </StackPane>
     </children>

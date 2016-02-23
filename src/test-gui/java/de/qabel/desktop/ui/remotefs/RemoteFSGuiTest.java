@@ -53,7 +53,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 	@Test
 	public void optionsOnHover() throws InterruptedException {
 		int rootIndex = 1;
-		waitUntil(() -> !getFirstNode("#download_" + rootIndex).isVisible());
+		assertFalse(waitForNode("#download_" + rootIndex).isVisible());
 		assertFalse(getFirstNode("#upload_file_" + rootIndex).isVisible());
 		assertFalse(getFirstNode("#upload_folder_" + rootIndex).isVisible());
 		assertFalse(getFirstNode("#create_folder_" + rootIndex).isVisible());
@@ -61,7 +61,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 
 		moveTo("#download_" + rootIndex);
 
-		waitUntil(() -> getFirstNode("#download_" + rootIndex).isVisible());
+		assertTrue(waitForNode("#download_" + rootIndex).isVisible());
 		assertTrue(getFirstNode("#upload_file_" + rootIndex).isVisible());
 		assertTrue(getFirstNode("#upload_folder_" + rootIndex).isVisible());
 		assertTrue(getFirstNode("#create_folder_" + rootIndex).isVisible());
@@ -69,7 +69,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 
 		robot.moveTo(stage);
 
-		waitUntil(() -> !getFirstNode("#download_" + rootIndex).isVisible());
+		assertFalse(waitForNode("#download_" + rootIndex).isVisible());
 		assertFalse(getFirstNode("#upload_file_" + rootIndex).isVisible());
 		assertFalse(getFirstNode("#upload_folder_" + rootIndex).isVisible());
 		assertFalse(getFirstNode("#create_folder_" + rootIndex).isVisible());
@@ -105,7 +105,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 		contacts.put(otto);
 
 		waitUntil(() -> getNodes(".cell").size() > 2);
-		clickOn(getFirstNode("#share_2"));
+		clickOn("#share_2");
 		waitForNode(".detailsContainer");
 		waitUntil(() -> getFirstNode(".detailsContainer").isVisible(), 5000L);
 
@@ -122,5 +122,30 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 		assertSame(identity, shared.sender);
 		assertSame(boxFile, shared.objectToShare);
 		assertSame(rootNavigation, shared.navigation);
+
+		clickOn(".details .close");
+
+		waitUntil(() -> waitForNode("#share_2").isVisible(), 10000L);
+	}
+
+	@Test
+	public void unshareFile() throws Exception {
+		rootNavigation.share(identity.getEcPublicKey(), boxFile, "receiver");
+
+		waitUntil(() -> getNodes(".cell").size() > 2);
+		clickOn("#share_2");
+		waitForNode(".detailsContainer");
+		waitUntil(() -> getFirstNode(".detailsContainer").isVisible(), 5000L);
+
+		clickOn("#unshare");
+
+		waitUntil(() -> controller.fileDetails.confirmationDialog != null);
+		clickOn(controller.fileDetails.confirmationDialog.getDialogPane().lookupButton(ButtonType.YES));
+
+		StubSharingService.ShareRequest shared = sharingService.shared;
+		assertNull(shared);
+
+		clickOn(".details .close");
+		waitUntil(() -> !waitForNode("#share_2").isVisible(), 10000L);
 	}
 }
