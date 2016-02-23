@@ -3,13 +3,24 @@
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 
 <BorderPane style="-fx-max-width: 1000" styleClass="detailsContainer" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.remotefs.RemoteFileDetailsController">
    <center>
       <VBox BorderPane.alignment="CENTER" style="-fx-spacing: 1em;">
          <children>
             <ComboBox fx:id="shareReceiver" editable="true" promptText="%remoteFileShareWith" />
-             <Label text="%remoteFileCurrentlySharedWith"/>
+             <HBox style="-fx-spacing: 2em">
+                 <children>
+                     <Label text="%remoteFileCurrentlySharedWith"/>
+                     <ImageView fx:id="unshare" styleClass="inline-button" pickOnBounds="true" preserveRatio="true" fitWidth="16">
+                         <image>
+                             <Image url="@/icon/delete.png" />
+                         </image>
+                     </ImageView>
+                 </children>
+             </HBox>
             <VBox fx:id="currentShares">
 
             </VBox>

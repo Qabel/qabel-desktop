@@ -5,11 +5,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane fx:id="stack" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.remotefs.RemoteFSController">
+<StackPane maxHeight="Infinity" maxWidth="Infinity" fx:id="stack" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.remotefs.RemoteFSController">
    <children>
-      <BorderPane style="-fx-background-color: red;">
+      <BorderPane style="-fx-background-color: red;" maxHeight="Infinity" maxWidth="Infinity" prefHeight="4000">
           <center>
-              <TreeTableView fx:id="treeTable" maxHeight="Infinity" maxWidth="Infinity" prefHeight="600" styleClass="browser">
+              <TreeTableView fx:id="treeTable" maxHeight="Infinity" maxWidth="Infinity" styleClass="browser">
                   <columns>
                       <TreeTableColumn fx:id="nameColumn" minWidth="50" prefWidth="200.0" text="%remoteFsName" />
                       <TreeTableColumn fx:id="sizeColumn" prefWidth="70.0" text="%remoteFsSize" />
