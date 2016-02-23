@@ -270,7 +270,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 				ObservableList<String> styleClass = row.getStyleClass();
 
 				styleClass.remove("child");
-				styleClass.remove("share-root");
+				styleClass.remove("root");
 				styleClass.remove("share-root");
 
 				if (newValue == rootItem) {

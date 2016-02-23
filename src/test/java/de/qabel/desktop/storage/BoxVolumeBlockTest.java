@@ -13,6 +13,14 @@ import java.util.List;
 import static org.junit.Assert.fail;
 
 public class BoxVolumeBlockTest extends BoxVolumeTest {
+
+	private BlockReadBackend readBackend;
+
+	@Override
+	protected StorageReadBackend getReadBackend() {
+		return readBackend;
+	}
+
 	@Override
 	protected void setUpVolume() {
 		try {
@@ -28,8 +36,9 @@ public class BoxVolumeBlockTest extends BoxVolumeTest {
 			prefix = prefixes.get(0);
 
 			String root = "http://localhost:9697/api/v0/files/" + prefix;
+			readBackend = new BlockReadBackend(root, accountingHTTP);
 			volume = new BoxVolume(
-					new BlockReadBackend(root, accountingHTTP),
+					readBackend,
 					new BlockWriteBackend(root, accountingHTTP),
 					keyPair,
 					deviceID,

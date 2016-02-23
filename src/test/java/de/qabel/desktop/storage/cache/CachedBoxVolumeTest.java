@@ -24,12 +24,19 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 	private Path tempFolder;
 	private List<ChangeEvent> updates = new LinkedList<>();
 	private CachedBoxNavigation nav;
+	private LocalReadBackend readBackend;
+
+	@Override
+	protected StorageReadBackend getReadBackend() {
+		return readBackend;
+	}
 
 	@Override
 	protected void setUpVolume() throws IOException {
 		tempFolder = Files.createTempDirectory("");
 
-		volume = new CachedBoxVolume(new LocalReadBackend(tempFolder),
+		readBackend = new LocalReadBackend(tempFolder);
+		volume = new CachedBoxVolume(readBackend,
 				new LocalWriteBackend(tempFolder),
 				keyPair, deviceID, new File(System.getProperty("java.io.tmpdir")), "");
 		volume2 = new CachedBoxVolume(new LocalReadBackend(tempFolder),

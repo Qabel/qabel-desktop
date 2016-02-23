@@ -29,7 +29,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
-	private final BoxFile boxFile = new BoxFile("123", "filename", 1L, 2L, new byte[0]);
+	private final BoxFile boxFile = new BoxFile("prefix", "123", "filename", 1L, 2L, new byte[0]);
 	private StubSharingService sharingService = new StubSharingService();
 	private BoxNavigationStub rootNavigation;
 
@@ -79,7 +79,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 	@Test
 	public void loadsShares() throws Exception {
 		ShareNotificationMessage notification = new ShareNotificationMessage("http://some.url.com", "key", "message");
-		sharingService.loadFileMetadata = new BoxExternalFile(identity.getEcPublicKey(), "block", "share name", 123L, 123L, new byte[0]);
+		sharingService.loadFileMetadata = new BoxExternalFile(identity.getEcPublicKey(), "prefix", "block", "share name", 123L, 123L, new byte[0]);
 		clientConfiguration.getShareNotification(identity).add(notification);
 
 		int sharedIndex = 1;

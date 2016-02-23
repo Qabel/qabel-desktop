@@ -3,6 +3,7 @@ package de.qabel.desktop.storage;
 import java.util.Arrays;
 
 public class BoxFile extends BoxObject {
+	protected String prefix;
 	protected String block;
 	protected Long size;
 	protected Long mtime;
@@ -16,6 +17,7 @@ public class BoxFile extends BoxObject {
 
 		BoxFile boxFile = (BoxFile) o;
 
+		if (prefix != null ? !prefix.equals(boxFile.prefix) : boxFile.prefix != null) return false;
 		if (block != null ? !block.equals(boxFile.block) : boxFile.block != null) return false;
 		if (name != null ? !name.equals(boxFile.name) : boxFile.name != null) return false;
 		if (size != null ? !size.equals(boxFile.size) : boxFile.size != null) return false;
@@ -27,7 +29,8 @@ public class BoxFile extends BoxObject {
 
 	@Override
 	public int hashCode() {
-		int result = block != null ? block.hashCode() : 0;
+		int result = prefix != null ? prefix.hashCode() : 0;
+		result = 31 * result + (block != null ? block.hashCode() : 0);
 		result = 31 * result + (name != null ? name.hashCode() : 0);
 		result = 31 * result + (size != null ? size.hashCode() : 0);
 		result = 31 * result + (mtime != null ? mtime.hashCode() : 0);
@@ -37,16 +40,18 @@ public class BoxFile extends BoxObject {
 		return result;
 	}
 
-	public BoxFile(String block, String name, Long size, Long mtime, byte[] key) {
+	public BoxFile(String prefix, String block, String name, Long size, Long mtime, byte[] key) {
 		super(name);
+		this.prefix = prefix;
 		this.block = block;
 		this.size = size;
 		this.mtime = mtime;
 		this.key = key;
 	}
 
-	public BoxFile(String block, String name, Long size, Long mtime, byte[] key, String meta, byte[] metaKey) {
+	public BoxFile(String prefix, String block, String name, Long size, Long mtime, byte[] key, String meta, byte[] metaKey) {
 		super(name);
+		this.prefix = prefix;
 		this.block = block;
 		this.size = size;
 		this.mtime = mtime;
@@ -57,7 +62,7 @@ public class BoxFile extends BoxObject {
 
 	@Override
 	protected BoxFile clone() throws CloneNotSupportedException {
-		return new BoxFile(block,name,size,mtime, key, meta,metakey);
+		return new BoxFile(prefix, block, name, size, mtime, key, meta, metakey);
 	}
 
 	/**
@@ -103,10 +108,10 @@ public class BoxFile extends BoxObject {
 
 	@Override
 	public String getRef() {
-		String meta = getMeta();
-		if (meta == null || !meta.contains("/")) {
-			return meta;
-		}
-		return meta.split("/")[1];
+		return getMeta();
+	}
+
+	public String getPrefix() {
+		return prefix;
 	}
 }

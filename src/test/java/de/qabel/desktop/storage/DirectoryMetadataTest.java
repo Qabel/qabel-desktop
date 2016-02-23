@@ -45,7 +45,7 @@ public class DirectoryMetadataTest {
 
 	@Test
 	public void testFileOperations() throws QblStorageException {
-		BoxFile file = new BoxFile("block", "name", 0L, 0L, new byte[]{1, 2,});
+		BoxFile file = new BoxFile("prefix", "block", "name", 0L, 0L, new byte[]{1, 2,});
 		dm.insertFile(file);
 		assertThat(dm.listFiles().size(), is(1));
 		assertThat(file, equalTo(dm.listFiles().get(0)));

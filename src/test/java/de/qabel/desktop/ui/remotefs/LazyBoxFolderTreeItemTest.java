@@ -123,7 +123,7 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 	}
 
 	private BoxFile createSomeFile() {
-		return new BoxFile("ref2", "name2", 0L, 0L, new byte[0]);
+		return new BoxFile("prefix", "ref2", "name2", 0L, 0L, new byte[0]);
 	}
 
 	private class FakeBoxNavigation extends Observable implements BoxNavigation {

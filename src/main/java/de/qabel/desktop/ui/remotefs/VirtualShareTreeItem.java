@@ -4,20 +4,26 @@ import de.qabel.desktop.SharingService;
 import de.qabel.desktop.config.ShareNotifications;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.exceptions.QblStorageException;
+import de.qabel.desktop.exceptions.QblStorageNotFound;
 import de.qabel.desktop.storage.*;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class VirtualShareTreeItem extends TreeItem<BoxObject> {
+	private static Logger logger = LoggerFactory.getLogger(VirtualShareTreeItem.class.getSimpleName());
 	private boolean initialized = false;
-	private static ExecutorService executorService = Executors.newCachedThreadPool();
+	private static ExecutorService executorService = Executors.newSingleThreadExecutor();
 	private ShareNotifications notifications;
 	private SharingService sharingService;
 	private AuthenticatedDownloader readBackend;
@@ -34,34 +40,46 @@ public class VirtualShareTreeItem extends TreeItem<BoxObject> {
 		this.readBackend = readBackend;
 		this.sharingService = sharingService;
 
-		notifications.addObserver((o, arg) -> {
+		notifications.addObserver((o, arg) -> executorService.submit(() -> {
 			initialized = false;
-			Platform.runLater(super.getChildren()::clear);
-		});
+			this.reload();
+		}));
 	}
 
 	@Override
 	public boolean isLeaf() {
-		return false;
+		return getChildren().isEmpty();
 	}
 
 	@Override
 	public ObservableList<TreeItem<BoxObject>> getChildren() {
+		reload();
+		return super.getChildren();
+	}
+
+	private synchronized void reload() {
 		if (!initialized) {
 			executorService.submit(() -> {
+				if (!super.getChildren().isEmpty()) {
+					Platform.runLater(super.getChildren()::clear);
+				}
+				List<ShareNotificationMessage> removedShares = new LinkedList<>();
 				for (ShareNotificationMessage message : notifications.getNotifications()) {
-					Platform.runLater(() -> {
-						try {
-							super.getChildren().add(itemFromNotification(message));
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					});
+					try {
+						final TreeItem<BoxObject> item = itemFromNotification(message);
+						Platform.runLater(() -> super.getChildren().add(item));
+					} catch (QblStorageNotFound e) {
+						removedShares.add(message);
+					} catch (Exception e) {
+						logger.error("failed to load FM", e);
+					}
+				}
+				for (ShareNotificationMessage message : removedShares) {
+					notifications.remove(message);
 				}
 			});
 			initialized = true;
 		}
-		return super.getChildren();
 	}
 
 	private TreeItem<BoxObject> itemFromNotification(ShareNotificationMessage message) throws IOException, QblStorageException, InvalidKeyException, UnmodifiedException {
