@@ -52,7 +52,7 @@
 }
 
 #shadow {
-    -fx-effect: dropshadow(one-pass-box, grey, 10, -1, 0, 0);
+    -fx-effect: dropshadow(one-pass-box, grey, 5, -1, 0, 2);
 }
 
 #myMessagebox {
@@ -181,8 +181,14 @@
     -fx-text-alignment: right;
 }
 
+.own .message-text .label {
+    -fx-text-alignment: right;
+}
+.other .message-text .label {
+    -fx-text-alignment: left;
+}
+
 .message-text .label {
-    -fx-text-alignment: justify;
     -fx-wrap-text: true;
     -fx-text-fill: white;
 }

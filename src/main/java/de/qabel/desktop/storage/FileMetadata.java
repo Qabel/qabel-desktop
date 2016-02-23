@@ -13,6 +13,7 @@ public class FileMetadata extends AbstractMetadata {
 					" version INTEGER PRIMARY KEY )",
 			"CREATE TABLE file (" +
 					" owner BLOB NOT NULL," +
+					" prefix VARCHAR(255) NOT NULL," +
 					" block VARCHAR(255) NOT NULL," +
 					" name VARCHAR(255) NULL PRIMARY KEY," +
 					" size LONG NOT NULL," +
@@ -64,13 +65,15 @@ public class FileMetadata extends AbstractMetadata {
 
 	private void insertFile(QblECPublicKey owner, BoxFile boxFile) throws QblStorageException {
 		try (PreparedStatement statement = connection.prepareStatement(
-				"INSERT INTO file (owner, block, name, size, mtime, key) VALUES(?, ?, ?, ?, ?, ?)")) {
-			statement.setBytes(1, owner.getKey());
-			statement.setString(2, boxFile.getBlock());
-			statement.setString(3, boxFile.getName());
-			statement.setLong(4, boxFile.getSize());
-			statement.setLong(5, boxFile.getMtime());
-			statement.setBytes(6, boxFile.getKey());
+				"INSERT INTO file (owner, prefix, block, name, size, mtime, key) VALUES(?, ?, ?, ?, ?, ?, ?)")) {
+			int i = 0;
+			statement.setBytes(++i, owner.getKey());
+			statement.setString(++i, boxFile.getBlock());
+			statement.setString(++i, boxFile.getBlock());
+			statement.setString(++i, boxFile.getName());
+			statement.setLong(++i, boxFile.getSize());
+			statement.setLong(++i, boxFile.getMtime());
+			statement.setBytes(++i, boxFile.getKey());
 			if (statement.executeUpdate() != 1) {
 				throw new QblStorageException("Failed to insert file");
 			}
@@ -83,15 +86,17 @@ public class FileMetadata extends AbstractMetadata {
 
 	public BoxExternalFile getFile() throws QblStorageException {
 		try (Statement statement = connection.createStatement()) {
-			ResultSet rs = statement.executeQuery("SELECT owner, block, name, size, mtime, key FROM file LIMIT 1");
+			ResultSet rs = statement.executeQuery("SELECT owner, prefix, block, name, size, mtime, key FROM file LIMIT 1");
 			if (rs.next()) {
-				byte[] ownerKey = rs.getBytes(1);
-				String block = rs.getString(2);
-				String name = rs.getString(3);
-				long size = rs.getLong(4);
-				long mtime = rs.getLong(5);
-				byte[] key = rs.getBytes(6);
-				return new BoxExternalFile(new QblECPublicKey(ownerKey), block, name, size, mtime, key);
+				int i = 0;
+				byte[] ownerKey = rs.getBytes(++i);
+				String prefix = rs.getString(++i);
+				String block = rs.getString(++i);
+				String name = rs.getString(++i);
+				long size = rs.getLong(++i);
+				long mtime = rs.getLong(++i);
+				byte[] key = rs.getBytes(++i);
+				return new BoxExternalFile(new QblECPublicKey(ownerKey), prefix, block, name, size, mtime, key);
 			}
 			return null;
 		} catch (SQLException e) {

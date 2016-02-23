@@ -103,6 +103,8 @@ public interface BoxNavigation extends ReadableBoxNavigation {
 	 */
 	void delete(BoxFile file) throws QblStorageException;
 
+	void unshare(BoxObject boxObject) throws QblStorageException;
+
 	/**
 	 * Delete a subfolder recursively.
 	 *

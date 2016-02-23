@@ -10,12 +10,19 @@ import java.nio.file.Path;
 public class BoxVolumeLocalTest extends BoxVolumeTest {
 
 	private Path tempFolder;
+	private LocalReadBackend readBackend;
+
+	@Override
+	protected StorageReadBackend getReadBackend() {
+		return readBackend;
+	}
 
 	@Override
 	public void setUpVolume() throws IOException {
 		tempFolder = Files.createTempDirectory("");
 
-		volume = new BoxVolume(new LocalReadBackend(tempFolder),
+		readBackend = new LocalReadBackend(tempFolder);
+		volume = new BoxVolume(readBackend,
 				new LocalWriteBackend(tempFolder),
 				keyPair, deviceID, new File(System.getProperty("java.io.tmpdir")), "");
 		volume2 = new BoxVolume(new LocalReadBackend(tempFolder),

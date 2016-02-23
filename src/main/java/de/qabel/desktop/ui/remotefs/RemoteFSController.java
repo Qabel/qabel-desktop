@@ -1,5 +1,6 @@
 package de.qabel.desktop.ui.remotefs;
 
+import com.sun.javafx.application.PlatformImpl;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.SharingService;
@@ -8,6 +9,7 @@ import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.ShareNotifications;
 import de.qabel.desktop.config.factory.BoxVolumeFactory;
 import de.qabel.desktop.daemon.management.*;
+import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.storage.*;
@@ -43,6 +45,7 @@ import java.net.URL;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
+import java.util.Observable;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
@@ -223,36 +226,72 @@ public class RemoteFSController extends AbstractController implements Initializa
 				return result;
 			}
 
-			buttonFromImage(item, bar, downloadImage, this::download, "download");
+			loadInlineButtons(item, bar);
 
-			if (item.getValue() instanceof BoxFolder) {
-				buttonFromImage(item, bar, uploadFileImage, this::uploadFile, "upload_file");
-				buttonFromImage(item, bar, uploadFolderImage, this::uploadFolder, "upload_folder");
-				buttonFromImage(item, bar, addFolderImage, this::createFolder, "create_folder");
-			} else {
-				spacer(bar);
-				spacer(bar);
-				spacer(bar);
+			BoxObject value = item.getValue();
+			TreeItem<BoxObject> folder = value instanceof BoxFolder ? item : item.getParent();
+			if (!(folder instanceof LazyBoxFolderTreeItem)) {
+				return result;
+			}
+			ReadableBoxNavigation rNav = ((LazyBoxFolderTreeItem)folder).getNavigation();
+			if (!(rNav instanceof CachedBoxNavigation)) {
+				return result;
 			}
 
-			buttonFromImage(item, bar, deleteImage, this::deleteItem, "delete");
-			if (item.getValue() instanceof BoxFolder) {
-				spacer(bar);
-			} else if (!(item.getValue() instanceof BoxExternal)) {
-				if (((BoxFile)item.getValue()).isShared()) {
-					buttonFromImage(item, bar, shareImage, this::showDetails, "share", new BooleanBinding() {
-						@Override
-						protected boolean computeValue() {
-							return true;
+			CachedBoxNavigation nav = (CachedBoxNavigation)rNav;
+			nav.addObserver((o, arg) -> {
+					if (!(arg instanceof ChangeEvent)) {
+						return;
+					}
+					ChangeEvent event = (ChangeEvent) arg;
+					if (!event.getPath().equals(value instanceof BoxFolder ? nav.getPath() : nav.getPath(item.getValue()))) {
+						return;
+					}
+					Platform.runLater(() -> {
+						try {
+							if (value instanceof BoxFile) {
+								item.setValue(nav.getFile(value.getName()));
+							}
+							loadInlineButtons(item, bar);
+							result.set(bar);
+						} catch (QblStorageException ignored) {
 						}
-					}).getStyleClass().add("highlighted");
-				} else {
-					buttonFromImage(item, bar, shareImage, this::showDetails, "share");
-				}
-			}
+					});
+			});
 
 			return result;
 		};
+	}
+
+	private void loadInlineButtons(TreeItem<BoxObject> item, HBox bar) {
+		bar.getChildren().clear();
+		buttonFromImage(item, bar, downloadImage, this::download, "download");
+
+		if (item.getValue() instanceof BoxFolder) {
+			buttonFromImage(item, bar, uploadFileImage, this::uploadFile, "upload_file");
+			buttonFromImage(item, bar, uploadFolderImage, this::uploadFolder, "upload_folder");
+			buttonFromImage(item, bar, addFolderImage, this::createFolder, "create_folder");
+		} else {
+			spacer(bar);
+			spacer(bar);
+			spacer(bar);
+		}
+
+		buttonFromImage(item, bar, deleteImage, this::deleteItem, "delete");
+		if (item.getValue() instanceof BoxFolder) {
+			spacer(bar);
+		} else if (!(item.getValue() instanceof BoxExternal)) {
+			if (((BoxFile)item.getValue()).isShared()) {
+				buttonFromImage(item, bar, shareImage, this::showDetails, "share", new BooleanBinding() {
+					@Override
+					protected boolean computeValue() {
+						return true;
+					}
+				}).getStyleClass().add("highlighted");
+			} else {
+				buttonFromImage(item, bar, shareImage, this::showDetails, "share");
+			}
+		}
 	}
 
 	private Callback<TreeTableView<BoxObject>, TreeTableRow<BoxObject>> sharingRowFactory() {
@@ -270,7 +309,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 				ObservableList<String> styleClass = row.getStyleClass();
 
 				styleClass.remove("child");
-				styleClass.remove("share-root");
+				styleClass.remove("root");
 				styleClass.remove("share-root");
 
 				if (newValue == rootItem) {

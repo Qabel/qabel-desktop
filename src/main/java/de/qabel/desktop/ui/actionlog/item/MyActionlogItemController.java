@@ -36,7 +36,7 @@ public class MyActionlogItemController extends AbstractController implements Ini
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		MessageRenderer renderer = messageRendererFactory.getRenderer(dropMessage.getDropPayloadType());
-		Node renderedMessage = renderer.render(dropMessage.getDropPayload());
+		Node renderedMessage = renderer.render(dropMessage.getDropPayload(), resources);
 		renderedMessage.getStyleClass().add("sent");
 		messageContainer.getChildren().addAll(renderedMessage);
 

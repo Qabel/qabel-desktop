@@ -61,8 +61,12 @@ public class PersistenceDropMessageRepository extends AbstractCachedPersistenceR
 		List<PersistenceDropMessage> messages = persistence.getEntities(PersistenceDropMessage.class);
 		for (PersistenceDropMessage m : messages) {
 			if (!map.containsKey(m.getPersistenceID())) {
-				if (belongsToConversation(m, c.hashCode(), identity.hashCode())) {
-					result.add(m);
+				try {
+					if (belongsToConversation(m, c.hashCode(), identity.hashCode())) {
+						result.add(m);
+					}
+				} catch (Exception e) {
+					logger.error(e.getMessage(), e);
 				}
 			}
 		}

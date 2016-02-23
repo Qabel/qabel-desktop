@@ -56,6 +56,8 @@ public abstract class BoxVolumeTest {
 		volume.createIndex(bucket, prefix);
 	}
 
+	protected abstract StorageReadBackend getReadBackend();
+
 	protected abstract void setUpVolume() throws IOException;
 
 	@After
@@ -267,5 +269,54 @@ public abstract class BoxVolumeTest {
 		assertEquals(1, nav2.getSharesOf(boxFile2).size());
 		assertEquals(contact.getKeyIdentifier(), nav2.getSharesOf(boxFile2).get(0).getRecipient());
 		assertEquals(boxFile.getRef(), nav2.getSharesOf(boxFile2).get(0).getRef());
+	}
+
+	@Test
+	public void testUnshare() throws Exception {
+		BoxNavigation nav = volume.navigate();
+		File file = new File(testFileName);
+		BoxFile boxFile = nav.upload("file1", file);
+		nav.share(keyPair.getPub(), boxFile, contact.getKeyIdentifier());
+		nav.unshare(boxFile);
+
+		BoxNavigation nav2 = volume2.navigate();
+		BoxFile boxFile2 = nav2.getFile("file1");
+		assertNull(boxFile2.getMeta());
+		assertNull(boxFile2.getMetakey());
+		assertFalse(boxFile2.isShared());
+		assertEquals(0, nav2.getSharesOf(boxFile2).size());
+	}
+
+	@Test
+	public void deleteCleansShares() throws Exception {BoxNavigation nav = volume.navigate();
+		File file = new File(testFileName);
+		BoxFile boxFile = nav.upload("file1", file);
+		nav.share(keyPair.getPub(), boxFile, contact.getKeyIdentifier());
+		String prefix = boxFile.getPrefix();
+		String meta = boxFile.getMeta();
+		byte[] metakey = boxFile.getMetakey();
+		assertTrue(blockExists(meta));
+		assertFalse(nav.getSharesOf(boxFile).isEmpty());
+
+		nav.delete(boxFile);
+		assertNull(boxFile.getMeta());
+		assertNull(boxFile.getMetakey());
+
+		// file metadata has been deleted
+		assertFalse(blockExists(meta));
+
+		// share has been removed from index
+		boxFile.setMeta(meta);
+		boxFile.setMetakey(metakey);
+		assertTrue(nav.getSharesOf(boxFile).isEmpty());
+	}
+
+	protected boolean blockExists(String meta) throws QblStorageException {
+		try {
+			getReadBackend().download(meta);
+			return true;
+		} catch (QblStorageNotFound e) {
+			return false;
+		}
 	}
 }

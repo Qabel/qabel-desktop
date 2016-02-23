@@ -42,7 +42,7 @@ public class OtherActionlogItemController extends AbstractController implements 
 	public void initialize(URL location, ResourceBundle resources) {
 
 		MessageRenderer renderer = messageRendererFactory.getRenderer(dropMessage.getDropPayloadType());
-		Node renderedMessage = renderer.render(dropMessage.getDropPayload());
+		Node renderedMessage = renderer.render(dropMessage.getDropPayload(), resources);
 		messageContainer.getChildren().addAll(renderedMessage);
 
 		p = new PrettyTime(resources.getLocale());

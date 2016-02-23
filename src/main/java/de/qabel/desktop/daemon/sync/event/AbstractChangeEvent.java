@@ -2,6 +2,8 @@ package de.qabel.desktop.daemon.sync.event;
 
 import java.nio.file.Path;
 
+import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.*;
+
 public abstract class AbstractChangeEvent extends AbstractWatchEvent implements ChangeEvent {
 	protected final ChangeEvent.TYPE type;
 
@@ -17,15 +19,28 @@ public abstract class AbstractChangeEvent extends AbstractWatchEvent implements 
 	@Override
 	public abstract boolean isValid();
 
+	@Override
 	public boolean isUpdate() {
-		return type == ChangeEvent.TYPE.UPDATE;
+		return type == UPDATE;
 	}
 
+	@Override
 	public boolean isCreate() {
-		return type == ChangeEvent.TYPE.CREATE;
+		return type == CREATE;
 	}
 
+	@Override
 	public boolean isDelete() {
-		return type == ChangeEvent.TYPE.DELETE;
+		return type == DELETE;
+	}
+
+	@Override
+	public boolean isShare() {
+		return type == SHARE;
+	}
+
+	@Override
+	public boolean isUnshare() {
+		return type == UNSHARE;
 	}
 }

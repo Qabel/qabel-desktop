@@ -104,7 +104,7 @@ public class LayoutController extends AbstractController implements Initializabl
 		}
 
 		updateIdentity();
-		clientConfiguration.addObserver((o, arg) -> updateIdentity());
+		clientConfiguration.addObserver((o, arg) -> Platform.runLater(this::updateIdentity));
 
 		uploadProgress.setProgress(0);
 		uploadProgress.setDisable(true);

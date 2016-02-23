@@ -213,7 +213,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	private BoxFile uploadFile(String name, File file, BoxFile oldFile, ProgressListener listener) throws QblStorageException {
 		KeyParameter key = cryptoUtils.generateSymmetricKey();
 		String block = UUID.randomUUID().toString();
-		BoxFile boxFile = new BoxFile(block, name, file.length(), 0L, key.getKey());
+		BoxFile boxFile = new BoxFile(prefix, block, name, file.length(), 0L, key.getKey());
 		boxFile.setMtime(file.lastModified());
 		uploadEncrypted(file, key, "blocks/" + block, listener);
 		updatedFiles.add(new FileUpdate(oldFile, boxFile));
@@ -285,7 +285,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	@Override
 	public BoxExternalReference createFileMetadata(QblECPublicKey owner, BoxFile boxFile) throws QblStorageException {
 		String block = UUID.randomUUID().toString();
-		boxFile.setMeta(prefix + '/' + block);
+		boxFile.setMeta(block);
 		KeyParameter key = cryptoUtils.generateSymmetricKey();
 		boxFile.setMetakey(key.getKey());
 
@@ -315,17 +315,15 @@ public abstract class AbstractNavigation implements BoxNavigation {
 			File out = getMetadataFile(boxFile.getMeta(), boxFile.getMetakey());
 			FileMetadata fileMetadataOld = FileMetadata.openExisting(out);
 			FileMetadata fileMetadataNew = FileMetadata.openNew(fileMetadataOld.getFile().getOwner(), boxFile, dm.getTempDir());
-			String[] splitURL = boxFile.getMeta().split("/");
-			uploadEncrypted(fileMetadataNew.getPath(), new KeyParameter(boxFile.getMetakey()), splitURL[1]);
+			uploadEncrypted(fileMetadataNew.getPath(), new KeyParameter(boxFile.getMetakey()), boxFile.getMeta());
 		} catch (QblStorageException | FileNotFoundException e) {
 			logger.error("Could not create or upload FileMetadata", e);
 			throw e;
 		}
 	}
 
-	private File getMetadataFile(String url, byte[] key) throws QblStorageException, IOException, InvalidKeyException {
-		String[] splitURL = url.split("/");
-		InputStream encryptedMetadata = readBackend.download(splitURL[1]).getInputStream();
+	private File getMetadataFile(String meta, byte[] key) throws QblStorageException, IOException, InvalidKeyException {
+		InputStream encryptedMetadata = readBackend.download(meta).getInputStream();
 
 		File tmp = File.createTempFile("dir", "db", dm.getTempDir());
 		tmp.deleteOnExit();
@@ -354,7 +352,52 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	public synchronized void delete(BoxFile file) throws QblStorageException {
 		dm.deleteFile(file);
 		deleteQueue.add("blocks/" + file.getBlock());
+
+		if (file.isShared()) {
+			unshare(file);
+		}
 		autocommit();
+	}
+
+	@Override
+	public synchronized void unshare(BoxObject boxObject) throws QblStorageException {
+		getIndexNavigation().getSharesOf(boxObject).stream().forEach(share -> {
+			try {
+				getIndexNavigation().deleteShare(share);
+			} catch (QblStorageException e) {
+				logger.error(e.getMessage(), e);
+			}
+		});
+		if (!(boxObject instanceof BoxFile)) {
+			throw new NotImplementedException("unshare not implemented for " + boxObject.getClass().getSimpleName());
+		}
+		removeFileMetadata((BoxFile) boxObject);
+		autocommit();
+	}
+
+	/**
+	 * Deletes FileMetadata and sets BoxFile.meta and BoxFile.metakey to null. Does not re-encrypt BoxFile thus
+	 * receivers of the FileMetadata can still read the BoxFile.
+	 * @param boxFile BoxFile to remove FileMetadata from.
+	 * @return True if FileMetadata has been deleted. False if meta information is missing.
+	 */
+	protected boolean removeFileMetadata(BoxFile boxFile) throws QblStorageException {
+		if (boxFile.meta == null || boxFile.metakey == null) {
+			return false;
+		}
+
+		writeBackend.delete(boxFile.meta);
+		boxFile.meta = null;
+		boxFile.metakey = null;
+
+		// Overwrite = delete old file, upload new file
+		BoxFile oldFile = dm.getFile(boxFile.getName());
+		if (oldFile != null) {
+			dm.deleteFile(oldFile);
+		}
+		dm.insertFile(boxFile);
+
+		return true;
 	}
 
 	@Override
@@ -456,7 +499,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	@Override
 	public BoxExternalReference share(QblECPublicKey owner, BoxFile file, String recipient) throws QblStorageException {
 		BoxExternalReference ref = createFileMetadata(owner, file);
-		BoxShare share = new BoxShare(file.getMeta().split("/")[1], recipient);
+		BoxShare share = new BoxShare(file.getMeta(), recipient);
 		getIndexNavigation().insertShare(share);
 		return ref;
 	}

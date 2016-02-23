@@ -104,17 +104,25 @@ public class AbstractControllerTest {
 		clientConfiguration.selectIdentity(identity);
 	}
 
-	protected static void waitUntil(Callable<Boolean> evaluate) {
+	public static void waitUntil(Callable<Boolean> evaluate) {
 		waitUntil(evaluate, 2000L);
 	}
 
-	protected static void waitUntil(Callable<Boolean> evaluate, long timeout) {
+	public static void waitUntil(Callable<Boolean> evaluate, long timeout) {
+		waitUntil(evaluate, timeout, () -> "wait timeout");
+	}
+
+	public static void waitUntil(Callable<Boolean> evaluate, Callable<String> errorMessage) {
+		waitUntil(evaluate, 2000L, () -> "wait timeout");
+	}
+
+	public static void waitUntil(Callable<Boolean> evaluate, long timeout, Callable<String> errorMessage) {
 		long startTime = System.currentTimeMillis();
 		try {
 			while (!evaluate.call()) {
 				Thread.yield();
 				if (System.currentTimeMillis() - timeout > startTime) {
-					fail("wait timeout");
+					fail(errorMessage.call());
 				}
 			}
 		} catch (Exception e) {

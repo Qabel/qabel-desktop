@@ -66,7 +66,7 @@ public class BoxObjectCellValueFactoryTest extends AbstractControllerTest {
 		rootNodeFolder.getChildren().add(boxFolderTreeItem);
 		treeTableFolder = new TreeTableView(rootNodeFolder);
 
-		TreeItem<BoxObject> boxFileTreeItem = new TreeItem<>(new BoxFile("block", "File", 1L, 2L, new byte[16]));
+		TreeItem<BoxObject> boxFileTreeItem = new TreeItem<>(new BoxFile("prefix", "block", "File", 1L, 2L, new byte[16]));
 		rootNodeFile.getChildren().add(boxFileTreeItem);
 		treeTableFile = new TreeTableView(rootNodeFile);
 

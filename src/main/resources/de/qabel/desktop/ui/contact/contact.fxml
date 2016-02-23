@@ -4,10 +4,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<BorderPane fx:id="contactroot" prefHeight="660.0" xmlns="http://javafx.com/javafx/8"
+<BorderPane prefHeight="4000" maxHeight="Infinity" maxWidth="Infinity" fx:id="contactroot" xmlns="http://javafx.com/javafx/8"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.contact.ContactController">
     <center>
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="600.0" prefWidth="250">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefWidth="250">
             <content>
                 <VBox fx:id="actionlogViewPane" maxWidth="600"/>
             </content>
@@ -32,7 +32,7 @@
                         </Button>
                     </children>
                 </HBox>
-                <ScrollPane fitToWidth="true" prefHeight="600.0" prefWidth="251.0">
+                <ScrollPane fitToWidth="true" prefHeight="4000" prefWidth="251.0">
                     <content>
                         <VBox fx:id="contactList" prefHeight="43.0" prefWidth="347.0" BorderPane.alignment="CENTER">
                             <children>

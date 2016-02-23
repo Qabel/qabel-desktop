@@ -1,7 +1,8 @@
 package de.qabel.desktop.daemon.sync.event;
 
 public interface ChangeEvent extends WatchEvent {
-	enum TYPE {CREATE, UPDATE, DELETE}
+
+	enum TYPE {CREATE, UPDATE, DELETE, SHARE, UNSHARE}
 
 	TYPE getType();
 
@@ -12,4 +13,8 @@ public interface ChangeEvent extends WatchEvent {
 	boolean isCreate();
 
 	boolean isDelete();
+
+	boolean isShare();
+
+	boolean isUnshare();
 }

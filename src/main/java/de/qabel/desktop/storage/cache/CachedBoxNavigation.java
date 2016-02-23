@@ -5,6 +5,7 @@ import de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
+import sun.security.provider.SHA;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,15 +17,13 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.CREATE;
-import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.DELETE;
-import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.UPDATE;
+import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.*;
 
 public class CachedBoxNavigation<T extends BoxNavigation> extends Observable implements BoxNavigation, PathNavigation {
 	protected final T nav;
 	private final BoxNavigationCache<CachedBoxNavigation> cache = new BoxNavigationCache<>();
 	private final Path path;
-	private static final ExecutorService executor = Executors.newCachedThreadPool();
+	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	public CachedBoxNavigation(T nav, Path path) {
 		this.nav = nav;
@@ -93,8 +92,8 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 		return upload;
 	}
 
-	protected void notifyAsync(BoxObject file, TYPE type) {
-		executor.submit(() -> notify(file, type));
+	protected void notifyAsync(BoxObject boxObject, TYPE type) {
+		executor.submit(() -> notify(boxObject, type));
 	}
 
 	@Override
@@ -132,6 +131,12 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 	public void delete(BoxFile file) throws QblStorageException {
 		nav.delete(file);
 		notifyAsync(file, DELETE);
+	}
+
+	@Override
+	public void unshare(BoxObject boxObject) throws QblStorageException {
+		nav.unshare(boxObject);
+		notifyAsync(boxObject, UNSHARE);
 	}
 
 	@Override
@@ -188,7 +193,9 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 
 	@Override
 	public BoxExternalReference share(QblECPublicKey owner, BoxFile file, String receiver) throws QblStorageException {
-		return  nav.share(owner, file, receiver);
+		BoxExternalReference share = nav.share(owner, file, receiver);
+		notifyAsync(file, SHARE);
+		return share;
 	}
 
 	@Override

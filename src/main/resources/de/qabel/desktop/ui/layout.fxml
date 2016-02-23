@@ -110,7 +110,7 @@
    </left>
    <center>
 
-      <BorderPane  styleClass="edge-to-edge" >
+      <BorderPane styleClass="edge-to-edge" >
          <center>
             <VBox fx:id="scrollContent" maxWidth="Infinity" styleClass="scrollContent" maxHeight="Infinity" BorderPane.alignment="CENTER">
                <children/>

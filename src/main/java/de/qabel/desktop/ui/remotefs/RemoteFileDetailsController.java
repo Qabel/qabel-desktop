@@ -3,21 +3,15 @@ package de.qabel.desktop.ui.remotefs;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Contacts;
 import de.qabel.core.config.Identity;
-import de.qabel.core.crypto.QblECPublicKey;
-import de.qabel.core.drop.DropMessage;
-import de.qabel.core.exceptions.QblNetworkInvalidResponseException;
 import de.qabel.desktop.SharingService;
 import de.qabel.desktop.config.ClientConfiguration;
-import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
-import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
-import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.storage.*;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.ui.AbstractController;
-import de.qabel.desktop.ui.connector.DropConnector;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -27,10 +21,10 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-import org.spongycastle.util.encoders.Hex;
 
 import javax.inject.Inject;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
@@ -59,10 +53,18 @@ public class RemoteFileDetailsController extends AbstractController implements I
 	@FXML
 	VBox currentShares;
 
+	@FXML
+	private Node unshare;
+
 	TextInputDialog dialog;
+	Alert confirmationDialog;
+
+	private ResourceBundle resources;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		this.resources = resources;
+
 		clientConfiguration.addObserver((o, arg) -> {
 			if (arg instanceof Identity) {
 				updateContacts();
@@ -74,22 +76,42 @@ public class RemoteFileDetailsController extends AbstractController implements I
 		shareReceiver.getSelectionModel().selectedItemProperty().addListener(showShareMessageDialog());
 		shareReceiver.getEditor().textProperty().addListener(filterContacts());
 
+		unshare.setOnMouseClicked(event -> askForUnshare());
+
 		updateContacts();
 		loadShares();
 	}
 
+	private void askForUnshare() {
+		String question = getString(resources, "confirmUnshare", boxObject.getName());
+		confirmationDialog = new Alert(Alert.AlertType.CONFIRMATION, question, ButtonType.CANCEL, ButtonType.YES);
+		confirmationDialog.setHeaderText(null);
+		confirmationDialog.showAndWait()
+				.filter(buttonType -> buttonType == ButtonType.YES)
+				.ifPresent(buttonType1 -> unshare());
+	}
+
+	private void unshare() {
+		tryOrAlert(() -> {
+			navigation.unshare(boxObject);
+			loadShares();
+		});
+	}
+
 	private void loadShares() {
-		ObservableList<Node> shares = currentShares.getChildren();
-		shares.clear();
-		try {
-			Contacts contacts = contactRepository.findContactsFromOneIdentity(clientConfiguration.getSelectedIdentity());
-			for (BoxShare share : navigation.getSharesOf(boxObject)) {
-				String recipientKeyId = share.getRecipient();
-				shares.add(new Label(contacts.getByKeyIdentifier(recipientKeyId).getAlias()));
-			}
-		} catch (Exception e) {
-			alert(e);
-		}
+		Platform.runLater(() -> {
+			ObservableList<Node> shares = currentShares.getChildren();
+			shares.clear();
+			tryOrAlert(() ->  {
+				Contacts contacts = contactRepository.findContactsFromOneIdentity(clientConfiguration.getSelectedIdentity());
+				for (BoxShare share : navigation.getSharesOf(boxObject)) {
+					String recipientKeyId = share.getRecipient();
+					Contact contact = contacts.getByKeyIdentifier(recipientKeyId);
+					String alias = contact == null ? recipientKeyId : contact.getAlias();
+					shares.add(new Label(alias));
+				}
+			});
+		});
 	}
 
 	private StringConverter<Contact> contactAutocomleteResultConverter() {
@@ -139,9 +161,7 @@ public class RemoteFileDetailsController extends AbstractController implements I
 			dialog = new TextInputDialog();
 			dialog.setTitle("Share message");
 			dialog.setHeaderText("You are sharing the file " + boxObject.getName() + " with user " + newValue.getAlias() + ". Please insert a message for him/her.");
-			dialog.showAndWait().ifPresent(message -> {
-				share(newValue, message);
-			});
+			dialog.showAndWait().ifPresent(message -> share(newValue, message));
 		};
 	}
 
@@ -170,26 +190,18 @@ public class RemoteFileDetailsController extends AbstractController implements I
 	}
 
 	private void share(Contact contact, String message) {
-		try {
-			sharingService.shareAndSendMessage(clientConfiguration.getSelectedIdentity(), contact, (BoxFile)boxObject, message, navigation);
+		tryOrAlert(() -> {
+			sharingService.shareAndSendMessage(clientConfiguration.getSelectedIdentity(), contact, (BoxFile) boxObject, message, navigation);
 			if (navigation instanceof CachedBoxNavigation) {
 				((CachedBoxNavigation) navigation).refresh();
 				loadShares();
 			}
-		} catch (Exception e) {
-			alert(e);
-		}
+		});
 	}
 
 	private void updateContacts() {
 		shareReceiver.getItems().clear();
-		try {
-			for (Contact c : getContacts().getContacts()) {
-				shareReceiver.getItems().add(c);
-			}
-		} catch (Exception e) {
-			alert(e);
-		}
+		tryOrAlert(() -> getContacts().getContacts().forEach(shareReceiver.getItems()::add));
 	}
 
 	private Contacts getContacts() throws EntityNotFoundExcepion {
