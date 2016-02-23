@@ -56,7 +56,7 @@
 }
 
 #myMessagebox {
-    -fx-background-color: grey;
+    -fx-background-color: #4d4d4d;
     -fx-background-radius: 5;
 }
 
@@ -168,9 +168,25 @@
     -fx-padding: 1em 1em 1em 1em;
     -fx-text-alignment: justify;
     -fx-wrap-text: true;
+    -fx-text-fill: white;
+}
+
+.message-date {
+    -fx-padding: 0 1em 0.5em 1em;
+    -fx-text-alignment: justify;
+    -fx-wrap-text: true;
+}
+.own .message-date {
+    -fx-alignment: bottom-right;
+    -fx-text-alignment: right;
 }
 
 .message-text .label {
     -fx-text-alignment: justify;
     -fx-wrap-text: true;
+    -fx-text-fill: white;
+}
+
+.payload-type-icon {
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 2, 0.0 , 0 , 2);
 }

@@ -18,7 +18,7 @@ public class SyncControllerGuiTest extends AbstractGuiTest<SyncController> {
 		clickOn("#addSync");
 		assertNotNull("addSync not created", controller.addStage);
 		waitUntil(() -> controller.addStage.isShowing());
-		robot.target(controller.addStage);
+		robot.targetWindow(controller.addStage);
 		clickOn("#cancel");
 	}
 
@@ -26,13 +26,13 @@ public class SyncControllerGuiTest extends AbstractGuiTest<SyncController> {
 	public void syncSetupIntegration() {
 		clickOn("#addSync");
 		waitUntil(() -> controller.addStage.isShowing());
-		robot.target(controller.addStage);
+		robot.targetWindow(controller.addStage);
 		clickOn("#name").write("new sync");
 		clickOn("#localPath").write("tmp");
 		clickOn("#remotePath").write("/");
 		clickOn("#start");
 		waitUntil(() -> !controller.addStage.isShowing());
-		robot.target(scene);
+		robot.targetWindow(scene);
 
 		assertEquals(1, controller.syncItemNodes.size());
 	}

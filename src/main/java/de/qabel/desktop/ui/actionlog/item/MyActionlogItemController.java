@@ -2,10 +2,14 @@ package de.qabel.desktop.ui.actionlog.item;
 
 import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.actionlog.item.renderer.MessageRenderer;
+import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.TextAlignment;
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -18,26 +22,26 @@ public class MyActionlogItemController extends AbstractController implements Ini
 	ResourceBundle resourceBundle;
 
 	@FXML
-	Label textlabel;
+	Pane messageContainer;
 	@FXML
 	Label dateLabel;
 
 	@Inject
 	private DropMessage dropMessage;
+	@Inject
+	MessageRendererFactory messageRendererFactory;
+
 	PrettyTime p;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		textlabel.setText(dropMessage.getDropPayload());
+		MessageRenderer renderer = messageRendererFactory.getRenderer(dropMessage.getDropPayloadType());
+		Node renderedMessage = renderer.render(dropMessage.getDropPayload());
+		renderedMessage.getStyleClass().add("sent");
+		messageContainer.getChildren().addAll(renderedMessage);
+
 		p = new PrettyTime(resources.getLocale());
 		dateLabel.setText(p.format(dropMessage.getCreationDate()));
-
-		textlabel.setWrapText(true);
-		dateLabel.setWrapText(true);
-
-		textlabel.setTextAlignment(TextAlignment.JUSTIFY);
-		dateLabel.setTextAlignment(TextAlignment.JUSTIFY);
-
 	}
 
 

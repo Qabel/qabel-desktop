@@ -10,7 +10,7 @@
 <?import javafx.scene.text.Font?>
 <?import java.lang.*?>
 
-<HBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.actionlog.item.OtherActionlogItemController">
+<HBox styleClass="other" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.actionlog.item.OtherActionlogItemController">
     <children>
         <BorderPane fx:id="otherActionlog">
             <center>
@@ -18,15 +18,15 @@
                     <children>
                         <Polygon fill="#fd670d" rotate="270" strokeType="INSIDE">
                             <points>
-                                <Double fx:value="-12.5" />
+                                <Double fx:value="-10.0" />
                                 <Double fx:value="10.0" />
-                                <Double fx:value="12.0" />
+                                <Double fx:value="10.0" />
                                 <Double fx:value="10.0" />
                                 <Double fx:value="0.0" />
-                                <Double fx:value="-12.5" />
+                                <Double fx:value="-2.5" />
                             </points>
                             <HBox.margin>
-                                <Insets right="-15.0" top="18.0" />
+                                <Insets right="-15.0" top="20.0" />
                             </HBox.margin>
                         </Polygon>
                         <VBox maxWidth="600">
@@ -37,7 +37,7 @@
                                         </VBox>
                                     </center>
                                     <bottom>
-                                        <Label fx:id="dateLabel" text="My Message" textAlignment="RIGHT" textFill="white" BorderPane.alignment="CENTER_LEFT">
+                                        <Label fx:id="dateLabel" styleClass="message-date" text="My Message" textAlignment="RIGHT" textFill="white" BorderPane.alignment="CENTER_LEFT">
                                             <font>
                                                 <Font name="System" size="10.0" />
                                             </font>
