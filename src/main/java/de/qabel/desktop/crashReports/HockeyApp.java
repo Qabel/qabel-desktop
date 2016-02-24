@@ -1,41 +1,36 @@
 package de.qabel.desktop.crashReports;
 
-
-import com.google.gson.Gson;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class HockeyApp implements CrashReportHandler {
 	private static final String APP_ID = "3b119dc227334d2d924e4e134c72aadc";
 	private static final String TOKEN = "350b097ef0964b17a0f3907050de309d";
-	private DefaultHttpClient httpClient = new DefaultHttpClient();
-	private Gson gson =  new Gson();
+	private HttpClient httpClient = HttpClients.createMinimal();
 
 	@Override
 	public int sendFeedback(String feedback) throws URISyntaxException, IOException {
 
-		List<NameValuePair> urlParameters = new ArrayList<>();
-		urlParameters.add(new BasicNameValuePair("text", feedback));
-
 		URI uri = new URI("https://rink.hockeyapp.net/api/2/apps/" + APP_ID + "/feedback");
 		HttpPost httpPost = new HttpPost(uri);
 		httpPost.addHeader("X-HockeyAppToken", TOKEN);
-		httpPost.setEntity(new UrlEncodedFormEntity(urlParameters));
-		CloseableHttpResponse response = this.httpClient.execute(httpPost);
+
+		HttpEntity entity = MultipartEntityBuilder.create()
+				.addPart("text", new ByteArrayBody(feedback.getBytes(), "text"))
+				.build();
+		httpPost.setEntity(entity);
+
+		HttpResponse response = httpClient.execute(httpPost);
 		return response.getStatusLine().getStatusCode();
 	}
 
@@ -44,18 +39,16 @@ public class HockeyApp implements CrashReportHandler {
 
 		String log = createlog(stacktrace);
 
-		List<NameValuePair> urlParameters = new ArrayList<>();
-		urlParameters.add(new BasicNameValuePair("log", log));
-		urlParameters.add(new BasicNameValuePair("description", feedback));
-
 		URI uri = new URI("https://rink.hockeyapp.net/api/2/apps/" + APP_ID + "/crashes/upload");
 		HttpPost httpPost = new HttpPost(uri);
-		String json = gson.toJson(urlParameters);
-		StringEntity entity = new StringEntity(json);
-		entity.setContentType("application/json");
+
+		HttpEntity entity = MultipartEntityBuilder.create()
+				.addPart("log", new ByteArrayBody(log.getBytes(), "log"))
+				.addPart("description", new ByteArrayBody(feedback.getBytes(), "description"))
+				.build();
 		httpPost.setEntity(entity);
 
-		CloseableHttpResponse response = httpClient.execute(httpPost);
+		HttpResponse response = httpClient.execute(httpPost);
 		return response.getStatusLine().getStatusCode();
 	}
 
@@ -65,10 +58,9 @@ public class HockeyApp implements CrashReportHandler {
 
 		log.append("Package: de.qabel.desktop\n");
 		log.append("Version: 1\n");
-		log.append("OS: " + System.getProperty("os.name") + " / " +
-				System.getProperty("os.arch") + " / " +
-				System.getProperty("os.version") + "\n"
-		);
+		log.append("OS: " + System.getProperty("os.name") + " / ");
+		log.append(System.getProperty("os.arch") + " / ");
+		log.append(System.getProperty("os.version") + "\n");
 		log.append("Manufacturer: " + System.getProperty("java.vendor") + "\n");
 		log.append("Model: " + System.getProperty("java.version") + "\n");
 		log.append("Date: " + date + "\n");
