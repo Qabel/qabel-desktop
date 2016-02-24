@@ -4,16 +4,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<BorderPane prefHeight="4000" maxHeight="Infinity" maxWidth="Infinity" fx:id="contactroot" xmlns="http://javafx.com/javafx/8"
+<StackPane prefHeight="4000" maxHeight="Infinity" maxWidth="Infinity" fx:id="contactroot" xmlns="http://javafx.com/javafx/8"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.contact.ContactController">
-    <center>
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefWidth="250">
-            <content>
-                <VBox fx:id="actionlogViewPane" maxWidth="600"/>
-            </content>
-        </ScrollPane>
-    </center>
-    <left>
+    <children>
         <VBox>
             <children>
                 <HBox prefHeight="60.0">
@@ -79,5 +72,5 @@
                 <Insets right="10.0"/>
             </BorderPane.margin>
         </VBox>
-    </left>
-</BorderPane>
+    </children>
+</StackPane>

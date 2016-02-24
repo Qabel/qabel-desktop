@@ -9,12 +9,17 @@ import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.DetailsController;
+import de.qabel.desktop.ui.DetailsView;
 import de.qabel.desktop.ui.accounting.item.SelectionEvent;
 import de.qabel.desktop.ui.actionlog.ActionlogController;
 import de.qabel.desktop.ui.actionlog.ActionlogView;
 import de.qabel.desktop.ui.contact.item.BlankItemView;
 import de.qabel.desktop.ui.contact.item.ContactItemController;
 import de.qabel.desktop.ui.contact.item.ContactItemView;
+import de.qabel.desktop.ui.remotefs.RemoteFileDetailsController;
+import de.qabel.desktop.ui.remotefs.RemoteFileDetailsView;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -24,6 +29,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
@@ -71,11 +77,15 @@ public class ContactController extends AbstractController implements Initializab
 
 	ActionlogController actionlogController;
 
+	@FXML
+	StackPane contactroot;
+
+	DetailsController details;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		this.resourceBundle = resources;
 		createObserver();
-		createActionlog();
 		try {
 			buildGson();
 			loadContacts();
@@ -83,6 +93,10 @@ public class ContactController extends AbstractController implements Initializab
 			alert(e);
 		}
 		createButtonGraphics();
+
+		DetailsView detailsView = new DetailsView();
+		details = (DetailsController) detailsView.getPresenter();
+		detailsView.getViewAsync(contactroot.getChildren()::add);
 	}
 
 	private void createButtonGraphics() {
@@ -94,10 +108,15 @@ public class ContactController extends AbstractController implements Initializab
 	}
 
 
-	private void createActionlog() {
-		ActionlogView actionlogView = new ActionlogView();
-		actionlogController = (ActionlogController) actionlogView.getPresenter();
-		actionlogViewPane.getChildren().add(actionlogView.getView());
+	private void showActionlog(Contact contact) {
+		if (actionlogController == null) {
+			ActionlogView actionlogView = new ActionlogView();
+			actionlogController = (ActionlogController) actionlogView.getPresenter();
+			actionlogView.getViewAsync(details::show);
+		} else {
+			details.show();
+		}
+		actionlogController.setContact(contact);
 	}
 
 	@FXML
@@ -156,7 +175,7 @@ public class ContactController extends AbstractController implements Initializab
 
 	private void select(SelectionEvent selectionEvent) {
 		selectionEvent.getController().select();
-		actionlogController.setContact(selectionEvent.getContact());
+		showActionlog(selectionEvent.getContact());
 	}
 
 
@@ -164,6 +183,7 @@ public class ContactController extends AbstractController implements Initializab
 		for (ContactItemController c : contactItems) {
 			c.unselect();
 		}
+		details.hide();
 	}
 
 	private String createBlankItem(Contact co) {

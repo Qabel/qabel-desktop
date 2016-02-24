@@ -24,7 +24,7 @@
             <children>
                 <VBox fx:id="detailsContainer"/>
                 <Label fx:id="closeDetails" text="X" alignment="TOP_RIGHT"
-                       style="-fx-alignment: top-right; -fx-padding: 10px 10px 10px 10px;" styleClass="inline-button,close"/>
+                       style="-fx-alignment: top-right; -fx-padding: 10px 10px 10px 10px;" styleClass="inline-button,close,solid"/>
             </children>
         </StackPane>
     </children>

@@ -44,7 +44,6 @@ public class HttpDropConnector implements DropConnector {
 		return createDropMessagesFromHttpResult(result, i);
 	}
 
-
 	private DropURL convertCollectionIntoDropUrl(Set<DropURL> dropUrls) {
 		for (DropURL d : dropUrls) {
 			return d;
