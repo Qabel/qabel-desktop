@@ -26,7 +26,7 @@
                                 <Double fx:value="-2.5" />
                             </points>
                             <HBox.margin>
-                                <Insets right="-15.0" top="20.0" />
+                                <Insets right="-15.0" top="25.0" />
                             </HBox.margin>
                         </Polygon>
                         <VBox maxWidth="600">
@@ -63,7 +63,7 @@
             <left>
                 <Pane fx:id="avatarContainer">
                     <BorderPane.margin>
-                        <Insets bottom="5" top="18.0" />
+                        <Insets bottom="5" top="18.0" left="5"/>
                     </BorderPane.margin>
                 </Pane>
             </left>

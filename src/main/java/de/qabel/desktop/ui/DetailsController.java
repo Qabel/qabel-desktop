@@ -31,6 +31,10 @@ public class DetailsController extends AbstractController implements Initializab
 		Platform.runLater(() -> detailsPane.setVisible(false));
 	}
 
+	public void show() {
+		Platform.runLater(() -> detailsPane.setVisible(true));
+	}
+
 	public void show(Node content) {
 		Platform.runLater(() -> {
 			detailsContainer.getChildren().setAll(content);

@@ -6,6 +6,8 @@ import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.drop.DropURL;
 import de.qabel.core.exceptions.*;
+import de.qabel.desktop.daemon.drop.TextMessage;
+import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractControllerTest;
@@ -61,7 +63,7 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 		List<PersistenceDropMessage> lst = dropMessageRepository.loadConversation(c, i);
 
 		assertEquals(1, lst.size());
-		assertEquals(msg2, lst.get(0).dropMessage.getDropPayload());
+		assertEquals(msg2, TextMessage.fromJson(lst.get(0).dropMessage.getDropPayload()).getText());
 	}
 
 	@Test
@@ -69,7 +71,7 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 		setup();
 		controller.sleepTime = 1;
 		controller.dateRefresher.interrupt();
-		DropMessage d = new DropMessage(i,"payload", "test");
+		DropMessage d = new DropMessage(i, new TextMessage("payload").toJson(), "test");
 		Contact sender = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
 
 		Map<String, Object> injectionContext = new HashMap<>();
@@ -96,7 +98,7 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 		c = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
 		createController(i);
 		controller = (ActionlogController) view.getPresenter();
-		return new DropMessage(i, text, "dropMessage");
+		return new DropMessage(i, new TextMessage(text).toJson(), DropMessageRepository.PAYLOAD_TYPE_MESSAGE);
 	}
 
 	private void createController(Identity i) {
