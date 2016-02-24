@@ -29,6 +29,8 @@ public class AbstractController {
 	protected Alert alert;
 	protected Label exceptionLabel;
 	protected Gson gson;
+	int statusCode;
+	TextArea inputArea;
 
 	protected void alert(Exception e) {
 		alert(e.getMessage(), e);
@@ -61,7 +63,8 @@ public class AbstractController {
 		Label feedbackLabel = new Label("Feedback");
 		Label stackTraceLabel = new Label("Stack Trace");
 
-		TextArea inputArea = new TextArea();
+		inputArea = new TextArea();
+		inputArea.getStyleClass().add("feedback");
 		VBox.setMargin(inputArea, new Insets(10, 0, 5, 0));
 
 		TextArea textArea = new TextArea(getTraceAsString(e));
@@ -71,10 +74,11 @@ public class AbstractController {
 
 		Button sendButton = new Button();
 		sendButton.setText("send");
+		sendButton.getStyleClass().add("send");
+
 		sendButton.setOnAction(e1 -> {
 			sendStackTrace(inputArea.getText(), textArea.getText());
 			inputArea.setText("");
-
 		});
 
 		alert.getDialogPane().getChildren().add(sendButton);
@@ -103,7 +107,7 @@ public class AbstractController {
 
 	private void sendStackTrace(String feedback, String stacktrace) {
 		try {
-			reportHandler.sendStacktrace(feedback, stacktrace);
+			statusCode = reportHandler.sendStacktrace(feedback, stacktrace);
 		} catch (URISyntaxException | IOException e) {
 			alert("CrashReport count not send", e);
 		}
