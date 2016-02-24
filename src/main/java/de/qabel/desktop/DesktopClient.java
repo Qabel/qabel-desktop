@@ -6,10 +6,8 @@ import de.qabel.core.accounting.AccountingProfile;
 import de.qabel.core.config.*;
 import de.qabel.core.exceptions.QblInvalidEncryptionKeyException;
 import de.qabel.desktop.config.ClientConfiguration;
-import de.qabel.desktop.config.factory.ClientConfigurationFactory;
-import de.qabel.desktop.config.factory.DropUrlGenerator;
-import de.qabel.desktop.daemon.drop.DropDaemon;
 import de.qabel.desktop.config.factory.*;
+import de.qabel.desktop.daemon.drop.DropDaemon;
 import de.qabel.desktop.daemon.management.DefaultTransferManager;
 import de.qabel.desktop.daemon.management.MonitoredTransferManager;
 import de.qabel.desktop.daemon.share.ShareNotificationHandler;
@@ -42,12 +40,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.Timer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -57,6 +55,7 @@ public class DesktopClient extends Application {
 	private static final String TITLE = "Qabel Desktop Client";
 	private static String DATABASE_FILE = "db.sqlite";
 	private final Map<String, Object> customProperties = new HashMap<>();
+	private boolean inBound;
 	private LayoutView view;
 	private HttpDropConnector dropConnector = new HttpDropConnector();
 	private PersistenceDropMessageRepository dropMessageRepository;
@@ -68,6 +67,8 @@ public class DesktopClient extends Application {
 	private BlockSharingService sharingService;
 	private ExecutorService executorService = Executors.newCachedThreadPool();
 	private ClientConfiguration config;
+	private boolean visible = false;
+
 
 	public static void main(String[] args) throws Exception {
 		if (args.length > 0) {
@@ -154,7 +155,7 @@ public class DesktopClient extends Application {
 	}
 
 	protected DropDaemon getDropDaemon(ClientConfiguration config) throws PersistenceException, EntityNotFoundExcepion {
-		return  new DropDaemon(config, dropConnector,contactRepository, dropMessageRepository);
+		return new DropDaemon(config, dropConnector, contactRepository, dropMessageRepository);
 	}
 
 	private ClientConfiguration initDiContainer() throws QblInvalidEncryptionKeyException, URISyntaxException {
@@ -212,6 +213,10 @@ public class DesktopClient extends Application {
 
 	private void setTrayIcon(Stage primaryStage) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
 
+		if (!SystemTray.isSupported()) {
+			return;
+		}
+
 		SystemTray sTray = SystemTray.getSystemTray();
 		primaryStage.setOnCloseRequest(arg0 -> primaryStage.hide());
 		JPopupMenu popup = buildSystemTrayJPopupMenu(primaryStage);
@@ -231,18 +236,92 @@ public class DesktopClient extends Application {
 	}
 
 	private void trayIconListener(final JPopupMenu popup, TrayIcon icon) {
+
+		Timer notificationTimer = new Timer();
+		notificationTimer.schedule(
+				new TimerTask() {
+					@Override
+					public void run() {
+						if (visible && !inBound) {
+							visible = !visible;
+							popup.setVisible(visible);
+						}
+						inBound = false;
+					}
+				}, 250, 1500
+		);
+
+		icon.addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				inBound = true;
+			}
+		});
+
+		popup.addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				inBound = true;
+			}
+		});
+
 		icon.addMouseListener(new MouseAdapter() {
-			boolean visible = false;
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
+
 				if (e.getButton() != MouseEvent.BUTTON1) {
 					return;
 				}
-				popup.setLocation(e.getX(), e.getY());
-				visible = !visible;
-				popup.setVisible(visible);
 
+				Point point = e.getPoint();
+				Rectangle bounds = getScreenViewableBounds(getGraphicsDeviceAt(point));
+				int x = point.x;
+				int y = point.y;
+				if (y < bounds.y) {
+					y = bounds.y;
+				} else if (y > bounds.y + bounds.height) {
+					y = bounds.y + bounds.height;
+				}
+				if (x < bounds.x) {
+					x = bounds.x;
+				} else if (x > bounds.x + bounds.width) {
+					x = bounds.x + bounds.width;
+				}
+
+				if (x + popup.getWidth() > bounds.x + bounds.width) {
+					x = (bounds.x + bounds.width) - popup.getWidth();
+				}
+				if (y + popup.getWidth() > bounds.y + bounds.height) {
+					y = (bounds.y + bounds.height) - popup.getHeight();
+				}
+
+				visible = !visible;
+
+				if (visible) {
+					popup.setLocation(x, y);
+				}
+				popup.setVisible(visible);
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				visible = false;
+				popup.setVisible(visible);
+			}
+		});
+
+		popup.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseExited(MouseEvent e) {
+				if ((e.getX() < popup.getBounds().getMaxX()) &&
+						(e.getX() >= popup.getBounds().getMinX()) &&
+						(e.getY() < popup.getBounds().getMaxY()) &&
+						(e.getY() >= popup.getBounds().getMinY())) {
+					return;
+				}
+				visible = false;
+				popup.setVisible(visible);
 			}
 		});
 	}
@@ -260,4 +339,44 @@ public class DesktopClient extends Application {
 
 		return menu;
 	}
+
+	public GraphicsDevice getGraphicsDeviceAt(Point pos) {
+
+		GraphicsDevice device = null;
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice lstGDs[] = ge.getScreenDevices();
+		ArrayList<GraphicsDevice> lstDevices = new ArrayList<>(lstGDs.length);
+
+		for (GraphicsDevice gd : lstGDs) {
+			GraphicsConfiguration gc = gd.getDefaultConfiguration();
+			Rectangle screenBounds = gc.getBounds();
+			if (screenBounds.contains(pos)) {
+				lstDevices.add(gd);
+			}
+		}
+
+		if (lstDevices.size() == 1) {
+			device = lstDevices.get(0);
+		}
+		return device;
+	}
+
+	public Rectangle getScreenViewableBounds(GraphicsDevice gd) {
+
+		Rectangle bounds = new Rectangle(0, 0, 0, 0);
+
+		if (gd != null) {
+			GraphicsConfiguration gc = gd.getDefaultConfiguration();
+			bounds = gc.getBounds();
+			Insets insets = Toolkit.getDefaultToolkit().getScreenInsets(gc);
+
+			bounds.x += insets.left;
+			bounds.y += insets.top;
+			bounds.width -= (insets.left + insets.right);
+			bounds.height -= (insets.top + insets.bottom);
+		}
+		return bounds;
+
+	}
+
 }
