@@ -7,7 +7,14 @@
 
 <StackPane maxHeight="Infinity" maxWidth="Infinity" fx:id="stack" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.remotefs.RemoteFSController">
    <children>
-      <BorderPane style="-fx-background-color: red;" maxHeight="Infinity" maxWidth="Infinity" prefHeight="4000">
+      <BorderPane maxHeight="Infinity" maxWidth="Infinity" prefHeight="4000">
+          <top>
+              <HBox fx:id="search">
+                  <children>
+                      <TextField styleClass="inline" fx:id="searchQuery"></TextField>
+                  </children>
+              </HBox>
+          </top>
           <center>
               <TreeTableView fx:id="treeTable" maxHeight="Infinity" maxWidth="Infinity" styleClass="browser">
                   <columns>

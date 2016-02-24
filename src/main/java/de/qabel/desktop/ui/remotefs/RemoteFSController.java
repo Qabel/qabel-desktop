@@ -1,7 +1,5 @@
 package de.qabel.desktop.ui.remotefs;
 
-import com.sun.javafx.application.PlatformImpl;
-import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.SharingService;
 import de.qabel.desktop.cellValueFactory.BoxObjectCellValueFactory;
@@ -19,9 +17,7 @@ import de.qabel.desktop.ui.DetailsController;
 import de.qabel.desktop.ui.DetailsView;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.binding.When;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -45,7 +41,6 @@ import java.net.URL;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
-import java.util.Observable;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
