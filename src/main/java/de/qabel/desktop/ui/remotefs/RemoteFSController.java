@@ -122,6 +122,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 				.subtract(sizeColumn.widthProperty())
 				.subtract(dateColumn.widthProperty())
 				.subtract(optionsColumn.widthProperty())
+				.subtract(2)
 		);
 
 		treeTable.getSelectionModel().clearSelection();

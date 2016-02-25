@@ -1,3 +1,41 @@
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+.scroll-bar:horizontal .track, .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent;
+    -fx-border-radius: 2em;
+}
+.scroll-bar:horizontal .track {
+    -fx-background-repeat: repeat-x;
+    -fx-background-image: url("/scroll-horizontal.png");
+}
+.scroll-bar:vertical .track {
+    -fx-background-repeat: repeat-y;
+    -fx-background-image: url("/scroll.png");
+}
+.scroll-bar:horizontal .increment-button, .scroll-bar:horizontal .decrement-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 1em 0;
+}
+.scroll-bar:vertical .increment-button, .scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 1em 0;
+}
+.scroll-bar .increment-arrow, .scroll-bar .decrement-arrow {
+    -fx-shape: " ";
+    -fx-padding: 0;
+}
+.scroll-bar:horizontal .thumb, .scroll-bar:vertical .thumb {
+    -fx-background-color: #222222;
+    -fx-background-insets: 2px, 0, 0;
+    -fx-background-radius: 2em;
+}
+
+
 .avatar {
     -fx-font-size: 3em;
     -fx-alignment: CENTER;
@@ -9,7 +47,7 @@
     -fx-border-radius: 25;
     -fx-padding: 0 0 0 0;
     -fx-margin: 3px;
-    -fx-effect: dropshadow(gaussian, grey, 8, 0, 0, 5);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 8, 0, 0, 5);
 }
 
 .avatarItem {
@@ -28,7 +66,9 @@
     -fx-min-width: 7em;
 }
 
-
+.btn {
+    -fx-cursor: hand;
+}
 
 .button {
     -fx-font-weight: bold;
@@ -60,10 +100,6 @@
     -fx-background-radius: 5;
 }
 
-#textarea {
-    -fx-border-color: #222222;
-}
-
 .progress-bar > *.bar {
     -fx-background-radius: 10px!important;
 }
@@ -74,11 +110,6 @@
 
 .selected {
     -fx-background-color: grey;
-}
-#chat{
-    -fx-border-style: solid solid solid solid;
-    -fx-border-color: black;
-    -fx-border-width: 0 0 0 1
 }
 
 .inline-button {
@@ -201,3 +232,45 @@
     -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 2, 0.0 , 0 , 2);
 }
 
+.inline-button {
+    -fx-font-weight: bold;
+}
+.inline-button.solid {
+    -fx-opacity: 1.0;
+}
+
+#contactRootItem {
+    -fx-padding: 0.4em 0 0 0.4em;
+}
+
+.chat-input {
+    -fx-background-color: #4d4d4d;
+    -fx-spacing: 1em;
+    -fx-padding: 0.5em 0.5em 0 0.5em;
+}
+.chat-input > .edit-icon {
+    -fx-fit-to-width: 2em;
+}
+.chat-input .text-area {
+    -fx-effect: none;
+    -fx-border-width: 0;
+    -fx-highlight-fill: white;
+    -fx-highlight-text-fill: #4d4d4d;
+    -fx-background-color: #4d4d4d;
+    -fx-text-fill: white;
+    -fx-border-radius: 0;
+    -fx-font-size: 1.2em;
+    -fx-pref-height: 1em;
+    -fx-max-height: 1em;
+}
+.chat-input .text-area * {
+    -fx-effect: none;
+    -fx-background-color: #4d4d4d;
+    -fx-border-width: 0;
+    -fx-border-radius: 0;
+}
+.chat-input .text-area .content {
+    -fx-effect: none;
+    -fx-prompt-text-fill: rgba(255,255,255,0.5);
+    -fx-text-fill: white;
+}

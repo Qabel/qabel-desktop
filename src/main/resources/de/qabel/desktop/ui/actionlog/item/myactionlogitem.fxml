@@ -44,7 +44,7 @@
                                     <Double fx:value="-2.5"/>
                                 </points>
                                 <HBox.margin>
-                                    <Insets left="-15.0" top="20.0"/>
+                                    <Insets left="-15.0" top="25.0"/>
                                 </HBox.margin>
                             </Polygon>
                         </children>

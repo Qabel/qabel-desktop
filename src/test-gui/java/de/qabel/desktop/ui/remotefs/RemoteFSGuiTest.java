@@ -4,19 +4,14 @@ import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Contacts;
 import de.qabel.core.crypto.QblECPublicKey;
-import de.qabel.core.drop.DropURL;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.daemon.sync.worker.BoxNavigationStub;
 import de.qabel.desktop.daemon.sync.worker.BoxVolumeStub;
 import de.qabel.desktop.storage.BoxExternalFile;
 import de.qabel.desktop.storage.BoxFile;
-import de.qabel.desktop.storage.FileMetadata;
-import de.qabel.desktop.storage.cache.CachedIndexNavigation;
 import de.qabel.desktop.ui.AbstractGuiTest;
-import javafx.event.EventType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import org.junit.Before;
 import org.junit.Test;
 import org.testfx.api.FxRobot;
@@ -53,7 +48,8 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 	@Test
 	public void optionsOnHover() throws InterruptedException {
 		int rootIndex = 1;
-		assertFalse(waitForNode("#download_" + rootIndex).isVisible());
+
+		waitUntil(() -> waitForNode("#download_" + rootIndex).isVisible());
 		assertFalse(getFirstNode("#upload_file_" + rootIndex).isVisible());
 		assertFalse(getFirstNode("#upload_folder_" + rootIndex).isVisible());
 		assertFalse(getFirstNode("#create_folder_" + rootIndex).isVisible());

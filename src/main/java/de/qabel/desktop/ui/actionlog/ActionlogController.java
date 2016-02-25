@@ -5,6 +5,7 @@ import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.exceptions.*;
 import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.daemon.drop.TextMessage;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
@@ -24,15 +25,21 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static java.lang.Thread.*;
 
 
 public class ActionlogController extends AbstractController implements Initializable, Observer {
+	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+	private static final Logger logger = LoggerFactory.getLogger(ActionlogController.class.getSimpleName());
 
 	int sleepTime = 60000;
 	List<ActionlogItemView> messageView = new LinkedList<>();
@@ -87,12 +94,16 @@ public class ActionlogController extends AbstractController implements Initializ
 	private void addListener() {
 
 		textarea.setOnKeyPressed(keyEvent -> {
-			if (keyEvent.getCode().equals(KeyCode.ENTER) && keyEvent.isControlDown()) {
+			if (keyEvent.getCode().equals(KeyCode.ENTER) && !keyEvent.isShiftDown()) {
 				try {
-					handleSubmitButtonAction();
+					submit();
+					keyEvent.consume();
 				} catch (QblException | PersistenceException | EntityNotFoundExcepion e) {
 					alert(e);
 				}
+			} else if (keyEvent.getCode().equals(KeyCode.ENTER) && keyEvent.isShiftDown()) {
+				keyEvent.consume();
+				textarea.appendText("\n");
 			}
 		});
 
@@ -103,13 +114,7 @@ public class ActionlogController extends AbstractController implements Initializ
 		});
 	}
 
-
-	@FXML
-	protected void handleSubmitButtonAction(ActionEvent event) throws QblDropPayloadSizeException, EntityNotFoundExcepion, PersistenceException, QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException, QblNetworkInvalidResponseException {
-		handleSubmitButtonAction();
-	}
-
-	protected void handleSubmitButtonAction() throws QblDropPayloadSizeException, EntityNotFoundExcepion, PersistenceException, QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException, QblNetworkInvalidResponseException {
+	protected void submit() throws QblDropPayloadSizeException, EntityNotFoundExcepion, PersistenceException, QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException, QblNetworkInvalidResponseException {
 		if (textarea.getText().equals("") || contact == null) {
 			return;
 		}
@@ -118,15 +123,15 @@ public class ActionlogController extends AbstractController implements Initializ
 	}
 
 	void sendDropMessage(Contact c, String text) throws QblDropPayloadSizeException, QblNetworkInvalidResponseException, PersistenceException {
-		DropMessage d = new DropMessage(identity, text, DropMessageRepository.PAYLOAD_TYPE_MESSAGE);
-		dropMessageRepository.addMessage(d, identity, c, true);
+		DropMessage d = new DropMessage(identity, new TextMessage(text).toJson(), DropMessageRepository.PAYLOAD_TYPE_MESSAGE);
 		dropConnector.send(c, d);
+		dropMessageRepository.addMessage(d, identity, c, true);
 	}
 
 	void loadMessages(Contact c) throws EntityNotFoundExcepion {
 		try {
 			if (receivedDropMessages == null) {
-				messages.getChildren().clear();
+				Platform.runLater(messages.getChildren()::clear);
 				receivedDropMessages = dropMessageRepository.loadConversation(c, identity);
 				addMessagesToView(receivedDropMessages);
 			} else {
@@ -146,19 +151,23 @@ public class ActionlogController extends AbstractController implements Initializ
 		}
 	}
 
-	private void addMessagesToView(List<PersistenceDropMessage> dropMessages) throws EntityNotFoundExcepion {
-		for (PersistenceDropMessage d : dropMessages) {
-
-			if (d.getSend()) {
-				addOwnMessageToActionlog(d.getDropMessage());
-			} else {
-				addMessageToActionlog(d.getDropMessage());
+	private void addMessagesToView(List<PersistenceDropMessage> dropMessages) {
+		Platform.runLater(() -> {
+			for (PersistenceDropMessage d : dropMessages) {
+				if (d.getSend()) {
+					addOwnMessageToActionlog(d.getDropMessage());
+				} else {
+					try {
+						addMessageToActionlog(d.getDropMessage());
+					} catch (EntityNotFoundExcepion e) {
+						logger.warn("failed to show message: " + e.getMessage(), e);
+					}
+				}
 			}
-		}
+		});
 	}
 
 	void addMessageToActionlog(DropMessage dropMessage) throws EntityNotFoundExcepion {
-		System.out.println("Message of type " + dropMessage.getDropPayloadType());
 		Map<String, Object> injectionContext = new HashMap<>();
 		Contact sender = contactRepository.findByKeyId(identity, dropMessage.getSenderKeyId());
 		injectionContext.put("dropMessage", dropMessage);
@@ -167,7 +176,6 @@ public class ActionlogController extends AbstractController implements Initializ
 		messages.getChildren().add(otherItemView.getView());
 		messageView.add(otherItemView);
 		messageControllers.add((ActionlogItem) otherItemView.getPresenter());
-
 	}
 
 	void addOwnMessageToActionlog(DropMessage dropMessage) {
@@ -205,13 +213,13 @@ public class ActionlogController extends AbstractController implements Initializ
 	}
 
 	public void setContact(Contact contact) {
-		Platform.runLater(() -> {
+		executor.submit(() -> {
 			try {
 				receivedDropMessages = null;
 				this.contact = contact;
 				loadMessages(this.contact);
-			} catch (EntityNotFoundExcepion e) {
-				alert("Failed to select Contact", e);
+			} catch (Exception e) {
+				alert(e);
 			}
 		});
 
