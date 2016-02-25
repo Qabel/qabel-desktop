@@ -5,7 +5,7 @@ import java.net.URISyntaxException;
 
 public class StubCrashReportHandler implements CrashReportHandler {
 	@Override
-	public int sendFeedback(String feedback) throws URISyntaxException, IOException {
+	public int sendFeedback(String feedbackFieldText, String text, String feedback) throws URISyntaxException, IOException {
 		return 201;
 	}
 

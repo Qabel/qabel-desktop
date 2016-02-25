@@ -11,6 +11,7 @@ import de.qabel.desktop.ui.accounting.AccountingView;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
 import de.qabel.desktop.ui.actionlog.ActionlogView;
 import de.qabel.desktop.ui.contact.ContactView;
+import de.qabel.desktop.ui.feedback.FeedbackView;
 import de.qabel.desktop.ui.invite.InviteView;
 import de.qabel.desktop.ui.remotefs.RemoteFSView;
 import de.qabel.desktop.ui.sync.SyncView;
@@ -75,6 +76,7 @@ public class LayoutController extends AbstractController implements Initializabl
 	private HBox syncNav;
 	private HBox inviteNav;
 	private HBox accountingNav;
+	private HBox feebbackNav;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -90,11 +92,13 @@ public class LayoutController extends AbstractController implements Initializabl
 		contactsNav = createNavItem(resourceBundle.getString("layoutContacts"), new ContactView());
 		syncNav = createNavItem(resourceBundle.getString("layoutSync"), new SyncView());
 		inviteNav = createNavItem(resourceBundle.getString("layoutInvite"), new InviteView());
+		feebbackNav = createNavItem(resourceBundle.getString("layoutFeedback"), new FeedbackView());
 
 		navi.getChildren().add(browseNav);
 		navi.getChildren().add(contactsNav);
 		navi.getChildren().add(syncNav);
 		navi.getChildren().add(inviteNav);
+		navi.getChildren().add(feebbackNav);
 
 		scrollContent.setFillWidth(true);
 
@@ -136,6 +140,7 @@ public class LayoutController extends AbstractController implements Initializabl
 		syncNav.setManaged(identity != null);
 		inviteNav.setManaged(identity != null);
 		selectedIdentity.setVisible(identity != null);
+		feebbackNav.setVisible(identity != null);
 
 		avatarContainer.setVisible(identity != null);
 		if (identity == null) {
