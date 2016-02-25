@@ -69,6 +69,7 @@ public class DesktopClient extends Application {
 	private ExecutorService executorService = Executors.newCachedThreadPool();
 	private ClientConfiguration config;
 	private boolean visible = false;
+	private PersistenceIdentityRepository identityRepository;
 
 
 	public static void main(String[] args) throws Exception {
@@ -105,7 +106,11 @@ public class DesktopClient extends Application {
 						AccountingServer server = new AccountingServer(new URI(acc.getProvider()), acc.getUser(), acc.getAuth());
 						AccountingHTTP accountingHTTP = new AccountingHTTP(server, new AccountingProfile());
 
-						BoxVolumeFactory factory = new BlockBoxVolumeFactory(configuration.getDeviceId().getBytes(), accountingHTTP);
+						BoxVolumeFactory factory = new BlockBoxVolumeFactory(
+								configuration.getDeviceId().getBytes(),
+								accountingHTTP,
+								identityRepository
+						);
 						boxVolumeFactory = new CachedBoxVolumeFactory(factory);
 						customProperties.put("boxVolumeFactory", boxVolumeFactory);
 						sharingService = new BlockSharingService(dropMessageRepository, dropConnector);
@@ -166,7 +171,7 @@ public class DesktopClient extends Application {
 		customProperties.put("transferManager", transferManager);
 		customProperties.put("persistence", persistence);
 		customProperties.put("dropUrlGenerator", new DropUrlGenerator("https://qdrop.prae.me"));
-		PersistenceIdentityRepository identityRepository = new PersistenceIdentityRepository(persistence);
+		identityRepository = new PersistenceIdentityRepository(persistence);
 		customProperties.put("identityRepository", identityRepository);
 		PersistenceAccountRepository accountRepository = new PersistenceAccountRepository(persistence);
 		customProperties.put("accountRepository", accountRepository);
