@@ -18,8 +18,12 @@ public class AbstractControllerGUITest extends AbstractGuiTest<AlertTestControll
 		Platform.runLater(() -> controller.alert("some error message", new Exception("exceptionmessage")));
 		waitUntil(() -> controller.alert != null);
 		waitUntil(() -> controller.exceptionLabel != null);
+		clickOn(waitForNode(".feedback")).write("123456");
+		clickOn(".send");
 		Alert alert = controller.alert;
 		try {
+			assertEquals(201, controller.statusCode);
+			assertEquals("", controller.inputArea.getText());
 			assertEquals("Error", alert.getTitle());
 			assertEquals("some error message", alert.getHeaderText());
 			assertEquals(Alert.AlertType.ERROR, alert.getAlertType());

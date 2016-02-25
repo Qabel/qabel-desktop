@@ -228,6 +228,10 @@
     -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 2, 0.0 , 0 , 2);
 }
 
+#feedbackField {
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 2, 0.0 , 0 , 2);
+}
+
 .inline-button {
     -fx-font-weight: bold;
 }

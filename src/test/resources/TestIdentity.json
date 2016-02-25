@@ -1,87 +1,10 @@
 {
-  "alias": "Test",
-  "prefixes": [],
-  "keys": {
-    "curve25519": {},
-    "privateKey": [
-      -43,
-      41,
-      14,
-      -37,
-      -71,
-      84,
-      -85,
-      29,
-      -57,
-      2,
-      62,
-      9,
-      3,
-      -69,
-      -45,
-      46,
-      -126,
-      36,
-      42,
-      93,
-      -49,
-      -25,
-      -100,
-      -43,
-      12,
-      57,
-      -71,
-      91,
-      111,
-      88,
-      -118,
-      46
-    ],
-    "pubKey": {
-      "pubKey": [
-        -56,
-        42,
-        3,
-        76,
-        -41,
-        79,
-        99,
-        19,
-        57,
-        -74,
-        -56,
-        -48,
-        47,
-        50,
-        -104,
-        10,
-        -106,
-        9,
-        51,
-        34,
-        39,
-        60,
-        66,
-        41,
-        127,
-        17,
-        -67,
-        -87,
-        69,
-        -79,
-        47,
-        97
-      ]
-    }
-  },
-  "dropUrls": [
-    {
-      "uri": "http://localhost:5000/Dp3rflDHjA3JDn3-W_ogixfgoCJ498_eXQvyiiC8hp8"
-    }
+  "public_key": "1b72b39576ced4ac8e003fae36d96dbda94ab28b2bdaf399719e1402fea9210c",
+  "drop_urls": [
+    "http://localhost:5000/MLx6pxTTpLzynl7FWQmBpL5eVt1SKzjf8zix9i53dds"
   ],
-  "id": 0,
-  "created": 1455725807495,
-  "updated": 0,
-  "deleted": 0,
-  "persistenceID": "7b6c3779-e900-4569-9882-7d0c2105e2ee"
+  "prefixes": [],
+  "alias": "Test",
+  "private_key": "c3bf2801eb7008400f8c0b9e30f566fb0eb3c7d3e11013abb6214500bf334b68",
+  "id": 0
 }

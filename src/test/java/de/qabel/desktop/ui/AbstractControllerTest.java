@@ -9,6 +9,8 @@ import de.qabel.desktop.SharingService;
 import de.qabel.desktop.config.DefaultClientConfiguration;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
+import de.qabel.desktop.crashReports.CrashReportHandler;
+import de.qabel.desktop.crashReports.StubCrashReportHandler;
 import de.qabel.desktop.daemon.management.BoxVolumeFactoryStub;
 import de.qabel.desktop.daemon.management.DefaultTransferManager;
 import de.qabel.desktop.repository.ContactRepository;
@@ -47,6 +49,7 @@ public class AbstractControllerTest {
 	protected BoxVolumeFactoryStub boxVolumeFactory;
 	protected DropMessageRepository dropMessageRepository = new StubDropMessageRepository();
 	protected DropConnector httpDropConnector = new InMemoryHttpDropConnector();
+	protected CrashReportHandler crashReportHandler = new StubCrashReportHandler();
 	protected SharingService sharingService = new BlockSharingService(dropMessageRepository, httpDropConnector);
 	protected Identity identity;
 
@@ -94,6 +97,7 @@ public class AbstractControllerTest {
 		diContainer.put("dropConnector", httpDropConnector);
 		diContainer.put("transferManager", new DefaultTransferManager());
 		diContainer.put("sharingService", sharingService);
+		diContainer.put("reportHandler", crashReportHandler);
 		MessageRendererFactory messageRendererFactory = new MessageRendererFactory();
 		messageRendererFactory.setFallbackRenderer(new PlaintextMessageRenderer());
 		diContainer.put("messageRendererFactory", messageRendererFactory);
