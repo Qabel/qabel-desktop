@@ -3,7 +3,6 @@ package de.qabel.desktop.config.factory;
 import de.qabel.core.accounting.AccountingHTTP;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
-import de.qabel.desktop.daemon.management.MagicEvilPrefixSource;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.storage.BlockReadBackend;
 import de.qabel.desktop.storage.BlockWriteBackend;

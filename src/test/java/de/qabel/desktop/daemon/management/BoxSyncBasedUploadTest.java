@@ -40,7 +40,6 @@ public class BoxSyncBasedUploadTest extends AbstractSyncTest {
 		IdentityBuilderFactory identityBuilderFactory = new IdentityBuilderFactory(new DropUrlGenerator("http://localhost:5000"));
 		Identity identity = identityBuilderFactory.factory().build();
 		Account account = new Account("a", "b", "c");
-		MagicEvilPrefixSource.set(account, "custom prefix");
 
 		BoxSyncConfig boxSyncConfig = new DefaultBoxSyncConfig(tmpDir, Paths.get("/tmp"), identity, account);
 		WatchEvent event = new WatchRegisteredEvent(file.toPath());

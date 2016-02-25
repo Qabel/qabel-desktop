@@ -2,7 +2,6 @@ package de.qabel.desktop.config.factory;
 
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
-import de.qabel.desktop.daemon.management.MagicEvilPrefixSource;
 import de.qabel.desktop.storage.BoxVolume;
 import de.qabel.desktop.storage.LocalReadBackend;
 import de.qabel.desktop.storage.LocalWriteBackend;
