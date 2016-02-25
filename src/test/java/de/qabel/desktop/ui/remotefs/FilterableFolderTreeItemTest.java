@@ -1,15 +1,19 @@
 package de.qabel.desktop.ui.remotefs;
 
-import de.qabel.desktop.daemon.sync.event.ChangeEvent;
+import com.sun.javafx.robot.impl.BaseFXRobot;
 import de.qabel.desktop.daemon.sync.worker.BoxNavigationStub;
 import de.qabel.desktop.storage.BoxFile;
 import de.qabel.desktop.storage.BoxFolder;
 import de.qabel.desktop.storage.BoxObject;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import javafx.beans.property.StringProperty;
+import javafx.scene.Scene;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.layout.HBox;
 import org.junit.Before;
 import org.junit.Test;
+import org.testfx.api.FxRobot;
 
 import java.nio.file.Paths;
 
@@ -41,6 +45,7 @@ public class FilterableFolderTreeItemTest extends AbstractControllerTest {
 		folderTree = new FilterableFolderTreeItem(folder, navigation);
 		filter = folderTree.filterProperty();
 		expectChildren(2);
+		runLaterAndWait(() -> {});
 	}
 
 	@Test
@@ -68,7 +73,8 @@ public class FilterableFolderTreeItemTest extends AbstractControllerTest {
 	}
 
 	private void expectChildren(int count) {
-		waitUntil(() -> folderTree.getChildren().size() == count, 5000L, () -> "expected " + count + " child but got " + folderTree.getChildren());
+		runLaterAndWait(() -> {});
+		waitUntil(() -> folderTree.getChildren().size() == count, 5000L, () -> "expected " + count + " children but got " + folderTree.getChildren());
 	}
 
 	@Test
