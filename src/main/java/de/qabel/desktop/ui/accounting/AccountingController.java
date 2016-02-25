@@ -175,8 +175,7 @@ public class AccountingController extends AbstractController implements Initiali
 	private void loadIdentities() {
 		try {
 			identityList.getChildren().clear();
-			//Identities identities = identityRepository.findAll();
-			Identities identities = null;
+			Identities identities = identityRepository.findAll();
 			for (Identity identity : identities.getIdentities()) {
 				final Map<String, Object> injectionContext = new HashMap<>();
 				injectionContext.put("identity", identity);
