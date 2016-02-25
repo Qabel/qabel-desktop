@@ -2,13 +2,11 @@ package de.qabel.desktop.ui.remotefs.dialog;
 
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
-import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.ui.remotefs.BoxObjectTreeCell;
-import de.qabel.desktop.ui.remotefs.LazyBoxFolderTreeItem;
+import de.qabel.desktop.ui.remotefs.FolderTreeItem;
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.*;
 
 import java.nio.file.Path;
@@ -35,7 +33,7 @@ public abstract class RemoteFSChooser extends Dialog<Path> implements ChangeList
 
 
 		BoxNavigation nav = volume.navigate();
-		root = new LazyBoxFolderTreeItem(new BoxFolder(volume.getRootRef(), "/", new byte[16]), nav);
+		root = new FolderTreeItem(new BoxFolder(volume.getRootRef(), "/", new byte[16]), nav);
 		tree = new TreeView<>(root);
 		getDialogPane().setContent(tree);
 

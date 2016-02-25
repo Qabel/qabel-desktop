@@ -22,14 +22,14 @@ import java.util.Observable;
 
 import static org.junit.Assert.*;
 
-public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
+public class FolderTreeItemTest extends AbstractControllerTest {
 	private FakeBoxNavigation navigation;
-	private LazyBoxFolderTreeItem item;
+	private FolderTreeItem item;
 
 	@Test(timeout = 1000)
 	public void adjustsNameProperty() {
 		navigation = new FakeBoxNavigation();
-		item = new LazyBoxFolderTreeItem(createSomeFolder(), navigation);
+		item = new FolderTreeItem(createSomeFolder(), navigation);
 		StringProperty nameProperty = item.getNameProperty();
 
 		assertEquals("name", nameProperty.get());
@@ -49,7 +49,7 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 	@Test(timeout = 1000)
 	public void isLeafWithoutFiles() {
 		navigation = new FakeBoxNavigation();
-		item = new LazyBoxFolderTreeItem(createSomeFolder(), navigation);
+		item = new FolderTreeItem(createSomeFolder(), navigation);
 		assertFalse(item.isLeaf());
 		load();
 		assertTrue(item.isLeaf());
@@ -58,7 +58,7 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 	@Test(timeout = 1000)
 	public void synchronouslyReturnsEmptyList() {
 		navigation = new FakeBoxNavigation();
-		item = new LazyBoxFolderTreeItem(createSomeFolder(), navigation);
+		item = new FolderTreeItem(createSomeFolder(), navigation);
 		navigation.folders.add(new BoxFolder("ref2", "name2", new byte[0]));
 		navigation.loading = true;
 
@@ -69,7 +69,7 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 	@Test(timeout = 1000)
 	public void loadsChildrenAsynchonously() throws InterruptedException {
 		navigation = new FakeBoxNavigation();
-		item = new LazyBoxFolderTreeItem(createSomeFolder(), navigation);
+		item = new FolderTreeItem(createSomeFolder(), navigation);
 		navigation.folders.add(createSomeFolder());
 
 		ObservableList<TreeItem<BoxObject>> children = load();
@@ -93,7 +93,7 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 	@Test(timeout = 1000)
 	public void loadsFiles() throws Exception {
 		navigation = new FakeBoxNavigation();
-		item = new LazyBoxFolderTreeItem(createSomeFolder(), navigation);
+		item = new FolderTreeItem(createSomeFolder(), navigation);
 		navigation.files.add(createSomeFile());
 
 		ObservableList<TreeItem<BoxObject>> children = load();
@@ -104,7 +104,7 @@ public class LazyBoxFolderTreeItemTest extends AbstractControllerTest {
 	@Test
 	public void updatesOnNavChange() throws Exception {
 		navigation = new FakeBoxNavigation();
-		item = new LazyBoxFolderTreeItem(createSomeFolder(), navigation);
+		item = new FolderTreeItem(createSomeFolder(), navigation);
 		item.setExpanded(true);
 		List children = load();
 		assertEquals(0, children.size());

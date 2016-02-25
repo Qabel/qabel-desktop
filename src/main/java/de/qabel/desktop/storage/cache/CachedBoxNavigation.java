@@ -5,7 +5,6 @@ import de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
-import sun.security.provider.SHA;
 
 import java.io.File;
 import java.io.IOException;

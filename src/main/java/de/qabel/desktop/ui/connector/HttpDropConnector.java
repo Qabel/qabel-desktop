@@ -71,6 +71,10 @@ public class HttpDropConnector implements DropConnector {
 			try {
 				binMessage = new BinaryDropMessageV0(message);
 				DropMessage dropMessage = binMessage.disassembleMessage(identity);
+				if (dropMessage == null) {
+					logger.warn("got empty dropmessage");
+					continue;
+				}
 				dropMessages.add(dropMessage);
 			} catch (QblException e) {
 				logger.trace("can't create Drop Message from HTTP result: " + e.getMessage());

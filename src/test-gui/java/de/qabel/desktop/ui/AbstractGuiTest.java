@@ -88,7 +88,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 
 	protected FxRobot clickOn(String query) {
 		baseFXRobot.waitForIdle();
-		Node node = getFirstNode(query);
+		Node node = waitForNode(query);
 		return clickOn(node);
 	}
 

@@ -5,6 +5,7 @@ import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.drop.DropURL;
 import de.qabel.core.exceptions.*;
+import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +33,7 @@ public class HttpDropConnectorTest extends AbstractControllerTest {
 	public void setUp() throws Exception {
 		super.setUp();
 		fakeURL = "http://localhost:12345/abcdefghijklmnopqrstuvwxyzabcdefgworkingUrl";
-		workingURL = "https://qdrop.prae.me/abcdefghijklmnopqrstuvwxyzabcdefgworkingUrl";
+		workingURL = new DropUrlGenerator("https://qdrop.prae.me").generateUrl().toString(); //"https://qdrop.prae.me/abcdefghijklmnopqrstuvwxyzabcdefgworkingUrl";
 		connector = new HttpDropConnector();
 	}
 

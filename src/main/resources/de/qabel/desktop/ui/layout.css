@@ -37,13 +37,13 @@
     -fx-pref-width: 220px;
     -fx-cursor: hand;
     -fx-border-radius: 0, 0, 0, 0;
-    -fx-padding: 10px 10px 10px 10px;
+    -fx-padding: 10px 10px 5px 10px;
     -fx-background-radius: 0;
     -fx-background-color: transparent;
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-font-family: Roboto, sans-serif;
-    -fx-font-size: 1.5em;
+    -fx-font-size: 1.2em;
 }
 
 .navi-container .progress-bar .bar {

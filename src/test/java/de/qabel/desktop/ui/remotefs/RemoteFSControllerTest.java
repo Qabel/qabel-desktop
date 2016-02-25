@@ -109,13 +109,13 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		assertThat(rootNode.getChildren().size(), is(0));
 	}
 
-	private LazyBoxFolderTreeItem getRoot() {
-		LazyBoxFolderTreeItem rootNode = new LazyBoxFolderTreeItem(new BoxFolder("", "root", new byte[0]), nav);
+	private FolderTreeItem getRoot() {
+		FolderTreeItem rootNode = new FolderTreeItem(new BoxFolder("", "root", new byte[0]), nav);
 		loadChildren(rootNode);
 		return rootNode;
 	}
 
-	private ObservableList loadChildren(LazyBoxFolderTreeItem node) {
+	private ObservableList loadChildren(FolderTreeItem node) {
 		ObservableList children = node.getChildren();
 		while (node.isLoading()) {
 			Thread.yield();
@@ -171,7 +171,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 			TreeItem rootNode = getRoot();
 			assertThat(rootNode.getChildren().size(), is(1));
 			TreeItem subnode = (TreeItem) rootNode.getChildren().get(0);
-			assertThat(loadChildren((LazyBoxFolderTreeItem) subnode).size(), is(1));
+			assertThat(loadChildren((FolderTreeItem) subnode).size(), is(1));
 
 		} catch (QblStorageException e) {
 			e.printStackTrace();
@@ -192,7 +192,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 			TreeItem rootNode = getRoot();
 			assertThat(rootNode.getChildren().size(), is(1));
 			TreeItem subnode = (TreeItem) rootNode.getChildren().get(0);
-			assertThat(loadChildren((LazyBoxFolderTreeItem) subnode).size(), is(1));
+			assertThat(loadChildren((FolderTreeItem) subnode).size(), is(1));
 
 		} catch (QblStorageException e) {
 			e.printStackTrace();
