@@ -1,56 +1,13 @@
 {
-  "owner": "5582a07cfec48e98303c39efa85ec2a2240b9eb8b5c7bccc14933bf4ac0cc44b",
   "contacts": [
     {
-      "alias": "TestAlias",
-      "email": "abc",
-      "phone": "000",
-      "ecPublicKey": {
-        "pubKey": [
-          -3,
-          -66,
-          86,
-          45,
-          126,
-          -5,
-          103,
-          -18,
-          99,
-          75,
-          -31,
-          34,
-          68,
-          -2,
-          -47,
-          114,
-          -30,
-          50,
-          -112,
-          -119,
-          63,
-          103,
-          -54,
-          39,
-          121,
-          -106,
-          -113,
-          -102,
-          58,
-          73,
-          -105,
-          85
-        ]
-      },
-      "dropUrls": [
-        {
-          "uri": "http://localhost:5000/QBaI8Yg7fo13s28diC6MBuXw97Pl9dEHoj1ukVZuqn0"
-        }
+      "public_key": "0c403e258baf03d19955d5b5fea1fecabc82ac65f304962af8e47c2135a30a36",
+      "drop_urls": [
+        "http://localhost:5000/ANnjT_ERN32FVEfttk1VpvlAn677Q1NeIZTKzc-_umE"
       ],
-      "id": 0,
-      "created": 1455723634797,
-      "updated": 0,
-      "deleted": 0,
-      "persistenceID": "d4bed643-d579-4d18-a960-f31ffbf07753"
+      "phone": "000",
+      "alias": "TestAlias",
+      "email": "abc"
     }
   ]
 }

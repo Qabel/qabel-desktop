@@ -64,6 +64,7 @@ dependencies {
     compile 'commons-codec:commons-codec:1.10'
     compile 'org.apache.httpcomponents:httpclient:4.5.+'
     compile 'org.apache.httpcomponents:httpmime:4.5.+'
+    compile 'org.json:json:20090211'
     // see https://github.com/AdamBien/afterburner.fx/pull/54 //compile 'com.airhacks:afterburner.fx:1.6.2' // Apache 2.0
     compile 'javax.inject:javax.inject:1'
     compile name: 'afterburner'

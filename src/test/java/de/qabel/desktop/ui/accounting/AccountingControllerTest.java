@@ -2,6 +2,7 @@ package de.qabel.desktop.ui.accounting;
 
 import com.google.gson.Gson;
 import de.qabel.core.config.Contact;
+import de.qabel.core.config.ContactExportImport;
 import de.qabel.core.config.Identities;
 import de.qabel.core.config.Identity;
 import de.qabel.core.crypto.QblECKeyPair;
@@ -12,6 +13,7 @@ import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import de.qabel.desktop.ui.accounting.item.AccountingItemController;
 import org.apache.commons.io.FileUtils;
+import org.json.JSONException;
 import org.junit.After;
 import org.junit.Test;
 
@@ -75,18 +77,18 @@ public class AccountingControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void importIdentityTest() throws IOException, QblStorageException, PersistenceException, EntityNotFoundExcepion, URISyntaxException, QblDropInvalidURL {
+	public void importIdentityTest() throws IOException, QblStorageException, PersistenceException, EntityNotFoundExcepion, URISyntaxException, QblDropInvalidURL, JSONException {
 		setupExport();
 		controller.importIdentity(new File(System.class.getResource(TEST_JSON).toURI()));
 		Identities identities = identityRepository.findAll();
 
 		assertEquals(1, identities.getIdentities().size());
-		Identity i = identities.getByKeyIdentifier("c82a034cd74f631339b6c8d02f32980a96093322273c42297f11bda945b12f61");
+		Identity i = identities.getByKeyIdentifier("1b72b39576ced4ac8e003fae36d96dbda94ab28b2bdaf399719e1402fea9210c");
 		assertEquals("Test", i.getAlias());
 	}
 
 	@Test
-	public void exportIdentityTest() throws URISyntaxException, IOException, QblStorageException, PersistenceException, EntityNotFoundExcepion, QblDropInvalidURL {
+	public void exportIdentityTest() throws URISyntaxException, IOException, QblStorageException, PersistenceException, EntityNotFoundExcepion, QblDropInvalidURL, JSONException {
 		File file = setupImport(TEST_IDENTITY);
 		Identity identity = identityBuilderFactory.factory().withAlias("Test").build();
 
@@ -107,7 +109,7 @@ public class AccountingControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void exportContactTest() throws IOException, QblStorageException, URISyntaxException, QblDropInvalidURL, EntityNotFoundExcepion, PersistenceException {
+	public void exportContactTest() throws IOException, QblStorageException, URISyntaxException, QblDropInvalidURL, EntityNotFoundExcepion, PersistenceException, JSONException {
 		File file = setupImport(TEST_CONTACT);
 
 		Identity identity = identityBuilderFactory.factory().build();
@@ -121,8 +123,7 @@ public class AccountingControllerTest extends AbstractControllerTest {
 		assertEquals(f.getName(), TEST_CONTACT);
 
 		String contentNew = controller.readFile(f);
-		Gson gson = controller.buildGson();
-		Contact exportContact = gson.fromJson(contentNew, Contact.class);
+		Contact exportContact = ContactExportImport.parseContactForIdentity(contentNew);
 
 		assertEquals(exportContact.getAlias(), identity.getAlias());
 		assertEquals(exportContact.getEmail(), identity.getEmail());

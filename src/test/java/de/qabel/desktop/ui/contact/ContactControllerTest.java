@@ -10,6 +10,7 @@ import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import org.apache.commons.io.FileUtils;
+import org.json.JSONException;
 import org.junit.After;
 import org.junit.Test;
 
@@ -48,7 +49,7 @@ public class ContactControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void exportContactsTest() throws URISyntaxException, EntityNotFoundExcepion, IOException, QblDropInvalidURL, PersistenceException {
+	public void exportContactsTest() throws URISyntaxException, EntityNotFoundExcepion, IOException, QblDropInvalidURL, PersistenceException, JSONException {
 		Identity i = identityBuilderFactory.factory().withAlias(TEST_ALIAS).build();
 		clientConfiguration.selectIdentity(i);
 
@@ -87,7 +88,7 @@ public class ContactControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void importContactsTest() throws URISyntaxException, PersistenceException, IOException, QblDropInvalidURL, EntityNotFoundExcepion {
+	public void importContactsTest() throws URISyntaxException, PersistenceException, IOException, QblDropInvalidURL, EntityNotFoundExcepion, JSONException {
 		Identity i = identityBuilderFactory.factory().withAlias(TEST_ALIAS).build();
 		clientConfiguration.selectIdentity(i);
 		File f = new File(System.class.getResource(TEST_JSON).toURI());
@@ -98,7 +99,7 @@ public class ContactControllerTest extends AbstractControllerTest {
 		assertEquals(1, contacts.getContacts().size());
 
 
-		Contact c = contacts.getByKeyIdentifier("fdbe562d7efb67ee634be12244fed172e23290893f67ca2779968f9a3a499755");
+		Contact c = contacts.getByKeyIdentifier("0c403e258baf03d19955d5b5fea1fecabc82ac65f304962af8e47c2135a30a36");
 		assertEquals(c.getAlias(),"TestAlias");
 		assertEquals(c.getEmail(), "abc");
 		assertEquals(c.getPhone(), "000");

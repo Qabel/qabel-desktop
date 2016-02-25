@@ -17,21 +17,17 @@ import de.qabel.desktop.ui.actionlog.ActionlogView;
 import de.qabel.desktop.ui.contact.item.BlankItemView;
 import de.qabel.desktop.ui.contact.item.ContactItemController;
 import de.qabel.desktop.ui.contact.item.ContactItemView;
-import de.qabel.desktop.ui.remotefs.RemoteFileDetailsController;
-import de.qabel.desktop.ui.remotefs.RemoteFileDetailsView;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import org.json.JSONException;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -51,8 +47,6 @@ public class ContactController extends AbstractController implements Initializab
 
 	@FXML
 	VBox actionlogViewPane;
-
-
 
 
 	@FXML
@@ -120,20 +114,22 @@ public class ContactController extends AbstractController implements Initializab
 	}
 
 	@FXML
-	protected void handleImportContactsButtonAction(ActionEvent event) throws IOException, PersistenceException, URISyntaxException, QblDropInvalidURL, EntityNotFoundExcepion {
+	protected void handleImportContactsButtonAction(ActionEvent event) throws IOException, PersistenceException, URISyntaxException, QblDropInvalidURL, EntityNotFoundExcepion, JSONException {
 		FileChooser chooser = new FileChooser();
 		chooser.setTitle(resourceBundle.getString("contactDownloadFolder"));
 		File file = chooser.showOpenDialog(contactList.getScene().getWindow());
+
 		importContacts(file);
 		loadContacts();
 	}
 
 	@FXML
-	protected void handleExportContactsButtonAction(ActionEvent event) throws EntityNotFoundExcepion, IOException {
+	protected void handleExportContactsButtonAction(ActionEvent event) throws EntityNotFoundExcepion, IOException, JSONException {
 		FileChooser chooser = new FileChooser();
 		chooser.setTitle(resourceBundle.getString("contactDownload"));
 		chooser.setInitialFileName("Contacts.json");
 		File file = chooser.showSaveDialog(contactList.getScene().getWindow());
+
 		exportContacts(file);
 	}
 
@@ -209,23 +205,23 @@ public class ContactController extends AbstractController implements Initializab
 		});
 	}
 
-	void exportContacts(File file) throws EntityNotFoundExcepion, IOException {
+	void exportContacts(File file) throws EntityNotFoundExcepion, IOException, JSONException {
 		Contacts contacts = contactRepository.findContactsFromOneIdentity(i);
-		String jsonContacts = gson.toJson(contacts);
+		String jsonContacts = ContactExportImport.exportContacts(contacts);
 		writeStringInFile(jsonContacts, file);
 	}
 
-	void importContacts(File file) throws IOException, URISyntaxException, QblDropInvalidURL, PersistenceException {
+	void importContacts(File file) throws IOException, URISyntaxException, QblDropInvalidURL, PersistenceException, JSONException {
 		String content = readFile(file);
 		Identity i = clientConfiguration.getSelectedIdentity();
 		try {
-			Contacts contacts = gson.fromJson(content, Contacts.class);
+			Contacts contacts = ContactExportImport.parseContactsForIdentity(i, content);
 			for (Contact c : contacts.getContacts()) {
 				contactRepository.save(c, i);
 			}
-		} catch (Exception e){
-			Contact contact = gson.fromJson(content, Contact.class);
-			contactRepository.save(contact, i);
+		} catch (Exception ignore){
+			Contact c = ContactExportImport.parseContactForIdentity(content);
+			contactRepository.save(c, i);
 		}
 	}
 
