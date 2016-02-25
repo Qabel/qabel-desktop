@@ -16,8 +16,6 @@ import javafx.scene.image.ImageView;
 
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class FilterableFolderTreeItem extends FolderTreeItem {
 	private static final Image fileImg = new Image(FilterableFolderTreeItem.class.getResourceAsStream("/icon/file.png"),  18, 18, true, false);
@@ -40,10 +38,8 @@ public class FilterableFolderTreeItem extends FolderTreeItem {
 	private void initialize() {
 		super.getChildren();
 		filteredChildren.addListener((ListChangeListener<? super TreeItem<BoxObject>>) c1 -> {
-			Platform.runLater(() -> {
-				hasVisibleChildren.setValue(!filteredChildren.isEmpty());
-				Event.fireEvent(this, new TreeModificationEvent<>(childrenModificationEvent(), this));
-			});
+			hasVisibleChildren.setValue(!filteredChildren.isEmpty());
+			Event.fireEvent(this, new TreeModificationEvent<>(childrenModificationEvent(), this));
 		});
 		visibleProperty.bind(filterProperty.isEmpty().or(containsIgnoreCase(filterProperty).or(hasVisibleChildren)));
 		visibleProperty.addListener(observable1 -> {
@@ -67,25 +63,25 @@ public class FilterableFolderTreeItem extends FolderTreeItem {
 			while (c.next()) {
 				if (c.wasAdded()) {
 					for (TreeItem<BoxObject> item : c.getAddedSubList()) {
-						Platform.runLater(() -> addChild(item));
+						addChild(item);
 					}
 				}
 				if (c.wasRemoved()) {
 					for (TreeItem<BoxObject> item : c.getRemoved()) {
-						Platform.runLater(() -> removeChild(item));
+						removeChild(item);
 					}
 				}
 			}
 		});
 	}
 
-	private boolean removeChild(TreeItem<BoxObject> item) {
-		return filteredChildren.remove(item);
+	private void removeChild(TreeItem<BoxObject> item) {
+		Platform.runLater(() -> filteredChildren.remove(item));
 	}
 
 
-	private boolean addChild(TreeItem<BoxObject> item) {
-		return filteredChildren.add(item);
+	private void addChild(TreeItem<BoxObject> item) {
+		Platform.runLater(() -> filteredChildren.add(item));
 	}
 
 	private BooleanBinding containsIgnoreCase(StringProperty filterProperty) {
@@ -104,17 +100,15 @@ public class FilterableFolderTreeItem extends FolderTreeItem {
 				return;
 			}
 
-			Platform.runLater(() -> {
-				synchronized (filteredChildren) {
-					if (newValue) {
-						if (super.getChildren().contains(item)) {
-							addChild(item);
-						}
-					} else {
-						removeChild(item);
+			synchronized (filteredChildren) {
+				if (newValue) {
+					if (super.getChildren().contains(item)) {
+						addChild(item);
 					}
+				} else {
+					removeChild(item);
 				}
-			});
+			}
 		});
 		item.filterProperty().bind(filterProperty);
 		return item;
@@ -128,15 +122,13 @@ public class FilterableFolderTreeItem extends FolderTreeItem {
 				return;
 			}
 
-			Platform.runLater(() -> {
-				synchronized (filteredChildren) {
-					if (newValue) {
-						addChild(item);
-					} else {
-						removeChild(item);
-					}
+			synchronized (filteredChildren) {
+				if (newValue) {
+					addChild(item);
+				} else {
+					removeChild(item);
 				}
-			});
+			}
 		});
 		item.filterProperty().bind(filterProperty);
 		return item;

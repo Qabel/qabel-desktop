@@ -22,7 +22,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 	protected T controller;
 	protected Stage stage;
 	protected Scene scene;
-	private BaseFXRobot baseFXRobot;
+	protected BaseFXRobot baseFXRobot;
 
 	@Override
 	public void setUp() throws Exception {

@@ -7,12 +7,12 @@ import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.BoxFile;
 import de.qabel.desktop.storage.BoxFolder;
 import de.qabel.desktop.storage.BoxObject;
-import de.qabel.desktop.ui.AbstractControllerTest;
 import de.qabel.desktop.ui.AbstractGuiTest;
-import javafx.beans.property.StringProperty;
 import javafx.scene.control.TreeItem;
+import javafx.scene.input.KeyCode;
 import org.junit.Before;
 import org.junit.Test;
+import org.testfx.api.FxRobot;
 
 import java.nio.file.Paths;
 
@@ -21,7 +21,6 @@ import static org.junit.Assert.*;
 
 public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSController> {
 	private FilterableFolderTreeItem folderTree;
-	private StringProperty filter;
 	private BoxFile subFile;
 	private BoxFile subSubFile;
 	private BoxFolder subFolder;
@@ -44,34 +43,37 @@ public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSContro
 			fail(e.getMessage());
 		}
 
-		folderTree = new FilterableFolderTreeItem(folder, navigation);
-		folderTree.getChildren();
-		filter = folderTree.filterProperty();
 		((BoxVolumeStub)boxVolumeFactory.boxVolume).rootNavigation = navigation;
-		expectChildren(2);
-		waitForUI();
 
 		return new RemoteFSView();
 	}
 
+	@Before
+	public void setUp() throws Exception {
+		super.setUp();
+
+		folderTree = controller.rootItem;
+		runLaterAndWait(folderTree::getChildren);
+		expectChildren(2);
+		waitForUI();
+	}
+
 	@Test
 	public void showsOriginalChildrenWithoutFilter() throws Exception {
-		Thread.sleep(10000);
 		expectChildren(2);
 		assertEquals("folderName", folderTree.getChildren().get(0).getValue().getName());
 		assertEquals("fileName", folderTree.getChildren().get(1).getValue().getName());
-
 	}
 
 	@Test
 	public void hidesInvalidChildren() throws Exception {
-		filter.setValue("notTheName");
+		search("notTheName");
 		expectChildren(0);
 	}
 
 	@Test
 	public void showsFilterMatches() throws Exception {
-		filter.setValue("inner");
+		search("inner");
 		expectChildren(1);
 		TreeItem<BoxObject> firstItem = folderTree.getChildren().get(0);
 		assertSame(subFolder, firstItem.getValue());
@@ -84,19 +86,15 @@ public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSContro
 		waitUntil(() -> folderTree.getChildren().size() == count, 5000L, () -> {
 			return "expected " + count + " children but got " + folderTree.getChildren();
 		});
+		waitForUI();
 	}
 
 	private void waitForUI() {
-		runLaterAndWait(() -> {});
+		baseFXRobot.waitForIdle();
 	}
 
 	@Test
 	public void reactsOnRemoteChanges() throws Exception {
-		filter.setValue("inner");
-		expectChildren(1);
-		filter.setValue("");
-		expectChildren(2);
-
 		navigation.navigate("folderName").files.remove(subSubFile);
 		navigation.navigate("folderName").pushNotification(subSubFile, DELETE);
 
@@ -104,7 +102,15 @@ public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSContro
 		waitForUI();
 		waitUntil(() -> folderTree.getChildren().get(0).getChildren().isEmpty());
 
-		filter.setValue("inner");
+		search("inner");
 		expectChildren(0);
+	}
+
+	private void search(String query) throws InterruptedException {
+		waitForUI();
+		if (controller.searchQuery.textProperty().isNotEmpty().get()) {
+			runLaterAndWait(() -> controller.searchQuery.textProperty().set(""));
+		}
+		clickOn("#searchQuery").write(query);
 	}
 }

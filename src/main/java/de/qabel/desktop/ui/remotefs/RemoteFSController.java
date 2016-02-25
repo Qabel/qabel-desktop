@@ -15,8 +15,6 @@ import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.DetailsController;
 import de.qabel.desktop.ui.DetailsView;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
@@ -30,14 +28,12 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
-import javafx.util.Duration;
 
 import javax.inject.Inject;
 import java.io.*;
@@ -56,7 +52,7 @@ import static javafx.scene.Cursor.HAND;
 
 
 public class RemoteFSController extends AbstractController implements Initializable {
-	private static final ExecutorService searchExecutor = Executors.newSingleThreadExecutor();
+	private final ExecutorService searchExecutor = Executors.newSingleThreadExecutor();
 	final String ROOT_FOLDER_NAME = "/";
 	public static final int OPTION_EDGE_SIZE = 16;
 	private static Image uploadFileImage = optionImage("/icon/upload.png");
@@ -102,7 +98,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 	@FXML
 	private StackPane stack;
 	@FXML
-	private TextField searchQuery;
+	TextField searchQuery;
 
 	DetailsController details;
 	RemoteFileDetailsController fileDetails;
@@ -198,8 +194,8 @@ public class RemoteFSController extends AbstractController implements Initializa
 						if (!searchQuery.textProperty().get().equals(newValue)) {
 							return;
 						}
+						searchExecutor.submit(() -> rootItem.filterProperty().setValue(newValue));
 						searchExecutor.submit(() -> {
-							rootItem.filterProperty().setValue(newValue);
 							if (searchQuery.textProperty().get().equals(newValue)) {
 								stack.setCursor(null);
 							}
