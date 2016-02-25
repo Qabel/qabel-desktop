@@ -19,6 +19,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import org.json.JSONException;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -102,8 +103,8 @@ public class AccountingController extends AbstractController implements Initiali
 		try {
 			importIdentity(file);
 			loadIdentities();
-		} catch (IOException | PersistenceException e) {
-			alert("Import identity fail",e);
+		} catch (IOException | PersistenceException | JSONException e) {
+			alert("Import identity fail", e);
 		} catch (NullPointerException ignored) {
 		}
 	}
@@ -129,7 +130,7 @@ public class AccountingController extends AbstractController implements Initiali
 		try {
 			exportContact(i, file);
 		} catch (IOException | QblStorageException e) {
-			alert("Export contact fail",e);
+			alert("Export contact fail", e);
 		} catch (NullPointerException ignored) {
 		}
 	}
@@ -147,24 +148,19 @@ public class AccountingController extends AbstractController implements Initiali
 		}
 	}
 
-	void importIdentity(File file) throws IOException, PersistenceException, URISyntaxException, QblDropInvalidURL {
+	void importIdentity(File file) throws IOException, PersistenceException, URISyntaxException, QblDropInvalidURL, JSONException {
 		String content = readFile(file);
-		Gson newGson = new Gson();
-		Identity i = newGson.fromJson(content, Identity.class);
+		Identity i = IdentityExportImport.parseIdentity(content);
 		identityRepository.save(i);
 	}
 
 	void exportIdentity(Identity i, File file) throws IOException, QblStorageException {
-		Gson newGson = new Gson();
-		String json = newGson.toJson(i);
+		String json = IdentityExportImport.exportIdentity(i);
 		writeStringInFile(json, file);
 	}
 
 	void exportContact(Identity i, File file) throws IOException, QblStorageException {
-		Contact c = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
-		c.setEmail(i.getEmail());
-		c.setPhone(i.getPhone());
-		String json = gson.toJson(c);
+		String json = ContactExportImport.exportIdentityAsContact(i);
 		writeStringInFile(json, file);
 	}
 

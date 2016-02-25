@@ -7,6 +7,7 @@ import de.qabel.core.config.*;
 import de.qabel.core.exceptions.QblInvalidEncryptionKeyException;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.factory.*;
+import de.qabel.desktop.crashReports.HockeyApp;
 import de.qabel.desktop.daemon.drop.DropDaemon;
 import de.qabel.desktop.daemon.management.DefaultTransferManager;
 import de.qabel.desktop.daemon.management.MonitoredTransferManager;
@@ -174,6 +175,7 @@ public class DesktopClient extends Application {
 		dropMessageRepository = new PersistenceDropMessageRepository(persistence);
 		customProperties.put("dropMessageRepository", dropMessageRepository);
 		customProperties.put("dropConnector", dropConnector);
+		customProperties.put("reportHandler", new HockeyApp());
 		ClientConfiguration clientConfig = getClientConfiguration(
 				persistence,
 				identityRepository,

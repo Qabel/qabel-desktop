@@ -4,13 +4,13 @@ import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.daemon.management.MonitoredTransferManager;
-import de.qabel.desktop.daemon.management.Transaction;
 import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.daemon.management.WindowedTransactionGroup;
 import de.qabel.desktop.ui.accounting.AccountingView;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
 import de.qabel.desktop.ui.actionlog.ActionlogView;
 import de.qabel.desktop.ui.contact.ContactView;
+import de.qabel.desktop.ui.feedback.FeedbackView;
 import de.qabel.desktop.ui.invite.InviteView;
 import de.qabel.desktop.ui.remotefs.RemoteFSView;
 import de.qabel.desktop.ui.sync.SyncView;
@@ -18,7 +18,12 @@ import de.qabel.desktop.ui.transfer.FxProgressModel;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -26,12 +31,7 @@ import javafx.scene.layout.VBox;
 
 import javax.inject.Inject;
 import java.net.URL;
-import java.util.Observable;
 import java.util.ResourceBundle;
-
-import static de.qabel.desktop.daemon.management.Transaction.STATE.FAILED;
-import static de.qabel.desktop.daemon.management.Transaction.STATE.FINISHED;
-import static de.qabel.desktop.daemon.management.Transaction.STATE.SKIPPED;
 
 public class LayoutController extends AbstractController implements Initializable {
 	ResourceBundle resourceBundle;
@@ -63,6 +63,16 @@ public class LayoutController extends AbstractController implements Initializabl
 	@FXML
 	private ProgressBar uploadProgress;
 
+	@FXML
+	private ImageView feedbackButton;
+
+	@FXML
+	private ImageView inviteButton;
+
+	@FXML
+	private ImageView configButton;
+
+
 	@Inject
 	private ClientConfiguration clientConfiguration;
 
@@ -73,7 +83,6 @@ public class LayoutController extends AbstractController implements Initializabl
 	private HBox contactsNav;
 	private HBox actionlogNav;
 	private HBox syncNav;
-	private HBox inviteNav;
 	private HBox accountingNav;
 
 	@Override
@@ -82,19 +91,19 @@ public class LayoutController extends AbstractController implements Initializabl
 
 		navi.getChildren().clear();
 		AccountingView accountingView = new AccountingView();
-		actionlogView =  new ActionlogView();
+		actionlogView = new ActionlogView();
 		accountingNav = createNavItem(resourceBundle.getString("layoutIdentity"), accountingView);
 		navi.getChildren().add(accountingNav);
 
 		browseNav = createNavItem(resourceBundle.getString("layoutBrowse"), new RemoteFSView());
 		contactsNav = createNavItem(resourceBundle.getString("layoutContacts"), new ContactView());
 		syncNav = createNavItem(resourceBundle.getString("layoutSync"), new SyncView());
-		inviteNav = createNavItem(resourceBundle.getString("layoutInvite"), new InviteView());
+
 
 		navi.getChildren().add(browseNav);
 		navi.getChildren().add(contactsNav);
 		navi.getChildren().add(syncNav);
-		navi.getChildren().add(inviteNav);
+
 
 		scrollContent.setFillWidth(true);
 
@@ -111,7 +120,7 @@ public class LayoutController extends AbstractController implements Initializabl
 
 		WindowedTransactionGroup progress = new WindowedTransactionGroup();
 		if (transferManager instanceof MonitoredTransferManager) {
-			MonitoredTransferManager tm = (MonitoredTransferManager)transferManager;
+			MonitoredTransferManager tm = (MonitoredTransferManager) transferManager;
 			tm.onAdd(progress::add);
 		}
 		FxProgressModel progressModel = new FxProgressModel(progress);
@@ -123,7 +132,26 @@ public class LayoutController extends AbstractController implements Initializabl
 				uploadProgress.setVisible(true);
 			}
 		});
+
+		createButtonGraphics();
 	}
+
+	private void createButtonGraphics() {
+		Image exclamationGraphic = new Image(getClass().getResourceAsStream("/img/exclamation.png"));
+		inviteButton.setImage(exclamationGraphic);
+		inviteButton.getStyleClass().add("inline-button");
+		inviteButton.setOnMouseClicked(e -> scrollContent.getChildren().setAll(new InviteView().getView()));
+
+		Image heartGraphic = new Image(getClass().getResourceAsStream("/img/heart.png"));
+		feedbackButton.setImage(heartGraphic);
+		feedbackButton.getStyleClass().add("inline-button");
+		feedbackButton.setOnMouseClicked(e -> scrollContent.getChildren().setAll(new FeedbackView().getView()));
+
+		Image gearGraphic = new Image(getClass().getResourceAsStream("/img/gear.png"));
+		configButton.setImage(gearGraphic);
+		configButton.getStyleClass().add("inline-button");
+	}
+
 
 	private String lastAlias;
 	private Identity lastIdentity;
@@ -134,8 +162,9 @@ public class LayoutController extends AbstractController implements Initializabl
 		browseNav.setManaged(identity != null);
 		contactsNav.setManaged(identity != null);
 		syncNav.setManaged(identity != null);
-		inviteNav.setManaged(identity != null);
+		//inviteNav.setManaged(identity != null);
 		selectedIdentity.setVisible(identity != null);
+		//feebbackNav.setVisible(identity != null);
 
 		avatarContainer.setVisible(identity != null);
 		if (identity == null) {
@@ -147,7 +176,7 @@ public class LayoutController extends AbstractController implements Initializabl
 			return;
 		}
 
-		new AvatarView(e ->  currentAlias).getViewAsync(avatarContainer.getChildren()::setAll);
+		new AvatarView(e -> currentAlias).getViewAsync(avatarContainer.getChildren()::setAll);
 		alias.setText(currentAlias);
 		lastAlias = currentAlias;
 

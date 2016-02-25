@@ -1,35 +1,37 @@
 package de.qabel.desktop.ui;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import de.qabel.core.config.*;
-import de.qabel.core.crypto.QblECPublicKey;
-import de.qabel.core.drop.DropMessage;
 import de.qabel.core.drop.DropURL;
 import de.qabel.core.exceptions.QblDropInvalidURL;
 import javafx.application.Platform;
+import de.qabel.desktop.crashReports.CrashReportHandler;
 import javafx.geometry.Insets;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import org.apache.log4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.io.*;
 import java.net.URISyntaxException;
-import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.function.Function;
+
+
 
 public class AbstractController {
+
+
+	@Inject
+	private CrashReportHandler reportHandler;
+
 	protected Alert alert;
 	protected Label exceptionLabel;
 	protected Gson gson;
+	int statusCode;
+	TextArea inputArea;
 
 	protected void alert(Exception e) {
 		alert(e.getMessage(), e);
@@ -62,22 +64,57 @@ public class AbstractController {
 		alert = new Alert(Alert.AlertType.ERROR);
 		alert.setTitle("Error");
 		alert.setHeaderText(message);
+		Label feedbackLabel = new Label("Feedback");
+		Label stackTraceLabel = new Label("Stack Trace");
+
+		inputArea = new TextArea();
+		inputArea.getStyleClass().add("feedback");
+		VBox.setMargin(inputArea, new Insets(10, 0, 5, 0));
 
 		TextArea textArea = new TextArea(getTraceAsString(e));
 		VBox.setMargin(textArea, new Insets(10, 0, 5, 0));
 		textArea.setEditable(false);
 		textArea.setWrapText(false);
 
+		Button sendButton = new Button();
+		sendButton.setText("send");
+		sendButton.getStyleClass().add("send");
+
+		sendButton.setOnAction(e1 -> {
+			sendStackTrace(inputArea.getText(), textArea.getText());
+			inputArea.setText("");
+		});
+
+		alert.getDialogPane().getChildren().add(sendButton);
+		Button close = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+		close.setText("close");
+		ButtonBar buttonBar = (ButtonBar)alert.getDialogPane().lookup(".button-bar");
+		buttonBar.getButtons().add(sendButton);
+
+		VBox.setVgrow(inputArea, Priority.ALWAYS);
 		VBox.setVgrow(textArea, Priority.ALWAYS);
+		VBox.setVgrow(sendButton, Priority.ALWAYS);
 
 		exceptionLabel = new Label(e.getMessage());
 		VBox expansion = new VBox();
+
 		expansion.getChildren().add(exceptionLabel);
+		expansion.getChildren().add(feedbackLabel);
+		expansion.getChildren().add(inputArea);
+		expansion.getChildren().add(stackTraceLabel);
 		expansion.getChildren().add(textArea);
 
 		alert.getDialogPane().setContent(expansion);
 		alert.setResizable(true);
 		alert.showAndWait();
+	}
+
+	private void sendStackTrace(String feedback, String stacktrace) {
+		try {
+			statusCode = reportHandler.sendStacktrace(feedback, stacktrace);
+		} catch (URISyntaxException | IOException e) {
+			alert("CrashReport count not send", e);
+		}
 	}
 
 	private String getTraceAsString(Exception e) {
