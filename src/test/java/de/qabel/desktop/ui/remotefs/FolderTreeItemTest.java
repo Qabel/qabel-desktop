@@ -50,7 +50,6 @@ public class FolderTreeItemTest extends AbstractControllerTest {
 	public void isLeafWithoutFiles() {
 		navigation = new FakeBoxNavigation();
 		item = new FolderTreeItem(createSomeFolder(), navigation);
-		assertFalse(item.isLeaf());
 		load();
 		assertTrue(item.isLeaf());
 	}

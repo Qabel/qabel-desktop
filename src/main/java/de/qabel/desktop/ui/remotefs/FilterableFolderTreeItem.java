@@ -51,8 +51,10 @@ public class FilterableFolderTreeItem extends FolderTreeItem {
 				expandedBeforeFilter = isExpanded();
 				expandedProperty().bind(visibleProperty);
 			}
-			if (filterProperty.isEmpty().get() && expandedBeforeFilter != null) {
+			if (filterProperty.isEmpty().get()) {
 				expandedProperty().unbind();
+			}
+			if (filterProperty.isEmpty().get() && expandedBeforeFilter != null) {
 				setExpanded(expandedBeforeFilter);
 				expandedBeforeFilter = null;
 			}
