@@ -127,7 +127,7 @@ public class ContactController extends AbstractController implements Initializab
 	protected void handleExportContactsButtonAction(ActionEvent event) throws EntityNotFoundExcepion, IOException, JSONException {
 		FileChooser chooser = new FileChooser();
 		chooser.setTitle(resourceBundle.getString("contactDownload"));
-		chooser.setInitialFileName("Contacts.json");
+		chooser.setInitialFileName("Contacts.qco");
 		File file = chooser.showSaveDialog(contactList.getScene().getWindow());
 
 		exportContacts(file);
