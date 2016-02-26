@@ -13,13 +13,9 @@ public class SyncIndex extends Observable implements Serializable {
 
 	public void update(Path localPath, Long localMtime, boolean exists) {
 		String key = localPath.toString();
-		if (exists) {
-			index.put(key, new SyncIndexEntry(localPath, localMtime, exists));
-		} else {
-			index.remove(key);
-		}
+		index.put(key, new SyncIndexEntry(localPath, localMtime, exists));
 		setChanged();
-		notifyObservers();
+		notifyObservers(index.get(key));
 	}
 
 	public boolean isUpToDate(Path localPath, Long localMtime, boolean existing) {
