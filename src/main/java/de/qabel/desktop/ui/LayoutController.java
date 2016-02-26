@@ -72,7 +72,11 @@ public class LayoutController extends AbstractController implements Initializabl
 	@FXML
 	private ImageView configButton;
 
+	@FXML
+	private ImageView infoButton;
 
+	@FXML
+	private ImageView fqaButton;
 	@Inject
 	private ClientConfiguration clientConfiguration;
 
@@ -81,7 +85,6 @@ public class LayoutController extends AbstractController implements Initializabl
 
 	private HBox browseNav;
 	private HBox contactsNav;
-	private HBox actionlogNav;
 	private HBox syncNav;
 	private HBox accountingNav;
 
@@ -150,6 +153,14 @@ public class LayoutController extends AbstractController implements Initializabl
 		Image gearGraphic = new Image(getClass().getResourceAsStream("/img/gear.png"));
 		configButton.setImage(gearGraphic);
 		configButton.getStyleClass().add("inline-button");
+
+		Image fqaGraphic = new Image(getClass().getResourceAsStream("/img/fqa.png"));
+		fqaButton.setImage(fqaGraphic);
+		fqaButton.getStyleClass().add("inline-button");
+
+		Image infoGraphic = new Image(getClass().getResourceAsStream("/img/info.png"));
+		infoButton.setImage(infoGraphic);
+		infoButton.getStyleClass().add("inline-button");
 	}
 
 
@@ -162,9 +173,7 @@ public class LayoutController extends AbstractController implements Initializabl
 		browseNav.setManaged(identity != null);
 		contactsNav.setManaged(identity != null);
 		syncNav.setManaged(identity != null);
-		//inviteNav.setManaged(identity != null);
 		selectedIdentity.setVisible(identity != null);
-		//feebbackNav.setVisible(identity != null);
 
 		avatarContainer.setVisible(identity != null);
 		if (identity == null) {

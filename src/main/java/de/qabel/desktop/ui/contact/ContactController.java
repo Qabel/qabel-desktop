@@ -115,22 +115,29 @@ public class ContactController extends AbstractController implements Initializab
 
 	@FXML
 	protected void handleImportContactsButtonAction(ActionEvent event) throws IOException, PersistenceException, URISyntaxException, QblDropInvalidURL, EntityNotFoundExcepion, JSONException {
-		FileChooser chooser = new FileChooser();
-		chooser.setTitle(resourceBundle.getString("contactDownloadFolder"));
-		File file = chooser.showOpenDialog(contactList.getScene().getWindow());
+		try {
+			FileChooser chooser = new FileChooser();
+			chooser.setTitle(resourceBundle.getString("contactDownloadFolder"));
+			File file = chooser.showOpenDialog(contactList.getScene().getWindow());
 
-		importContacts(file);
-		loadContacts();
+			importContacts(file);
+			loadContacts();
+		} catch (NullPointerException ignored) {
+		}
 	}
 
 	@FXML
 	protected void handleExportContactsButtonAction(ActionEvent event) throws EntityNotFoundExcepion, IOException, JSONException {
-		FileChooser chooser = new FileChooser();
-		chooser.setTitle(resourceBundle.getString("contactDownload"));
-		chooser.setInitialFileName("Contacts.json");
-		File file = chooser.showSaveDialog(contactList.getScene().getWindow());
+		try {
 
-		exportContacts(file);
+			FileChooser chooser = new FileChooser();
+			chooser.setTitle(resourceBundle.getString("contactDownload"));
+			chooser.setInitialFileName("Contacts.qco");
+			File file = chooser.showSaveDialog(contactList.getScene().getWindow());
+
+			exportContacts(file);
+		} catch (NullPointerException ignored) {
+		}
 	}
 
 	void loadContacts() throws EntityNotFoundExcepion {
@@ -219,7 +226,7 @@ public class ContactController extends AbstractController implements Initializab
 			for (Contact c : contacts.getContacts()) {
 				contactRepository.save(c, i);
 			}
-		} catch (Exception ignore){
+		} catch (Exception ignore) {
 			Contact c = ContactExportImport.parseContactForIdentity(content);
 			contactRepository.save(c, i);
 		}

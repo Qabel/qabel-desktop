@@ -114,7 +114,7 @@ public class AccountingController extends AbstractController implements Initiali
 	protected void handleExportIdentityButtonAction(ActionEvent event) {
 
 		Identity i = clientConfiguration.getSelectedIdentity();
-		File file = createSaveFileChooser(i.getAlias() + "_Identity.json");
+		File file = createSaveFileChooser(i.getAlias() + ".qid");
 		try {
 			exportIdentity(i, file);
 			loadIdentities();
@@ -127,7 +127,7 @@ public class AccountingController extends AbstractController implements Initiali
 	@FXML
 	protected void handleExportContactButtonAction(ActionEvent event) {
 		Identity i = clientConfiguration.getSelectedIdentity();
-		File file = createSaveFileChooser(i.getAlias() + "_Contact.json");
+		File file = createSaveFileChooser(i.getAlias() + ".qco");
 		try {
 			exportContact(i, file);
 		} catch (IOException | QblStorageException e) {
