@@ -90,12 +90,16 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 		CachedBoxNavigation nav = navigateToRemoteDir();
 
 		nav.addObserver((o, arg) -> {
-			if (!(arg instanceof ChangeEvent)) {
-				return;
+			try {
+				if (!(arg instanceof ChangeEvent)) {
+					return;
+				}
+				String type = ((ChangeEvent) arg).getType().toString();
+				logger.trace("remote update " + type + " " + ((ChangeEvent) arg).getPath().toString());
+				download((ChangeEvent) arg);
+			} catch (Exception e) {
+				logger.error("failed to handle remote change: " + e.getMessage(), e);
 			}
-			String type =((ChangeEvent)arg).getType().toString();
-			logger.trace("remote update " + type + " " + ((ChangeEvent)arg).getPath().toString());
-			download((ChangeEvent) arg);
 		});
 	}
 
@@ -121,7 +125,7 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 		}
 
 		SyncIndexEntry entry = index.get(download.getDestination());
-		if (entry != null && entry.getLocalMtime() >= download.getMtime()) {
+		if (entry != null && download.getMtime() != null && entry.getLocalMtime() >= download.getMtime()) {
 			return;
 		}
 
