@@ -1,7 +1,5 @@
 package de.qabel.desktop.ui.remotefs;
 
-import com.sun.javafx.application.PlatformImpl;
-import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.SharingService;
 import de.qabel.desktop.cellValueFactory.BoxObjectCellValueFactory;
@@ -19,9 +17,7 @@ import de.qabel.desktop.ui.DetailsController;
 import de.qabel.desktop.ui.DetailsView;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.binding.When;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -44,10 +40,9 @@ import java.io.*;
 import java.net.URL;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.List;
-import java.util.Observable;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -57,6 +52,7 @@ import static javafx.scene.Cursor.HAND;
 
 
 public class RemoteFSController extends AbstractController implements Initializable {
+	private final ExecutorService searchExecutor = Executors.newSingleThreadExecutor();
 	final String ROOT_FOLDER_NAME = "/";
 	public static final int OPTION_EDGE_SIZE = 16;
 	private static Image uploadFileImage = optionImage("/icon/upload.png");
@@ -72,7 +68,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 
 	private BoxVolume volume;
 	ReadableBoxNavigation nav;
-	LazyBoxFolderTreeItem rootItem;
+	FilterableFolderTreeItem rootItem;
 	StaticTreeItemContainer virtualRoot;
 	VirtualShareTreeItem shareRoot;
 	ObjectProperty<TreeItem<BoxObject>> hoveredItem = new SimpleObjectProperty<>(null);
@@ -101,6 +97,8 @@ public class RemoteFSController extends AbstractController implements Initializa
 	private TreeTableColumn<BoxObject, Node> optionsColumn;
 	@FXML
 	private StackPane stack;
+	@FXML
+	TextField searchQuery;
 
 	DetailsController details;
 	RemoteFileDetailsController fileDetails;
@@ -145,10 +143,10 @@ public class RemoteFSController extends AbstractController implements Initializa
 	}
 
 	private BoxNavigation getNavigation(TreeItem<BoxObject> value) {
-		if (value instanceof LazyBoxFolderTreeItem) {
-			return (BoxNavigation) ((LazyBoxFolderTreeItem) value).getNavigation();
+		if (value instanceof FolderTreeItem) {
+			return (BoxNavigation) ((FolderTreeItem) value).getNavigation();
 		} else {
-			return (BoxNavigation) ((LazyBoxFolderTreeItem)value.getParent()).getNavigation();
+			return (BoxNavigation) ((FolderTreeItem)value.getParent()).getNavigation();
 		}
 	}
 
@@ -178,11 +176,37 @@ public class RemoteFSController extends AbstractController implements Initializa
 
 			virtualRoot.getChildren().add(shareRoot);
 
-			rootItem = new LazyBoxFolderTreeItem(new BoxFolder(volume.getRootRef(), ROOT_FOLDER_NAME, new byte[16]), nav);
+			rootItem = new FilterableFolderTreeItem(
+					new BoxFolder(
+							volume.getRootRef(),
+							ROOT_FOLDER_NAME,
+							new byte[16]
+					),
+					nav
+			);
+
+			searchQuery.textProperty().addListener((observable, oldValue, newValue) -> {
+				Timer timer = new Timer();
+				stack.setCursor(Cursor.WAIT);
+				timer.schedule(new TimerTask() {
+					@Override
+					public void run() {
+						if (!searchQuery.textProperty().get().equals(newValue)) {
+							return;
+						}
+						searchExecutor.submit(() -> rootItem.filterProperty().setValue(newValue));
+						searchExecutor.submit(() -> {
+							if (searchQuery.textProperty().get().equals(newValue)) {
+								stack.setCursor(null);
+							}
+						});
+					}
+				}, 500);
+			});
+
 			rootItem.setExpanded(true);
 			virtualRoot.getChildren().add(rootItem);
 			virtualRoot.setExpanded(true);
-
 
 			treeTable.setShowRoot(false);
 			treeTable.setRoot(virtualRoot);
@@ -231,10 +255,10 @@ public class RemoteFSController extends AbstractController implements Initializa
 
 			BoxObject value = item.getValue();
 			TreeItem<BoxObject> folder = value instanceof BoxFolder ? item : item.getParent();
-			if (!(folder instanceof LazyBoxFolderTreeItem)) {
+			if (!(folder instanceof FolderTreeItem)) {
 				return result;
 			}
-			ReadableBoxNavigation rNav = ((LazyBoxFolderTreeItem)folder).getNavigation();
+			ReadableBoxNavigation rNav = ((FolderTreeItem)folder).getNavigation();
 			if (!(rNav instanceof CachedBoxNavigation)) {
 				return result;
 			}
@@ -325,7 +349,6 @@ public class RemoteFSController extends AbstractController implements Initializa
 		};
 	}
 
-
 	private void spacer(HBox bar) {
 		Label label = new Label();
 		label.setPrefWidth(OPTION_EDGE_SIZE);
@@ -358,7 +381,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 	}
 
 	private void uploadFile(TreeItem<BoxObject> item) {
-		if (!(item instanceof LazyBoxFolderTreeItem)) {
+		if (!(item instanceof FolderTreeItem)) {
 			return;
 		}
 
@@ -367,7 +390,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 		chooser.setTitle(title);
 		List<File> list = chooser.showOpenMultipleDialog(treeTable.getScene().getWindow());
 		for (File file : list) {
-			Path destination = ((LazyBoxFolderTreeItem) item).getPath().resolve(file.getName());
+			Path destination = ((FolderTreeItem) item).getPath().resolve(file.getName());
 			Path source = file.toPath();
 			upload(source, destination);
 		}
@@ -379,7 +402,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 	}
 
 	private void uploadFolder(TreeItem<BoxObject> item) {
-		if (item == null || !(item.getValue() instanceof BoxFolder) || !(item instanceof LazyBoxFolderTreeItem)) {
+		if (item == null || !(item.getValue() instanceof BoxFolder) || !(item instanceof FolderTreeItem)) {
 			return;
 		}
 
@@ -417,12 +440,12 @@ public class RemoteFSController extends AbstractController implements Initializa
 					);
 			} else {
 				Path path;
-				LazyBoxFolderTreeItem folderTreeItem;
+				FolderTreeItem folderTreeItem;
 				if (item.getValue() instanceof BoxFolder) {
-					folderTreeItem = (LazyBoxFolderTreeItem) item;
+					folderTreeItem = (FolderTreeItem) item;
 					path = folderTreeItem.getPath();
 				} else {
-					folderTreeItem = (LazyBoxFolderTreeItem) item.getParent();
+					folderTreeItem = (FolderTreeItem) item.getParent();
 					path = folderTreeItem.getPath().resolve(boxObject.getName());
 				}
 				ReadableBoxNavigation navigation = folderTreeItem.getNavigation();
@@ -435,7 +458,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 	}
 
 	private void createFolder(TreeItem<BoxObject> item) {
-		if (item == null || !(item instanceof LazyBoxFolderTreeItem)) {
+		if (item == null || !(item instanceof FolderTreeItem)) {
 			return;
 		}
 
@@ -446,7 +469,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 		Optional<String> result = dialog.showAndWait();
 		new Thread(() -> {
 			result.ifPresent(name -> {
-				LazyBoxFolderTreeItem lazyItem = (LazyBoxFolderTreeItem) item;
+				FolderTreeItem lazyItem = (FolderTreeItem) item;
 
 				try {
 					createFolder(lazyItem.getPath().resolve(name));
@@ -471,7 +494,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 				alert.setHeaderText(resourceBundle.getString("remoteFsDeleteFolder") + item.getValue().getName() + " ?");
 				Optional<ButtonType> result = alert.showAndWait();
 
-				LazyBoxFolderTreeItem updateTreeItem = (LazyBoxFolderTreeItem) item.getParent();
+				FolderTreeItem updateTreeItem = (FolderTreeItem) item.getParent();
 				Path path = updateTreeItem.getPath().resolve(item.getValue().getName());
 
 				deleteBoxObject(result.get(), path, item.getValue());
@@ -483,7 +506,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 
 
 	void chooseUploadDirectory(File directory, TreeItem<BoxObject> item) throws IOException {
-		Path destination = Paths.get(((LazyBoxFolderTreeItem) item).getPath().toString(), directory.getName());
+		Path destination = Paths.get(((FolderTreeItem) item).getPath().toString(), directory.getName());
 		uploadDirectory(directory.toPath(), destination);
 	}
 

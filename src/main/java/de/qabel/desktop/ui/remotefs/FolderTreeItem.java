@@ -17,18 +17,18 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observer {
+public class FolderTreeItem extends TreeItem<BoxObject> implements Observer {
 	private BoxFolder folder;
 	private ReadableBoxNavigation navigation;
 	private boolean upToDate;
 	private boolean loading;
 	private StringProperty nameProperty;
-	private boolean isLeaf;
+	private boolean isLeaf = true;
 	private Image fileImg = new Image(getClass().getResourceAsStream("/icon/file.png"),  18, 18, true, false);
-	private static Image folderImg = new Image(LazyBoxFolderTreeItem.class.getResourceAsStream("/icon/folder.png"), 18, 18, true, true);
+	private static Image folderImg = new Image(FolderTreeItem.class.getResourceAsStream("/icon/folder.png"), 18, 18, true, true);
 	private static ExecutorService executorService = Executors.newCachedThreadPool();
 
-	public LazyBoxFolderTreeItem(BoxFolder folder, ReadableBoxNavigation navigation) {
+	public FolderTreeItem(BoxFolder folder, ReadableBoxNavigation navigation) {
 		this(folder, navigation, folderImg);
 		getGraphic().focusedProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue) {
@@ -37,7 +37,7 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observ
 		});
 	}
 
-	public LazyBoxFolderTreeItem(BoxFolder folder, ReadableBoxNavigation navigation, Image icon) {
+	public FolderTreeItem(BoxFolder folder, ReadableBoxNavigation navigation, Image icon) {
 		super(folder);
 		ImageView value = new ImageView(icon);
 		super.setGraphic(value);
@@ -51,8 +51,8 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observ
 	}
 
 	public Path getPath() {
-		if (getParent() != null && getParent() instanceof LazyBoxFolderTreeItem) {
-			return ((LazyBoxFolderTreeItem) getParent()).getPath().resolve(folder.getName());
+		if (getParent() != null && getParent() instanceof FolderTreeItem) {
+			return ((FolderTreeItem) getParent()).getPath().resolve(folder.getName());
 		}
 		return Paths.get("/");
 	}
@@ -87,7 +87,7 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observ
 					Map<BoxObject, TreeItem<BoxObject>> newObjects = new HashMap<>();
 					col.stream().forEach(item -> newObjects.put(item.getValue(), item));
 					Map<BoxObject, TreeItem<BoxObject>> oldObjects = new HashMap<>();
-					ObservableList<TreeItem<BoxObject>> children = LazyBoxFolderTreeItem.super.getChildren();
+					ObservableList<TreeItem<BoxObject>> children = FolderTreeItem.super.getChildren();
 					children.stream().forEach(item -> oldObjects.put(item.getValue(), item));
 
 					oldObjects.keySet().stream()
@@ -114,7 +114,7 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observ
 				}
 				if (!isLeaf && isExpanded() && getChildren().size() == 1) {
 					TreeItem<BoxObject> child = getChildren().get(0);
-					if (child.getValue() instanceof BoxFolder) {
+					if (child.getValue() instanceof BoxFolder && !child.expandedProperty().isBound()) {
 						child.setExpanded(true);
 					}
 				}
@@ -126,13 +126,22 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observ
 	private Collection<TreeItem<BoxObject>> calculateChildren() throws QblStorageException {
 		List<TreeItem<BoxObject>> children = new LinkedList<>();
 		for (BoxFolder folder : navigation.listFolders()) {
-			children.add(new LazyBoxFolderTreeItem(folder, navigation.navigate(folder)));
+			BoxNavigation subNavigation = this.navigation.navigate(folder);
+			children.add(initSubFolderItem(folder, subNavigation));
 		}
 
 		for (BoxFile file : navigation.listFiles()) {
-			children.add(new TreeItem<>(file, new ImageView(fileImg)));
+			children.add(initSubFileItem(file));
 		}
 		return children;
+	}
+
+	protected FilterableTreeItem initSubFileItem(BoxFile file) {
+		return new FilterableTreeItem(file, new ImageView(fileImg));
+	}
+
+	protected FolderTreeItem initSubFolderItem(BoxFolder folder, BoxNavigation subNavigation) {
+		return new FolderTreeItem(folder, subNavigation);
 	}
 
 	@Override
@@ -159,10 +168,10 @@ public class LazyBoxFolderTreeItem extends TreeItem<BoxObject> implements Observ
 		}
 
 		upToDate = false;
-		isLeaf = false;
-		if (!isExpanded()) {
+		if (!isExpanded() && !isLeaf()) {
 			return;
 		}
+		isLeaf = false;
 
 		updateAsync();
 	}

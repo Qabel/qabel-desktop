@@ -1,7 +1,7 @@
 package de.qabel.desktop.cellValueFactory;
 
 import de.qabel.desktop.storage.*;
-import de.qabel.desktop.ui.remotefs.LazyBoxFolderTreeItem;
+import de.qabel.desktop.ui.remotefs.FolderTreeItem;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TreeItem;
@@ -32,8 +32,8 @@ public class BoxObjectCellValueFactory implements Callback<TreeTableColumn.CellD
 		}
 
 		if (searchValue.equals(NAME)) {
-			if (treeItem instanceof LazyBoxFolderTreeItem) {
-				return ((LazyBoxFolderTreeItem) treeItem).getNameProperty();
+			if (treeItem instanceof FolderTreeItem) {
+				return ((FolderTreeItem) treeItem).getNameProperty();
 			}
 			return new ReadOnlyStringWrapper(bf.getName());
 		}

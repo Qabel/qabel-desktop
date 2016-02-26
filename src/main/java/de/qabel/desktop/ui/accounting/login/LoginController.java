@@ -192,7 +192,9 @@ public class LoginController extends AbstractController implements Initializable
 					text = text.concat(((ArrayList) map.get("username")).get(0) + " ");
 				}
 				createFailureState(text);
-			} catch (QblInvalidCredentials | URISyntaxException | IOException | IllegalArgumentException e) {
+			} catch (QblInvalidCredentials | IllegalArgumentException e) {
+				createFailureState(e.getMessage());
+			} catch (URISyntaxException | IOException e) {
 				alert("Failed to create box account", e);
 			} finally {
 				Platform.runLater(() -> buttonBar.setVisible(true));
