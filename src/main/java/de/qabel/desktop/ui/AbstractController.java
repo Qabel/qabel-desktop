@@ -3,6 +3,7 @@ package de.qabel.desktop.ui;
 import com.google.gson.Gson;
 import de.qabel.core.drop.DropURL;
 import de.qabel.core.exceptions.QblDropInvalidURL;
+import javafx.application.Platform;
 import de.qabel.desktop.crashReports.CrashReportHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -54,6 +55,9 @@ public class AbstractController {
 	}
 
 	protected void alert(String message, Exception e) {
+		if (!Platform.isFxApplicationThread()) {
+			Platform.runLater(() -> alert(message, e));
+		}
 		LoggerFactory.getLogger(getClass().getSimpleName()).error(message, e);
 		e.printStackTrace();
 

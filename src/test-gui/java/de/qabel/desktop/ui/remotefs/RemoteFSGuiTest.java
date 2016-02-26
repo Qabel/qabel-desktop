@@ -48,8 +48,9 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 	@Test
 	public void optionsOnHover() throws InterruptedException {
 		int rootIndex = 1;
+		robot.moveTo(stage);
 
-		waitUntil(() -> waitForNode("#download_" + rootIndex).isVisible());
+		waitUntil(() -> !waitForNode("#download_" + rootIndex).isVisible());
 		assertFalse(getFirstNode("#upload_file_" + rootIndex).isVisible());
 		assertFalse(getFirstNode("#upload_folder_" + rootIndex).isVisible());
 		assertFalse(getFirstNode("#create_folder_" + rootIndex).isVisible());

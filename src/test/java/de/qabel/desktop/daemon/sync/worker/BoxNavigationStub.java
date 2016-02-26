@@ -2,6 +2,8 @@ package de.qabel.desktop.daemon.sync.worker;
 
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
+import de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE;
+import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.exceptions.QblStorageNotFound;
 import de.qabel.desktop.storage.*;
@@ -9,8 +11,10 @@ import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.storage.cache.CachedIndexNavigation;
 
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.SHARE;
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.UNSHARE;
@@ -20,6 +24,7 @@ public class BoxNavigationStub extends CachedIndexNavigation {
 	public List<BoxFolder> folders = new LinkedList<>();
 	public List<BoxFile> files = new LinkedList<>();
 	public List<BoxShare> shares = new LinkedList<>();
+	public Map<String, BoxNavigationStub> subnavs = new HashMap<>();
 
 	public BoxNavigationStub(IndexNavigation nav, Path path) {
 		super(nav, path);
@@ -39,14 +44,26 @@ public class BoxNavigationStub extends CachedIndexNavigation {
 
 	}
 
+	public void pushNotification(BoxObject object, TYPE type) {
+		notifyAsync(object, type);
+	}
+
 	@Override
 	public boolean hasFolder(String name) throws QblStorageException {
 		return true;
 	}
 
 	@Override
-	public CachedBoxNavigation navigate(String name) throws QblStorageException {
-		return new BoxNavigationStub(null, getPath().resolve(name + "/"));
+	public BoxNavigationStub navigate(String name) throws QblStorageException {
+		if (!subnavs.containsKey(name)) {
+			subnavs.put(name, new BoxNavigationStub(null, getPath().resolve(name + "/")));
+		}
+		return subnavs.get(name);
+	}
+
+	@Override
+	public synchronized CachedBoxNavigation navigate(BoxFolder target) throws QblStorageException {
+		return navigate(target.getName());
 	}
 
 	@Override

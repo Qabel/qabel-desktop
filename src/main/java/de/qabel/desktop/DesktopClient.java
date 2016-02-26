@@ -45,6 +45,9 @@ import java.awt.event.MouseMotionAdapter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.Timer;
 import java.util.concurrent.ExecutorService;
@@ -54,7 +57,7 @@ import java.util.concurrent.Executors;
 public class DesktopClient extends Application {
 	private static final Logger logger = LoggerFactory.getLogger(DesktopClient.class.getSimpleName());
 	private static final String TITLE = "Qabel Desktop Client";
-	private static String DATABASE_FILE = "db.sqlite";
+	private static Path DATABASE_FILE = Paths.get(System.getProperty("user.home")).resolve(".qabel/db.sqlite");
 	private final Map<String, Object> customProperties = new HashMap<>();
 	private boolean inBound;
 	private LayoutView view;
@@ -69,11 +72,12 @@ public class DesktopClient extends Application {
 	private ExecutorService executorService = Executors.newCachedThreadPool();
 	private ClientConfiguration config;
 	private boolean visible = false;
+	private PersistenceIdentityRepository identityRepository;
 
 
 	public static void main(String[] args) throws Exception {
 		if (args.length > 0) {
-			DATABASE_FILE = args[0];
+			DATABASE_FILE = Paths.get(args[0]);
 		}
 		UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 		launch(args);
@@ -105,7 +109,11 @@ public class DesktopClient extends Application {
 						AccountingServer server = new AccountingServer(new URI(acc.getProvider()), acc.getUser(), acc.getAuth());
 						AccountingHTTP accountingHTTP = new AccountingHTTP(server, new AccountingProfile());
 
-						BoxVolumeFactory factory = new BlockBoxVolumeFactory(configuration.getDeviceId().getBytes(), accountingHTTP);
+						BoxVolumeFactory factory = new BlockBoxVolumeFactory(
+								configuration.getDeviceId().getBytes(),
+								accountingHTTP,
+								identityRepository
+						);
 						boxVolumeFactory = new CachedBoxVolumeFactory(factory);
 						customProperties.put("boxVolumeFactory", boxVolumeFactory);
 						sharingService = new BlockSharingService(dropMessageRepository, dropConnector);
@@ -159,14 +167,18 @@ public class DesktopClient extends Application {
 		return new DropDaemon(config, dropConnector, contactRepository, dropMessageRepository);
 	}
 
-	private ClientConfiguration initDiContainer() throws QblInvalidEncryptionKeyException, URISyntaxException {
-		Persistence<String> persistence = new SQLitePersistence(DATABASE_FILE);
+	private ClientConfiguration initDiContainer() throws Exception {
+		if (!Files.exists(DATABASE_FILE) && !Files.exists(DATABASE_FILE.getParent())) {
+			Files.createDirectories(DATABASE_FILE.getParent());
+		}
+
+		Persistence<String> persistence = new SQLitePersistence(DATABASE_FILE.toFile().getAbsolutePath());
 		transferManager = new MonitoredTransferManager(new DefaultTransferManager());
 		customProperties.put("loadManager", transferManager);
 		customProperties.put("transferManager", transferManager);
 		customProperties.put("persistence", persistence);
 		customProperties.put("dropUrlGenerator", new DropUrlGenerator("https://qdrop.prae.me"));
-		PersistenceIdentityRepository identityRepository = new PersistenceIdentityRepository(persistence);
+		identityRepository = new PersistenceIdentityRepository(persistence);
 		customProperties.put("identityRepository", identityRepository);
 		PersistenceAccountRepository accountRepository = new PersistenceAccountRepository(persistence);
 		customProperties.put("accountRepository", accountRepository);
