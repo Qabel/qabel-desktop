@@ -114,8 +114,7 @@ Then you can do the following steps to create your setup:
 
 The project includes a vagrantbox that is able to create the windows setup.
 Launch it with `vagrant up` from the project root.
-Then, after extracting the Qabel Desktop distribution to `installer/dist`,
-build the installer from inside the vm:
+Then, build the installer from inside the vm:
 
 ```BASH
 vagrant ssh

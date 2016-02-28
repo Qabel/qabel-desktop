@@ -121,7 +121,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     apt-get install -y xvfb
 
-    echo "now enter the VM with `vagrant ssh`, go to `/vagrant` and build with `bash build.sh`"
+    echo "now enter the VM with `vagrant ssh`, go to `/vagrant/installer` and build with `bash build-setup.sh`"
 
 SCRIPT
 end
