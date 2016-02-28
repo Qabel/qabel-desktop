@@ -72,11 +72,8 @@ public class LayoutController extends AbstractController implements Initializabl
 	@FXML
 	private ImageView configButton;
 
-	@FXML
-	private ImageView infoButton;
-
-	@FXML
-	private ImageView fqaButton;
+	//@FXML
+	//private ImageView fqaButton;
 	@Inject
 	private ClientConfiguration clientConfiguration;
 
@@ -154,13 +151,13 @@ public class LayoutController extends AbstractController implements Initializabl
 		configButton.setImage(gearGraphic);
 		configButton.getStyleClass().add("inline-button");
 
-		Image fqaGraphic = new Image(getClass().getResourceAsStream("/img/fqa.png"));
-		fqaButton.setImage(fqaGraphic);
-		fqaButton.getStyleClass().add("inline-button");
+		//Image fqaGraphic = new Image(getClass().getResourceAsStream("/img/fqa.png"));
+		//fqaButton.setImage(fqaGraphic);
+		//fqaButton.getStyleClass().add("inline-button");
 
-		Image infoGraphic = new Image(getClass().getResourceAsStream("/img/info.png"));
-		infoButton.setImage(infoGraphic);
-		infoButton.getStyleClass().add("inline-button");
+		//Image infoGraphic = new Image(getClass().getResourceAsStream("/img/info.png"));
+		//infoButton.setImage(infoGraphic);
+		//infoButton.getStyleClass().add("inline-button");
 	}
 
 

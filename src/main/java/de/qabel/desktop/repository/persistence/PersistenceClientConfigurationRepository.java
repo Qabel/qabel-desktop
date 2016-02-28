@@ -6,8 +6,8 @@ import de.qabel.core.config.Persistence;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.DefaultBoxSyncConfig;
-import de.qabel.desktop.config.ShareNotifications;
 import de.qabel.desktop.config.factory.ClientConfigurationFactory;
+import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.repository.AccountRepository;
 import de.qabel.desktop.repository.ClientConfigurationRepository;
 import de.qabel.desktop.repository.IdentityRepository;
@@ -76,7 +76,7 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 				DefaultBoxSyncConfig boxSyncConfig = new DefaultBoxSyncConfig(
 						dto.name,
 						Paths.get(dto.localPath),
-						Paths.get(dto.remotePath),
+						BoxFileSystem.get(dto.remotePath),
 						identityRepository.find(dto.identity),
 						accountRepository.find(dto.account)
 				);

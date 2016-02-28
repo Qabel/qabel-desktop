@@ -4,9 +4,9 @@ import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.daemon.sync.worker.Syncer;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndex;
+import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -55,13 +55,13 @@ public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig, O
 	@Override
 	public void setRemotePath(Path remotePath) {
 		if (!remotePath.isAbsolute()) {
-			remotePath = Paths.get("/", remotePath.toString());
+			remotePath = BoxFileSystem.get("/", remotePath.toString());
 		}
 		if (this.remotePath != null && !this.remotePath.equals(remotePath)) {
 			setChanged();
 		}
 
-		this.remotePath = remotePath;
+		this.remotePath = BoxFileSystem.get(remotePath);
 		notifyObservers(remotePath);
 	}
 

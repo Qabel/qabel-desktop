@@ -5,6 +5,7 @@ import de.qabel.desktop.daemon.sync.event.WatchEvent;
 import de.qabel.desktop.storage.BoxVolume;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class BoxSyncBasedDownload extends AbstractBoxSyncBasedTransaction implements Download {
 	public BoxSyncBasedDownload(BoxVolume volume, BoxSyncConfig boxSyncConfig,  WatchEvent event) {
@@ -14,7 +15,7 @@ public class BoxSyncBasedDownload extends AbstractBoxSyncBasedTransaction implem
 	@Override
 	public Path getDestination() {
 		Path relativePath = boxSyncConfig.getRemotePath().relativize(getSource());
-		return boxSyncConfig.getLocalPath().resolve(relativePath);
+		return boxSyncConfig.getLocalPath().resolve(Paths.get(relativePath.toString()));
 	}
 
 	@Override
