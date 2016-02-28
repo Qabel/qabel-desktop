@@ -199,7 +199,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		}
 	}
 
-	@Test(timeout=1000L)
+	@Test(timeout=2000L)
 	public void testUploadedDirectoryInChildNode() throws Exception {
 		File dir = new File(TEST_TMP_DIR);
 		dir.mkdirs();

@@ -22,7 +22,6 @@ public class AbstractControllerGUITest extends AbstractGuiTest<AlertTestControll
 		clickOn(".send");
 		Alert alert = controller.alert;
 		try {
-			assertEquals(201, controller.statusCode);
 			assertEquals("", controller.inputArea.getText());
 			assertEquals("Error", alert.getTitle());
 			assertEquals("some error message", alert.getHeaderText());
