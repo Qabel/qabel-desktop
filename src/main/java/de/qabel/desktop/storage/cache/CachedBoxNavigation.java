@@ -4,13 +4,13 @@ import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
+import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.storage.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -49,7 +49,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 		if (!cache.has(target)) {
 			CachedBoxNavigation subnav = new CachedBoxNavigation(
 					this.nav.navigate(target),
-					Paths.get(path.toString(), target.getName())
+					BoxFileSystem.get(path.toString(), target.getName())
 			);
 			cache.cache(target, subnav);
 			subnav.addObserver((o, arg) -> {setChanged(); notifyObservers(arg);});
@@ -318,6 +318,6 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 
 	@Override
 	public Path getPath(BoxObject folder) {
-		return Paths.get(path.toString(), folder.getName());
+		return BoxFileSystem.get(path.toString(), folder.getName());
 	}
 }

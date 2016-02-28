@@ -1,0 +1,235 @@
+package de.qabel.desktop.nio.boxfs;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+public class BoxPath implements Path {
+
+	private String path;
+	private String[] elements;
+	private BoxFileSystem fileSystem;
+
+	public BoxPath(BoxFileSystem fileSystem, String path) {
+		this.path = path;
+		this.fileSystem = fileSystem;
+
+		String workingPath = path;
+		List<String> elements = new LinkedList<>();
+		String separator = fileSystem.getSeparator();
+		while (workingPath.contains(separator)) {
+			int index = workingPath.indexOf(separator);
+			String element = workingPath.substring(0, index);
+			if (!element.isEmpty()) {
+				elements.add(element);
+			}
+			workingPath = workingPath.substring(index + 1);
+		}
+		if (!workingPath.isEmpty()) {
+			elements.add(workingPath);
+		}
+		this.elements = elements.toArray(new String[elements.size()]);
+	}
+
+	@Override
+	public FileSystem getFileSystem() {
+		return fileSystem;
+	}
+
+	@Override
+	public boolean isAbsolute() {
+		return path.length() > 0 && path.startsWith(separator());
+	}
+
+	@Override
+	public Path getRoot() {
+		return isAbsolute() ? new BoxPath(fileSystem, path.substring(0, 1)) : null;
+	}
+
+	@Override
+	public Path getFileName() {
+		if (path.length() == 0 || path.equals(separator())) {
+			return null;
+		}
+		if (!path.contains(separator())) {
+			return this;
+		}
+		String filename = elements[elements.length - 1];
+		return new BoxPath(fileSystem, filename);
+	}
+
+	private String separator() {
+		return fileSystem.getSeparator();
+	}
+
+	@Override
+	public Path getParent() {
+		if (getNameCount() <= (isAbsolute() ? 0 : 1)) {
+			return null;
+		}
+		Path relativeParent = subpath(0, getNameCount() - 2);
+		return isAbsolute() ? getRoot().resolve(relativeParent) : relativeParent;
+	}
+
+	@Override
+	public int getNameCount() {
+		return elements.length;
+	}
+
+	@Override
+	public Path getName(int index) {
+		return new BoxPath(fileSystem, elements[index]);
+	}
+
+	@Override
+	public Path subpath(int beginIndex, int endIndex) {
+		Path result = new BoxPath(fileSystem, "");
+		for (int i = beginIndex; i <= endIndex; i++) {
+			result = result.resolve(elements[i]);
+		}
+		return result;
+	}
+
+	@Override
+	public boolean startsWith(Path other) {
+		if (isAbsolute() != other.isAbsolute()) {
+			return false;
+		}
+		if (other.getNameCount() > getNameCount()) {
+			return false;
+		}
+		for (int i = 0; i < other.getNameCount(); i++) {
+			if (!getName(i).toString().equals(other.getName(i).toString())) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public boolean startsWith(String other) {
+		return startsWith(new BoxPath(fileSystem, other));
+	}
+
+	@Override
+	public boolean endsWith(Path other) {
+		if (other.isAbsolute()) {
+			return false;
+		}
+		int otherNameCount = other.getNameCount();
+		if (otherNameCount > getNameCount()) {
+			return false;
+		}
+		for (int i = 0; i < otherNameCount; i++) {
+			String otherName = other.getName(otherNameCount - i - 1).toString();
+			String ownName = getName(getNameCount() - i - 1).toString();
+			if (!ownName.equals(otherName)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public boolean endsWith(String other) {
+		return endsWith(new BoxPath(fileSystem, other));
+	}
+
+	@Override
+	public Path normalize() {
+		return null;
+	}
+
+	@Override
+	public Path resolve(Path other) {
+		String separator = separator();
+		if (this.path.endsWith(separator) || other.toString().isEmpty() || this.path.isEmpty()) {
+			separator = "";
+		}
+		String path = other.isAbsolute() ? other.toString() : this.path + separator + other;
+		return new BoxPath(fileSystem, path);
+	}
+
+	@Override
+	public Path resolve(String other) {
+		return resolve(new BoxPath(fileSystem, other));
+	}
+
+	@Override
+	public Path resolveSibling(Path other) {
+		return null;
+	}
+
+	@Override
+	public Path resolveSibling(String other) {
+		return null;
+	}
+
+	@Override
+	public Path relativize(Path other) {
+		Path result = new BoxPath(fileSystem, "");
+		for (int i = 0; i < getNameCount(); i++) {
+			if (!other.getName(i).toString().equals(getName(i).toString())) {
+				result = result.resolve("..");
+			}
+		}
+		for (int i = 0; i < getNameCount(); i++) {
+			if (!other.getName(i).toString().equals(getName(i).toString())) {
+				result = result.resolve(other.getName(i));
+			}
+		}
+		for (int i = getNameCount(); i < other.getNameCount(); i++) {
+			result = result.resolve(other.getName(i));
+		}
+		return result;
+	}
+
+	@Override
+	public URI toUri() {
+		return null;
+	}
+
+	@Override
+	public Path toAbsolutePath() {
+		return isAbsolute() ? this : new BoxPath(fileSystem, fileSystem.getSeparator()).resolve(this);
+	}
+
+	@Override
+	public Path toRealPath(LinkOption... options) throws IOException {
+		return null;
+	}
+
+	@Override
+	public File toFile() {
+		return null;
+	}
+
+	@Override
+	public WatchKey register(WatchService watcher, WatchEvent.Kind<?>[] events, WatchEvent.Modifier... modifiers) throws IOException {
+		return null;
+	}
+
+	@Override
+	public WatchKey register(WatchService watcher, WatchEvent.Kind<?>... events) throws IOException {
+		return null;
+	}
+
+	@Override
+	public Iterator<Path> iterator() {
+		return null;
+	}
+
+	@Override
+	public int compareTo(Path other) {
+		return toString().compareTo(other.toString());
+	}
+
+	@Override
+	public String toString() {
+		return path;
+	}
+}

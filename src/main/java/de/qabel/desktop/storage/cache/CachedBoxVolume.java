@@ -3,10 +3,13 @@ package de.qabel.desktop.storage.cache;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.exceptions.QblStorageNotFound;
-import de.qabel.desktop.storage.*;
+import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import de.qabel.desktop.storage.BoxVolume;
+import de.qabel.desktop.storage.IndexNavigation;
+import de.qabel.desktop.storage.StorageReadBackend;
+import de.qabel.desktop.storage.StorageWriteBackend;
 
 import java.io.File;
-import java.nio.file.Paths;
 
 public class CachedBoxVolume extends BoxVolume {
 	private CachedIndexNavigation navigation;
@@ -25,7 +28,7 @@ public class CachedBoxVolume extends BoxVolume {
 				createIndex(getRootRef());
 				nav = super.navigate();
 			}
-			navigation = new CachedIndexNavigation(nav, Paths.get("/"));
+			navigation = new CachedIndexNavigation(nav, BoxFileSystem.get("/"));
 		}
 		return navigation;
 	}

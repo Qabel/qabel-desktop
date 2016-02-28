@@ -9,6 +9,7 @@ import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import de.qabel.desktop.config.factory.ClientConfigurationFactory;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilder;
+import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.repository.AccountRepository;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.PersistenceException;
@@ -97,7 +98,7 @@ public class PersistenceClientConfigurationRepositoryTest extends AbstractPersis
 		accountRepo.save(account);
 
 		Path localPath = Paths.get("some/where");
-		Path remotePath = Paths.get("over/the/rainbow");
+		Path remotePath = BoxFileSystem.get("over/the/rainbow");
 		DefaultBoxSyncConfig boxSyncConfig = new DefaultBoxSyncConfig("named", localPath, remotePath, identity, account);
 		boxSyncConfig.getSyncIndex().update(localPath, 1000L, true);
 		config.getBoxSyncConfigs().add(boxSyncConfig);

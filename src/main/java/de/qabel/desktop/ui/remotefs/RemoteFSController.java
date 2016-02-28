@@ -9,6 +9,7 @@ import de.qabel.desktop.config.factory.BoxVolumeFactory;
 import de.qabel.desktop.daemon.management.*;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
+import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.storage.*;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
@@ -506,7 +507,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 
 
 	void chooseUploadDirectory(File directory, TreeItem<BoxObject> item) throws IOException {
-		Path destination = Paths.get(((FolderTreeItem) item).getPath().toString(), directory.getName());
+		Path destination = BoxFileSystem.get(((FolderTreeItem) item).getPath().toString(), directory.getName());
 		uploadDirectory(directory.toPath(), destination);
 	}
 
