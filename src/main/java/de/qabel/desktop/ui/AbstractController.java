@@ -111,8 +111,8 @@ public class AbstractController {
 
 	private void sendStackTrace(String feedback, String stacktrace) {
 		try {
-			statusCode = reportHandler.sendStacktrace(feedback, stacktrace);
-		} catch (URISyntaxException | IOException e) {
+			reportHandler.sendStacktrace(feedback, stacktrace);
+		} catch (IOException e) {
 			alert("CrashReport count not send", e);
 		}
 	}

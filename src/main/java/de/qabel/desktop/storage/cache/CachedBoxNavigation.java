@@ -47,6 +47,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 	@Override
 	public synchronized CachedBoxNavigation navigate(BoxFolder target) throws QblStorageException {
 		if (!cache.has(target)) {
+
 			CachedBoxNavigation subnav = new CachedBoxNavigation(
 					this.nav.navigate(target),
 					BoxFileSystem.get(path.toString(), target.getName())

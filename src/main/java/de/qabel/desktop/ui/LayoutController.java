@@ -18,10 +18,7 @@ import de.qabel.desktop.ui.transfer.FxProgressModel;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -72,8 +69,12 @@ public class LayoutController extends AbstractController implements Initializabl
 	@FXML
 	private ImageView configButton;
 
-	//@FXML
-	//private ImageView fqaButton;
+	@FXML
+	private ImageView fqaButton;
+
+	@FXML
+	private ImageView infoButton;
+
 	@Inject
 	private ClientConfiguration clientConfiguration;
 
@@ -137,27 +138,41 @@ public class LayoutController extends AbstractController implements Initializabl
 	}
 
 	private void createButtonGraphics() {
-		Image exclamationGraphic = new Image(getClass().getResourceAsStream("/img/exclamation.png"));
-		inviteButton.setImage(exclamationGraphic);
-		inviteButton.getStyleClass().add("inline-button");
-		inviteButton.setOnMouseClicked(e -> scrollContent.getChildren().setAll(new InviteView().getView()));
-
 		Image heartGraphic = new Image(getClass().getResourceAsStream("/img/heart.png"));
-		feedbackButton.setImage(heartGraphic);
+
+
+
+		inviteButton.setImage(heartGraphic);
+		inviteButton.getStyleClass().add("inline-button");
+		inviteButton.setOnMouseClicked(e -> {
+			scrollContent.getChildren().setAll(new InviteView().getView());
+			activeNavItem.getStyleClass().remove("active");
+		});
+		Tooltip inviteTooltip = new Tooltip(resourceBundle.getString("layoutIconInviteTooltip"));
+		Tooltip.install(inviteButton, inviteTooltip);
+
+		Image exclamationGraphic = new Image(getClass().getResourceAsStream("/img/exclamation.png"));
+		feedbackButton.setImage(exclamationGraphic);
 		feedbackButton.getStyleClass().add("inline-button");
-		feedbackButton.setOnMouseClicked(e -> scrollContent.getChildren().setAll(new FeedbackView().getView()));
+		feedbackButton.setOnMouseClicked(e -> {
+			scrollContent.getChildren().setAll(new FeedbackView().getView());
+			activeNavItem.getStyleClass().remove("active");
+
+		});
+		Tooltip feebackTooltip = new Tooltip(resourceBundle.getString("layoutIconFeebackTooltip"));
+		Tooltip.install(feedbackButton, feebackTooltip);
 
 		Image gearGraphic = new Image(getClass().getResourceAsStream("/img/gear.png"));
 		configButton.setImage(gearGraphic);
 		configButton.getStyleClass().add("inline-button");
 
-		//Image fqaGraphic = new Image(getClass().getResourceAsStream("/img/fqa.png"));
-		//fqaButton.setImage(fqaGraphic);
-		//fqaButton.getStyleClass().add("inline-button");
+		Image fqaGraphic = new Image(getClass().getResourceAsStream("/img/fqa.png"));
+		fqaButton.setImage(fqaGraphic);
+		fqaButton.getStyleClass().add("inline-button");
 
-		//Image infoGraphic = new Image(getClass().getResourceAsStream("/img/info.png"));
-		//infoButton.setImage(infoGraphic);
-		//infoButton.getStyleClass().add("inline-button");
+		Image infoGraphic = new Image(getClass().getResourceAsStream("/img/info.png"));
+		infoButton.setImage(infoGraphic);
+		infoButton.getStyleClass().add("inline-button");
 	}
 
 

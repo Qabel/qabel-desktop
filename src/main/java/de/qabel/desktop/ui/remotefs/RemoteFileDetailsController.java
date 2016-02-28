@@ -8,7 +8,10 @@ import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
-import de.qabel.desktop.storage.*;
+import de.qabel.desktop.storage.BoxFile;
+import de.qabel.desktop.storage.BoxNavigation;
+import de.qabel.desktop.storage.BoxObject;
+import de.qabel.desktop.storage.BoxShare;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.ui.AbstractController;
 import javafx.application.Platform;
@@ -24,7 +27,6 @@ import javafx.util.StringConverter;
 
 import javax.inject.Inject;
 import java.net.URL;
-import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
@@ -102,7 +104,7 @@ public class RemoteFileDetailsController extends AbstractController implements I
 		Platform.runLater(() -> {
 			ObservableList<Node> shares = currentShares.getChildren();
 			shares.clear();
-			tryOrAlert(() ->  {
+			tryOrAlert(() -> {
 				Contacts contacts = contactRepository.findContactsFromOneIdentity(clientConfiguration.getSelectedIdentity());
 				for (BoxShare share : navigation.getSharesOf(boxObject)) {
 					String recipientKeyId = share.getRecipient();
@@ -160,7 +162,8 @@ public class RemoteFileDetailsController extends AbstractController implements I
 			}
 			dialog = new TextInputDialog();
 			dialog.setTitle("Share message");
-			dialog.setHeaderText("You are sharing the file " + boxObject.getName() + " with user " + newValue.getAlias() + ". Please insert a message for him/her.");
+			String header = getString(resources, "remoteFileRemoteFileShare", boxObject.getName(), newValue.getAlias());
+			dialog.setHeaderText(header);
 			dialog.showAndWait().ifPresent(message -> share(newValue, message));
 		};
 	}
