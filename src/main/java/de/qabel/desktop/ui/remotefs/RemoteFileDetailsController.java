@@ -162,7 +162,7 @@ public class RemoteFileDetailsController extends AbstractController implements I
 			}
 			dialog = new TextInputDialog();
 			dialog.setTitle("Share message");
-			String header = getString(resources,  "remoteFile", boxObject.getName(), newValue.getAlias());
+			String header = getString(resources, "remoteFileRemoteFileShare", boxObject.getName(), newValue.getAlias());
 			dialog.setHeaderText(header);
 			dialog.showAndWait().ifPresent(message -> share(newValue, message));
 		};

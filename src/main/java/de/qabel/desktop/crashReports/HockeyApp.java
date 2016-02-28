@@ -30,7 +30,7 @@ public class HockeyApp implements CrashReportHandler {
 	@Override
 	public void sendFeedback(String feedback, String name, String email) throws  IOException {
 
-		URI uri = null;
+		URI uri;
 		try {
 			uri = new URI("https://rink.hockeyapp.net/api/2/apps/" + APP_ID + "/feedback");
 		} catch (URISyntaxException e) {
@@ -49,11 +49,15 @@ public class HockeyApp implements CrashReportHandler {
 	}
 
 	@Override
-	public int sendStacktrace(String feedback, String stacktrace) throws URISyntaxException, IOException {
+	public void sendStacktrace(String feedback, String stacktrace) throws IOException {
 
 		String log = createLog(stacktrace);
-
-		URI uri = new URI("https://rink.hockeyapp.net/api/2/apps/" + APP_ID + "/crashes/upload");
+		URI uri;
+		try {
+			uri = new URI("https://rink.hockeyapp.net/api/2/apps/" + APP_ID + "/crashes/upload");
+		} catch (URISyntaxException e) {
+			throw new IllegalStateException("invalid App Id");
+		}
 		HttpPost httpPost = new HttpPost(uri);
 
 		HttpEntity entity = MultipartEntityBuilder.create()
@@ -62,8 +66,7 @@ public class HockeyApp implements CrashReportHandler {
 				.build();
 		httpPost.setEntity(entity);
 
-		HttpResponse response = httpClient.execute(httpPost);
-		return response.getStatusLine().getStatusCode();
+		 httpClient.execute(httpPost);
 	}
 
 	private String createLog(String stacktrace) {
