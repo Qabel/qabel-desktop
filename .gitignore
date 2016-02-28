@@ -10,8 +10,10 @@ log/
 gradle
 accounting.log
 drop.log
+block.log
 accounting.pid
 drop.pid
+block.pid
 qabel-desktop.sqlite
 ScenicView.jar
 scenicView.properties

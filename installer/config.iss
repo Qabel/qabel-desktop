@@ -2,7 +2,7 @@
 #define AppVersion "0.1"
 #define AppPublisher "Qabel GmbH"
 #define AppURL "https://qabel.de"
-#define AppExeName "desktopLaunch4j.exe"
+#define AppExeName "QabelDesktop.exe"
 #define SetupIcon "logo.ico"
 
 [Setup]
@@ -16,7 +16,7 @@ AppSupportURL={#AppURL}
 AppUpdatesURL={#AppURL}
 DefaultDirName={pf}\{#AppName}
 DefaultGroupName={#AppName}
-AllowNoIcons=yes
+AllowNoIcons=yes                                  
 LicenseFile=..\LICENSE
 OutputDir=.
 OutputBaseFilename=QabelSetup
@@ -32,11 +32,15 @@ AppCopyright={#AppPublisher}
 Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "german"; MessagesFile: "compiler:Languages\German.isl"
 
+[CustomMessages]
+english.DeleteConfig=Do you want to delete the configuration file?
+german.DeleteConfig=Wollen Sie die Konfigurationsdatei löschen?
+
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "desktopLaunch4j.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "QabelDesktop.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\lib\*"; DestDir: "{app}\lib"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "jre\*"; DestDir: "{app}\jre"; Flags: ignoreversion recursesubdirs createallsubdirs
 
@@ -48,3 +52,16 @@ Name: "{userstartup}\{#AppName}"; Filename: "{app}\{#AppExeName}"
 
 [Run]
 Filename: "{app}\{#AppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(AppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+
+
+[Code]
+
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+begin
+  if CurUninstallStep = usUninstall then begin
+    if MsgBox(ExpandConstant('{cm:DeleteConfig}'), mbConfirmation, MB_YESNO) = IDYES
+    then begin
+      DeleteFile(ExpandConstant('{%HOMEPATH}\.qabel\db.sqlite'));
+    end;
+  end;
+end;

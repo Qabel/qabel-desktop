@@ -3,7 +3,7 @@
   <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
   <jar>lib\qabel-desktop-0.1.jar</jar>
-  <outfile>desktopLaunch4j.exe</outfile>
+  <outfile>QabelDesktop.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
@@ -24,4 +24,16 @@
     <runtimeBits>64/32</runtimeBits>
     <opt>-Djava.library.path=lib</opt>
   </jre>
+  <versionInfo>
+    <fileVersion>0.1.0.0</fileVersion>
+    <txtFileVersion>QabelDesktop 0.1.0.0</txtFileVersion>
+    <fileDescription>Qabel Desktop</fileDescription>
+    <copyright>Qabel GmbH</copyright>
+    <productVersion>0.1.0.0</productVersion>
+    <txtProductVersion>Qabel Desktop 0.1.0.0</txtProductVersion>
+    <productName>Qabel Desktop</productName>
+    <companyName>Qabel GmbH</companyName>
+    <internalName>QabelDesktop</internalName>
+    <originalFilename>QabelDesktop.exe</originalFilename>
+  </versionInfo>
 </launch4jConfig>
