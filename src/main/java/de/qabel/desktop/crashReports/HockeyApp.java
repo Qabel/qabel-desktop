@@ -28,12 +28,13 @@ public class HockeyApp implements CrashReportHandler {
 	private HttpClient httpClient = HttpClients.createMinimal();
 
 	@Override
-	public int sendFeedback(String feedback, String name, String email) throws  IOException {
+	public void sendFeedback(String feedback, String name, String email) throws  IOException {
 
 		URI uri = null;
 		try {
 			uri = new URI("https://rink.hockeyapp.net/api/2/apps/" + APP_ID + "/feedback");
-		} catch (URISyntaxException ignore) {
+		} catch (URISyntaxException e) {
+			throw new IllegalStateException("invalid App Id");
 		}
 		HttpPost httpPost = new HttpPost(uri);
 		httpPost.addHeader("X-HockeyAppToken", TOKEN);
@@ -44,8 +45,7 @@ public class HockeyApp implements CrashReportHandler {
 		parameters.add(new BasicNameValuePair("email", email));
 		httpPost.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
 
-		HttpResponse response = httpClient.execute(httpPost);
-		return response.getStatusLine().getStatusCode();
+		httpClient.execute(httpPost);
 	}
 
 	@Override
