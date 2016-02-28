@@ -49,7 +49,7 @@ public class FeedbackController extends AbstractController implements Initializa
 					feedbackField.setText("");
 					nameField.setText("");
 					emailField.setText("");
-				} catch (IOException | URISyntaxException e) {
+				} catch (IOException  e) {
 					alert(e);
 				}
 			}
