@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -40,28 +41,23 @@ public class FeedbackController extends AbstractController implements Initializa
 
 	protected void handleSendButtonAction() {
 
-		int responseCode;
+		new Thread() {
+			public void run() {
+				try {
+					reportHandler.sendFeedback(feedbackField.getText(), nameField.getText(), emailField.getText());
 
-		try {
-			responseCode = reportHandler.sendFeedback(feedbackField.getText(), nameField.getText(), emailField.getText());
-
-			if (responseCode <= 205) {
-				feedbackField.setText("");
-				nameField.setText("");
-				emailField.setText("");
-				return;
+					feedbackField.setText("");
+					nameField.setText("");
+					emailField.setText("");
+				} catch (IOException  e) {
+					alert(e);
+				}
 			}
+		}.start();
 
-			if (responseCode > 205) {
-				String str = "Illegal response code from hockey app server - response code: " + responseCode;
-				Exception e = new IOException(str);
-				alert(str, e);
-				throw e;
-			}
 
-		} catch (Exception e) {
-			alert(e);
-		}
+
+
 	}
 }
 

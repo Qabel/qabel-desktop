@@ -84,7 +84,6 @@
 
 .scrollContent {
     -fx-background-color: white;
-    -fx-background-image: url("/logo.png");
     -fx-background-size: 50px;
     -fx-background-position: bottom right;
     -fx-background-repeat: no-repeat;

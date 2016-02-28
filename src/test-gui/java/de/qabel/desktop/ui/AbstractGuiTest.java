@@ -57,7 +57,11 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 		);
 		baseFXRobot = new BaseFXRobot(scene);
 		baseFXRobot.waitForIdle();
-		Node sceneNode = robot.rootNode(scene);
+		waitTillTheEnd(robot.rootNode(scene));
+		return presenter;
+	}
+
+	protected void waitTillTheEnd(Node sceneNode) {
 		waitUntil(() -> {
 			try {
 				int a = (int) Math.round(sceneNode.computeAreaInScreen());
@@ -67,7 +71,6 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 				return false;
 			}
 		}, 10000L);
-		return presenter;
 	}
 
 	protected int getHeight() {
