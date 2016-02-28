@@ -18,7 +18,7 @@ public class AbstractControllerGUITest extends AbstractGuiTest<AlertTestControll
 		Platform.runLater(() -> controller.alert("some error message", new Exception("exceptionmessage")));
 		waitUntil(() -> controller.alert != null);
 		waitUntil(() -> controller.exceptionLabel != null);
-		clickOn(waitForNode(".feedback")).write("123456");
+		clickOn(".feedback").write("123456");
 		clickOn(".send");
 		Alert alert = controller.alert;
 		try {
