@@ -5,7 +5,7 @@ import java.net.URISyntaxException;
 
 public interface CrashReportHandler {
 
-	int sendFeedback(String feedbackFieldText, String text, String feedback) throws URISyntaxException, IOException;
+	void sendFeedback(String feedbackFieldText, String text, String feedback) throws URISyntaxException, IOException;
 	int sendStacktrace(String feedback, String stacktrace) throws URISyntaxException, IOException;
 
 }

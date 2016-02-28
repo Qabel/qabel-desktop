@@ -40,24 +40,12 @@ public class FeedbackController extends AbstractController implements Initializa
 
 	protected void handleSendButtonAction() {
 
-		int responseCode;
-
 		try {
-			responseCode = reportHandler.sendFeedback(feedbackField.getText(), nameField.getText(), emailField.getText());
+			reportHandler.sendFeedback(feedbackField.getText(), nameField.getText(), emailField.getText());
 
-			if (responseCode <= 205) {
 				feedbackField.setText("");
 				nameField.setText("");
 				emailField.setText("");
-				return;
-			}
-
-			if (responseCode > 205) {
-				String str = "Illegal response code from hockey app server - response code: " + responseCode;
-				Exception e = new IOException(str);
-				alert(str, e);
-				throw e;
-			}
 
 		} catch (Exception e) {
 			alert(e);
