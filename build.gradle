@@ -60,26 +60,28 @@ dependencies {
     testCompile 'org.testfx:testfx-junit:4.+'
 
     compile 'org.ocpsoft.prettytime:prettytime:3.2.7.Final' //Apache License https://github.com/ocpsoft/prettytime/blob/master/LICENSE
-    compile 'commons-cli:commons-cli:1.2'
-    compile 'commons-codec:commons-codec:1.10'
-    compile 'org.apache.httpcomponents:httpclient:4.5.+'
-    compile 'org.apache.httpcomponents:httpmime:4.5.+'
-    compile 'org.json:json:20090211'
+    compile 'commons-cli:commons-cli:1.2'                   //Apache License
+    compile 'commons-codec:commons-codec:1.10'              //Apache License
+    compile 'org.apache.httpcomponents:httpclient:4.5.+'    //Apache License
+    compile 'org.apache.httpcomponents:httpmime:4.5.+'      //Apache License
+    compile 'org.json:json:20090211'                        //None? https://github.com/stleary/JSON-java
+    compile 'javax.inject:javax.inject:1'                   //Apache License http://mvnrepository.com/artifact/javax.inject/javax.inject/1
+    compile name: 'afterburner'                             //Apache License https://github.com/AdamBien/afterburner.fx
     // see https://github.com/AdamBien/afterburner.fx/pull/54 //compile 'com.airhacks:afterburner.fx:1.6.2' // Apache 2.0
-    compile 'javax.inject:javax.inject:1'
-    compile name: 'afterburner'
+
     compile name: 'qabel-core-0.1'
 
-    compile 'com.google.code.gson:gson:2.+'
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.12'
-    compile group: 'log4j', name:'log4j', version: '1.2.16';
+    compile 'com.google.code.gson:gson:2.+'                 //Apache License https://github.com/google/gson/blob/master/LICENSE
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.12'    //MIT http://www.slf4j.org/license.html
+    compile group: 'log4j', name:'log4j', version: '1.2.16';            //Apache License https://logging.apache.org/log4j/1.2/license.html
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.4'
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.4'
     compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.4'
     compile group: 'org.apache.james', name: 'apache-mime4j', version: '0.7.2'
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.+'
-    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.8.7'
-    compile 'com.madgag.spongycastle:prov:1.53.0.0'
+
+    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.8.7'  //Apache License https://bitbucket.org/xerial/sqlite-jdbc
+    compile 'com.madgag.spongycastle:prov:1.53.0.0'                     //Bounty Castle License http://www.bouncycastle.org/licence.html
 }
 
 task copyToLib(type: Copy) {

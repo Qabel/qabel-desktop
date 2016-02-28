@@ -4,7 +4,7 @@ set -e
 # qabel-drop
 cd qabel-drop
 if [ ! -d venv ]; then
-  virtualenv --python=python3.5 venv
+  virtualenv --always-copy --python=python3.5 venv
 fi
 source venv/bin/activate
 pip install -r requirements.txt
@@ -20,7 +20,7 @@ cd ..
 # qabel-accounting
 cd qabel-accounting
 if [ ! -d venv ]; then
-  virtualenv --python=python3.5 venv
+  virtualenv --always-copy --python=python3.5 venv
 fi
 source venv/bin/activate
 pip install -r requirements.txt
@@ -32,7 +32,7 @@ cd ..
 # qabel-block
 cd qabel-block
 if [ ! -d venv ]; then
-  virtualenv --python=python3.5 venv
+  virtualenv --always-copy --python=python3.5 venv
 fi
 source venv/bin/activate
 pip install -r requirements.txt
