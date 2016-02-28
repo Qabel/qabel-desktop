@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -40,16 +41,23 @@ public class FeedbackController extends AbstractController implements Initializa
 
 	protected void handleSendButtonAction() {
 
-		try {
-			reportHandler.sendFeedback(feedbackField.getText(), nameField.getText(), emailField.getText());
+		new Thread() {
+			public void run() {
+				try {
+					reportHandler.sendFeedback(feedbackField.getText(), nameField.getText(), emailField.getText());
 
-				feedbackField.setText("");
-				nameField.setText("");
-				emailField.setText("");
+					feedbackField.setText("");
+					nameField.setText("");
+					emailField.setText("");
+				} catch (IOException | URISyntaxException e) {
+					alert(e);
+				}
+			}
+		}.start();
 
-		} catch (Exception e) {
-			alert(e);
-		}
+
+
+
 	}
 }
 

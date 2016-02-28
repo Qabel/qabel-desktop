@@ -10,6 +10,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 
@@ -23,15 +24,17 @@ import java.util.List;
 public class HockeyApp implements CrashReportHandler {
 	private static final String APP_ID = "3b119dc227334d2d924e4e134c72aadc";
 	private static final String TOKEN = "350b097ef0964b17a0f3907050de309d";
-	private RequestConfig config = RequestConfig.custom().
-			setConnectTimeout(2 * 1000).build();
-	private HttpClient httpClient = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
-	private HttpResponse response;
+
+	private HttpClient httpClient = HttpClients.createMinimal();
 
 	@Override
-	public void sendFeedback(String feedback, String name, String email) throws URISyntaxException, IOException {
+	public int sendFeedback(String feedback, String name, String email) throws  IOException {
 
-		URI uri = new URI("https://rink.hockeyapp.net/api/2/apps/" + APP_ID + "/feedback");
+		URI uri = null;
+		try {
+			uri = new URI("https://rink.hockeyapp.net/api/2/apps/" + APP_ID + "/feedback");
+		} catch (URISyntaxException ignore) {
+		}
 		HttpPost httpPost = new HttpPost(uri);
 		httpPost.addHeader("X-HockeyAppToken", TOKEN);
 
@@ -41,20 +44,8 @@ public class HockeyApp implements CrashReportHandler {
 		parameters.add(new BasicNameValuePair("email", email));
 		httpPost.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
 
-
-		new Thread() {
-			public void run() {
-				try {
-					response = httpClient.execute(httpPost);
-					if (!(response.getStatusLine().getStatusCode() <= 205)) {
-						String str = "Illegal response code from hockey app server - response code: " + response.getStatusLine().getStatusCode();
-						throw new IOException(str);
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}.start();
+		HttpResponse response = httpClient.execute(httpPost);
+		return response.getStatusLine().getStatusCode();
 	}
 
 	@Override
