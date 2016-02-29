@@ -109,3 +109,17 @@ Then you can do the following steps to create your setup:
 
  If you haven't configured your PATH to include ISCC, you need to use the full path to the ISCC.exe. For example:
  `"C:\Program Files (x86)\Inno Setup 5\ISCC.exe" config.iss`
+
+### Build Windows Setup with the VagrantBox
+
+The project includes a vagrantbox that is able to create the windows setup.
+Launch it with `vagrant up` from the project root.
+Then, build the installer from inside the vm:
+
+```BASH
+vagrant ssh
+cd /vagrant/installer
+bash build-setup.sh
+```
+
+It will generate the setup at `installer/QabelSetup.exe`.
