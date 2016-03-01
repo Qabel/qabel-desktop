@@ -68,7 +68,7 @@ public class FileMetadata extends AbstractMetadata {
 				"INSERT INTO file (owner, prefix, block, name, size, mtime, key) VALUES(?, ?, ?, ?, ?, ?, ?)")) {
 			int i = 0;
 			statement.setBytes(++i, owner.getKey());
-			statement.setString(++i, boxFile.getBlock());
+			statement.setString(++i, boxFile.getPrefix());
 			statement.setString(++i, boxFile.getBlock());
 			statement.setString(++i, boxFile.getName());
 			statement.setLong(++i, boxFile.getSize());

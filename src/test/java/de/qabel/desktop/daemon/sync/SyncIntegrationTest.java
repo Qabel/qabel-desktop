@@ -9,6 +9,7 @@ import de.qabel.desktop.config.factory.IdentityBuilder;
 import de.qabel.desktop.daemon.management.*;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncer;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndexEntry;
+import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.storage.LocalReadBackend;
 import de.qabel.desktop.storage.LocalWriteBackend;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
@@ -175,10 +176,10 @@ public class SyncIntegrationTest {
 		if (history.get(0) instanceof Upload) {
 			rootSyncUpload = 0;
 		}
-		assertEquals(Paths.get("/sync"), history.get(rootSyncUpload).getDestination());
+		assertEquals(BoxFileSystem.get("/sync").toString(), history.get(rootSyncUpload).getDestination().toString());
 
 		assertTrue(history.get(1) instanceof Download);
-		assertEquals(Paths.get("/sync/dir"), history.get(1).getSource());
+		assertEquals(BoxFileSystem.get("/sync/dir").toString(), history.get(1).getSource().toString());
 
 		waitUntil(() -> history.size() > 2, () -> {
 			SyncIntegrationTest i = SyncIntegrationTest.this;
@@ -188,7 +189,7 @@ public class SyncIntegrationTest {
 				"an unecpected " + history.get(2) + " occured after DOWNLAOD /sync/dir",
 				history.get(2) instanceof Download
 		);
-		assertEquals(Paths.get("/sync/dir/file"), history.get(2).getSource());
+		assertEquals(BoxFileSystem.get("/sync/dir/file").toString(), history.get(2).getSource().toString());
 	}
 
 	@Test
