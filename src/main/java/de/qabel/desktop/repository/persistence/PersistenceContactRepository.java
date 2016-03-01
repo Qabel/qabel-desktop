@@ -60,6 +60,10 @@ public class PersistenceContactRepository extends AbstractCachedPersistenceRepos
 	public Contact findByKeyId(Identity identity, String keyId) throws EntityNotFoundExcepion {
 
 		Contacts contacts = findContactsFromOneIdentity(identity);
-		return contacts.getByKeyIdentifier(keyId);
+		Contact contact = contacts.getByKeyIdentifier(keyId);
+		if (contact == null) {
+			throw new EntityNotFoundExcepion("No contact with keyId " + keyId + " found");
+		}
+		return contact;
 	}
 }
