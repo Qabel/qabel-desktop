@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+<BorderPane prefHeight="130.0" prefWidth="600.0" style="-fx-border-color: darkgrey; -fx-border-width: 1 0 0 0;"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="de.qabel.desktop.ui.sync.item.DummySyncItemController">
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+    </padding>
+    <center>
+        <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <center>
+                <Label text="%syncItemEmptyList" wrapText="true">
+                    <font>
+                        <Font name="System Bold" size="15.0"/>
+                    </font>
+                </Label>
+            </center>
+        </BorderPane>
+    </center>
+</BorderPane>

@@ -157,7 +157,6 @@ public class LayoutController extends AbstractController implements Initializabl
 		feedbackButton.setOnMouseClicked(e -> {
 			scrollContent.getChildren().setAll(new FeedbackView().getView());
 			activeNavItem.getStyleClass().remove("active");
-
 		});
 		Tooltip feebackTooltip = new Tooltip(resourceBundle.getString("layoutIconFeebackTooltip"));
 		Tooltip.install(feedbackButton, feebackTooltip);
