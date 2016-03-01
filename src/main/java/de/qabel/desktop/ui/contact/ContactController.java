@@ -17,6 +17,7 @@ import de.qabel.desktop.ui.actionlog.ActionlogView;
 import de.qabel.desktop.ui.contact.item.BlankItemView;
 import de.qabel.desktop.ui.contact.item.ContactItemController;
 import de.qabel.desktop.ui.contact.item.ContactItemView;
+import de.qabel.desktop.ui.contact.item.DummyItemView;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -148,6 +149,12 @@ public class ContactController extends AbstractController implements Initializab
 
 		String old = null;
 		Contacts contacts = contactRepository.findContactsFromOneIdentity(i);
+		if(contacts.getContacts().size() == 0){
+			final Map<String, Object> injectionContext = new HashMap<>();
+			DummyItemView itemView = new DummyItemView(injectionContext::get);
+			contactList.getChildren().add(itemView.getView());
+			return;
+		}
 		List<Contact> cl = new LinkedList<>(contacts.getContacts());
 
 		cl.sort((c1, c2) -> c1.getAlias().toLowerCase().compareTo(c2.getAlias().toLowerCase()));

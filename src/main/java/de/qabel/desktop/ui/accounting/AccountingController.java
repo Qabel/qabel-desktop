@@ -12,7 +12,7 @@ import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.item.AccountingItemView;
-import javafx.application.Platform;
+import de.qabel.desktop.ui.accounting.item.DummyAccountingItemView;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -173,6 +173,14 @@ public class AccountingController extends AbstractController implements Initiali
 		try {
 			identityList.getChildren().clear();
 			Identities identities = identityRepository.findAll();
+
+			if (identities.getIdentities().size() == 0) {
+				DummyAccountingItemView itemView = new DummyAccountingItemView();
+				identityList.getChildren().add(itemView.getView());
+				return;
+			}
+
+
 			for (Identity identity : identities.getIdentities()) {
 				final Map<String, Object> injectionContext = new HashMap<>();
 				injectionContext.put("identity", identity);
@@ -182,8 +190,8 @@ public class AccountingController extends AbstractController implements Initiali
 			}
 		} catch (Exception e) {
 			alert("Failed to load identities", e);
-
 		}
+
 	}
 
 	private File createSaveFileChooser(String defaultName) {
