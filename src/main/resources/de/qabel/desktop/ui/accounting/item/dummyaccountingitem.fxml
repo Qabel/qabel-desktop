@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<HBox fx:id="root" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS"
+      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="de.qabel.desktop.ui.accounting.item.DummyAccountingItemController">
+    <children>
+        <Pane fx:id="avatarContainer"/>
+        <VBox maxWidth="1.7976931348623157E308" prefHeight="65.0" HBox.hgrow="ALWAYS">
+            <children>
+                <BorderPane prefHeight="200.0">
+                    <center>
+                        <VBox minWidth="200.0" prefHeight="30.0" BorderPane.alignment="CENTER">
+                            <children>
+                                <Label fx:id="alias" text="%accountItemEmptyIdentities">
+                                    <font>
+                                        <Font name="System Bold" size="15.0"/>
+                                    </font>
+                                </Label>
+                            </children>
+                            <padding>
+                                <Insets left="5.0" right="5.0"/>
+                            </padding>
+                        </VBox>
+                    </center>
+                </BorderPane>
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+            </padding>
+        </VBox>
+    </children>
+</HBox>

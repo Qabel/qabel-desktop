@@ -3,6 +3,7 @@ package de.qabel.desktop.ui.sync;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.sync.item.DummySyncItemView;
 import de.qabel.desktop.ui.sync.item.SyncItemView;
 import de.qabel.desktop.ui.sync.setup.SyncSetupController;
 import de.qabel.desktop.ui.sync.setup.SyncSetupView;
@@ -45,6 +46,11 @@ public class SyncController extends AbstractController implements Initializable 
 	private ObservableList<BoxSyncConfig> reload() {
 		syncItemNodes.clear();
 		ObservableList<BoxSyncConfig> boxSyncConfigs = clientConfiguration.getBoxSyncConfigs();
+
+		if(Collections.unmodifiableList(boxSyncConfigs).size() == 0){
+			syncItemNodes.add(new DummySyncItemView().getView());
+			return boxSyncConfigs;
+		}
 		for (BoxSyncConfig syncConfig : Collections.unmodifiableList(boxSyncConfigs)) {
 			syncItemNodes.add(new SyncItemView(s -> syncConfig).getView());
 		}
