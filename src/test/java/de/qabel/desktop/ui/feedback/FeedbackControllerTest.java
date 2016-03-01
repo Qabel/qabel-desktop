@@ -21,10 +21,9 @@ public class FeedbackControllerTest extends AbstractControllerTest {
 		controller.feedbackField.setText("feedback");
 
 		controller.handleSendButtonAction();
-		waitUntil(() -> controller.nameField.getText().equals(""),2000);
-		assertEquals(controller.nameField.getText(), "");
-		assertEquals(controller.emailField.getText(), "");
-		assertEquals(controller.feedbackField.getText(), "");
+		waitUntil(() -> controller.nameField.getText().equals(""));
+		waitUntil(() -> controller.emailField.getText().equals(""));
+		waitUntil(() -> controller.feedbackField.getText().equals(""));
 	}
 
 

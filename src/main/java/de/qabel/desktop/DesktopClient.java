@@ -42,8 +42,8 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.io.File;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -77,7 +77,7 @@ public class DesktopClient extends Application {
 
 	public static void main(String[] args) throws Exception {
 		if (args.length > 0) {
-			DATABASE_FILE = Paths.get(args[0]);
+			DATABASE_FILE = new File(args[0]).getAbsoluteFile().toPath();
 		}
 		UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 		launch(args);

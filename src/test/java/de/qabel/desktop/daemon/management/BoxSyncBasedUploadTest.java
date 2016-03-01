@@ -10,6 +10,8 @@ import de.qabel.desktop.daemon.sync.AbstractSyncTest;
 import de.qabel.desktop.daemon.sync.event.WatchEvent;
 import de.qabel.desktop.daemon.sync.event.WatchRegisteredEvent;
 import de.qabel.desktop.daemon.sync.worker.BoxVolumeStub;
+import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.storage.BoxVolume;
 import org.junit.After;
 import org.junit.Before;
@@ -49,7 +51,7 @@ public class BoxSyncBasedUploadTest extends AbstractSyncTest {
 		BoxVolume boxVolume = upload.getBoxVolume();
 		assertEquals(volume, boxVolume);
 		assertEquals(new File(tmpDir.toFile(), "testfile").toPath(), upload.getSource());
-		assertEquals(Paths.get("/tmp/testfile"), upload.getDestination());
+		assertEquals(BoxFileSystem.get("/tmp/testfile").toString(), upload.getDestination().toString());
 		assertEquals(5, upload.getSize());
 	}
 }
