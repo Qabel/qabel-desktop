@@ -196,7 +196,6 @@ public class DesktopClient extends Application {
 		if (!clientConfig.hasDeviceId()) {
 			clientConfig.setDeviceId(generateDeviceId());
 		}
-		PersistenceContactRepository contactRepository = new PersistenceContactRepository(persistence);
 		customProperties.put("contactRepository", contactRepository);
 		customProperties.put("clientConfiguration", clientConfig);
 		customProperties.put("primaryStage", primaryStage);
