@@ -14,6 +14,6 @@ public class ShareNotificationMessageTest {
 
 		assertEquals("http://somewhere", unserializedMessage.getUrl());
 		assertEquals("key", unserializedMessage.getHexKey());
-		assertEquals("message", unserializedMessage.getMessage());
+		assertEquals("message", unserializedMessage.getMsg());
 	}
 }

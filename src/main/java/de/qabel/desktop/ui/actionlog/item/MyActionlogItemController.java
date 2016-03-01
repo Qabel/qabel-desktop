@@ -10,7 +10,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
-import javafx.scene.text.TextAlignment;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import javax.inject.Inject;
@@ -18,7 +17,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class MyActionlogItemController extends AbstractController implements Initializable, ActionlogItem {
-
 	ResourceBundle resourceBundle;
 
 	@FXML

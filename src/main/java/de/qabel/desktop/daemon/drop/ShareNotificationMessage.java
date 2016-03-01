@@ -1,7 +1,6 @@
 package de.qabel.desktop.daemon.drop;
 
 import com.google.gson.Gson;
-import com.google.gson.annotations.Expose;
 import de.qabel.core.crypto.QblECPublicKey;
 import org.spongycastle.util.encoders.Hex;
 
@@ -11,12 +10,12 @@ public class ShareNotificationMessage implements Serializable {
 	private static final long serialVersionUID = -3612862422477244263L;
 	private String url;
 	private String key;
-	private String message;
+	private String msg;
 
-	public ShareNotificationMessage(String url, String key, String message) {
+	public ShareNotificationMessage(String url, String key, String msg) {
 		this.url = url;
 		this.key = key;
-		this.message = message;
+		this.msg = msg;
 	}
 
 	public static ShareNotificationMessage fromJson(String jsonMessage) {
@@ -40,7 +39,7 @@ public class ShareNotificationMessage implements Serializable {
 		return key;
 	}
 
-	public String getMessage() {
-		return message;
+	public String getMsg() {
+		return msg;
 	}
 }
