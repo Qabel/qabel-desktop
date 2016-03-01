@@ -15,7 +15,7 @@
                     <center>
                         <VBox minWidth="200.0" prefHeight="30.0" BorderPane.alignment="CENTER">
                             <children>
-                                <Label fx:id="alias" text="%accountItemEmptyIdentities">
+                                <Label text="%accountItemEmptyIdentities" wrapText="true">
                                     <font>
                                         <Font name="System Bold" size="15.0"/>
                                     </font>

@@ -13,7 +13,7 @@
     <center>
         <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <center>
-                <Label text="%syncItemEmptyList">
+                <Label text="%syncItemEmptyList" wrapText="true">
                     <font>
                         <Font name="System Bold" size="15.0"/>
                     </font>

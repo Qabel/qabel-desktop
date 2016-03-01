@@ -10,7 +10,7 @@
     <children>
         <BorderPane minHeight="200.0" prefWidth="500.0">
             <center>
-                <Label text="%contactItemEmptyList">
+                <Label text="%contactItemEmptyList" wrapText="true">
                     <font>
                         <Font name="System Bold" size="15.0"/>
                     </font>
