@@ -67,4 +67,7 @@ public class QabelFXMLView extends FXMLView {
 		};
 	}
 
+	public static void unloadDefaultResourceBundle() {
+		resourceBundle = null;
+	}
 }
