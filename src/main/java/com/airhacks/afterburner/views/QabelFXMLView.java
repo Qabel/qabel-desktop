@@ -9,16 +9,24 @@ import java.util.ResourceBundle;
 import java.util.function.Function;
 
 public class QabelFXMLView extends FXMLView {
+	private static ResourceBundle resourceBundle;
 
 
 	public QabelFXMLView() {
 		super();
-		this.bundle = ResourceBundle.getBundle("ui", Locale.getDefault(), new UTF8Converter());
+		this.bundle = getDefaultResourceBundle();
 	}
 
 	public QabelFXMLView(Function<String, Object> injectionContext) {
 		super(injectionContext);
-		this.bundle = ResourceBundle.getBundle("ui", Locale.getDefault(), new UTF8Converter());
+		this.bundle = getDefaultResourceBundle();
+	}
+
+	public static ResourceBundle getDefaultResourceBundle() {
+		if (resourceBundle == null) {
+			resourceBundle = ResourceBundle.getBundle("ui", Locale.getDefault(), new UTF8Converter());
+		}
+		return resourceBundle;
 	}
 
 	@Override

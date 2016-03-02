@@ -1,6 +1,7 @@
 package de.qabel.desktop;
 
 import com.airhacks.afterburner.injection.Injector;
+import com.airhacks.afterburner.views.QabelFXMLView;
 import de.qabel.core.accounting.AccountingHTTP;
 import de.qabel.core.accounting.AccountingProfile;
 import de.qabel.core.config.*;
@@ -28,12 +29,21 @@ import de.qabel.desktop.ui.actionlog.item.renderer.PlaintextMessageRenderer;
 import de.qabel.desktop.ui.actionlog.item.renderer.ShareNotificationRenderer;
 import de.qabel.desktop.ui.connector.HttpDropConnector;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
+import de.qabel.desktop.update.AppInfos;
+import de.qabel.desktop.update.HttpUpdateChecker;
+import de.qabel.desktop.update.LatestVersionInfo;
+import de.qabel.desktop.update.VersionInformation;
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +53,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -76,6 +88,7 @@ public class DesktopClient extends Application {
 
 
 	public static void main(String[] args) throws Exception {
+
 		if (args.length > 0) {
 			DATABASE_FILE = new File(args[0]).getAbsoluteFile().toPath();
 		}
@@ -83,11 +96,41 @@ public class DesktopClient extends Application {
 		launch(args);
 	}
 
+	private void checkVersion() {
+		try {
+			VersionInformation infos = new HttpUpdateChecker().loadInfos();
+			String currentVersion = IOUtils.toString(DesktopClient.class.getResourceAsStream("/version"));
+
+			if (currentVersion.equals("dev")) {
+				return;
+			}
+
+			LatestVersionInfo desktopVersion = infos.getAppinfos().getDesktop();
+			if (!desktopVersion.getCurrentAppVersion().equals(currentVersion)) {
+
+				ResourceBundle resources = QabelFXMLView.getDefaultResourceBundle();
+				ButtonType cancelButton = new ButtonType(resources.getString("updateCancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
+				ButtonType updateButton = new ButtonType(resources.getString("updateStart"), ButtonBar.ButtonData.APPLY);
+				Alert alert = new Alert(Alert.AlertType.WARNING, resources.getString("updateRequired"), cancelButton, updateButton);
+				alert.setHeaderText(null);
+				alert.showAndWait().ifPresent(buttonType -> {
+					if (buttonType == updateButton) {
+						getHostServices().showDocument(desktopVersion.getDownloadURL());
+					}
+					System.exit(-1);
+				});
+			}
+		} catch (Exception e) {
+			logger.error("failed to check for updates: " + e.getMessage(), e);
+		}
+	}
+
 	@Override
 	public void start(Stage stage) throws Exception {
 		primaryStage = stage;
 		setUserAgentStylesheet(STYLESHEET_MODENA);
 
+		checkVersion();
 		config = initDiContainer();
 
 		SceneAntialiasing aa = SceneAntialiasing.BALANCED;
@@ -215,7 +258,8 @@ public class DesktopClient extends Application {
 	private ClientConfiguration getClientConfiguration(
 			Persistence<String> persistence,
 			IdentityRepository identityRepository,
-			AccountRepository accountRepository) {
+			AccountRepository accountRepository
+	) {
 		ClientConfigurationRepository repo = new PersistenceClientConfigurationRepository(
 				persistence,
 				new ClientConfigurationFactory(), identityRepository, accountRepository);
