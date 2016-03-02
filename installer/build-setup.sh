@@ -9,6 +9,7 @@ if [ ! -d dist ]; then
     ls -1 qabel-desktop-linux* | xargs -I{} mv {} ../../installer/dist.zip
     cd ../../installer
     unzip -n dist.zip
+    ls -1 | grep qabel-desktop-linux | xargs -I{} mv {} dist
     rm dist.zip
 fi
 

@@ -72,15 +72,15 @@ public class LoginController extends AbstractController implements Initializable
 
 	@Inject
 	private Stage primaryStage;
-	private String accountUrl = "http://localhost:9696";
+	private String accountUrl = "https://test-accounting.qabel.de";
 	Map map = new HashMap<>();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		List<String> providerList = new LinkedList<>();
-		providerList.add("http://localhost:9696");
+		//providerList.add("http://localhost:9696");
 		providerList.add("https://test-accounting.qabel.de");
-		providerList.add("https://qaccounting.prae.me");
+		//providerList.add("https://qaccounting.prae.me");
 		ObservableList<String> providers = new ObservableListWrapper<>(providerList);
 		providerChoices.setItems(providers);
 		providerChoices.setValue(accountUrl);

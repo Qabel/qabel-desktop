@@ -23,7 +23,7 @@
                 </Label>
                 <ChoiceBox fx:id="providerChoices"/>
                 <TextField fx:id="user" alignment="CENTER" promptText="%loginBoxAccountUserName" styleClass="user"
-                           text="testuser">
+                           text="">
                     <VBox.margin>
                         <Insets/>
                     </VBox.margin>
@@ -35,7 +35,7 @@
                     </VBox.margin>
                 </TextField>
 
-                <PasswordField fx:id="password" alignment="CENTER" promptText="%loginBoxAccountUserPassword" text="testuser">
+                <PasswordField fx:id="password" alignment="CENTER" promptText="%loginBoxAccountUserPassword" text="">
                     <VBox.margin>
                         <Insets/>
                     </VBox.margin>
