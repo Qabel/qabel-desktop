@@ -1,5 +1,6 @@
 package de.qabel.desktop.ui.remotefs;
 
+import com.airhacks.afterburner.views.QabelFXMLView;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.core.crypto.CryptoUtils;
@@ -131,18 +132,12 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 	}
 
 	@Test(timeout=1000L)
-	public void testCalculateFolderStructure() {
-		try {
+	public void testCalculateFolderStructure() throws Exception {
+		nav.createFolder("folder");
+		nav.commit();
 
-			nav.createFolder("folder");
-			nav.commit();
-
-			TreeItem rootNode = getRoot();
-			assertThat(rootNode.getChildren().size(), is(1));
-
-		} catch (QblStorageException e) {
-			e.printStackTrace();
-		}
+		TreeItem rootNode = getRoot();
+		waitUntil(() -> rootNode.getChildren().size() == 1);
 	}
 
 	@Test(timeout=1000L)
@@ -153,7 +148,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 			nav.commit();
 
 			TreeItem rootNode = getRoot();
-			assertThat(rootNode.getChildren().size(), is(1));
+			waitUntil(() -> rootNode.getChildren().size() == 1);
 
 		} catch (QblStorageException e) {
 			e.printStackTrace();
@@ -161,42 +156,31 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 	}
 
 	@Test(timeout=1000L)
-	public void testObserveFilesSubfolder() {
-		try {
+	public void testObserveFilesSubfolder() throws Exception {
 			BoxFolder folder = nav.createFolder("folder");
 			BoxNavigation navFolder1 = nav.navigate(folder);
 			navFolder1.upload("File", file);
 			navFolder1.commit();
 
 			TreeItem rootNode = getRoot();
-			assertThat(rootNode.getChildren().size(), is(1));
+			waitUntil(() -> rootNode.getChildren().size() == 1);
 			TreeItem subnode = (TreeItem) rootNode.getChildren().get(0);
-			assertThat(loadChildren((FolderTreeItem) subnode).size(), is(1));
-
-		} catch (QblStorageException e) {
-			e.printStackTrace();
-		}
+			waitUntil(() -> loadChildren((FolderTreeItem) subnode).size() == 1);
 	}
 
 	@Test(timeout=1000L)
-	public void testObserveFoldersSubfolder() {
-		try {
+	public void testObserveFoldersSubfolder() throws Exception {
+		BoxFolder folder = nav.createFolder("folder");
+		nav.commit();
 
-			BoxFolder folder = nav.createFolder("folder");
-			nav.commit();
+		BoxNavigation navFolder3 = nav.navigate(folder);
+		navFolder3.createFolder("subFolder");
+		navFolder3.commit();
 
-			BoxNavigation navFolder3 = nav.navigate(folder);
-			navFolder3.createFolder("subFolder");
-			navFolder3.commit();
-
-			TreeItem rootNode = getRoot();
-			assertThat(rootNode.getChildren().size(), is(1));
-			TreeItem subnode = (TreeItem) rootNode.getChildren().get(0);
-			assertThat(loadChildren((FolderTreeItem) subnode).size(), is(1));
-
-		} catch (QblStorageException e) {
-			e.printStackTrace();
-		}
+		TreeItem rootNode = getRoot();
+		waitUntil(() -> rootNode.getChildren().size() == 1);
+		TreeItem subnode = (TreeItem) rootNode.getChildren().get(0);
+		waitUntil(() -> loadChildren((FolderTreeItem) subnode).size() == 1);
 	}
 
 	@Test(timeout=2000L)

@@ -1,6 +1,7 @@
 package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.injection.Injector;
+import com.airhacks.afterburner.views.QabelFXMLView;
 import com.sun.javafx.application.PlatformImpl;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
@@ -106,6 +107,7 @@ public class AbstractControllerTest {
 
 		identity = identityBuilderFactory.factory().withAlias("TestAlias").build();
 		clientConfiguration.selectIdentity(identity);
+		QabelFXMLView.unloadDefaultResourceBundle();
 	}
 
 	public static void waitUntil(Callable<Boolean> evaluate) {
