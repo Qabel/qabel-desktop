@@ -23,7 +23,7 @@ public class FolderTreeItem extends TreeItem<BoxObject> implements Observer {
 	private boolean upToDate;
 	private boolean loading;
 	private StringProperty nameProperty;
-	private boolean isLeaf = true;
+	private boolean isLeaf = false;
 	private Image fileImg = new Image(getClass().getResourceAsStream("/icon/file.png"),  18, 18, true, false);
 	private static Image folderImg = new Image(FolderTreeItem.class.getResourceAsStream("/icon/folder.png"), 18, 18, true, true);
 	private static ExecutorService executorService = Executors.newCachedThreadPool();
@@ -92,15 +92,15 @@ public class FolderTreeItem extends TreeItem<BoxObject> implements Observer {
 
 					oldObjects.keySet().stream()
 							.filter(object -> !newObjects.containsKey(object))
-							.forEach(object -> children.remove(oldObjects.get(object)));
+							.forEach(object -> Platform.runLater(() -> children.remove(oldObjects.get(object))));
 					newObjects.keySet().stream()
 							.filter(object -> !oldObjects.containsKey(object))
-							.forEach(object -> children.add(newObjects.get(object)));
+							.forEach(object -> Platform.runLater(() -> children.add(newObjects.get(object))));
 				}
 			} catch (QblStorageException e) {
 				updateError = e.getMessage();
 			} finally {
-				isLeaf = super.getChildren().size() == 0;
+				Platform.runLater(() -> isLeaf = super.getChildren().size() == 0);
 				loading = false;
 			}
 
