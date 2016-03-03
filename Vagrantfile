@@ -48,14 +48,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
-  # config.vm.provider "virtualbox" do |vb|
-  #   # Don't boot with headless mode
-  #   vb.gui = true
-  #
-  #   # Use VBoxManage to customize the VM. For example to change memory:
-  #   vb.customize ["modifyvm", :id, "--memory", "1024"]
-  # end
-  #
+  config.vm.provider "virtualbox" do |vb|
+    vb.customize ["modifyvm", :id, "--memory", "1024"]
+  end
+
 
 
   config.vm.provision "shell", inline: <<SCRIPT
@@ -113,7 +109,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         python3-dev \
         python3.5 \
         python3.5-dev \
-        python3.5-venv
+        python3.5-venv \
+        libpq-dev \
+        redis-server
 
     if [ ! -d ~/.virtualenv ]; then
         mkdir ~/.virtualenv
