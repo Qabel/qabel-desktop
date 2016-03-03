@@ -58,17 +58,17 @@ public class PersistenceContactRepository extends AbstractCachedPersistenceRepos
 
 	@Override
 	public void delete(Contact contact, Identity identity) throws PersistenceException {
-		boolean result;
 		try {
 			Contacts personalContacts = contacts.get(identity.getKeyIdentifier());
 			personalContacts.remove(contact);
-			result = persistence.updateOrPersistEntity(personalContacts);
+
+			if (!persistence.updateOrPersistEntity(personalContacts)) {
+				throw new PersistenceException("Failed to delete Entity " + contact + ", reason unknown");
+			}
 		} catch (Exception e) {
 			throw new PersistenceException("Failed to delete Entity " + contact + ": " + e.getMessage(), e);
 		}
-		if (!result) {
-			throw new PersistenceException("Failed to delete Entity " + contact + ", reason unknown");
-		}
+
 	}
 
 	@Override

@@ -9,7 +9,6 @@ import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
-import de.qabel.desktop.ui.ContactObserver;
 import de.qabel.desktop.ui.DetailsController;
 import de.qabel.desktop.ui.DetailsView;
 import de.qabel.desktop.ui.accounting.item.SelectionEvent;
@@ -83,7 +82,6 @@ public class ContactController extends AbstractController implements Initializab
 		this.resourceBundle = resources;
 
 		i = clientConfiguration.getSelectedIdentity();
-		createObserver();
 
 		createButtonGraphics();
 
@@ -94,6 +92,8 @@ public class ContactController extends AbstractController implements Initializab
 		try {
 			buildGson();
 			loadContacts();
+			createObserver();
+
 		} catch (EntityNotFoundExcepion | PersistenceException e) {
 			alert(e);
 		}
@@ -155,7 +155,7 @@ public class ContactController extends AbstractController implements Initializab
 
 		String old = null;
 		contactsFromRepo = contactRepository.findContactsFromOneIdentity(i);
-		if(contactsFromRepo.getContacts().size() == 0){
+		if (contactsFromRepo.getContacts().size() == 0) {
 			final Map<String, Object> injectionContext = new HashMap<>();
 			DummyItemView itemView = new DummyItemView(injectionContext::get);
 			contactList.getChildren().add(itemView.getView());
@@ -213,12 +213,7 @@ public class ContactController extends AbstractController implements Initializab
 
 	private void createObserver() {
 
-		try {
-			Contacts co = contactRepository.findContactsFromOneIdentity(i);
-			co.addObserver(this);
-		} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
-			entityNotFoundExcepion.printStackTrace();
-		}
+		contactsFromRepo.addObserver(this);
 
 		clientConfiguration.addObserver((o, arg) -> {
 			if (!(arg instanceof Identity)) {
@@ -265,8 +260,8 @@ public class ContactController extends AbstractController implements Initializab
 	public void update() {
 		try {
 			loadContacts();
-		} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
-			entityNotFoundExcepion.printStackTrace();
+		} catch (EntityNotFoundExcepion e) {
+			alert("Failed to load Contacts", e);
 		}
 	}
 }

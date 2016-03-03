@@ -6,10 +6,8 @@ import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.IdentityRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
-import de.qabel.desktop.ui.ContactObserver;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
 import de.qabel.desktop.ui.accounting.item.SelectionEvent;
 import de.qabel.desktop.ui.contact.ContactController;
@@ -98,7 +96,6 @@ public class ContactItemController extends AbstractController implements Initial
 			contactRepository.delete(contact, i);
 		} catch (PersistenceException  e) {
 			alert("Failed to delete Contact: " + contact.getAlias(), e);
-			e.printStackTrace();
 		}
 	}
 }
