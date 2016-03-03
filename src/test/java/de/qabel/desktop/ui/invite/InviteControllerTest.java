@@ -1,6 +1,8 @@
 package de.qabel.desktop.ui.invite;
 
+import com.airhacks.afterburner.views.QabelFXMLView;
 import de.qabel.desktop.ui.AbstractControllerTest;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Locale;
@@ -10,6 +12,12 @@ import static org.junit.Assert.assertEquals;
 
 public class InviteControllerTest extends AbstractControllerTest {
 	InviteController controller;
+
+	@Before
+	public void setUp() throws Exception {
+		super.setUp();
+		QabelFXMLView.unloadDefaultResourceBundle();
+	}
 
 	@Test
 	public void createEMailBodyTest() {

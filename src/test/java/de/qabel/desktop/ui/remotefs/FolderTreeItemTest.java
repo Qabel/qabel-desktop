@@ -51,7 +51,7 @@ public class FolderTreeItemTest extends AbstractControllerTest {
 		navigation = new FakeBoxNavigation();
 		item = new FolderTreeItem(createSomeFolder(), navigation);
 		load();
-		assertTrue(item.isLeaf());
+		waitUntil(() -> item.isLeaf());
 	}
 
 	@Test(timeout = 1000)
@@ -73,7 +73,7 @@ public class FolderTreeItemTest extends AbstractControllerTest {
 
 		ObservableList<TreeItem<BoxObject>> children = load();
 
-		assertEquals(1, children.size());
+		waitUntil(() -> children.size() == 1);
 		assertFalse(item.isLeaf());
 	}
 
@@ -96,8 +96,7 @@ public class FolderTreeItemTest extends AbstractControllerTest {
 		navigation.files.add(createSomeFile());
 
 		ObservableList<TreeItem<BoxObject>> children = load();
-
-		assertEquals(1, children.size());
+		waitUntil(() -> children.size() == 1);
 	}
 
 	@Test
