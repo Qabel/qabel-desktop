@@ -161,6 +161,9 @@ public class BoxPath implements Path {
 
 		boolean empty = true;
 		for (String name : names) {
+			if (name.isEmpty()) {
+				continue;
+			}
 			if (empty) {
 				empty = false;
 			} else {
