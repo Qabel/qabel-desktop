@@ -40,6 +40,7 @@ For the documentation take a look at the [documentation](http://qabel.github.io/
 * **fatJar**: create a JAR containing all java dependencies
 * **distZip**: create a zip file containing all dependencies (like libcurve) and start-scripts
 * **run**: start the desktop-client
+* **downloadLicenses**: downloads licenses from dependencies and generates an overview at `build/reports`
 
 
 ## running Qabel Desktop (on Mac OS)
