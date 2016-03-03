@@ -7,6 +7,7 @@ import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
+import de.qabel.desktop.ui.ContactObserver;
 
 
 public class StubContactRepository implements ContactRepository {
@@ -16,6 +17,11 @@ public class StubContactRepository implements ContactRepository {
 	@Override
 	public void save(Contact contact, Identity identity) throws PersistenceException {
 		contacts.put(contact);
+	}
+
+	@Override
+	public void delete(Contact contact, Identity identity) throws PersistenceException {
+		contacts.remove(contact);
 	}
 
 	@Override

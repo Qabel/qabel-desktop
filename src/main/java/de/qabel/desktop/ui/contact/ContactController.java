@@ -9,6 +9,7 @@ import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.ContactObserver;
 import de.qabel.desktop.ui.DetailsController;
 import de.qabel.desktop.ui.DetailsView;
 import de.qabel.desktop.ui.accounting.item.SelectionEvent;
@@ -37,7 +38,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
-public class ContactController extends AbstractController implements Initializable {
+public class ContactController extends AbstractController implements Initializable, EntityObserver {
 
 	ResourceBundle resourceBundle;
 	List<ContactItemView> itemViews = new LinkedList<>();
@@ -48,7 +49,6 @@ public class ContactController extends AbstractController implements Initializab
 
 	@FXML
 	VBox actionlogViewPane;
-
 
 	@FXML
 	Button importButton;
@@ -76,22 +76,28 @@ public class ContactController extends AbstractController implements Initializab
 	StackPane contactroot;
 
 	DetailsController details;
+	Contacts contactsFromRepo;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		this.resourceBundle = resources;
+
+		i = clientConfiguration.getSelectedIdentity();
 		createObserver();
+
+		createButtonGraphics();
+
+		DetailsView detailsView = new DetailsView();
+		details = (DetailsController) detailsView.getPresenter();
+		detailsView.getViewAsync(contactroot.getChildren()::add);
+
 		try {
 			buildGson();
 			loadContacts();
 		} catch (EntityNotFoundExcepion | PersistenceException e) {
 			alert(e);
 		}
-		createButtonGraphics();
 
-		DetailsView detailsView = new DetailsView();
-		details = (DetailsController) detailsView.getPresenter();
-		detailsView.getViewAsync(contactroot.getChildren()::add);
 	}
 
 	private void createButtonGraphics() {
@@ -141,21 +147,21 @@ public class ContactController extends AbstractController implements Initializab
 		}
 	}
 
-	void loadContacts() throws EntityNotFoundExcepion {
+	public void loadContacts() throws EntityNotFoundExcepion {
 		contactList.getChildren().clear();
 		contactItems.clear();
 
 		i = clientConfiguration.getSelectedIdentity();
 
 		String old = null;
-		Contacts contacts = contactRepository.findContactsFromOneIdentity(i);
-		if(contacts.getContacts().size() == 0){
+		contactsFromRepo = contactRepository.findContactsFromOneIdentity(i);
+		if(contactsFromRepo.getContacts().size() == 0){
 			final Map<String, Object> injectionContext = new HashMap<>();
 			DummyItemView itemView = new DummyItemView(injectionContext::get);
 			contactList.getChildren().add(itemView.getView());
 			return;
 		}
-		List<Contact> cl = new LinkedList<>(contacts.getContacts());
+		List<Contact> cl = new LinkedList<>(contactsFromRepo.getContacts());
 
 		cl.sort((c1, c2) -> c1.getAlias().toLowerCase().compareTo(c2.getAlias().toLowerCase()));
 
@@ -167,7 +173,7 @@ public class ContactController extends AbstractController implements Initializab
 		}
 	}
 
-	private void createContactItem(Contact co) {
+	void createContactItem(Contact co) {
 		final Map<String, Object> injectionContext = new HashMap<>();
 		injectionContext.put("contact", co);
 		ContactItemView itemView = new ContactItemView(injectionContext::get);
@@ -175,7 +181,6 @@ public class ContactController extends AbstractController implements Initializab
 		controller.addSelectionListener((selectionEvent) -> {
 			unselectAll();
 			select(selectionEvent);
-
 		});
 		contactList.getChildren().add(itemView.getView());
 		contactItems.add(controller);
@@ -207,6 +212,14 @@ public class ContactController extends AbstractController implements Initializab
 	}
 
 	private void createObserver() {
+
+		try {
+			Contacts co = contactRepository.findContactsFromOneIdentity(i);
+			co.addObserver(this);
+		} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
+			entityNotFoundExcepion.printStackTrace();
+		}
+
 		clientConfiguration.addObserver((o, arg) -> {
 			if (!(arg instanceof Identity)) {
 				return;
@@ -246,6 +259,15 @@ public class ContactController extends AbstractController implements Initializab
 		builder.registerTypeAdapter(Contacts.class, new ContactsTypeAdapter(ids));
 		builder.registerTypeAdapter(Contact.class, new ContactTypeAdapter());
 		gson = builder.create();
+	}
+
+	@Override
+	public void update() {
+		try {
+			loadContacts();
+		} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
+			entityNotFoundExcepion.printStackTrace();
+		}
 	}
 }
 
