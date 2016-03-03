@@ -101,6 +101,12 @@ public class BoxPathTest {
 	}
 
 	@Test
+	public void resolvesSeparatorIndependent() {
+		Path other = new WindowsLikePathFake(false, "other", "path");
+		assertEquals("/some/other/path", path("/some").resolve(other).toString());
+	}
+
+	@Test
 	public void absolutePathDoesNotStartWithRelativePath() {
 		assertFalse(path("/folder").startsWith("file"));
 	}

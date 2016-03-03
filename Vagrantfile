@@ -12,6 +12,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = "ubuntu/wily64"
 
+  if Vagrant.has_plugin?("vagrant-cachier")
+    config.cache.scope = :box
+  end
+
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
@@ -20,8 +24,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
-  config.vm.network "forwarded_port", guest: 5000, host: 5000
-  config.vm.network "forwarded_port", guest: 9696, host: 9696
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -46,14 +48,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
-  # config.vm.provider "virtualbox" do |vb|
-  #   # Don't boot with headless mode
-  #   vb.gui = true
-  #
-  #   # Use VBoxManage to customize the VM. For example to change memory:
-  #   vb.customize ["modifyvm", :id, "--memory", "1024"]
-  # end
-  #
+  config.vm.provider "virtualbox" do |vb|
+    vb.customize ["modifyvm", :id, "--memory", "1024"]
+  end
+
 
 
   config.vm.provision "shell", inline: <<SCRIPT
@@ -62,6 +60,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # prepare innosetup (needs wine and an extractor)
     dpkg --add-architecture i386
     apt-get -y update
+    apt-get install -y xvfb
 
     echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
     apt-get -y install wine unzip unrar unp
@@ -69,14 +68,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         wget http://www.jrsoftware.org/download.php/is.exe
         wget http://downloads.sourceforge.net/project/innounp/innounp/innounp%200.45/innounp045.rar
 
-        mkdir /vagrant/installer/inno
+        unp innounp045.rar
         wine innounp.exe -dinno -c"{app}" -x is.exe
-        if [ -d /vagrant/installer ]; then
+        if [ -d /vagrant/installer/inno ]; then
             rm -r /vagrant/installer/inno
         fi
         mv inno /vagrant/installer/
-        rm innounp.exe
-        rm is.exe
+        rm -f innounp.exe
+        rm -f is.exe
     fi
 
     # download jre
@@ -89,6 +88,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
         tar -xzf jre.tar.gz
         mv jre1.8.0_73 jre
+        rm jre.tar.gz
     fi
 
     if [ ! -d launch4j ]; then
@@ -109,7 +109,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         python3-dev \
         python3.5 \
         python3.5-dev \
-        python3.5-venv
+        python3.5-venv \
+        libpq-dev \
+        redis-server
 
     if [ ! -d ~/.virtualenv ]; then
         mkdir ~/.virtualenv
@@ -119,8 +121,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     fi
     update-ca-certificates -f
 
-    apt-get install -y xvfb
-
+    chown -R vagrant:vagrant /vagrant/installer
     echo "now enter the VM with `vagrant ssh`, go to `/vagrant/installer` and build with `bash build-setup.sh`"
 
 SCRIPT

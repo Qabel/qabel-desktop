@@ -1,7 +1,8 @@
 #!/bin/bash
 set -x
-cat drop.pid | xargs kill
-rm drop.pid
+cd drop-server
+bash drop-server.sh stop
+cd ..
 cat accounting.pid | xargs kill
 rm accounting.pid
 cat block.pid | xargs kill
