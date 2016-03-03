@@ -1,6 +1,5 @@
 package de.qabel.desktop.storage;
 
-import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.exceptions.QblStorageException;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,9 +10,7 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class DirectoryMetadataTest {
 
@@ -63,7 +60,7 @@ public class DirectoryMetadataTest {
 		assertThat(folder, equalTo(dm.listFolders().get(0)));
 		dm.deleteFolder(folder);
 		assertThat(dm.listFolders().size(), is(0));
-		assertThat(dm.path.getAbsolutePath().toString(), startsWith("/tmp"));
+		assertThat(dm.path.getAbsolutePath().toString(), startsWith(System.getProperty("java.io.tmpdir")));
 	}
 
 	@Test

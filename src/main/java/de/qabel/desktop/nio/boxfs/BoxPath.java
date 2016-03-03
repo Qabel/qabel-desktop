@@ -147,11 +147,28 @@ public class BoxPath implements Path {
 	@Override
 	public Path resolve(Path other) {
 		String separator = separator();
-		if (this.path.endsWith(separator) || other.toString().isEmpty() || this.path.isEmpty()) {
-			separator = "";
+
+		List<String> names = new LinkedList<>();
+		if (!other.isAbsolute()) {
+			for (int i = 0; i < getNameCount(); i++) {
+				names.add(getName(i).toString());
+			}
 		}
-		String path = other.isAbsolute() ? other.toString() : this.path + separator + other;
-		return new BoxPath(fileSystem, path);
+		for (int i = 0; i < other.getNameCount(); i++) {
+			names.add(other.getName(i).toString());
+		}
+		StringBuilder pathBuilder = new StringBuilder(isAbsolute() || other.isAbsolute() ? separator : "");
+
+		boolean empty = true;
+		for (String name : names) {
+			if (empty) {
+				empty = false;
+			} else {
+				pathBuilder.append(separator);
+			}
+			pathBuilder.append(name);
+		}
+		return new BoxPath(fileSystem, pathBuilder.toString());
 	}
 
 	@Override

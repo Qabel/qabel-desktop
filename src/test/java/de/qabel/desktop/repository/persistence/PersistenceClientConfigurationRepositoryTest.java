@@ -114,7 +114,7 @@ public class PersistenceClientConfigurationRepositoryTest extends AbstractPersis
 		assertSame(identity, boxConfig.getIdentity());
 		assertEquals(account, boxConfig.getAccount());
 		assertEquals(account.hashCode(), boxConfig.getAccount().hashCode());
-		assertEquals("some/where", boxConfig.getLocalPath().toString());
+		assertEquals(Paths.get("some/where").toString(), boxConfig.getLocalPath().toString());
 		assertEquals("/over/the/rainbow", boxConfig.getRemotePath().toString());
 		assertEquals("named", boxConfig.getName());
 		assertTrue(boxConfig.getSyncIndex().isUpToDate(localPath, 1000L, true));
