@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.spongycastle.crypto.params.KeyParameter;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.security.InvalidKeyException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -214,7 +215,11 @@ public abstract class AbstractNavigation implements BoxNavigation {
 		KeyParameter key = cryptoUtils.generateSymmetricKey();
 		String block = UUID.randomUUID().toString();
 		BoxFile boxFile = new BoxFile(prefix, block, name, file.length(), 0L, key.getKey());
-		boxFile.setMtime(file.lastModified());
+		try {
+			boxFile.setMtime(Files.getLastModifiedTime(file.toPath()).toMillis());
+		} catch (IOException e) {
+			throw new IllegalArgumentException("invalid source file " + file.getAbsolutePath());
+		}
 		uploadEncrypted(file, key, "blocks/" + block, listener);
 		updatedFiles.add(new FileUpdate(oldFile, boxFile));
 		dm.insertFile(boxFile);
@@ -284,23 +289,25 @@ public abstract class AbstractNavigation implements BoxNavigation {
 
 	@Override
 	public BoxExternalReference createFileMetadata(QblECPublicKey owner, BoxFile boxFile) throws QblStorageException {
-		String block = UUID.randomUUID().toString();
-		boxFile.setMeta(block);
-		KeyParameter key = cryptoUtils.generateSymmetricKey();
-		boxFile.setMetakey(key.getKey());
-
 		try {
-			FileMetadata fileMetadata = FileMetadata.openNew(owner, boxFile, dm.getTempDir());
-			uploadEncrypted(fileMetadata.getPath(), key, block, null);
+			if (!boxFile.isShared()) {
+				String block = UUID.randomUUID().toString();
+				boxFile.setMeta(block);
+				KeyParameter key = cryptoUtils.generateSymmetricKey();
+				boxFile.setMetakey(key.getKey());
 
-			// Overwrite = delete old file, upload new file
-			BoxFile oldFile = dm.getFile(boxFile.getName());
-			if (oldFile != null) {
-				dm.deleteFile(oldFile);
+				FileMetadata fileMetadata = FileMetadata.openNew(owner, boxFile, dm.getTempDir());
+				uploadEncrypted(fileMetadata.getPath(), key, block, null);
+
+				// Overwrite = delete old file, upload new file
+				BoxFile oldFile = dm.getFile(boxFile.getName());
+				if (oldFile != null) {
+					dm.deleteFile(oldFile);
+				}
+				dm.insertFile(boxFile);
+				autocommit();
 			}
-			dm.insertFile(boxFile);
-			autocommit();
-			return new BoxExternalReference(false, readBackend.getUrl(block), boxFile.getName(), owner, boxFile.getMetakey());
+			return new BoxExternalReference(false, readBackend.getUrl(boxFile.getMeta()), boxFile.getName(), owner, boxFile.getMetakey());
 		} catch (QblStorageException e) {
 			throw new QblStorageException("Could not create or upload FileMetadata", e);
 		}

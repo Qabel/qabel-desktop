@@ -6,6 +6,9 @@ apply plugin: 'application'
 apply plugin: 'eclipse'
 apply plugin: 'c'
 
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
 mainClassName = "de.qabel.desktop.DesktopClient"
 version = '0.1'
 def platform = "${System.properties['os.name'].toLowerCase()}_${System.properties['os.arch']}"

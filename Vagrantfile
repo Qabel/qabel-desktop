@@ -21,6 +21,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # `vagrant box outdated`. This is not recommended.
   # config.vm.box_check_update = false
 
+  config.vm.network "forwarded_port", guest: 9696, host: 9696
+  config.vm.network "forwarded_port", guest: 9697, host: 9697
+  config.vm.network "forwarded_port", guest: 5000, host: 5000
+
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
@@ -49,7 +53,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Example for VirtualBox:
   #
   config.vm.provider "virtualbox" do |vb|
-    vb.customize ["modifyvm", :id, "--memory", "1024"]
+    vb.customize ["modifyvm", :id, "--memory", "2048"]
   end
 
 
@@ -102,6 +106,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     apt-get install -y openjdk-8-jdk \
         openjfx \
         python-dev \
+        python-pip \
         virtualenv \
         python3 \
         python3-virtualenv \
@@ -111,13 +116,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         python3.5-dev \
         python3.5-venv \
         libpq-dev \
-        redis-server
+        redis-server \
+        postgresql-9.4 \
+        postgresql-client-9.4
+
+    echo "CREATE DATABASE qabel_drop; CREATE USER qabel WITH PASSWORD 'qabel_test'; GRANT ALL PRIVILEGES ON DATABASE qabel_drop TO qabel;" | sudo -u postgres psql postgres
 
     if [ ! -d ~/.virtualenv ]; then
         mkdir ~/.virtualenv
         mkdir /home/vagrant/.virtualenv
-        echo "always-copy=true" > ~/.virtualenv/virtualenv.ini
-        echo "always-copy=true" > /home/vagrant/.virtualenv/virtualenv.ini
+        echo -e "[virtualenv]\nalways-copy=true" > /home/vagrant/.virtualenv/virtualenv.ini
+        chown -R vagrant:vagrant /home/vagrant/.virtualenv
     fi
     update-ca-certificates -f
 

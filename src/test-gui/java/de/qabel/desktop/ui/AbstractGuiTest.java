@@ -102,11 +102,14 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 
 	protected FxRobot clickOn(Node node) {
 		moveTo(node);
+		FxRobot fxRobot;
 		try {
-			return robot.moveTo(node).clickOn(node);
+			fxRobot = robot.moveTo(node).clickOn(node);
 		} catch (BoundsLocatorException e) {
-			return robot.moveTo(node).clickOn(node);
+			fxRobot = robot.moveTo(node).clickOn(node);
 		}
+		baseFXRobot.waitForIdle();
+		return fxRobot;
 	}
 
 	protected FxRobot moveTo(String query) {

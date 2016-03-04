@@ -1,6 +1,8 @@
 package de.qabel.desktop.storage;
 
-public abstract class BoxObject implements Comparable<BoxObject> {
+import java.util.Observable;
+
+public abstract class BoxObject extends Observable implements Comparable<BoxObject> {
 	protected String name;
 	protected byte[] key;
 

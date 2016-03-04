@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
 
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.*;
 import static org.junit.Assert.*;
