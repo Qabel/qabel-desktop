@@ -42,11 +42,6 @@ For the documentation take a look at the [documentation](http://qabel.github.io/
 * **run**: start the desktop-client
 * **downloadLicenses**: downloads licenses from dependencies and generates an overview at `build/reports`
 
-
-## running Qabel Desktop (on Mac OS)
-
-A simple `./gradlew run` does not work. Use `./gradlew distZip` instead, unzip it and copy the curve library file (e.g. `qabel-core/build/binaries/curve25519SharedLibrary/osx_amd64/libcurve25519.dylib`) into the libs folder of the unzipped dist file prior to running the application.
-
 ## CI
 
 Because of the gui tests, you can't run all tests headless, so at least a virtual x environment like xvfb is required. You should be save with a resolution of at least 1000*1000px.
