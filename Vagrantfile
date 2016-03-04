@@ -106,7 +106,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     apt-get install -y openjdk-8-jdk \
         openjfx \
         python-dev \
-        python-pip \
         virtualenv \
         python3 \
         python3-virtualenv \
@@ -119,6 +118,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         redis-server \
         postgresql-9.4 \
         postgresql-client-9.4
+    easy_install pip
 
     echo "CREATE DATABASE qabel_drop; CREATE USER qabel WITH PASSWORD 'qabel_test'; GRANT ALL PRIVILEGES ON DATABASE qabel_drop TO qabel;" | sudo -u postgres psql postgres
 
