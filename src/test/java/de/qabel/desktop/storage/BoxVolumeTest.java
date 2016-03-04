@@ -5,6 +5,8 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.core.crypto.QblECPublicKey;
+import de.qabel.desktop.BlockSharingService;
+import de.qabel.desktop.SharingService;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.exceptions.QblStorageNameConflict;
 import de.qabel.desktop.exceptions.QblStorageNotFound;
@@ -21,10 +23,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -269,6 +270,39 @@ public abstract class BoxVolumeTest {
 		assertEquals(1, nav2.getSharesOf(boxFile2).size());
 		assertEquals(contact.getKeyIdentifier(), nav2.getSharesOf(boxFile2).get(0).getRecipient());
 		assertEquals(boxFile.getRef(), nav2.getSharesOf(boxFile2).get(0).getRef());
+	}
+
+	@Test
+	public void testShareUpdate() throws Exception {
+		BoxNavigation nav = volume.navigate();
+		File file = new File(testFileName);
+		BoxFile boxFile = nav.upload("file1", file);
+		nav.share(keyPair.getPub(), boxFile, contact.getKeyIdentifier());
+
+		BoxFile updatedBoxFile = nav.overwrite("file1", file);
+		assertEquals(boxFile.getMeta(), updatedBoxFile.getMeta());
+		assertArrayEquals(boxFile.getMetakey(), updatedBoxFile.getMetakey());
+
+		BoxNavigation nav2 = volume2.navigate();
+		BoxFile boxFile2 = nav2.getFile("file1");
+		assertNotNull(boxFile2.getMeta());
+		assertNotNull(boxFile2.getMetakey());
+		assertEquals(boxFile.getMeta(), boxFile2.getMeta());
+		assertTrue(Arrays.equals(boxFile.getMetakey(), boxFile2.getMetakey()));
+		assertTrue(boxFile2.isShared());
+		assertEquals(1, nav2.getSharesOf(boxFile2).size());
+		assertEquals(contact.getKeyIdentifier(), nav2.getSharesOf(boxFile2).get(0).getRecipient());
+		assertEquals(updatedBoxFile.getRef(), nav2.getSharesOf(boxFile2).get(0).getRef());
+
+		FileMetadata fm = nav2.getFileMetadata(boxFile);
+		BoxExternalFile externalFile = fm.getFile();
+		assertEquals("the file metadata have not been updated", updatedBoxFile.getBlock(), externalFile.getBlock());
+	}
+
+	private File download(InputStream in) throws IOException {
+		Path path = Files.createTempFile(Paths.get(System.getProperty("java.io.tmpdir")), "tmpdownload", "");
+		Files.write(path, IOUtils.toByteArray(in));
+		return path.toFile();
 	}
 
 	@Test
