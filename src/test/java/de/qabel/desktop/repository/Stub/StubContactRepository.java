@@ -19,12 +19,17 @@ public class StubContactRepository implements ContactRepository {
 	}
 
 	@Override
+	public void delete(Contact contact, Identity identity) throws PersistenceException {
+		contacts.remove(contact);
+	}
+
+	@Override
 	public Contact findByKeyId(Identity identity, String keyId) throws EntityNotFoundExcepion {
 		return new Contact(identity.getAlias(), identity.getDropUrls(), identity.getEcPublicKey());
 	}
 
 	@Override
-	public Contacts findContactsFromOneIdentity(Identity identity) throws EntityNotFoundExcepion {
+	public Contacts findContactsFromOneIdentity(Identity identity) {
 		return contacts;
 	}
 

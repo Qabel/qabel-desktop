@@ -11,11 +11,11 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<HBox prefHeight="70.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.contact.item.BlankItemController">
+<HBox prefHeight="70.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.contact.item.BlankItemController">
     <children>
-        <BorderPane prefHeight="27.0" prefWidth="200.0">
+        <BorderPane prefHeight="27.0" prefWidth="400.0">
             <center>
-                <VBox prefHeight="29.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                <VBox prefHeight="29.0" prefWidth="399.0" BorderPane.alignment="CENTER">
                     <children>
                         <Label fx:id="firstChar" text="A">
                             <font>
@@ -32,7 +32,7 @@
                 </VBox>
             </center>
             <bottom>
-                <Line endX="50.0" startX="-200.0" BorderPane.alignment="CENTER" />
+                <Line endX="00.0" startX="-400.0" BorderPane.alignment="CENTER" />
             </bottom>
          <HBox.margin>
             <Insets bottom="20.0" />
