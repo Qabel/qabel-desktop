@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.DELETE;
+
 public class LocalChangeEvent extends AbstractChangeEvent implements ChangeEvent {
 	public LocalChangeEvent(Path path, ChangeEvent.TYPE type) throws IOException {
 		this(path, Files.isDirectory(path), Files.getLastModifiedTime(path).toMillis(), type);
@@ -17,11 +19,15 @@ public class LocalChangeEvent extends AbstractChangeEvent implements ChangeEvent
 
 	@Override
 	public boolean isValid() {
-		long currentMtime = getPath().toFile().lastModified();
-		boolean valid = currentMtime == getMtime();
-		if (!valid) {
-			LoggerFactory.getLogger(getClass()).debug("event invalid: mtime " + currentMtime + " != " + getMtime() + " on " + getPath().toString());
+		try {
+			long currentMtime = Files.getLastModifiedTime(getPath()).toMillis();
+			boolean valid = currentMtime == getMtime();
+			if (!valid) {
+				LoggerFactory.getLogger(getClass()).debug("event invalid: mtime " + currentMtime + " != " + getMtime() + " on " + getPath().toString());
+			}
+			return valid;
+		} catch (IOException e) {
+			return type == DELETE;
 		}
-		return valid;
 	}
 }

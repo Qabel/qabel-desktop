@@ -414,7 +414,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 		file.createNewFile();
 		upload.source = path;
 		upload.destination = Paths.get("/testfile");
-		upload.mtime = file.lastModified();
+		upload.mtime = Files.getLastModifiedTime(path).toMillis();
 		upload.type = CREATE;
 		upload.transactionAge = 0L;
 		upload.isDir = false;

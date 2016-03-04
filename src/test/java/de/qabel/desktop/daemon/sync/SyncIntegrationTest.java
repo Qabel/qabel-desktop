@@ -167,7 +167,8 @@ public class SyncIntegrationTest {
 
 		Path file2 = Paths.get(dir2.toString(), "file");
 		waitUntil(() -> Files.exists(file2), TIMEOUT);
-		assertEquals("text", new String(Files.readAllBytes(file2)));
+		waitUntil(() -> Files.size(file2) > 0);
+		waitUntil(() -> "text".equals(new String(Files.readAllBytes(file2))));
 
 		List<Transaction> history = manager2.getHistory();
 
@@ -185,11 +186,17 @@ public class SyncIntegrationTest {
 			SyncIntegrationTest i = SyncIntegrationTest.this;
 			return "too few events: " + history;
 		});
+		for (int i = 2; i < history.size(); i++) {
+			if (history.get(i) instanceof Download) {
+				assertEquals(BoxFileSystem.get("/sync/dir/file").toString(), history.get(i).getSource().toString());
+				return;
+			}
+		}
 		assertTrue(
-				"an unecpected " + history.get(2) + " occured after DOWNLAOD /sync/dir",
+				"an unecpected " + history.get(2) + " occured after DOWNLAOD /sync/dir (" + history.size() + " in history)",
 				history.get(2) instanceof Download
 		);
-		assertEquals(BoxFileSystem.get("/sync/dir/file").toString(), history.get(2).getSource().toString());
+		fail("no download found");
 	}
 
 	@Test
@@ -230,7 +237,7 @@ public class SyncIntegrationTest {
 		file.createNewFile();
 
 		// mark file up2date on syncer2
-		config2.getSyncIndex().update(Paths.get(tmpDir2.toString(), "file"), file.lastModified(), true);
+		config2.getSyncIndex().update(Paths.get(tmpDir2.toString(), "file"), Files.getLastModifiedTime(path).toMillis(), true);
 		syncer2.run();
 		syncer2.waitFor();
 

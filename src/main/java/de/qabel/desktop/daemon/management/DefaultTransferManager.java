@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -129,7 +130,7 @@ public class DefaultTransferManager extends Observable implements TransferManage
 						Files.copy(stream, tmpFile, StandardCopyOption.REPLACE_EXISTING);
 						Files.setLastModifiedTime(tmpFile, FileTime.fromMillis(download.getMtime()));
 						Files.move(tmpFile, destination, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-						if (destination.toFile().lastModified() != download.getMtime()) {
+						if (Files.getLastModifiedTime(destination).toMillis() != download.getMtime()) {
 							Files.setLastModifiedTime(destination, FileTime.fromMillis(download.getMtime()));
 						}
 						Files.deleteIfExists(tmpFile);
@@ -153,8 +154,12 @@ public class DefaultTransferManager extends Observable implements TransferManage
 		}
 	}
 
-	private boolean localIsNewer(Path destination, BoxFile file) {
-		return file.getMtime() < destination.toFile().lastModified();
+	private boolean localIsNewer(Path local, BoxFile file) {
+		try {
+			return file.getMtime() < Files.getLastModifiedTime(local).toMillis();
+		} catch (IOException e) {
+			return false;
+		}
 	}
 
 	private boolean remoteChanged(Download download, BoxFile file) {

@@ -73,6 +73,7 @@ public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSContro
 
 	@Test
 	public void showsFilterMatches() throws Exception {
+		Thread.sleep(500);	// sorry, couldn't handle this otherwise
 		search("inner");
 		expectChildren(1);
 		TreeItem<BoxObject> firstItem = folderTree.getChildren().get(0);
@@ -83,9 +84,9 @@ public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSContro
 
 	private void expectChildren(int count) {
 		waitForUI();
-		waitUntil(() -> folderTree.getChildren().size() == count, 5000L, () -> {
-			return "expected " + count + " children but got " + folderTree.getChildren();
-		});
+		waitUntil(() -> folderTree.getChildren().size() == count, 10000L, () ->
+			"expected " + count + " children but got " + folderTree.getChildren()
+		);
 		waitForUI();
 	}
 

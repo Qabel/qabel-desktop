@@ -96,14 +96,20 @@ public class BoxFile extends BoxObject {
 
 	public void setMtime(long mtime) {
 		this.mtime = mtime;
+		setChanged();
+		notifyObservers();
 	}
 
 	public void setMeta(String meta) {
 		this.meta = meta;
+		setChanged();
+		notifyObservers();
 	}
 
 	public void setMetakey(byte[] metakey) {
 		this.metakey = metakey;
+		setChanged();
+		notifyObservers();
 	}
 
 	@Override

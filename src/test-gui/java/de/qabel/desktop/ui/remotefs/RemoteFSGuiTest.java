@@ -3,6 +3,7 @@ package de.qabel.desktop.ui.remotefs;
 import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Contacts;
+import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.daemon.sync.worker.BoxNavigationStub;
@@ -123,6 +124,44 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 		clickOn(".details .close");
 
 		waitUntil(() -> waitForNode("#share_2").isVisible(), 10000L);
+	}
+
+	@Test(timeout = 20000L)
+	public void doubleShare() throws Exception {
+		Contacts contacts = contactRepository.findContactsFromOneIdentity(identity);
+		Contact otto = new Contact("Otto", new LinkedList<>(), new QblECKeyPair().getPub());
+		Contact bob = new Contact("Bob", new LinkedList<>(), new QblECKeyPair().getPub());
+		contacts.put(otto);
+		contacts.put(bob);
+
+		waitUntil(() -> getNodes(".cell").size() > 2);
+		clickOn("#share_2");
+		waitForNode(".detailsContainer");
+		waitUntil(() -> getFirstNode(".detailsContainer").isVisible(), 5000L);
+
+		clickOn("#shareReceiver .arrow").push(KeyCode.DOWN);
+		waitUntil(() -> controller.fileDetails.dialog != null);
+		runLaterAndWait(() -> controller.fileDetails.dialog.getEditor().setText("this is a sharing message"));
+		baseFXRobot.waitForIdle();
+		clickOn(controller.fileDetails.dialog.getDialogPane().lookupButton(ButtonType.OK));
+		waitUntil(() -> controller.fileDetails.dialog == null);
+
+		FxRobot fxRobot = clickOn("#shareReceiver .arrow");
+		while (true) {
+			try {
+				getFirstNode("#detailsContainer .list-cell");
+				break;
+			} catch (Exception ignored) {
+				fxRobot = clickOn("#shareReceiver .arrow");
+			}
+		}
+		fxRobot.push(KeyCode.DOWN);
+		waitUntil(() -> controller.fileDetails.dialog != null);
+		runLaterAndWait(() -> controller.fileDetails.dialog.getEditor().setText("this is a sharing message"));
+		baseFXRobot.waitForIdle();
+		clickOn(controller.fileDetails.dialog.getDialogPane().lookupButton(ButtonType.OK));
+
+		waitUntil(() -> controller.fileDetails.currentShares.getChildren().size() == 2);
 	}
 
 	@Test
