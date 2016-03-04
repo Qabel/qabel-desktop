@@ -85,6 +85,8 @@ public interface BoxNavigation extends ReadableBoxNavigation {
 	 */
 	InputStream download(BoxFile file) throws QblStorageException;
 
+	FileMetadata getFileMetadata(BoxFile boxFile) throws IOException, InvalidKeyException, QblStorageException;
+
 	/**
 	 * Create a subfolder in the current folder. You should commit
 	 * after creating a new subfolder to minimize conflict potential.

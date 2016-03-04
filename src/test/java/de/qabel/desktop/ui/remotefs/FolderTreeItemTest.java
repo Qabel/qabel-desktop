@@ -205,6 +205,11 @@ public class FolderTreeItemTest extends AbstractControllerTest {
 		}
 
 		@Override
+		public FileMetadata getFileMetadata(BoxFile boxFile) throws IOException, InvalidKeyException, QblStorageException {
+			return null;
+		}
+
+		@Override
 		public BoxFolder createFolder(String name) throws QblStorageException {
 			return null;
 		}

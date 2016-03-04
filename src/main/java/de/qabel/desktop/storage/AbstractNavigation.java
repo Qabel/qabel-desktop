@@ -3,7 +3,9 @@ package de.qabel.desktop.storage;
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.core.crypto.QblECPublicKey;
+import de.qabel.core.exceptions.QblInvalidCredentials;
 import de.qabel.desktop.exceptions.QblStorageException;
+import de.qabel.desktop.exceptions.QblStorageInvalidKey;
 import de.qabel.desktop.exceptions.QblStorageNameConflict;
 import de.qabel.desktop.exceptions.QblStorageNotFound;
 import org.apache.commons.codec.binary.Hex;
@@ -214,7 +216,13 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	private BoxFile uploadFile(String name, File file, BoxFile oldFile, ProgressListener listener) throws QblStorageException {
 		KeyParameter key = cryptoUtils.generateSymmetricKey();
 		String block = UUID.randomUUID().toString();
-		BoxFile boxFile = new BoxFile(prefix, block, name, file.length(), 0L, key.getKey());
+		String meta = null;
+		byte[] metakey = null;
+		if (oldFile != null) {
+			meta = oldFile.getMeta();
+			metakey = oldFile.getMetakey();
+		}
+		BoxFile boxFile = new BoxFile(prefix, block, name, file.length(), 0L, key.getKey(), meta, metakey);
 		try {
 			boxFile.setMtime(Files.getLastModifiedTime(file.toPath()).toMillis());
 		} catch (IOException e) {
@@ -223,6 +231,15 @@ public abstract class AbstractNavigation implements BoxNavigation {
 		uploadEncrypted(file, key, "blocks/" + block, listener);
 		updatedFiles.add(new FileUpdate(oldFile, boxFile));
 		dm.insertFile(boxFile);
+		try {
+			if (boxFile.isShared()) {
+				updateFileMetadata(boxFile);
+			}
+		} catch (IOException e) {
+			throw new QblStorageException("failed to update file metadata");
+		} catch (InvalidKeyException e) {
+			throw new QblStorageInvalidKey("failed to update file metadata");
+		}
 		autocommit();
 		return boxFile;
 	}
@@ -323,6 +340,21 @@ public abstract class AbstractNavigation implements BoxNavigation {
 			FileMetadata fileMetadataOld = FileMetadata.openExisting(out);
 			FileMetadata fileMetadataNew = FileMetadata.openNew(fileMetadataOld.getFile().getOwner(), boxFile, dm.getTempDir());
 			uploadEncrypted(fileMetadataNew.getPath(), new KeyParameter(boxFile.getMetakey()), boxFile.getMeta());
+		} catch (QblStorageException | FileNotFoundException e) {
+			logger.error("Could not create or upload FileMetadata", e);
+			throw e;
+		}
+	}
+
+	@Override
+	public FileMetadata getFileMetadata(BoxFile boxFile) throws IOException, InvalidKeyException, QblStorageException {
+		if (boxFile.getMeta() == null || boxFile.getMetakey() == null) {
+			throw new IllegalArgumentException("BoxFile without FileMetadata cannot be updated");
+		}
+
+		try {
+			File out = getMetadataFile(boxFile.getMeta(), boxFile.getMetakey());
+			return FileMetadata.openExisting(out);
 		} catch (QblStorageException | FileNotFoundException e) {
 			logger.error("Could not create or upload FileMetadata", e);
 			throw e;

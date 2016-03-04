@@ -121,6 +121,11 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 	}
 
 	@Override
+	public FileMetadata getFileMetadata(BoxFile boxFile) throws IOException, InvalidKeyException, QblStorageException {
+		return nav.getFileMetadata(boxFile);
+	}
+
+	@Override
 	public BoxFolder createFolder(String name) throws QblStorageException {
 		BoxFolder folder = nav.createFolder(name);
 		notifyAsync(folder, CREATE);
