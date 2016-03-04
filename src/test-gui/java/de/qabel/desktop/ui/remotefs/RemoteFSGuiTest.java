@@ -4,15 +4,12 @@ import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Contacts;
 import de.qabel.core.crypto.QblECKeyPair;
-import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.daemon.sync.worker.BoxNavigationStub;
 import de.qabel.desktop.daemon.sync.worker.BoxVolumeStub;
 import de.qabel.desktop.storage.BoxExternalFile;
 import de.qabel.desktop.storage.BoxFile;
 import de.qabel.desktop.ui.AbstractGuiTest;
-import javafx.scene.control.ButtonType;
-import javafx.scene.input.KeyCode;
 import org.junit.Before;
 import org.junit.Test;
 import org.testfx.api.FxRobot;
@@ -28,6 +25,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 	private final BoxFile boxFile = new BoxFile("prefix", "123", "filename", 1L, 2L, new byte[0]);
 	private StubSharingService sharingService = new StubSharingService();
 	private BoxNavigationStub rootNavigation;
+	private RemoteBrowserPage page;
 
 	@Override
 	protected FXMLView getView() {
@@ -44,6 +42,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
+		page = new RemoteBrowserPage(baseFXRobot, robot, controller);
 	}
 
 	@Test
@@ -51,27 +50,28 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 		int rootIndex = 1;
 		robot.moveTo(stage);
 
-		waitUntil(() -> !waitForNode("#download_" + rootIndex).isVisible());
-		assertFalse(getFirstNode("#upload_file_" + rootIndex).isVisible());
-		assertFalse(getFirstNode("#upload_folder_" + rootIndex).isVisible());
-		assertFalse(getFirstNode("#create_folder_" + rootIndex).isVisible());
-		assertFalse(getFirstNode("#delete_" + rootIndex).isVisible());
+		RemoteBrowserRow row = page.getRow(rootIndex);
+		row.downloadIcon().assertHidden();
+		row.uploadFileIcon().assertHidden();
+		row.uploadFolderIcon().assertHidden();
+		row.createFolderIcon().assertHidden();
+		row.deleteIcon().assertHidden();
 
-		moveTo("#download_" + rootIndex);
+		row.downloadIcon().hover();
 
-		assertTrue(waitForNode("#download_" + rootIndex).isVisible());
-		assertTrue(getFirstNode("#upload_file_" + rootIndex).isVisible());
-		assertTrue(getFirstNode("#upload_folder_" + rootIndex).isVisible());
-		assertTrue(getFirstNode("#create_folder_" + rootIndex).isVisible());
-		assertTrue(getFirstNode("#delete_" + rootIndex).isVisible());
+		row.downloadIcon().assertVisible();
+		row.uploadFileIcon().assertVisible();
+		row.uploadFolderIcon().assertVisible();
+		row.createFolderIcon().assertVisible();
+		row.deleteIcon().assertVisible();
 
 		robot.moveTo(stage);
 
-		assertFalse(waitForNode("#download_" + rootIndex).isVisible());
-		assertFalse(getFirstNode("#upload_file_" + rootIndex).isVisible());
-		assertFalse(getFirstNode("#upload_folder_" + rootIndex).isVisible());
-		assertFalse(getFirstNode("#create_folder_" + rootIndex).isVisible());
-		assertFalse(getFirstNode("#delete_" + rootIndex).isVisible());
+		row.downloadIcon().assertHidden();
+		row.uploadFileIcon().assertHidden();
+		row.uploadFolderIcon().assertHidden();
+		row.createFolderIcon().assertHidden();
+		row.deleteIcon().assertHidden();
 	}
 
 	@Test
@@ -83,9 +83,10 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 		int sharedIndex = 1;
 		expandNode(0);
 
-		moveTo(getFirstNode("#download_" + sharedIndex));
-		assertTrue(getFirstNode("#download_" + sharedIndex).isVisible());
-		assertTrue(getFirstNode("#delete_" + sharedIndex).isVisible());
+		RemoteBrowserRow sharedRow = page.getRow(sharedIndex);
+		sharedRow.downloadIcon().hover();
+		sharedRow.downloadIcon().assertVisible();
+		sharedRow.deleteIcon().assertVisible();
 
 		assertThat(controller.shareRoot.getChildren().size(), is(1));
 		assertThat(controller.shareRoot.getChildren().get(0).getValue().getName(), equalTo("share name"));
@@ -98,20 +99,11 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 
 	@Test
 	public void shareFile() throws Exception {
-		Contacts contacts = contactRepository.findContactsFromOneIdentity(identity);
-		Contact otto = new Contact("Otto", new LinkedList<>(), new QblECPublicKey(new byte[0]));
-		contacts.put(otto);
+		Contact otto = addContact("Otto");
 
-		waitUntil(() -> getNodes(".cell").size() > 2);
-		clickOn("#share_2");
-		waitForNode(".detailsContainer");
-		waitUntil(() -> getFirstNode(".detailsContainer").isVisible(), 5000L);
-
-		clickOn(getFirstNode("#shareReceiver")).write("tto").push(KeyCode.ENTER);
-
-		waitUntil(() -> controller.fileDetails.dialog != null);
-		runLaterAndWait(() -> controller.fileDetails.dialog.getEditor().setText("this is a sharing message"));
-		clickOn(controller.fileDetails.dialog.getDialogPane().lookupButton(ButtonType.OK));
+		page.getRow(2).share()
+				.shareBySearch("tto", "this is a sharing message")
+				.close();
 
 		StubSharingService.ShareRequest shared = sharingService.shared;
 		assertNotNull(shared);
@@ -121,67 +113,39 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 		assertSame(boxFile, shared.objectToShare);
 		assertSame(rootNavigation, shared.navigation);
 
-		clickOn(".details .close");
 
-		waitUntil(() -> waitForNode("#share_2").isVisible(), 10000L);
+		page.getRow(2).shareIcon().assertVisible();
 	}
 
 	@Test(timeout = 20000L)
 	public void doubleShare() throws Exception {
+		addContact("Otto");
+		addContact("Bob");
+
+		page.getRow(2).share()
+				.shareFirst("this is a sharing message")
+				.shareFirst("this is another sharing message")
+				.assertReceivers(2);
+	}
+
+	private Contact addContact(String name) {
 		Contacts contacts = contactRepository.findContactsFromOneIdentity(identity);
-		Contact otto = new Contact("Otto", new LinkedList<>(), new QblECKeyPair().getPub());
-		Contact bob = new Contact("Bob", new LinkedList<>(), new QblECKeyPair().getPub());
-		contacts.put(otto);
-		contacts.put(bob);
-
-		waitUntil(() -> getNodes(".cell").size() > 2);
-		clickOn("#share_2");
-		waitForNode(".detailsContainer");
-		waitUntil(() -> getFirstNode(".detailsContainer").isVisible(), 5000L);
-
-		clickOn("#shareReceiver .arrow").push(KeyCode.DOWN);
-		waitUntil(() -> controller.fileDetails.dialog != null);
-		runLaterAndWait(() -> controller.fileDetails.dialog.getEditor().setText("this is a sharing message"));
-		baseFXRobot.waitForIdle();
-		clickOn(controller.fileDetails.dialog.getDialogPane().lookupButton(ButtonType.OK));
-		waitUntil(() -> controller.fileDetails.dialog == null);
-
-		FxRobot fxRobot = clickOn("#shareReceiver .arrow");
-		while (true) {
-			try {
-				getFirstNode("#detailsContainer .list-cell");
-				break;
-			} catch (Exception ignored) {
-				fxRobot = clickOn("#shareReceiver .arrow");
-			}
-		}
-		fxRobot.push(KeyCode.DOWN);
-		waitUntil(() -> controller.fileDetails.dialog != null);
-		runLaterAndWait(() -> controller.fileDetails.dialog.getEditor().setText("this is a sharing message"));
-		baseFXRobot.waitForIdle();
-		clickOn(controller.fileDetails.dialog.getDialogPane().lookupButton(ButtonType.OK));
-
-		waitUntil(() -> controller.fileDetails.currentShares.getChildren().size() == 2);
+		Contact contact = new Contact(name, new LinkedList<>(), new QblECKeyPair().getPub());
+		contacts.put(contact);
+		return contact;
 	}
 
 	@Test
 	public void unshareFile() throws Exception {
 		rootNavigation.share(identity.getEcPublicKey(), boxFile, "receiver");
 
-		waitUntil(() -> getNodes(".cell").size() > 2);
-		clickOn("#share_2");
-		waitForNode(".detailsContainer");
-		waitUntil(() -> getFirstNode(".detailsContainer").isVisible(), 5000L);
-
-		clickOn("#unshare");
-
-		waitUntil(() -> controller.fileDetails.confirmationDialog != null);
-		clickOn(controller.fileDetails.confirmationDialog.getDialogPane().lookupButton(ButtonType.YES));
+		page.getRow(2).share()
+				.unshare()
+				.close();
 
 		StubSharingService.ShareRequest shared = sharingService.shared;
 		assertNull(shared);
 
-		clickOn(".details .close");
-		waitUntil(() -> !waitForNode("#share_2").isVisible(), 10000L);
+		page.getRow(2).shareIcon().assertHidden();
 	}
 }
