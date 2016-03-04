@@ -4,8 +4,6 @@ import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.crypto.QblECKeyPair;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
-import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Test;
 
@@ -19,20 +17,21 @@ public class ContactGuiTest extends AbstractGuiTest<ContactController> {
 	}
 
 	@Test
-	public void testDeleteContact() throws EntityNotFoundExcepion {
+	public void testDeleteContact() throws Exception {
 		Identity identity = new Identity("alias", null, new QblECKeyPair());
 
 		Contact c = new Contact("TestContact", null, identity.getEcPublicKey());
-		runLaterAndWait(() -> {
-			try {
-				contactRepository.save(c, null);
-				controller.loadContacts();
-			} catch (EntityNotFoundExcepion | PersistenceException entityNotFoundExcepion) {
-				entityNotFoundExcepion.printStackTrace();
-			}
-		});
+		contactRepository.save(c, null);
+
+		runLaterAndWait(() -> controller.loadContacts());
+
 		clickOn("#delete");
-		assertEquals(1, controller.contactList.getChildren().size());
 		assertEquals(0, controller.contactsFromRepo.getContacts().size());
 	}
+
+	@Test
+	public void testDummyContact() throws Exception {
+		assertEquals(1, controller.contactList.getChildren().size());
+	}
+
 }

@@ -85,11 +85,6 @@ public class ContactItemController extends AbstractController implements Initial
 	}
 
 	@FXML
-	protected void handleDeleteContactsButtonAction(ActionEvent event) {
-		handleDeleteContactsButtonAction();
-
-	}
-
 	protected void handleDeleteContactsButtonAction() {
 		Identity i = clientConfiguration.getSelectedIdentity();
 		try {

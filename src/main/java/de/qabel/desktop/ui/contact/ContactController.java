@@ -18,6 +18,7 @@ import de.qabel.desktop.ui.contact.item.BlankItemView;
 import de.qabel.desktop.ui.contact.item.ContactItemController;
 import de.qabel.desktop.ui.contact.item.ContactItemView;
 import de.qabel.desktop.ui.contact.item.DummyItemView;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -147,7 +148,7 @@ public class ContactController extends AbstractController implements Initializab
 		}
 	}
 
-	public void loadContacts() throws EntityNotFoundExcepion {
+	public void loadContacts() {
 		contactList.getChildren().clear();
 		contactItems.clear();
 
@@ -155,7 +156,7 @@ public class ContactController extends AbstractController implements Initializab
 
 		String old = null;
 		contactsFromRepo = contactRepository.findContactsFromOneIdentity(i);
-		if (contactsFromRepo.getContacts().size() == 0) {
+		if (contactsFromRepo.getContacts().isEmpty()) {
 			final Map<String, Object> injectionContext = new HashMap<>();
 			DummyItemView itemView = new DummyItemView(injectionContext::get);
 			contactList.getChildren().add(itemView.getView());
@@ -219,11 +220,7 @@ public class ContactController extends AbstractController implements Initializab
 			if (!(arg instanceof Identity)) {
 				return;
 			}
-			try {
-				loadContacts();
-			} catch (EntityNotFoundExcepion entityNotFoundExcepion) {
-				entityNotFoundExcepion.printStackTrace();
-			}
+			loadContacts();
 		});
 	}
 
@@ -258,11 +255,7 @@ public class ContactController extends AbstractController implements Initializab
 
 	@Override
 	public void update() {
-		try {
-			loadContacts();
-		} catch (EntityNotFoundExcepion e) {
-			alert("Failed to load Contacts", e);
-		}
+		Platform.runLater(this::loadContacts);
 	}
 }
 

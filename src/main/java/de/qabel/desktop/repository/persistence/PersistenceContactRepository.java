@@ -20,7 +20,7 @@ public class PersistenceContactRepository extends AbstractCachedPersistenceRepos
 	private Map<String, Contacts> contacts = new HashMap<>();
 
 	@Override
-	public synchronized Contacts findContactsFromOneIdentity(Identity i) throws EntityNotFoundExcepion {
+	public synchronized Contacts findContactsFromOneIdentity(Identity i) {
 
 		if (contacts.containsKey(i.getKeyIdentifier())) {
 			return contacts.get(i.getKeyIdentifier());
@@ -58,17 +58,12 @@ public class PersistenceContactRepository extends AbstractCachedPersistenceRepos
 
 	@Override
 	public void delete(Contact contact, Identity identity) throws PersistenceException {
-		try {
-			Contacts personalContacts = contacts.get(identity.getKeyIdentifier());
-			personalContacts.remove(contact);
+		Contacts personalContacts = contacts.get(identity.getKeyIdentifier());
+		personalContacts.remove(contact);
 
-			if (!persistence.updateOrPersistEntity(personalContacts)) {
-				throw new PersistenceException("Failed to delete Entity " + contact + ", reason unknown");
-			}
-		} catch (Exception e) {
-			throw new PersistenceException("Failed to delete Entity " + contact + ": " + e.getMessage(), e);
+		if (!persistence.updateOrPersistEntity(personalContacts)) {
+			throw new PersistenceException("Failed to delete Entity " + contact + ", reason unknown");
 		}
-
 	}
 
 	@Override
