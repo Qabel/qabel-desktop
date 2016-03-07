@@ -29,7 +29,7 @@ public class ContactGuiTest extends AbstractGuiTest<ContactController> {
 
 		runLaterAndWait(() -> clientConfiguration.selectIdentity(identity));
 
-		int elements = contactRepository.findContactsFromOneIdentity(identity).getContacts().size();
+		int elements = contactRepository.find(identity).getContacts().size();
 
 		runLaterAndWait(() -> controller.loadContacts());
 		clickOn("#delete");

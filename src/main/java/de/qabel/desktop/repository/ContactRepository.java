@@ -8,7 +8,7 @@ import de.qabel.desktop.repository.exception.PersistenceException;
 
 public interface ContactRepository {
 
-	Contacts findContactsFromOneIdentity(Identity identity);
+	Contacts find(Identity identity);
 
 	void save(Contact contact, Identity identity) throws PersistenceException;
 	void delete(Contact contact, Identity identity) throws PersistenceException;

@@ -20,7 +20,7 @@ public class PersistenceContactRepository extends AbstractCachedPersistenceRepos
 	private Map<String, Contacts> contacts = new HashMap<>();
 
 	@Override
-	public synchronized Contacts findContactsFromOneIdentity(Identity i) {
+	public synchronized Contacts find(Identity i) {
 
 		if (contacts.containsKey(i.getKeyIdentifier())) {
 			return contacts.get(i.getKeyIdentifier());
@@ -69,7 +69,7 @@ public class PersistenceContactRepository extends AbstractCachedPersistenceRepos
 	@Override
 	public Contact findByKeyId(Identity identity, String keyId) throws EntityNotFoundExcepion {
 
-		Contacts contacts = findContactsFromOneIdentity(identity);
+		Contacts contacts = find(identity);
 		Contact contact = contacts.getByKeyIdentifier(keyId);
 		if (contact == null) {
 			throw new EntityNotFoundExcepion("No contact with keyId " + keyId + " found");

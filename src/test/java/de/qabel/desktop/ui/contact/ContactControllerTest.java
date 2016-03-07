@@ -63,7 +63,7 @@ public class ContactControllerTest extends AbstractControllerTest {
 		testDir.mkdirs();
 		File file = new File(testDir + "/contacts.json");
 		controller.exportContacts(file);
-		Contacts contacts = contactRepository.findContactsFromOneIdentity(i);
+		Contacts contacts = contactRepository.find(i);
 		assertEquals(1, contacts.getContacts().size());
 
 		contacts.remove(c);
@@ -71,7 +71,7 @@ public class ContactControllerTest extends AbstractControllerTest {
 
 		controller.importContacts(file);
 
-		contacts = contactRepository.findContactsFromOneIdentity(i);
+		contacts = contactRepository.find(i);
 		assertEquals(1, contacts.getContacts().size());
 
 		List<Contact> l = new LinkedList<>(contacts.getContacts());
@@ -95,7 +95,7 @@ public class ContactControllerTest extends AbstractControllerTest {
 		controller = getController();
 		controller.importContacts(f);
 
-		Contacts contacts = contactRepository.findContactsFromOneIdentity(i);
+		Contacts contacts = contactRepository.find(i);
 		assertEquals(1, contacts.getContacts().size());
 
 
