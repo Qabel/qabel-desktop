@@ -222,7 +222,6 @@ public class ContactController extends AbstractController implements Initializab
 
 			contactsFromRepo.removeObserver(this);
 			loadContacts();
-			contactsFromRepo = contactRepository.findContactsFromOneIdentity(i);
 			contactsFromRepo.addObserver(this);
 		});
 	}
