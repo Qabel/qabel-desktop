@@ -32,6 +32,7 @@ public class HttpUpdateChecker implements UpdateChecker {
 		}
 	}
 
+	@Override
 	public boolean isCurrent(String version) {
 		load();
 		Version currentVersion = Version.valueOf(desktopVersion.getCurrentAppVersion());
@@ -45,6 +46,13 @@ public class HttpUpdateChecker implements UpdateChecker {
 		}
 	}
 
+	@Override
+	public LatestVersionInfo getDesktopVersion() {
+		load();
+		return desktopVersion;
+	}
+
+	@Override
 	public boolean isAllowed(String version) {
 		load();
 		Version minimumVersion = Version.valueOf(desktopVersion.getMinimumAppVersion());
