@@ -117,6 +117,20 @@ public class TreeWatcherTest extends AbstractSyncTest {
 		assertEquals(getPath("/existingSubdir"), events.get(2).getPath());
 	}
 
+	@Test(timeout = 10000L)
+	public void notifiesAboutFileDeletes() throws Exception {
+		File file = new File(tmpDir.toFile(), "existingFile");
+		file.createNewFile();
+		watch();
+
+		waitUntil(() -> events.size() == 2);
+		events.clear();
+
+		file.delete();
+		waitUntil(() -> events.size() == 1);
+		assertEquals(getPath("/existingFile"), events.get(0).getPath());
+	}
+
 	protected void watch() {
 		watcher.start();
 		waitUntil(watcher::isWatching);

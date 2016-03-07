@@ -159,7 +159,8 @@ public class DefaultTransferManager extends Observable implements TransferManage
 
 	private Path createTempFileForDownload(Path destinationFile) throws IOException {
 		String filename = destinationFile.getFileName().toString();
-		return destinationFile.getParent().resolve("." + filename + ".qpart~");
+		Path tmpFile = destinationFile.getParent().resolve("." + filename + ".qpart~");
+		return tmpFile;
 	}
 
 	private boolean localIsNewer(Path local, BoxFile file) {
