@@ -155,7 +155,7 @@ public class ContactController extends AbstractController implements Initializab
 		i = clientConfiguration.getSelectedIdentity();
 
 		String old = null;
-		contactsFromRepo = contactRepository.findContactsFromOneIdentity(i);
+		contactsFromRepo = contactRepository.find(i);
 		if (contactsFromRepo.getContacts().isEmpty()) {
 			final Map<String, Object> injectionContext = new HashMap<>();
 			DummyItemView itemView = new DummyItemView(injectionContext::get);
@@ -227,7 +227,7 @@ public class ContactController extends AbstractController implements Initializab
 	}
 
 	void exportContacts(File file) throws EntityNotFoundExcepion, IOException, JSONException {
-		Contacts contacts = contactRepository.findContactsFromOneIdentity(i);
+		Contacts contacts = contactRepository.find(i);
 		String jsonContacts = ContactExportImport.exportContacts(contacts);
 		writeStringInFile(jsonContacts, file);
 	}

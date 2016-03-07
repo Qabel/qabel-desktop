@@ -10,7 +10,7 @@ For the documentation take a look at the [documentation](http://qabel.github.io/
 * to build the java code, you need an **OracleJDK 1.8 u67** or higher
 * to build the libcurve from the [Qabel Core Project](https://github.com/Qabel/qabel-core) (lib called with JNI) you need a **C-Compiler** (`apt-get install build-essential` for ubuntu)
 * when cloning this repository, make sure to get the **submodules** by cloning recursive or running `gut submodule update --init --recursive` afterwards
- 
+
 #### server test-instances
 
 * the submodules include two required **servers**: [Qabel Drop Server](https://github.com/Qabel/qabel-drop/blob/master/README.md) and [Qabel Accounting Server](https://github.com/Qabel/qabel-accounting/blob/master/README.md) to work. They will be started automatically for you (`start-server.sh`) but have some additional requirements like **postgresql**:
@@ -27,7 +27,7 @@ For the documentation take a look at the [documentation](http://qabel.github.io/
 
 * then, you try out the whole build by running the `build.sh`. It will
  * start both the drop-server and the accounting-server with the script `start-servers.sh`
-   * which installs the servers python dependencies in two virtualenvs and starts both servers 
+   * which installs the servers python dependencies in two virtualenvs and starts both servers
  * run the gradle-based build with `./gradlew build`
  * stop the started servers with the `stop-servers.sh`
 
@@ -42,6 +42,14 @@ For the documentation take a look at the [documentation](http://qabel.github.io/
 * **run**: start the desktop-client
 * **downloadLicenses**: downloads licenses from dependencies and generates an overview at `build/reports`
 
+### releases
+
+to build a jar including a release number (also important for in-application version checks),
+call gradle with the parameter `release`:
+```BASH
+./gradlew -Prelease=0.3.1 distZip
+```
+
 ## CI
 
 Because of the gui tests, you can't run all tests headless, so at least a virtual x environment like xvfb is required. You should be save with a resolution of at least 1000*1000px.
@@ -50,7 +58,7 @@ Because of the gui tests, you can't run all tests headless, so at least a virtua
 
 * the configuration is stored in an encrypted sqlite file named `db.sqlite`
 * Because JavaFX with FXML uses magic injections anyways, the Contollers for all JavaFX-Views get their properties by magic `javax.inject` implemented by Afterburner.FX
-*  
+*
 
 ### box sync architecture
 

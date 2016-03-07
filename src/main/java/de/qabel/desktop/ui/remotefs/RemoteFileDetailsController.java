@@ -105,7 +105,7 @@ public class RemoteFileDetailsController extends AbstractController implements I
 			ObservableList<Node> shares = currentShares.getChildren();
 			shares.clear();
 			tryOrAlert(() -> {
-				Contacts contacts = contactRepository.findContactsFromOneIdentity(clientConfiguration.getSelectedIdentity());
+				Contacts contacts = contactRepository.find(clientConfiguration.getSelectedIdentity());
 				for (BoxShare share : navigation.getSharesOf(boxObject)) {
 					String recipientKeyId = share.getRecipient();
 					Contact contact = contacts.getByKeyIdentifier(recipientKeyId);
@@ -209,6 +209,6 @@ public class RemoteFileDetailsController extends AbstractController implements I
 	}
 
 	private Contacts getContacts() throws EntityNotFoundExcepion {
-		return contactRepository.findContactsFromOneIdentity(clientConfiguration.getSelectedIdentity());
+		return contactRepository.find(clientConfiguration.getSelectedIdentity());
 	}
 }

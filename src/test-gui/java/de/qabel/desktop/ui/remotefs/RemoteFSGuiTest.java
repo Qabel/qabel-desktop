@@ -129,7 +129,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 	}
 
 	private Contact addContact(String name) {
-		Contacts contacts = contactRepository.findContactsFromOneIdentity(identity);
+		Contacts contacts = contactRepository.find(identity);
 		Contact contact = new Contact(name, new LinkedList<>(), new QblECKeyPair().getPub());
 		contacts.put(contact);
 		return contact;

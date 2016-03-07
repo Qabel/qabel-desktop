@@ -19,4 +19,4 @@ ScenicView.jar
 scenicView.properties
 hs_err_*
 db.sqlite
-
+/dist/resources/version

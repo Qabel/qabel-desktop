@@ -3,7 +3,6 @@ package de.qabel.desktop.repository.Stub;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Contacts;
 import de.qabel.core.config.Identity;
-import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
@@ -17,7 +16,7 @@ public class InMemoryContactRepository implements ContactRepository {
 
 	@Override
 	public void save(Contact contact, Identity identity) throws PersistenceException {
-		Contacts contacts = contactsMap.get(identity.getKeyIdentifier());
+		Contacts contacts = find(identity);
 		if(contacts == null){
 			contacts = new Contacts(identity);
 		}
@@ -27,18 +26,18 @@ public class InMemoryContactRepository implements ContactRepository {
 
 	@Override
 	public void delete(Contact contact, Identity identity) throws PersistenceException {
-		Contacts contacts = contactsMap.get(identity.getKeyIdentifier());
+		Contacts contacts = find(identity);
 		contacts.remove(contact);
 	}
 
 	@Override
 	public Contact findByKeyId(Identity identity, String keyId) throws EntityNotFoundExcepion {
-		Contacts contacts = contactsMap.get(identity.getKeyIdentifier());
+		Contacts contacts = find(identity);
 		return contacts.getByKeyIdentifier(keyId);
 	}
 
 	@Override
-	public Contacts findContactsFromOneIdentity(Identity identity) {
+	public Contacts find(Identity identity) {
 		Contacts contacts = contactsMap.get(identity.getKeyIdentifier());
 		if(contacts == null){
 			contacts = new Contacts(identity);

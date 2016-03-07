@@ -10,7 +10,8 @@ compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
 
 mainClassName = "de.qabel.desktop.DesktopClient"
-version = '0.1'
+version = hasProperty('release') ? release : 'dev'
+new File('dist/resources/version').write version.toString()
 def platform = "${System.properties['os.name'].toLowerCase()}_${System.properties['os.arch']}"
 
 repositories {
@@ -22,6 +23,11 @@ repositories {
 }
 
 sourceSets {
+	main {
+		resources {
+			srcDirs = ["src/main/resources", "dist/resources"]
+		}
+	}
     guiTest {
         java {
             compileClasspath += main.output + test.output
@@ -92,10 +98,10 @@ dependencies {
 
 task copyToLib(type: Copy) {
   	from configurations.runtime
-    into "$buildDir/libs"  
+    into "$buildDir/libs"
 }
 
-classes {   
+classes {
 	 doLast {
         copyToLib.execute()
     }
