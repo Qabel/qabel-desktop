@@ -43,9 +43,6 @@ public class LayoutController extends AbstractController implements Initializabl
 	private VBox scrollContent;
 
 	@FXML
-	private BorderPane window;
-
-	@FXML
 	private HBox activeNavItem;
 
 	@FXML
@@ -74,6 +71,9 @@ public class LayoutController extends AbstractController implements Initializabl
 
 	@FXML
 	private ImageView infoButton;
+
+	@FXML
+	private Pane window;
 
 	@Inject
 	private ClientConfiguration clientConfiguration;
@@ -135,6 +135,8 @@ public class LayoutController extends AbstractController implements Initializabl
 		});
 
 		createButtonGraphics();
+
+		new OfflineView().getViewAsync(window.getChildren()::add);
 	}
 
 	private void createButtonGraphics() {

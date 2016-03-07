@@ -68,7 +68,7 @@ public class DropDaemon implements Runnable {
 		} catch (NullPointerException e) {
 			return;
 		}
-		Contact sender = null;
+		Contact sender;
 
 		for (DropMessage d : dropMessages) {
 
