@@ -201,7 +201,7 @@ public class DesktopClient extends Application {
 		});
 	}
 
-	protected SyncDaemon getSyncDaemon(ClientConfiguration config) {
+	protected SyncDaemon getSyncDaemon(ClientConfiguration config) throws IOException {
 		new Thread(transferManager, "TransactionManager").start();
 		return new SyncDaemon(config.getBoxSyncConfigs(), new DefaultSyncerFactory(boxVolumeFactory, transferManager));
 	}
