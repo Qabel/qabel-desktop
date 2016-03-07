@@ -107,6 +107,26 @@ public class ContactControllerTest extends AbstractControllerTest {
 		assertNotNull(c.getEcPublicKey());
 	}
 
+	@Test
+	public void changeIdentityObserverTest() throws Exception {
+		getContact("One");
+		Contact contact = getContact("Two");
+		controller = getController();
+
+		assertEquals(1, controller.contactsFromRepo.getContacts().size());
+		assertEquals("Two", controller.contactsFromRepo.getByKeyIdentifier(contact.getKeyIdentifier()).getAlias());
+
+	}
+
+	private Contact getContact(String name) throws PersistenceException {
+		Identity i = identityBuilderFactory.factory().withAlias(name).build();
+		Contact c = new Contact(name, i.getDropUrls(), i.getEcPublicKey());
+		contactRepository.save(c, i);
+		clientConfiguration.selectIdentity(i);
+		return c;
+	}
+
+
 	private ContactController getController() {
 		ContactView view = new ContactView();
 		view.getView();
