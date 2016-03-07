@@ -119,6 +119,12 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 
 	private void download(ChangeEvent event) {
 		BoxSyncBasedDownload download = new BoxSyncBasedDownload(boxVolume, config, event);
+
+		if (!download.getDestination().normalize().startsWith(config.getLocalPath().normalize())) {
+			logger.warn("syncer received event from outside sync path: " + download);
+			return;
+		}
+
 		if (download.getType() != Transaction.TYPE.DELETE && isUpToDate(download)) {
 			uploadUnnoticedDelete(download);
 			return;
