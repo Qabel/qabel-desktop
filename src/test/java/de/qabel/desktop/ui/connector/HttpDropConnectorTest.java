@@ -91,12 +91,12 @@ public class HttpDropConnectorTest extends AbstractControllerTest {
 		connector = new HttpDropConnector(networkStatus, dropStub);
 		networkStatus.online();
 
-		dropStub.messages.setOk(false);
+		dropStub.messages.setResponseCode(0);
 		connector.receive(identity, new Date(0L));
 
 		assertFalse(networkStatus.isOnline());
 
-		dropStub.messages.setOk(true);
+		dropStub.messages.setResponseCode(204);
 		connector.receive(identity, new Date(0L));
 
 		assertTrue(networkStatus.isOnline());

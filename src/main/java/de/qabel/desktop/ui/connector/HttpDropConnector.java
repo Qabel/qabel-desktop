@@ -47,7 +47,7 @@ public class HttpDropConnector implements DropConnector {
 		DropURL d = convertCollectionIntoDropUrl(i.getDropUrls());
 		HTTPResult<Collection<byte[]>> result = receiveMessages(since, d);
 
-		if (!result.isOk()) {
+		if (result.getResponseCode() == 0) {
 			networkStatus.offline();
 		} else {
 			networkStatus.online();
