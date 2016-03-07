@@ -169,7 +169,11 @@ public class ActionlogController extends AbstractController implements Initializ
 
 	void addMessageToActionlog(DropMessage dropMessage) throws EntityNotFoundExcepion {
 		Map<String, Object> injectionContext = new HashMap<>();
-		Contact sender = contactRepository.findByKeyId(identity, dropMessage.getSender().getKeyIdentifier());
+		Contact sender = contactRepository.findByKeyId(identity, dropMessage.getSenderKeyId());
+
+		if(sender == null){
+			sender = contactRepository.findByKeyId(identity, dropMessage.getSender().getKeyIdentifier());
+		}
 		injectionContext.put("dropMessage", dropMessage);
 		injectionContext.put("contact", sender);
 		OtherActionlogItemView otherItemView = new OtherActionlogItemView(injectionContext::get);
