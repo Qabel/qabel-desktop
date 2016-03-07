@@ -25,10 +25,11 @@ if [ -f drop.pid ]; then
     echo "stopping old drop instance"
     cat drop.pid | xargs kill || echo "already gone"
 fi
-if [ ! -d "venv_"${DIRHASH} ]; then
-  virtualenv --always-copy --python=python3.4 "venv_"${DIRHASH}
+DROP_VENV="venv_"${DIRHASH}
+if [ ! -d ${DROP_VENV} ]; then
+  virtualenv --no-site-packages --python=python3.4 ${DROP_VENV}
 fi
-source "venv_"${DIRHASH}"/bin/activate"
+source ${DROP_VENV}"/bin/activate"
 pip install -r requirements.txt
 if [ ! -d config.py ]; then
   cp config.py.example config.py
@@ -42,14 +43,15 @@ waitForPort 5000
 
 # qabel-accounting
 cd qabel-accounting
+ACCOUNTING_VENV="venv_"${DIRHASH}
 if [ -f accounting.pid ]; then
     echo "stopping old accounting instance"
     cat accounting.pid | xargs kill || echo "already gone"
 fi
-if [ ! -d "venv_"${DIRHASH} ]; then
-  virtualenv --always-copy --python=python3.4 "venv_"${DIRHASH}
+if [ ! -d ${ACCOUNTING_VENV} ]; then
+  virtualenv --no-site-packages --always-copy --python=python3.4 ${ACCOUNTING_VENV}
 fi
-source "venv_"${DIRHASH}"/bin/activate"
+source ${ACCOUNTING_VENV}"/bin/activate"
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py testserver testdata.json --addrport 0.0.0.0:9696 > ../accounting.log 2>&1 &
@@ -60,17 +62,18 @@ waitForPort 9696
 
 # qabel-block
 cd qabel-block
+BLOCK_VENV="venv_"${DIRHASH}
 if [ -f block.pid ]; then
     echo "stopping old block instance"
     cat block.pid | xargs kill || echo "already gone"
 fi
-if [ ! -d "venv_"${DIRHASH} ]; then
-  virtualenv --always-copy --python=python3.5 "venv_"${DIRHASH}
+if [ ! -d ${BLOCK_VENV} ]; then
+  virtualenv --no-site-packages --always-copy --python=python3.5 ${BLOCK_VENV}
 fi
 if [ ! -f config.ini ]; then
   cp config.ini.example config.ini
 fi
-source "venv_"${DIRHASH}"/bin/activate"
+source ${BLOCK_VENV}"/bin/activate"
 pip install -r requirements.txt
 cd src
 python run.py --debug --dummy --dummy-log --dummy-cache --apisecret=Changeme --accounting-host=http://localhost:9696 --address=0.0.0.0 --port=9697 > ../../block.log 2>&1 &

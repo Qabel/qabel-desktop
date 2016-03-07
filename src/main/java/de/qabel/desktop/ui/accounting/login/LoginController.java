@@ -207,10 +207,6 @@ public class LoginController extends AbstractController implements Initializable
 				toCreateFailureState(finalText));
 	}
 
-	public void login(ActionEvent actionEvent) {
-		login();
-	}
-
 	public void login() {
 		toProgressState();
 

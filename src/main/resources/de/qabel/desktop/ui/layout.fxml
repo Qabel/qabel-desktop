@@ -7,155 +7,159 @@
 <?import java.lang.String?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
-<BorderPane fx:id="window" fx:controller="de.qabel.desktop.ui.LayoutController" prefHeight="568.0" prefWidth="842.0" maxWidth="Infinity" maxHeight="Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-   <left>
-      <BorderPane styleClass="navi-container">
-         <center>
-            <VBox>
-               <children>
-                  <HBox fx:id="selectedIdentity" styleClass="selectedIdentity">
-                     <children>
-                         <Pane fx:id="avatarContainer">
-                            <Label styleClass="avatar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="50.0" minWidth="50.0" prefHeight="50.0" prefWidth="50.0">
-                               <HBox.margin>
-                                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                               </HBox.margin>
-                            </Label>
-                         </Pane>
-                        <VBox BorderPane.alignment="CENTER" styleClass="aliasContainer">
+<StackPane fx:id="window" fx:controller="de.qabel.desktop.ui.LayoutController" prefHeight="600.0" prefWidth="842.0" maxWidth="Infinity" maxHeight="Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+        <BorderPane>
+            <left>
+          <BorderPane styleClass="navi-container">
+             <center>
+                <VBox>
+                   <children>
+                      <HBox fx:id="selectedIdentity" styleClass="selectedIdentity">
+                         <children>
+                             <Pane fx:id="avatarContainer">
+                                <Label styleClass="avatar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="50.0" minWidth="50.0" prefHeight="50.0" prefWidth="50.0">
+                                   <HBox.margin>
+                                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                   </HBox.margin>
+                                </Label>
+                             </Pane>
+                            <VBox BorderPane.alignment="CENTER" styleClass="aliasContainer">
+                               <children>
+                                  <Label fx:id="alias" text="Guy Pearce Longerman">
+                                     <font>
+                                        <Font name="System Bold" size="13.0" />
+                                     </font>
+                                  </Label>
+                                  <Label fx:id="mail" text="guy@pearce.com">
+                                      <font>
+                                          <Font name="System" size="9.5" />
+                                      </font>
+                                  </Label>
+                                   <BorderPane styleClass="quotaBlock">
+                                       <right>
+                                           <Label fx:id="quota" BorderPane.alignment="CENTER"
+                                                  text="24%" style="-fx-text-fill: #fd670d; -fx-padding: 0 0.2em 0 0">
+                                           <font>
+                                               <Font name="System" size="9.5" />
+                                           </font>
+                                           </Label>
+                                       </right>
+                                       <center>
+                                           <HBox BorderPane.alignment="CENTER" style="-fx-pref-height: 0.5em">
+                                               <padding>
+                                                       <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                               </padding>
+                                               <children>
+                                                   <Label
+                                                           minWidth="50.0"
+                                                           style="-fx-border-radius: 5; -fx-background-radius: 5; -fx-background-color: #fd670d;"
+                                                           fx:id="provider"
+                                                           text="">
+                                                       <font>
+                                                           <Font name="System" size="6" />
+                                                       </font>
+                                                       <padding>
+                                                           <Insets left="5.0" right="5.0"/>
+                                                       </padding>
+                                                   </Label>
+                                               </children>
+                                           </HBox>
+                                       </center>
+                                       <VBox.margin>
+                                           <Insets top="5.0"/>
+                                       </VBox.margin>
+                                   </BorderPane>
+
+                               </children>
+                               <padding>
+                                  <Insets top="5" left="5.0" right="5.0" />
+                               </padding>
+                            </VBox>
+                         </children>
+                      </HBox>
+                      <VBox fx:id="navi" alignment="TOP_RIGHT" styleClass="navi" BorderPane.alignment="CENTER">
+                         <children>
+                            <HBox>
+                               <children>
+                                  <Button text="Button" />
+                               </children>
+                               <styleClass>
+                                  <String fx:value="navi-item" />
+                                  <String fx:value="active" />
+                               </styleClass>
+                            </HBox>
+                            <HBox styleClass="navi-item">
+                               <children>
+                                  <Button text="Button" />
+                               </children>
+                            </HBox>
+                         </children>
+                      </VBox>
+                   </children>
+                </VBox>
+             </center>
+             <bottom>
+                <VBox fillWidth="true">
+                   <children>
+                       <ProgressBar fx:id="uploadProgress" style="-fx-pref-width: 200;"/>
+
+                       <HBox alignment="CENTER">
                            <children>
-                              <Label fx:id="alias" text="Guy Pearce Longerman">
-                                 <font>
-                                    <Font name="System Bold" size="13.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="mail" text="guy@pearce.com">
-                                  <font>
-                                      <Font name="System" size="9.5" />
-                                  </font>
-                              </Label>
-                               <BorderPane styleClass="quotaBlock">
-                                   <right>
-                                       <Label fx:id="quota" BorderPane.alignment="CENTER"
-                                              text="24%" style="-fx-text-fill: #fd670d; -fx-padding: 0 0.2em 0 0">
-                                       <font>
-                                           <Font name="System" size="9.5" />
-                                       </font>
-                                       </Label>
-                                   </right>
-                                   <center>
-                                       <HBox BorderPane.alignment="CENTER" style="-fx-pref-height: 0.5em">
-                                           <padding>
-                                                   <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
-                                           </padding>
-                                           <children>
-                                               <Label
-                                                       minWidth="50.0"
-                                                       style="-fx-border-radius: 5; -fx-background-radius: 5; -fx-background-color: #fd670d;"
-                                                       fx:id="provider"
-                                                       text="">
-                                                   <font>
-                                                       <Font name="System" size="6" />
-                                                   </font>
-                                                   <padding>
-                                                       <Insets left="5.0" right="5.0"/>
-                                                   </padding>
-                                               </Label>
-                                           </children>
-                                       </HBox>
-                                   </center>
-                                   <VBox.margin>
-                                       <Insets top="5.0"/>
-                                   </VBox.margin>
-                               </BorderPane>
+
+                               <ImageView fx:id="configButton">
+                                   <HBox.margin>
+                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                   </HBox.margin>
+                               </ImageView>
+
+                               <ImageView fx:id="fqaButton">
+                                   <HBox.margin>
+                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                   </HBox.margin>
+                               </ImageView>
+
+
+                               <ImageView fx:id="infoButton">
+                                   <HBox.margin>
+                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                   </HBox.margin>
+                               </ImageView>
+
+
+                               <ImageView fx:id="inviteButton">
+                                   <HBox.margin>
+                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                   </HBox.margin>
+                               </ImageView>
+
+                               <ImageView fx:id="feedbackButton">
+                                   <HBox.margin>
+                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                   </HBox.margin>
+                               </ImageView>
 
                            </children>
-                           <padding>
-                              <Insets top="5" left="5.0" right="5.0" />
-                           </padding>
-                        </VBox>
-                     </children>
-                  </HBox>
-                  <VBox fx:id="navi" alignment="TOP_RIGHT" styleClass="navi" BorderPane.alignment="CENTER">
-                     <children>
-                        <HBox>
-                           <children>
-                              <Button text="Button" />
-                           </children>
-                           <styleClass>
-                              <String fx:value="navi-item" />
-                              <String fx:value="active" />
-                           </styleClass>
-                        </HBox>
-                        <HBox styleClass="navi-item">
-                           <children>
-                              <Button text="Button" />
-                           </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-               </children>
-            </VBox>
-         </center>
-         <bottom>
-            <VBox fillWidth="true">
-               <children>
-                   <ProgressBar fx:id="uploadProgress" style="-fx-pref-width: 200;"/>
+                       </HBox>
+                   </children>
+                   <padding>
+                      <Insets top="10" left="10" right="20" bottom="10"/>
+                   </padding>
+                </VBox>
+             </bottom>
+          </BorderPane>
 
-                   <HBox alignment="CENTER">
-                       <children>
+           </left>
+           <center>
 
-                           <ImageView fx:id="configButton">
-                               <HBox.margin>
-                                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                               </HBox.margin>
-                           </ImageView>
-
-                           <ImageView fx:id="fqaButton">
-                               <HBox.margin>
-                                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                               </HBox.margin>
-                           </ImageView>
-
-
-                           <ImageView fx:id="infoButton">
-                               <HBox.margin>
-                                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                               </HBox.margin>
-                           </ImageView>
-
-
-                           <ImageView fx:id="inviteButton">
-                               <HBox.margin>
-                                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                               </HBox.margin>
-                           </ImageView>
-
-                           <ImageView fx:id="feedbackButton">
-                               <HBox.margin>
-                                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                               </HBox.margin>
-                           </ImageView>
-
-                       </children>
-                   </HBox>
-               </children>
-               <padding>
-                  <Insets top="10" left="10" right="20" bottom="10"/>
-               </padding>
-            </VBox>
-         </bottom>
-      </BorderPane>
-
-   </left>
-   <center>
-
-      <BorderPane styleClass="edge-to-edge" >
-         <center>
-            <VBox fx:id="scrollContent" maxWidth="Infinity" styleClass="scrollContent" maxHeight="Infinity" BorderPane.alignment="CENTER">
-               <children/>
-            </VBox>
-         </center>
-      </BorderPane>
-   </center>
-</BorderPane>
+              <BorderPane styleClass="edge-to-edge" >
+                 <center>
+                    <VBox fx:id="scrollContent" maxWidth="Infinity" styleClass="scrollContent" maxHeight="Infinity" BorderPane.alignment="CENTER">
+                       <children/>
+                    </VBox>
+                 </center>
+              </BorderPane>
+           </center>
+       </BorderPane>
+   </children>
+</StackPane>
