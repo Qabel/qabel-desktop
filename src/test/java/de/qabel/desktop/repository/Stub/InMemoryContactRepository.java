@@ -8,29 +8,43 @@ import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 
+import java.util.HashMap;
 
-public class StubContactRepository implements ContactRepository {
-	private Contacts contacts = new Contacts(new Identity("i", null, new QblECKeyPair()));
+
+public class InMemoryContactRepository implements ContactRepository {
+	private HashMap<String, Contacts> contactsMap = new HashMap<>();
 
 
 	@Override
 	public void save(Contact contact, Identity identity) throws PersistenceException {
+		Contacts contacts = contactsMap.get(identity.getKeyIdentifier());
+		if(contacts == null){
+			contacts = new Contacts(identity);
+		}
 		contacts.put(contact);
+		contactsMap.put(identity.getKeyIdentifier(), contacts);
 	}
 
 	@Override
 	public void delete(Contact contact, Identity identity) throws PersistenceException {
+		Contacts contacts = contactsMap.get(identity.getKeyIdentifier());
 		contacts.remove(contact);
 	}
 
 	@Override
 	public Contact findByKeyId(Identity identity, String keyId) throws EntityNotFoundExcepion {
-		return new Contact(identity.getAlias(), identity.getDropUrls(), identity.getEcPublicKey());
+		Contacts contacts = contactsMap.get(identity.getKeyIdentifier());
+		return contacts.getByKeyIdentifier(keyId);
 	}
 
 	@Override
 	public Contacts findContactsFromOneIdentity(Identity identity) {
-		return contacts;
+		Contacts contacts = contactsMap.get(identity.getKeyIdentifier());
+		if(contacts == null){
+			contacts = new Contacts(identity);
+			contactsMap.put(identity.getKeyIdentifier(), contacts);
+		}
+		return contactsMap.get(identity.getKeyIdentifier());
 	}
 
 

@@ -17,7 +17,7 @@ function waitForPort {
     fi
 }
 
-DIRHASH=$(`pwd` | shasum -a 256 | cut -d" " -f1)
+DIRHASH=$(`pwd` | shasum | cut -d" " -f1)
 
 # qabel-drop
 cd qabel-drop
@@ -25,7 +25,7 @@ if [ -f drop.pid ]; then
     echo "stopping old drop instance"
     cat drop.pid | xargs kill || echo "already gone"
 fi
-if [ ! -d "venv"${DIRHASH} ]; then
+if [ ! -d "venv_"${DIRHASH} ]; then
   virtualenv --always-copy --python=python3.4 "venv_"${DIRHASH}
 fi
 source "venv_"${DIRHASH}"/bin/activate"
@@ -46,7 +46,7 @@ if [ -f accounting.pid ]; then
     echo "stopping old accounting instance"
     cat accounting.pid | xargs kill || echo "already gone"
 fi
-if [ ! -d "venv"${DIRHASH} ]; then
+if [ ! -d "venv_"${DIRHASH} ]; then
   virtualenv --always-copy --python=python3.4 "venv_"${DIRHASH}
 fi
 source "venv_"${DIRHASH}"/bin/activate"
@@ -64,7 +64,7 @@ if [ -f block.pid ]; then
     echo "stopping old block instance"
     cat block.pid | xargs kill || echo "already gone"
 fi
-if [ ! -d "venv"${DIRHASH} ]; then
+if [ ! -d "venv_"${DIRHASH} ]; then
   virtualenv --always-copy --python=python3.5 "venv_"${DIRHASH}
 fi
 if [ ! -f config.ini ]; then

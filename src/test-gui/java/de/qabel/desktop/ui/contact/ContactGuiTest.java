@@ -3,7 +3,6 @@ package de.qabel.desktop.ui.contact;
 import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
-import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Test;
 
@@ -18,14 +17,15 @@ public class ContactGuiTest extends AbstractGuiTest<ContactController> {
 
 	@Test
 	public void testDeleteContact() throws Exception {
-		Identity identity = new Identity("alias", null, new QblECKeyPair());
+		Identity identity = identityBuilderFactory.factory().withAlias("TestAlias").build();
+		Contact c = new Contact("TestContact", identity.getDropUrls(), identity.getEcPublicKey());
 
-		Contact c = new Contact("TestContact", null, identity.getEcPublicKey());
-		contactRepository.save(c, null);
+		runLaterAndWait(() -> clientConfiguration.selectIdentity(identity));
 
+		contactRepository.save(c, identity);
 		runLaterAndWait(() -> controller.loadContacts());
-
 		clickOn("#delete");
+
 		assertEquals(0, controller.contactsFromRepo.getContacts().size());
 	}
 

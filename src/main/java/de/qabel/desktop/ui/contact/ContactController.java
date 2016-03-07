@@ -215,12 +215,15 @@ public class ContactController extends AbstractController implements Initializab
 	private void createObserver() {
 
 		contactsFromRepo.addObserver(this);
-
 		clientConfiguration.addObserver((o, arg) -> {
 			if (!(arg instanceof Identity)) {
 				return;
 			}
+
+			contactsFromRepo.removeObserver(this);
 			loadContacts();
+			contactsFromRepo = contactRepository.findContactsFromOneIdentity(i);
+			contactsFromRepo.addObserver(this);
 		});
 	}
 
@@ -232,7 +235,7 @@ public class ContactController extends AbstractController implements Initializab
 
 	void importContacts(File file) throws IOException, URISyntaxException, QblDropInvalidURL, PersistenceException, JSONException {
 		String content = readFile(file);
-		Identity i = clientConfiguration.getSelectedIdentity();
+		i = clientConfiguration.getSelectedIdentity();
 		try {
 			Contacts contacts = ContactExportImport.parseContactsForIdentity(i, content);
 			for (Contact c : contacts.getContacts()) {
