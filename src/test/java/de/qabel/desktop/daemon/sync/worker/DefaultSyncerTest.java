@@ -20,12 +20,12 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.DELETE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class DefaultSyncerTest extends AbstractSyncTest {
 	private MonitoredTransferManager manager;
@@ -101,6 +101,27 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 		assertEquals("/tmp/someFile", transaction.getSource().toString());
 		assertEquals(Transaction.TYPE.DELETE, transaction.getType());
 	}
+
+	@Test
+	public void policyPreventsActionsOutsideOfTheSyncDir() throws Exception {
+		BoxNavigationStub nav = new BoxNavigationStub(null, null);
+		nav.event = new RemoteChangeEvent(Paths.get("../../usr/local/tmp"), true, 1000L, DELETE, null, nav);
+		BoxVolumeStub volume = new BoxVolumeStub();
+		volume.rootNavigation = nav;
+		final List<Object> events = new LinkedList<>();
+		nav.addObserver((o, arg) -> events.add(arg));
+
+		syncer = new DefaultSyncer(config, volume, manager);
+		syncer.setPollInterval(1, TimeUnit.DAYS);
+		syncer.run();
+
+		waitUntil(syncer::isPolling);
+		waitUntil(() -> !events.isEmpty());
+
+		manager.getTransactions().stream().filter(transaction -> transaction instanceof Download).findFirst()
+			.ifPresent(transaction -> fail("policy should have prevented delete but " + transaction + " happened"));
+	}
+
 
 	@Test
 	public void bootstrappingCreatesDirIfLocalDirDoesNotExist() throws IOException {

@@ -35,21 +35,22 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 	String text = "MessageString";
 
 	@Test
-	public void addMessageToActionlogTest() throws QblDropPayloadSizeException, PersistenceException, QblNetworkInvalidResponseException, EntityNotFoundExcepion {
+	public void addMessageToActionlogTest() throws Exception {
 		DropMessage dm = setup();
+		contactRepository.save((Contact) dm.getSender(), i);
 		controller.addMessageToActionlog(dm);
 		assertEquals(1, controller.messages.getChildren().size());
 	}
 
 	@Test
-	public void addOwnMessageToActionlogTest() throws QblDropPayloadSizeException, PersistenceException, QblNetworkInvalidResponseException {
+	public void addOwnMessageToActionlogTest() throws Exception {
 		DropMessage dm = setup();
 		controller.addOwnMessageToActionlog(dm);
 		assertEquals(1, controller.messages.getChildren().size());
 	}
 
 	@Test
-	public void switchBetweenIdentitesTest() throws QblDropPayloadSizeException, PersistenceException, QblNetworkInvalidResponseException, EntityNotFoundExcepion {
+	public void switchBetweenIdentitesTest() throws Exception {
 		setup();
 		clientConfiguration.selectIdentity(i);
 		controller.sendDropMessage(c, "msg1");
@@ -67,7 +68,7 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void refreshTime() throws EntityNotFoundExcepion {
+	public void refreshTime() throws Exception {
 		setup();
 		controller.sleepTime = 1;
 		controller.dateRefresher.interrupt();
@@ -93,12 +94,13 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 		});
 	}
 
-	private DropMessage setup() {
+	private DropMessage setup() throws PersistenceException {
 		i = identityBuilderFactory.factory().withAlias("TestAlias").build();
 		c = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
 		createController(i);
 		controller = (ActionlogController) view.getPresenter();
-		return new DropMessage(i, new TextMessage(text).toJson(), DropMessageRepository.PAYLOAD_TYPE_MESSAGE);
+
+		return new DropMessage(c, new TextMessage(text).toJson(), DropMessageRepository.PAYLOAD_TYPE_MESSAGE);
 	}
 
 	private void createController(Identity i) {

@@ -18,7 +18,7 @@ import de.qabel.desktop.daemon.management.DefaultTransferManager;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.IdentityRepository;
-import de.qabel.desktop.repository.Stub.StubContactRepository;
+import de.qabel.desktop.repository.Stub.InMemoryContactRepository;
 import de.qabel.desktop.repository.Stub.StubDropMessageRepository;
 import de.qabel.desktop.repository.inmemory.InMemoryHttpDropConnector;
 import de.qabel.desktop.repository.inmemory.InMemoryIdentityRepository;
@@ -46,7 +46,7 @@ public class AbstractControllerTest {
 	protected IdentityRepository identityRepository = new InMemoryIdentityRepository();
 	protected DefaultClientConfiguration clientConfiguration;
 	protected IdentityBuilderFactory identityBuilderFactory;
-	protected ContactRepository contactRepository = new StubContactRepository();
+	protected ContactRepository contactRepository = new InMemoryContactRepository();
 	protected DefaultTransferManager loadManager;
 	protected BoxVolumeFactoryStub boxVolumeFactory;
 	protected DropMessageRepository dropMessageRepository = new StubDropMessageRepository();

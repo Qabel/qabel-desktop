@@ -10,7 +10,8 @@ compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
 
 mainClassName = "de.qabel.desktop.DesktopClient"
-version = '0.1'
+version = hasProperty('release') ? release : 'dev'
+new File('dist/resources/version').write version.toString()
 def platform = "${System.properties['os.name'].toLowerCase()}_${System.properties['os.arch']}"
 
 repositories {
@@ -22,6 +23,11 @@ repositories {
 }
 
 sourceSets {
+	main {
+		resources {
+			srcDirs = ["src/main/resources", "dist/resources"]
+		}
+	}
     guiTest {
         java {
             compileClasspath += main.output + test.output
@@ -88,14 +94,16 @@ dependencies {
 
     compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.8.7'  //Apache License https://bitbucket.org/xerial/sqlite-jdbc
     compile 'com.madgag.spongycastle:prov:1.53.0.0'                     //Bounty Castle License http://www.bouncycastle.org/licence.html
+
+    compile 'com.github.zafarkhaja:java-semver:0.9.0'       // MIT https://github.com/zafarkhaja/jsemver/blob/master/LICENSE
 }
 
 task copyToLib(type: Copy) {
   	from configurations.runtime
-    into "$buildDir/libs"  
+    into "$buildDir/libs"
 }
 
-classes {   
+classes {
 	 doLast {
         copyToLib.execute()
     }

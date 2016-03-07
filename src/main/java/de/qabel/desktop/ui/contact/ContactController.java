@@ -155,7 +155,7 @@ public class ContactController extends AbstractController implements Initializab
 		i = clientConfiguration.getSelectedIdentity();
 
 		String old = null;
-		contactsFromRepo = contactRepository.findContactsFromOneIdentity(i);
+		contactsFromRepo = contactRepository.find(i);
 		if (contactsFromRepo.getContacts().isEmpty()) {
 			final Map<String, Object> injectionContext = new HashMap<>();
 			DummyItemView itemView = new DummyItemView(injectionContext::get);
@@ -215,24 +215,26 @@ public class ContactController extends AbstractController implements Initializab
 	private void createObserver() {
 
 		contactsFromRepo.addObserver(this);
-
 		clientConfiguration.addObserver((o, arg) -> {
 			if (!(arg instanceof Identity)) {
 				return;
 			}
+
+			contactsFromRepo.removeObserver(this);
 			loadContacts();
+			contactsFromRepo.addObserver(this);
 		});
 	}
 
 	void exportContacts(File file) throws EntityNotFoundExcepion, IOException, JSONException {
-		Contacts contacts = contactRepository.findContactsFromOneIdentity(i);
+		Contacts contacts = contactRepository.find(i);
 		String jsonContacts = ContactExportImport.exportContacts(contacts);
 		writeStringInFile(jsonContacts, file);
 	}
 
 	void importContacts(File file) throws IOException, URISyntaxException, QblDropInvalidURL, PersistenceException, JSONException {
 		String content = readFile(file);
-		Identity i = clientConfiguration.getSelectedIdentity();
+		i = clientConfiguration.getSelectedIdentity();
 		try {
 			Contacts contacts = ContactExportImport.parseContactsForIdentity(i, content);
 			for (Contact c : contacts.getContacts()) {

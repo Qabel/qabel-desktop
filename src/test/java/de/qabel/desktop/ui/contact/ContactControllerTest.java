@@ -63,7 +63,7 @@ public class ContactControllerTest extends AbstractControllerTest {
 		testDir.mkdirs();
 		File file = new File(testDir + "/contacts.json");
 		controller.exportContacts(file);
-		Contacts contacts = contactRepository.findContactsFromOneIdentity(i);
+		Contacts contacts = contactRepository.find(i);
 		assertEquals(1, contacts.getContacts().size());
 
 		contacts.remove(c);
@@ -71,7 +71,7 @@ public class ContactControllerTest extends AbstractControllerTest {
 
 		controller.importContacts(file);
 
-		contacts = contactRepository.findContactsFromOneIdentity(i);
+		contacts = contactRepository.find(i);
 		assertEquals(1, contacts.getContacts().size());
 
 		List<Contact> l = new LinkedList<>(contacts.getContacts());
@@ -95,7 +95,7 @@ public class ContactControllerTest extends AbstractControllerTest {
 		controller = getController();
 		controller.importContacts(f);
 
-		Contacts contacts = contactRepository.findContactsFromOneIdentity(i);
+		Contacts contacts = contactRepository.find(i);
 		assertEquals(1, contacts.getContacts().size());
 
 
@@ -106,6 +106,26 @@ public class ContactControllerTest extends AbstractControllerTest {
 		assertEquals(c.getDropUrls().size(), 1);
 		assertNotNull(c.getEcPublicKey());
 	}
+
+	@Test
+	public void changeIdentityObserverTest() throws Exception {
+		getContact("One");
+		Contact contact = getContact("Two");
+		controller = getController();
+
+		assertEquals(1, controller.contactsFromRepo.getContacts().size());
+		assertEquals("Two", controller.contactsFromRepo.getByKeyIdentifier(contact.getKeyIdentifier()).getAlias());
+
+	}
+
+	private Contact getContact(String name) throws PersistenceException {
+		Identity i = identityBuilderFactory.factory().withAlias(name).build();
+		Contact c = new Contact(name, i.getDropUrls(), i.getEcPublicKey());
+		contactRepository.save(c, i);
+		clientConfiguration.selectIdentity(i);
+		return c;
+	}
+
 
 	private ContactController getController() {
 		ContactView view = new ContactView();
