@@ -65,6 +65,9 @@ import java.util.Timer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static javafx.scene.control.Alert.AlertType.INFORMATION;
+import static javafx.scene.control.Alert.AlertType.WARNING;
+
 
 public class DesktopClient extends Application {
 	private static final Logger logger = LoggerFactory.getLogger(DesktopClient.class.getSimpleName());
@@ -98,26 +101,30 @@ public class DesktopClient extends Application {
 
 	private void checkVersion() {
 		try {
-			VersionInformation infos = new HttpUpdateChecker().loadInfos();
+			HttpUpdateChecker checker = new HttpUpdateChecker();
 			String currentVersion = IOUtils.toString(DesktopClient.class.getResourceAsStream("/version"));
 
 			if (currentVersion.equals("dev")) {
 				return;
 			}
 
-			LatestVersionInfo desktopVersion = infos.getAppinfos().getDesktop();
-			if (!desktopVersion.getCurrentAppVersion().equals(currentVersion)) {
+			if (!checker.isCurrent(currentVersion)) {
+				final boolean required = !checker.isAllowed(currentVersion);
 
 				ResourceBundle resources = QabelFXMLView.getDefaultResourceBundle();
 				ButtonType cancelButton = new ButtonType(resources.getString("updateCancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
 				ButtonType updateButton = new ButtonType(resources.getString("updateStart"), ButtonBar.ButtonData.APPLY);
-				Alert alert = new Alert(Alert.AlertType.WARNING, resources.getString("updateRequired"), cancelButton, updateButton);
+				String message = required ? resources.getString("updateRequired") : resources.getString("updatePossible");
+				Alert alert = new Alert(required ? WARNING : INFORMATION, message, cancelButton, updateButton);
 				alert.setHeaderText(null);
 				alert.showAndWait().ifPresent(buttonType -> {
 					if (buttonType == updateButton) {
-						getHostServices().showDocument(desktopVersion.getDownloadURL());
+						getHostServices().showDocument(checker.getDesktopVersion().getDownloadURL());
+						System.exit(-1);
 					}
-					System.exit(-1);
+					if (required) {
+						System.exit(-1);
+					}
 				});
 			}
 		} catch (Exception e) {

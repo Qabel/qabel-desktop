@@ -1,5 +1,6 @@
 package de.qabel.desktop.update;
 
+import com.github.zafarkhaja.semver.Version;
 import com.google.gson.Gson;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.HttpClient;
@@ -9,9 +10,19 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 
 public class HttpUpdateChecker implements UpdateChecker {
+	private final HttpClient client;
+	private LatestVersionInfo desktopVersion = null;
+
+	public HttpUpdateChecker(HttpClient client) {
+		this.client = client;
+	}
+
+	public HttpUpdateChecker() {
+		this(HttpClientBuilder.create().build());
+	}
+
 	@Override
 	public VersionInformation loadInfos() {
-		HttpClient client = HttpClientBuilder.create().build();
 		HttpGet request = new HttpGet("https://files.qabel.de/etc/versions.json");
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			String body = IOUtils.toString(response.getEntity().getContent());
@@ -19,5 +30,33 @@ public class HttpUpdateChecker implements UpdateChecker {
 		} catch (Exception e) {
 			throw new IllegalStateException("Failed to check for updates: " + e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public boolean isCurrent(String version) {
+		load();
+		Version currentVersion = Version.valueOf(desktopVersion.getCurrentAppVersion());
+		Version appVersion = Version.valueOf(version);
+		return appVersion.greaterThanOrEqualTo(currentVersion);
+	}
+
+	private void load() {
+		if (desktopVersion == null) {
+			desktopVersion = loadInfos().getAppinfos().getDesktop();
+		}
+	}
+
+	@Override
+	public LatestVersionInfo getDesktopVersion() {
+		load();
+		return desktopVersion;
+	}
+
+	@Override
+	public boolean isAllowed(String version) {
+		load();
+		Version minimumVersion = Version.valueOf(desktopVersion.getMinimumAppVersion());
+		Version appVersion = Version.valueOf(version);
+		return appVersion.greaterThanOrEqualTo(minimumVersion);
 	}
 }
