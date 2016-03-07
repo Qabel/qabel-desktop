@@ -12,6 +12,7 @@ import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.crashReports.CrashReportHandler;
 import de.qabel.desktop.crashReports.StubCrashReportHandler;
+import de.qabel.desktop.daemon.NetworkStatus;
 import de.qabel.desktop.daemon.management.BoxVolumeFactoryStub;
 import de.qabel.desktop.daemon.management.DefaultTransferManager;
 import de.qabel.desktop.repository.ContactRepository;
@@ -52,6 +53,7 @@ public class AbstractControllerTest {
 	protected DropConnector httpDropConnector = new InMemoryHttpDropConnector();
 	protected CrashReportHandler crashReportHandler = new StubCrashReportHandler();
 	protected SharingService sharingService = new BlockSharingService(dropMessageRepository, httpDropConnector);
+	protected NetworkStatus networkStatus = new NetworkStatus();
 	protected Identity identity;
 
 	@BeforeClass
@@ -99,6 +101,7 @@ public class AbstractControllerTest {
 		diContainer.put("transferManager", new DefaultTransferManager());
 		diContainer.put("sharingService", sharingService);
 		diContainer.put("reportHandler", crashReportHandler);
+		diContainer.put("networkStatus", networkStatus);
 		MessageRendererFactory messageRendererFactory = new MessageRendererFactory();
 		messageRendererFactory.setFallbackRenderer(new PlaintextMessageRenderer());
 		diContainer.put("messageRendererFactory", messageRendererFactory);

@@ -5,7 +5,9 @@ import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.drop.DropURL;
 import de.qabel.core.exceptions.*;
+import de.qabel.core.http.DropHTTP;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
+import de.qabel.desktop.daemon.NetworkStatus;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +20,8 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 
 public class HttpDropConnectorTest extends AbstractControllerTest {
@@ -28,18 +32,22 @@ public class HttpDropConnectorTest extends AbstractControllerTest {
 	String workingURL;
 	String text = "MessageString";
 	HttpDropConnector connector;
+	private NetworkStatus networkStatus;
+	private DropHTTP dHTTP;
 
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
 		fakeURL = "http://localhost:12345/abcdefghijklmnopqrstuvwxyzabcdefgworkingUrl";
 		workingURL = new DropUrlGenerator("https://qdrop.prae.me").generateUrl().toString(); //"https://qdrop.prae.me/abcdefghijklmnopqrstuvwxyzabcdefgworkingUrl";
-		connector = new HttpDropConnector();
+		networkStatus = new NetworkStatus();
+		dHTTP = new DropHTTP();
+		connector = new HttpDropConnector(networkStatus, dHTTP);
 	}
 
 
 	@Test(expected = QblNetworkInvalidResponseException.class)
-	public void sendDropMessageFailTest() throws QblDropPayloadSizeException, URISyntaxException, QblDropInvalidURL, QblNetworkInvalidResponseException {
+	public void sendDropMessageFailTest() throws Exception {
 		Collection<DropURL> collection = new ArrayList<>();
 		DropURL drpoUrl = new DropURL(fakeURL);
 		collection.add(drpoUrl);
@@ -51,7 +59,7 @@ public class HttpDropConnectorTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void sendAndReceiveMessagesTest() throws QblDropPayloadSizeException, QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException, URISyntaxException, QblDropInvalidURL, QblNetworkInvalidResponseException {
+	public void sendAndReceiveMessagesTest() throws Exception {
 		String text = "MessageString";
 		String type = "dropMessage";
 
@@ -74,5 +82,23 @@ public class HttpDropConnectorTest extends AbstractControllerTest {
 		assertEquals(text, messages.get(messages.size()-1).getDropPayload());
 		assertEquals(type, messages.get(messages.size()-1).getDropPayloadType());
 		assertEquals(c.getEcPublicKey().getReadableKeyIdentifier(), messages.get(messages.size()-1).getSenderKeyId());
+	}
+
+	@Test
+	public void setsNetworkState() throws Exception {
+		StubDropHttp dropStub = new StubDropHttp();
+		dropStub.messages.setData(new ArrayList<>());
+		connector = new HttpDropConnector(networkStatus, dropStub);
+		networkStatus.online();
+
+		dropStub.messages.setOk(false);
+		connector.receive(identity, new Date(0L));
+
+		assertFalse(networkStatus.isOnline());
+
+		dropStub.messages.setOk(true);
+		connector.receive(identity, new Date(0L));
+
+		assertTrue(networkStatus.isOnline());
 	}
 }

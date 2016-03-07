@@ -10,6 +10,7 @@ import de.qabel.core.drop.DropURL;
 import de.qabel.core.exceptions.*;
 import de.qabel.core.http.DropHTTP;
 import de.qabel.core.http.HTTPResult;
+import de.qabel.desktop.daemon.NetworkStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,9 +18,14 @@ import java.util.*;
 
 public class HttpDropConnector implements DropConnector {
 
-	DropHTTP dHTTP = new DropHTTP();
+	DropHTTP dHTTP;
 	private final Logger logger = LoggerFactory.getLogger(HttpDropConnector.class);
+	private final NetworkStatus networkStatus;
 
+	public HttpDropConnector(NetworkStatus networkStatus, DropHTTP dHTTP) {
+		this.networkStatus = networkStatus;
+		this.dHTTP = dHTTP;
+	}
 
 	public void send(Contact c, DropMessage d) throws QblNetworkInvalidResponseException {
 		BinaryDropMessageV0 binaryMessage;
@@ -40,6 +46,12 @@ public class HttpDropConnector implements DropConnector {
 	public List<DropMessage> receive(Identity i, Date since) {
 		DropURL d = convertCollectionIntoDropUrl(i.getDropUrls());
 		HTTPResult<Collection<byte[]>> result = receiveMessages(since, d);
+
+		if (!result.isOk()) {
+			networkStatus.offline();
+		} else {
+			networkStatus.online();
+		}
 
 		return createDropMessagesFromHttpResult(result, i);
 	}

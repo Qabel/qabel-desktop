@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="offlineIndicator" fx:controller="de.qabel.desktop.ui.OfflineController"
+      visible="false" pickOnBounds="false" alignment="CENTER" prefHeight="529.0" prefWidth="586.0" style="-fx-spacing: 2em; -fx-background-color: rgba(0,0,0,0.8);" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@/logo.png" />
+         </image>
+      </ImageView>
+      <Label style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,1), 2, 0, 0, 1);" text="offline" textFill="WHITE">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Label>
+   </children>
+</VBox>

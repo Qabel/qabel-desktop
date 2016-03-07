@@ -6,9 +6,11 @@ import de.qabel.core.accounting.AccountingHTTP;
 import de.qabel.core.accounting.AccountingProfile;
 import de.qabel.core.config.*;
 import de.qabel.core.exceptions.QblInvalidEncryptionKeyException;
+import de.qabel.core.http.DropHTTP;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.factory.*;
 import de.qabel.desktop.crashReports.HockeyApp;
+import de.qabel.desktop.daemon.NetworkStatus;
 import de.qabel.desktop.daemon.drop.DropDaemon;
 import de.qabel.desktop.daemon.management.DefaultTransferManager;
 import de.qabel.desktop.daemon.management.MonitoredTransferManager;
@@ -73,7 +75,7 @@ public class DesktopClient extends Application {
 	private final Map<String, Object> customProperties = new HashMap<>();
 	private boolean inBound;
 	private LayoutView view;
-	private HttpDropConnector dropConnector = new HttpDropConnector();
+	private HttpDropConnector dropConnector;
 	private PersistenceDropMessageRepository dropMessageRepository;
 	private PersistenceContactRepository contactRepository;
 	private BoxVolumeFactory boxVolumeFactory;
@@ -85,6 +87,7 @@ public class DesktopClient extends Application {
 	private ClientConfiguration config;
 	private boolean visible = false;
 	private PersistenceIdentityRepository identityRepository;
+	private NetworkStatus networkStatus;
 
 
 	public static void main(String[] args) throws Exception {
@@ -229,6 +232,10 @@ public class DesktopClient extends Application {
 		customProperties.put("contactRepository", contactRepository);
 		dropMessageRepository = new PersistenceDropMessageRepository(persistence);
 		customProperties.put("dropMessageRepository", dropMessageRepository);
+
+		networkStatus = new NetworkStatus();
+		customProperties.put("networkStatus", networkStatus);
+		dropConnector = new HttpDropConnector(networkStatus, new DropHTTP());
 		customProperties.put("dropConnector", dropConnector);
 		customProperties.put("reportHandler", new HockeyApp());
 		ClientConfiguration clientConfig = getClientConfiguration(
