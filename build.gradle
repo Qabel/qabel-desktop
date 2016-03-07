@@ -94,6 +94,8 @@ dependencies {
 
     compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.8.7'  //Apache License https://bitbucket.org/xerial/sqlite-jdbc
     compile 'com.madgag.spongycastle:prov:1.53.0.0'                     //Bounty Castle License http://www.bouncycastle.org/licence.html
+
+    compile 'com.github.zafarkhaja:java-semver:0.9.0'       // MIT https://github.com/zafarkhaja/jsemver/blob/master/LICENSE
 }
 
 task copyToLib(type: Copy) {
