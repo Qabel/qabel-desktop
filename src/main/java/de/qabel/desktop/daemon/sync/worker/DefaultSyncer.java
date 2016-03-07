@@ -6,6 +6,7 @@ import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.daemon.management.*;
 import de.qabel.desktop.daemon.sync.BoxSync;
+import de.qabel.desktop.daemon.sync.blacklist.Blacklist;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.LocalDeleteEvent;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
@@ -39,6 +40,7 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 	private boolean polling = false;
 	private final SyncIndex index;
 	private WindowedTransactionGroup progress = new WindowedTransactionGroup();
+	private Blacklist localBlacklist;
 
 	public DefaultSyncer(BoxSyncConfig config, CachedBoxVolume boxVolume, TransferManager manager) {
 		this.config = config;
@@ -46,6 +48,10 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 		this.manager = manager;
 		index = config.getSyncIndex();
 		config.setSyncer(this);
+	}
+
+	public void setLocalBlacklist(Blacklist blacklist) {
+		this.localBlacklist = blacklist;
 	}
 
 	@Override
@@ -163,6 +169,14 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 
 	private void upload(WatchEvent event) {
 		BoxSyncBasedUpload upload = uploadFactory.getUpload(boxVolume, config, event);
+
+		if (localBlacklist != null) {
+			String filename = event.getPath().getFileName().toString();
+			if (localBlacklist.matches(filename)) {
+				return;
+			}
+		}
+
 		if (isUpToDate(upload)) {
 			downloadUnnoticedDelete(upload);
 			return;
@@ -217,6 +231,12 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 		}
 	}
 
+	private int localEvents = 0;
+
+	public boolean isProcessingLocalEvents() {
+		return localEvents > 0;
+	}
+
 	protected void startWatcher() throws IOException {
 		Path localPath = config.getLocalPath();
 		if (!Files.isDirectory(localPath)) {
@@ -226,14 +246,23 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 			throw new IllegalStateException("local dir " + localPath.toString() + " is not valid");
 		}
 		watcher = new TreeWatcher(localPath, watchEvent -> {
-			if (!watchEvent.isValid()) {
-				return;
+			try {
+				synchronized (DefaultSyncer.this) {
+					localEvents++;
+				}
+				if (!watchEvent.isValid()) {
+					return;
+				}
+				String type = "";
+				if (watchEvent instanceof ChangeEvent)
+					type = ((ChangeEvent) watchEvent).getType().toString();
+				logger.trace("local update " + type + " " + watchEvent.getPath().toString());
+				upload(watchEvent);
+			} finally {
+				synchronized (DefaultSyncer.this) {
+					localEvents--;
+				}
 			}
-			String type = "";
-			if (watchEvent instanceof ChangeEvent)
-				type = ((ChangeEvent)watchEvent).getType().toString();
-			logger.trace("local update " + type + " " + watchEvent.getPath().toString());
-			upload(watchEvent);
 		});
 		watcher.setName("DefaultSyncer-" + config.getName() + "#Watcher");
 		watcher.setDaemon(true);
