@@ -8,13 +8,18 @@
 }
 
 .text-field:focused {
-	-fx-background-insets: 0px, 2px;
+	-fx-background-insets: 0px, 4px;
 	-fx-background-color: black, white;
+}
+
+.text-field {
+	-fx-background-insets: 0px, 4px;
+	-fx-background-color: white;
 }
 
 .login-form  .choice-box {
     -fx-background-radius: 0;
-    -fx-background-color: #d5d5d5, white;
+    -fx-background-color: white;
     -fx-background-insets: 0px, 2px;
     -fx-pref-width: 100em;
     -fx-alignment: CENTER-CENTER!important;
@@ -28,7 +33,6 @@
 
 .login-title {
     -fx-text-fill: white;
-    -fx-font-weight: bold;
 }
 
 .button {
@@ -41,11 +45,12 @@
     -fx-cursor: hand;
 }
 .button.error {
-    -fx-border-color: white;
-    -fx-background-color: red;
+	-fx-background-insets: 0px, 4px;
+    -fx-border-color: black;
+    -fx-background-color: #FF00FF;
     -fx-border-width: 0.1em;
     -fx-border-radius: 0;
-    -fx-text-fill: white;
+    -fx-text-fill: black;
 }
 
 .button.check {

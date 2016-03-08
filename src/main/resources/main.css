@@ -1,3 +1,5 @@
+System.setProperty("prism.lcdtext", "false");`
+
 @font-face {
   -fx-font-family: 'Source Sans Pro';
   src: url("/font/source-sans-pro.regular.ttf") ;
@@ -14,18 +16,20 @@
 }
 
 .text-field:focused {
-	-fx-background-insets: 0px, 2px;
+	-fx-background-insets: 0px, 4px;
 	-fx-background-color: black, white;
 }
 
 .text-area:focused {
-	-fx-background-insets: 0px, 3px;
+	-fx-background-insets: 0px, 4px;
 	-fx-background-color: black, white;
 }
 
 #alias {
 	-fx-font-weight: bold
 }
+
+
 
 #quota{
 	-fx-font-size: 8px;
