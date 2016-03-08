@@ -20,10 +20,3 @@ scenicView.properties
 hs_err_*
 db.sqlite
 /dist/resources/version
-
-/installer/inno
-/installer/dist
-/installer/jre
-/installer/launch4j
-/installer/log
-/installer/*.exe
