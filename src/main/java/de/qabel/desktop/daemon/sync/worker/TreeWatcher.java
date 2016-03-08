@@ -80,11 +80,11 @@ public class TreeWatcher extends Thread {
 				Path child = parent.resolve(name);
 
 				boolean isDir = Files.isDirectory(child);
-				long mtime = Files.getLastModifiedTime(child).toMillis();
 				ChangeEvent ce;
 				if (kind == ENTRY_DELETE) {
 					ce = new LocalDeleteEvent(child, isDir, System.currentTimeMillis(), convertType(kind));
 				} else {
+					long mtime = Files.getLastModifiedTime(child).toMillis();
 					ce = new LocalChangeEvent(child, isDir, mtime, convertType(kind));
 				}
 				consumer.accept(ce);

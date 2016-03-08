@@ -126,14 +126,17 @@ public class DefaultTransferManager extends Observable implements TransferManage
 
 					ProgressListener listener = new TransactionRelatedProgressListener(download);
 					try (InputStream stream = new BufferedInputStream(nav.download(file, listener))) {
-						Path tmpFile = Files.createTempFile("prefix", "suffix");
-						Files.copy(stream, tmpFile, StandardCopyOption.REPLACE_EXISTING);
-						Files.setLastModifiedTime(tmpFile, FileTime.fromMillis(download.getMtime()));
-						Files.move(tmpFile, destination, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-						if (Files.getLastModifiedTime(destination).toMillis() != download.getMtime()) {
-							Files.setLastModifiedTime(destination, FileTime.fromMillis(download.getMtime()));
+						Path tmpFile = createTempFileForDownload(destination);
+						try {
+							Files.copy(stream, tmpFile, StandardCopyOption.REPLACE_EXISTING);
+							Files.setLastModifiedTime(tmpFile, FileTime.fromMillis(download.getMtime()));
+							Files.move(tmpFile, destination, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+							if (Files.getLastModifiedTime(destination).toMillis() != download.getMtime()) {
+								Files.setLastModifiedTime(destination, FileTime.fromMillis(download.getMtime()));
+							}
+						} finally {
+							Files.deleteIfExists(tmpFile);
 						}
-						Files.deleteIfExists(tmpFile);
 					}
 					break;
 				case DELETE:
@@ -152,6 +155,12 @@ public class DefaultTransferManager extends Observable implements TransferManage
 			download.toState(FAILED);
 			throw e;
 		}
+	}
+
+	private Path createTempFileForDownload(Path destinationFile) throws IOException {
+		String filename = destinationFile.getFileName().toString();
+		Path tmpFile = destinationFile.getParent().resolve("." + filename + ".qpart~");
+		return tmpFile;
 	}
 
 	private boolean localIsNewer(Path local, BoxFile file) {

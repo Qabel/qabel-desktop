@@ -17,7 +17,7 @@ function waitForPort {
     fi
 }
 
-DIRHASH=$(`pwd` | shasum | cut -d" " -f1)
+DIRHASH=$(pwd | shasum | cut -d" " -f1)
 
 # qabel-drop
 cd qabel-drop

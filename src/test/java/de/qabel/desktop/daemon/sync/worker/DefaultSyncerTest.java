@@ -8,6 +8,8 @@ import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.daemon.management.*;
 import de.qabel.desktop.daemon.sync.AbstractSyncTest;
+import de.qabel.desktop.daemon.sync.blacklist.Blacklist;
+import de.qabel.desktop.daemon.sync.blacklist.PatternBlacklist;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import org.apache.commons.io.FileUtils;
@@ -23,6 +25,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.DELETE;
 import static org.junit.Assert.*;
@@ -122,7 +125,6 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 			.ifPresent(transaction -> fail("policy should have prevented delete but " + transaction + " happened"));
 	}
 
-
 	@Test
 	public void bootstrappingCreatesDirIfLocalDirDoesNotExist() throws IOException {
 		FileUtils.deleteDirectory(tmpDir.toFile());
@@ -130,5 +132,30 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 		syncer = new DefaultSyncer(config, new BoxVolumeStub(), manager);
 		syncer.run();
 		assertTrue(Files.isDirectory(tmpDir));
+	}
+
+	@Test
+	public void ignoresFilesOnBlacklist() throws Exception {
+		BoxNavigationStub nav = new BoxNavigationStub(null, null);
+		BoxVolumeStub volume = new BoxVolumeStub();
+		volume.rootNavigation = nav;
+
+		PatternBlacklist blacklist = new PatternBlacklist();
+		blacklist.add(Pattern.compile("\\..*\\.qpart~"));
+		BlacklistSpy spy = new BlacklistSpy(blacklist);
+
+		syncer = new DefaultSyncer(config, volume, manager);
+		syncer.setLocalBlacklist(spy);
+		syncer.setPollInterval(1, TimeUnit.DAYS);
+		syncer.run();
+		syncer.waitFor();
+
+		Files.write(tmpDir.resolve(".mydownload.qpart~"), "content".getBytes());
+
+		waitUntil(() -> manager.getTransactions().size() > 0);	// wait for root sync event
+		waitUntil(() -> !spy.tests.isEmpty());
+		waitUntil(() -> !syncer.isProcessingLocalEvents());
+		assertTrue(manager.getTransactions().get(0).isDir());
+		assertEquals("blacklisted file was not ignored: " + manager.getTransactions(), 1, manager.getTransactions().size());
 	}
 }
