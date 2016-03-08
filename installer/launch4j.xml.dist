@@ -25,11 +25,11 @@
     <opt>-Dfile.encoding=UTF-8 -Djava.library.path=lib</opt>
   </jre>
   <versionInfo>
-    <fileVersion>{version}</fileVersion>
+    <fileVersion>{version}.0</fileVersion>
     <txtFileVersion>QabelDesktop {version}</txtFileVersion>
     <fileDescription>Qabel Desktop</fileDescription>
     <copyright>Qabel GmbH</copyright>
-    <productVersion>{version}</productVersion>
+    <productVersion>{version}.0</productVersion>
     <txtProductVersion>Qabel Desktop {version}</txtProductVersion>
     <productName>Qabel Desktop</productName>
     <companyName>Qabel GmbH</companyName>

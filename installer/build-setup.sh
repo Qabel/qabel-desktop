@@ -35,6 +35,12 @@ cp launch4j.xml.dist launch4j.xml
 sed --in-place "s/{version}/${version}/g" config.iss
 sed --in-place "s/{version}/${version}/g"  launch4j.xml
 
-
+if [ -f QabelDesktop.exe ]; then
+    rm QabelDesktop.exe
+fi
 ./launch4j/launch4j launch4j.xml
+if [ ! -f QabelDesktop.exe ]; then
+    echo "launch4j failed to create QabelDesktop.exe"
+    exit -1
+fi
 wine inno/ISCC.exe config.iss
