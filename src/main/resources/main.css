@@ -10,6 +10,17 @@
 
 * {
     -fx-font-family: "Source Sans Pro";
+    -fx-font-size: 14;
+}
+
+.text-field:focused {
+	-fx-background-insets: 0px, 2px;
+	-fx-background-color: black, white;
+}
+
+.text-area:focused {
+	-fx-background-insets: 0px, 3px;
+	-fx-background-color: black, white;
 }
 
 #alias {
@@ -17,7 +28,7 @@
 }
 
 #quota{
-	-fx-font-size: 10px;
+	-fx-font-size: 8px;
 	-fx-text-fill: #fd670d;
 	-fx-padding: 0 5px 0 0;
 }

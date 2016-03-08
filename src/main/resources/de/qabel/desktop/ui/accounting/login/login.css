@@ -7,10 +7,15 @@
     -fx-padding: 5px 15px 5px 15px;
 }
 
+.text-field:focused {
+	-fx-background-insets: 0px, 2px;
+	-fx-background-color: black, white;
+}
+
 .login-form  .choice-box {
     -fx-background-radius: 0;
     -fx-background-color: #d5d5d5, white;
-    -fx-background-insets: 0px, 1px;
+    -fx-background-insets: 0px, 2px;
     -fx-pref-width: 100em;
     -fx-alignment: CENTER-CENTER!important;
     -fx-text-alignment: center!important;
@@ -24,10 +29,6 @@
 .login-title {
     -fx-text-fill: white;
     -fx-font-weight: bold;
-}
-
-.login-button-bar {
-    -fx-spacing: 3em;
 }
 
 .button {
@@ -73,7 +74,7 @@
 }
 
 .separator .line{
-     -fx-border-color: linear-gradient(to right, rgba(0,0,0, 0.0) 0%, rgba(255,255,255, 1.0) 10%, rgba(255,255,255, 1.0) 90%, rgba(0,0,0, 0.0)	100% );
+     -fx-border-color: linear-gradient(to right, rgba(0,0,0, 0.0) 0%, rgba(255,255,255, 1.0) 50%, rgba(255,255,255, 1.0) 50%, rgba(0,0,0, 0.0)	100% );
      -fx-border-repeat: repeat;
      -fx-border-attachment: scroll;
      -fx-border-position: 0% 0%;
