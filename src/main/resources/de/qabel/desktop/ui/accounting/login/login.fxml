@@ -15,52 +15,65 @@
             <Insets />
          </VBox.margin>
         </ImageView>
-        <VBox alignment="TOP_CENTER" prefHeight="445.0" prefWidth="342.0" styleClass="login-form">
+		<VBox alignment="TOP_CENTER" prefHeight="397.0" prefWidth="220.0" styleClass="login-form">
             <children>
                 <Label styleClass="login-title" text="%loginText">
                     <VBox.margin>
                         <Insets bottom="10.0" top="10.0" />
                     </VBox.margin>
                 </Label>
-                <ChoiceBox fx:id="providerChoices" />
-                <TextField fx:id="user" alignment="CENTER" prefHeight="26.0" promptText="%loginBoxAccountUserName" styleClass="user" text="testuser">
+				<ChoiceBox fx:id="providerChoices">
+					<VBox.margin>
+						<Insets left="10.0" right="10.0"/>
+					</VBox.margin>
+				</ChoiceBox>
+				<TextField fx:id="user" alignment="CENTER" prefHeight="26.0" prefWidth="220.0"
+						   promptText="%loginBoxAccountUserName" styleClass="user" text="testuser">
                     <VBox.margin>
-                        <Insets />
+						<Insets left="10.0" right="10.0"/>
                     </VBox.margin>
                 </TextField>
 
                 <TextField fx:id="email" alignment="CENTER" managed="false" prefHeight="26.0" promptText="%loginUserEMail" styleClass="user">
                     <VBox.margin>
-                        <Insets />
+						<Insets left="10.0" right="10.0"/>
                     </VBox.margin>
                 </TextField>
 
-                <PasswordField fx:id="password" alignment="CENTER" prefHeight="26.0" promptText="%loginBoxAccountUserPassword" text="testuser">
+				<PasswordField fx:id="password" alignment="CENTER" prefHeight="26.0" prefWidth="220.0"
+							   promptText="%loginBoxAccountUserPassword" text="testuser">
                     <VBox.margin>
-                        <Insets />
+						<Insets left="10.0" right="10.0"/>
                     </VBox.margin>
                 </PasswordField>
 
                 <PasswordField fx:id="confirm" alignment="CENTER" managed="false" prefHeight="26.0" promptText="%loginConfirmPassword">
                     <VBox.margin>
-                        <Insets />
+						<Insets left="10.0" right="10.0"/>
                     </VBox.margin>
                 </PasswordField>
 
-                <HBox fx:id="buttonBar" alignment="CENTER" prefHeight="26.0" prefWidth="362.0" styleClass="login-button-bar">
+				<HBox fx:id="buttonBar" alignment="CENTER" prefHeight="26.0" prefWidth="220.0"
+					  styleClass="login-button-bar">
                     <children>
 						<Button fx:id="openCreateButton" managed="true" mnemonicParsing="false" onAction="#openCreateBoxAccountSetup" prefHeight="26.0" prefWidth="221.0" styleClass="create-account-button" text="%loginOpenCreateBoxAccountDialog">
-                     <HBox.margin>
-                        <Insets right="10.0" />
-                     </HBox.margin></Button>
+							<HBox.margin>
+								<Insets left="10.0" right="10.0"/>
+							</HBox.margin>
+						</Button>
 						<Button fx:id="createButton" managed="false" mnemonicParsing="false"
 								onAction="#createBoxAccount" prefHeight="26.0" prefWidth="221.0"
 								styleClass="create-account-button" text="%loginCreateBoxAccount">
 							<HBox.margin>
+								<Insets left="10.0" right="10.0"/>
+							</HBox.margin>
+						</Button>
+						<Button fx:id="loginButton" mnemonicParsing="false" onAction="#login" prefHeight="26.0"
+								prefWidth="137.0" styleClass="login-button" text="%loginLogin">
+							<HBox.margin>
 								<Insets right="10.0"/>
 							</HBox.margin>
 						</Button>
-                        <Button fx:id="loginButton" mnemonicParsing="false" onAction="#login" prefHeight="26.0" prefWidth="137.0" styleClass="login-button" text="%loginLogin" />
                     </children>
                     <VBox.margin>
                         <Insets />
@@ -75,11 +88,22 @@
                     </VBox.margin>
                 </HBox>
                 <Separator />
-				<Button fx:id="recoverPassword" managed="true" mnemonicParsing="false" onAction="#recoverPassword" prefHeight="26.0" prefWidth="367.0" styleClass="newPassword" text="%loginRecoverPassword" />
-                <Button fx:id="newPassword" managed="false" mnemonicParsing="false" onAction="#newPassword" prefHeight="26.0" styleClass="login-button" text="%loginNewPassword" />
-            </children>
+				<Button fx:id="recoverPassword" managed="true" mnemonicParsing="false" onAction="#recoverPassword"
+						minHeight="26.0" prefWidth="367.0" styleClass="newPassword" text="%loginRecoverPassword">
+					<VBox.margin>
+						<Insets left="10.0" right="10.0"/>
+					</VBox.margin>
+				</Button>
+				<Button fx:id="newPassword" managed="false" mnemonicParsing="false" onAction="#newPassword"
+						minHeight="26.0" prefWidth="367.0" styleClass="login-button" text="%loginNewPassword">
+					<VBox.margin>
+						<Insets left="10.0" right="10.0"/>
+					</VBox.margin>
+				</Button>
+
+			</children>
             <VBox.margin>
-                <Insets top="10.0" />
+				<Insets left="20.0" right="20.0" top="10.0"/>
             </VBox.margin>
         </VBox>
     </children>

@@ -150,7 +150,7 @@ public class DesktopClient extends Application {
 
 		Platform.setImplicitExit(false);
 		primaryStage.setTitle(TITLE);
-		scene = new Scene(new LoginView().getView(), 370, 550, true, aa);
+		scene = new Scene(new LoginView().getView(), 370, 570, true, aa);
 		primaryStage.setScene(scene);
 
 		config.addObserver((o, arg) -> {
