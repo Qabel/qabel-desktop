@@ -2,3 +2,8 @@ QabelSetup.exe
 dist
 jre
 launch4j
+inno
+*.exe
+log
+config.iss
+launch4j.xml

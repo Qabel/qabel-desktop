@@ -1,5 +1,5 @@
 #define AppName "Qabel Desktop Client"
-#define AppVersion "0.1"
+#define AppVersion "{version}"
 #define AppPublisher "Qabel GmbH"
 #define AppURL "https://qabel.de"
 #define AppExeName "QabelDesktop.exe"
@@ -34,7 +34,7 @@ Name: "german"; MessagesFile: "compiler:Languages\German.isl"
 
 [CustomMessages]
 english.DeleteConfig=Do you want to delete the configuration file?
-german.DeleteConfig=Wollen Sie die Konfigurationsdatei löschen?
+german.DeleteConfig=Wollen Sie die Konfigurationsdatei lÃ¶schen?
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked

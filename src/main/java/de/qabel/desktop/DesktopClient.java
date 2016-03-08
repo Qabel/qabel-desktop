@@ -59,6 +59,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -94,18 +95,29 @@ public class DesktopClient extends Application {
 
 
 	public static void main(String[] args) throws Exception {
-
+		String defaultEncoding = System.getProperty("file.encoding");
+		if (!defaultEncoding.equals("UTF-8")) {
+			logger.warn("default encoding " + defaultEncoding + " is not UTF-8");
+		}
 		if (args.length > 0) {
+			if (args[0].equals("--version")) {
+				System.out.println(appVersion());
+				System.exit(-1);
+			}
 			DATABASE_FILE = new File(args[0]).getAbsoluteFile().toPath();
 		}
 		UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 		launch(args);
 	}
 
+	public static String appVersion() throws IOException {
+		return IOUtils.toString(DesktopClient.class.getResourceAsStream("/version"));
+	}
+
 	private void checkVersion() {
 		try {
 			HttpUpdateChecker checker = new HttpUpdateChecker();
-			String currentVersion = IOUtils.toString(DesktopClient.class.getResourceAsStream("/version"));
+			String currentVersion = appVersion();
 
 			if (currentVersion.equals("dev")) {
 				return;

@@ -70,7 +70,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
     apt-get -y install wine unzip unrar unp
     if [ ! -d /vagrant/installer/inno ]; then
-        wget http://www.jrsoftware.org/download.php/is.exe
+        wget http://www.jrsoftware.org/download.php/is-unicode.exe
         wget http://downloads.sourceforge.net/project/innounp/innounp/innounp%200.45/innounp045.rar
 
         unp innounp045.rar
@@ -123,8 +123,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     echo "CREATE DATABASE qabel_drop; CREATE USER qabel WITH PASSWORD 'qabel_test'; GRANT ALL PRIVILEGES ON DATABASE qabel_drop TO qabel;" | sudo -u postgres psql postgres
 
-    if [ ! -d ~/.virtualenv ]; then
-        mkdir ~/.virtualenv
+    if [ ! -d /home/vagrant/.virtualenv ]; then
         mkdir /home/vagrant/.virtualenv
         echo -e "[virtualenv]\nalways-copy=true" > /home/vagrant/.virtualenv/virtualenv.ini
         chown -R vagrant:vagrant /home/vagrant/.virtualenv
@@ -132,7 +131,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     update-ca-certificates -f
 
     chown -R vagrant:vagrant /vagrant/installer
-    echo "now enter the VM with `vagrant ssh`, go to `/vagrant/installer` and build with `bash build-setup.sh`"
+    echo "now enter the VM with vagrant ssh, go to /vagrant/installer and build with bash build-setup.sh"
 
 SCRIPT
 end
