@@ -26,9 +26,7 @@
                         <VBox minWidth="200.0" prefHeight="30.0" BorderPane.alignment="CENTER">
                             <children>
                                 <Label fx:id="alias" text="Guy Pearce">
-                                    <font>
-                                        <Font name="System Bold" size="15.0"/>
-                                    </font>
+
                                 </Label>
                                 <Label fx:id="mail" text="guy@pearce.com"/>
                             </children>

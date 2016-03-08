@@ -1,3 +1,26 @@
+@font-face {
+  -fx-font-family: 'Source Sans Pro';
+  src: url("/font/source-sans-pro.regular.ttf") ;
+ }
+
+@font-face {
+  -fx-font-family: 'Source Sans Pro', bold;
+  src: url("/font/source-sans-pro.bold.ttf") ;
+ }
+
+* {
+    -fx-font-family: "Source Sans Pro";
+}
+
+#alias {
+	-fx-font-weight: bold
+}
+
+#quota{
+	-fx-font-size: 10px;
+	-fx-text-fill: #fd670d;
+	-fx-padding: 0 5px 0 0;
+}
 
 .scroll-bar {
     -fx-background-color: transparent;
@@ -73,7 +96,7 @@
 
 .button {
     -fx-font-weight: bold;
-    -fx-background-radius: 15;
+    -fx-background-radius: 0;
     -fx-indent: 20em;
     -fx-background-color: #fcdcca, #fc7b4c, #ff690f;
     -fx-background-insets: 0px, 1px;
