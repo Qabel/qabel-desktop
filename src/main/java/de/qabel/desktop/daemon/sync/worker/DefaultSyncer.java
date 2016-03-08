@@ -171,8 +171,7 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 		BoxSyncBasedUpload upload = uploadFactory.getUpload(boxVolume, config, event);
 
 		if (localBlacklist != null) {
-			String filename = event.getPath().getFileName().toString();
-			if (localBlacklist.matches(filename)) {
+			if (localBlacklist.matches(upload.getDestination())) {
 				return;
 			}
 		}

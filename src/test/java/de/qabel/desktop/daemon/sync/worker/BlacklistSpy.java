@@ -2,12 +2,13 @@ package de.qabel.desktop.daemon.sync.worker;
 
 import de.qabel.desktop.daemon.sync.blacklist.Blacklist;
 
+import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 
 public class BlacklistSpy implements Blacklist {
 	private Blacklist blacklist;
-	public List<String> tests = new LinkedList<>();
+	public List<Path> tests = new LinkedList<>();
 	public int matches = 0;
 
 	public BlacklistSpy(Blacklist blacklist) {
@@ -15,9 +16,9 @@ public class BlacklistSpy implements Blacklist {
 	}
 
 	@Override
-	public boolean matches(String filename) {
-		tests.add(filename);
-		boolean match = blacklist.matches(filename);
+	public boolean matches(Path path) {
+		tests.add(path);
+		boolean match = blacklist.matches(path);
 		if (match) {
 			++matches;
 		}
