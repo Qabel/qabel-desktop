@@ -71,3 +71,13 @@
 .hyperlink {
     -fx-text-fill: #c8c8c8;
 }
+
+.separator .line{
+     -fx-border-color: linear-gradient(to right, rgba(0,0,0, 0.0) 0%, rgba(255,255,255, 1.0) 10%, rgba(255,255,255, 1.0) 90%, rgba(0,0,0, 0.0)	100% );
+     -fx-border-repeat: repeat;
+     -fx-border-attachment: scroll;
+     -fx-border-position: 0% 0%;
+	 -fx-border-clip: border-box;
+	 -fx-border-origin: padding-box;
+	 -fx-border-size: auto auto;
+}
