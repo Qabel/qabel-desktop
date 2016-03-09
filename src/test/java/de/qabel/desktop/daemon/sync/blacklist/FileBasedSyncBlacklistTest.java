@@ -17,11 +17,11 @@ public class FileBasedSyncBlacklistTest {
 
 	@Test
 	public void testExcludesDownload() {
-		assertTrue(blacklist.matches(".mydoc.docx.qpart~"));
+		assertTrue(blacklist.matches(Paths.get(".mydoc.docx.qpart~")));
 	}
 
 	@Test
 	public void testDoesNotExcludeNormalWordDocument() {
-		assertFalse(blacklist.matches("mydoc.docx"));
+		assertFalse(blacklist.matches(Paths.get("mydoc.docx")));
 	}
 }
