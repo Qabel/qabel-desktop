@@ -13,7 +13,6 @@ import java.util.List;
 import static org.junit.Assert.fail;
 
 public class BoxVolumeBlockTest extends BoxVolumeTest {
-
 	private BlockReadBackend readBackend;
 
 	@Override
@@ -25,7 +24,7 @@ public class BoxVolumeBlockTest extends BoxVolumeTest {
 	protected void setUpVolume() {
 		try {
 			QblECKeyPair keyPair = new QblECKeyPair();
-			AccountingServer server = new AccountingServer(new URI("http://localhost:9696"), "testuser", "testuser");
+			AccountingServer server = new AccountingServer(new URI("http://localhost:9696"), new URI("http://localhost:9697"), "testuser", "testuser");
 			AccountingHTTP accountingHTTP = new AccountingHTTP(server, new AccountingProfile());
 
 			List<String> prefixes = accountingHTTP.getPrefixes();
@@ -35,7 +34,8 @@ public class BoxVolumeBlockTest extends BoxVolumeTest {
 			}
 			prefix = prefixes.get(0);
 
-			String root = "http://localhost:9697/api/v0/files/" + prefix;
+
+			String root = accountingHTTP.buildBlockUri("api/v0/files/" + prefix).build().toString();
 			readBackend = new BlockReadBackend(root, accountingHTTP);
 			volume = new BoxVolume(
 					readBackend,
