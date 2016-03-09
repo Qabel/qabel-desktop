@@ -247,7 +247,7 @@ public class DesktopClient extends Application {
 		customProperties.put("loadManager", transferManager);
 		customProperties.put("transferManager", transferManager);
 		customProperties.put("persistence", persistence);
-		customProperties.put("dropUrlGenerator", new DropUrlGenerator("https://test-drop.qabel.de"));
+		customProperties.put("dropUrlGenerator", new DropUrlGenerator("https://drop.qabel.org"));
 		identityRepository = new PersistenceIdentityRepository(persistence);
 		customProperties.put("identityRepository", identityRepository);
 		PersistenceAccountRepository accountRepository = new PersistenceAccountRepository(persistence);
