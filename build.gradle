@@ -1,5 +1,6 @@
 plugins {
-    id "com.github.hierynomus.license" version "0.12.1"
+    id "com.github.hierynomus.license" version "0.12.1"     // Apache V2 https://github.com/hierynomus/license-gradle-plugin/blob/master/LICENSE
+    id 'nebula.dependency-lock' version '4.2.0'             // Apache V2 https://github.com/nebula-plugins/gradle-dependency-lock-plugin/blob/master/LICENSE
 }
 apply plugin: 'java'
 apply plugin: 'application'
@@ -60,47 +61,47 @@ startScripts {
 jar.doFirst{
 	manifest {
 		attributes 'Implementation-Title': 'Qabel Desktop', 'Implementation-Version': version
-		attributes 'Main-Class': 'de.qabel.desktop.DesktopClient'
+		attributes 'Main-Class': mainClassName
 	    attributes 'Class-Path': configurations.runtime.collect { it.getName() }.join(' ')
 	}
 }
 
 dependencies {
-    testCompile 'junit:junit:4.+'
-    testCompile group: 'org.meanbean', name: 'meanbean', version: '2.+'
-    testCompile 'org.testfx:testfx-core:4.+'
-    testCompile 'org.testfx:testfx-junit:4.+'
+    testCompile 'junit:junit:4.+'                            // Eclipse Public License - v 1.0 https://github.com/junit-team/junit/blob/master/LICENSE-junit.txt
+    testCompile 'org.meanbean:meanbean:2.+'                  // Apache License V2.0 http://meanbean.sourceforge.net
+    testCompile 'org.testfx:testfx-core:4.+'                 // EUPL 1.1 https://github.com/TestFX/TestFX/blob/master/LICENSE.txt
+    testCompile 'org.testfx:testfx-junit:4.+'                // EUPL 1.1 https://github.com/TestFX/TestFX/blob/master/LICENSE.txt
 
-    compile 'org.ocpsoft.prettytime:prettytime:3.2.7.Final' //Apache License https://github.com/ocpsoft/prettytime/blob/master/LICENSE
-    compile 'commons-cli:commons-cli:1.2'                   //Apache License
-    compile 'commons-codec:commons-codec:1.10'              //Apache License
-    compile 'org.apache.httpcomponents:httpclient:4.5.+'    //Apache License
-    compile 'org.apache.httpcomponents:httpmime:4.5.+'      //Apache License
-    compile 'org.json:json:20090211'                        //None? https://github.com/stleary/JSON-java
-    compile 'javax.inject:javax.inject:1'                   //Apache License http://mvnrepository.com/artifact/javax.inject/javax.inject/1
-    compile name: 'afterburner'                             //Apache License https://github.com/AdamBien/afterburner.fx
+    compile 'org.ocpsoft.prettytime:prettytime:3.2.+'        //Apache License https://github.com/ocpsoft/prettytime/blob/master/LICENSE
+    compile 'commons-cli:commons-cli:1.2'                    //Apache License
+    compile 'commons-codec:commons-codec:1.10'               //Apache License
+    compile 'org.apache.httpcomponents:httpclient:4.5.+'     //Apache License
+    compile 'org.apache.httpcomponents:httpmime:4.5.+'       //Apache License
+    compile 'org.json:json:20090211'                         //None? https://github.com/stleary/JSON-java
+    compile 'javax.inject:javax.inject:1'                    //Apache License http://mvnrepository.com/artifact/javax.inject/javax.inject/1
+    compile name: 'afterburner'                              //Apache License https://github.com/AdamBien/afterburner.fx
     // see https://github.com/AdamBien/afterburner.fx/pull/54 //compile 'com.airhacks:afterburner.fx:1.6.2' // Apache 2.0
 
     compile name: 'qabel-core-0.1'
 
-    compile 'com.google.code.gson:gson:2.+'                 //Apache License https://github.com/google/gson/blob/master/LICENSE
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.12'    //MIT http://www.slf4j.org/license.html
-    compile group: 'log4j', name:'log4j', version: '1.2.16';            //Apache License https://logging.apache.org/log4j/1.2/license.html
-    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.4'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.4'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.4'
-    compile group: 'org.apache.james', name: 'apache-mime4j', version: '0.7.2'
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.+'
+    compile 'com.google.code.gson:gson:2.+'                  //Apache License https://github.com/google/gson/blob/master/LICENSE
+    compile 'org.slf4j:slf4j-api:1.7.+'                      //MIT http://www.slf4j.org/license.html
+    compile 'log4j:log4j:1.2.+'                              //Apache License https://logging.apache.org/log4j/1.2/license.html
+    compile 'org.apache.logging.log4j:log4j-api:2.4.+'
+    compile 'org.apache.logging.log4j:log4j-core:2.4.+'
+    compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.4.+'
+    compile 'org.apache.james:apache-mime4j:0.7.+'
+    compile 'org.apache.commons:commons-lang3:3.+'
 
-    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.8.7'  //Apache License https://bitbucket.org/xerial/sqlite-jdbc
-    compile 'com.madgag.spongycastle:prov:1.53.0.0'                     //Bounty Castle License http://www.bouncycastle.org/licence.html
+    compile 'org.xerial:sqlite-jdbc:3.8.+'                   //Apache License https://bitbucket.org/xerial/sqlite-jdbc
+    compile 'com.madgag.spongycastle:prov:1.53.0.0'         //Bounty Castle License http://www.bouncycastle.org/licence.html
 
-    compile 'com.github.zafarkhaja:java-semver:0.9.0'       // MIT https://github.com/zafarkhaja/jsemver/blob/master/LICENSE
+    compile 'com.github.zafarkhaja:java-semver:0.9.+'        // MIT https://github.com/zafarkhaja/jsemver/blob/master/LICENSE
 }
 
 task copyToLib(type: Copy) {
   	from configurations.runtime
-    into "$buildDir/libs"
+    into '$buildDir/libs'
 }
 
 classes {
@@ -122,19 +123,18 @@ task wrapper(type: Wrapper) {
 }
 
 tasks.withType(Test) {
-    systemProperty "java.library.path", "libs/"
+    systemProperty 'java.library.path', 'libs/'
 
-    reports.html.destination = file("${reporting.baseDir}/${name}")
+    reports.html.destination = file('${reporting.baseDir}/${name}')
 }
 run {
-    systemProperty "java.library.path", "libs/"
+    systemProperty 'java.library.path', 'libs/'
 }
-
 
 task fatJar(type: Jar) {
     manifest {
         attributes 'Implementation-Title': 'Qabel Desktop', 'Implementation-Version': version
-        attributes 'Main-Class': 'de.qabel.desktop.DesktopClient'
+        attributes 'Main-Class': mainClassName
         attributes 'Class-Path': configurations.runtime.collect { it.getName() }.join(' ')
     }
 
@@ -149,7 +149,7 @@ distZip() {
     from (configurations.compile) {
         into baseName + '-' + version + '/lib/'
     }
-    from ("libs/") {
+    from ('libs/') {
         into baseName + '-' + version + '/lib/'
     }
 }
@@ -173,5 +173,9 @@ downloadLicenses {
             ':qabel-core-0.1:'
     ]
 
-    dependencyConfiguration = 'compile'
+    dependencyConfiguration = 'testCompile'
 }
+
+task lock() {}
+lock.dependsOn(saveLock)
+saveLock.dependsOn(updateLock)
