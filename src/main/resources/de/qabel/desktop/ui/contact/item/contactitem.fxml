@@ -35,13 +35,12 @@
             <left>
                 <Pane fx:id="avatarContainer">
                     <children>
-
                     </children>
                 </Pane>
             </left>
             <right>
                 <Button fx:id="delete" mnemonicParsing="false"
-                        onAction="#handleDeleteContactsButtonAction" text="X">
+                        onAction="#handleDeleteContactsButtonAction" text="X" styleClass="transparency-button">
                     <HBox.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                     </HBox.margin>
