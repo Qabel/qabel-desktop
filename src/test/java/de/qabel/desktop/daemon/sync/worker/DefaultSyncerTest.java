@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
@@ -157,5 +158,32 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 		waitUntil(() -> !syncer.isProcessingLocalEvents());
 		assertTrue(manager.getTransactions().get(0).isDir());
 		assertEquals("blacklisted file was not ignored: " + manager.getTransactions(), 1, manager.getTransactions().size());
+	}
+
+	@Test
+	public void ignoresFoldersOnBlacklist() throws Exception {
+		BoxNavigationStub nav = new BoxNavigationStub(null, null);
+		BoxVolumeStub volume = new BoxVolumeStub();
+		volume.rootNavigation = nav;
+
+		PatternBlacklist blacklist = new PatternBlacklist();
+		blacklist.add(Pattern.compile(".*\\.*"));
+		BlacklistSpy spy = new BlacklistSpy(blacklist);
+
+		syncer = new DefaultSyncer(config, volume, manager);
+		syncer.setLocalBlacklist(spy);
+		syncer.setPollInterval(1, TimeUnit.DAYS);
+		syncer.run();
+		syncer.waitFor();
+
+		Path illegalFolder = tmpDir.resolve("illegal\\folder");
+		Files.createDirectory(illegalFolder);
+		Files.write(illegalFolder.resolve("validFile"), "content".getBytes());
+
+		waitUntil(() -> manager.getTransactions().size() > 0);	// wait for root sync event
+		waitUntil(() -> !spy.tests.isEmpty());
+		waitUntil(() -> !syncer.isProcessingLocalEvents());
+		assertTrue(manager.getTransactions().get(0).isDir());
+		assertEquals("blacklisted folder was not ignored: " + manager.getTransactions(), 1, manager.getTransactions().size());
 	}
 }
