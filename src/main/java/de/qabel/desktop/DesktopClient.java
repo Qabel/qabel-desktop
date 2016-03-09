@@ -171,7 +171,12 @@ public class DesktopClient extends Application {
 					try {
 						ClientConfiguration configuration = (ClientConfiguration) customProperties.get("clientConfiguration");
 						Account acc = (Account) arg;
-						AccountingServer server = new AccountingServer(new URI(acc.getProvider()), acc.getUser(), acc.getAuth());
+						AccountingServer server = new AccountingServer(
+								new URI(acc.getProvider()),
+								new URI(MagicEvilBlockUriProvider.getBlockUri(acc)),
+								acc.getUser(),
+								acc.getAuth()
+						);
 						AccountingHTTP accountingHTTP = new AccountingHTTP(server, new AccountingProfile());
 
 						BoxVolumeFactory factory = new BlockBoxVolumeFactory(

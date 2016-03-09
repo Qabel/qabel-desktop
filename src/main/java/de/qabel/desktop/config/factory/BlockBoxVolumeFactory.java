@@ -3,6 +3,7 @@ package de.qabel.desktop.config.factory;
 import de.qabel.core.accounting.AccountingHTTP;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
+import de.qabel.desktop.MagicEvilBlockUriProvider;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.storage.BlockReadBackend;
 import de.qabel.desktop.storage.BlockWriteBackend;
@@ -24,16 +25,7 @@ public class BlockBoxVolumeFactory extends AbstractBoxVolumeFactory implements B
 	public BoxVolume getVolume(Account account, Identity identity) {
 		String prefix = super.choosePrefix(identity);
 
-		String root;
-		if (account.getProvider().contains("localhost")) {
-			root = "http://localhost:9697/api/v0/files/" + prefix;
-		} else if (account.getProvider().contains("https://test-accounting.qabel.de")) {
-			root = "https://test-block.qabel.de/api/v0/files/" + prefix;
-		} else if (account.getProvider().contains("https://qaccounting.prae.me")) {
-			root = "https://qblock.prae.me/api/v0/files/" + prefix;
-		} else {
-			throw new IllegalArgumentException("don't know the block server for " + account.getProvider());
-		}
+		String root = MagicEvilBlockUriProvider.getBlockUri(account) + "//api/v0/files/";
 
 		try {
 			BlockReadBackend readBackend = new BlockReadBackend(root, accountingHTTP);

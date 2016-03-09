@@ -35,6 +35,7 @@ if [ ! -d config.py ]; then
   cp config.py.example config.py
   sed --in-place "s/'qabel_drop'/'qabel_drop','host':'localhost','port':'5432','username':'qabel','password':'qabel_test'/" config.py
 fi
+python manage.py create_db
 python manage.py runserver --host 0.0.0.0 --port 5000 > ../drop.log 2>&1 &
 echo $! > ../accounting.pid
 deactivate
@@ -54,7 +55,9 @@ fi
 source ${ACCOUNTING_VENV}"/bin/activate"
 pip install -r requirements.txt
 python manage.py migrate
-python manage.py testserver testdata.json --addrport 0.0.0.0:9696 > ../accounting.log 2>&1 &
+cp qabel_id/settings/local_settings.example.py qabel_id/settings/local_settings.py
+echo -e "\nEMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'\nSECRET_KEY = '=tmcici-p92_^_jih9ud11#+wb7*i21firlrtcqh\$p+d7o*49@'\n" >> qabel_id/settings/local_settings.py
+DJANGO_SETTINGS_MODULE=qabel_id.settings.production_settings python manage.py testserver testdata.json --addrport 0.0.0.0:9696 > ../accounting.log 2>&1 &
 echo $! > ../accounting.pid
 deactivate
 cd ..
@@ -70,13 +73,14 @@ fi
 if [ ! -d ${BLOCK_VENV} ]; then
   virtualenv --no-site-packages --always-copy --python=python3.5 ${BLOCK_VENV}
 fi
-if [ ! -f config.ini ]; then
-  cp config.ini.example config.ini
-fi
+cp config.ini.example config.ini
+echo -e "\npsql_dsn='postgres://block_dummy:qabel_test_dummy@localhost/block_dummy'" >> config.ini
 source ${BLOCK_VENV}"/bin/activate"
 pip install -r requirements.txt
 cd src
-python run.py --debug --dummy --dummy-log --dummy-cache --apisecret=Changeme --accounting-host=http://localhost:9696 --address=0.0.0.0 --port=9697 > ../../block.log 2>&1 &
+
+python manage.py initdb --psql-dsn 'postgres://block_dummy:qabel_test_dummy@localhost/block_dummy'
+python run.py --debug --dummy --dummy-log --dummy-cache --apisecret=Changeme --accounting-host=http://localhost:9696 --address=0.0.0.0 --port=9697 --psql-dsn='postgres://block_dummy:qabel_test_dummy@localhost/block_dummy' > ../../block.log 2>&1 &
 echo $! > ../../block.pid
 deactivate
 cd ../..

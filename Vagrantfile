@@ -59,79 +59,86 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
 
 
-  config.vm.provision "shell", inline: <<SCRIPT
-    set -x
-    set -e
-    # prepare innosetup (needs wine and an extractor)
-    dpkg --add-architecture i386
-    apt-get -y update
-    apt-get install -y xvfb
+    config.vm.provision "shell", inline: <<SCRIPT
+        set -x
+        set -e
+        # prepare innosetup (needs wine and an extractor)
+        dpkg --add-architecture i386
+        apt-get -y update
+        apt-get install -y xvfb
 
-    echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
-    apt-get -y install wine unzip unrar unp
-    if [ ! -d /vagrant/installer/inno ]; then
-        wget http://www.jrsoftware.org/download.php/is-unicode.exe
-        wget http://downloads.sourceforge.net/project/innounp/innounp/innounp%200.45/innounp045.rar
+        echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
+        apt-get -y install wine unzip unrar unp
+        if [ ! -d /vagrant/installer/inno ]; then
+            wget http://www.jrsoftware.org/download.php/is-unicode.exe
+            wget http://downloads.sourceforge.net/project/innounp/innounp/innounp%200.45/innounp045.rar
 
-        unp innounp045.rar
-        wine innounp.exe -dinno -c"{app}" -x is.exe
-        if [ -d /vagrant/installer/inno ]; then
-            rm -r /vagrant/installer/inno
+            unp innounp045.rar
+            wine innounp.exe -dinno -c"{app}" -x is.exe
+            if [ -d /vagrant/installer/inno ]; then
+                rm -r /vagrant/installer/inno
+            fi
+            mv inno /vagrant/installer/
+            rm -f innounp.exe
+            rm -f is.exe
         fi
-        mv inno /vagrant/installer/
-        rm -f innounp.exe
-        rm -f is.exe
-    fi
 
-    # download jre
-    cd /vagrant/installer
-    if [ ! -d jre ]; then
-        wget -O jre.tar.gz \
-            --no-cookies \
-            --header "Cookie: oraclelicense=accept-securebackup-cookie" \
-            http://download.oracle.com/otn-pub/java/jdk/8u73-b02/jre-8u73-windows-x64.tar.gz
+        # download jre
+        cd /vagrant/installer
+        if [ ! -d jre ]; then
+            wget -O jre.tar.gz \
+                --no-cookies \
+                --header "Cookie: oraclelicense=accept-securebackup-cookie" \
+                http://download.oracle.com/otn-pub/java/jdk/8u73-b02/jre-8u73-windows-x64.tar.gz
 
-        tar -xzf jre.tar.gz
-        mv jre1.8.0_73 jre
-        rm jre.tar.gz
-    fi
+            tar -xzf jre.tar.gz
+            mv jre1.8.0_73 jre
+            rm jre.tar.gz
+        fi
 
-    if [ ! -d launch4j ]; then
-        wget -O launch4j.tgz https://sourceforge.net/projects/launch4j/files/launch4j-3/3.8/launch4j-3.8-linux.tgz
-        tar -xzf launch4j.tgz
-        rm launch4j.tgz
-    fi
+        if [ ! -d launch4j ]; then
+            wget -O launch4j.tgz https://sourceforge.net/projects/launch4j/files/launch4j-3/3.8/launch4j-3.8-linux.tgz
+            tar -xzf launch4j.tgz
+            rm launch4j.tgz
+        fi
 
-    # now prepare the build
-    cd ..
-    apt-get install -y openjdk-8-jdk \
-        openjfx \
-        python-dev \
-        virtualenv \
-        python3 \
-        python3-virtualenv \
-        python3-pip \
-        python3-dev \
-        python3.5 \
-        python3.5-dev \
-        python3.5-venv \
-        libpq-dev \
-        redis-server \
-        postgresql-9.4 \
-        postgresql-client-9.4
-    easy_install pip
+        # now prepare the build
+        cd ..
+        apt-get install -y openjdk-8-jdk \
+            openjfx \
+            python-dev \
+            virtualenv \
+            python3 \
+            python3-virtualenv \
+            python3-pip \
+            python3-dev \
+            python3.5 \
+            python3.5-dev \
+            python3.5-venv \
+            libpq-dev \
+            redis-server \
+            postgresql-9.4 \
+            postgresql-client-9.4
+        easy_install pip
 
-    echo "CREATE DATABASE qabel_drop; CREATE USER qabel WITH PASSWORD 'qabel_test'; GRANT ALL PRIVILEGES ON DATABASE qabel_drop TO qabel;" | sudo -u postgres psql postgres
+        echo "CREATE DATABASE qabel_drop; CREATE USER qabel WITH PASSWORD 'qabel_test'; GRANT ALL PRIVILEGES ON DATABASE qabel_drop TO qabel;" | sudo -u postgres psql postgres
+        echo "CREATE DATABASE block_dummy; CREATE USER block_dummy WITH PASSWORD 'qabel_test_dummy'; GRANT ALL PRIVILEGES ON DATABASE block_dummy TO block_dummy;" | sudo -u postgres psql postgres
 
-    if [ ! -d /home/vagrant/.virtualenv ]; then
-        mkdir /home/vagrant/.virtualenv
-        echo -e "[virtualenv]\nalways-copy=true" > /home/vagrant/.virtualenv/virtualenv.ini
-        chown -R vagrant:vagrant /home/vagrant/.virtualenv
-    fi
-    update-ca-certificates -f
+        if [ ! -d /home/vagrant/.virtualenv ]; then
+            mkdir /home/vagrant/.virtualenv
+            echo -e "[virtualenv]\nalways-copy=true" > /home/vagrant/.virtualenv/virtualenv.ini
+            chown -R vagrant:vagrant /home/vagrant/.virtualenv
+        fi
+        update-ca-certificates -f
 
-    chown -R vagrant:vagrant /vagrant/installer
-    echo "now enter the VM with vagrant ssh, go to /vagrant/installer and build with bash build-setup.sh"
+        chown -R vagrant:vagrant /vagrant/installer
+        echo "now enter the VM with vagrant ssh, go to /vagrant/installer and build with bash build-setup.sh"
+SCRIPT
 
+    config.vm.provision "shell", run: "always", privileged: "false", inline: <<SCRIPT
+        set -e
+        set -x
+        cd /vagrant
+        bash start-servers.sh
 SCRIPT
 end
