@@ -25,7 +25,7 @@ public class BlockBoxVolumeFactory extends AbstractBoxVolumeFactory implements B
 	public BoxVolume getVolume(Account account, Identity identity) {
 		String prefix = super.choosePrefix(identity);
 
-		String root = MagicEvilBlockUriProvider.getBlockUri(account) + "//api/v0/files/";
+		String root = MagicEvilBlockUriProvider.getBlockUri(account) + "/api/v0/files/" + prefix + "/";
 
 		try {
 			BlockReadBackend readBackend = new BlockReadBackend(root, accountingHTTP);

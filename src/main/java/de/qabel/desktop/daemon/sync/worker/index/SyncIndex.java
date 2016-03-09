@@ -53,4 +53,10 @@ public class SyncIndex extends Observable implements Serializable {
 	public SyncIndexEntry get(Path localPath) {
 		return index.get(localPath.toString());
 	}
+
+	public void clear() {
+		index.clear();
+		setChanged();
+		notifyObservers();
+	}
 }

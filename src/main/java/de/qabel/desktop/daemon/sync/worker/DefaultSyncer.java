@@ -116,6 +116,7 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 		for (int i = 0; i < remotePath.getNameCount(); i++) {
 			String name = remotePath.getName(i).toString();
 			if (!nav.hasFolder(name)) {
+				index.clear();
 				nav.createFolder(name);
 			}
 			nav = nav.navigate(name);

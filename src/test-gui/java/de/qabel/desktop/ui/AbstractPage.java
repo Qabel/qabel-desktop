@@ -109,6 +109,7 @@ public class AbstractPage {
 		try {
 			while (!evaluate.call()) {
 				Thread.yield();
+				Thread.sleep(10);
 				if (System.currentTimeMillis() - timeout > startTime) {
 					fail(errorMessage.call());
 				}
