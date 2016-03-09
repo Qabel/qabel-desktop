@@ -174,7 +174,6 @@ public class LoginController extends AbstractController implements Initializable
 				AccountingHTTP http = createAccount();
 				http.createBoxAccount(email.getText());
 				http.login();
-				http.updateProfile();
 				config.setAccount(account);
 
 			} catch (QblCreateAccountFailException e) {
@@ -215,7 +214,6 @@ public class LoginController extends AbstractController implements Initializable
 			try {
 				AccountingHTTP http = createAccount();
 				http.login();
-				http.updateProfile();
 				config.setAccount(account);
 
 			} catch (URISyntaxException | IOException e) {
@@ -237,7 +235,15 @@ public class LoginController extends AbstractController implements Initializable
 		account.setUser(user.getText());
 		account.setAuth(password.getText());
 
-		AccountingHTTP http = new AccountingHTTP(new AccountingServer(new URL(account.getProvider()).toURI(), account.getUser(), account.getAuth()), new AccountingProfile());
+		AccountingHTTP http = new AccountingHTTP(
+				new AccountingServer(
+						new URL(account.getProvider()).toURI(),
+						new URL(account.getProvider()).toURI(),
+						account.getUser(),
+						account.getAuth()
+				),
+				new AccountingProfile()
+		);
 
 		return http;
 	}
