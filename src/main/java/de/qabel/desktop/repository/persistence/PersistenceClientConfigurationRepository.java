@@ -110,14 +110,10 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
 		Account account = configuration.getAccount();
 		if (account != null) {
 			try {
-				try {
-					accountRepository.find(account.getPersistenceID());
-				} catch (EntityNotFoundExcepion e) {
-					accountRepository.save(account);
-				}
+				accountRepository.save(account);
 				configDto.accountId = account.getPersistenceID();
 			} catch (PersistenceException e) {
-				e.printStackTrace();
+				throw new IllegalStateException("Failed to save account " + account);
 			}
 		}
 
