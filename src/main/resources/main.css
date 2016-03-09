@@ -1,5 +1,3 @@
-System.setProperty("prism.lcdtext", "false");`
-
 @font-face {
   -fx-font-family: 'Source Sans Pro';
   src: url("/font/source-sans-pro.regular.ttf") ;
@@ -9,6 +7,11 @@ System.setProperty("prism.lcdtext", "false");`
   -fx-font-family: 'Source Sans Pro', bold;
   src: url("/font/source-sans-pro.bold.ttf") ;
  }
+
+ @font-face {
+   -fx-font-family: 'Source Sans Pro', black;
+   src: url("/font/source-sans-pro.black.ttf") ;
+  }
 
 * {
     -fx-font-family: "Source Sans Pro";
@@ -25,17 +28,6 @@ System.setProperty("prism.lcdtext", "false");`
 	-fx-background-color: black, white;
 }
 
-#alias {
-	-fx-font-weight: bold
-}
-
-
-
-#quota{
-	-fx-font-size: 8px;
-	-fx-text-fill: #fd670d;
-	-fx-padding: 0 5px 0 0;
-}
 
 .scroll-bar {
     -fx-background-color: transparent;
@@ -93,13 +85,7 @@ System.setProperty("prism.lcdtext", "false");`
     -fx-padding: 0 0 0 10;
 }
 
-.quotaBlock {
-    -fx-background-color: #ffffff;
-    -fx-background-radius: 10px;
-    -fx-text-alignment: RIGHT!important;
-    -fx-alignment: TOP-RIGHT!important;
-    -fx-pref-width: 100px;
-}
+
 
 .button.choose {
     -fx-min-width: 7em;
@@ -110,15 +96,19 @@ System.setProperty("prism.lcdtext", "false");`
 }
 
 .button {
-    -fx-font-weight: bold;
-    -fx-background-radius: 0;
-    -fx-indent: 20em;
-    -fx-background-color: #fcdcca, #fc7b4c, #ff690f;
-    -fx-background-insets: 0px, 1px;
+    -fx-border-color: black;
+    -fx-border-width: 0.2em;
+    -fx-background-color: none;
     -fx-cursor: hand;
 }
 .button:hover {
-    -fx-background-color: #fcdcca, #fcdcca;
+    -fx-border-color: grey;
+    -fx-text-fill: grey;
+}
+
+.button:pressed {
+    -fx-border-color: #ff690f;
+    -fx-text-fill: #ff690f;
 }
 
 .scroll-pane > .viewport {
@@ -351,4 +341,10 @@ System.setProperty("prism.lcdtext", "false");`
 }
 .nested-column-header .table-column {
     -fx-background-color: #b3b3b3;
+}
+
+.transparency-button{
+	-fx-background-color: none;
+	-fx-background-insets: 0px;
+	-fx-border-color: none;
 }

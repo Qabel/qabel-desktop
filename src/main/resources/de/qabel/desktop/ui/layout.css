@@ -20,29 +20,30 @@
 }
 
 .navi {
-    -fx-font-weight: bold;
     -fx-padding: 10px 0 0 0px;
 }
 
 .navi .navi-item {
-    -fx-alignment: top-left;
-    -fx-padding: 1px 20px 1px 20px;
+    -fx-padding: 0px 20px 0px 20px;
 }
 
 .navi .navi-item.active {
-    -fx-padding: 1px 0px 1px 0px;
+    -fx-padding: 0px 0px 0px 0px;
 }
 
 .navi .button {
     -fx-pref-width: 220px;
     -fx-cursor: hand;
     -fx-border-radius: 0, 0, 0, 0;
-    -fx-padding: 10px 10px 5px 10px;
+    -fx-padding: 10px 10 5px 45px;
     -fx-background-radius: 0;
     -fx-background-color: transparent;
     -fx-text-fill: white;
-    -fx-font-weight: bold;
     -fx-font-size: 1.2em;
+    -fx-alignment: CENTER_LEFT;
+	-fx-background-insets: 0px;
+	-fx-border-color: none;
+    -fx-font-weight: normal;
 }
 
 .navi-container .progress-bar .bar {
@@ -59,21 +60,23 @@
 .navi .button:hover {
     -fx-focus-traversable: true;
     -fx-background-color: white;
-    -fx-text-fill: #222222;
-}
-
-.button:armed {
-
+    -fx-text-fill: #ff690f;
 }
 
 .navi .navi-item.active .button {
-    -fx-text-fill: #222222;
+    -fx-font-weight: bold;
+
+    -fx-text-fill: #ff690f;
     -fx-background-radius: 0;
     -fx-width: 220px;
     -fx-pref-width: 220px;
     -fx-max-width: 220px;
-    -fx-padding: 10px 30px 10px 30px;
     -fx-background-color: white;
+	-fx-padding: 10px 10 5px 65px;
+	-fx-alignment: CENTER_LEFT;
+	-fx-font-size: 1.2em;
+
+
 }
 
 .scroll-pane {
@@ -88,3 +91,25 @@
     -fx-background-repeat: no-repeat;
     -fx-padding: 0 0 0 10px;
 }
+
+.quotaBlock {
+    -fx-background-color: #ffffff;
+    -fx-text-alignment: RIGHT!important;
+    -fx-alignment: TOP-RIGHT!important;
+    -fx-pref-width: 100px;
+}
+
+.mail {
+	-fx-text-fill: white;
+}
+
+.quota {
+   	-fx-text-fill: #fd670d;
+	-fx-padding: 0 5px 0 0;
+}
+
+.alias {
+	-fx-font-weight: bold;
+	-fx-text-fill: white;
+}
+

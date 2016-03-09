@@ -15,6 +15,7 @@
 .text-field {
 	-fx-background-insets: 0px, 4px;
 	-fx-background-color: white;
+	-fx-pref-height: 26px
 }
 
 .login-form  .choice-box {
@@ -43,6 +44,10 @@
     -fx-background-color: #fcdcca, white;
     -fx-background-insets: 0px, 1px;
     -fx-cursor: hand;
+    -fx-pref-height: 26px
+	-fx-background-color: none;
+	-fx-background-insets: 0px;
+	-fx-border-color: none;
 }
 .button.error {
 	-fx-background-insets: 0px, 4px;
@@ -62,8 +67,11 @@
 }
 
 .button:hover {
-    -fx-background-color: #fcdcca, #fcdcca;
-}
+    -fx-background-color: white;
+	-fx-background-insets: 0px;
+	-fx-border-color: none;
+    -fx-text-fill: ff690f;
+    }
 
 .separator {
     -fx-background-color: white;
@@ -87,3 +95,5 @@
 	 -fx-border-origin: padding-box;
 	 -fx-border-size: auto auto;
 }
+
+
