@@ -344,7 +344,7 @@
 }
 
 .transparency-button{
-	-fx-background-color: none
+	-fx-background-color: none;
 	-fx-background-insets: 0px;
 	-fx-border-color: none;
 }
