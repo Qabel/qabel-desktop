@@ -130,11 +130,15 @@
 }
 
 .progress-bar > *.bar {
-    -fx-background-radius: 10px!important;
+    -fx-background-radius: 0px;
 }
 
 .progress-bar > .track {
-    -fx-background-radius: 5em;
+	-fx-border-color: black;
+	-fx-padding: 10,10,10,10;
+    -fx-background-radius: 0em;
+    -fx-background-insets: 0em;
+    -fx-background-color: white;
 }
 
 .selected {
@@ -354,5 +358,9 @@
 	-fx-background-insets: 0px;
 	-fx-border-color: none;
     -fx-text-fill: ff690f;
+}
+.transparency-button:pressed {
+    -fx-border-color: none;
+    -fx-text-fill: none;
 }
 

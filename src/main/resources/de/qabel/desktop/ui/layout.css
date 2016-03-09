@@ -58,14 +58,12 @@
 }
 
 .navi .button:hover {
-    -fx-focus-traversable: true;
-    -fx-background-color: white;
-    -fx-text-fill: #ff690f;
+    -fx-background-color: none;
+    -fx-text-fill: white;
 }
 
 .navi .navi-item.active .button {
     -fx-font-weight: bold;
-
     -fx-text-fill: #ff690f;
     -fx-background-radius: 0;
     -fx-width: 220px;
@@ -75,8 +73,6 @@
 	-fx-padding: 10px 10 5px 65px;
 	-fx-alignment: CENTER_LEFT;
 	-fx-font-size: 1.2em;
-
-
 }
 
 .scroll-pane {
