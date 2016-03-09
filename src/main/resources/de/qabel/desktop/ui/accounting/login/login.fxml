@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -11,9 +11,6 @@
             <image>
                 <Image url="@../../../../../../logo-with-label-invert.png" />
             </image>
-         <VBox.margin>
-            <Insets />
-         </VBox.margin>
         </ImageView>
 		<VBox alignment="TOP_CENTER" prefHeight="397.0" prefWidth="220.0" styleClass="login-form">
             <children>
@@ -38,12 +35,12 @@
 					  styleClass="login-button-bar" spacing="10">
                     <children>
 						<Button fx:id="openCreateButton" managed="true" mnemonicParsing="false"
-								onAction="#openCreateBoxAccountSetup" prefWidth="221.0"
+								onAction="#openCreateBoxAccountSetup" prefWidth="220.0"
 								styleClass="create-account-button" text="%loginOpenCreateBoxAccountDialog">
 						</Button>
 
 						<Button fx:id="createButton" managed="false" mnemonicParsing="false"
-								onAction="#createBoxAccount" prefWidth="221.0"
+								onAction="#createBoxAccount" prefWidth="220.0"
 								styleClass="create-account-button" text="%loginCreateBoxAccount">
 						</Button>
 
