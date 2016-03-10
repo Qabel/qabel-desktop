@@ -46,11 +46,11 @@
 }
 .button.error {
 	-fx-background-insets: 0px, 4px;
-    -fx-border-color: black;
-    -fx-background-color: #FF00FF;
+    -fx-border-color: white;
+    -fx-background-color: red;
     -fx-border-width: 0.1em;
     -fx-border-radius: 0;
-    -fx-text-fill: black;
+    -fx-text-fill: white;
 }
 
 .button.check {
