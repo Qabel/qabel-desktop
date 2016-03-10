@@ -38,7 +38,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 	public static final String TEST_FOLDER = "testFolder";
 	public static final String TEST_SUB_FOLDER = "subFolder";
 	public static final String SUB_FILE = "tmp1.txt";
-	public static final String TMP_DIR = "/tmp/tmpQbl";
+	public static final String TMP_DIR = System.getProperty("java.io.tmpdir") + "/tmpQbl";
 	public static final String TEST_TMP_DIR = TMP_DIR + "/" + TEST_FOLDER;
 
 	private BoxNavigation nav;
