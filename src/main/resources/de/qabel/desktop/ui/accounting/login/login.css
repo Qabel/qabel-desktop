@@ -40,6 +40,7 @@
     -fx-font-weight: bold;
     -fx-background-color: white;
 	-fx-background-insets: 0px;
+	-fx-background-radius: 0px;
 	-fx-border-color: none;
     -fx-text-fill: ff690f
 }
