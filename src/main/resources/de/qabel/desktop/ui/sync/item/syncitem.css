@@ -8,5 +8,5 @@
 }
 
 #progress > .track {
-
+	-fx-background-radius: 0;
 }
