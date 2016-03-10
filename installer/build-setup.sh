@@ -13,7 +13,7 @@ if [ -d dist ]; then
 fi
 #if [ `ls -1 ../build/distributions | wc -l` != "1" ]; then
     cd ..
-    ./gradlew -Prelease=${version} distZip
+    ./gradlew -Prelease=${version} clean distZip
     cd installer
 #fi
 
