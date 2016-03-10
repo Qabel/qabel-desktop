@@ -19,20 +19,31 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import javax.inject.Inject;
+import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class LayoutController extends AbstractController implements Initializable {
+	private ExecutorService executor = Executors.newCachedThreadPool();
 	ResourceBundle resourceBundle;
 	ActionlogView actionlogView;
+
 	@FXML
 	public Label alias;
 	@FXML
@@ -67,7 +78,7 @@ public class LayoutController extends AbstractController implements Initializabl
 	private ImageView configButton;
 
 	@FXML
-	private ImageView fqaButton;
+	private ImageView faqButton;
 
 	@FXML
 	private ImageView infoButton;
@@ -167,11 +178,22 @@ public class LayoutController extends AbstractController implements Initializabl
 		Image gearGraphic = new Image(getClass().getResourceAsStream("/img/gear.png"));
 		configButton.setImage(gearGraphic);
 		configButton.getStyleClass().add("inline-button");
+		*/
 
-		Image fqaGraphic = new Image(getClass().getResourceAsStream("/img/fqa.png"));
-		fqaButton.setImage(fqaGraphic);
-		fqaButton.getStyleClass().add("inline-button");
+		Image faqGraphics = new Image(getClass().getResourceAsStream("/img/faq.png"));
+		faqButton.setImage(faqGraphics);
+		faqButton.getStyleClass().add("inline-button");
+		faqButton.setOnMouseClicked(e -> {
+			executor.submit(() -> {
+				try {
+					Desktop.getDesktop().browse(new URI(resourceBundle.getString("faqUrl")));
+				} catch (Exception e1) {
+					alert("failed to open FAQ: " + e1.getMessage(), e1);
+				}
+			});
+		});
 
+		/*
 		Image infoGraphic = new Image(getClass().getResourceAsStream("/img/info.png"));
 		infoButton.setImage(infoGraphic);
 		infoButton.getStyleClass().add("inline-button");
