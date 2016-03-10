@@ -1,42 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<VBox fx:controller="de.qabel.desktop.ui.sync.setup.SyncSetupController"
-      styleClass="dialog" prefWidth="600"
-      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+
+<VBox prefWidth="600" styleClass="dialog" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.sync.setup.SyncSetupController">
    <children>
-      <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">
-         <children>
-            <Label prefWidth="150.0" text="Name" />
-            <TextField fx:id="name" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%syncSetupText" />
-         </children>
-      </HBox>
+
+	   <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"  styleClass="row">
+		   <children>
+			   <Label prefWidth="150.0" text="Name" />
+			   <TextField fx:id="name" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%syncSetupText" />
+		   </children>
+	   </HBox>
+
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">
          <children>
             <Label prefWidth="150.0" text="%syncSetupLocalFolder" />
             <TextField fx:id="localPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
-            <Button fx:id="chooseLocalPath" styleClass="choose" text="%syncSetupChooseLocalPath"/>
+            <Button fx:id="chooseLocalPath" styleClass="choose" text="%syncSetupChooseLocalPath" />
          </children>
       </HBox>
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">
          <children>
             <Label prefWidth="150.0" text="%syncSetupRemoteFolder" />
             <TextField fx:id="remotePath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
-            <Button fx:id="chooseRemotePath" styleClass="choose" text="%syncSetupChooseRemotePath"/>
+            <Button fx:id="chooseRemotePath" styleClass="choose" text="%syncSetupChooseRemotePath" />
          </children>
       </HBox>
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">
          <children>
             <Label prefWidth="150.0" text="%syncSetupIdentity" />
-            <TextField fx:id="identity" disable="true" editable="false" text="%syncSetupIdentity"/>
+            <TextField fx:id="identity" disable="true" editable="false" text="%syncSetupIdentity" />
          </children>
       </HBox>
-      <HBox styleClass="button-bar" alignment="TOP_RIGHT">
+      <HBox alignment="TOP_RIGHT" styleClass="button-bar">
          <children>
-            <Button fx:id="cancel" onAction="#close" cancelButton="true" text="%syncSetupCancel"/>
-            <Button fx:id="start" onAction="#createSyncConfig" defaultButton="true"  text="%syncSetupStartSync"/>
+            <Button fx:id="cancel" cancelButton="true" onAction="#close" text="%syncSetupCancel">
+               <HBox.margin>
+                  <Insets right="15.0" />
+               </HBox.margin>
+			</Button>
+            <Button fx:id="start" defaultButton="true" onAction="#createSyncConfig" text="%syncSetupStartSync" />
          </children>
       </HBox>
    </children>

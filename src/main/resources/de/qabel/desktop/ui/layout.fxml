@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
-<?import java.lang.String?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
 <StackPane fx:id="window" fx:controller="de.qabel.desktop.ui.LayoutController" prefHeight="600.0" prefWidth="842.0" maxWidth="Infinity" maxHeight="Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
         <BorderPane>
@@ -26,41 +23,26 @@
                              </Pane>
                             <VBox BorderPane.alignment="CENTER" styleClass="aliasContainer">
                                <children>
-                                  <Label fx:id="alias" text="Guy Pearce Longerman">
-                                     <font>
-                                        <Font name="System Bold" size="13.0" />
-                                     </font>
-                                  </Label>
-                                  <Label fx:id="mail" text="guy@pearce.com">
-                                      <font>
-                                          <Font name="System" size="9.5" />
-                                      </font>
-                                  </Label>
+								   <Label fx:id="alias" text="Guy Pearce Longerman" styleClass="alias"/>
+								   <Label fx:id="mail" text="guy@pearce.com" styleClass="mail"
+										  style="-fx-font-size: 0.8em"/>
                                    <BorderPane styleClass="quotaBlock">
                                        <right>
                                            <Label fx:id="quota" BorderPane.alignment="CENTER"
-                                                  text="24%" style="-fx-text-fill: #fd670d; -fx-padding: 0 0.2em 0 0">
-                                           <font>
-                                               <Font name="System" size="9.5" />
-                                           </font>
-                                           </Label>
+												  text="24%" styleClass="quota" style="-fx-font-size: 0.8em"/>
                                        </right>
                                        <center>
-                                           <HBox BorderPane.alignment="CENTER" style="-fx-pref-height: 0.5em">
+                                           <HBox BorderPane.alignment="CENTER" style="-fx-pref-height: 0.3em">
                                                <padding>
-                                                       <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                                       <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
                                                </padding>
                                                <children>
-                                                   <Label
-                                                           minWidth="50.0"
-                                                           style="-fx-border-radius: 5; -fx-background-radius: 5; -fx-background-color: #fd670d;"
-                                                           fx:id="provider"
-                                                           text="">
-                                                       <font>
-                                                           <Font name="System" size="6" />
-                                                       </font>
+												   <Label minWidth="50.0"
+														  style="-fx-background-color: #fd670d; -fx-min-height:0.3em"
+														  fx:id="provider"
+														  text="">
                                                        <padding>
-                                                           <Insets left="5.0" right="5.0"/>
+                                                           <Insets left="10.0" right="10.0" top="-3" bottom="-3"/>
                                                        </padding>
                                                    </Label>
                                                </children>
@@ -70,7 +52,6 @@
                                            <Insets top="5.0"/>
                                        </VBox.margin>
                                    </BorderPane>
-
                                </children>
                                <padding>
                                   <Insets top="5" left="5.0" right="5.0" />
@@ -78,18 +59,14 @@
                             </VBox>
                          </children>
                       </HBox>
-                      <VBox fx:id="navi" alignment="TOP_RIGHT" styleClass="navi" BorderPane.alignment="CENTER">
+					   <VBox fx:id="navi" styleClass="navi">
                          <children>
                             <HBox>
                                <children>
                                   <Button text="Button" />
                                </children>
-                               <styleClass>
-                                  <String fx:value="navi-item" />
-                                  <String fx:value="active" />
-                               </styleClass>
                             </HBox>
-                            <HBox styleClass="navi-item">
+							 <HBox>
                                <children>
                                   <Button text="Button" />
                                </children>
