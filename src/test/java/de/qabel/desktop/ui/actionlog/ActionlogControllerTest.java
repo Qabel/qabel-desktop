@@ -24,19 +24,19 @@ import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 
 public class ActionlogControllerTest extends AbstractControllerTest {
-
 	ActionlogController controller;
 	Identity i;
 	ActionlogView view;
 	Contact c;
 	String text = "MessageString";
+	DropMessage dm;
 
 	@Test
 	public void addMessageToActionlogTest() throws Exception {
-		DropMessage dm = setup();
 		contactRepository.save((Contact) dm.getSender(), i);
 		controller.addMessageToActionlog(dm);
 		assertEquals(1, controller.messages.getChildren().size());
@@ -44,14 +44,20 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 
 	@Test
 	public void addOwnMessageToActionlogTest() throws Exception {
-		DropMessage dm = setup();
 		controller.addOwnMessageToActionlog(dm);
 		assertEquals(1, controller.messages.getChildren().size());
 	}
 
 	@Test
+	public void marksSeenMessages() throws Exception {
+		controller.setContact(c);
+		waitUntil(() -> controller.contact == c);
+		dropMessageRepository.addMessage(dm, c, i, false);
+		waitUntil(() -> dropMessageRepository.lastMessage.isSeen());
+	}
+
+	@Test
 	public void switchBetweenIdentitesTest() throws Exception {
-		setup();
 		clientConfiguration.selectIdentity(i);
 		controller.sendDropMessage(c, "msg1");
 		i = identityBuilderFactory.factory().withAlias("NewIdentity").build();
@@ -69,7 +75,6 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 
 	@Test
 	public void refreshTime() throws Exception {
-		setup();
 		controller.sleepTime = 1;
 		controller.dateRefresher.interrupt();
 		DropMessage d = new DropMessage(i, new TextMessage("payload").toJson(), "test");
@@ -94,13 +99,15 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 		});
 	}
 
-	private DropMessage setup() throws PersistenceException {
+	@Before
+	public void setUp() throws Exception {
+		super.setUp();
 		i = identityBuilderFactory.factory().withAlias("TestAlias").build();
 		c = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
 		createController(i);
 		controller = (ActionlogController) view.getPresenter();
 
-		return new DropMessage(c, new TextMessage(text).toJson(), DropMessageRepository.PAYLOAD_TYPE_MESSAGE);
+		dm = new DropMessage(c, new TextMessage(text).toJson(), DropMessageRepository.PAYLOAD_TYPE_MESSAGE);
 	}
 
 	private void createController(Identity i) {

@@ -49,7 +49,7 @@ public class AbstractControllerTest {
 	protected ContactRepository contactRepository = new InMemoryContactRepository();
 	protected DefaultTransferManager loadManager;
 	protected BoxVolumeFactoryStub boxVolumeFactory;
-	protected DropMessageRepository dropMessageRepository = new StubDropMessageRepository();
+	protected StubDropMessageRepository dropMessageRepository = new StubDropMessageRepository();
 	protected DropConnector httpDropConnector = new InMemoryHttpDropConnector();
 	protected CrashReportHandler crashReportHandler = new StubCrashReportHandler();
 	protected SharingService sharingService = new BlockSharingService(dropMessageRepository, httpDropConnector);

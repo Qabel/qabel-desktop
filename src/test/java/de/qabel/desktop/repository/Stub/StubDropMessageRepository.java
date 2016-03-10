@@ -8,20 +8,17 @@ import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Observer;
-import java.util.function.Consumer;
+import java.util.*;
 
-public class StubDropMessageRepository implements DropMessageRepository {
-
+public class StubDropMessageRepository extends Observable implements DropMessageRepository {
+	public PersistenceDropMessage lastMessage;
 	private HashMap<String,List<PersistenceDropMessage>> messagesMap = new HashMap<>();
 
 
 	@Override
 	public void addMessage(DropMessage dropMessage, Entity from, Entity to, boolean send) throws PersistenceException {
-		PersistenceDropMessage pdm = new PersistenceDropMessage(dropMessage,from, to,send);
+		PersistenceDropMessage pdm = new PersistenceDropMessage(dropMessage,from, to,send, send);
+		lastMessage = pdm;
 
 		List<PersistenceDropMessage> lst = messagesMap.get(to.getKeyIdentifier());
 		if(lst == null){
@@ -29,6 +26,9 @@ public class StubDropMessageRepository implements DropMessageRepository {
 			lst.add(pdm);
 		}
 		messagesMap.put(to.getKeyIdentifier(), lst);
+
+		setChanged();
+		notifyObservers(pdm);
 	}
 
 	@Override
@@ -41,11 +41,11 @@ public class StubDropMessageRepository implements DropMessageRepository {
 	}
 
 	@Override
-	public void addObserver(Observer o) {
-	}
-
-	@Override
 	public List<PersistenceDropMessage> loadNewMessagesFromConversation(List<PersistenceDropMessage> dropMessages, Contact c, Identity identity) {
-		return null;
+		try {
+			return loadConversation(c, identity);
+		} catch (PersistenceException e) {
+			throw new IllegalStateException("failed to load conversation: " + e.getMessage(), e);
+		}
 	}
 }

@@ -17,7 +17,6 @@ import de.qabel.desktop.ui.actionlog.item.MyActionlogItemView;
 import de.qabel.desktop.ui.actionlog.item.OtherActionlogItemView;
 import de.qabel.desktop.ui.connector.DropConnector;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ScrollPane;
@@ -147,6 +146,9 @@ public class ActionlogController extends AbstractController implements Initializ
 
 	private void addNewMessagesToReceivedDropMessages(List<PersistenceDropMessage> newMessages) {
 		for (PersistenceDropMessage d : newMessages) {
+			if (!d.isSeen()) {
+				d.setSeen(true);
+			}
 			receivedDropMessages.add(d);
 		}
 	}
@@ -154,7 +156,10 @@ public class ActionlogController extends AbstractController implements Initializ
 	private void addMessagesToView(List<PersistenceDropMessage> dropMessages) {
 		Platform.runLater(() -> {
 			for (PersistenceDropMessage d : dropMessages) {
-				if (d.getSend()) {
+				if (!d.isSeen()) {
+					d.setSeen(true);
+				}
+				if (d.isSent()) {
 					addOwnMessageToActionlog(d.getDropMessage());
 				} else {
 					try {
@@ -202,7 +207,6 @@ public class ActionlogController extends AbstractController implements Initializ
 
 	@Override
 	public void update(Observable o, Object arg) {
-
 		if (o instanceof DropMessageRepository) {
 			Platform.runLater(() -> {
 				try {

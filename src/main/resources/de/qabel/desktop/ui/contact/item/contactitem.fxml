@@ -33,11 +33,11 @@
                 </VBox>
             </center>
             <left>
-                <Pane fx:id="avatarContainer">
+                <StackPane fx:id="avatarContainer" styleClass="avatarContainer">
                     <children>
 
                     </children>
-                </Pane>
+                </StackPane>
             </left>
             <right>
                 <Button fx:id="delete" mnemonicParsing="false"

@@ -14,18 +14,19 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 
-public class PersistenceDropMessageRepository extends AbstractCachedPersistenceRepository<Contact> implements DropMessageRepository {
+public class PersistenceDropMessageRepository extends AbstractCachedPersistenceRepository<PersistenceDropMessage> implements DropMessageRepository {
 	private static final Logger logger = LoggerFactory.getLogger(PersistenceDropMessageRepository.class.getSimpleName());
 
 	public PersistenceDropMessageRepository(Persistence<String> persistence) {
 		super(persistence);
 	}
 
-
 	@Override
-	public void addMessage(DropMessage dropMessage, Entity from, Entity to, boolean send) throws PersistenceException {
-		PersistenceDropMessage persistenceDropMessage = new PersistenceDropMessage(dropMessage, from, to, send);
+	public void addMessage(DropMessage dropMessage, Entity from, Entity to, boolean sent) throws PersistenceException {
+		boolean seen = sent;
+		PersistenceDropMessage persistenceDropMessage = new PersistenceDropMessage(dropMessage, from, to, sent, seen);
 		persistence.updateOrPersistEntity(persistenceDropMessage);
+		cache(persistenceDropMessage);
 		setChanged();
 		notifyObservers(persistenceDropMessage);
 	}
@@ -38,6 +39,11 @@ public class PersistenceDropMessageRepository extends AbstractCachedPersistenceR
 		for (PersistenceDropMessage d : messages) {
 			try {
 				if (d.getSender().hashCode() == contact.hashCode() || d.getReceiver().hashCode() == contact.hashCode()) {
+					if (!isCached(d)) {
+						cache(d);
+					} else {
+						d = fromCache(d);
+					}
 					result.add(d);
 				}
 			} catch (Exception e) {
@@ -63,6 +69,11 @@ public class PersistenceDropMessageRepository extends AbstractCachedPersistenceR
 			if (!map.containsKey(m.getPersistenceID())) {
 				try {
 					if (belongsToConversation(m, c.hashCode(), identity.hashCode())) {
+						if (!isCached(m)) {
+							cache(m);
+						} else {
+							m = fromCache(m);
+						}
 						result.add(m);
 					}
 				} catch (Exception e) {
@@ -79,7 +90,7 @@ public class PersistenceDropMessageRepository extends AbstractCachedPersistenceR
 		int senderIdentifier = dropMessage.getSender().hashCode();
 		int receiverKeyIdentifier = dropMessage.getReceiver().hashCode();
 
-		return (senderIdentifier == contactKeyIdentifier && receiverKeyIdentifier == ownKeyIdentifier && (!dropMessage.getSend())
-				|| (senderIdentifier == ownKeyIdentifier && receiverKeyIdentifier == contactKeyIdentifier && dropMessage.getSend()));
+		return (senderIdentifier == contactKeyIdentifier && receiverKeyIdentifier == ownKeyIdentifier && (!dropMessage.isSent())
+				|| (senderIdentifier == ownKeyIdentifier && receiverKeyIdentifier == contactKeyIdentifier && dropMessage.isSent()));
 	}
 }

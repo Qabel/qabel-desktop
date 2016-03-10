@@ -101,7 +101,7 @@ dependencies {
 
 task copyToLib(type: Copy) {
   	from configurations.runtime
-    into '$buildDir/libs'
+    into "$buildDir/libs"
 }
 
 classes {
@@ -125,7 +125,7 @@ task wrapper(type: Wrapper) {
 tasks.withType(Test) {
     systemProperty 'java.library.path', 'libs/'
 
-    reports.html.destination = file('${reporting.baseDir}/${name}')
+    reports.html.destination = file("${reporting.baseDir}/${name}")
 }
 run {
     systemProperty 'java.library.path', 'libs/'
