@@ -73,7 +73,7 @@
 
     -fx-text-fill: #343434;
     -fx-background-size: 50px;
-    -fx-background-color: white;
+    -fx-background-color: magenta;
     -fx-background-radius: 25;
     -fx-border-radius: 25;
     -fx-padding: 0 0 0 0;
@@ -83,6 +83,22 @@
 
 .avatarItem {
     -fx-padding: 0 0 0 10;
+}
+
+.avatarContainer {
+    -fx-alignment: top-right;
+}
+
+.indicator {
+    -fx-background-color: #ff690f;
+    -fx-text-fill: white;
+    -fx-background-radius: 3em;
+    -fx-font-size: 1em;
+    -fx-pref-width: 1.5em;
+    -fx-pref-height: 1.5em;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 3, -1, 0, 1);
+    -fx-snap-to-pixel: true;
 }
 
 .button.choose {

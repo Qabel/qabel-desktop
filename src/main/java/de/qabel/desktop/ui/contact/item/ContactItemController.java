@@ -5,13 +5,18 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.repository.ContactRepository;
+import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.Indicator;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
 import de.qabel.desktop.ui.accounting.item.SelectionEvent;
+import de.qabel.desktop.ui.actionlog.Actionlog;
+import de.qabel.desktop.ui.actionlog.ContactActionLog;
+import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 import de.qabel.desktop.ui.contact.ContactController;
-import javafx.event.ActionEvent;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -43,7 +48,7 @@ public class ContactItemController extends AbstractController implements Initial
 
 	ContactController parent;
 
-	List<Consumer> consumers = new LinkedList<>();
+	List<Consumer> selectionListeners = new LinkedList<>();
 
 	@Inject
 	private Contact contact;
@@ -51,25 +56,48 @@ public class ContactItemController extends AbstractController implements Initial
 	private ClientConfiguration clientConfiguration;
 	@Inject
 	private IdentityRepository identityRepository;
+	@Inject
+	private DropMessageRepository dropMessageRepository;
+
+	private Indicator indicator = new Indicator();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		contactRootItem.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-			for (Consumer c : consumers) {
+			for (Consumer listener : selectionListeners) {
 				SelectionEvent selectionEvent = new SelectionEvent();
 				selectionEvent.setContact(contact);
 				selectionEvent.setController(ContactItemController.this);
-				c.accept(selectionEvent);
+				listener.accept(selectionEvent);
 			}
 		});
 		this.resourceBundle = resources;
 		alias.setText(contact.getAlias());
 		email.setText(contact.getEmail());
 		updateAvatar();
+
+		indicator.setVisible(false);
+		final Actionlog actionlog = new ContactActionLog(contact, dropMessageRepository);
+
+		actionlog.addObserver(message -> {
+			refreshIndicator(actionlog);
+		});
+	}
+
+	public Indicator getIndicator() {
+		return indicator;
+	}
+
+	private void refreshIndicator(Actionlog actionlog) {
+		Platform.runLater(() -> {
+			int unseenMessageCount = actionlog.getUnseenMessageCount();
+			indicator.setVisible(unseenMessageCount > 0);
+			indicator.setText(String.valueOf(unseenMessageCount));
+		});
 	}
 
 	public void addSelectionListener(Consumer<SelectionEvent> consumer) {
-		consumers.add(consumer);
+		selectionListeners.add(consumer);
 	}
 
 	public void select() {
@@ -77,7 +105,10 @@ public class ContactItemController extends AbstractController implements Initial
 	}
 
 	private void updateAvatar() {
-		new AvatarView(e -> contact.getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
+		new AvatarView(e -> contact.getAlias()).getViewAsync(view -> {
+			avatarContainer.getChildren().setAll(view);
+			avatarContainer.getChildren().add(indicator);
+		});
 	}
 
 	public void unselect() {

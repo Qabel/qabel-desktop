@@ -68,7 +68,7 @@ public class ContactController extends AbstractController implements Initializab
 	@Inject
 	private IdentityRepository identityRepository;
 
-	private List<ContactItemController> contactItems = new LinkedList<>();
+	List<ContactItemController> contactItems = new LinkedList<>();
 
 	ActionlogController actionlogController;
 

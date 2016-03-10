@@ -64,7 +64,6 @@ public class BlockSharingService implements SharingService {
 		QblECPublicKey owner = sender.getEcPublicKey();
 		BoxExternalReference ref = navigation.share(owner, objectToShare, receiver.getKeyIdentifier());
 		ShareNotificationMessage share = new ShareNotificationMessage(ref.url, Hex.toHexString(ref.key), message);
-		System.out.println(share.toJson());
 		DropMessage dropMessage = new DropMessage(sender, share.toJson(), DropMessageRepository.PAYLOAD_TYPE_SHARE_NOTIFICATION);
 		dropConnector.send(receiver, dropMessage);
 		dropMessageRepository.addMessage(

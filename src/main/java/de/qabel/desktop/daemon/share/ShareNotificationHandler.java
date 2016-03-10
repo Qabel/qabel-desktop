@@ -28,7 +28,7 @@ public class ShareNotificationHandler implements Observer {
 		if (!isShareNotification(dropMessage)) {
 			return;
 		}
-		if (internalDropMessage.getSend() || !(internalDropMessage.getReceiver() instanceof Identity)) {
+		if (internalDropMessage.isSent() || !(internalDropMessage.getReceiver() instanceof Identity)) {
 			return;
 		}
 

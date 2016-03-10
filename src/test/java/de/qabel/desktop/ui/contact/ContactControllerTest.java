@@ -5,6 +5,7 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.config.Contacts;
 import de.qabel.core.config.Identity;
 import de.qabel.core.crypto.QblECKeyPair;
+import de.qabel.core.drop.DropMessage;
 import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 public class ContactControllerTest extends AbstractControllerTest {
@@ -116,6 +118,38 @@ public class ContactControllerTest extends AbstractControllerTest {
 		assertEquals(1, controller.contactsFromRepo.getContacts().size());
 		assertEquals("Two", controller.contactsFromRepo.getByKeyIdentifier(contact.getKeyIdentifier()).getAlias());
 
+	}
+
+	@Test
+	public void indicatorStartsInvisible() throws Exception {
+		getContact("One");
+		controller = getController();
+		waitUntil(() -> controller.contactItems.size() > 0);
+		assertFalse(controller.contactItems.get(0).getIndicator().isVisible());
+	}
+
+	@Test
+	public void indicatorShowsUnUnreadMessages() throws Exception {
+		Contact contact = getContact("One");
+		controller = getController();
+		waitUntil(() -> controller.contactItems.size() > 0);
+
+		dropMessageRepository.addMessage(new DropMessage(contact, "a", "b"), contact, identity, false);
+		waitUntil(() -> controller.contactItems.get(0).getIndicator().isVisible());
+		assertEquals("1", controller.contactItems.get(0).getIndicator().getText());
+	}
+
+	@Test
+	public void indicatorHidesWhenMessageIsRead() throws Exception {
+		Contact contact = getContact("One");
+		controller = getController();
+		waitUntil(() -> controller.contactItems.size() > 0);
+
+		dropMessageRepository.addMessage(new DropMessage(contact, "a", "b"), contact, identity, false);
+		waitUntil(() -> controller.contactItems.get(0).getIndicator().isVisible());
+
+		dropMessageRepository.lastMessage.setSeen(true);
+		waitUntil(() -> !controller.contactItems.get(0).getIndicator().isVisible());
 	}
 
 	private Contact getContact(String name) throws PersistenceException {
