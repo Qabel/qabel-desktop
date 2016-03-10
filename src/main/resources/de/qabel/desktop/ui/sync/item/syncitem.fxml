@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
-
+<?import javafx.scene.text.*?>
 <BorderPane prefHeight="130.0" prefWidth="600.0" style="-fx-border-color: darkgrey; -fx-border-width: 1 0 0 0;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.sync.item.SyncItemController">
             <left>
                 <VBox fx:id="avatarContainer" BorderPane.alignment="CENTER" />
@@ -28,15 +24,13 @@
                                     </padding>
                                     <children>
                         <BorderPane nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="200.0">
-                           <right>
-                                            <Button mnemonicParsing="false" text="..." BorderPane.alignment="CENTER" />
-                           </right>
                            <center>
-                                              <Label fx:id="name" maxWidth="1.7976931348623157E308" text="My Documents" BorderPane.alignment="CENTER">
-                                                  <font>
-                                                      <Font name="System Bold" size="22.0" />
-                                                  </font>
-                                              </Label>
+							   <Label fx:id="name" maxWidth="1.7976931348623157E308" text="My Documents"
+									  BorderPane.alignment="CENTER">
+								   <font>
+									   <Font name="System Bold" size="22.0"/>
+								   </font>
+							   </Label>
                            </center>
                         </BorderPane>
                         <HBox style="-fx-spacing: 20;">
@@ -88,13 +82,14 @@
                               </VBox>
                            </children>
                         </HBox>
-                                    </children>
+							</children>
                                 </VBox>
-                                <ProgressBar fx:id="progress" maxHeight="11.0" maxWidth="1.7976931348623157E308" prefHeight="0.0" prefWidth="519.0" progress="0.35" style="-fx-border-radius: 50;">
-                                    <VBox.margin>
-                                        <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                    </VBox.margin>
-                                </ProgressBar>
+								<ProgressBar fx:id="progress" maxHeight="20.0" prefHeight="20.0" prefWidth="555.0"
+											 progress="0.35">
+									<VBox.margin>
+										<Insets left="10.0"/>
+									</VBox.margin>
+								</ProgressBar>
                             </children>
                         </VBox>
                     </center>

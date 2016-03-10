@@ -10,6 +10,7 @@ import java.util.function.Function;
 
 public class QabelFXMLView extends FXMLView {
 	private static ResourceBundle resourceBundle;
+	private String globalStyleCheat = "/main.css";
 
 
 	public QabelFXMLView() {
@@ -35,6 +36,8 @@ public class QabelFXMLView extends FXMLView {
 		Parent parent = view.getParent();
 		if (parent != null) {
 			view.getStylesheets().addAll(parent.getStylesheets());
+		} else {
+			view.getStylesheets().add(globalStyleCheat);
 		}
 		super.addCSSIfAvailable(view);
 	}

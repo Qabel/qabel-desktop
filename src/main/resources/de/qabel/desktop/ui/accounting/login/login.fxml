@@ -1,86 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="672.0" prefWidth="369.0" styleClass="login" xmlns="http://javafx.com/javafx/8"
-      xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.accounting.login.LoginController">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="672.0" prefWidth="369.0" styleClass="login" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.accounting.login.LoginController">
     <children>
-        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+		<ImageView pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../../../../../../logo-invert.png"/>
+                <Image url="@../../../../../../logo-with-label-invert.png" />
             </image>
+			<VBox.margin>
+				<Insets top="30.0"/>
+			</VBox.margin>
         </ImageView>
-        <VBox alignment="TOP_CENTER" prefHeight="445.0" prefWidth="342.0" styleClass="login-form">
+		<VBox alignment="TOP_CENTER" prefHeight="397.0" prefWidth="220.0" styleClass="login-form">
             <children>
-                <Label styleClass="login-title" text="%loginText">
-                    <VBox.margin>
-                        <Insets bottom="10.0" top="10.0"/>
-                    </VBox.margin>
-                </Label>
-                <ChoiceBox fx:id="providerChoices"/>
-                <TextField fx:id="user" alignment="CENTER" promptText="%loginBoxAccountUserName" styleClass="user"
-                           text="testuser">
-                    <VBox.margin>
-                        <Insets/>
-                    </VBox.margin>
-                </TextField>
+				<Label styleClass="login-title" text="%loginText"/>
 
-                <TextField fx:id="email" alignment="CENTER" managed="false" promptText="%loginUserEMail" styleClass="user">
-                    <VBox.margin>
-                        <Insets/>
-                    </VBox.margin>
-                </TextField>
+				<ChoiceBox fx:id="providerChoices"/>
 
-                <PasswordField fx:id="password" alignment="CENTER" promptText="%loginBoxAccountUserPassword" text="testuser">
-                    <VBox.margin>
-                        <Insets/>
-                    </VBox.margin>
-                </PasswordField>
+				<TextField fx:id="user" alignment="CENTER" prefWidth="220.0" promptText="%loginBoxAccountUserName"
+						   styleClass="user" text="testuser"/>
 
-                <PasswordField fx:id="confirm" alignment="CENTER" managed="false" promptText="%loginConfirmPassword">
-                    <VBox.margin>
-                        <Insets/>
-                    </VBox.margin>
-                </PasswordField>
+				<TextField fx:id="email" alignment="CENTER" managed="false" promptText="%loginUserEMail"
+						   styleClass="user"/>
 
-                <HBox fx:id="buttonBar" alignment="CENTER" styleClass="login-button-bar">
+				<PasswordField fx:id="password" alignment="CENTER" prefWidth="220.0"
+							   promptText="%loginBoxAccountUserPassword" text="testuser"/>
+
+				<PasswordField fx:id="confirm" alignment="CENTER" managed="false" promptText="%loginConfirmPassword"/>
+
+				<HBox fx:id="buttonBar" alignment="CENTER" prefWidth="220.0" spacing="10" styleClass="login-button-bar">
                     <children>
-                        <Button fx:id="openCreateButton" mnemonicParsing="false" onAction="#openCreateBoxAccountSetup"
-                                styleClass="create-account-button" text="%loginOpenCreateBoxAccountDialog" managed="true"/>
-                        <Button fx:id="createButton" mnemonicParsing="false" onAction="#createBoxAccount"
-                                styleClass="create-account-button" text="%loginCreateBoxAccount" managed="false"/>
-                        <Button fx:id="loginButton" mnemonicParsing="false" onAction="#login" styleClass="login-button"
-                                text="%loginLogin"/>
+						<Button fx:id="openCreateButton" managed="true" mnemonicParsing="false"
+								onAction="#openCreateBoxAccountSetup" prefWidth="220.0"
+								styleClass="create-account-button" text="%loginOpenCreateBoxAccountDialog" />
 
-                    </children>
-                    <VBox.margin>
-                        <Insets/>
-                    </VBox.margin>
-                </HBox>
-                <HBox fx:id="progressBar" alignment="CENTER" styleClass="login-button-bar">
+						<Button fx:id="createButton" managed="false" mnemonicParsing="false"
+								onAction="#createBoxAccount" prefWidth="220.0" styleClass="create-account-button"
+								text="%loginCreateBoxAccount" />
+
+						<Button fx:id="loginButton" mnemonicParsing="false" onAction="#login" prefWidth="137.0"
+								styleClass="login-button" text="%loginLogin" />
+
+					</children>
+				</HBox>
+
+				<HBox fx:id="progressBar" alignment="CENTER" styleClass="login-button-bar">
                     <children>
-                        <ProgressIndicator minHeight="30" minWidth="30" prefHeight="30" prefWidth="30"/>
+                        <ProgressIndicator minHeight="30" minWidth="30" prefHeight="30" prefWidth="30" />
                     </children>
-                    <VBox.margin>
-                        <Insets/>
-                    </VBox.margin>
-                </HBox>
-                <Separator/>
-                <Button fx:id="recoverPassword" mnemonicParsing="false" onAction="#recoverPassword"
-                        styleClass="newPassword" text="%loginRecoverPassword" managed="true"/>
-                <Button fx:id="newPassword" mnemonicParsing="false" onAction="#newPassword" styleClass="login-button"
-                        text="%loginNewPassword" managed="false"/>
-            </children>
+				</HBox>
+
+				<Separator/>
+				<Button fx:id="recoverPassword" managed="true" mnemonicParsing="false" onAction="#recoverPassword"
+						prefWidth="367.0" styleClass="newPassword" text="%loginRecoverPassword"/>
+
+				<Button fx:id="newPassword" managed="false" mnemonicParsing="false" onAction="#newPassword"
+						prefWidth="367.0" styleClass="login-button" text="%loginNewPassword"/>
+
+			</children>
             <VBox.margin>
-                <Insets top="50.0"/>
+				<Insets left="20.0" right="20.0" top="10.0"/>
             </VBox.margin>
+			<padding>
+				<Insets left="10.0" right="10.0"/>
+			</padding>
         </VBox>
     </children>
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-    </padding>
 </VBox>

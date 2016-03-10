@@ -74,7 +74,6 @@ import static javafx.scene.control.Alert.AlertType.WARNING;
 
 public class DesktopClient extends Application {
 	private static final Logger logger = LoggerFactory.getLogger(DesktopClient.class.getSimpleName());
-	private static final String TITLE = "Qabel Desktop Client";
 	private static Path DATABASE_FILE = Paths.get(System.getProperty("user.home")).resolve(".qabel/db.sqlite");
 	private final Map<String, Object> customProperties = new HashMap<>();
 	private boolean inBound;
@@ -92,7 +91,7 @@ public class DesktopClient extends Application {
 	private boolean visible = false;
 	private PersistenceIdentityRepository identityRepository;
 	private NetworkStatus networkStatus;
-
+	private ResourceBundle resources;
 
 	public static void main(String[] args) throws Exception {
 		String defaultEncoding = System.getProperty("file.encoding");
@@ -106,6 +105,8 @@ public class DesktopClient extends Application {
 			}
 			DATABASE_FILE = new File(args[0]).getAbsoluteFile().toPath();
 		}
+
+		System.setProperty("prism.lcdtext", "false");
 		UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 		launch(args);
 	}
@@ -126,7 +127,6 @@ public class DesktopClient extends Application {
 			if (!checker.isCurrent(currentVersion)) {
 				final boolean required = !checker.isAllowed(currentVersion);
 
-				ResourceBundle resources = QabelFXMLView.getDefaultResourceBundle();
 				ButtonType cancelButton = new ButtonType(resources.getString("updateCancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
 				ButtonType updateButton = new ButtonType(resources.getString("updateStart"), ButtonBar.ButtonData.APPLY);
 				String message = required ? resources.getString("updateRequired") : resources.getString("updatePossible");
@@ -158,11 +158,11 @@ public class DesktopClient extends Application {
 		SceneAntialiasing aa = SceneAntialiasing.BALANCED;
 		primaryStage.getIcons().setAll(new javafx.scene.image.Image(getClass().getResourceAsStream("/logo-invert_small.png")));
 		Scene scene;
-
+		resources = QabelFXMLView.getDefaultResourceBundle();
 
 		Platform.setImplicitExit(false);
-		primaryStage.setTitle(TITLE);
-		scene = new Scene(new LoginView().getView(), 370, 550, true, aa);
+		primaryStage.setTitle(resources.getString("title"));
+		scene = new Scene(new LoginView().getView(), 370, 570, true, aa);
 		primaryStage.setScene(scene);
 
 		config.addObserver((o, arg) -> {
