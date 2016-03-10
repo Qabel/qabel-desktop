@@ -11,6 +11,9 @@
             <image>
                 <Image url="@../../../../../../logo-with-label-invert.png" />
             </image>
+			<VBox.margin>
+				<Insets top="30.0"/>
+			</VBox.margin>
         </ImageView>
 		<VBox alignment="TOP_CENTER" prefHeight="397.0" prefWidth="220.0" styleClass="login-form">
             <children>
@@ -18,34 +21,29 @@
 
 				<ChoiceBox fx:id="providerChoices"/>
 
-				<TextField fx:id="user" alignment="CENTER" prefWidth="220.0"
-						   promptText="%loginBoxAccountUserName" styleClass="user" text="testuser"/>
+				<TextField fx:id="user" alignment="CENTER" prefWidth="220.0" promptText="%loginBoxAccountUserName"
+						   styleClass="user" text="testuser"/>
 
-				<TextField fx:id="email" alignment="CENTER" managed="false"
-						   promptText="%loginUserEMail"
+				<TextField fx:id="email" alignment="CENTER" managed="false" promptText="%loginUserEMail"
 						   styleClass="user"/>
 
 				<PasswordField fx:id="password" alignment="CENTER" prefWidth="220.0"
 							   promptText="%loginBoxAccountUserPassword" text="testuser"/>
 
-				<PasswordField fx:id="confirm" alignment="CENTER" managed="false"
-							   promptText="%loginConfirmPassword"/>
+				<PasswordField fx:id="confirm" alignment="CENTER" managed="false" promptText="%loginConfirmPassword"/>
 
-				<HBox fx:id="buttonBar" alignment="CENTER" prefWidth="220.0"
-					  styleClass="login-button-bar" spacing="10">
+				<HBox fx:id="buttonBar" alignment="CENTER" prefWidth="220.0" spacing="10" styleClass="login-button-bar">
                     <children>
 						<Button fx:id="openCreateButton" managed="true" mnemonicParsing="false"
 								onAction="#openCreateBoxAccountSetup" prefWidth="220.0"
-								styleClass="create-account-button" text="%loginOpenCreateBoxAccountDialog">
-						</Button>
+								styleClass="create-account-button" text="%loginOpenCreateBoxAccountDialog" />
 
 						<Button fx:id="createButton" managed="false" mnemonicParsing="false"
-								onAction="#createBoxAccount" prefWidth="220.0"
-								styleClass="create-account-button" text="%loginCreateBoxAccount">
-						</Button>
+								onAction="#createBoxAccount" prefWidth="220.0" styleClass="create-account-button"
+								text="%loginCreateBoxAccount" />
 
-						<Button fx:id="loginButton" mnemonicParsing="false" onAction="#login"
-								prefWidth="137.0" styleClass="login-button" text="%loginLogin"/>
+						<Button fx:id="loginButton" mnemonicParsing="false" onAction="#login" prefWidth="137.0"
+								styleClass="login-button" text="%loginLogin" />
 
 					</children>
 				</HBox>
@@ -57,12 +55,10 @@
 				</HBox>
 
 				<Separator/>
-				<Button fx:id="recoverPassword" managed="true" mnemonicParsing="false"
-						onAction="#recoverPassword"
+				<Button fx:id="recoverPassword" managed="true" mnemonicParsing="false" onAction="#recoverPassword"
 						prefWidth="367.0" styleClass="newPassword" text="%loginRecoverPassword"/>
 
-				<Button fx:id="newPassword" managed="false" mnemonicParsing="false"
-						onAction="#newPassword"
+				<Button fx:id="newPassword" managed="false" mnemonicParsing="false" onAction="#newPassword"
 						prefWidth="367.0" styleClass="login-button" text="%loginNewPassword"/>
 
 			</children>

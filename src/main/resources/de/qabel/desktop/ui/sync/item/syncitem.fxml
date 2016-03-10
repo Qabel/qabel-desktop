@@ -84,8 +84,12 @@
                         </HBox>
 							</children>
                                 </VBox>
-								<ProgressBar fx:id="progress" maxHeight="11.0" prefWidth="519.0" progress="0.35"
-										/>
+								<ProgressBar fx:id="progress" maxHeight="20.0" prefHeight="20.0" prefWidth="555.0"
+											 progress="0.35">
+									<VBox.margin>
+										<Insets left="10.0"/>
+									</VBox.margin>
+								</ProgressBar>
                             </children>
                         </VBox>
                     </center>

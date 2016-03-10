@@ -60,12 +60,12 @@
     -fx-shape: " ";
     -fx-padding: 0;
 }
+
 .scroll-bar:horizontal .thumb, .scroll-bar:vertical .thumb {
     -fx-background-color: #222222;
     -fx-background-insets: 2px, 0, 0;
     -fx-background-radius: 2em;
 }
-
 
 .avatar {
     -fx-font-size: 3em;
@@ -85,8 +85,6 @@
     -fx-padding: 0 0 0 10;
 }
 
-
-
 .button.choose {
     -fx-min-width: 7em;
 }
@@ -101,6 +99,7 @@
     -fx-background-color: none;
     -fx-cursor: hand;
 }
+
 .button:hover {
     -fx-border-color: grey;
     -fx-text-fill: grey;
@@ -127,18 +126,6 @@
 #myMessagebox {
     -fx-background-color: #4d4d4d;
     -fx-background-radius: 5;
-}
-
-.progress-bar > *.bar {
-    -fx-background-radius: 0px;
-}
-
-.progress-bar > .track {
-	-fx-border-color: black;
-	-fx-padding: 10,10,10,10;
-    -fx-background-radius: 0em;
-    -fx-background-insets: 0em;
-    -fx-background-color: white;
 }
 
 .selected {
@@ -308,7 +295,6 @@
     -fx-text-fill: white;
 }
 
-
 .text-field.inline {
     -fx-border-width: 0;
     -fx-background-insets: 0;
@@ -325,14 +311,17 @@
     -fx-border-width: 0 1 0 0;
     -fx-border-color: #cccccc;
 }
+
 .tree-table-row-cell:hover {
     -fx-background-color: #f0f0f0;
 }
+
 .tree-table-row-cell:selected {
     -fx-background-color: #f0f0f0;
     -fx-text-fill: #222222;
     -fx-border-width: 0;
 }
+
 .tree-table-row-cell:selected * {
     -fx-text-fill: #222222;
 }

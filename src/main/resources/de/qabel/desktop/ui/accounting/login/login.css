@@ -37,17 +37,11 @@
 }
 
 .button {
-    -fx-text-fill: #ff690f;
     -fx-font-weight: bold;
-    -fx-background-radius: 0;
-    -fx-indent: 20em;
-    -fx-background-color: #fcdcca, white;
-    -fx-background-insets: 0px, 1px;
-    -fx-cursor: hand;
-    -fx-pref-height: 26px;
-	-fx-background-color: none;
+    -fx-background-color: white;
 	-fx-background-insets: 0px;
 	-fx-border-color: none;
+    -fx-text-fill: ff690f
 }
 .button.error {
 	-fx-background-insets: 0px, 4px;

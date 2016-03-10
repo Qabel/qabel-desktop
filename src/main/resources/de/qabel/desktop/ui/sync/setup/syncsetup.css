@@ -24,12 +24,11 @@
 
 .text-field {
     -fx-pref-width: 40em;
-}
-
-.text-field {
+	-fx-background-radius: 0;
     -fx-padding: 5px 15px 5px 15px;
     -fx-alignment: center;
     -fx-text-alignment: center!important;
+    -fx-min-height: 2.3em;
 }
 
 .text-field.error {
