@@ -1,7 +1,7 @@
 # Qabel Desktop Application
 For the documentation take a look at the [documentation](http://qabel.github.io/docs/).
 
-[![Build Status](https://jenkins.prae.me/job/qabel-desktop/badge/icon)](https://jenkins.prae.me/job/qabel-desktop/)
+[![Build Status](https://jenkins.prae.me/buildStatus/icon?job=qabel-desktop)](https://jenkins.prae.me/job/qabel-desktop/)
 
 ## Quick Start (for developers)
 
