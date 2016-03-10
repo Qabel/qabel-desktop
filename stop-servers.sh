@@ -1,11 +1,7 @@
 #!/bin/bash
 set -x
-cd drop-server
-bash drop-server.sh stop
-cd ..
-cat accounting.pid | xargs kill
-rm accounting.pid
-cat block.pid | xargs kill
-rm block.pid
+(cat qabel-drop/drop.pid | xargs kill && rm qabel-drop/drop.pid) || echo "failed to kill drop server"
+(cat qabel-accounting/accounting.pid | xargs kill && rm qabel-accounting/accounting.pid) || echo "failed to kill accounting server"
+(cat qabel-block/block.pid | xargs kill && rm qabel-block/block.pid) || echo "failed to kill block server"
 
 
