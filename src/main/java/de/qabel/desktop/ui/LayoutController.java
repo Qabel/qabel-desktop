@@ -192,6 +192,8 @@ public class LayoutController extends AbstractController implements Initializabl
 				}
 			});
 		});
+		Tooltip faq = new Tooltip(resourceBundle.getString("layoutIconFaqTooltip"));
+		Tooltip.install(faqButton, faq);
 
 		/*
 		Image infoGraphic = new Image(getClass().getResourceAsStream("/img/info.png"));
