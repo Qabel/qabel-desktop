@@ -81,6 +81,7 @@ source ${BLOCK_VENV}"/bin/activate"
 pip install -r requirements.txt
 cd src
 
+python manage.py dropdb --psql-dsn 'postgres://block_dummy:qabel_test_dummy@localhost/block_dummy'
 python manage.py initdb --psql-dsn 'postgres://block_dummy:qabel_test_dummy@localhost/block_dummy'
 python run.py --debug --dummy --dummy-log --dummy-cache --apisecret=Changeme --accounting-host=http://localhost:9696 --address=0.0.0.0 --port=9697 --psql-dsn='postgres://block_dummy:qabel_test_dummy@localhost/block_dummy' > ../block.log 2>&1 &
 echo $! > ../block.pid
