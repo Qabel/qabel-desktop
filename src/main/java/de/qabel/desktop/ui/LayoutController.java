@@ -6,6 +6,7 @@ import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.daemon.management.MonitoredTransferManager;
 import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.daemon.management.WindowedTransactionGroup;
+import de.qabel.desktop.ui.about.AboutView;
 import de.qabel.desktop.ui.accounting.AccountingView;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
 import de.qabel.desktop.ui.actionlog.ActionlogView;
@@ -96,6 +97,7 @@ public class LayoutController extends AbstractController implements Initializabl
 	private HBox contactsNav;
 	private HBox syncNav;
 	private HBox accountingNav;
+	private HBox aboutNav;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -110,11 +112,13 @@ public class LayoutController extends AbstractController implements Initializabl
 		browseNav = createNavItem(resourceBundle.getString("layoutBrowse"), new RemoteFSView());
 		contactsNav = createNavItem(resourceBundle.getString("layoutContacts"), new ContactView());
 		syncNav = createNavItem(resourceBundle.getString("layoutSync"), new SyncView());
+		aboutNav = createNavItem(resourceBundle.getString("layoutAbout"), new AboutView());
 
 
 		navi.getChildren().add(browseNav);
 		navi.getChildren().add(contactsNav);
 		navi.getChildren().add(syncNav);
+		navi.getChildren().add(aboutNav);
 
 
 		scrollContent.setFillWidth(true);

@@ -369,3 +369,41 @@
     -fx-text-fill: none;
 }
 
+.padded-page {
+    -fx-padding: 3em;
+}
+
+VBox.spaced, HBox.spaced {
+    -fx-spacing: 2em;
+}
+
+.headline {
+    -fx-font-weight: bolder;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.hyperlink {
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+    -fx-underline: false;
+}
+.hyperlink .text {
+    -fx-fill: #222222;
+}
+.hyperlink:visited .text {
+    -fx-fill: #222222;
+}
+.hyperlink:hover .text {
+    -fx-fill: #787878;
+}
+.hyperlink:pressed .text {
+    -fx-fill: #fd670d;
+}
+
+
+.labeled-link {
+    -fx-spacing: 0.5em;
+}
+.labeled-link > .label {
+    -fx-font-weight: bold;
+}

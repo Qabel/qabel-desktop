@@ -56,7 +56,8 @@ source ${ACCOUNTING_VENV}"/bin/activate"
 pip install -r requirements.txt
 yes "yes" | python manage.py migrate
 cp qabel_id/settings/local_settings.example.py qabel_id/settings/local_settings.py
-echo -e "\nEMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'\nSECRET_KEY = '=tmcici-p92_^_jih9ud11#+wb7*i21firlrtcqh\$p+d7o*49@'\n" >> qabel_id/settings/local_settings.py
+echo -e "\nEMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'\n" >> qabel_id/settings/local_settings.py
+echo -e "\nSECRET_KEY = '=tmcici-p92_^_jih9ud11#+wb7*i21firlrtcqh\$p+d7o*49@'\n" >> qabel_id/settings/local_settings.py
 DJANGO_SETTINGS_MODULE=qabel_id.settings.production_settings python manage.py testserver testdata.json --addrport 0.0.0.0:9696 > accounting.log 2>&1 &
 echo $! > accounting.pid
 deactivate
@@ -74,6 +75,7 @@ if [ ! -d ${BLOCK_VENV} ]; then
   virtualenv --no-site-packages --always-copy --python=python3.5 ${BLOCK_VENV}
 fi
 cp config.ini.example config.ini
+sed --in-place 's/api_secret=".*"/api_secret="Changeme"/g' config.ini
 echo -e "\npsql_dsn='postgres://block_dummy:qabel_test_dummy@localhost/block_dummy'" >> config.ini
 source ${BLOCK_VENV}"/bin/activate"
 pip install -r requirements.txt

@@ -1,0 +1,52 @@
+<licenses>
+  <license name='European Union Public Licence, Version 1.1' url='http://ec.europa.eu/idabc/eupl.html'>
+    <dependency>testfx-junit-4.0.2-alpha.jar</dependency>
+    <dependency>testfx-core-4.0.2-alpha.jar</dependency>
+  </license>
+  <license name='Apache License, Version 2.0' url='http://opensource.org/licenses/Apache-2.0'>
+    <dependency>apache-mime4j-examples-0.7.2.jar</dependency>
+    <dependency>commons-codec-1.10.jar</dependency>
+    <dependency>apache-mime4j-dom-0.7.2.jar</dependency>
+    <dependency>commons-cli-1.2.jar</dependency>
+    <dependency>guava-18.0.jar</dependency>
+    <dependency>sqlite-jdbc-3.8.7.jar</dependency>
+    <dependency>apache-mime4j-core-0.7.2.jar</dependency>
+    <dependency>apache-mime4j-benchmark-0.7.2.jar</dependency>
+    <dependency>meanbean-2.0.3.jar</dependency>
+    <dependency>log4j-core-2.4.jar</dependency>
+    <dependency>commons-logging-1.2.jar</dependency>
+    <dependency>prettytime-3.2.7.Final.jar</dependency>
+    <dependency>log4j-api-2.4.jar</dependency>
+    <dependency>log4j-slf4j-impl-2.4.jar</dependency>
+    <dependency>gson-2.6.2.jar</dependency>
+    <dependency>httpclient-4.5.2.jar</dependency>
+    <dependency>javax.inject-1.jar</dependency>
+    <dependency>commons-lang3-3.4.jar</dependency>
+    <dependency>log4j-1.2.16.jar</dependency>
+    <dependency>commons-io-1.4.jar</dependency>
+    <dependency>httpmime-4.5.2.jar</dependency>
+    <dependency>afterburner.jar</dependency>
+    <dependency>apache-mime4j-storage-0.7.2.jar</dependency>
+    <dependency>httpcore-4.4.4.jar</dependency>
+  </license>
+  <license name='Bouncy Castle Licence' url='http://www.bouncycastle.org/licence.html'>
+    <dependency>core-1.53.0.0.jar</dependency>
+    <dependency>prov-1.53.0.0.jar</dependency>
+  </license>
+  <license name='The MIT License' url='http://www.opensource.org/licenses/mit-license.php'>
+    <dependency>java-semver-0.9.0.jar</dependency>
+  </license>
+  <license name='Eclipse Public License 1.0' url='http://www.eclipse.org/legal/epl-v10.html'>
+    <dependency>junit-4.12.jar</dependency>
+  </license>
+  <license name='provided without support or warranty' url='http://www.json.org/license.html'>
+    <dependency>json-20090211.jar</dependency>
+  </license>
+  <license name='MIT License' url='http://www.opensource.org/licenses/mit-license.php'>
+    <dependency>slf4j-api-1.7.12.jar</dependency>
+  </license>
+  <license name='BSD License' url='http://www.opensource.org/licenses/bsd-license.php'>
+    <dependency>hamcrest-all-1.3.jar</dependency>
+    <dependency>hamcrest-core-1.3.jar</dependency>
+  </license>
+</licenses>
