@@ -16,7 +16,7 @@ AppSupportURL={#AppURL}
 AppUpdatesURL={#AppURL}
 DefaultDirName={pf}\{#AppName}
 DefaultGroupName={#AppName}
-AllowNoIcons=yes                                  
+AllowNoIcons=yes
 LicenseFile=..\LICENSE
 OutputDir=.
 OutputBaseFilename=QabelSetup-{version}
@@ -27,14 +27,37 @@ SetupIconFile={#SetupIcon}
 UninstallIconFile={#SetupIcon}
 UsePreviousAppDir=True
 AppCopyright={#AppPublisher}
+ArchitecturesAllowed=x64
+ArchitecturesInstallIn64BitMode=x64
 
 [Languages]
-Name: "english"; MessagesFile: "compiler:Default.isl"
-Name: "german"; MessagesFile: "compiler:Languages\German.isl"
+Name: "english"; MessagesFile: "compiler:Default.isl"; LicenseFile: ../LICENSE
+Name: "german"; MessagesFile: "compiler:Languages\German.isl"; LicenseFile: ../LICENSE
 
 [CustomMessages]
+english.licenseFile=en_license.rtf
+german.licenseFile=de_license.rtf
+english.termsFile=en_terms.rtf
+german.termsFile=de_terms.rtf
+english.policyFile=en_policy.rtf
+german.policyFile=de_policy.rtf
+
 english.DeleteConfig=Do you want to delete the configuration file?
 german.DeleteConfig=Wollen Sie die Konfigurationsdatei löschen?
+
+english.Terms=General Business Terms
+german.Terms=Allgemeine Geschäftsbedingungen
+english.TermsHeader=Please read the following General Business Terms. You must accept the General Business Terms before continuing with the installation.
+german.TermsHeader=Bitte lesen Sie folgende Bestimmungen
+english.TermsAccept=I accept the General Business Terms
+german.TermsAccept=Ich akzeptiere die allgemeinen Geschäftsbedingungen
+
+english.Policy=Privacy Policy
+german.Policy=Datenschutzbestimmungen
+english.PolicyHeader=Please read the following Privacy Policy. You must accept the Privacy Policy before continuing with the installation.
+german.PolicyHeader=Bitte lesen Sie folgende Datenschutzbestimmungen
+english.PolicyAccept=I accept the Privacy Policy
+german.PolicyAccept=Ich akzeptiere die Datenschutzbestimmungen
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -43,10 +66,11 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "QabelDesktop.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\lib\*"; DestDir: "{app}\lib"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "jre\*"; DestDir: "{app}\jre"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: content\*; DestDir: {app}\content; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#AppName}"; Filename: "{app}\{#AppExeName}"
-Name: "{group}\{cm:UninstallProgram,{#AppName}}"; Filename: "{uninstallexe}"    
+Name: "{group}\{cm:UninstallProgram,{#AppName}}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\{#AppName}"; Filename: "{app}\{#AppExeName}"; Tasks: desktopicon
 Name: "{userstartup}\{#AppName}"; Filename: "{app}\{#AppExeName}"
 
@@ -55,7 +79,6 @@ Filename: "{app}\{#AppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(
 
 
 [Code]
-
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
   if CurUninstallStep = usUninstall then begin
@@ -65,3 +88,67 @@ begin
     end;
   end;
 end;
+
+var
+	TermsAccept: TNewCheckBox;
+  PolicyAccept: TNewCheckBox;
+
+procedure TermsOpenPage(Sender: TWizardPage);
+begin
+	WizardForm.NextButton.Enabled := TermsAccept.Checked;
+end;
+procedure TermsAccepted(Sender: TObject);
+begin
+	WizardForm.NextButton.Enabled := TermsAccept.Checked;
+end;
+procedure PolicyOpenPage(Sender: TWizardPage);
+begin
+	WizardForm.NextButton.Enabled := PolicyAccept.Checked;
+end;
+procedure PolicyAccepted(Sender: TObject);
+begin
+	WizardForm.NextButton.Enabled := PolicyAccept.Checked;
+end;
+
+procedure CreateCustomWizardAgreementPage(title: AnsiString; contentHeader: AnsiString; agreementFilename: AnsiString; openCallback: TWizardPageNotifyEvent; acceptedCallback: TNotifyEvent);
+var
+	TermsText: AnsiString;
+	TermsPage: TOutputMsgMemoWizardPage;
+begin
+  TermsPage := CreateOutputMsgMemoPage(wpLicense, CustomMessage('Terms'), SetupMessage(msgLicenseLabel), CustomMessage('TermsHeader'), '33');
+
+  TermsPage.RichEditViewer.Height := ScaleY(148);
+	TermsAccept := TNewCheckBox.Create(TermsPage);
+  TermsAccept.Left := TermsPage.RichEditViewer.Left;
+  TermsAccept.Top := TermsPage.Surface.ClientHeight - ScaleY(41);
+  TermsAccept.Width := TermsPage.RichEditViewer.Width;
+	TermsAccept.Parent := TermsPage.Surface;
+	TermsAccept.Caption := SetupMessage(msgLicenseAccepted);
+
+	TermsPage.OnActivate := openCallback;
+	TermsAccept.OnClick := acceptedCallback;
+	TermsAccept.Checked := false
+
+	ExtractTemporaryFile(agreementFilename);
+	LoadStringFromFile(ExpandConstant('{tmp}/' + agreementFilename), TermsText);
+	TermsPage.RichEditViewer.RTFText := TermsText;
+end;
+
+procedure TermsInitializeWizard();
+begin
+  CreateCustomWizardAgreementPage(CustomMessage('Terms'), CustomMessage('TermsHeader'), ExpandConstant('{cm:termsFile}'), @TermsOpenPage, @TermsAccepted);
+end;
+procedure PolicyInitializeWizard();
+begin
+  CreateCustomWizardAgreementPage(CustomMessage('Policy'), CustomMessage('PolicyHeader'), ExpandConstant('{cm:policyFile}'), @TermsOpenPage, @TermsAccepted);
+end;
+
+
+
+procedure InitializeWizard();
+begin
+  TermsInitializeWizard
+  PolicyInitializeWizard
+end;
+
+
