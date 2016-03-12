@@ -45,19 +45,19 @@ german.policyFile=de_policy.rtf
 english.DeleteConfig=Do you want to delete the configuration file?
 german.DeleteConfig=Wollen Sie die Konfigurationsdatei löschen?
 
-english.Terms=General Business Terms
+english.Terms=Terms of Service
 german.Terms=Allgemeine Geschäftsbedingungen
-english.TermsHeader=Please read the following General Business Terms. You must accept the General Business Terms before continuing with the installation.
+english.TermsHeader=Please read the following Terms of Service. You must accept the Terms of Service before continuing with the installation.
 german.TermsHeader=Bitte lesen Sie folgende Bestimmungen
-english.TermsAccept=I accept the General Business Terms
+english.TermsAccept=I accept the Terms of Service
 german.TermsAccept=Ich akzeptiere die allgemeinen Geschäftsbedingungen
 
 english.Policy=Privacy Policy
-german.Policy=Datenschutzbestimmungen
+german.Policy=Datenschutzerklärung
 english.PolicyHeader=Please read the following Privacy Policy. You must accept the Privacy Policy before continuing with the installation.
-german.PolicyHeader=Bitte lesen Sie folgende Datenschutzbestimmungen
+german.PolicyHeader=Bitte lesen Sie folgende Datenschutzerklärung
 english.PolicyAccept=I accept the Privacy Policy
-german.PolicyAccept=Ich akzeptiere die Datenschutzbestimmungen
+german.PolicyAccept=Ich akzeptiere die Datenschutzerklärung
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
