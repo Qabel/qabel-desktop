@@ -81,17 +81,17 @@ Filename: "{app}\{#AppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(
 [Code]
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
-  if CurUninstallStep = usUninstall then begin
-    if MsgBox(ExpandConstant('{cm:DeleteConfig}'), mbConfirmation, MB_YESNO) = IDYES
-    then begin
-      DeleteFile(ExpandConstant('{%HOMEPATH}\.qabel\db.sqlite'));
+    if CurUninstallStep = usUninstall then begin
+        if MsgBox(ExpandConstant('{cm:DeleteConfig}'), mbConfirmation, MB_YESNO) = IDYES
+            then begin
+                DeleteFile(ExpandConstant('{%HOMEPATH}\.qabel\db.sqlite'));
+            end;
     end;
-  end;
 end;
 
 var
 	TermsAccept: TNewCheckBox;
-  PolicyAccept: TNewCheckBox;
+    PolicyAccept: TNewCheckBox;
 
 procedure TermsOpenPage(Sender: TWizardPage);
 begin
@@ -115,13 +115,13 @@ var
 	TermsText: AnsiString;
 	TermsPage: TOutputMsgMemoWizardPage;
 begin
-  TermsPage := CreateOutputMsgMemoPage(wpLicense, CustomMessage('Terms'), SetupMessage(msgLicenseLabel), CustomMessage('TermsHeader'), '33');
+    TermsPage := CreateOutputMsgMemoPage(wpLicense, CustomMessage('Terms'), SetupMessage(msgLicenseLabel), CustomMessage('TermsHeader'), '33');
 
-  TermsPage.RichEditViewer.Height := ScaleY(148);
+    TermsPage.RichEditViewer.Height := ScaleY(148);
 	TermsAccept := TNewCheckBox.Create(TermsPage);
-  TermsAccept.Left := TermsPage.RichEditViewer.Left;
-  TermsAccept.Top := TermsPage.Surface.ClientHeight - ScaleY(41);
-  TermsAccept.Width := TermsPage.RichEditViewer.Width;
+    TermsAccept.Left := TermsPage.RichEditViewer.Left;
+    TermsAccept.Top := TermsPage.Surface.ClientHeight - ScaleY(41);
+    TermsAccept.Width := TermsPage.RichEditViewer.Width;
 	TermsAccept.Parent := TermsPage.Surface;
 	TermsAccept.Caption := SetupMessage(msgLicenseAccepted);
 
@@ -136,19 +136,16 @@ end;
 
 procedure TermsInitializeWizard();
 begin
-  CreateCustomWizardAgreementPage(CustomMessage('Terms'), CustomMessage('TermsHeader'), ExpandConstant('{cm:termsFile}'), @TermsOpenPage, @TermsAccepted);
+    CreateCustomWizardAgreementPage(CustomMessage('Terms'), CustomMessage('TermsHeader'), ExpandConstant('{cm:termsFile}'), @TermsOpenPage, @TermsAccepted);
 end;
 procedure PolicyInitializeWizard();
 begin
-  CreateCustomWizardAgreementPage(CustomMessage('Policy'), CustomMessage('PolicyHeader'), ExpandConstant('{cm:policyFile}'), @TermsOpenPage, @TermsAccepted);
+    CreateCustomWizardAgreementPage(CustomMessage('Policy'), CustomMessage('PolicyHeader'), ExpandConstant('{cm:policyFile}'), @TermsOpenPage, @TermsAccepted);
 end;
-
 
 
 procedure InitializeWizard();
 begin
-  TermsInitializeWizard
-  PolicyInitializeWizard
+    TermsInitializeWizard
+    PolicyInitializeWizard
 end;
-
-
