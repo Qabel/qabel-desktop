@@ -110,12 +110,12 @@ begin
 	WizardForm.NextButton.Enabled := PolicyAccept.Checked;
 end;
 
-procedure CreateCustomWizardAgreementPage(title: AnsiString; contentHeader: AnsiString; agreementFilename: AnsiString; openCallback: TWizardPageNotifyEvent; acceptedCallback: TNotifyEvent);
+procedure CreateCustomWizardAgreementPage(title: AnsiString; contentHeader: AnsiString; acceptLabel: AnsiString; agreementFilename: AnsiString; openCallback: TWizardPageNotifyEvent; acceptedCallback: TNotifyEvent);
 var
 	TermsText: AnsiString;
 	TermsPage: TOutputMsgMemoWizardPage;
 begin
-    TermsPage := CreateOutputMsgMemoPage(wpLicense, CustomMessage('Terms'), SetupMessage(msgLicenseLabel), CustomMessage('TermsHeader'), '33');
+    TermsPage := CreateOutputMsgMemoPage(wpLicense, title, SetupMessage(msgLicenseLabel), contentHeader, '33');
 
     TermsPage.RichEditViewer.Height := ScaleY(148);
 	TermsAccept := TNewCheckBox.Create(TermsPage);
@@ -123,7 +123,7 @@ begin
     TermsAccept.Top := TermsPage.Surface.ClientHeight - ScaleY(41);
     TermsAccept.Width := TermsPage.RichEditViewer.Width;
 	TermsAccept.Parent := TermsPage.Surface;
-	TermsAccept.Caption := SetupMessage(msgLicenseAccepted);
+	TermsAccept.Caption := acceptLabel;
 
 	TermsPage.OnActivate := openCallback;
 	TermsAccept.OnClick := acceptedCallback;
@@ -136,11 +136,11 @@ end;
 
 procedure TermsInitializeWizard();
 begin
-    CreateCustomWizardAgreementPage(CustomMessage('Terms'), CustomMessage('TermsHeader'), ExpandConstant('{cm:termsFile}'), @TermsOpenPage, @TermsAccepted);
+    CreateCustomWizardAgreementPage(CustomMessage('Terms'), CustomMessage('TermsHeader'), CustomMessage('TermsAccept'), ExpandConstant('{cm:termsFile}'), @TermsOpenPage, @TermsAccepted);
 end;
 procedure PolicyInitializeWizard();
 begin
-    CreateCustomWizardAgreementPage(CustomMessage('Policy'), CustomMessage('PolicyHeader'), ExpandConstant('{cm:policyFile}'), @TermsOpenPage, @TermsAccepted);
+    CreateCustomWizardAgreementPage(CustomMessage('Policy'), CustomMessage('PolicyHeader'), CustomMessage('PolicyAccept'), ExpandConstant('{cm:policyFile}'), @TermsOpenPage, @TermsAccepted);
 end;
 
 
