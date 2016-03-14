@@ -92,6 +92,8 @@ end;
 var
 	TermsAccept: TNewCheckBox;
     PolicyAccept: TNewCheckBox;
+    TermsPage: TOutputMsgMemoWizardPage;
+    PolicyPage: TOutputMsgMemoWizardPage;
 
 procedure TermsOpenPage(Sender: TWizardPage);
 begin
@@ -110,24 +112,17 @@ begin
 	WizardForm.NextButton.Enabled := PolicyAccept.Checked;
 end;
 
-procedure CreateCustomWizardAgreementPage(title: AnsiString; contentHeader: AnsiString; acceptLabel: AnsiString; agreementFilename: AnsiString; openCallback: TWizardPageNotifyEvent; acceptedCallback: TNotifyEvent);
+procedure CreateCustomWizardAgreementPage(TermsPage: TOutputMsgMemoWizardPage; TermsAccept: TNewCheckBox; acceptLabel: AnsiString; agreementFilename: AnsiString);
 var
 	TermsText: AnsiString;
-	TermsPage: TOutputMsgMemoWizardPage;
 begin
-    TermsPage := CreateOutputMsgMemoPage(wpLicense, title, SetupMessage(msgLicenseLabel), contentHeader, '33');
 
     TermsPage.RichEditViewer.Height := ScaleY(148);
-	TermsAccept := TNewCheckBox.Create(TermsPage);
     TermsAccept.Left := TermsPage.RichEditViewer.Left;
     TermsAccept.Top := TermsPage.Surface.ClientHeight - ScaleY(41);
     TermsAccept.Width := TermsPage.RichEditViewer.Width;
 	TermsAccept.Parent := TermsPage.Surface;
 	TermsAccept.Caption := acceptLabel;
-
-	TermsPage.OnActivate := openCallback;
-	TermsAccept.OnClick := acceptedCallback;
-	TermsAccept.Checked := false
 
 	ExtractTemporaryFile(agreementFilename);
 	LoadStringFromFile(ExpandConstant('{tmp}/' + agreementFilename), TermsText);
@@ -136,11 +131,21 @@ end;
 
 procedure TermsInitializeWizard();
 begin
-    CreateCustomWizardAgreementPage(CustomMessage('Terms'), CustomMessage('TermsHeader'), CustomMessage('TermsAccept'), ExpandConstant('{cm:termsFile}'), @TermsOpenPage, @TermsAccepted);
+    TermsPage := CreateOutputMsgMemoPage(wpLicense, CustomMessage('Terms'), SetupMessage(msgLicenseLabel), CustomMessage('TermsHeader'), '33');
+    TermsAccept := TNewCheckBox.Create(TermsPage);
+    CreateCustomWizardAgreementPage(TermsPage, TermsAccept, CustomMessage('TermsAccept'), ExpandConstant('{cm:termsFile}'));
+    TermsPage.OnActivate := @TermsOpenPage;
+    TermsAccept.OnClick := @TermsAccepted;
+    TermsAccept.Checked := false
 end;
 procedure PolicyInitializeWizard();
 begin
-    CreateCustomWizardAgreementPage(CustomMessage('Policy'), CustomMessage('PolicyHeader'), CustomMessage('PolicyAccept'), ExpandConstant('{cm:policyFile}'), @TermsOpenPage, @TermsAccepted);
+    PolicyPage := CreateOutputMsgMemoPage(wpLicense, CustomMessage('Policy'), SetupMessage(msgLicenseLabel), CustomMessage('PolicyHeader'), '33');
+    PolicyAccept := TNewCheckBox.Create(PolicyPage);
+    CreateCustomWizardAgreementPage(PolicyPage, PolicyAccept, CustomMessage('PolicyAccept'), ExpandConstant('{cm:policyFile}'));
+    PolicyPage.OnActivate := @PolicyOpenPage;
+    PolicyAccept.OnClick := @PolicyAccepted;
+    PolicyAccept.Checked := false
 end;
 
 

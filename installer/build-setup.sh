@@ -33,6 +33,9 @@ rm -r tmp
 cp config.iss.dist config.iss
 cp launch4j.xml.dist launch4j.xml
 sed --in-place "s/{version}/${version}/g" config.iss
+if [ "${version}" == "dev" ]; then
+    sed --in-place "s/Compression=.*/Compression=none/g"
+fi
 sed --in-place "s/{version}/${version}/g"  launch4j.xml
 
 if [ -f QabelDesktop.exe ]; then
