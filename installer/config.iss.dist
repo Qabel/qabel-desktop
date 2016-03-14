@@ -43,21 +43,23 @@ english.policyFile=en_policy.rtf
 german.policyFile=de_policy.rtf
 
 english.DeleteConfig=Do you want to delete the configuration file?
-german.DeleteConfig=Wollen Sie die Konfigurationsdatei l√∂schen?
+german.DeleteConfig=Wollen Sie die Konfigurationsdatei lˆschen?
 
 english.Terms=Terms of Service
-german.Terms=Allgemeine Gesch√§ftsbedingungen
+german.Terms=Allgemeine Gesch‰ftsbedingungen
 english.TermsHeader=Please read the following Terms of Service. You must accept the Terms of Service before continuing with the installation.
 german.TermsHeader=Bitte lesen Sie folgende Bestimmungen
 english.TermsAccept=I accept the Terms of Service
-german.TermsAccept=Ich akzeptiere die allgemeinen Gesch√§ftsbedingungen
+german.TermsAccept=Ich akzeptiere die allgemeinen Gesch‰ftsbedingungen
 
 english.Policy=Privacy Policy
-german.Policy=Datenschutzerkl√§rung
+german.Policy=Datenschutzerkl‰rung
 english.PolicyHeader=Please read the following Privacy Policy. You must accept the Privacy Policy before continuing with the installation.
-german.PolicyHeader=Bitte lesen Sie folgende Datenschutzerkl√§rung
+german.PolicyHeader=Bitte lesen Sie folgende Datenschutzerkl‰rung
 english.PolicyAccept=I accept the Privacy Policy
-german.PolicyAccept=Ich akzeptiere die Datenschutzerkl√§rung
+german.PolicyAccept=Ich akzeptiere die Datenschutzerkl‰rung
+english.LoadingTerms=Loading legal notices...
+german.LoadingTerms=Lade Rechtliches...
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -92,6 +94,10 @@ end;
 var
 	TermsAccept: TNewCheckBox;
     PolicyAccept: TNewCheckBox;
+    TermsPage: TOutputMsgMemoWizardPage;
+    PolicyPage: TOutputMsgMemoWizardPage;
+    LoaderPage: TOutputProgressWizardPage;
+    Loaded: Boolean;
 
 procedure TermsOpenPage(Sender: TWizardPage);
 begin
@@ -110,42 +116,69 @@ begin
 	WizardForm.NextButton.Enabled := PolicyAccept.Checked;
 end;
 
-procedure CreateCustomWizardAgreementPage(title: AnsiString; contentHeader: AnsiString; acceptLabel: AnsiString; agreementFilename: AnsiString; openCallback: TWizardPageNotifyEvent; acceptedCallback: TNotifyEvent);
+procedure CreateCustomWizardAgreementPage(TPage: TOutputMsgMemoWizardPage; TAccept: TNewCheckBox; acceptLabel: AnsiString; agreementFilename: AnsiString);
 var
-	TermsText: AnsiString;
-	TermsPage: TOutputMsgMemoWizardPage;
+	TText: AnsiString;
 begin
-    TermsPage := CreateOutputMsgMemoPage(wpLicense, title, SetupMessage(msgLicenseLabel), contentHeader, '33');
+    TPage.RichEditViewer.Height := ScaleY(148);
 
-    TermsPage.RichEditViewer.Height := ScaleY(148);
-	TermsAccept := TNewCheckBox.Create(TermsPage);
-    TermsAccept.Left := TermsPage.RichEditViewer.Left;
-    TermsAccept.Top := TermsPage.Surface.ClientHeight - ScaleY(41);
-    TermsAccept.Width := TermsPage.RichEditViewer.Width;
-	TermsAccept.Parent := TermsPage.Surface;
-	TermsAccept.Caption := acceptLabel;
-
-	TermsPage.OnActivate := openCallback;
-	TermsAccept.OnClick := acceptedCallback;
-	TermsAccept.Checked := false
+    TAccept.Parent := TPage.Surface;
+    TAccept.Caption := acceptLabel;
+    TAccept.Width := TPage.RichEditViewer.Width;
+    TAccept.Top := TPage.Surface.ClientHeight - ScaleY(41);
+    TAccept.Left := TPage.RichEditViewer.Left;
 
 	ExtractTemporaryFile(agreementFilename);
-	LoadStringFromFile(ExpandConstant('{tmp}/' + agreementFilename), TermsText);
-	TermsPage.RichEditViewer.RTFText := TermsText;
+	LoadStringFromFile(ExpandConstant('{tmp}/' + agreementFilename), TText);
+	TPage.RichEditViewer.RTFText := TText;
 end;
 
 procedure TermsInitializeWizard();
 begin
-    CreateCustomWizardAgreementPage(CustomMessage('Terms'), CustomMessage('TermsHeader'), CustomMessage('TermsAccept'), ExpandConstant('{cm:termsFile}'), @TermsOpenPage, @TermsAccepted);
+    TermsPage := CreateOutputMsgMemoPage(wpLicense, CustomMessage('Terms'), SetupMessage(msgLicenseLabel), CustomMessage('TermsHeader'), '33');
+    TermsAccept := TNewCheckBox.Create(TermsPage);
+    CreateCustomWizardAgreementPage(TermsPage, TermsAccept, CustomMessage('TermsAccept'), ExpandConstant('{cm:termsFile}'));
+    TermsPage.OnActivate := @TermsOpenPage;
+    TermsAccept.OnClick := @TermsAccepted;
+    TermsAccept.Checked := false;
 end;
 procedure PolicyInitializeWizard();
 begin
-    CreateCustomWizardAgreementPage(CustomMessage('Policy'), CustomMessage('PolicyHeader'), CustomMessage('PolicyAccept'), ExpandConstant('{cm:policyFile}'), @TermsOpenPage, @TermsAccepted);
+    PolicyPage := CreateOutputMsgMemoPage(wpLicense, CustomMessage('Policy'), SetupMessage(msgLicenseLabel), CustomMessage('PolicyHeader'), '33');
+    PolicyAccept := TNewCheckBox.Create(PolicyPage);
+    CreateCustomWizardAgreementPage(PolicyPage, PolicyAccept, CustomMessage('PolicyAccept'), ExpandConstant('{cm:policyFile}'));
+    PolicyPage.OnActivate := @PolicyOpenPage;
+    PolicyAccept.OnClick := @PolicyAccepted;
+    PolicyAccept.Checked := false;
 end;
 
 
+procedure InitTerms(Sender: TWizardPage);
+begin
+    try
+        LoaderPage.setProgress(0,2);
+        TermsInitializeWizard;
+        LoaderPage.setProgress(1,2);
+        PolicyInitializeWizard;
+        LoaderPage.setProgress(2,2);
+    finally
+        LoaderPage.Hide();
+    end;
+end;
+
 procedure InitializeWizard();
 begin
-    TermsInitializeWizard
-    PolicyInitializeWizard
+    Loaded := False;
+    LoaderPage := CreateOutputProgressPage(CustomMessage('LoadingTerms'), CustomMessage('LoadingTerms'));
+    LoaderPage.OnActivate := @InitTerms;
+end;
+
+procedure CurPageChanged(CurPageID: Integer);
+begin
+    if CurPageID = wpLicense then begin
+        if Loaded = False then begin
+            Loaded := True;
+            LoaderPage.Show();
+        end;
+    end;
 end;
