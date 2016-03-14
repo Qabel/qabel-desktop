@@ -35,6 +35,22 @@
                         <Hyperlink text="%qaplUrl" />
                     </children>
                 </VBox>
+
+                <Separator />
+                <Label styleClass="headline" text="%thirdPartyComponents" />
+                <VBox styleClass="labeled-link">
+                    <children>
+                        <Label text="Inno Setup"/>
+                        <Hyperlink text="http://www.jrsoftware.org/files/is/license.txt"/>
+                    </children>
+                </VBox>
+                <VBox styleClass="labeled-link">
+                    <children>
+                        <Label text="Launch4j"/>
+                        <Hyperlink text="https://opensource.org/licenses/BSD-3-Clause"/>
+                        <Hyperlink text="https://opensource.org/licenses/mit-license.html"/>
+                    </children>
+                </VBox>
             </children>
             <styleClass>
                 <String fx:value="padded-page" />
