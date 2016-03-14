@@ -17,7 +17,6 @@ AppUpdatesURL={#AppURL}
 DefaultDirName={pf}\{#AppName}
 DefaultGroupName={#AppName}
 AllowNoIcons=yes
-LicenseFile=..\LICENSE
 OutputDir=.
 OutputBaseFilename=QabelSetup-{version}
 Compression=lzma
@@ -31,8 +30,8 @@ ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
 
 [Languages]
-Name: "english"; MessagesFile: "compiler:Default.isl"; LicenseFile: ../LICENSE
-Name: "german"; MessagesFile: "compiler:Languages\German.isl"; LicenseFile: ../LICENSE
+Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "german"; MessagesFile: "compiler:Languages\German.isl"
 
 [CustomMessages]
 english.licenseFile=en_license.rtf
@@ -175,10 +174,8 @@ end;
 
 procedure CurPageChanged(CurPageID: Integer);
 begin
-    if CurPageID = wpLicense then begin
-        if Loaded = False then begin
-            Loaded := True;
-            LoaderPage.Show();
-        end;
+    if Loaded = False then begin
+        Loaded := True;
+        LoaderPage.Show();
     end;
 end;
