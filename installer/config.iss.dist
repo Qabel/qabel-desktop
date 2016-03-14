@@ -58,6 +58,8 @@ english.PolicyHeader=Please read the following Privacy Policy. You must accept t
 german.PolicyHeader=Bitte lesen Sie folgende Datenschutzerklärung
 english.PolicyAccept=I accept the Privacy Policy
 german.PolicyAccept=Ich akzeptiere die Datenschutzerklärung
+english.LoadingTerms=Loading legal notices...
+german.LoadingTerms=Lade Rechtliches...
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -94,6 +96,8 @@ var
     PolicyAccept: TNewCheckBox;
     TermsPage: TOutputMsgMemoWizardPage;
     PolicyPage: TOutputMsgMemoWizardPage;
+    LoaderPage: TOutputProgressWizardPage;
+    Loaded: Boolean;
 
 procedure TermsOpenPage(Sender: TWizardPage);
 begin
@@ -112,21 +116,21 @@ begin
 	WizardForm.NextButton.Enabled := PolicyAccept.Checked;
 end;
 
-procedure CreateCustomWizardAgreementPage(TermsPage: TOutputMsgMemoWizardPage; TermsAccept: TNewCheckBox; acceptLabel: AnsiString; agreementFilename: AnsiString);
+procedure CreateCustomWizardAgreementPage(TPage: TOutputMsgMemoWizardPage; TAccept: TNewCheckBox; acceptLabel: AnsiString; agreementFilename: AnsiString);
 var
-	TermsText: AnsiString;
+	TText: AnsiString;
 begin
+    TPage.RichEditViewer.Height := ScaleY(148);
 
-    TermsPage.RichEditViewer.Height := ScaleY(148);
-    TermsAccept.Left := TermsPage.RichEditViewer.Left;
-    TermsAccept.Top := TermsPage.Surface.ClientHeight - ScaleY(41);
-    TermsAccept.Width := TermsPage.RichEditViewer.Width;
-	TermsAccept.Parent := TermsPage.Surface;
-	TermsAccept.Caption := acceptLabel;
+    TAccept.Parent := TPage.Surface;
+    TAccept.Caption := acceptLabel;
+    TAccept.Width := TPage.RichEditViewer.Width;
+    TAccept.Top := TPage.Surface.ClientHeight - ScaleY(41);
+    TAccept.Left := TPage.RichEditViewer.Left;
 
 	ExtractTemporaryFile(agreementFilename);
-	LoadStringFromFile(ExpandConstant('{tmp}/' + agreementFilename), TermsText);
-	TermsPage.RichEditViewer.RTFText := TermsText;
+	LoadStringFromFile(ExpandConstant('{tmp}/' + agreementFilename), TText);
+	TPage.RichEditViewer.RTFText := TText;
 end;
 
 procedure TermsInitializeWizard();
@@ -136,7 +140,7 @@ begin
     CreateCustomWizardAgreementPage(TermsPage, TermsAccept, CustomMessage('TermsAccept'), ExpandConstant('{cm:termsFile}'));
     TermsPage.OnActivate := @TermsOpenPage;
     TermsAccept.OnClick := @TermsAccepted;
-    TermsAccept.Checked := false
+    TermsAccept.Checked := false;
 end;
 procedure PolicyInitializeWizard();
 begin
@@ -145,12 +149,36 @@ begin
     CreateCustomWizardAgreementPage(PolicyPage, PolicyAccept, CustomMessage('PolicyAccept'), ExpandConstant('{cm:policyFile}'));
     PolicyPage.OnActivate := @PolicyOpenPage;
     PolicyAccept.OnClick := @PolicyAccepted;
-    PolicyAccept.Checked := false
+    PolicyAccept.Checked := false;
 end;
 
 
+procedure InitTerms(Sender: TWizardPage);
+begin
+    try
+        LoaderPage.setProgress(0,2);
+        TermsInitializeWizard;
+        LoaderPage.setProgress(1,2);
+        PolicyInitializeWizard;
+        LoaderPage.setProgress(2,2);
+    finally
+        LoaderPage.Hide();
+    end;
+end;
+
 procedure InitializeWizard();
 begin
-    TermsInitializeWizard
-    PolicyInitializeWizard
+    Loaded := False;
+    LoaderPage := CreateOutputProgressPage(CustomMessage('LoadingTerms'), CustomMessage('LoadingTerms'));
+    LoaderPage.OnActivate := @InitTerms;
+end;
+
+procedure CurPageChanged(CurPageID: Integer);
+begin
+    if CurPageID = wpLicense then begin
+        if Loaded = False then begin
+            Loaded := True;
+            LoaderPage.Show();
+        end;
+    end;
 end;
