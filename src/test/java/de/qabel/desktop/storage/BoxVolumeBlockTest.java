@@ -4,6 +4,7 @@ import de.qabel.core.accounting.AccountingHTTP;
 import de.qabel.core.accounting.AccountingProfile;
 import de.qabel.core.config.AccountingServer;
 import de.qabel.core.crypto.QblECKeyPair;
+import org.junit.BeforeClass;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +15,11 @@ import static org.junit.Assert.fail;
 
 public class BoxVolumeBlockTest extends BoxVolumeTest {
 	private BlockReadBackend readBackend;
+	private static AccountingHTTP accountingHTTP;
+
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+	}
 
 	@Override
 	protected StorageReadBackend getReadBackend() {
@@ -23,9 +29,9 @@ public class BoxVolumeBlockTest extends BoxVolumeTest {
 	@Override
 	protected void setUpVolume() {
 		try {
-			QblECKeyPair keyPair = new QblECKeyPair();
 			AccountingServer server = new AccountingServer(new URI("http://localhost:9696"), new URI("http://localhost:9697"), "testuser", "testuser");
-			AccountingHTTP accountingHTTP = new AccountingHTTP(server, new AccountingProfile());
+			accountingHTTP = new AccountingHTTP(server, new AccountingProfile());
+			QblECKeyPair keyPair = new QblECKeyPair();
 
 			List<String> prefixes = accountingHTTP.getPrefixes();
 			if (prefixes.isEmpty()) {
@@ -54,7 +60,7 @@ public class BoxVolumeBlockTest extends BoxVolumeTest {
 					prefix
 			);
 		} catch (Exception e) {
-			fail(e.getMessage());
+			throw new IllegalStateException(e.getMessage(), e);
 		}
 	}
 

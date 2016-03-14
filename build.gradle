@@ -175,6 +175,13 @@ downloadLicenses {
 
     dependencyConfiguration = 'testCompile'
 }
+task distLicenses(type: Copy) {
+    from('src/main/resources')
+    include('dependency-license.xml', 'license-dependency.xml')
+    into('dist/resources/')
+}
+distLicenses.dependsOn tasks['downloadLicenses']
+jar.dependsOn(distLicenses)
 
 task lock() {}
 lock.dependsOn(saveLock)

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<ScrollPane fx:controller="de.qabel.desktop.ui.about.AboutController" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+    <content>
+        <VBox fx:id="linkContainer">
+            <children>
+                <Label styleClass="headline" text="%aboutHeadline" />
+                <Separator />
+                <VBox styleClass="labeled-link">
+                    <children>
+                        <Label text="%imprint" />
+                        <Hyperlink text="%imprintUrl" />
+                    </children>
+                </VBox>
+                <VBox styleClass="labeled-link">
+                    <children>
+                        <Label text="%privacy" />
+                        <Hyperlink text="%privacyUrl" />
+                    </children>
+                </VBox>
+                <VBox styleClass="labeled-link">
+                    <children>
+                        <Label text="%terms" />
+                        <Hyperlink text="%termsUrl" />
+                    </children>
+                </VBox>
+                <VBox styleClass="labeled-link">
+                    <children>
+                        <Label text="%qapl" />
+                        <Hyperlink text="%qaplUrl" />
+                    </children>
+                </VBox>
+            </children>
+            <styleClass>
+                <String fx:value="padded-page" />
+                <String fx:value="spaced" />
+            </styleClass>
+        </VBox>
+    </content>
+</ScrollPane>

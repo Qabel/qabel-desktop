@@ -193,7 +193,7 @@ public class DesktopClient extends Application {
 						new Thread(getDropDaemon(config)).start();
 						view = new LayoutView();
 						Parent view = this.view.getView();
-						Scene layoutScene = new Scene(view, 800, 600, true, aa);
+						Scene layoutScene = new Scene(view, 900, 600, true, aa);
 						Platform.runLater(() -> primaryStage.setScene(layoutScene));
 
 						if (config.getSelectedIdentity() != null) {

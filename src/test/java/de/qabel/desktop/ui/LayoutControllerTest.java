@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 
 public class LayoutControllerTest extends AbstractControllerTest {
 
-	public static final int MIN_ITEM_COUNT = 1;
+	public static final int MIN_ITEM_COUNT = 2;
 
 	@Test
 	public void testHidesNaviItemsByDefault() throws Exception {
