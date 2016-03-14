@@ -50,7 +50,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 
 			CachedBoxNavigation subnav = new CachedBoxNavigation(
 					this.nav.navigate(target),
-					BoxFileSystem.get(path.toString(), target.getName())
+					BoxFileSystem.get(path).resolve(target.getName())
 			);
 			cache.cache(target, subnav);
 			subnav.addObserver((o, arg) -> {setChanged(); notifyObservers(arg);});
@@ -324,6 +324,6 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 
 	@Override
 	public Path getPath(BoxObject folder) {
-		return BoxFileSystem.get(path.toString(), folder.getName());
+		return BoxFileSystem.get(path).resolve(folder.getName());
 	}
 }

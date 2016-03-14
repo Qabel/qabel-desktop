@@ -52,6 +52,15 @@ public class BoxFileSystem extends FileSystem {
 		return null;
 	}
 
+	public static Path getRoot() {
+		return get("/");
+	}
+
+	/**
+	 * @deprecated call get(Path oldPath) or getRoot(), because calling this with a spring
+	 * is dangerous with filesystems that have other separators
+	 */
+	@Deprecated
 	public static Path get(String first, String... more) {
 		return new BoxFileSystem().getPath(first, more);
 	}

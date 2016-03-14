@@ -28,7 +28,7 @@ public class CachedBoxVolume extends BoxVolume {
 				createIndex(getRootRef());
 				nav = super.navigate();
 			}
-			navigation = new CachedIndexNavigation(nav, BoxFileSystem.get("/"));
+			navigation = new CachedIndexNavigation(nav, BoxFileSystem.getRoot());
 		}
 		return navigation;
 	}

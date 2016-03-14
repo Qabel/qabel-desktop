@@ -507,7 +507,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 
 
 	void chooseUploadDirectory(File directory, TreeItem<BoxObject> item) throws IOException {
-		Path destination = BoxFileSystem.get(((FolderTreeItem) item).getPath().toString(), directory.getName());
+		Path destination = BoxFileSystem.get(((FolderTreeItem) item).getPath()).resolve(directory.getName());
 		uploadDirectory(directory.toPath(), destination);
 	}
 
