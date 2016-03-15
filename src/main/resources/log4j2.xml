@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Simple Logger with Level all, and appender to console and file -->
- 
+
 <Configuration>
   <Appenders>
     <RandomAccessFile name="RandomAccessFile" fileName="log/desktop.log" immediateFlush="false" append="false">
@@ -12,19 +12,16 @@
     </Console>
   </Appenders>
   <Loggers>
-    <logger name="de.qabel.desktop.storage" includeLocation="true ">
-      <level>WARN</level>
-      <AppenderRef ref="Console"/>
-    </logger>
-    <logger name="de.qabel.desktop.daemon" includeLocation="true ">
+    <logger name="de.qabel.desktop.daemon" includeLocation="true">
       <level>TRACE</level>
       <AppenderRef ref="Console"/>
     </logger>
-    <logger name="de.qabel.desktop.ui" includeLocation="true ">
-      <level>WARN</level>
-      <AppenderRef ref="Console"/>
+    <logger name="de.qabel.desktop" includeLocation="true">
+        <level>WARN</level>
+        <AppenderRef ref="Console"/>
+        <AppenderRef ref="RandomAccessFile"/>
     </logger>
-    <logger name="org.apache.http" includeLocation="true ">
+    <logger name="org.apache.http" includeLocation="true">
       <level>ERROR</level>
       <AppenderRef ref="Console"/>
     </logger>
@@ -32,5 +29,4 @@
       <AppenderRef ref="RandomAccessFile"/>
     </root>
   </Loggers>
-
 </Configuration>

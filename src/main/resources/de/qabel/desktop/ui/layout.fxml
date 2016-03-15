@@ -138,5 +138,10 @@
               </BorderPane>
            </center>
        </BorderPane>
+       <ImageView StackPane.alignment="TOP_LEFT" preserveRatio="true" fitHeight="64">
+           <image>
+               <Image url="@/beta-badge.png" />
+           </image>
+       </ImageView>
    </children>
 </StackPane>
