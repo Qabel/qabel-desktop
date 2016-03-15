@@ -40,39 +40,21 @@ public class BoxFile extends BoxObject {
 		return result;
 	}
 
-	/**
-	 * @param prefix
-	 * @param block
-	 * @param name
-	 * @param size
-	 * @param mtime in milliseconds
-	 * @param key
-	 */
 	public BoxFile(String prefix, String block, String name, Long size, Long mtime, byte[] key) {
 		super(name);
 		this.prefix = prefix;
 		this.block = block;
 		this.size = size;
-		this.mtime = mtime / 1000;
+		this.mtime = mtime;
 		this.key = key;
 	}
 
-	/**
-	 * @param prefix
-	 * @param block
-	 * @param name
-	 * @param size
-	 * @param mtime in milliseconds
-	 * @param key
-	 * @param meta
-	 * @param metaKey
-	 */
 	public BoxFile(String prefix, String block, String name, Long size, Long mtime, byte[] key, String meta, byte[] metaKey) {
 		super(name);
 		this.prefix = prefix;
 		this.block = block;
 		this.size = size;
-		this.mtime = mtime / 1000;
+		this.mtime = mtime;
 		this.meta = meta;
 		this.metakey = metaKey;
 		this.key = key;
@@ -101,7 +83,7 @@ public class BoxFile extends BoxObject {
 	}
 
 	public Long getMtime() {
-		return mtime * 1000;
+		return mtime;
 	}
 
 	public String getMeta() {
@@ -113,7 +95,6 @@ public class BoxFile extends BoxObject {
 	}
 
 	public void setMtime(long mtime) {
-		mtime = mtime / 1000;
 		this.mtime = mtime;
 		setChanged();
 		notifyObservers();
