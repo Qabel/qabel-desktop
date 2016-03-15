@@ -270,7 +270,7 @@ public class DirectoryMetadata extends AbstractMetadata {
 							rs.getString(++i),
 							rs.getString(++i),
 							rs.getLong(++i),
-							rs.getLong(++i),
+							rs.getLong(++i) * 1000,
 							rs.getBytes(++i),
 							rs.getString(++i),
 							rs.getBytes(++i)
@@ -298,7 +298,7 @@ public class DirectoryMetadata extends AbstractMetadata {
 			st.setString(++i, file.getBlock());
 			st.setString(++i, file.getName());
 			st.setLong(++i, file.getSize());
-			st.setLong(++i, file.getMtime());
+			st.setLong(++i, file.getMtime() / 1000);
 			st.setBytes(++i, file.getKey());
 			st.setString(++i, file.getMeta());
 			st.setBytes(++i, file.getMetakey());
@@ -463,7 +463,7 @@ public class DirectoryMetadata extends AbstractMetadata {
 							rs.getString(++i),
 							rs.getString(++i),
 							rs.getLong(++i),
-							rs.getLong(++i),
+							rs.getLong(++i) * 1000,
 							rs.getBytes(++i),
 							rs.getString(++i),
 							rs.getBytes(++i)
