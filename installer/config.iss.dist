@@ -1,4 +1,4 @@
-#define AppName "Qabel Desktop"
+#define AppName "Qabel Desktop Client"
 #define AppVersion "{version}"
 #define AppPublisher "Qabel GmbH"
 #define AppURL "https://qabel.de"
@@ -18,7 +18,7 @@ DefaultDirName={pf}\{#AppName}
 DefaultGroupName={#AppName}
 AllowNoIcons=yes
 OutputDir=.
-OutputBaseFilename=QabelSetup-{version}
+OutputBaseFilename=qabel-desktop-client-{version}-beta
 Compression=lzma
 SolidCompression=yes
 PrivilegesRequired=admin

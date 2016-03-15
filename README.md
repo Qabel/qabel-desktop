@@ -1,4 +1,4 @@
-# Qabel Desktop Application
+# Qabel Desktop Client
 For the documentation take a look at the [documentation](http://qabel.github.io/docs/).
 
 [![Build Status](https://jenkins.prae.me/buildStatus/icon?job=qabel-desktop)](https://jenkins.prae.me/job/qabel-desktop/)
