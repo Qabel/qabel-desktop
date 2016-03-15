@@ -55,7 +55,7 @@ public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig, O
 	@Override
 	public void setRemotePath(Path remotePath) {
 		if (!remotePath.isAbsolute()) {
-			remotePath = BoxFileSystem.get("/", remotePath.toString());
+			remotePath = BoxFileSystem.getRoot().resolve(remotePath);
 		}
 		if (this.remotePath != null && !this.remotePath.equals(remotePath)) {
 			setChanged();

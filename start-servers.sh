@@ -30,6 +30,7 @@ if [ ! -d ${DROP_VENV} ]; then
   virtualenv --no-site-packages --python=python3.4 ${DROP_VENV}
 fi
 source ${DROP_VENV}"/bin/activate"
+pip install -U pip
 pip install -r requirements.txt
 if [ ! -d config.py ]; then
   cp config.py.example config.py
@@ -53,6 +54,7 @@ if [ ! -d ${ACCOUNTING_VENV} ]; then
   virtualenv --no-site-packages --always-copy --python=python3.4 ${ACCOUNTING_VENV}
 fi
 source ${ACCOUNTING_VENV}"/bin/activate"
+pip install -U pip
 pip install -r requirements.txt
 yes "yes" | python manage.py migrate
 cp qabel_id/settings/local_settings.example.py qabel_id/settings/local_settings.py
@@ -78,6 +80,7 @@ cp config.ini.example config.ini
 sed --in-place 's/api_secret=".*"/api_secret="Changeme"/g' config.ini
 echo -e "\npsql_dsn='postgres://block_dummy:qabel_test_dummy@localhost/block_dummy'" >> config.ini
 source ${BLOCK_VENV}"/bin/activate"
+pip install -U pip
 pip install -r requirements.txt
 cd src
 
