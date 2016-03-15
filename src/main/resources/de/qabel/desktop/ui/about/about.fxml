@@ -51,6 +51,24 @@
                         <Hyperlink text="https://opensource.org/licenses/mit-license.html"/>
                     </children>
                 </VBox>
+                <VBox styleClass="labeled-link">
+                    <children>
+                        <Label text="Google Material Design Icons"/>
+                        <Hyperlink text="https://github.com/google/material-design-icons/blob/master/LICENSE"/>
+                    </children>
+                </VBox>
+                <VBox styleClass="labeled-link">
+                    <children>
+                        <Label text="Community Icons"/>
+                        <Hyperlink text="http://scripts.sil.org/OFL"/>
+                    </children>
+                </VBox>
+                <VBox styleClass="labeled-link">
+                    <children>
+                        <Label text="Source Sans Pro"/>
+                        <Hyperlink text="http://scripts.sil.org/OFL"/>
+                    </children>
+                </VBox>
             </children>
             <styleClass>
                 <String fx:value="padded-page" />
