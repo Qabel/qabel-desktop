@@ -78,7 +78,6 @@ public class LoginController extends AbstractController implements Initializable
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		List<String> providerList = new LinkedList<>();
-		providerList.add("http://localhost:9696");
 		providerList.add("https://accounting.qabel.org");
 		ObservableList<String> providers = new ObservableListWrapper<>(providerList);
 		providerChoices.setItems(providers);
