@@ -22,13 +22,13 @@
 				<ChoiceBox fx:id="providerChoices"/>
 
 				<TextField fx:id="user" alignment="CENTER" prefWidth="220.0" promptText="%loginBoxAccountUserName"
-						   styleClass="user" text="testuser"/>
+						   styleClass="user" text=""/>
 
 				<TextField fx:id="email" alignment="CENTER" managed="false" promptText="%loginUserEMail"
 						   styleClass="user"/>
 
 				<PasswordField fx:id="password" alignment="CENTER" prefWidth="220.0"
-							   promptText="%loginBoxAccountUserPassword" text="testuser"/>
+							   promptText="%loginBoxAccountUserPassword" text=""/>
 
 				<PasswordField fx:id="confirm" alignment="CENTER" managed="false" promptText="%loginConfirmPassword"/>
 
