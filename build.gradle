@@ -60,7 +60,7 @@ startScripts {
 
 jar.doFirst{
 	manifest {
-		attributes 'Implementation-Title': 'Qabel Desktop', 'Implementation-Version': version
+		attributes 'Implementation-Title': 'Qabel Desktop Client', 'Implementation-Version': version
 		attributes 'Main-Class': mainClassName
 	    attributes 'Class-Path': configurations.runtime.collect { it.getName() }.join(' ')
 	}
@@ -133,7 +133,7 @@ run {
 
 task fatJar(type: Jar) {
     manifest {
-        attributes 'Implementation-Title': 'Qabel Desktop', 'Implementation-Version': version
+        attributes 'Implementation-Title': 'Qabel Desktop Client', 'Implementation-Version': version
         attributes 'Main-Class': mainClassName
         attributes 'Class-Path': configurations.runtime.collect { it.getName() }.join(' ')
     }
