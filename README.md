@@ -1,8 +1,11 @@
-<img src="https://files.qabel.de/img/qabel-kl.png" height="64px"/>
+<a href="https://qabel.de" align="left">
+	<img src="https://files.qabel.de/img/qabel_logo_orange_preview.png" height="64px"/>
+</a>
+> Qabel Desktop Client
 
-# <img src="https://files.qabel.de/img/qabel_logo_orange_preview.png" height="32px"/> Qabel Desktop Client
 [![Build Status](https://jenkins.prae.me/buildStatus/icon?job=qabel-desktop)](https://jenkins.prae.me/job/qabel-desktop/)
 ![version](https://img.shields.io/badge/beta-0.5.0--beta.1-ff690f.svg)
+
 This project provides a Desktop Client for [Qabel]/https://qabel.de) currently targeting Windows. It is a small part of the qabel platform.
 
 ![screenshot](https://raw.githubusercontent.com/Qabel/qabel-desktop/master/readme/screenshot.png)
