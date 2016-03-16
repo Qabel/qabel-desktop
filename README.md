@@ -16,7 +16,8 @@ This project provides a Desktop Client for <a href="https://qabel.de"><img alt="
 	<a href="#introduction">Introduction</a> |
 	<a href="#getting_started">Getting Started</a> |
 	<a href="#usage">Usage</a> |
-	<a href="#structure">Structure</a>
+	<a href="#structure">Structure</a> |
+	<a href="#contribution">Contribution</a>
 </p>
 
 # Introduction
@@ -200,3 +201,9 @@ adjust the path relative to the path you are running the command from.
 One syncer is started per BoxSyncConfig. Both, the local and the remote filesystem send notifications of changed files to the syncer. Remotely, a poller let's the BoxNavigations update itself every few seconds and they will notify the syncer if a change happened.
 The syncer checks it's SyncIndex for information about the changed file (to prevent event loops, like a download triggering a local fs event). If everything is fine, the Syncer schedules a transaction (up- or download) at the central LoadManager that executes these transactions synchronously. Once finished, the LoadManager updates the SyncIndex (per callback) to store the current state of synchronization.
 The SyncIndex is persisted on change to allow detection of events that occured during a clients offline period.
+
+# Contribution
+
+For issues using the Qabel Desktop Client, use the **feedback button** (<img alt="feedback icon" src="https://raw.githubusercontent.com/Qabel/qabel-desktop/master/src/main/resources/img/exclamation.png" height="14px"/>) inside the application.
+
+Otherwise, use the Issue tracker of GitHub.
