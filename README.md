@@ -3,7 +3,7 @@
 [![Build Status](https://jenkins.prae.me/buildStatus/icon?job=qabel-desktop)](https://jenkins.prae.me/job/qabel-desktop/)
 ![version](https://img.shields.io/badge/beta-0.5.0--beta.1-ff690f.svg)
 
-# <img src="https://files.qabel.de/img/qabel_logo_orange_preview.png" height="64px"/> Qabel Desktop Client
+# <img src="https://files.qabel.de/img/qabel_logo_orange_preview.png" height="32px"/> Qabel Desktop Client
 This project provides a Desktop Client for Qabel currently targeting Windows as platform.
 
 For a comprehensive documentation of the whole Qabel Platform use https://qabel.de as the main source of information. http://qabel.github.io/docs/ may provide additional technical information.
