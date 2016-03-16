@@ -1,13 +1,21 @@
 <a href="https://qabel.de" align="left">
-	<img src="https://files.qabel.de/img/qabel_logo_orange_preview.png" height="64px"/>
+	<img src="https://files.qabel.de/img/qabel_logo_orange_preview.png" height="150px" align="left"/>
 </a>
-> Qabel Desktop Client
+<img align="left" width="0" height="150px" hspace="10"/>
+> The Qabel Desktop Client
 
 [![Build Status](https://jenkins.prae.me/buildStatus/icon?job=qabel-desktop)](https://jenkins.prae.me/job/qabel-desktop/)
 ![version](https://img.shields.io/badge/beta-0.5.0--beta.1-ff690f.svg)
 
 This project provides a Desktop Client for [Qabel]/https://qabel.de) currently targeting Windows. It is a small part of the qabel platform.
 
+<p align="center">
+	<a href="#introduction">Introduction</a> |
+	<a href="#usage">Usage</a> |
+	...
+</p>
+
+# Introduction
 ![screenshot](https://raw.githubusercontent.com/Qabel/qabel-desktop/master/readme/screenshot.png)
 
 For a comprehensive documentation of the whole Qabel Platform use https://qabel.de as the main source of information. http://qabel.github.io/docs/ may provide additional technical information.
@@ -18,6 +26,7 @@ Qabel consists of multiple Projects:
  * [Qabel Accounting Server](https://github.com/Qabel/qabel-accounting) accounting server for Qabel-Accounts that authorize Qabel Box usage according to the [Qabel Box Protocol](http://qabel.github.io/docs/Qabel-Protocol-Box/)
  * [Qabel Block Server](https://github.com/Qabel/qabel-block) storage backend according to the [Qabel Box Protocol](http://qabel.github.io/docs/Qabel-Protocol-Box/)
 
+# Usage
 
 ## Install
 
