@@ -4,7 +4,9 @@
 ![version](https://img.shields.io/badge/beta-0.5.0--beta.1-ff690f.svg)
 
 # <img src="https://files.qabel.de/img/qabel_logo_orange_preview.png" height="32px"/> Qabel Desktop Client
-This project provides a Desktop Client for Qabel currently targeting Windows as platform.
+This project provides a Desktop Client for Qabel currently targeting Windows. It is a small part of the qabel platform.
+
+![screenshot](https://raw.githubusercontent.com/Qabel/qabel-desktop/master/readme/screenshot.png)
 
 For a comprehensive documentation of the whole Qabel Platform use https://qabel.de as the main source of information. http://qabel.github.io/docs/ may provide additional technical information.
 
@@ -13,6 +15,7 @@ Qabel consists of multiple Projects:
  * [Qabel Drop Server](https://github.com/Qabel/qabel-drop) target server for drop messages according to the [Qabel Drop Protocol](http://qabel.github.io/docs/Qabel-Protocol-Drop/)
  * [Qabel Accounting Server](https://github.com/Qabel/qabel-accounting) accounting server for Qabel-Accounts that authorize Qabel Box usage according to the [Qabel Box Protocol](http://qabel.github.io/docs/Qabel-Protocol-Box/)
  * [Qabel Block Server](https://github.com/Qabel/qabel-block) storage backend according to the [Qabel Box Protocol](http://qabel.github.io/docs/Qabel-Protocol-Box/)
+
 
 ## Install
 
