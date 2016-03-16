@@ -1,11 +1,26 @@
-# Qabel Desktop Client
-For the documentation take a look at the [documentation](http://qabel.github.io/docs/).
+<img src="https://files.qabel.de/img/qabel-kl.png" height="128px"/>
 
 [![Build Status](https://jenkins.prae.me/buildStatus/icon?job=qabel-desktop)](https://jenkins.prae.me/job/qabel-desktop/)
+![version](https://img.shields.io/badge/beta-0.5.0--beta.1-ff690f.svg)
+
+# <img src="https://files.qabel.de/img/qabel_logo_orange_preview.png" height="64px"/> Qabel Desktop Client
+This project provides a Desktop Client for Qabel currently targeting Windows as platform.
+
+For a comprehensive documentation of the whole Qabel Platform use https://qabel.de as the main source of information. http://qabel.github.io/docs/ may provide additional technical information.
+
+Qabel consists of multiple Projects:
+ * [Qabel Android Client](https://github.com/Qabel/qabel-android)
+ * [Qabel Drop Server](https://github.com/Qabel/qabel-drop) target server for drop messages according to the [Qabel Drop Protocol](http://qabel.github.io/docs/Qabel-Protocol-Drop/)
+ * [Qabel Accounting Server](https://github.com/Qabel/qabel-accounting) accounting server for Qabel-Accounts that authorize Qabel Box usage according to the [Qabel Box Protocol](http://qabel.github.io/docs/Qabel-Protocol-Box/)
+ * [Qabel Block Server](https://github.com/Qabel/qabel-block) storage backend according to the [Qabel Box Protocol](http://qabel.github.io/docs/Qabel-Protocol-Box/)
+
+## Install
+
+Distributions for Windows (and [Android](https://github.com/Qabel/qabel-android)) are provided by the [official Qabel website](https://qabel.de) at https://qabel.de/de/download
 
 ## Quick Start (for developers)
 
-#### preconditions
+#### preconditions //TODO update
 
 * to build the java code, you need an **OracleJDK 1.8 u67** or higher
 * to build the libcurve from the [Qabel Core Project](https://github.com/Qabel/qabel-core) (lib called with JNI) you need a **C-Compiler** (`apt-get install build-essential` for ubuntu)
