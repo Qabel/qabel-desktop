@@ -7,7 +7,7 @@
 [![Build Status](https://jenkins.prae.me/buildStatus/icon?job=qabel-desktop)](https://jenkins.prae.me/job/qabel-desktop/)
 ![version](https://img.shields.io/badge/beta-0.5.0--beta.1-ff690f.svg)
 
-This project provides a Desktop Client for [Qabel]/https://qabel.de) currently targeting Windows. It is a small part of the qabel platform.
+This project provides a Desktop Client for [Qabel](https://qabel.de) currently targeting Windows. It is a small part of the qabel platform.
 
 <p align="center">
 	<a href="#introduction">Introduction</a> |
