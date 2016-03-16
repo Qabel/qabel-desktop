@@ -10,6 +10,8 @@
 
 This project provides a Desktop Client for <a href="https://qabel.de"><img alt="Qabel" src="https://files.qabel.de/img/qabel-kl.png" height="18px"/></a> currently targeting Windows. It is a small part of the qabel platform.
 
+<br style="clear: both"/>
+<br style="clear: both"/>
 <p align="center">
 	<a href="#introduction">Introduction</a> |
 	<a href="#getting_started">Getting Started</a> |
@@ -24,10 +26,10 @@ For a comprehensive documentation of the whole Qabel Platform use https://qabel.
 
 Qabel consists of multiple Projects:
  * [Qabel Android Client](https://github.com/Qabel/qabel-android)
- * [Qabel Drop Server](https://github.com/Qabel/qabel-drop) target server for drop messages according to the [Qabel Drop Protocol](http://qabel.github.io/docs/Qabel-Protocol-Drop/)
- * [Qabel Accounting Server](https://github.com/Qabel/qabel-accounting) accounting server for Qabel-Accounts that authorize Qabel Box usage according to the [Qabel Box Protocol](http://qabel.github.io/docs/Qabel-Protocol-Box/)
- * [Qabel Block Server](https://github.com/Qabel/qabel-block) storage backend according to the [Qabel Box Protocol](http://qabel.github.io/docs/Qabel-Protocol-Box/)
- * [Qabel Core](https://github.com/Qabel/qabel-core) is a library that includes the common code between both clients to keep them spec conform
+ * [Qabel Core](https://github.com/Qabel/qabel-core) is a library that includes the common code between both clients to keep them consistent
+ * [Qabel Drop Server](https://github.com/Qabel/qabel-drop) is the target server for drop messages according to the [Qabel Drop Protocol](http://qabel.github.io/docs/Qabel-Protocol-Drop/)
+ * [Qabel Accounting Server](https://github.com/Qabel/qabel-accounting) manages Qabel-Accounts that authorize Qabel Box usage according to the [Qabel Box Protocol](http://qabel.github.io/docs/Qabel-Protocol-Box/)
+ * [Qabel Block Server](https://github.com/Qabel/qabel-block) serves as the storage backend according to the [Qabel Box Protocol](http://qabel.github.io/docs/Qabel-Protocol-Box/)
 
 # Install
 
