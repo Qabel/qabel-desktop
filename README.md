@@ -68,17 +68,12 @@ If that doesn't work for you for any reason, you need to follow the long way wit
 (If you want to use vagrant,) start the vagrant vm with `vagrant up`.
 It will install all requirements like java or postgres and run the three qabel servers (drop, accounting and block).
 
-### server test-instances  (skip this if using vagrant)
+### server test-instances
 
-* the submodules include two required **servers**: [Qabel Drop Server](https://github.com/Qabel/qabel-drop/blob/master/README.md) and [Qabel Accounting Server](https://github.com/Qabel/qabel-accounting/blob/master/README.md) to work. They will be started automatically for you (`start-server.sh`) but have some additional requirements like **postgresql**:
- * install postgresql-server (`apt-get install postgresql` for ubuntu)
- * connect to your postgresql server using a proper client (like psql)
- * to create the database, the user and give access permissions, run
-    * `CREATE DATABASE 'qabel_drop'`
-    * `CREATE USER qabel WITH PASSWORD 'qabel_test'`
-    * `GRANT ALL PRIVILEGES ON DATABASE qabel_drop TO qabel`
- * for python integration with postgresql, you will need the postgresql-devel libs (`apt-get install libpq-dev` for ubuntu)
- * to connect with an S3 instance, set up an aws config as described [here](https://boto3.readthedocs.org/en/latest/guide/quickstart.html#configuration)
+the submodules include three required **servers**: [Qabel Drop Server](https://github.com/Qabel/qabel-drop), [Qabel Accounting Server](https://github.com/Qabel/qabel-accounting) and [Qabel Block Server](https://github.com/Qabel/qabel-block) to work. They will be started automatically for you when using the Vagrantbox or running `start-server.sh` inside the Vagrantbox.
+
+When not using Vagrant, follow the instructions of the project readmes of take a look inside the Vagrantfile to run all thee locally.
+The tests assume the drop server on port 5000, the accounting server on port 9696 and the block server on port 9697.
 
 ### build it
 
