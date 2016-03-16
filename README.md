@@ -12,7 +12,7 @@ This project provides a Desktop Client for <a href="https://qabel.de"><img alt="
 
 <p align="center">
 	<a href="#introduction">Introduction</a> |
-	<a href="#getting started">Getting Started</a> |
+	<a href="#getting_started">Getting Started</a> |
 	<a href="#usage">Usage</a> |
 	<a href="#structure">Structure</a>
 </p>
@@ -34,7 +34,7 @@ Qabel consists of multiple Projects:
 Distributions for Windows (and [Android](https://github.com/Qabel/qabel-android)) are provided by the [official Qabel website](https://qabel.de) at https://qabel.de/de/download .
 Everything below this line describes the usage of the Qabel Desktop Client for development purposes.
 
-# Getting started
+# <a name="getting_started"></a>Getting started
 // TODO move this to a separate install instruction
 
 After cloning this repository, don't forget to load the submodules, too. They are required to run the tests or the client locally.
@@ -170,7 +170,7 @@ java -Djava.library.path=libs -jar qabel-desktop-dev.jar
 ```
 adjust the path relative to the path you are running the command from.
 
-# Stucture
+# Structure
 
 * the configuration is stored in a sqlite file named `db.sqlite`
 * Because JavaFX with FXML uses magic injections anyways, the Contollers for all JavaFX-Views get their properties by magic `javax.inject` implemented by Afterburner.FX
