@@ -12,8 +12,9 @@ This project provides a Desktop Client for <a href="https://qabel.de"><img alt="
 
 <p align="center">
 	<a href="#introduction">Introduction</a> |
+	<a href="#getting started">Getting Started</a> |
 	<a href="#usage">Usage</a> |
-	...
+	<a href="#structure">Structure</a>
 </p>
 
 # Introduction
@@ -40,6 +41,19 @@ After cloning this repository, don't forget to load the submodules, too. They ar
 ```BASH
 git submodule update --init --recursive
 ```
+
+The easiest way to get started is using [Vagrant](https://www.vagrantup.com/):
+```
+vagrant up
+vagrant ssh
+cd /vagrant
+./gradlew run
+```
+
+If that doesn't work for you for any reason, you need to follow the long way with <a href="#usage">Usage</a>
+
+# Usage
+**(aka "the long way")**
 
 ### preconditions
 
@@ -156,7 +170,7 @@ java -Djava.library.path=libs -jar qabel-desktop-dev.jar
 ```
 adjust the path relative to the path you are running the command from.
 
-# Development-Infos
+# Stucture
 
 * the configuration is stored in a sqlite file named `db.sqlite`
 * Because JavaFX with FXML uses magic injections anyways, the Contollers for all JavaFX-Views get their properties by magic `javax.inject` implemented by Afterburner.FX
