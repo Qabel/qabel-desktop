@@ -35,7 +35,7 @@ fi
 source ${DROP_VENV}"/bin/activate"
 echo "installing dependencies..."
 pip install -q -U pip
-pip install -q -r requirements.txt
+pip install -q -U -r requirements.txt
 if [ ! -d config.py ]; then
   cp config.py.example config.py
   sed --in-place "s/'qabel_drop'/'qabel_drop','host':'localhost','port':'5432','username':'qabel','password':'qabel_test'/" config.py
@@ -61,7 +61,7 @@ fi
 source ${ACCOUNTING_VENV}"/bin/activate"
 echo "installing dependencies..."
 pip install -q -U pip
-pip install -q -r requirements.txt
+pip install -q -U -r requirements.txt
 yes "yes" | python manage.py migrate
 cp qabel_id/settings/local_settings.example.py qabel_id/settings/local_settings.py
 echo -e "\nEMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'\n" >> qabel_id/settings/local_settings.py
@@ -89,12 +89,11 @@ echo -e "\npsql_dsn='postgres://block_dummy:qabel_test_dummy@localhost/block_dum
 source ${BLOCK_VENV}"/bin/activate"
 echo "installing dependencies..."
 pip install -q -U pip
-pip install -q -r requirements.txt
+pip install -q -U -r requirements.txt
 cd src
 
 echo "preparing database..."
-python manage.py dropdb --psql-dsn 'postgres://block_dummy:qabel_test_dummy@localhost/block_dummy'
-python manage.py initdb --psql-dsn 'postgres://block_dummy:qabel_test_dummy@localhost/block_dummy'
+alembic -x "url=postgres://block_dummy:qabel_test_dummy@localhost/block_dummy" upgrade head
 python run.py --debug --dummy --dummy-log --dummy-cache --apisecret=Changeme --accounting-host=http://localhost:9696 --address=0.0.0.0 --port=9697 --psql-dsn='postgres://block_dummy:qabel_test_dummy@localhost/block_dummy' > ../block.log 2>&1 &
 echo $! > ../block.pid
 deactivate
