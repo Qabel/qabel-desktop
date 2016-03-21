@@ -17,6 +17,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -26,6 +28,8 @@ import java.net.URL;
 import java.util.*;
 
 public class LoginController extends AbstractController implements Initializable {
+	private static final Logger logger = LoggerFactory.getLogger(LoginController.class.getSimpleName());
+
 	@FXML
 	ChoiceBox<String> providerChoices;
 
@@ -100,10 +104,7 @@ public class LoginController extends AbstractController implements Initializable
 		}
 	}
 
-	public void newPassword(ActionEvent actionEvent) {
-		newPassword();
-	}
-
+	@FXML
 	public void newPassword() {
 		new Thread(() -> {
 			try {
@@ -118,10 +119,7 @@ public class LoginController extends AbstractController implements Initializable
 		}).start();
 	}
 
-	public void recoverPassword(ActionEvent actionEvent) {
-		recoverPassword();
-	}
-
+	@FXML
 	public void recoverPassword() {
 
 		Platform.runLater(() -> {
@@ -136,12 +134,8 @@ public class LoginController extends AbstractController implements Initializable
 
 	}
 
-
-	public void openCreateBoxAccountSetup(ActionEvent actionEvent) {
-		openCreateBoxAccountSetup();
-	}
-
-	private void openCreateBoxAccountSetup() {
+	@FXML
+	public void openCreateBoxAccountSetup() {
 		Platform.runLater(() -> {
 			email.setManaged(true);
 			confirm.setManaged(true);
@@ -155,12 +149,8 @@ public class LoginController extends AbstractController implements Initializable
 		});
 	}
 
-
-	public void createBoxAccount(ActionEvent actionEvent) {
-		createBoxAccount();
-	}
-
-	private void createBoxAccount() {
+	@FXML
+	public void createBoxAccount() {
 		toProgressState();
 
 		new Thread(() -> {
@@ -207,6 +197,7 @@ public class LoginController extends AbstractController implements Initializable
 				toCreateFailureState(finalText));
 	}
 
+	@FXML
 	public void login() {
 		toProgressState();
 
@@ -218,7 +209,8 @@ public class LoginController extends AbstractController implements Initializable
 				config.setAccount(account);
 
 			} catch (URISyntaxException | IOException e) {
-				e.printStackTrace();
+				logger.warn(e.getMessage(), e);
+				Platform.runLater(() -> toLoginFailureState(e.getMessage()));
 			} catch (QblInvalidCredentials qblInvalidCredentials) {
 				qblInvalidCredentials.printStackTrace();
 				Platform.runLater(() -> toLoginFailureState(qblInvalidCredentials.getMessage()));
@@ -251,21 +243,21 @@ public class LoginController extends AbstractController implements Initializable
 
 	private void toLoginFailureState(String message) {
 		buttonBar.setVisible(true);
-		loginButton.getStyleClass().add("error");
+		showError(message, this.loginButton);
+	}
+
+	private void showError(String message, Button button) {
+		button.getStyleClass().add("error");
 		Tooltip t = new Tooltip(message);
-		loginButton.setTooltip(t);
+		button.setTooltip(t);
 	}
 
 	private void toCreateFailureState(String message) {
-		createButton.getStyleClass().add("error");
-		Tooltip t = new Tooltip(message);
-		createButton.setTooltip(t);
+		showError(message, createButton);
 	}
 
 	private void toEMailSendFailureState(String message) {
-		newPassword.getStyleClass().add("error");
-		Tooltip t = new Tooltip(message);
-		newPassword.setTooltip(t);
+		showError(message, newPassword);
 	}
 
 	private void toMailSend(String message) {

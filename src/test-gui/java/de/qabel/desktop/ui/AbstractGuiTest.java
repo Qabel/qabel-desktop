@@ -41,7 +41,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 
 	protected abstract FXMLView getView();
 
-	private Object launchNode(FXMLView view) {
+	protected Object launchNode(FXMLView view) {
 		Parent node = view.getView();
 		scene = new Scene(node, getWidth(), getHeight());
 		Object presenter = view.getPresenter();
