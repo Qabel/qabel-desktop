@@ -1,8 +1,7 @@
 package de.qabel.desktop.ui.accounting.login;
 
+import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.desktop.ui.AbstractGuiTest;
-import de.qabel.desktop.ui.connector.HttpDropConnector;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Random;
@@ -10,10 +9,30 @@ import java.util.Random;
 import static junit.framework.Assert.assertTrue;
 
 
-public class CreateBoxAccountUiTest extends AbstractGuiTest<LoginController> {
+public class LoginGuiTest extends AbstractGuiTest<LoginController> {
 	@Override
 	protected LoginView getView() {
 		return new LoginView();
+	}
+
+	private void setup() {
+		runLaterAndWait(() -> {
+			controller.providerChoices.getItems().clear();
+			controller.providerChoices.getItems().add("http://localhost:9696");
+			controller.providerChoices.setValue("http://localhost:9696");
+		});
+		runLaterAndWait(() -> controller.user.clear());
+		runLaterAndWait(() -> controller.password.clear());
+	}
+
+	@Test
+	public void showsFailureOnInvalidCredentials() {
+		setup();
+		clickOn("#user");
+		runLaterAndWait(() -> controller.user.clear());
+		clickOn("#user").write("invalid user");
+		clickOn("#loginButton");
+		waitUntil(() -> controller.loginButton.getStyleClass().contains("error"));
 	}
 
 	private Random random = new Random();
@@ -100,15 +119,11 @@ public class CreateBoxAccountUiTest extends AbstractGuiTest<LoginController> {
 
 	@Test
 	public void errorButtonTest() {
+		setup();
 		runLaterAndWait(() -> controller.user.clear());
 		clickOn("#openCreateButton");
 		clickOn("#createButton");
 		waitUntil(() -> controller.createButton.getStyleClass().contains("error"), 5000L);
 		assertTrue(controller.createButton.getStyleClass().contains("error"));
-	}
-
-	private void setup() {
-		runLaterAndWait(() -> controller.user.clear());
-		runLaterAndWait(() -> controller.password.clear());
 	}
 }

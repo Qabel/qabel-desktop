@@ -4,7 +4,7 @@ set -e
 function waitForPort {
     started=false
     echo -n "waiting for port "$1" "
-    for i in `seq 0 9`; do
+    for i in `seq 0 29`; do
         echo -n "."
         if [ $(curl -I "http://localhost:"$1 2>/dev/null | grep "HTTP/1" | cut -d' ' -f2)"" == "404" ]; then
             started=true
@@ -93,8 +93,7 @@ pip install -q -r requirements.txt
 cd src
 
 echo "preparing database..."
-python manage.py dropdb --psql-dsn 'postgres://block_dummy:qabel_test_dummy@localhost/block_dummy'
-python manage.py initdb --psql-dsn 'postgres://block_dummy:qabel_test_dummy@localhost/block_dummy'
+alembic -x 'url=postgres://block_dummy:qabel_test_dummy@localhost/block_dummy' upgrade head
 python run.py --debug --dummy --dummy-log --dummy-cache --apisecret=Changeme --accounting-host=http://localhost:9696 --address=0.0.0.0 --port=9697 --psql-dsn='postgres://block_dummy:qabel_test_dummy@localhost/block_dummy' > ../block.log 2>&1 &
 echo $! > ../block.pid
 deactivate
