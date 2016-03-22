@@ -1,17 +1,16 @@
 package de.qabel.desktop.ui.inject;
 
 import com.airhacks.afterburner.injection.Injector;
+import de.qabel.desktop.ServiceFactory;
+import de.qabel.desktop.inject.DefaultServiceFactory;
 import org.junit.After;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 
 public class RecursiveInjectionInstanceSupplierTest {
-	private Map<String, Object> properties = new HashMap<>();
+	private ServiceFactory properties = new DefaultServiceFactory();
 
 	@After
 	public void tearDown() {

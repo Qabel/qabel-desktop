@@ -23,8 +23,8 @@
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
                                     <children>
-                        <BorderPane nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="200.0">
-                           <center>
+                                        <BorderPane nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="200.0">
+                                            <center>
 							   <Label fx:id="name" maxWidth="1.7976931348623157E308" text="My Documents"
 									  BorderPane.alignment="CENTER">
 								   <font>
@@ -32,8 +32,11 @@
 								   </font>
 							   </Label>
                            </center>
-                        </BorderPane>
-                        <HBox style="-fx-spacing: 20;">
+                                            <right>
+                                                <Label fx:id="pollState" prefWidth="20" prefHeight="20"></Label>
+                                            </right>
+                                        </BorderPane>
+                                        <HBox style="-fx-spacing: 20;">
                            <children>
                               <ImageView fx:id="syncImage" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -82,9 +85,9 @@
                               </VBox>
                            </children>
                         </HBox>
-							</children>
+                                    </children>
                                 </VBox>
-								<ProgressBar fx:id="progress" maxHeight="20.0" prefHeight="20.0" prefWidth="555.0"
+                                <ProgressBar fx:id="progress" maxHeight="20.0" prefHeight="20.0" prefWidth="555.0"
 											 progress="0.35">
 									<VBox.margin>
 										<Insets left="10.0"/>
