@@ -70,6 +70,26 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 	}
 
 	@Test
+	public void afterStopFilesAreNotAddedAsUploads() throws Exception {
+		syncer = new DefaultSyncer(config, new BoxVolumeStub(), manager);
+		syncer.run();
+
+		waitUntil(() -> manager.getTransactions().size() == 1);
+		syncer.stop();
+		new File(tmpDir.toFile(), "file").createNewFile();
+		syncer.startWatcher();
+
+		waitUntil(() -> manager.getTransactions().size() == 3, () -> "expected 6 transactions but got " + manager.getTransactions().size() + ": " + manager.getTransactions());
+		// pre restart
+		assertTrue(Files.isDirectory(manager.getTransactions().get(0).getSource()));
+
+		// after restart (everything is re-notified)
+		assertTrue(Files.isDirectory(manager.getTransactions().get(1).getSource()));	// root
+		assertEquals("file", manager.getTransactions().get(2).getSource().getFileName().toString());
+		assertEquals(3, manager.getTransactions().size());
+	}
+
+	@Test
 	public void addsFoldersAsDownloads() throws Exception {
 		BoxNavigationStub nav = new BoxNavigationStub(null, null);
 		nav.event = new RemoteChangeEvent(Paths.get("/tmp/someFolder"), true, 1000L, ChangeEvent.TYPE.CREATE, null, nav);
