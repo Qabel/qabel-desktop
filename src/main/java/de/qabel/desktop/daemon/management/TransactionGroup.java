@@ -52,4 +52,15 @@ public class TransactionGroup extends Observable implements Observer, HasProgres
 		setChanged();
 		notifyObservers(transaction);
 	}
+
+	public void cancel() {
+		synchronized (transactions) {
+			for (Transaction t: transactions.toArray(new Transaction[0])) {
+				if (t.isDone()) {
+					continue;
+				}
+				t.toState(Transaction.STATE.FAILED);
+			}
+		}
+	}
 }

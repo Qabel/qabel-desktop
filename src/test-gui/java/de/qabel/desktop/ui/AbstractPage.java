@@ -77,12 +77,15 @@ public class AbstractPage {
 		Node[] nodes = new Node[1];
 		waitUntil(() -> {
 			Optional<Node> node = robot.lookup(query).tryQueryFirst();
-			boolean present = node.isPresent();
+			boolean present = node.isPresent() && node.get() != null;
 			if (present) {
 				nodes[0] = node.get();
 			}
 			return present;
 		});
+		if (nodes[0] == null) {
+			throw new IllegalStateException("node should be present but is null: " + query);
+		}
 		return nodes[0];
 	}
 
