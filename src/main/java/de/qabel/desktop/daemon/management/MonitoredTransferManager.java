@@ -39,6 +39,11 @@ public class MonitoredTransferManager implements TransferManager {
 	}
 
 	@Override
+	public void cleanup() {
+		manager.cleanup();
+	}
+
+	@Override
 	public void run() {
 		manager.run();
 	}

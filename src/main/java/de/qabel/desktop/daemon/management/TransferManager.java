@@ -8,4 +8,9 @@ public interface TransferManager extends Runnable {
 	void addUpload(Upload upload);
 	void addDownload(Download download);
 	List<Transaction> getHistory();
+
+	/**
+	 * removes Transactions that are no longer valid or cancelled
+	 */
+	void cleanup();
 }

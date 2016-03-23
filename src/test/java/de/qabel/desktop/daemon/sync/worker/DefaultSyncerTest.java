@@ -90,13 +90,24 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 	}
 
 	@Test
-	public void stopStoppsPolling() throws Exception {
+	public void stopStopsPolling() throws Exception {
 		syncer = new DefaultSyncer(config, new BoxVolumeStub(), manager);
 		syncer.run();
 
 		waitUntil(() -> manager.getTransactions().size() == 1 && syncer.isPolling());
 		syncer.stop();
 		assertFalse(syncer.isPolling());
+	}
+
+	@Test
+	public void stopStopsTransactions() throws Exception {
+		syncer = new DefaultSyncer(config, new BoxVolumeStub(), manager);
+		syncer.run();
+
+		waitUntil(() -> manager.getTransactions().size() == 1);
+		syncer.stop();
+		manager.cleanup();
+		assertEquals(0, manager.getTransactions().size());
 	}
 
 	@Test

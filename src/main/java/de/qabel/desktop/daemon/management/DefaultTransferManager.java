@@ -48,6 +48,20 @@ public class DefaultTransferManager extends Observable implements TransferManage
 	}
 
 	@Override
+	public void cleanup() {
+		synchronized (transactions) {
+			Iterator<Transaction> iter = transactions.iterator();
+			Transaction transaction;
+			while (iter.hasNext()) {
+				transaction = iter.next();
+				if (transaction.isDone() || !transaction.isValid()) {
+					iter.remove();
+				}
+			}
+		}
+	}
+
+	@Override
 	public void addUpload(Upload upload) {
 		logger.trace("upload added: " + upload.getSource() + " to " + upload.getDestination());
 		transactions.add(upload);

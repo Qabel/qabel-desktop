@@ -299,6 +299,7 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 		poller.interrupt();
 		watcher.join();
 		poller.join();
+		progress.cancel();
 	}
 
 	public boolean isPolling() {

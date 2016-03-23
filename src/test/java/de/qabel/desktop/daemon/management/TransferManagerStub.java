@@ -28,6 +28,11 @@ public class TransferManagerStub implements TransferManager {
 	}
 
 	@Override
+	public void cleanup() {
+
+	}
+
+	@Override
 	public void run() {
 		hasRun = true;
 	}
