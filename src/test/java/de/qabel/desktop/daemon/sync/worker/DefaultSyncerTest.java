@@ -90,6 +90,16 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 	}
 
 	@Test
+	public void stopStoppsPolling() throws Exception {
+		syncer = new DefaultSyncer(config, new BoxVolumeStub(), manager);
+		syncer.run();
+
+		waitUntil(() -> manager.getTransactions().size() == 1 && syncer.isPolling());
+		syncer.stop();
+		assertFalse(syncer.isPolling());
+	}
+
+	@Test
 	public void addsFoldersAsDownloads() throws Exception {
 		BoxNavigationStub nav = new BoxNavigationStub(null, null);
 		nav.event = new RemoteChangeEvent(Paths.get("/tmp/someFolder"), true, 1000L, ChangeEvent.TYPE.CREATE, null, nav);

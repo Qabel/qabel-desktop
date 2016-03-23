@@ -79,7 +79,7 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 						nav.refresh();
 						polling = true;
 					} catch (QblStorageException e) {
-						e.printStackTrace();
+						logger.warn("polling failed: " + e.getMessage(), e);
 					}
 					Thread.sleep(pollUnit.toMillis(pollInterval));
 				}
@@ -296,7 +296,9 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 	@Override
 	public void stop() throws InterruptedException {
 		watcher.interrupt();
+		poller.interrupt();
 		watcher.join();
+		poller.join();
 	}
 
 	public boolean isPolling() {
