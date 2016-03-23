@@ -150,16 +150,22 @@
 
 .inline-button {
     -fx-cursor: hand;
-    -fx-opacity: 0.5;
-}
-.inline-button.highlighted {
     -fx-opacity: 1.0;
 }
-.inline-button:hover {
+.inline-button.highlighted {
     -fx-opacity: 0.9;
+}
+.inline-button:hover {
+    -fx-opacity: 0.5;
 }
 .inline-button:pressed {
     -fx-opacity: 0.7;
+}
+.inline-button.faded-button {
+    -fx-opacity: 0.5;
+}
+.inline-button.faded-button:hover {
+    -fx-opacity: 0.9;
 }
 
 .combo-box {

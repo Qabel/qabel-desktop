@@ -25,15 +25,20 @@
                                     <children>
                                         <BorderPane nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="200.0">
                                             <center>
-							   <Label fx:id="name" maxWidth="1.7976931348623157E308" text="My Documents"
-									  BorderPane.alignment="CENTER">
-								   <font>
-									   <Font name="System Bold" size="22.0"/>
-								   </font>
-							   </Label>
-                           </center>
+                                                <Label fx:id="name" maxWidth="1.7976931348623157E308" text="My Documents"
+                                                      BorderPane.alignment="CENTER">
+                                                    <font>
+                                                        <Font name="System Bold" size="22.0"/>
+                                                    </font>
+                                                </Label>
+                                            </center>
                                             <right>
                                                 <Label fx:id="pollState" prefWidth="20" prefHeight="20"></Label>
+                                                <ImageView fx:id="deleteSync" onMouseClicked="#delete" styleClass="inline-button" preserveRatio="true" fitHeight="16" style="-fx-alignment: CENTER-RIGHT">
+                                                    <image>
+                                                        <Image url="@/icon/delete.png"/>
+                                                    </image>
+                                                </ImageView>
                                             </right>
                                         </BorderPane>
                                         <HBox style="-fx-spacing: 20;">
@@ -87,7 +92,7 @@
                         </HBox>
                                     </children>
                                 </VBox>
-                                <ProgressBar fx:id="progress" maxHeight="20.0" prefHeight="20.0" prefWidth="555.0"
+                                <ProgressBar fx:id="progress" maxHeight="20.0" prefHeight="20.0" prefWidth="1000.0"
 											 progress="0.35">
 									<VBox.margin>
 										<Insets left="10.0"/>

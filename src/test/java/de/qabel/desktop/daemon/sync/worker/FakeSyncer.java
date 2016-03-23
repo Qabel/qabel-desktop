@@ -32,4 +32,8 @@ public class FakeSyncer implements Syncer {
 	public void stop() throws InterruptedException {
 		stopped = true;
 	}
+
+	public boolean isStopped() {
+		return stopped;
+	}
 }

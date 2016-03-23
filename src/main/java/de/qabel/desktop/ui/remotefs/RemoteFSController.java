@@ -363,7 +363,9 @@ public class RemoteFSController extends AbstractController implements Initializa
 	private Pane buttonFromImage(TreeItem<BoxObject> item, HBox bar, Image image, Consumer<TreeItem<BoxObject>> handler, String name, BooleanBinding showIf) {
 		ImageView buttonIcon = new ImageView(image);
 		Pane button = new Pane(buttonIcon);
-		button.getStyleClass().add("inline-button");
+		ObservableList<String> styleClass = button.getStyleClass();
+		styleClass.add("inline-button");
+		styleClass.add("faded-button");
 		button.setCursor(HAND);
 		button.setOnMouseClicked(event -> handler.accept(item));
 		button.visibleProperty().bind(showIf);
