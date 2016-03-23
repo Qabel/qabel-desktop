@@ -52,7 +52,7 @@ public class SyncController extends AbstractController implements Initializable 
 			return boxSyncConfigs;
 		}
 		for (BoxSyncConfig syncConfig : Collections.unmodifiableList(boxSyncConfigs)) {
-			syncItemNodes.add(new SyncItemView(s -> syncConfig).getView());
+			syncItemNodes.add(new SyncItemView(s -> s.equals("syncConfig") ? syncConfig : null).getView());
 		}
 		return boxSyncConfigs;
 	}

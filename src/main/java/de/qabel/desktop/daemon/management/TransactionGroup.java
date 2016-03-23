@@ -4,7 +4,7 @@ import java.util.*;
 
 public class TransactionGroup extends Observable implements Observer, HasProgress<TransactionGroup> {
 	public static final long METADATA_SIZE = 56320L;
-	protected Set<Transaction> transactions = new HashSet<>();
+	protected final Set<Transaction> transactions = new HashSet<>();
 
 	public boolean isEmpty() {
 		return transactions.isEmpty();
