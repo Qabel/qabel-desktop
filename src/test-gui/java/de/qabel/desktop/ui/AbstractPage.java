@@ -26,9 +26,15 @@ public class AbstractPage {
 	}
 
 	protected FxRobot clickOn(String query) {
-		baseFXRobot.waitForIdle();
-		Node node = waitForNode(query);
-		return clickOn(node);
+		try {
+			baseFXRobot.waitForIdle();
+			Node node = waitForNode(query);
+			return clickOn(node);
+		} catch (NullPointerException e) {
+			baseFXRobot.waitForIdle();
+			Node node = waitForNode(query);
+			return clickOn(node);
+		}
 	}
 
 	private boolean hasMoved(Node node, double x, double y) {
