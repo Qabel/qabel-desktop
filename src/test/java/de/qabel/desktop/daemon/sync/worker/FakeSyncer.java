@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 public class FakeSyncer implements Syncer {
 	public BoxSyncConfig config;
 	public boolean started;
+	public boolean stopped;
 
 	public FakeSyncer(BoxSyncConfig config) {
 		this.config = config;
@@ -25,5 +26,10 @@ public class FakeSyncer implements Syncer {
 	@Override
 	public void setPollInterval(int amount, TimeUnit unit) {
 
+	}
+
+	@Override
+	public void stop() throws InterruptedException {
+		stopped = true;
 	}
 }

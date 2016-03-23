@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Observer;
 import java.util.concurrent.TimeUnit;
 
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.UPDATE;
@@ -41,6 +42,7 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 	private final SyncIndex index;
 	private WindowedTransactionGroup progress = new WindowedTransactionGroup();
 	private Blacklist localBlacklist;
+	private Observer remoteChangeHandler;
 
 	public DefaultSyncer(BoxSyncConfig config, CachedBoxVolume boxVolume, TransferManager manager) {
 		this.config = config;
@@ -95,7 +97,7 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 	protected void registerRemoteChangeHandler() throws QblStorageException {
 		CachedBoxNavigation nav = navigateToRemoteDir();
 
-		nav.addObserver((o, arg) -> {
+		remoteChangeHandler = (o, arg) -> {
 			try {
 				if (!(arg instanceof ChangeEvent)) {
 					return;
@@ -106,7 +108,8 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 			} catch (Exception e) {
 				logger.error("failed to handle remote change: " + e.getMessage(), e);
 			}
-		});
+		};
+		nav.addObserver(remoteChangeHandler);
 	}
 
 	private CachedBoxNavigation navigateToRemoteDir() throws QblStorageException {
@@ -288,6 +291,12 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 	public void setPollInterval(int amount, TimeUnit unit) {
 		pollInterval = amount;
 		pollUnit = unit;
+	}
+
+	@Override
+	public void stop() throws InterruptedException {
+		watcher.interrupt();
+		watcher.join();
 	}
 
 	public boolean isPolling() {

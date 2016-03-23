@@ -10,7 +10,11 @@ public class DropUrlGenerator {
 	private DropServer dropServer;
 
 	public DropUrlGenerator(String dropServerUrl) throws URISyntaxException {
-		this.dropServer = new DropServer(new URI(dropServerUrl), null, true);
+		this(new URI(dropServerUrl));
+	}
+
+	public DropUrlGenerator(URI dropServerUrl) {
+		this.dropServer = new DropServer(dropServerUrl, null, true);
 	}
 
 	public DropURL generateUrl() {

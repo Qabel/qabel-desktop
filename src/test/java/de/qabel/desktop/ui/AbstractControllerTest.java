@@ -6,6 +6,7 @@ import com.sun.javafx.application.PlatformImpl;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.BlockSharingService;
+import de.qabel.desktop.ServiceFactory;
 import de.qabel.desktop.SharingService;
 import de.qabel.desktop.config.DefaultClientConfiguration;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
@@ -16,12 +17,12 @@ import de.qabel.desktop.daemon.NetworkStatus;
 import de.qabel.desktop.daemon.management.BoxVolumeFactoryStub;
 import de.qabel.desktop.daemon.management.DefaultTransferManager;
 import de.qabel.desktop.repository.ContactRepository;
-import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.Stub.InMemoryContactRepository;
 import de.qabel.desktop.repository.Stub.StubDropMessageRepository;
 import de.qabel.desktop.repository.inmemory.InMemoryHttpDropConnector;
 import de.qabel.desktop.repository.inmemory.InMemoryIdentityRepository;
+import de.qabel.desktop.inject.DefaultServiceFactory;
 import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory;
 import de.qabel.desktop.ui.actionlog.item.renderer.PlaintextMessageRenderer;
 import de.qabel.desktop.ui.connector.DropConnector;
@@ -33,8 +34,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
@@ -42,7 +41,7 @@ import java.util.function.Function;
 import static org.junit.Assert.fail;
 
 public class AbstractControllerTest {
-	protected Map<String, Object> diContainer = new HashMap<>();
+	protected ServiceFactory diContainer = new DefaultServiceFactory();
 	protected IdentityRepository identityRepository = new InMemoryIdentityRepository();
 	protected DefaultClientConfiguration clientConfiguration;
 	protected IdentityBuilderFactory identityBuilderFactory;
@@ -105,7 +104,7 @@ public class AbstractControllerTest {
 		MessageRendererFactory messageRendererFactory = new MessageRendererFactory();
 		messageRendererFactory.setFallbackRenderer(new PlaintextMessageRenderer());
 		diContainer.put("messageRendererFactory", messageRendererFactory);
-		Injector.setConfigurationSource(diContainer::get);
+		Injector.setConfigurationSource(key -> diContainer.get((String)key));
 		Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(diContainer));
 
 		identity = identityBuilderFactory.factory().withAlias("TestAlias").build();

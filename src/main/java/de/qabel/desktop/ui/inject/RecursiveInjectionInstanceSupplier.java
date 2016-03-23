@@ -1,25 +1,20 @@
 package de.qabel.desktop.ui.inject;
 
 import com.airhacks.afterburner.injection.Injector;
+import de.qabel.desktop.ServiceFactory;
 
 import javax.inject.Inject;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
 import java.util.function.Function;
 
 public class RecursiveInjectionInstanceSupplier implements Function<Class<?>, Object> {
-	private final Map<String, Object> customProperties;
-	private final Map<Class, Object> customPropertiesClassmap = new WeakHashMap<>();
+	private final ServiceFactory serviceFactory;
 
-	public RecursiveInjectionInstanceSupplier(Map<String, Object> customProperties) {
-		this.customProperties = customProperties;
-		for (Object entry : customProperties.values()) {
-			customPropertiesClassmap.put(entry.getClass(), entry);
-		}
+	public RecursiveInjectionInstanceSupplier(ServiceFactory serviceFactory) {
+		this.serviceFactory = serviceFactory;
 	}
 
 	@Override
@@ -41,19 +36,9 @@ public class RecursiveInjectionInstanceSupplier implements Function<Class<?>, Ob
 				Class<?>[] parameterTypes = constructor.getParameterTypes();
 				for (int i = 0; i < constructor.getParameterCount(); i++) {
 					Class<?> parameterClass = parameterTypes[i];
-					boolean resolved = false;
-					if (customPropertiesClassmap.containsKey(parameterClass)) {
-						instances.add(customPropertiesClassmap.get(parameterClass));
-						continue;
-					}
-					for (Object value : customProperties.values()) {
-						if (parameterClass.isInstance(value)) {
-							instances.add(value);
-							resolved = true;
-							break;
-						}
-					}
-					if (resolved) {
+					Object instance = serviceFactory.getByType(parameterClass);
+					if (instance != null) {
+						instances.add(instance);
 						continue;
 					}
 					instances.add(Injector.instantiateModelOrService(parameterClass));

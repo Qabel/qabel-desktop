@@ -61,7 +61,13 @@ public class TreeWatcher extends Thread {
 			logger.error(e.getMessage(), e);
 		} catch (InterruptedException e) {
 			logger.warn(e.getMessage(), e);
+			unregisterKeys();
 		}
+	}
+
+	private void unregisterKeys() {
+		keys.keySet().forEach(WatchKey::cancel);
+		keys.clear();
 	}
 
 	protected void processEvents(WatchKey instance) throws IOException {

@@ -2,41 +2,25 @@ package de.qabel.desktop;
 
 import com.airhacks.afterburner.injection.Injector;
 import com.airhacks.afterburner.views.QabelFXMLView;
-import de.qabel.core.accounting.AccountingHTTP;
-import de.qabel.core.accounting.AccountingProfile;
 import de.qabel.core.config.*;
-import de.qabel.core.exceptions.QblInvalidEncryptionKeyException;
-import de.qabel.core.http.DropHTTP;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.factory.*;
-import de.qabel.desktop.crashReports.HockeyApp;
-import de.qabel.desktop.daemon.NetworkStatus;
 import de.qabel.desktop.daemon.drop.DropDaemon;
-import de.qabel.desktop.daemon.management.DefaultTransferManager;
-import de.qabel.desktop.daemon.management.MonitoredTransferManager;
 import de.qabel.desktop.daemon.share.ShareNotificationHandler;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
-import de.qabel.desktop.repository.AccountRepository;
-import de.qabel.desktop.repository.ClientConfigurationRepository;
+import de.qabel.desktop.inject.DesktopServices;
+import de.qabel.desktop.inject.config.StaticRuntimeConfiguration;
 import de.qabel.desktop.repository.DropMessageRepository;
-import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
-import de.qabel.desktop.repository.persistence.*;
+import de.qabel.desktop.inject.StaticDesktopServiceFactory;
 import de.qabel.desktop.ui.LayoutView;
 import de.qabel.desktop.ui.accounting.login.LoginView;
-import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory;
-import de.qabel.desktop.ui.actionlog.item.renderer.PlaintextMessageRenderer;
 import de.qabel.desktop.ui.actionlog.item.renderer.ShareNotificationRenderer;
-import de.qabel.desktop.ui.connector.HttpDropConnector;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
-import de.qabel.desktop.update.AppInfos;
 import de.qabel.desktop.update.HttpUpdateChecker;
-import de.qabel.desktop.update.LatestVersionInfo;
-import de.qabel.desktop.update.VersionInformation;
 import javafx.application.Application;
-import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -56,11 +40,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -75,22 +55,14 @@ import static javafx.scene.control.Alert.AlertType.WARNING;
 public class DesktopClient extends Application {
 	private static final Logger logger = LoggerFactory.getLogger(DesktopClient.class.getSimpleName());
 	private static Path DATABASE_FILE = Paths.get(System.getProperty("user.home")).resolve(".qabel/db.sqlite");
-	private final Map<String, Object> customProperties = new HashMap<>();
+	private static DesktopServices services;
+	private static StaticRuntimeConfiguration runtimeConfiguration;
 	private boolean inBound;
 	private LayoutView view;
-	private HttpDropConnector dropConnector;
-	private PersistenceDropMessageRepository dropMessageRepository;
-	private PersistenceContactRepository contactRepository;
-	private BoxVolumeFactory boxVolumeFactory;
 	private Stage primaryStage;
-	private MonitoredTransferManager transferManager;
-	private MessageRendererFactory rendererFactory = new MessageRendererFactory();
-	private BlockSharingService sharingService;
 	private ExecutorService executorService = Executors.newCachedThreadPool();
 	private ClientConfiguration config;
 	private boolean visible = false;
-	private PersistenceIdentityRepository identityRepository;
-	private NetworkStatus networkStatus;
 	private ResourceBundle resources;
 
 	public static void main(String[] args) throws Exception {
@@ -105,6 +77,12 @@ public class DesktopClient extends Application {
 			}
 			DATABASE_FILE = new File(args[0]).getAbsoluteFile().toPath();
 		}
+
+		runtimeConfiguration = new StaticRuntimeConfiguration("https://drop.qabel.de",DATABASE_FILE);
+		StaticDesktopServiceFactory staticDesktopServiceFactory = new StaticDesktopServiceFactory(runtimeConfiguration);
+		services = staticDesktopServiceFactory;
+		Injector.setConfigurationSource(key -> staticDesktopServiceFactory.get((String)key));
+		Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(staticDesktopServiceFactory));
 
 		System.setProperty("prism.lcdtext", "false");
 		UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -153,7 +131,8 @@ public class DesktopClient extends Application {
 		setUserAgentStylesheet(STYLESHEET_MODENA);
 
 		checkVersion();
-		config = initDiContainer();
+		runtimeConfiguration.setPrimaryStage(primaryStage);
+		config = services.getClientConfiguration();
 
 		SceneAntialiasing aa = SceneAntialiasing.BALANCED;
 		primaryStage.getIcons().setAll(new javafx.scene.image.Image(getClass().getResourceAsStream("/logo-invert_small.png")));
@@ -169,26 +148,6 @@ public class DesktopClient extends Application {
 			Platform.runLater(() -> {
 				if (arg instanceof Account) {
 					try {
-						ClientConfiguration configuration = (ClientConfiguration) customProperties.get("clientConfiguration");
-						Account acc = (Account) arg;
-						AccountingServer server = new AccountingServer(
-								new URI(acc.getProvider()),
-								new URI(MagicEvilBlockUriProvider.getBlockUri(acc)),
-								acc.getUser(),
-								acc.getAuth()
-						);
-						AccountingHTTP accountingHTTP = new AccountingHTTP(server, new AccountingProfile());
-
-						BoxVolumeFactory factory = new BlockBoxVolumeFactory(
-								configuration.getDeviceId().getBytes(),
-								accountingHTTP,
-								identityRepository
-						);
-						boxVolumeFactory = new CachedBoxVolumeFactory(factory);
-						customProperties.put("boxVolumeFactory", boxVolumeFactory);
-						sharingService = new BlockSharingService(dropMessageRepository, dropConnector);
-						customProperties.put("sharingService", sharingService);
-
 						new Thread(getSyncDaemon(config)).start();
 						new Thread(getDropDaemon(config)).start();
 						view = new LayoutView();
@@ -209,7 +168,7 @@ public class DesktopClient extends Application {
 			});
 		});
 
-		dropMessageRepository.addObserver(new ShareNotificationHandler(config));
+		services.getDropMessageRepository().addObserver(new ShareNotificationHandler(config));
 
 		setTrayIcon(primaryStage);
 
@@ -223,80 +182,21 @@ public class DesktopClient extends Application {
 
 	private void addShareMessageRenderer(Identity arg) {
 		executorService.submit(() -> {
-			ShareNotificationRenderer renderer = new ShareNotificationRenderer(((BoxVolumeFactory) customProperties.get("boxVolumeFactory")).getVolume(config.getAccount(), arg).getReadBackend(), sharingService);
-			rendererFactory.addRenderer(DropMessageRepository.PAYLOAD_TYPE_SHARE_NOTIFICATION, renderer);
+			ShareNotificationRenderer renderer = new ShareNotificationRenderer(
+					services.getBoxVolumeFactory().getVolume(config.getAccount(), arg).getReadBackend(),
+					services.getSharingService()
+			);
+			services.getDropMessageRendererFactory().addRenderer(DropMessageRepository.PAYLOAD_TYPE_SHARE_NOTIFICATION, renderer);
 		});
 	}
 
 	protected SyncDaemon getSyncDaemon(ClientConfiguration config) throws IOException {
-		new Thread(transferManager, "TransactionManager").start();
-		return new SyncDaemon(config.getBoxSyncConfigs(), new DefaultSyncerFactory(boxVolumeFactory, transferManager));
+		new Thread(services.getTransferManager(), "TransactionManager").start();
+		return new SyncDaemon(config.getBoxSyncConfigs(), new DefaultSyncerFactory(services.getBoxVolumeFactory(), services.getTransferManager()));
 	}
 
 	protected DropDaemon getDropDaemon(ClientConfiguration config) throws PersistenceException, EntityNotFoundExcepion {
-		return new DropDaemon(config, dropConnector, contactRepository, dropMessageRepository);
-	}
-
-	private ClientConfiguration initDiContainer() throws Exception {
-		if (!Files.exists(DATABASE_FILE) && !Files.exists(DATABASE_FILE.getParent())) {
-			Files.createDirectories(DATABASE_FILE.getParent());
-		}
-
-		Persistence<String> persistence = new SQLitePersistence(DATABASE_FILE.toFile().getAbsolutePath());
-		transferManager = new MonitoredTransferManager(new DefaultTransferManager());
-		customProperties.put("loadManager", transferManager);
-		customProperties.put("transferManager", transferManager);
-		customProperties.put("persistence", persistence);
-		customProperties.put("dropUrlGenerator", new DropUrlGenerator("https://drop.qabel.org"));
-		identityRepository = new PersistenceIdentityRepository(persistence);
-		customProperties.put("identityRepository", identityRepository);
-		PersistenceAccountRepository accountRepository = new PersistenceAccountRepository(persistence);
-		customProperties.put("accountRepository", accountRepository);
-		contactRepository = new PersistenceContactRepository(persistence);
-		customProperties.put("contactRepository", contactRepository);
-		dropMessageRepository = new PersistenceDropMessageRepository(persistence);
-		customProperties.put("dropMessageRepository", dropMessageRepository);
-
-		networkStatus = new NetworkStatus();
-		customProperties.put("networkStatus", networkStatus);
-		dropConnector = new HttpDropConnector(networkStatus, new DropHTTP());
-		customProperties.put("dropConnector", dropConnector);
-		customProperties.put("reportHandler", new HockeyApp());
-		ClientConfiguration clientConfig = getClientConfiguration(
-				persistence,
-				identityRepository,
-				accountRepository
-		);
-		if (!clientConfig.hasDeviceId()) {
-			clientConfig.setDeviceId(generateDeviceId());
-		}
-		customProperties.put("contactRepository", contactRepository);
-		customProperties.put("clientConfiguration", clientConfig);
-		customProperties.put("primaryStage", primaryStage);
-
-		rendererFactory.setFallbackRenderer(new PlaintextMessageRenderer());
-		customProperties.put("messageRendererFactory", rendererFactory);
-
-		Injector.setConfigurationSource(customProperties::get);
-		Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(customProperties));
-		return clientConfig;
-	}
-
-	private String generateDeviceId() {
-		return UUID.randomUUID().toString();
-	}
-
-	private ClientConfiguration getClientConfiguration(
-			Persistence<String> persistence,
-			IdentityRepository identityRepository,
-			AccountRepository accountRepository
-	) {
-		ClientConfigurationRepository repo = new PersistenceClientConfigurationRepository(
-				persistence,
-				new ClientConfigurationFactory(), identityRepository, accountRepository);
-		final ClientConfiguration config = repo.load();
-		config.addObserver((o, arg) -> repo.save(config));
-		return config;
+		return new DropDaemon(config, services.getDropConnector(), services.getContactRepository(), services.getDropMessageRepository());
 	}
 
 	private void setTrayIcon(Stage primaryStage) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
