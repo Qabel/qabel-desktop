@@ -202,3 +202,5 @@ The SyncIndex is persisted on change to allow detection of events that occured d
 For issues using the Qabel Desktop Client, use the **feedback button** (<img alt="feedback icon" src="https://raw.githubusercontent.com/Qabel/qabel-desktop/master/src/main/resources/img/exclamation.png" height="14px"/>) inside the application.
 
 Otherwise, use the Issue tracker of GitHub.
+
+Please read the contribution guidelines at https://github.com/Qabel/qabel-core/blob/master/CONTRIBUTING.md carefully.
