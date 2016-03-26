@@ -23,24 +23,32 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Observer;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.UPDATE;
 
-public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
+public class DefaultSyncer implements Syncer, BoxSync, HasProgressCollection<Syncer, Transaction> {
+	private static final ExecutorService executor = Executors.newCachedThreadPool();
 	private BoxSyncBasedUploadFactory uploadFactory = new BoxSyncBasedUploadFactory();
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private CachedBoxVolume boxVolume;
 	private BoxSyncConfig config;
 	private TransferManager manager;
-	private int pollInterval = 2;
+	private int pollInterval = 5;
 	private TimeUnit pollUnit = TimeUnit.SECONDS;
 	private Thread poller;
 	private TreeWatcher watcher;
 	private boolean polling = false;
 	private final SyncIndex index;
 	private WindowedTransactionGroup progress = new WindowedTransactionGroup();
+	private List<Transaction> history = new LinkedList<>();
 	private Blacklist localBlacklist;
 	private Observer remoteChangeHandler;
 
@@ -54,6 +62,11 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 
 	public void setLocalBlacklist(Blacklist blacklist) {
 		this.localBlacklist = blacklist;
+	}
+
+	@Override
+	public List<Transaction> getHistory() {
+		return history;
 	}
 
 	@Override
@@ -151,6 +164,7 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 
 	private void addDownload(BoxSyncBasedDownload download) {
 		progress.add(download);
+		history.add(download);
 		manager.addDownload(download);
 	}
 
@@ -200,6 +214,7 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 
 	private void addUpload(BoxSyncBasedUpload upload) {
 		progress.add(upload);
+		history.add(upload);
 		manager.addUpload(upload);
 	}
 
@@ -322,7 +337,7 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 
 	@Override
 	public boolean isSynced() {
-		return progress.isEmpty();
+		return progress.isEmpty() && isPolling() && watcher.isWatching() && poller.isAlive() && watcher.isAlive();
 	}
 
 	@Override
@@ -331,8 +346,19 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 	}
 
 	@Override
-	public Object onProgress(Runnable runnable) {
-		return progress.onProgress(runnable);
+	public DefaultSyncer onProgress(Runnable runnable) {
+		progress.onProgress(runnable);
+		return this;
+	}
+
+	@Override
+	public long totalSize() {
+		return progress.totalSize();
+	}
+
+	@Override
+	public long currentSize() {
+		return progress.currentSize();
 	}
 
 	@Override
@@ -348,5 +374,21 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgress {
 	@Override
 	public boolean hasError() {
 		return false;
+	}
+
+	@Override
+	public DefaultSyncer onProgress(Consumer<Transaction> consumer) {
+		progress.onProgress(consumer);
+		return this;
+	}
+
+	@Override
+	public long totalElements() {
+		return progress.totalElements();
+	}
+
+	@Override
+	public long finishedElements() {
+		return progress.finishedElements();
 	}
 }

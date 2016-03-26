@@ -1,5 +1,6 @@
 package de.qabel.desktop.daemon.sync;
 
+import de.qabel.desktop.AsyncUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -33,18 +34,18 @@ public abstract class AbstractSyncTest {
 	}
 
 	protected static void waitUntil(Callable<Boolean> evaluate) {
-		SyncUtils.waitUntil(evaluate);
+		AsyncUtils.waitUntil(evaluate);
 	}
 
 	protected static void waitUntil(Callable<Boolean> evaluate, Callable<String> errorMessage) {
-		SyncUtils.waitUntil(evaluate, errorMessage);
+		AsyncUtils.waitUntil(evaluate, errorMessage);
 	}
 
 	protected static void waitUntil(Callable<Boolean> evaluate, long timeout) {
-		SyncUtils.waitUntil(evaluate, timeout);
+		AsyncUtils.waitUntil(evaluate, timeout);
 	}
 
 	protected static void waitUntil(Callable<Boolean> evaluate, long timeout, Callable<String> errorMessage) {
-		SyncUtils.waitUntil(evaluate, timeout, errorMessage);
+		AsyncUtils.waitUntil(evaluate, timeout, errorMessage);
 	}
 }

@@ -15,6 +15,7 @@ import org.testfx.api.FxRobot;
 import java.util.Date;
 import java.util.List;
 
+import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

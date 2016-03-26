@@ -84,6 +84,7 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 		assertTrue(Files.isDirectory(manager.getTransactions().get(0).getSource()));
 
 		// after restart (everything is re-notified)
+		waitUntil(() -> manager.getTransactions().size() > 1);
 		assertTrue(Files.isDirectory(manager.getTransactions().get(1).getSource()));	// root
 		assertEquals("file", manager.getTransactions().get(2).getSource().getFileName().toString());
 		assertEquals(3, manager.getTransactions().size());

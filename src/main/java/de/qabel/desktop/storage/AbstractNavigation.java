@@ -3,11 +3,12 @@ package de.qabel.desktop.storage;
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.core.crypto.QblECPublicKey;
-import de.qabel.core.exceptions.QblInvalidCredentials;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.exceptions.QblStorageInvalidKey;
 import de.qabel.desktop.exceptions.QblStorageNameConflict;
 import de.qabel.desktop.exceptions.QblStorageNotFound;
+import de.qabel.desktop.storage.command.CreateFolderChange;
+import de.qabel.desktop.storage.command.DirectoryMetadataChange;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
@@ -18,9 +19,13 @@ import java.io.*;
 import java.nio.file.Files;
 import java.security.InvalidKeyException;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public abstract class AbstractNavigation implements BoxNavigation {
+	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 	private static final Logger logger = LoggerFactory.getLogger(AbstractNavigation.class.getSimpleName());
 	public static final String BLOCKS_PREFIX = "blocks/";
 
@@ -34,11 +39,13 @@ public abstract class AbstractNavigation implements BoxNavigation {
 
 	private final Set<String> deleteQueue = new HashSet<>();
 	private final Set<FileUpdate> updatedFiles = new HashSet<>();
+	private final List<DirectoryMetadataChange> changes = new LinkedList<>();
 	private final String prefix;
 	private IndexNavigation indexNavigation = null;
 
 	private boolean autocommit = true;
-
+	private long autocommitDelay = 0;
+	private long lastAutocommitStart = 0;
 
 	protected AbstractNavigation(String prefix, DirectoryMetadata dm, QblECKeyPair keyPair, byte[] deviceId,
 					   StorageReadBackend readBackend, StorageWriteBackend writeBackend) {
@@ -58,6 +65,11 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	}
 
 	@Override
+	public void setAutocommitDelay(long delay) {
+		this.autocommitDelay = delay;
+	}
+
+	@Override
 	public synchronized AbstractNavigation navigate(BoxFolder target) throws QblStorageException {
 		try {
 			InputStream indexDl = readBackend.download(target.ref).getInputStream();
@@ -67,7 +79,10 @@ public abstract class AbstractNavigation implements BoxNavigation {
 			if (cryptoUtils.decryptFileAuthenticatedSymmetricAndValidateTag(indexDl, tmp, key)) {
 				DirectoryMetadata dm = DirectoryMetadata.openDatabase(
 						tmp, deviceId, target.ref, this.dm.getTempDir());
-				return new FolderNavigation(prefix, dm, keyPair, target.key, deviceId, readBackend, writeBackend, getIndexNavigation());
+				FolderNavigation folderNavigation = new FolderNavigation(prefix, dm, keyPair, target.key, deviceId, readBackend, writeBackend, getIndexNavigation());
+				folderNavigation.setAutocommit(autocommit);
+				folderNavigation.setAutocommitDelay(autocommitDelay);
+				return folderNavigation;
 			} else {
 				throw new QblStorageNotFound("Invalid key");
 			}
@@ -83,6 +98,14 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	@Override
 	public synchronized void setMetadata(DirectoryMetadata dm) {
 		this.dm = dm;
+	}
+
+	@Override
+	public synchronized void commitIfChanged() throws QblStorageException {
+		if (isUnmodified()) {
+			return;
+		}
+		commit();
 	}
 
 	@Override
@@ -107,6 +130,9 @@ public abstract class AbstractNavigation implements BoxNavigation {
 			for (FileUpdate update : updatedFiles) {
 				handleConflict(update);
 			}
+			for (DirectoryMetadataChange change : changes) {
+				change.execute(dm);
+			}
 			dm.commit();
 		}
 		uploadDirectoryMetadata();
@@ -116,6 +142,11 @@ public abstract class AbstractNavigation implements BoxNavigation {
 		// TODO: make a test fail without these
 		deleteQueue.clear();
 		updatedFiles.clear();
+	}
+
+	@Override
+	public boolean isUnmodified() {
+		return deleteQueue.isEmpty() && updatedFiles.isEmpty();
 	}
 
 	private void handleConflict(FileUpdate update) throws QblStorageException {
@@ -248,8 +279,23 @@ public abstract class AbstractNavigation implements BoxNavigation {
 		if (!autocommit) {
 			return;
 		}
+		if (autocommitDelay == 0) {
+			commit();	// TODO commitIfModified
+			return;
+		}
 
-		commit();
+		final long autocommitStart = System.currentTimeMillis();
+
+		scheduler.schedule(() -> {
+			try {
+				if (lastAutocommitStart != autocommitStart) {
+					return;
+				}
+				AbstractNavigation.this.commitIfChanged();
+			} catch (QblStorageException e) {
+				logger.error("failed late commit: " + e.getMessage(), e);
+			}
+		}, autocommitDelay, TimeUnit.MILLISECONDS);
 	}
 
 	protected long uploadEncrypted(File file, KeyParameter key, String block) throws QblStorageException {
@@ -376,12 +422,15 @@ public abstract class AbstractNavigation implements BoxNavigation {
 
 	@Override
 	public synchronized BoxFolder createFolder(String name) throws QblStorageException {
-		DirectoryMetadata dm = DirectoryMetadata.newDatabase(null, deviceId, this.dm.getTempDir());
-		KeyParameter secretKey = cryptoUtils.generateSymmetricKey();
-		BoxFolder folder = new BoxFolder(dm.getFileName(), name, secretKey.getKey());
-		this.dm.insertFolder(folder);
-		BoxNavigation newFolder = new FolderNavigation(prefix, dm, keyPair, secretKey.getKey(),
+		CreateFolderChange createFolderChange = new CreateFolderChange(name, deviceId);
+		CreateFolderChange.Result result = createFolderChange.execute(dm);
+		changes.add(createFolderChange);
+
+		BoxFolder folder = result.getFolder();
+		BoxNavigation newFolder = new FolderNavigation(prefix, result.getDM(), keyPair, folder.getKey(),
 				deviceId, readBackend, writeBackend, getIndexNavigation());
+		newFolder.setAutocommit(autocommit);
+		newFolder.setAutocommitDelay(autocommitDelay);
 		newFolder.commit();
 		autocommit();
 		return folder;

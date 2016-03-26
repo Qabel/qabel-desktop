@@ -1,7 +1,6 @@
 package de.qabel.desktop.storage.cache;
 
 import de.qabel.core.crypto.QblECKeyPair;
-import de.qabel.desktop.daemon.sync.SyncUtils;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
@@ -19,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.*;
 
@@ -191,7 +191,7 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 	}
 
 	private ChangeEvent waitForEvent() {
-		AbstractControllerTest.waitUntil(() -> !updates.isEmpty());
+		waitUntil(() -> !updates.isEmpty());
 		return updates.get(0);
 	}
 
@@ -263,7 +263,7 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 	}
 
 	protected void clear(int events) {
-		SyncUtils.waitUntil(() -> updates.size() == events);
+		waitUntil(() -> updates.size() == events);
 		updates.clear();
 	}
 

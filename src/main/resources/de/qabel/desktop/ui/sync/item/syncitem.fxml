@@ -24,6 +24,9 @@
                                     </padding>
                                     <children>
                                         <BorderPane nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="200.0">
+                                            <VBox.margin>
+                                                <Insets left="8.0"/>
+                                            </VBox.margin>
                                             <center>
                                                 <Label fx:id="name" maxWidth="1.7976931348623157E308" text="My Documents"
                                                       BorderPane.alignment="CENTER">
@@ -33,12 +36,25 @@
                                                 </Label>
                                             </center>
                                             <right>
-                                                <Label fx:id="pollState" prefWidth="20" prefHeight="20"></Label>
-                                                <ImageView fx:id="deleteSync" onMouseClicked="#delete" styleClass="inline-button" preserveRatio="true" fitHeight="16" style="-fx-alignment: CENTER-RIGHT">
-                                                    <image>
-                                                        <Image url="@/icon/delete.png"/>
-                                                    </image>
-                                                </ImageView>
+                                                <HBox style="-fx-spacing: 1em;">
+                                                    <children>
+                                                        <Label fx:id="pollState" prefWidth="20" prefHeight="20"></Label>
+                                                        <ImageView fx:id="syncHistory" onMouseClicked="#showHistory" styleClass="inline-button" preserveRatio="true" fitHeight="16" style="-fx-alignment: CENTER-RIGHT">
+                                                            <image>
+                                                                <Image url="@/img/faq.png"/>
+                                                            </image>
+                                                        </ImageView><ImageView fx:id="openSync" onMouseClicked="#open" styleClass="inline-button" preserveRatio="true" fitHeight="16" style="-fx-alignment: CENTER-RIGHT">
+                                                        <image>
+                                                            <Image url="@/icon/folder.png"/>
+                                                        </image>
+                                                    </ImageView>
+                                                        <ImageView fx:id="deleteSync" onMouseClicked="#delete" styleClass="inline-button" preserveRatio="true" fitHeight="16" style="-fx-alignment: CENTER-RIGHT">
+                                                            <image>
+                                                                <Image url="@/icon/delete.png"/>
+                                                            </image>
+                                                        </ImageView>
+                                                    </children>
+                                                </HBox>
                                             </right>
                                         </BorderPane>
                                         <HBox style="-fx-spacing: 20;">
@@ -92,12 +108,38 @@
                         </HBox>
                                     </children>
                                 </VBox>
-                                <ProgressBar fx:id="progress" maxHeight="20.0" prefHeight="20.0" prefWidth="1000.0"
-											 progress="0.35">
-									<VBox.margin>
-										<Insets left="10.0"/>
-									</VBox.margin>
-								</ProgressBar>
+                                <StackPane styleClass="composedProgress">
+                                    <VBox.margin>
+                                        <Insets left="10.0"/>
+                                    </VBox.margin>
+                                    <children>
+                                        <ProgressBar fx:id="progress" maxHeight="20.0" prefHeight="20.0" prefWidth="1000.0"
+                                                     progress="0.35">
+                                        </ProgressBar>
+                                        <BorderPane>
+                                            <center>
+                                                <Label BorderPane.alignment="TOP_LEFT" fx:id="syncStatusLabel" text="initializing..."/>
+                                            </center>
+                                            <right>
+                                                <Label fx:id="itemStatusLabel" text="0%"/>
+                                            </right>
+                                        </BorderPane>
+                                    </children>
+                                </StackPane>
+                                <HBox style="-fx-spacing: 1em">
+                                    <VBox.margin>
+                                        <Insets left="10.0"/>
+                                    </VBox.margin>
+                                    <children>
+                                        <ImageView fx:id="currentItemIcon" styleClass="inline-button" preserveRatio="true" fitHeight="16">
+                                            <image>
+                                                <Image url="@/icon/delete.png"/>
+                                            </image>
+                                        </ImageView>
+                                        <Label fx:id="currentItemLabel" text="...">
+                                        </Label>
+                                    </children>
+                                </HBox>
                             </children>
                         </VBox>
                     </center>

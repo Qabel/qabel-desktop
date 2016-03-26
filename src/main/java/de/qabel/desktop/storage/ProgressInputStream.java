@@ -3,11 +3,15 @@ package de.qabel.desktop.storage;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class ProgressInputStream extends FilterInputStream {
+	private static final ExecutorService executor = Executors.newCachedThreadPool();
 	private Consumer<Long> consumer;
 	private long read = 0;
+	private long lastUpdate = 0;
 
 	/**
 	 * Creates a <code>FilterInputStream</code>
@@ -35,7 +39,20 @@ public class ProgressInputStream extends FilterInputStream {
 			return;
 		}
 		read += bytes;
-		consumer.accept(read);
+		update();
+	}
+
+	private void update() {
+		update(false);
+	}
+
+	private void update(boolean force) {
+		long now = System.currentTimeMillis();
+//		if (force || now < lastUpdate + 100) {
+//			return;
+//		}
+		lastUpdate = now;
+		executor.submit(() -> consumer.accept(read));
 	}
 
 	@Override
@@ -54,6 +71,7 @@ public class ProgressInputStream extends FilterInputStream {
 
 	@Override
 	public void close() throws IOException {
+		update(true);
 		super.close();
 	}
 

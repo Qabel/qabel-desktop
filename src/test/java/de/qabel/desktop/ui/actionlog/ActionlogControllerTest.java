@@ -22,6 +22,7 @@ import org.junit.Test;
 import java.net.URISyntaxException;
 import java.util.*;
 
+import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;

@@ -106,4 +106,32 @@ public class TransactionGroupTest {
 		group.add(upload1);
 		assertEquals(1, updates.size());
 	}
+
+	@Test
+	public void notifiesConsumers() {
+		List<Transaction> updates = new LinkedList<>();
+		group.onProgress(updates::add);
+		group.add(upload1);
+		assertSame(upload1, updates.get(0));
+	}
+
+	@Test
+	public void knowsWhenEmpty() {
+		assertEquals(0, group.totalElements());
+	}
+
+	@Test
+	public void knowsNoProgress() {
+		group.add(upload1);
+		assertEquals(1, group.totalElements());
+		assertEquals(0, group.finishedElements());
+	}
+
+	@Test
+	public void knowsProgress() {
+		group.add(upload1);
+		upload1.toState(FINISHED);
+		assertEquals(1, group.totalElements());
+		assertEquals(1, group.finishedElements());
+	}
 }

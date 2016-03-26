@@ -7,6 +7,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongycastle.crypto.InvalidCipherTextException;
+import org.spongycastle.util.encoders.Hex;
 
 import java.io.*;
 import java.security.InvalidKeyException;
@@ -29,11 +30,11 @@ public class DefaultIndexNavigation extends AbstractNavigation implements IndexN
 		// TODO: duplicate with BoxVoume.navigate()
 		String rootRef = dm.getFileName();
 
-		try {
-			StorageDownload download = readBackend.download(rootRef, directoryMetadataMHashes.get(Arrays.hashCode(dm.getVersion())));
+		try (StorageDownload download = readBackend.download(rootRef, directoryMetadataMHashes.get(Arrays.hashCode(dm.getVersion())))) {
 			InputStream indexDl = download.getInputStream();
 			File tmp;
 			byte[] encrypted = IOUtils.toByteArray(indexDl);
+			System.out.println("reading box with key " + Hex.toHexString(keyPair.getPrivateKey()));
 			DecryptedPlaintext plaintext = cryptoUtils.readBox(keyPair, encrypted);
 			tmp = File.createTempFile("dir", "db", dm.getTempDir());
 			tmp.deleteOnExit();
@@ -47,7 +48,7 @@ public class DefaultIndexNavigation extends AbstractNavigation implements IndexN
 		} catch (UnmodifiedException e) {
 			return dm;
 		} catch (IOException | InvalidCipherTextException | InvalidKeyException e) {
-			throw new QblStorageException(e);
+			throw new QblStorageException(e.getMessage(), e);
 		}
 	}
 

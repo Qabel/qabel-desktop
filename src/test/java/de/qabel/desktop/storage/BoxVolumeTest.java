@@ -191,6 +191,23 @@ public abstract class BoxVolumeTest {
 		assertThat(nav.listFiles().size(), is(2));
 	}
 
+	@Test
+	public void testFoldersAreMergedOnConflict() throws Exception {
+		BoxNavigation nav = volume.navigate();
+		nav.setAutocommit(false);
+		BoxNavigation nav2 = volume2.navigate();
+		nav2.setAutocommit(false);
+
+		nav.createFolder("folder1");
+		nav2.createFolder("folder2");
+
+		nav2.commit();
+		nav.commit();
+		assertThat(nav.listFolders().size(), is(2));
+	}
+	// merge deleted folders
+	// merge deleted files
+
 	@Test(expected = QblStorageNameConflict.class)
 	public void testFileNameConflict() throws QblStorageException {
 		BoxNavigation nav = volume.navigate();

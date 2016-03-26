@@ -39,9 +39,7 @@ public class FolderNavigation extends AbstractNavigation {
 	public DirectoryMetadata reloadMetadata() throws QblStorageException {
 		logger.info("Reloading directory metadata");
 		// duplicate of navigate()
-		try {
-			StorageDownload download = readBackend.download(dm.getFileName(), directoryMetadataMHashes.get(Arrays.hashCode(dm.getVersion())));
-
+		try (StorageDownload download = readBackend.download(dm.getFileName(), directoryMetadataMHashes.get(Arrays.hashCode(dm.getVersion())))) {
 			InputStream indexDl = download.getInputStream();
 			File tmp = File.createTempFile("dir", "db", dm.getTempDir());
 			tmp.deleteOnExit();

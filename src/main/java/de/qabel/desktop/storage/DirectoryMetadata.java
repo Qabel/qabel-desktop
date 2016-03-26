@@ -85,7 +85,7 @@ public class DirectoryMetadata extends AbstractMetadata {
 	 * @return
 	 * @throws QblStorageException
 	 */
-	static DirectoryMetadata newDatabase(String root, byte[] deviceId, File tempDir) throws QblStorageException {
+	public static DirectoryMetadata newDatabase(String root, byte[] deviceId, File tempDir) throws QblStorageException {
 		File path;
 		try {
 			path = File.createTempFile("dir", "db", tempDir);
@@ -233,7 +233,7 @@ public class DirectoryMetadata extends AbstractMetadata {
 		}
 	}
 
-	void commit() throws QblStorageException {
+	public void commit() throws QblStorageException {
 		byte[] oldVersion = getVersion();
 		MessageDigest md;
 		try {
@@ -326,7 +326,7 @@ public class DirectoryMetadata extends AbstractMetadata {
 		}
 	}
 
-	void insertFolder(BoxFolder folder) throws QblStorageException {
+	public void insertFolder(BoxFolder folder) throws QblStorageException {
 		int type = isA(folder.name);
 		if ((type != TYPE_NONE) && (type != TYPE_FOLDER)) {
 			throw new QblStorageNameConflict(folder.name);

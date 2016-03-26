@@ -18,7 +18,7 @@ public class WindowedTransactionGroup extends TransactionGroup {
 					runningTransactions.remove(transaction);
 				}
 				if (runningTransactions.isEmpty()) {
-					transactions.clear();
+					clear();
 				}
 			});
 			super.add(transaction);
@@ -30,5 +30,10 @@ public class WindowedTransactionGroup extends TransactionGroup {
 		return transaction.getState() == FINISHED
 				|| transaction.getState() == FAILED
 				|| transaction.getState() == SKIPPED;
+	}
+
+	@Override
+	public long finishedElements() {
+		return totalElements() - runningTransactions.size();
 	}
 }

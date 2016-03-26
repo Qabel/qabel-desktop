@@ -6,6 +6,8 @@ import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.storage.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +21,7 @@ import java.util.concurrent.Executors;
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.*;
 
 public class CachedBoxNavigation<T extends BoxNavigation> extends Observable implements BoxNavigation, PathNavigation {
+	private static final Logger logger = LoggerFactory.getLogger(CachedBoxNavigation.class.getSimpleName());
 	protected final T nav;
 	private final BoxNavigationCache<CachedBoxNavigation> cache = new BoxNavigationCache<>();
 	private final Path path;
@@ -42,6 +45,11 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 	@Override
 	public void commit() throws QblStorageException {
 		nav.commit();
+	}
+
+	@Override
+	public void commitIfChanged() throws QblStorageException {
+		nav.commitIfChanged();
 	}
 
 	@Override
@@ -83,6 +91,11 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 		BoxFile upload = nav.upload(name, file, listener);
 		notifyAsync(upload, CREATE);
 		return upload;
+	}
+
+	@Override
+	public boolean isUnmodified() {
+		return nav.isUnmodified();
 	}
 
 	@Override
@@ -162,6 +175,11 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 	}
 
 	@Override
+	public void setAutocommitDelay(long delay) {
+		nav.setAutocommitDelay(delay);
+	}
+
+	@Override
 	public CachedBoxNavigation navigate(String folderName) throws QblStorageException {
 		return navigate(getFolder(folderName));
 	}
@@ -211,21 +229,23 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 	public void refresh() throws QblStorageException {
 		synchronized (this) {
 			synchronized (nav) {
-				DirectoryMetadata dm = nav.reloadMetadata();
-				if (!Arrays.equals(nav.getMetadata().getVersion(), dm.getVersion())) {
-					Set<BoxFolder> oldFolders = new HashSet<>(nav.listFolders());
-					Set<BoxFile> oldFiles = new HashSet<>(nav.listFiles());
+				if (nav.isUnmodified()) {
+					DirectoryMetadata dm = nav.reloadMetadata();
+					if (!Arrays.equals(nav.getMetadata().getVersion(), dm.getVersion())) {
+						Set<BoxFolder> oldFolders = new HashSet<>(nav.listFolders());
+						Set<BoxFile> oldFiles = new HashSet<>(nav.listFiles());
 
-					nav.setMetadata(dm);
+						nav.setMetadata(dm);
 
-					Set<BoxFolder> newFolders = new HashSet<>(nav.listFolders());
-					Set<BoxFile> newFiles = new HashSet<>(nav.listFiles());
-					Set<BoxFile> changedFiles = new HashSet<>();
+						Set<BoxFolder> newFolders = new HashSet<>(nav.listFolders());
+						Set<BoxFile> newFiles = new HashSet<>(nav.listFiles());
+						Set<BoxFile> changedFiles = new HashSet<>();
 
-					findNewFolders(oldFolders, newFolders);
-					findNewFiles(oldFiles, newFiles, changedFiles);
-					findDeletedFolders(oldFolders, newFolders);
-					findDeletedFiles(oldFiles, newFiles, changedFiles);
+						findNewFolders(oldFolders, newFolders);
+						findNewFiles(oldFiles, newFiles, changedFiles);
+						findDeletedFolders(oldFolders, newFolders);
+						findDeletedFiles(oldFiles, newFiles, changedFiles);
+					}
 				}
 			}
 		}
@@ -234,7 +254,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 			try {
 				navigate(folder).refresh();
 			} catch (QblStorageException e) {
-				System.err.println(path.toString() + "/" + folder.getName() + ": " + e.getMessage());
+				logger.error("failed to refresh directory: " + path.toString() + "/" + folder.getName() + " " + e.getMessage(), e);
 			}
 		}
 	}
@@ -308,6 +328,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 	}
 
 	public void notifyAllContents() throws QblStorageException {
+		// TODO notify async and sync files first (better UX on files)
 		for (BoxFolder folder : nav.listFolders()) {
 			notify(folder, CREATE);
 			navigate(folder).notifyAllContents();

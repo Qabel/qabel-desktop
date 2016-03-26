@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 
+import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.junit.Assert.*;
 
 public class FolderTreeItemTest extends AbstractControllerTest {
@@ -146,6 +147,11 @@ public class FolderTreeItemTest extends AbstractControllerTest {
 		}
 
 		@Override
+		public void commitIfChanged() throws QblStorageException {
+
+		}
+
+		@Override
 		public BoxNavigation navigate(BoxFolder target) throws QblStorageException {
 			return null;
 		}
@@ -177,6 +183,11 @@ public class FolderTreeItemTest extends AbstractControllerTest {
 		@Override
 		public BoxFile upload(String name, File file, ProgressListener listener) throws QblStorageException {
 			return null;
+		}
+
+		@Override
+		public boolean isUnmodified() {
+			return false;
 		}
 
 		@Override
@@ -236,6 +247,11 @@ public class FolderTreeItemTest extends AbstractControllerTest {
 
 		@Override
 		public void setAutocommit(boolean autocommit) {
+
+		}
+
+		@Override
+		public void setAutocommitDelay(long delay) {
 
 		}
 

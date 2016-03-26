@@ -5,11 +5,18 @@ import de.qabel.desktop.ui.AbstractControllerTest;
 import javafx.application.Platform;
 import org.junit.Test;
 
+import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.junit.Assert.*;
 
 public class FxProgressModelTest extends AbstractControllerTest {
 	private ProgressStub progress = new ProgressStub();
 	private FxProgressModel model = new FxProgressModel();
+
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+		model.setMinimumUpdateDelay(null);
+	}
 
 	@Test
 	public void givenNoProgressAllIsDone() {
@@ -58,6 +65,6 @@ public class FxProgressModelTest extends AbstractControllerTest {
 
 		model.setProgress(progress);
 		progress.setProgress(0.5);
-		waitUntil(() -> updatedProgress[0] == 0.5);
+		waitUntil(() -> updatedProgress[0] == 0.5, () -> "progress is " + updatedProgress[0]);
 	}
 }

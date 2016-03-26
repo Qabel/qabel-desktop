@@ -3,6 +3,7 @@ package de.qabel.desktop.daemon.management;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static de.qabel.desktop.daemon.management.Transaction.STATE.*;
 
@@ -10,10 +11,10 @@ public abstract class AbstractTransaction extends Observable implements Transact
 	public static final long METADATA_SIZE = 56320L;
 	private STATE state = STATE.INITIALIZING;
 	protected Long mtime;
-	private List<Runnable> successHandler = new LinkedList<>();
-	private List<Runnable> failureHandler = new LinkedList<>();
-	private List<Runnable> skippedHandler = new LinkedList<>();
-	private List<Runnable> progressHandler = new LinkedList<>();
+	private List<Runnable> successHandler = new CopyOnWriteArrayList<>();
+	private List<Runnable> failureHandler = new CopyOnWriteArrayList<>();
+	private List<Runnable> skippedHandler = new CopyOnWriteArrayList<>();
+	private List<Runnable> progressHandler = new CopyOnWriteArrayList<>();
 	private long creationTime = System.currentTimeMillis();
 	private Long size = METADATA_SIZE;	// metadata size ... imagine a random number here
 	private long transferred = 0L;
@@ -40,6 +41,9 @@ public abstract class AbstractTransaction extends Observable implements Transact
 
 	@Override
 	public void close() {
+		if (transferred == 0) {
+			setTransferred(getSize());
+		}
 		if (state == FAILED) {
 			failureHandler.forEach(Runnable::run);
 		} else if (state == FINISHED) {
@@ -50,27 +54,37 @@ public abstract class AbstractTransaction extends Observable implements Transact
 	}
 
 	@Override
-	public Transaction onSuccess(Runnable runnable) {
+	public synchronized Transaction onSuccess(Runnable runnable) {
 		successHandler.add(runnable);
 		return this;
 	}
 
 	@Override
-	public Transaction onFailure(Runnable runnable) {
+	public synchronized Transaction onFailure(Runnable runnable) {
 		failureHandler.add(runnable);
 		return this;
 	}
 
 	@Override
-	public Transaction onSkipped(Runnable runnable) {
+	public synchronized Transaction onSkipped(Runnable runnable) {
 		skippedHandler.add(runnable);
 		return this;
 	}
 
 	@Override
-	public Transaction onProgress(Runnable runnable) {
+	public synchronized Transaction onProgress(Runnable runnable) {
 		progressHandler.add(runnable);
 		return this;
+	}
+
+	@Override
+	public long totalSize() {
+		return getSize();
+	}
+
+	@Override
+	public long currentSize() {
+		return getTransferred();
 	}
 
 	@Override
@@ -85,6 +99,7 @@ public abstract class AbstractTransaction extends Observable implements Transact
 
 	public void setSize(long size) {
 		this.size = size;
+		progressHandler.forEach(Runnable::run);
 	}
 
 	@Override
@@ -103,11 +118,16 @@ public abstract class AbstractTransaction extends Observable implements Transact
 
 	@Override
 	public double getProgress() {
-		return hasSize() ? getTransferred() / getSize() : (isDone() ? 1.0 : 0.0);
+		return  getSize() > 0 ? (double)getTransferred() / (double)getSize() : (isDone() ? 1.0 : 0.0);
 	}
 
 	@Override
 	public boolean isDone() {
 		return state == FINISHED || state == FAILED || state == SKIPPED;
+	}
+
+	@Override
+	public boolean hasStarted() {
+		return state != INITIALIZING && state != WAITING && state != SCHEDULED;
 	}
 }

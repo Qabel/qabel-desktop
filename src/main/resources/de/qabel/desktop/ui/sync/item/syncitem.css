@@ -10,3 +10,12 @@
 #progress > .track {
 	-fx-background-radius: 0;
 }
+
+.composedProgress BorderPane {
+    -fx-padding: 0 0.5em 0 0.5em;
+}
+
+#syncStatusLabel {
+    -fx-alignment: center-left;
+    -fx-text-alignment: left;
+}

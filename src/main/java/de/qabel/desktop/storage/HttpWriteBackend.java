@@ -24,7 +24,6 @@ public class HttpWriteBackend extends AbstractHttpStorageBackend implements Stor
 	@Override
 	public long upload(String name, InputStream content) throws QblStorageException {
 		logger.info("Uploading " + name);
-		CloseableHttpResponse response;
 		HttpPost httpPost;
 		try {
 			URI uri = this.root.resolve(name);
@@ -32,18 +31,19 @@ public class HttpWriteBackend extends AbstractHttpStorageBackend implements Stor
 			prepareRequest(httpPost);
 			httpPost.setEntity(new InputStreamEntity(content));
 
-			response = httpclient.execute(httpPost);
+			try (CloseableHttpResponse response = httpclient.execute(httpPost)) {
+				int status = response.getStatusLine().getStatusCode();
+				if ((status == 404) || (status == 403)) {
+					throw new QblStorageNotFound("File not found");
+				}
+				if (status >= 300) {
+					throw new QblStorageException("Upload error");
+				}
+			}
+			return System.currentTimeMillis();
 		} catch (IOException e) {
 			throw new QblStorageException(e);
 		}
-		int status = response.getStatusLine().getStatusCode();
-		if ((status == 404) || (status == 403)) {
-			throw new QblStorageNotFound("File not found");
-		}
-		if (status >= 300) {
-			throw new QblStorageException("Upload error");
-		}
-		return System.currentTimeMillis();
 	}
 
 	@Override

@@ -23,4 +23,14 @@ public class ProgressStub extends Observable implements HasProgress<ProgressStub
 		addObserver((o, arg) -> runnable.run());
 		return this;
 	}
+
+	@Override
+	public long totalSize() {
+		return 0;
+	}
+
+	@Override
+	public long currentSize() {
+		return 0;
+	}
 }
