@@ -108,7 +108,7 @@
                         </HBox>
                                     </children>
                                 </VBox>
-                                <StackPane styleClass="composedProgress">
+                                <StackPane styleClass="composedProgress" style="-fx-width: 100%">
                                     <VBox.margin>
                                         <Insets left="10.0"/>
                                     </VBox.margin>
@@ -116,6 +116,21 @@
                                         <ProgressBar fx:id="progress" maxHeight="20.0" prefHeight="20.0" prefWidth="1000.0"
                                                      progress="0.35">
                                         </ProgressBar>
+                                        <GridPane pickOnBounds="false" style="-fx-background-color: null">
+                                            <columnConstraints>
+                                                <ColumnConstraints fx:id="itemProgressColumn" hgrow="SOMETIMES" maxWidth="0.0" minWidth="0.0" percentWidth="0" prefWidth="0.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" percentWidth="0" />
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                            </rowConstraints>
+                                            <children>
+                                                <Pane style="-fx-background-color: rgba(0,0,0,0.1)">
+
+                                                </Pane>
+                                            </children>
+                                        </GridPane>
+
                                         <BorderPane>
                                             <center>
                                                 <Label BorderPane.alignment="TOP_LEFT" fx:id="syncStatusLabel" text="initializing..."/>

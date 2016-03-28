@@ -26,6 +26,7 @@ import static java.nio.file.StandardWatchEventKinds.*;
  */
 public class TreeWatcher extends Thread {
 	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+	private static final ExecutorService fileExecutor = Executors.newSingleThreadExecutor();
 	private Logger logger = LoggerFactory.getLogger(TreeWatcher.class);
 	private Path root;
 	private Consumer<de.qabel.desktop.daemon.sync.event.WatchEvent> consumer;
@@ -144,20 +145,22 @@ public class TreeWatcher extends Thread {
 		Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
 			@Override
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-				consumer.accept(new WatchRegisteredEvent(file));
+				WatchRegisteredEvent watchEvent = new WatchRegisteredEvent(file);
+				fileExecutor.submit(() -> consumer.accept(watchEvent));
 				if (watching) {
 					final LocalChangeEvent event = new LocalChangeEvent(file, CREATE);
-					executor.submit(() -> consumer.accept(event));
+					fileExecutor.submit(() -> consumer.accept(event));
 				}
 				return super.visitFile(file, attrs);
 			}
 
 			@Override
 			public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-				logger.trace("watching " + dir);
+				//logger.trace("watching " + dir);
 				try {
 					WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
 					keys.put(key, dir);
+					System.out.println("watching " + keys.size() + " dirs");
 					WatchRegisteredEvent event = new WatchRegisteredEvent(dir);
 					executor.submit(() -> consumer.accept(event));
 				} catch (Exception e) {

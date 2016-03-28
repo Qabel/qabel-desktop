@@ -39,7 +39,7 @@ public class HttpDropConnector implements DropConnector {
 				throw new QblNetworkInvalidResponseException();
 			}
 		} catch (QblDropPayloadSizeException e) {
-			e.printStackTrace();
+			throw new IllegalStateException("drop payload too big: " + e.getMessage(), e);
 		}
 	}
 

@@ -37,7 +37,7 @@ public class DefaultTransferManager extends Observable implements TransferManage
 
 	@Override
 	public void addDownload(Download download) {
-		logger.trace("download added: " + download.getSource() + " to " + download.getDestination());
+		//logger.trace("download added: " + download.getSource() + " to " + download.getDestination());
 		transactions.add(download);
 		history.add(download);
 	}
@@ -63,7 +63,7 @@ public class DefaultTransferManager extends Observable implements TransferManage
 
 	@Override
 	public void addUpload(Upload upload) {
-		logger.trace("upload added: " + upload.getSource() + " to " + upload.getDestination());
+		//logger.trace("upload added: " + upload.getSource() + " to " + upload.getDestination());
 		transactions.add(upload);
 		history.add(upload);
 	}
@@ -74,7 +74,7 @@ public class DefaultTransferManager extends Observable implements TransferManage
 				next();
 			}
 		} catch (InterruptedException e) {
-			logger.trace("loadManager stopped: " + e.getMessage());
+			logger.debug("loadManager stopped: " + e.getMessage());
 		}
 	}
 

@@ -29,6 +29,9 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractNavigation.class.getSimpleName());
 	public static final String BLOCKS_PREFIX = "blocks/";
 
+	@Deprecated
+	public static long DEFAULT_AUTOCOMMIT_DELAY = 0;
+
 	DirectoryMetadata dm;
 	final QblECKeyPair keyPair;
 	final byte[] deviceId;
@@ -44,7 +47,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	private IndexNavigation indexNavigation = null;
 
 	private boolean autocommit = true;
-	private long autocommitDelay = 0;
+	private long autocommitDelay = DEFAULT_AUTOCOMMIT_DELAY;
 	private long lastAutocommitStart = 0;
 
 	protected AbstractNavigation(String prefix, DirectoryMetadata dm, QblECKeyPair keyPair, byte[] deviceId,
@@ -146,7 +149,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 
 	@Override
 	public boolean isUnmodified() {
-		return deleteQueue.isEmpty() && updatedFiles.isEmpty();
+		return deleteQueue.isEmpty() && updatedFiles.isEmpty() && changes.isEmpty();
 	}
 
 	private void handleConflict(FileUpdate update) throws QblStorageException {

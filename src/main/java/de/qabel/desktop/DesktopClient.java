@@ -4,7 +4,6 @@ import com.airhacks.afterburner.injection.Injector;
 import com.airhacks.afterburner.views.QabelFXMLView;
 import de.qabel.core.config.*;
 import de.qabel.desktop.config.ClientConfiguration;
-import de.qabel.desktop.config.factory.*;
 import de.qabel.desktop.daemon.drop.DropDaemon;
 import de.qabel.desktop.daemon.share.ShareNotificationHandler;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
@@ -15,6 +14,7 @@ import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.inject.StaticDesktopServiceFactory;
+import de.qabel.desktop.storage.AbstractNavigation;
 import de.qabel.desktop.ui.LayoutView;
 import de.qabel.desktop.ui.accounting.login.LoginView;
 import de.qabel.desktop.ui.actionlog.item.renderer.ShareNotificationRenderer;
@@ -66,6 +66,8 @@ public class DesktopClient extends Application {
 	private ResourceBundle resources;
 
 	public static void main(String[] args) throws Exception {
+		AbstractNavigation.DEFAULT_AUTOCOMMIT_DELAY = 0;
+
 		String defaultEncoding = System.getProperty("file.encoding");
 		if (!defaultEncoding.equals("UTF-8")) {
 			logger.warn("default encoding " + defaultEncoding + " is not UTF-8");

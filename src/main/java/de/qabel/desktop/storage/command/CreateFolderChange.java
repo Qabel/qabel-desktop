@@ -21,7 +21,6 @@ public class CreateFolderChange implements DirectoryMetadataChange<CreateFolderC
 
 	@Override
 	public Result execute(DirectoryMetadata parentDM) throws QblStorageException {
-		System.out.println("Execute create folder " + name + " with key " + Hex.toHexString(secretKey.getKey()));
 		DirectoryMetadata dm = DirectoryMetadata.newDatabase(null, deviceId, parentDM.getTempDir());
 		BoxFolder folder = new BoxFolder(dm.getFileName(), name, secretKey.getKey());
 		parentDM.insertFolder(folder);

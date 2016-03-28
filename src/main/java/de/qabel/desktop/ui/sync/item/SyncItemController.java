@@ -2,7 +2,6 @@ package de.qabel.desktop.ui.sync.item;
 
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.ClientConfiguration;
-import de.qabel.desktop.daemon.management.HasProgress;
 import de.qabel.desktop.daemon.management.Transaction;
 import de.qabel.desktop.daemon.management.Upload;
 import de.qabel.desktop.daemon.sync.BoxSync;
@@ -11,20 +10,18 @@ import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.transfer.FxProgressCollectionModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.*;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
 import java.awt.*;
-import java.awt.Insets;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -51,6 +48,9 @@ public class SyncItemController extends AbstractController implements Initializa
 
 	@FXML
 	private ProgressBar progress;
+
+	@FXML
+	private ColumnConstraints itemProgressColumn;
 
 	@FXML
 	private ImageView syncImage;
@@ -86,18 +86,18 @@ public class SyncItemController extends AbstractController implements Initializa
 		if (syncer instanceof BoxSync) {
 			boxSync = (BoxSync) syncer;
 		}
-		if (syncConfig.getSyncer() instanceof HasProgress && syncConfig.getSyncer() instanceof BoxSync) {
-			progressModel = new FxProgressCollectionModel<>(syncConfig.getSyncer());
-			progress.progressProperty().bind(progressModel.progressProperty());
 
-			progressModel.progressProperty().addListener((observable, oldValue, newValue) -> {
-				updateSyncStatus();
-			});
-			progressModel.currentItemProperty().addListener(observable -> {
-				updateSyncStatus(progressModel.currentItemProperty().get());
-			});
-			progressModel.onChange(this::updateSyncStatus);
-		}
+		progressModel = new FxProgressCollectionModel<>(syncConfig.getSyncer());
+		progress.progressProperty().bind(progressModel.progressProperty());
+
+		progressModel.progressProperty().addListener((observable, oldValue, newValue) -> {
+			updateSyncStatus();
+		});
+		progressModel.currentItemProperty().addListener(observable -> {
+			updateSyncStatus(progressModel.currentItemProperty().get());
+		});
+		progressModel.onChange(this::updateSyncStatus);
+
 		updateSyncStatus();
 		syncStatusLabel.setText("");
 	}
@@ -149,9 +149,11 @@ public class SyncItemController extends AbstractController implements Initializa
 				itemStatusLabel.setText("");
 				currentItemIcon.setVisible(false);
 			} else {
-				if (transaction.hasStarted() && !transaction.isDone()) {
+				if (!transaction.isDone()) {
 					currentItemLabel.setText(renderTransaction(transaction));
-					itemStatusLabel.setText(((int) (transaction.getProgress() * 100)) + " %");
+					int itemProgressPercent = (int) (transaction.getProgress() * 100);
+					itemStatusLabel.setText(itemProgressPercent + " %");
+					itemProgressColumn.setPercentWidth(itemProgressPercent);
 					currentItemIcon.setImage(selectImage(transaction));
 					currentItemIcon.setVisible(true);
 				}

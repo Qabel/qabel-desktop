@@ -34,7 +34,6 @@ public class DefaultIndexNavigation extends AbstractNavigation implements IndexN
 			InputStream indexDl = download.getInputStream();
 			File tmp;
 			byte[] encrypted = IOUtils.toByteArray(indexDl);
-			System.out.println("reading box with key " + Hex.toHexString(keyPair.getPrivateKey()));
 			DecryptedPlaintext plaintext = cryptoUtils.readBox(keyPair, encrypted);
 			tmp = File.createTempFile("dir", "db", dm.getTempDir());
 			tmp.deleteOnExit();

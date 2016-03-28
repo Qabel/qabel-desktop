@@ -35,13 +35,14 @@ import java.util.function.Consumer;
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.UPDATE;
 
 public class DefaultSyncer implements Syncer, BoxSync, HasProgressCollection<Syncer, Transaction> {
-	private static final ExecutorService executor = Executors.newCachedThreadPool();
+	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+	private static final ExecutorService fileExecutor = Executors.newSingleThreadExecutor();
 	private BoxSyncBasedUploadFactory uploadFactory = new BoxSyncBasedUploadFactory();
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private CachedBoxVolume boxVolume;
 	private BoxSyncConfig config;
 	private TransferManager manager;
-	private int pollInterval = 5;
+	private int pollInterval = 600;
 	private TimeUnit pollUnit = TimeUnit.SECONDS;
 	private Thread poller;
 	private TreeWatcher watcher;
@@ -110,7 +111,7 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgressCollection<Syn
 	protected void registerRemoteChangeHandler() throws QblStorageException {
 		CachedBoxNavigation nav = navigateToRemoteDir();
 
-		remoteChangeHandler = (o, arg) -> {
+		remoteChangeHandler = (o, arg) -> executor.submit(() -> {
 			try {
 				if (!(arg instanceof ChangeEvent)) {
 					return;
@@ -121,7 +122,7 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgressCollection<Syn
 			} catch (Exception e) {
 				logger.error("failed to handle remote change: " + e.getMessage(), e);
 			}
-		};
+		});
 		nav.addObserver(remoteChangeHandler);
 	}
 
@@ -207,6 +208,9 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgressCollection<Syn
 		}
 
 		upload.onSuccess(() -> {
+			index.update(upload.getSource(), upload.getMtime(), upload.getType() != Transaction.TYPE.DELETE);
+		});
+		upload.onSkipped(() -> {
 			index.update(upload.getSource(), upload.getMtime(), upload.getType() != Transaction.TYPE.DELETE);
 		});
 		addUpload(upload);

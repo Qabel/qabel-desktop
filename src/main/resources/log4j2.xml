@@ -13,7 +13,7 @@
   </Appenders>
   <Loggers>
     <logger name="de.qabel.desktop.daemon" includeLocation="true">
-      <level>trace</level>
+      <level>debug</level>
       <AppenderRef ref="Console"/>
     </logger>
     <logger name="de.qabel.desktop" includeLocation="true">
