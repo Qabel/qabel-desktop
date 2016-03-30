@@ -5,6 +5,7 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.core.crypto.QblECPublicKey;
+import de.qabel.desktop.AsyncUtils;
 import de.qabel.desktop.BlockSharingService;
 import de.qabel.desktop.SharingService;
 import de.qabel.desktop.exceptions.QblStorageException;
@@ -77,6 +78,16 @@ public abstract class BoxVolumeTest {
 	@Test
 	public void testUploadFile() throws QblStorageException, IOException {
 		uploadFile(volume.navigate());
+	}
+
+	@Test
+	public void modifiedStateIsClearedOnCommit() throws Exception {
+		IndexNavigation nav = volume.navigate();
+		nav.setAutocommit(false);
+		uploadFile(nav);
+		assertFalse(nav.isUnmodified());
+		nav.commit();
+		assertTrue(nav.isUnmodified());
 	}
 
 	@Test(expected = QblStorageNotFound.class)
