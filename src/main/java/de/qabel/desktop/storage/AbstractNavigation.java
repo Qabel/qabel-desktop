@@ -142,9 +142,10 @@ public abstract class AbstractNavigation implements BoxNavigation {
 		for (String ref : deleteQueue) {
 			writeBackend.delete(ref);
 		}
-		// TODO: make a test fail without these
+
 		deleteQueue.clear();
 		updatedFiles.clear();
+		changes.clear();
 	}
 
 	@Override

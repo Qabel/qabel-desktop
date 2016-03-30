@@ -7,7 +7,7 @@ import de.qabel.desktop.daemon.management.Upload;
 import de.qabel.desktop.daemon.sync.BoxSync;
 import de.qabel.desktop.daemon.sync.worker.Syncer;
 import de.qabel.desktop.ui.AbstractController;
-import de.qabel.desktop.ui.transfer.FxProgressCollectionModel;
+import de.qabel.desktop.ui.transfer.SyncViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -26,10 +26,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class SyncItemController extends AbstractController implements Initializable {
-	private static final Image folderDownloadImg = new Image(SyncItemController.class.getResourceAsStream("/icon/add_folder.png"), 18, 18, true, true);
-	private static final Image folderUploadImg = new Image(SyncItemController.class.getResourceAsStream("/icon/folder-upload.png"), 18, 18, true, true);
-	private static final Image fileDownloadImg = new Image(SyncItemController.class.getResourceAsStream("/icon/download.png"), 18, 18, true, true);
-	private static final Image fileUploadImg = new Image(SyncItemController.class.getResourceAsStream("/icon/upload.png"), 18, 18, true, true);
 
 	@Inject
 	private ClientConfiguration clientConfiguration;
@@ -71,7 +67,7 @@ public class SyncItemController extends AbstractController implements Initializa
 
 	Alert confirmationDialog;
 	private ResourceBundle resources;
-	private FxProgressCollectionModel<Transaction> progressModel;
+	private SyncViewModel progressModel;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -82,12 +78,13 @@ public class SyncItemController extends AbstractController implements Initializa
 		localPath.textProperty().bind(fxConfig.localPathProperty());
 		remotePath.textProperty().bind(fxConfig.remotePathProperty());
 
-		Syncer syncer = syncConfig.getSyncer();
-		if (syncer instanceof BoxSync) {
-			boxSync = (BoxSync) syncer;
-		}
 
-		progressModel = new FxProgressCollectionModel<>(syncConfig.getSyncer());
+		syncConfig.withSyncer(this::initModel);
+	}
+
+	public void initModel(Syncer syncer) {
+		boxSync = syncer;
+		progressModel = new SyncViewModel(syncer);
 		progress.progressProperty().bind(progressModel.progressProperty());
 
 		progressModel.progressProperty().addListener((observable, oldValue, newValue) -> {
@@ -96,7 +93,12 @@ public class SyncItemController extends AbstractController implements Initializa
 		progressModel.currentItemProperty().addListener(observable -> {
 			updateSyncStatus(progressModel.currentItemProperty().get());
 		});
-		progressModel.onChange(this::updateSyncStatus);
+
+		itemStatusLabel.textProperty().bind(progressModel.currentTransactionPercentLabel());
+		itemProgressColumn.percentWidthProperty().bind(progressModel.currentTransactionPercent());
+		currentItemLabel.textProperty().bind(progressModel.currentTransactionLabel());
+		currentItemIcon.visibleProperty().bind(progressModel.currentTransactionImageVisible());
+		currentItemIcon.imageProperty().bind(progressModel.currentTransactionImage());
 
 		updateSyncStatus();
 		syncStatusLabel.setText("");
@@ -139,44 +141,7 @@ public class SyncItemController extends AbstractController implements Initializa
 	}
 
 	private void updateSyncStatus(Transaction transaction) {
-		if (transaction == null) {
-			currentItemLabel.setText("");
-			itemStatusLabel.setText("");
-			currentItemIcon.setVisible(false);
-		} else {
-			if (transaction.isDone()) {
-				currentItemLabel.setText("");
-				itemStatusLabel.setText("");
-				currentItemIcon.setVisible(false);
-			} else {
-				if (!transaction.isDone()) {
-					currentItemLabel.setText(renderTransaction(transaction));
-					int itemProgressPercent = (int) (transaction.getProgress() * 100);
-					itemStatusLabel.setText(itemProgressPercent + " %");
-					itemProgressColumn.setPercentWidth(itemProgressPercent);
-					currentItemIcon.setImage(selectImage(transaction));
-					currentItemIcon.setVisible(true);
-				}
-			}
-		}
-
 		updateSyncStatus();
-	}
-
-	private Image selectImage(Transaction transaction) {
-		if (transaction.isDir()) {
-			if (transaction instanceof Upload) {
-				return folderUploadImg;
-			} else {
-				return folderDownloadImg;
-			}
-		} else {
-			if (transaction instanceof Upload) {
-				return fileUploadImg;
-			} else {
-				return folderUploadImg;
-			}
-		}
 	}
 
 	private String renderTransaction(Transaction transaction) {

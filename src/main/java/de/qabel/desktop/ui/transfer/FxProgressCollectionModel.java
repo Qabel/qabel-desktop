@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class FxProgressCollectionModel<T> {
+	boolean usePlaformThread = true;
 	private DoubleProperty progressProperty = new SimpleDoubleProperty(1.0);
 	private LongProperty totalItemsProperty = new SimpleLongProperty(0);
 	private LongProperty currentItemsProperty = new SimpleLongProperty(0);
@@ -42,7 +43,7 @@ public class FxProgressCollectionModel<T> {
 	}
 
 	private void updateProgress(T currentItem) {
-		Platform.runLater(() -> {
+		run(() -> {
 			progressProperty.set(this.progress.getProgress());
 			this.currentItemProperty.set(currentItem);
 			totalItemsProperty.setValue(progress.totalElements());
@@ -51,6 +52,14 @@ public class FxProgressCollectionModel<T> {
 				handler.accept(currentItem);
 			}
 		});
+	}
+
+	private void run(Runnable runnable) {
+		if (usePlaformThread) {
+			Platform.runLater(runnable);
+		} else {
+			runnable.run();
+		}
 	}
 
 	public void onChange(Consumer<T> changeHandler) {

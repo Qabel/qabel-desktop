@@ -2,12 +2,12 @@ package de.qabel.desktop.config;
 
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
-import de.qabel.desktop.daemon.sync.worker.DefaultSyncer;
 import de.qabel.desktop.daemon.sync.worker.Syncer;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndex;
 
 import java.nio.file.Path;
 import java.util.Observer;
+import java.util.function.Consumer;
 
 public interface BoxSyncConfig {
 	String getName();
@@ -27,4 +27,6 @@ public interface BoxSyncConfig {
 
 	void setSyncer(Syncer syncer);
 	Syncer getSyncer();
+
+	void withSyncer(Consumer<Syncer> callback);
 }

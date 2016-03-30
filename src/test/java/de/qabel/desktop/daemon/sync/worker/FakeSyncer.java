@@ -61,8 +61,28 @@ public class FakeSyncer implements Syncer {
 	}
 
 	@Override
+	public boolean isSynced() {
+		return false;
+	}
+
+	@Override
 	public double getProgress() {
 		return 0;
+	}
+
+	@Override
+	public int countFiles() {
+		return 0;
+	}
+
+	@Override
+	public int countFolders() {
+		return 0;
+	}
+
+	@Override
+	public boolean hasError() {
+		return false;
 	}
 
 	@Override

@@ -339,7 +339,8 @@ public abstract class BoxVolumeTest {
 	}
 
 	@Test
-	public void deleteCleansShares() throws Exception {BoxNavigation nav = volume.navigate();
+	public void deleteCleansShares() throws Exception {
+		BoxNavigation nav = volume.navigate();
 		File file = new File(testFileName);
 		BoxFile boxFile = nav.upload("file1", file);
 		nav.share(keyPair.getPub(), boxFile, contact.getKeyIdentifier());

@@ -35,6 +35,7 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 
 	@Override
 	protected void setUpVolume() throws IOException {
+		AbstractNavigation.DEFAULT_AUTOCOMMIT_DELAY = 0;
 		tempFolder = Files.createTempDirectory("");
 
 		readBackend = new LocalReadBackend(tempFolder);
@@ -240,7 +241,7 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 		nav2.delete(nav2.getFolder("testfolder"));
 		nav.refresh();
 
-		assertEquals("no notification", 1, updates.size());
+		waitUntil(() -> updates.size() == 1, 10000L, () -> "no notification");
 		ChangeEvent event = updates.get(0);
 		assertTrue("wrong event type " + event.getType(), event.isDelete());
 		assertEquals("/testfolder", event.getPath().toString());
@@ -256,7 +257,7 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 		volume2.navigate().delete(boxFile);
 		nav.refresh();
 
-		assertEquals("no notification", 1, updates.size());
+		waitUntil(() -> updates.size() == 1, () -> "no notification");
 		ChangeEvent event = updates.get(0);
 		assertTrue("wrong event type " + event.getType(), event.isDelete());
 		assertEquals("/testfile", event.getPath().toString());

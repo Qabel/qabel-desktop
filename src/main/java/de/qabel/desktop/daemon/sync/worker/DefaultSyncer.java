@@ -26,7 +26,6 @@ import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observer;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -42,7 +41,7 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgressCollection<Syn
 	private CachedBoxVolume boxVolume;
 	private BoxSyncConfig config;
 	private TransferManager manager;
-	private int pollInterval = 600;
+	private int pollInterval = 10;
 	private TimeUnit pollUnit = TimeUnit.SECONDS;
 	private Thread poller;
 	private TreeWatcher watcher;
