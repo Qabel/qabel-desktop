@@ -7,8 +7,7 @@ import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.exceptions.QblStorageInvalidKey;
 import de.qabel.desktop.exceptions.QblStorageNameConflict;
 import de.qabel.desktop.exceptions.QblStorageNotFound;
-import de.qabel.desktop.storage.command.CreateFolderChange;
-import de.qabel.desktop.storage.command.DirectoryMetadataChange;
+import de.qabel.desktop.storage.command.*;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
@@ -427,10 +426,10 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	@Override
 	public synchronized BoxFolder createFolder(String name) throws QblStorageException {
 		CreateFolderChange createFolderChange = new CreateFolderChange(name, deviceId);
-		CreateFolderChange.Result result = createFolderChange.execute(dm);
+		ChangeResult<BoxFolder> result = createFolderChange.execute(dm);
 		changes.add(createFolderChange);
 
-		BoxFolder folder = result.getFolder();
+		BoxFolder folder = result.getBoxObject();
 		BoxNavigation newFolder = new FolderNavigation(prefix, result.getDM(), keyPair, folder.getKey(),
 				deviceId, readBackend, writeBackend, getIndexNavigation());
 		newFolder.setAutocommit(autocommit);
@@ -442,12 +441,11 @@ public abstract class AbstractNavigation implements BoxNavigation {
 
 	@Override
 	public synchronized void delete(BoxFile file) throws QblStorageException {
-		dm.deleteFile(file);
-		deleteQueue.add("blocks/" + file.getBlock());
+		DeleteFileChange change = new DeleteFileChange(file, getIndexNavigation(), writeBackend);
+		DeleteFileChange.FileDeletionResult result = change.execute(dm);
+		changes.add(change);
+		deleteQueue.add(result.getDeletedBlockRef());
 
-		if (file.isShared()) {
-			unshare(file);
-		}
 		autocommit();
 	}
 
@@ -474,6 +472,10 @@ public abstract class AbstractNavigation implements BoxNavigation {
 	 * @return True if FileMetadata has been deleted. False if meta information is missing.
 	 */
 	protected boolean removeFileMetadata(BoxFile boxFile) throws QblStorageException {
+		return removeFileMetadata(boxFile, writeBackend, dm);
+	}
+
+	public static boolean removeFileMetadata(BoxFile boxFile, StorageWriteBackend writeBackend, DirectoryMetadata dm) throws QblStorageException {
 		if (boxFile.meta == null || boxFile.metakey == null) {
 			return false;
 		}
@@ -504,8 +506,10 @@ public abstract class AbstractNavigation implements BoxNavigation {
 			folderNav.delete(subFolder);
 		}
 		folderNav.commit();
-		dm.deleteFolder(folder);
-		deleteQueue.add(folder.getRef());
+		DeleteFolderChange deleteFolderChange = new DeleteFolderChange(folder);
+		DeleteFolderChange.FolderDeletionResult result = deleteFolderChange.execute(dm);
+		changes.add(deleteFolderChange);
+		deleteQueue.add(result.getDeletedBlockRef());
 		autocommit();
 	}
 

@@ -80,7 +80,7 @@ public class DesktopClient extends Application {
 			DATABASE_FILE = new File(args[0]).getAbsoluteFile().toPath();
 		}
 
-		runtimeConfiguration = new StaticRuntimeConfiguration("https://drop.qabel.de",DATABASE_FILE);
+		runtimeConfiguration = new StaticRuntimeConfiguration("https://drop.qabel.de", DATABASE_FILE);
 		StaticDesktopServiceFactory staticDesktopServiceFactory = new StaticDesktopServiceFactory(runtimeConfiguration);
 		services = staticDesktopServiceFactory;
 		Injector.setConfigurationSource(key -> staticDesktopServiceFactory.get((String)key));

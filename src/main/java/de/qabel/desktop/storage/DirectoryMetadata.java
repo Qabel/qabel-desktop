@@ -312,7 +312,7 @@ public class DirectoryMetadata extends AbstractMetadata {
 		}
 	}
 
-	void deleteFile(BoxFile file) throws QblStorageException {
+	public void deleteFile(BoxFile file) throws QblStorageException {
 		try {
 			PreparedStatement st = connection.prepareStatement(
 					"DELETE FROM files WHERE name=?");
@@ -341,7 +341,7 @@ public class DirectoryMetadata extends AbstractMetadata {
 		});
 	}
 
-	void deleteFolder(BoxFolder folder) throws QblStorageException {
+	public void deleteFolder(BoxFolder folder) throws QblStorageException {
 		executeStatement(() -> {
 			PreparedStatement st = connection.prepareStatement(
 					"DELETE FROM folders WHERE name=?");

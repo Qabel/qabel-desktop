@@ -3,6 +3,7 @@ package de.qabel.desktop.daemon.sync.worker;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.daemon.management.Transaction;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -23,7 +24,7 @@ public class FakeSyncer implements Syncer {
 
 	@Override
 	public List<Transaction> getHistory() {
-		return null;
+		return new LinkedList<>();
 	}
 
 	@Override

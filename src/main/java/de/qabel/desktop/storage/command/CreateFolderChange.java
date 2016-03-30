@@ -5,9 +5,8 @@ import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.BoxFolder;
 import de.qabel.desktop.storage.DirectoryMetadata;
 import org.spongycastle.crypto.params.KeyParameter;
-import org.spongycastle.util.encoders.Hex;
 
-public class CreateFolderChange implements DirectoryMetadataChange<CreateFolderChange.Result> {
+public class CreateFolderChange implements DirectoryMetadataChange<ChangeResult<BoxFolder>> {
 	private CryptoUtils cryptoUtils = new CryptoUtils();
 	private String name;
 	private byte[] deviceId;
@@ -20,29 +19,11 @@ public class CreateFolderChange implements DirectoryMetadataChange<CreateFolderC
 	}
 
 	@Override
-	public Result execute(DirectoryMetadata parentDM) throws QblStorageException {
+	public ChangeResult<BoxFolder> execute(DirectoryMetadata parentDM) throws QblStorageException {
 		DirectoryMetadata dm = DirectoryMetadata.newDatabase(null, deviceId, parentDM.getTempDir());
 		BoxFolder folder = new BoxFolder(dm.getFileName(), name, secretKey.getKey());
 		parentDM.insertFolder(folder);
 		dm.commit();
-		return new Result(dm, folder);
-	}
-
-	public class Result {
-		private DirectoryMetadata dm;
-		private BoxFolder folder;
-
-		public Result(DirectoryMetadata dm, BoxFolder folder) {
-			this.dm = dm;
-			this.folder = folder;
-		}
-
-		public DirectoryMetadata getDM() {
-			return dm;
-		}
-
-		public BoxFolder getFolder() {
-			return folder;
-		}
+		return new ChangeResult<>(dm, folder);
 	}
 }

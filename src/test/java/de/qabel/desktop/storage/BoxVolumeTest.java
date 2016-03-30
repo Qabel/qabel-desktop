@@ -33,6 +33,7 @@ import static org.junit.Assert.*;
 
 public abstract class BoxVolumeTest {
 	private static final Logger logger = LoggerFactory.getLogger(BoxVolumeTest.class.getSimpleName());
+	private final String DEFAULT_UPLOAD_FILENAME = "foobar";
 
 	protected BoxVolume volume;
 	protected BoxVolume volume2;
@@ -99,8 +100,13 @@ public abstract class BoxVolumeTest {
 	}
 
 	private BoxFile uploadFile(BoxNavigation nav) throws QblStorageException, IOException {
+		String filename = DEFAULT_UPLOAD_FILENAME;
+		return uploadFile(nav, filename);
+	}
+
+	private BoxFile uploadFile(BoxNavigation nav, String filename) throws QblStorageException, IOException {
 		File file = new File(testFileName);
-		BoxFile boxFile = nav.upload("foobar", file);
+		BoxFile boxFile = nav.upload(filename, file);
 		BoxNavigation nav_new = volume.navigate();
 		checkFile(boxFile, nav_new);
 		return boxFile;
@@ -176,27 +182,25 @@ public abstract class BoxVolumeTest {
 	public void testOverwriteFileNotFound() throws QblStorageException, IOException {
 		BoxNavigation nav = volume.navigate();
 		File file = new File(testFileName);
-		nav.overwrite("foobar", file);
+		nav.overwrite(DEFAULT_UPLOAD_FILENAME, file);
 	}
 
 	@Test
 	public void testOverwriteFile() throws QblStorageException, IOException {
 		BoxNavigation nav = volume.navigate();
 		File file = new File(testFileName);
-		nav.upload("foobar", file);
-		nav.overwrite("foobar", file);
+		nav.upload(DEFAULT_UPLOAD_FILENAME, file);
+		nav.overwrite(DEFAULT_UPLOAD_FILENAME, file);
 		assertThat(nav.listFiles().size(), is(1));
 	}
 
 	@Test
 	public void testConflictFileUpdate() throws QblStorageException, IOException {
-		BoxNavigation nav = volume.navigate();
-		nav.setAutocommit(false);
-		BoxNavigation nav2 = volume2.navigate();
-		nav2.setAutocommit(false);
+		BoxNavigation nav = setupConflictNav1();
+		BoxNavigation nav2 = setupConflictNav2();
 		File file = new File(testFileName);
-		nav.upload("foobar", file);
-		nav2.upload("foobar", file);
+		nav.upload(DEFAULT_UPLOAD_FILENAME, file);
+		nav2.upload(DEFAULT_UPLOAD_FILENAME, file);
 		nav2.commit();
 		nav.commit();
 		assertThat(nav.listFiles().size(), is(2));
@@ -204,10 +208,8 @@ public abstract class BoxVolumeTest {
 
 	@Test
 	public void testFoldersAreMergedOnConflict() throws Exception {
-		BoxNavigation nav = volume.navigate();
-		nav.setAutocommit(false);
-		BoxNavigation nav2 = volume2.navigate();
-		nav2.setAutocommit(false);
+		BoxNavigation nav = setupConflictNav1();
+		BoxNavigation nav2 = setupConflictNav2();
 
 		nav.createFolder("folder1");
 		nav2.createFolder("folder2");
@@ -216,32 +218,89 @@ public abstract class BoxVolumeTest {
 		nav.commit();
 		assertThat(nav.listFolders().size(), is(2));
 	}
-	// merge deleted folders
-	// merge deleted files
+
+	private BoxNavigation setupConflictNav1() throws QblStorageException {
+		BoxNavigation nav = volume.navigate();
+		nav.setAutocommit(false);
+		return nav;
+	}
+
+	@Test
+	public void testDeletedFoldersAreMergedOnConflict() throws Exception {
+		BoxNavigation nav = setupConflictNav1();
+		BoxFolder folder1 = nav.createFolder("folder1");
+		nav.commit();
+
+		BoxNavigation nav2 = setupConflictNav2();
+		BoxFolder folder2 = nav2.createFolder("folder2");
+		nav2.commit();
+		nav = setupConflictNav1();
+
+		nav2.delete(folder2);
+		nav.delete(folder1);
+		nav2.commit();
+		nav.commit();
+
+		nav.setMetadata(nav.reloadMetadata());
+		assertFalse(nav.hasFolder("folder2"));
+		assertFalse(nav.hasFolder("folder1"));
+	}
+
+	@Test
+	public void testDeletedFilesAreMergedOnConflict() throws Exception {
+		BoxNavigation nav = setupConflictNav1();
+		BoxFile file1 = uploadFile(nav, "file1");
+		nav.commit();
+		getReadBackend().download("blocks/" + file1.getBlock()).close();
+
+		BoxNavigation nav2 = setupConflictNav2();
+		BoxFile file2 = uploadFile(nav2, "file2");
+		nav2.commit();
+		getReadBackend().download("blocks/" + file2.getBlock()).close();
+		nav = setupConflictNav1();
+
+		nav2.delete(file2);
+		nav.delete(file1);
+		nav2.commit();
+		nav.commit();
+
+		nav.setMetadata(nav.reloadMetadata());
+		assertFalse(nav.hasFile("file1"));
+		assertFalse(nav.hasFile("file2"));
+
+		assertFileBlockDeleted(file1);
+		assertFileBlockDeleted(file2);
+	}
+
+	private void assertFileBlockDeleted(BoxFile file2) throws IOException, QblStorageException {
+		try {
+			getReadBackend().download("blocks/" + file2.getBlock()).close();
+			fail("block of file " + file2.getName() + " was not deleted");
+		} catch (QblStorageNotFound ignored) {
+		}
+	}
 
 	@Test(expected = QblStorageNameConflict.class)
 	public void testFileNameConflict() throws QblStorageException {
 		BoxNavigation nav = volume.navigate();
-		nav.createFolder("foobar");
-		nav.upload("foobar", new File(testFileName));
+		nav.createFolder(DEFAULT_UPLOAD_FILENAME);
+		nav.upload(DEFAULT_UPLOAD_FILENAME, new File(testFileName));
 	}
 
 	@Test(expected = QblStorageNameConflict.class)
 	public void testFolderNameConflict() throws QblStorageException {
 		BoxNavigation nav = volume.navigate();
-		nav.upload("foobar", new File(testFileName));
-		nav.createFolder("foobar");
+		nav.upload(DEFAULT_UPLOAD_FILENAME, new File(testFileName));
+		nav.createFolder(DEFAULT_UPLOAD_FILENAME);
 	}
 
 	@Test
 	public void testNameConflictOnDifferentClients() throws QblStorageException, IOException {
-		BoxNavigation nav = volume.navigate();
-		nav.setAutocommit(false);
-		BoxNavigation nav2 = volume2.navigate();
-		nav2.setAutocommit(false);
+		BoxNavigation nav = setupConflictNav1();
+		BoxNavigation nav2 = setupConflictNav2();
 		File file = new File(testFileName);
-		nav.upload("foobar", file);
-		nav2.createFolder("foobar");
+		nav.upload(DEFAULT_UPLOAD_FILENAME, file);
+		nav2.createFolder(DEFAULT_UPLOAD_FILENAME);
 		nav2.commit();
 		nav.commit();
 		assertThat(nav.listFiles().size(), is(1));
@@ -254,7 +313,7 @@ public abstract class BoxVolumeTest {
 		IndexNavigation index = volume.navigate();
 		index.createFolder("subfolder");
 		BoxNavigation nav = index.navigate("subfolder");
-		BoxFile file = nav.upload("foobar", new File(testFileName));
+		BoxFile file = nav.upload(DEFAULT_UPLOAD_FILENAME, new File(testFileName));
 
 		nav.share(keyPair.getPub(), file, "receiverId");
 
@@ -267,18 +326,22 @@ public abstract class BoxVolumeTest {
 	@Test
 	@Ignore
 	public void testFolderNameConflictOnDifferentClients() throws QblStorageException, IOException {
-		BoxNavigation nav = volume.navigate();
-		nav.setAutocommit(false);
-		BoxNavigation nav2 = volume2.navigate();
-		nav2.setAutocommit(false);
+		BoxNavigation nav = setupConflictNav1();
+		BoxNavigation nav2 = setupConflictNav2();
 		File file = new File(testFileName);
-		nav.createFolder("foobar");
-		nav2.upload("foobar", file);
+		nav.createFolder(DEFAULT_UPLOAD_FILENAME);
+		nav2.upload(DEFAULT_UPLOAD_FILENAME, file);
 		nav2.commit();
 		nav.commit();
 		assertThat(nav.listFiles().size(), is(1));
 		assertThat(nav.listFolders().size(), is(1));
 		assertThat(nav.listFiles().get(0).name, startsWith("foobar_conflict"));
+	}
+
+	private BoxNavigation setupConflictNav2() throws QblStorageException {
+		BoxNavigation nav2 = volume2.navigate();
+		nav2.setAutocommit(false);
+		return nav2;
 	}
 
 	@Test

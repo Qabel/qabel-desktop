@@ -86,7 +86,7 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 		// restart syncer
 		syncer.startWatcher();
 		// after restart (everything is re-notified)
-		waitUntil(() -> manager.getTransactions().size() > 1);
+		waitUntil(() -> manager.getTransactions().size() > 2);
 
 		assertContainsTransaction(config.getLocalPath());
 		assertContainsTransaction(file.toPath());
