@@ -16,6 +16,8 @@ import de.qabel.desktop.ui.invite.InviteView;
 import de.qabel.desktop.ui.remotefs.RemoteFSView;
 import de.qabel.desktop.ui.sync.SyncView;
 import de.qabel.desktop.ui.transfer.FxProgressModel;
+import de.qabel.desktop.ui.transfer.SyncViewModel;
+import de.qabel.desktop.ui.transfer.TransactionFxProgressCollectionModel;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -139,15 +141,9 @@ public class LayoutController extends AbstractController implements Initializabl
 			MonitoredTransferManager tm = (MonitoredTransferManager) transferManager;
 			tm.onAdd(progress::add);
 		}
-		FxProgressModel progressModel = new FxProgressModel(progress);
+		TransactionFxProgressCollectionModel progressModel = new TransactionFxProgressCollectionModel(progress);
 		uploadProgress.progressProperty().bind(progressModel.progressProperty());
-		progress.onProgress(() -> {
-			if (progress.isEmpty()) {
-				uploadProgress.setVisible(false);
-			} else {
-				uploadProgress.setVisible(true);
-			}
-		});
+		uploadProgress.visibleProperty().bind(progressModel.runningProperty());
 
 		createButtonGraphics();
 

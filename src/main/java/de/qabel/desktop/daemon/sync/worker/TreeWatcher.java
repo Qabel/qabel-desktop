@@ -156,11 +156,10 @@ public class TreeWatcher extends Thread {
 
 			@Override
 			public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-				//logger.trace("watching " + dir);
+				logger.trace("watching dir " + dir);
 				try {
 					WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
 					keys.put(key, dir);
-					System.out.println("watching " + keys.size() + " dirs");
 					WatchRegisteredEvent event = new WatchRegisteredEvent(dir);
 					executor.submit(() -> consumer.accept(event));
 				} catch (Exception e) {

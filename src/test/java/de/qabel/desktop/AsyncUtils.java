@@ -14,7 +14,7 @@ public class AsyncUtils {
 	}
 
 	public static void waitUntil(Callable<Boolean> evaluate, Callable<String> errorMessage) {
-		waitUntil(evaluate, 2000L, () -> "wait timeout");
+		waitUntil(evaluate, 2000L, errorMessage);
 	}
 
 	public static void waitUntil(Callable<Boolean> evaluate, long timeout, Callable<String> errorMessage) {
