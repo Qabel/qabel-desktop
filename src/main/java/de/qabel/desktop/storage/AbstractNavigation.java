@@ -81,7 +81,16 @@ public abstract class AbstractNavigation implements BoxNavigation {
 			if (cryptoUtils.decryptFileAuthenticatedSymmetricAndValidateTag(indexDl, tmp, key)) {
 				DirectoryMetadata dm = DirectoryMetadata.openDatabase(
 						tmp, deviceId, target.ref, this.dm.getTempDir());
-				FolderNavigation folderNavigation = new FolderNavigation(prefix, dm, keyPair, target.key, deviceId, readBackend, writeBackend, getIndexNavigation());
+				FolderNavigation folderNavigation = new FolderNavigation(
+					prefix,
+					dm,
+					keyPair,
+					target.key,
+					deviceId,
+					readBackend,
+					writeBackend,
+					getIndexNavigation()
+				);
 				folderNavigation.setAutocommit(autocommit);
 				folderNavigation.setAutocommitDelay(autocommitDelay);
 				return folderNavigation;
