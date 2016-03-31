@@ -106,19 +106,24 @@ public class TreeWatcher extends Thread {
 					registerRecursive(child);
 				}
 
-				boolean valid = instance.reset();
-				if (!valid) {
-					keys.remove(instance);
-
-					if (nothingToDo()) {
-						break;
-					}
-				}
 			} catch (Exception e) {
 				if (e instanceof InterruptedException) {
 					throw e;
 				}
 				logger.error("watcher errored: " + e.getMessage(), e);
+			} finally {
+				try {
+					boolean valid = instance.reset();
+					if (!valid) {
+						keys.remove(instance);
+
+						if (nothingToDo()) {
+							break;
+						}
+					}
+				} catch (Exception e) {
+					logger.error("failed to close dir watch: " + e.getMessage(), e);
+				}
 			}
 		}
 	}
