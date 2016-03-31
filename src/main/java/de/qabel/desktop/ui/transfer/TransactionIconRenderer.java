@@ -7,11 +7,17 @@ import javafx.scene.image.Image;
 import java.util.function.Function;
 
 public class TransactionIconRenderer implements Function<Transaction, Image> {
-	private static final Image folderDownloadImg = new Image(TransactionIconRenderer.class.getResourceAsStream("/icon/add_folder.png"), 18, 18, true, true);
-	private static final Image folderUploadImg = new Image(TransactionIconRenderer.class.getResourceAsStream("/icon/folder-upload.png"), 18, 18, true, true);
-	private static final Image fileDownloadImg = new Image(TransactionIconRenderer.class.getResourceAsStream("/icon/download.png"), 18, 18, true, true);
-	private static final Image fileUploadImg = new Image(TransactionIconRenderer.class.getResourceAsStream("/icon/upload.png"), 18, 18, true, true);
+	private static final Image folderDownloadImg = getImage("/icon/add_folder.png");
+	private static final Image folderUploadImg = getImage("/icon/folder-upload.png");
+	private static final Image fileDownloadImg = getImage("/icon/download.png");
+	private static final Image fileUploadImg = getImage("/icon/upload.png");
 
+
+	private static Image getImage(String resourceName) {
+		return new Image(TransactionIconRenderer.class.getResourceAsStream(resourceName), 18, 18, true, true);
+	}
+
+	@Override
 	public Image apply(Transaction transaction) {
 		if (transaction.isDir()) {
 			if (transaction instanceof Upload) {
@@ -23,7 +29,7 @@ public class TransactionIconRenderer implements Function<Transaction, Image> {
 			if (transaction instanceof Upload) {
 				return fileUploadImg;
 			} else {
-				return folderUploadImg;
+				return fileDownloadImg;
 			}
 		}
 	}
