@@ -28,15 +28,15 @@ public class AbstractPage {
 	}
 
 	protected FxRobot clickOn(String query) {
-		try {
-			baseFXRobot.waitForIdle();
-			Node node = waitForNode(query);
-			return clickOn(node);
-		} catch (NullPointerException e) {
-			baseFXRobot.waitForIdle();
-			Node node = waitForNode(query);
-			return clickOn(node);
+		for (int i = 0; i < 10; i++) {
+			try {
+				baseFXRobot.waitForIdle();
+				Node node = waitForNode(query);
+				return clickOn(node);
+			} catch (NullPointerException retry) {
+			}
 		}
+		throw new IllegalStateException("failed to click on " + query + ", it vanished 10 times in a row");
 	}
 
 	private boolean hasMoved(Node node, double x, double y) {
