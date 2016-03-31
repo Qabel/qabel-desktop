@@ -66,7 +66,7 @@ public class DesktopClient extends Application {
 	private ResourceBundle resources;
 
 	public static void main(String[] args) throws Exception {
-		AbstractNavigation.DEFAULT_AUTOCOMMIT_DELAY = 0;
+		AbstractNavigation.DEFAULT_AUTOCOMMIT_DELAY = 2000;
 
 		String defaultEncoding = System.getProperty("file.encoding");
 		if (!defaultEncoding.equals("UTF-8")) {

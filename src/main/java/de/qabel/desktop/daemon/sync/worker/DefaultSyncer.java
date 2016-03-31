@@ -41,8 +41,8 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgressCollection<Syn
 	private CachedBoxVolume boxVolume;
 	private BoxSyncConfig config;
 	private TransferManager manager;
-	private int pollInterval = 10;
-	private TimeUnit pollUnit = TimeUnit.SECONDS;
+	private int pollInterval = 1;
+	private TimeUnit pollUnit = TimeUnit.MINUTES;
 	private Thread poller;
 	private TreeWatcher watcher;
 	private boolean polling = false;

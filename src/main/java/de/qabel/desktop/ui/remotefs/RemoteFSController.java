@@ -221,7 +221,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 							} catch (QblStorageException e) {
 								e.printStackTrace();
 							}
-							Thread.sleep(TimeUnit.MINUTES.toMillis(1));
+							Thread.sleep(TimeUnit.MINUTES.toMillis(5));
 						}
 					} catch (InterruptedException ignored) {
 					}
