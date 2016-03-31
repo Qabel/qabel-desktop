@@ -30,7 +30,7 @@ public class TreeWatcher extends Thread {
 	private Logger logger = LoggerFactory.getLogger(TreeWatcher.class);
 	private Path root;
 	private Consumer<de.qabel.desktop.daemon.sync.event.WatchEvent> consumer;
-	private boolean watching = false;
+	private boolean watching;
 
 	private WatchService watcher;
 	private Map<WatchKey, Path> keys = new HashMap<>();
@@ -47,11 +47,11 @@ public class TreeWatcher extends Thread {
 	@Override
 	@SuppressWarnings("unchecked")
 	public void run() {
-		logger.trace("starting treewatch for " + this.root);
+		logger.trace("starting treewatch for " + root);
 		try {
 			watcher = FileSystems.getDefault().newWatchService();
 
-			registerRecursive(this.root);
+			registerRecursive(root);
 
 			watching = true;
 			while (!isInterrupted()) {

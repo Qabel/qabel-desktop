@@ -16,7 +16,7 @@ public class MonitoredTransferManagerTest {
 
 	@Before
 	public void setUp() {
-		manager.onAdd((t) -> transactions.add(t));
+		manager.onAdd(t -> transactions.add(t));
 	}
 
 	@Test

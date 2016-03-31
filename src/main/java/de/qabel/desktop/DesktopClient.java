@@ -65,7 +65,7 @@ public class DesktopClient extends Application {
     private Stage primaryStage;
     private ExecutorService executorService = Executors.newCachedThreadPool();
     private ClientConfiguration config;
-    private boolean visible = false;
+    private boolean visible;
     private ResourceBundle resources;
 
     public static void main(String[] args) throws Exception {
@@ -178,6 +178,7 @@ public class DesktopClient extends Application {
         setTrayIcon(primaryStage);
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
             public void run() {
                 Platform.exit();
             }
@@ -283,10 +284,10 @@ public class DesktopClient extends Application {
                 }
 
                 if (x + popup.getWidth() > bounds.x + bounds.width) {
-                    x = (bounds.x + bounds.width) - popup.getWidth();
+                    x = bounds.x + bounds.width - popup.getWidth();
                 }
                 if (y + popup.getWidth() > bounds.y + bounds.height) {
-                    y = (bounds.y + bounds.height) - popup.getHeight();
+                    y = bounds.y + bounds.height - popup.getHeight();
                 }
 
                 visible = !visible;
@@ -307,10 +308,10 @@ public class DesktopClient extends Application {
         popup.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseExited(MouseEvent e) {
-                if ((e.getX() < popup.getBounds().getMaxX()) &&
-                    (e.getX() >= popup.getBounds().getMinX()) &&
-                    (e.getY() < popup.getBounds().getMaxY()) &&
-                    (e.getY() >= popup.getBounds().getMinY())) {
+                if (e.getX() < popup.getBounds().getMaxX() &&
+                    e.getX() >= popup.getBounds().getMinX() &&
+                    e.getY() < popup.getBounds().getMaxY() &&
+                    e.getY() >= popup.getBounds().getMinY()) {
                     return;
                 }
                 visible = false;
@@ -365,8 +366,8 @@ public class DesktopClient extends Application {
 
             bounds.x += insets.left;
             bounds.y += insets.top;
-            bounds.width -= (insets.left + insets.right);
-            bounds.height -= (insets.top + insets.bottom);
+            bounds.width -= insets.left + insets.right;
+            bounds.height -= insets.top + insets.bottom;
         }
         return bounds;
 

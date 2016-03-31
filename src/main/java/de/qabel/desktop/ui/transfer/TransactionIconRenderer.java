@@ -12,7 +12,8 @@ public class TransactionIconRenderer implements Function<Transaction, Image> {
 	private static final Image fileDownloadImg = new Image(TransactionIconRenderer.class.getResourceAsStream("/icon/download.png"), 18, 18, true, true);
 	private static final Image fileUploadImg = new Image(TransactionIconRenderer.class.getResourceAsStream("/icon/upload.png"), 18, 18, true, true);
 
-	public Image apply(Transaction transaction) {
+	@Override
+    public Image apply(Transaction transaction) {
 		if (transaction.isDir()) {
 			if (transaction instanceof Upload) {
 				return folderUploadImg;

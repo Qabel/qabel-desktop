@@ -46,7 +46,8 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 		return volume.navigate();
 	}
 
-	@Before
+	@Override
+    @Before
 	public void setUp() {
 		super.setUp();
 		try {
@@ -68,7 +69,8 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 		}
 	}
 
-	@After
+	@Override
+    @After
 	public void tearDown() throws InterruptedException {
 		super.tearDown();
 	}
@@ -199,7 +201,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 		upload.mtime = modifyMtime(upload.source, OLDER);
 		manager.upload(upload);
 
-		upload.type = Transaction.TYPE.UPDATE;
+		upload.type = UPDATE;
 		write("content2", upload.source);
 		upload.mtime = modifyMtime(upload.source, NEWER);
 		manager.upload(upload);
@@ -220,7 +222,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 		upload.destination = Paths.get("/syncRoot", "targetFile");
 		upload.mtime = modifyMtime(upload.source, NEWER);
 		upload.isDir = false;
-		upload.type = Transaction.TYPE.CREATE;
+		upload.type = CREATE;
 		manager.upload(upload);
 
 		BoxNavigation syncRoot = nav().navigate("syncRoot");
@@ -261,7 +263,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 		nav().createFolder("syncRoot");
 		download.source = Paths.get("/syncRoot");
 		download.destination = tmpPath("syncLocal");
-		download.type = Transaction.TYPE.CREATE;
+		download.type = CREATE;
 		download.isDir = true;
 
 		manager.download(download);
@@ -425,7 +427,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 		file.delete();
 		upload.valid = false;
 
-		waitUntil(() -> upload.getState() == Transaction.STATE.SKIPPED);
+		waitUntil(() -> upload.getState() == SKIPPED);
 	}
 
 	protected void managerNext() {

@@ -65,7 +65,7 @@ public class AccountingController extends AbstractController implements Initiali
 		} catch (EntityNotFoundExcepion | PersistenceException e) {
 			alert(e);
 		}
-		this.resourceBundle = resources;
+        resourceBundle = resources;
 
 		updateIdentityState();
 		clientConfiguration.addObserver((o, arg) -> {

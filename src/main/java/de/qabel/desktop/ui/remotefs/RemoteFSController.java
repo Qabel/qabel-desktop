@@ -107,10 +107,11 @@ public class RemoteFSController extends AbstractController implements Initializa
 	private Identity identity;
 	private ShareNotifications notifications;
 
-	public void initialize(URL location, ResourceBundle resources) {
+	@Override
+    public void initialize(URL location, ResourceBundle resources) {
 		Cursor oldCursor = stack.getCursor();
 		stack.setCursor(Cursor.WAIT);
-		this.resourceBundle = resources;
+        resourceBundle = resources;
 		observeIdentityChanges();
 		initTreeTableView();
 

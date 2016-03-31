@@ -27,7 +27,8 @@ public class HttpDropConnector implements DropConnector {
 		this.dHTTP = dHTTP;
 	}
 
-	public void send(Contact c, DropMessage d) throws QblNetworkInvalidResponseException {
+	@Override
+    public void send(Contact c, DropMessage d) throws QblNetworkInvalidResponseException {
 		BinaryDropMessageV0 binaryMessage;
 
 		try {
@@ -43,7 +44,8 @@ public class HttpDropConnector implements DropConnector {
 		}
 	}
 
-	public List<DropMessage> receive(Identity i, Date since) {
+	@Override
+    public List<DropMessage> receive(Identity i, Date since) {
 		DropURL d = convertCollectionIntoDropUrl(i.getDropUrls());
 		HTTPResult<Collection<byte[]>> result = receiveMessages(since, d);
 

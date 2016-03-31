@@ -117,6 +117,7 @@ public class DefaultClientConfiguration extends Observable implements ClientConf
         return shareNotifications;
     }
 
+    @Override
     public void setShareNotifications(Map<String, ShareNotifications> shareNotifications) {
         this.shareNotifications = shareNotifications;
         shareNotifications.values().forEach(this::observeShare);

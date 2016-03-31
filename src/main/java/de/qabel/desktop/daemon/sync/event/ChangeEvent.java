@@ -6,7 +6,8 @@ public interface ChangeEvent extends WatchEvent {
 
 	TYPE getType();
 
-	boolean isValid();
+	@Override
+    boolean isValid();
 
 	boolean isUpdate();
 

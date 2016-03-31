@@ -63,12 +63,13 @@ public class ActionlogController extends AbstractController implements Initializ
 	DropConnector dropConnector;
 
 	Identity identity;
-	Contact contact = null;
+	Contact contact;
 	List<PersistenceDropMessage> receivedDropMessages;
 	List<ActionlogItem> messageControllers = new LinkedList<>();
 	Thread dateRefresher;
 
-	public void initialize(URL location, ResourceBundle resources) {
+	@Override
+    public void initialize(URL location, ResourceBundle resources) {
 
 		startThreads();
 		identity = clientConfiguration.getSelectedIdentity();
@@ -202,7 +203,7 @@ public class ActionlogController extends AbstractController implements Initializ
 	}
 
 	void setText(String text) {
-		this.textarea.setText(text);
+        textarea.setText(text);
 	}
 
 	@Override

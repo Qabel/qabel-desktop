@@ -9,7 +9,7 @@ import java.util.List;
 public class BlacklistSpy implements Blacklist {
 	private Blacklist blacklist;
 	public List<Path> tests = new LinkedList<>();
-	public int matches = 0;
+	public int matches;
 
 	public BlacklistSpy(Blacklist blacklist) {
 		this.blacklist = blacklist;

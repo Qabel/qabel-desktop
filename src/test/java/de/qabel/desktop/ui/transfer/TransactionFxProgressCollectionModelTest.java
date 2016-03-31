@@ -18,7 +18,8 @@ public class TransactionFxProgressCollectionModelTest extends AbstractController
 	private final TransactionFxProgressCollectionModel model = new TransactionFxProgressCollectionModel(progress);
 	private final TransactionStub t = new TransactionStub();
 
-	@Before
+	@Override
+    @Before
 	public void setUp() throws Exception {
 
 	}

@@ -44,8 +44,8 @@ public class FxProgressCollectionModel<T> {
 
 	private void updateProgress(T currentItem) {
 		run(() -> {
-			progressProperty.set(this.progress.getProgress());
-			this.currentItemProperty.set(currentItem);
+			progressProperty.set(progress.getProgress());
+            currentItemProperty.set(currentItem);
 			totalItemsProperty.setValue(progress.totalElements());
 			currentItemsProperty.setValue(progress.finishedElements());
 			for (Consumer<T> handler : changeHandlers) {
@@ -63,6 +63,6 @@ public class FxProgressCollectionModel<T> {
 	}
 
 	public void onChange(Consumer<T> changeHandler) {
-		this.changeHandlers.add(changeHandler);
+        changeHandlers.add(changeHandler);
 	}
 }

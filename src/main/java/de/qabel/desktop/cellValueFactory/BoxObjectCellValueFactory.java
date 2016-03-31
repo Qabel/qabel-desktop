@@ -24,6 +24,7 @@ public class BoxObjectCellValueFactory implements Callback<TreeTableColumn.CellD
         this.searchValue = searchValue;
     }
 
+    @Override
     public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<BoxObject, String> p) {
         TreeItem<BoxObject> treeItem = p.getValue();
         BoxObject bf = treeItem.getValue();

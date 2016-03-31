@@ -11,7 +11,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 public class HttpUpdateChecker implements UpdateChecker {
     private final HttpClient client;
-    private LatestVersionInfo desktopVersion = null;
+    private LatestVersionInfo desktopVersion;
 
     public HttpUpdateChecker(HttpClient client) {
         this.client = client;

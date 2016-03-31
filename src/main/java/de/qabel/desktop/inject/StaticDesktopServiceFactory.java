@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class StaticDesktopServiceFactory extends DefaultServiceFactory implements DesktopServices, ServiceFactory {
+public class StaticDesktopServiceFactory extends DefaultServiceFactory implements DesktopServices {
     private static Map<String, Method> creators = new HashMap<>();
 
     static {
@@ -275,6 +275,7 @@ public class StaticDesktopServiceFactory extends DefaultServiceFactory implement
 
     private AccountingHTTP accountingHTTP;
 
+    @Override
     @Create(name = "boxVolumeFactory")
     public synchronized BoxVolumeFactory getBoxVolumeFactory() {
         if (boxVolumeFactory == null) {
@@ -287,6 +288,7 @@ public class StaticDesktopServiceFactory extends DefaultServiceFactory implement
         return boxVolumeFactory;
     }
 
+    @Override
     @Create(name = "accountingClient")
     public synchronized AccountingHTTP getAccountingClient() {
         if (accountingHTTP == null) {

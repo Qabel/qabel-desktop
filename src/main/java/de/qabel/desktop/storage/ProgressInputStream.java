@@ -10,8 +10,8 @@ import java.util.function.Consumer;
 public class ProgressInputStream extends FilterInputStream {
     private static final ExecutorService executor = Executors.newCachedThreadPool();
     private Consumer<Long> consumer;
-    private long read = 0;
-    private long lastUpdate = 0;
+    private long read;
+    private long lastUpdate;
 
     /**
      * Creates a <code>FilterInputStream</code>

@@ -14,7 +14,7 @@ import java.nio.file.Path;
 import java.security.InvalidKeyException;
 
 public class StubSharingService implements SharingService {
-	public DownloadRequest downloadedFile = null;
+	public DownloadRequest downloadedFile;
 	public BoxObject loadFileMetadata;
 	public ShareRequest shared;
 

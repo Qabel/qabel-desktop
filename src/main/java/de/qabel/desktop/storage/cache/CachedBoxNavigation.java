@@ -57,7 +57,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 		if (!cache.has(target)) {
 
 			CachedBoxNavigation subnav = new CachedBoxNavigation(
-					this.nav.navigate(target),
+                nav.navigate(target),
 					BoxFileSystem.get(path).resolve(target.getName())
 			);
 			cache.cache(target, subnav);
@@ -254,7 +254,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 			try {
 				navigate(folder).refresh();
 			} catch (QblStorageException e) {
-				logger.error("failed to refresh directory: " + path.toString() + "/" + folder.getName() + " " + e.getMessage(), e);
+				logger.error("failed to refresh directory: " + path + "/" + folder.getName() + " " + e.getMessage(), e);
 			}
 		}
 	}
@@ -270,7 +270,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 				continue;
 			}
 			if (!newFiles.contains(file)) {
-				TYPE type = TYPE.DELETE;
+				TYPE type = DELETE;
 				notify(file, type);
 			}
 		}
@@ -297,7 +297,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 	protected void findDeletedFolders(Set<BoxFolder> oldFolders, Set<BoxFolder> newFolders) {
 		for (BoxFolder folder : oldFolders) {
 			if (!newFolders.contains(folder)) {
-				notify(folder, TYPE.DELETE);
+				notify(folder, DELETE);
 			}
 		}
 	}

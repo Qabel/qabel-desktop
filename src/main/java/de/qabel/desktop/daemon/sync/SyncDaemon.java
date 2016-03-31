@@ -15,7 +15,7 @@ public class SyncDaemon implements Runnable {
 	private SyncerFactory syncerFactory;
 	private ObservableList<BoxSyncConfig> configs;
 	private List<Syncer> syncers = new LinkedList<>();
-	boolean started = false;
+	boolean started;
 
 	private ExecutorService threadPool = Executors.newCachedThreadPool();
 

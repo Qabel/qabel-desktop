@@ -48,7 +48,8 @@ public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSContro
 		return new RemoteFSView();
 	}
 
-	@Before
+	@Override
+    @Before
 	public void setUp() throws Exception {
 		super.setUp();
 

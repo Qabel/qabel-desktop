@@ -16,8 +16,7 @@ public class ComposedProgressBar extends StackPane {
 	private ColumnConstraints itemProgressColumn;
 
 	public ComposedProgressBar() {
-		super();
-		initElements();
+        initElements();
 	}
 
 	private void initElements() {

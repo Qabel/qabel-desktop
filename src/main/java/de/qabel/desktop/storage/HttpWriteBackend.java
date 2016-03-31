@@ -22,14 +22,14 @@ public class HttpWriteBackend extends AbstractHttpStorageBackend implements Stor
         logger.info("Uploading " + name);
         HttpPost httpPost;
         try {
-            URI uri = this.root.resolve(name);
+            URI uri = root.resolve(name);
             httpPost = new HttpPost(uri);
             prepareRequest(httpPost);
             httpPost.setEntity(new InputStreamEntity(content));
 
             try (CloseableHttpResponse response = httpclient.execute(httpPost)) {
                 int status = response.getStatusLine().getStatusCode();
-                if ((status == 404) || (status == 403)) {
+                if (status == 404 || status == 403) {
                     throw new QblStorageNotFound("File not found");
                 }
                 if (status >= 300) {
@@ -49,7 +49,7 @@ public class HttpWriteBackend extends AbstractHttpStorageBackend implements Stor
         CloseableHttpResponse response;
 
         try {
-            uri = this.root.resolve(name);
+            uri = root.resolve(name);
             HttpDelete httpDelete = new HttpDelete(uri);
             prepareRequest(httpDelete);
 
@@ -58,7 +58,7 @@ public class HttpWriteBackend extends AbstractHttpStorageBackend implements Stor
             throw new QblStorageException(e);
         }
         int status = response.getStatusLine().getStatusCode();
-        if ((status == 404) || (status == 403)) {
+        if (status == 404 || status == 403) {
             throw new QblStorageNotFound("File not found");
         }
         if (status >= 300) {

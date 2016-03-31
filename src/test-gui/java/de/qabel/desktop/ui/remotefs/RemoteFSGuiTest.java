@@ -39,7 +39,8 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 		return new RemoteFSView();
 	}
 
-	@Before
+	@Override
+    @Before
 	public void setUp() throws Exception {
 		super.setUp();
 		page = new RemoteBrowserPage(baseFXRobot, robot, controller);

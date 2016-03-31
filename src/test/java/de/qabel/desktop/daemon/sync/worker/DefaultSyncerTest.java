@@ -38,7 +38,8 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 	private Account account;
 	private DefaultSyncer syncer;
 
-	@Before
+	@Override
+    @Before
 	public void setUp() {
 		super.setUp();
 		try {
@@ -51,7 +52,8 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 		config = new DefaultBoxSyncConfig(tmpDir, Paths.get("/"), identity, account);
 	}
 
-	@After
+	@Override
+    @After
 	public void tearDown() throws InterruptedException {
 		if (syncer != null) {
 			syncer.shutdown();
@@ -100,7 +102,7 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 				return;
 			}
 		}
-		fail(localPath.toString() + " not found in " + manager.getTransactions());
+		fail(localPath + " not found in " + manager.getTransactions());
 	}
 
 	@Test

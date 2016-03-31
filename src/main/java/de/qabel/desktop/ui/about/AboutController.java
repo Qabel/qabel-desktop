@@ -36,7 +36,7 @@ public class AboutController extends AbstractController implements Initializable
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		this.resourceBundle = resources;
+        resourceBundle = resources;
 		try {
 			addDependencyLicenses();
 			activateLinks();

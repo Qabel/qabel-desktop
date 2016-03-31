@@ -33,7 +33,7 @@ import java.util.function.Consumer;
 
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.UPDATE;
 
-public class DefaultSyncer implements Syncer, BoxSync, HasProgressCollection<Syncer, Transaction> {
+public class DefaultSyncer implements Syncer {
 	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 	private static final ExecutorService fileExecutor = Executors.newSingleThreadExecutor();
 	private BoxSyncBasedUploadFactory uploadFactory = new BoxSyncBasedUploadFactory();
@@ -45,7 +45,7 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgressCollection<Syn
 	private TimeUnit pollUnit = TimeUnit.MINUTES;
 	private Thread poller;
 	private TreeWatcher watcher;
-	private boolean polling = false;
+	private boolean polling;
 	private final SyncIndex index;
 	private WindowedTransactionGroup progress = new WindowedTransactionGroup();
 	private List<Transaction> history = new LinkedList<>();
@@ -61,7 +61,7 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgressCollection<Syn
 	}
 
 	public void setLocalBlacklist(Blacklist blacklist) {
-		this.localBlacklist = blacklist;
+        localBlacklist = blacklist;
 	}
 
 	@Override
@@ -116,7 +116,7 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgressCollection<Syn
 					return;
 				}
 				String type = ((ChangeEvent) arg).getType().toString();
-				logger.trace("remote update " + type + " " + ((ChangeEvent) arg).getPath().toString());
+				logger.trace("remote update " + type + " " + ((ChangeEvent) arg).getPath());
 				download((ChangeEvent) arg);
 			} catch (Exception e) {
 				logger.error("failed to handle remote change: " + e.getMessage(), e);
@@ -252,7 +252,7 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgressCollection<Syn
 		}
 	}
 
-	private int localEvents = 0;
+	private int localEvents;
 
 	public boolean isProcessingLocalEvents() {
 		return localEvents > 0;
@@ -264,11 +264,11 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgressCollection<Syn
 			Files.createDirectories(localPath);
 		}
 		if (!Files.isReadable(localPath)) {
-			throw new IllegalStateException("local dir " + localPath.toString() + " is not valid");
+			throw new IllegalStateException("local dir " + localPath + " is not valid");
 		}
 		watcher = new TreeWatcher(localPath, watchEvent -> {
 			try {
-				synchronized (DefaultSyncer.this) {
+				synchronized (this) {
 					localEvents++;
 				}
 				if (!watchEvent.isValid()) {
@@ -277,10 +277,10 @@ public class DefaultSyncer implements Syncer, BoxSync, HasProgressCollection<Syn
 				String type = "";
 				if (watchEvent instanceof ChangeEvent)
 					type = ((ChangeEvent) watchEvent).getType().toString();
-				logger.trace("local update " + type + " " + watchEvent.getPath().toString());
+				logger.trace("local update " + type + " " + watchEvent.getPath());
 				upload(watchEvent);
 			} finally {
-				synchronized (DefaultSyncer.this) {
+				synchronized (this) {
 					localEvents--;
 				}
 			}

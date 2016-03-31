@@ -67,11 +67,11 @@ public class ContactItemController extends AbstractController implements Initial
 			for (Consumer listener : selectionListeners) {
 				SelectionEvent selectionEvent = new SelectionEvent();
 				selectionEvent.setContact(contact);
-				selectionEvent.setController(ContactItemController.this);
+				selectionEvent.setController(this);
 				listener.accept(selectionEvent);
 			}
 		});
-		this.resourceBundle = resources;
+        resourceBundle = resources;
 		alias.setText(contact.getAlias());
 		email.setText(contact.getEmail());
 		updateAvatar();

@@ -11,6 +11,7 @@ import de.qabel.desktop.ui.transfer.ComposedProgressBar;
 import de.qabel.desktop.ui.transfer.TransferViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -157,7 +158,7 @@ public class SyncItemController extends AbstractController implements Initializa
 		String filename = transaction.getDestination().getFileName().toString();
 		String direction = transaction instanceof Upload ? "Remote" : "Local";
 		String type = transaction.getType().toString();
-		return filename + " (" + StringUtils.capitalize(type) + " " + (transaction.getSize() / 1024) + "kb)";
+		return filename + " (" + StringUtils.capitalize(type) + " " + transaction.getSize() / 1024 + "kb)";
 	}
 
 	private void updateSyncStatus() {
@@ -198,7 +199,7 @@ public class SyncItemController extends AbstractController implements Initializa
 					});
 
 			TextArea textArea = new TextArea(history.toString());
-			VBox.setMargin(textArea, new javafx.geometry.Insets(10, 0, 5, 0));
+			VBox.setMargin(textArea, new Insets(10, 0, 5, 0));
 			textArea.setEditable(false);
 			textArea.setWrapText(false);
 

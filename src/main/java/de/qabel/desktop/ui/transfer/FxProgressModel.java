@@ -26,7 +26,7 @@ public class FxProgressModel {
 	 * delay = null means always update
 	 */
 	public void setMinimumUpdateDelay(Long delay) {
-		this.minimumUpdateDelay = delay;
+        minimumUpdateDelay = delay;
 	}
 
 	public DoubleProperty progressProperty() {
@@ -39,7 +39,7 @@ public class FxProgressModel {
 		updateProgress();
 	}
 
-	long lastUpdate = 0;
+	long lastUpdate;
 
 	private void updateProgress() {
 		final double progress = this.progress.getProgress();

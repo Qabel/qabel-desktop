@@ -5,7 +5,7 @@ import de.qabel.desktop.daemon.management.HasProgress;
 import java.util.Observable;
 
 public class ProgressStub extends Observable implements HasProgress<ProgressStub> {
-	public double progress = 0.0;
+	public double progress;
 
 	@Override
 	public double getProgress() {

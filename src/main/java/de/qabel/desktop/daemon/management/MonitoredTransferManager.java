@@ -27,7 +27,7 @@ public class MonitoredTransferManager implements TransferManager {
 	}
 
 	private void notifyListeners(Transaction transaction) {
-		executor.submit(() -> addListeners.forEach((c) -> c.accept(transaction)));
+		executor.submit(() -> addListeners.forEach(c -> c.accept(transaction)));
 	}
 
 	@Override

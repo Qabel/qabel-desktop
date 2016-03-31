@@ -93,7 +93,7 @@ public class BoxVolume {
         } catch (NoSuchAlgorithmException e) {
             throw new QblStorageException(e);
         }
-        md.update(this.prefix.getBytes());
+        md.update(prefix.getBytes());
         md.update(keyPair.getPrivateKey());
         byte[] digest = md.digest();
         byte[] firstBytes = Arrays.copyOfRange(digest, 0, 16);

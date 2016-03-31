@@ -126,7 +126,7 @@ public class FolderTreeItemTest extends AbstractControllerTest {
 	}
 
 	private class FakeBoxNavigation extends Observable implements BoxNavigation {
-		public boolean loading = false;
+		public boolean loading;
 
 		public List<BoxFile> files = new LinkedList<>();
 		public List<BoxFolder> folders = new LinkedList<>();

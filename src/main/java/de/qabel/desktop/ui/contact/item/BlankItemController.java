@@ -28,7 +28,7 @@ public class BlankItemController extends AbstractController implements Initializ
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		this.resourceBundle = resources;
+        resourceBundle = resources;
 		firstChar.setText(contact.getAlias().substring(0,1).toUpperCase());
 	}
 }

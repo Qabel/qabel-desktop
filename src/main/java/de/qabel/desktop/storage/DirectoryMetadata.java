@@ -280,7 +280,7 @@ public class DirectoryMetadata extends AbstractMetadata {
 
     void insertFile(BoxFile file) throws QblStorageException {
         int type = isA(file.name);
-        if ((type != TYPE_NONE) && (type != TYPE_FILE)) {
+        if (type != TYPE_NONE && type != TYPE_FILE) {
             throw new QblStorageNameConflict(file.name);
         }
         try {
@@ -322,7 +322,7 @@ public class DirectoryMetadata extends AbstractMetadata {
 
     public void insertFolder(BoxFolder folder) throws QblStorageException {
         int type = isA(folder.name);
-        if ((type != TYPE_NONE) && (type != TYPE_FOLDER)) {
+        if (type != TYPE_NONE && type != TYPE_FOLDER) {
             throw new QblStorageNameConflict(folder.name);
         }
         executeStatement(() -> {
@@ -412,7 +412,7 @@ public class DirectoryMetadata extends AbstractMetadata {
 
     void insertExternal(BoxExternalReference external) throws QblStorageException {
         int type = isA(external.name);
-        if ((type != TYPE_NONE) && (type != TYPE_EXTERNAL)) {
+        if (type != TYPE_NONE && type != TYPE_EXTERNAL) {
             throw new QblStorageNameConflict(external.name);
         }
         try {
