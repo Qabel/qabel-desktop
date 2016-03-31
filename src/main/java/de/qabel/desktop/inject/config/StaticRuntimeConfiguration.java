@@ -37,7 +37,8 @@ public class StaticRuntimeConfiguration implements RuntimeConfiguration {
 		this.primaryStage = primaryStage;
 	}
 
-	public Stage getPrimaryStage() {
+	@Override
+    public Stage getPrimaryStage() {
 		return primaryStage;
 	}
 }

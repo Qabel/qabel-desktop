@@ -19,7 +19,8 @@ public class SyncDaemonTest extends AbstractSyncTest {
 	private Thread thread;
 	private BoxSyncConfig config;
 
-	@Before
+	@Override
+    @Before
 	public void setUp() {
 		super.setUp();
 		daemon = new SyncDaemon(clientConfig.getBoxSyncConfigs(), new FakeSyncerFactory());
@@ -50,7 +51,8 @@ public class SyncDaemonTest extends AbstractSyncTest {
 		waitUntil(() -> fakeSyncer.started);
 	}
 
-	@After
+	@Override
+    @After
 	public void tearDown() throws InterruptedException {
 		daemon.stop();
 		if (thread.isAlive()) {

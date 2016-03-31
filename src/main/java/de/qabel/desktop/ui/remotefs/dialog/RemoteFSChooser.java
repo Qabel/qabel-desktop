@@ -20,9 +20,8 @@ public abstract class RemoteFSChooser extends Dialog<Path> implements ChangeList
 	Button cancelButton;
 
 	public RemoteFSChooser(ResourceBundle resources, BoxVolume volume) throws QblStorageException {
-		super();
 
-		setTitle(resources.getString("syncSetupChooseRemoteFolder"));
+        setTitle(resources.getString("syncSetupChooseRemoteFolder"));
 		ButtonType okType = new ButtonType(resources.getString("open"), ButtonBar.ButtonData.OK_DONE);
 		ButtonType cancelType = new ButtonType(resources.getString("cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
 		getDialogPane().getButtonTypes().add(okType);

@@ -2,22 +2,34 @@ package de.qabel.desktop.ui.sync.item;
 
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.ClientConfiguration;
-import de.qabel.desktop.daemon.management.HasProgress;
+import de.qabel.desktop.daemon.management.Transaction;
+import de.qabel.desktop.daemon.management.Upload;
 import de.qabel.desktop.daemon.sync.BoxSync;
 import de.qabel.desktop.daemon.sync.worker.Syncer;
 import de.qabel.desktop.ui.AbstractController;
-import de.qabel.desktop.ui.transfer.FxProgressModel;
+import de.qabel.desktop.ui.transfer.ComposedProgressBar;
+import de.qabel.desktop.ui.transfer.TransferViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
+import java.awt.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class SyncItemController extends AbstractController implements Initializable {
+
 	@Inject
 	private ClientConfiguration clientConfiguration;
 
@@ -37,12 +49,34 @@ public class SyncItemController extends AbstractController implements Initializa
 	private ProgressBar progress;
 
 	@FXML
+	private ColumnConstraints itemProgressColumn;
+
+	@FXML
 	private ImageView syncImage;
+
+	@FXML
+	private ImageView currentItemIcon;
+
+	@FXML
+	private Label syncStatusLabel;
+
+	@FXML
+	private Label itemStatusLabel;
+
+	@FXML
+	private Label currentItemLabel;
+
+	@FXML
+	private StackPane composedProgressPane;
+
+	@FXML
+	private VBox statusContentPane;
 
 	private BoxSync boxSync;
 
 	Alert confirmationDialog;
 	private ResourceBundle resources;
+	private TransferViewModel progressModel;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -53,17 +87,37 @@ public class SyncItemController extends AbstractController implements Initializa
 		localPath.textProperty().bind(fxConfig.localPathProperty());
 		remotePath.textProperty().bind(fxConfig.remotePathProperty());
 
-		Syncer syncer = syncConfig.getSyncer();
-		if (syncer instanceof BoxSync) {
-			boxSync = (BoxSync) syncer;
-		}
-		if (syncConfig.getSyncer() instanceof HasProgress && syncConfig.getSyncer() instanceof BoxSync) {
-			progress.progressProperty().bind(new FxProgressModel((HasProgress) syncConfig.getSyncer()).progressProperty());
-			progress.progressProperty().addListener((observable, oldValue, newValue) -> {
-				updateSyncStatus();
-			});
-		}
+
+		syncConfig.withSyncer(this::initModel);
+	}
+
+	public void initModel(Syncer syncer) {
+		boxSync = syncer;
+		progressModel = new TransferViewModel(syncer);
+		progress.progressProperty().bind(progressModel.progressProperty());
+
+		progressModel.progressProperty().addListener((observable, oldValue, newValue) -> {
+			updateSyncStatus();
+		});
+		progressModel.currentItemProperty().addListener(observable -> {
+			updateSyncStatus(progressModel.currentItemProperty().get());
+		});
+
+		itemStatusLabel.textProperty().bind(progressModel.currentTransactionPercentLabel());
+		itemProgressColumn.percentWidthProperty().bind(progressModel.currentTransactionPercent());
+		currentItemLabel.textProperty().bind(progressModel.currentTransactionLabel());
+		currentItemIcon.visibleProperty().bind(progressModel.currentTransactionImageVisible());
+		currentItemIcon.imageProperty().bind(progressModel.currentTransactionImage());
+		currentItemLabel.visibleProperty().bind(progressModel.currentTransactionImageVisible());
+
 		updateSyncStatus();
+		syncStatusLabel.setText("");
+	}
+
+	public void open() {
+		new Thread(() -> {
+			tryOrAlert(() -> Desktop.getDesktop().open(syncConfig.getLocalPath().toFile()));
+		}).start();
 	}
 
 	public void delete() {
@@ -96,11 +150,69 @@ public class SyncItemController extends AbstractController implements Initializa
 		});
 	}
 
+	private void updateSyncStatus(Transaction transaction) {
+		updateSyncStatus();
+	}
+
+	private String renderTransaction(Transaction transaction) {
+		String filename = transaction.getDestination().getFileName().toString();
+		String direction = transaction instanceof Upload ? "Remote" : "Local";
+		String type = transaction.getType().toString();
+		return filename + " (" + StringUtils.capitalize(type) + " " + transaction.getSize() / 1024 + "kb)";
+	}
+
 	private void updateSyncStatus() {
 		if (boxSync == null)
 			return;
 
 		syncImage.setImage(new Image(getClass().getResourceAsStream(getImage(boxSync.isSynced()))));
+		syncStatusLabel.setText(getSyncStatusText());
+	}
+
+	private String getSyncStatusText() {
+		if (boxSync.isSynced()) {
+			return "Ready";
+		}
+
+		long totalTransfers = progressModel.totalItemsProperty().get();
+		if (totalTransfers == 0) {
+			return "Collecting files... " + syncConfig.getSyncer().getHistory().size();
+		}
+		return "Syncing: " + progressModel.currentItemsProperty().get() + " / " + totalTransfers;
+	}
+
+	@FXML
+	public void showHistory() {
+		tryOrAlert(() -> {
+			Alert alert = new Alert(Alert.AlertType.INFORMATION);
+			alert.setHeaderText(null);
+			alert.setTitle("Sync History");
+
+			StringBuilder history = new StringBuilder();
+			syncConfig.getSyncer().getHistory().stream()
+					.sorted((o1, o2) -> (int)(o1.transactionAge() - o2.transactionAge()))
+					.forEach(transaction -> {
+						if (history.length() != 0) {
+							history.append("\n");
+						}
+						history.append(renderTransaction(transaction)).append(" ").append(transaction.getState());
+					});
+
+			TextArea textArea = new TextArea(history.toString());
+			VBox.setMargin(textArea, new Insets(10, 0, 5, 0));
+			textArea.setEditable(false);
+			textArea.setWrapText(false);
+
+			VBox.setVgrow(textArea, Priority.ALWAYS);
+
+			VBox expansion = new VBox();
+
+			expansion.getChildren().add(textArea);
+
+			alert.getDialogPane().setContent(expansion);
+			alert.setResizable(true);
+			alert.showAndWait();
+		});
 	}
 
 	private String getImage(boolean synced) {

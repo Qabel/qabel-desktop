@@ -23,6 +23,7 @@ public class TreeWatcherTest extends AbstractSyncTest {
 	private List<WatchEvent> events = new LinkedList<>();
 	private TreeWatcher watcher;
 
+	@Override
 	@Before
 	public void setUp() {
 		super.setUp();
@@ -35,6 +36,7 @@ public class TreeWatcherTest extends AbstractSyncTest {
 		});
 	}
 
+	@Override
 	@After
 	public void tearDown() throws InterruptedException {
 		if (watcher != null && watcher.isAlive()) {
@@ -129,6 +131,23 @@ public class TreeWatcherTest extends AbstractSyncTest {
 		file.delete();
 		waitUntil(() -> events.size() == 1);
 		assertEquals(getPath("/existingFile"), events.get(0).getPath());
+	}
+
+	@Test(timeout = 10000L)
+	public void notifiesAboutFileDeletesAfterTmpFileWasHandled() throws Exception {
+		File file = new File(tmpDir.toFile(), "existingFile");
+		file.createNewFile();
+		watch();
+
+		waitUntil(() -> events.size() == 2);
+		events.clear();
+
+		new File(tmpDir.toFile(), ".test.qpart~").createNewFile();
+
+		Thread.sleep(1000);	// make sure both events don't occur in the same watchkey (don't know a better way...)
+		file.delete();
+		waitUntil(() -> events.size() >= 1);
+		waitUntil(() -> events.get(0).getPath().getFileName().toString().equals("existingFile"), () -> "invalid event: " + events.get(0));
 	}
 
 	protected void watch() {

@@ -30,7 +30,8 @@ public class FeedbackController extends AbstractController implements Initializa
 	@Inject
 	private CrashReportHandler reportHandler;
 
-	public void initialize(URL location, ResourceBundle resources) {
+	@Override
+    public void initialize(URL location, ResourceBundle resources) {
 
 	}
 
@@ -42,7 +43,8 @@ public class FeedbackController extends AbstractController implements Initializa
 	protected void handleSendButtonAction() {
 
 		new Thread() {
-			public void run() {
+			@Override
+            public void run() {
 				try {
 					reportHandler.sendFeedback(feedbackField.getText(), nameField.getText(), emailField.getText());
 

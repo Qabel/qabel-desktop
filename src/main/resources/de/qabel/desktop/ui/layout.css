@@ -7,7 +7,7 @@
 }
 
 .navi-container {
-    -fx-text-fill: rgb(77,77,77);
+    -fx-text-fill: rgb(77, 77, 77);
     -fx-background-color: #ff690f;
     -fx-pref-width: 220px;
     -fx-background-image: url('/rough_edgeshadow.png');
@@ -41,17 +41,19 @@
     -fx-text-fill: white;
     -fx-font-size: 1.2em;
     -fx-alignment: CENTER_LEFT;
-	-fx-background-insets: 0px;
-	-fx-border-color: none;
+    -fx-background-insets: 0px;
+    -fx-border-color: none;
     -fx-font-weight: normal;
 }
 
 .navi-container .progress-bar .bar {
     -fx-background-color: #ff690f;
 }
+
 .navi-container .progress-bar:disabled .bar {
     -fx-background-color: #ff690f;
 }
+
 .navi-container .progress-bar:disabled .track {
     -fx-background-color: white;
     -fx-background-insets: 0;
@@ -70,13 +72,13 @@
     -fx-pref-width: 220px;
     -fx-max-width: 220px;
     -fx-background-color: white;
-	-fx-padding: 10px 10 5px 65px;
-	-fx-alignment: CENTER_LEFT;
-	-fx-font-size: 1.2em;
+    -fx-padding: 10px 10 5px 65px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-font-size: 1.2em;
 }
 
 .scroll-pane {
-    -fx-background-color: white!important;
+    -fx-background-color: white !important;
     -fx-padding: 0;
 }
 
@@ -90,22 +92,22 @@
 
 .quotaBlock {
     -fx-background-color: #ffffff;
-    -fx-text-alignment: RIGHT!important;
-    -fx-alignment: TOP-RIGHT!important;
+    -fx-text-alignment: RIGHT !important;
+    -fx-alignment: TOP-RIGHT !important;
     -fx-pref-width: 100px;
 }
 
 .mail {
-	-fx-text-fill: white;
+    -fx-text-fill: white;
 }
 
 .quota {
-   	-fx-text-fill: #fd670d;
-	-fx-padding: 0 5px 0 0;
+    -fx-text-fill: #fd670d;
+    -fx-padding: 0 5px 0 0;
 }
 
 .alias {
-	-fx-font-weight: bold;
-	-fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
 }
 

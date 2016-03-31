@@ -27,7 +27,8 @@ public class SyncItemControllerGuiTest extends AbstractGuiTest<SyncItemControlle
 	private FakeSyncer syncer;
 	private SyncItemPage page;
 
-	@Before
+	@Override
+    @Before
 	public void setUp() throws Exception {
 		identityBuilderFactory = new IdentityBuilderFactory(new DropUrlGenerator("http://localhost:5000"));
 		identity = identityBuilderFactory.factory().build();

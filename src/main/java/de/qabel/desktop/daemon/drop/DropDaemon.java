@@ -14,12 +14,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.List;
 
 
 public class DropDaemon implements Runnable {
 
 	private ClientConfiguration config;
-	private Date lastDate = null;
+	private Date lastDate;
 	private DropConnector httpDropConnector;
 	private ContactRepository contactRepository;
 	private DropMessageRepository dropMessageRepository;
@@ -62,7 +63,7 @@ public class DropDaemon implements Runnable {
 		if (identity == null) {
 			return;
 		}
-		java.util.List<DropMessage> dropMessages;
+		List<DropMessage> dropMessages;
 		try {
 			dropMessages = httpDropConnector.receive(identity, lastDate);
 		} catch (NullPointerException e) {

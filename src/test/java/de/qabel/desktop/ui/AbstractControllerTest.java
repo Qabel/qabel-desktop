@@ -5,6 +5,7 @@ import com.airhacks.afterburner.views.QabelFXMLView;
 import com.sun.javafx.application.PlatformImpl;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
+import de.qabel.desktop.AsyncUtils;
 import de.qabel.desktop.BlockSharingService;
 import de.qabel.desktop.ServiceFactory;
 import de.qabel.desktop.SharingService;
@@ -32,6 +33,7 @@ import javafx.application.Platform;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import static de.qabel.desktop.AsyncUtils.*;
 
 import java.lang.reflect.Field;
 import java.util.concurrent.Callable;
@@ -71,7 +73,8 @@ public class AbstractControllerTest {
 
 	private static void startPlatform() throws NoSuchFieldException, IllegalAccessException, InterruptedException {
 		new Thread() {
-			public void run() {
+			@Override
+            public void run() {
 				Application.launch(TestApplication.class);
 			}
 		}.start();
@@ -112,34 +115,6 @@ public class AbstractControllerTest {
 		QabelFXMLView.unloadDefaultResourceBundle();
 	}
 
-	public static void waitUntil(Callable<Boolean> evaluate) {
-		waitUntil(evaluate, 2000L);
-	}
-
-	public static void waitUntil(Callable<Boolean> evaluate, long timeout) {
-		waitUntil(evaluate, timeout, () -> "wait timeout");
-	}
-
-	public static void waitUntil(Callable<Boolean> evaluate, Callable<String> errorMessage) {
-		waitUntil(evaluate, 2000L, () -> "wait timeout");
-	}
-
-	public static void waitUntil(Callable<Boolean> evaluate, long timeout, Callable<String> errorMessage) {
-		long startTime = System.currentTimeMillis();
-		try {
-			while (!evaluate.call()) {
-				Thread.yield();
-				Thread.sleep(10);
-				if (System.currentTimeMillis() - timeout > startTime) {
-					fail(errorMessage.call());
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
-	}
-
 	@After
 	public void tearDown() throws Exception {
 		try {
@@ -150,7 +125,7 @@ public class AbstractControllerTest {
 	}
 
 	protected Function<String, Object> generateInjection(String name, Object instance) {
-		return (requestedName) -> requestedName.equals(name) ? instance : null;
+		return requestedName -> requestedName.equals(name) ? instance : null;
 	}
 
 	protected void runLaterAndWait(Runnable runnable) {
@@ -160,5 +135,21 @@ public class AbstractControllerTest {
 			hasRun[0] = true;
 		});
 		waitUntil(() -> hasRun[0], 5000L);
+	}
+
+	public static void waitUntil(Callable<Boolean> evaluate) {
+		AsyncUtils.waitUntil(evaluate);
+	}
+
+	public static void waitUntil(Callable<Boolean> evaluate, long timeout) {
+		AsyncUtils.waitUntil(evaluate, timeout);
+	}
+
+	public static void waitUntil(Callable<Boolean> evaluate, Callable<String> errorMessage) {
+		AsyncUtils.waitUntil(evaluate, errorMessage);
+	}
+
+	public static void waitUntil(Callable<Boolean> evaluate, long timeout, Callable<String> errorMessage) {
+		AsyncUtils.waitUntil(evaluate, timeout, errorMessage);
 	}
 }

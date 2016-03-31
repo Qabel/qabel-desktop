@@ -82,4 +82,11 @@ public class AbstractTransactionTest {
 
 		assertEquals(0.0, t.getProgress(), PRECISION);
 	}
+
+	@Test
+	public void hasDecimalProgress() {
+		t.setSize(100);
+		t.setTransferred(50);
+		assertEquals(0.5, t.getProgress(), PRECISION);
+	}
 }

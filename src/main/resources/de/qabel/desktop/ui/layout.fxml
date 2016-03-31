@@ -77,7 +77,7 @@
                 </VBox>
              </center>
              <bottom>
-                <VBox fillWidth="true">
+                <VBox fillWidth="true" fx:id="bottomContainer">
                    <children>
                        <ProgressBar fx:id="uploadProgress" style="-fx-pref-width: 200;"/>
 

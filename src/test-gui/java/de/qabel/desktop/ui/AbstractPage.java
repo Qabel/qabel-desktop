@@ -2,6 +2,7 @@ package de.qabel.desktop.ui;
 
 import com.google.common.base.Optional;
 import com.sun.javafx.robot.FXRobot;
+import de.qabel.desktop.AsyncUtils;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import org.testfx.service.locator.BoundsLocatorException;
@@ -13,6 +14,7 @@ import org.testfx.api.FxRobot;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import static de.qabel.desktop.AsyncUtils.*;
 
 import static org.junit.Assert.fail;
 
@@ -26,15 +28,15 @@ public class AbstractPage {
 	}
 
 	protected FxRobot clickOn(String query) {
-		try {
-			baseFXRobot.waitForIdle();
-			Node node = waitForNode(query);
-			return clickOn(node);
-		} catch (NullPointerException e) {
-			baseFXRobot.waitForIdle();
-			Node node = waitForNode(query);
-			return clickOn(node);
+		for (int i = 0; i < 10; i++) {
+			try {
+				baseFXRobot.waitForIdle();
+				Node node = waitForNode(query);
+				return clickOn(node);
+			} catch (NullPointerException retry) {
+			}
 		}
+		throw new IllegalStateException("failed to click on " + query + ", it vanished 10 times in a row");
 	}
 
 	private boolean hasMoved(Node node, double x, double y) {
@@ -75,10 +77,6 @@ public class AbstractPage {
 		return robot.moveTo(node);
 	}
 
-	public static void waitUntil(Callable<Boolean> evaluate) {
-		waitUntil(evaluate, 10000L);
-	}
-
 	protected Node waitForNode(String query) {
 		Node[] nodes = new Node[1];
 		waitUntil(() -> {
@@ -105,30 +103,6 @@ public class AbstractPage {
 		return nodes;
 	}
 
-	public static void waitUntil(Callable<Boolean> evaluate, long timeout) {
-		waitUntil(evaluate, timeout, () -> "wait timeout");
-	}
-
-	public static void waitUntil(Callable<Boolean> evaluate, Callable<String> errorMessage) {
-		waitUntil(evaluate, 2000L, () -> "wait timeout");
-	}
-
-	public static void waitUntil(Callable<Boolean> evaluate, long timeout, Callable<String> errorMessage) {
-		long startTime = System.currentTimeMillis();
-		try {
-			while (!evaluate.call()) {
-				Thread.yield();
-				Thread.sleep(10);
-				if (System.currentTimeMillis() - timeout > startTime) {
-					fail(errorMessage.call());
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
-	}
-
 	protected void runLaterAndWait(Runnable runnable) {
 		boolean[] hasRun = new boolean[]{false};
 		Platform.runLater(() -> {
@@ -136,5 +110,21 @@ public class AbstractPage {
 			hasRun[0] = true;
 		});
 		waitUntil(() -> hasRun[0], 5000L);
+	}
+
+	public static void waitUntil(Callable<Boolean> evaluate) {
+		AsyncUtils.waitUntil(evaluate);
+	}
+
+	public static void waitUntil(Callable<Boolean> evaluate, long timeout) {
+		AsyncUtils.waitUntil(evaluate, timeout);
+	}
+
+	public static void waitUntil(Callable<Boolean> evaluate, Callable<String> errorMessage) {
+		AsyncUtils.waitUntil(evaluate, errorMessage);
+	}
+
+	public static void waitUntil(Callable<Boolean> evaluate, long timeout, Callable<String> errorMessage) {
+		AsyncUtils.waitUntil(evaluate, timeout, errorMessage);
 	}
 }

@@ -80,7 +80,7 @@ public class ContactController extends AbstractController implements Initializab
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		this.resourceBundle = resources;
+        resourceBundle = resources;
 
 		i = clientConfiguration.getSelectedIdentity();
 
@@ -179,7 +179,7 @@ public class ContactController extends AbstractController implements Initializab
 		injectionContext.put("contact", co);
 		ContactItemView itemView = new ContactItemView(injectionContext::get);
 		ContactItemController controller = (ContactItemController) itemView.getPresenter();
-		controller.addSelectionListener((selectionEvent) -> {
+		controller.addSelectionListener(selectionEvent -> {
 			unselectAll();
 			select(selectionEvent);
 		});

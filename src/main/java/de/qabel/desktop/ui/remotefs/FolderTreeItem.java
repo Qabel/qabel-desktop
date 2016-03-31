@@ -23,7 +23,7 @@ public class FolderTreeItem extends TreeItem<BoxObject> implements Observer {
 	private boolean upToDate;
 	private boolean loading;
 	private StringProperty nameProperty;
-	private boolean isLeaf = false;
+	private boolean isLeaf;
 	private Image fileImg = new Image(getClass().getResourceAsStream("/icon/file.png"),  18, 18, true, false);
 	private static Image folderImg = new Image(FolderTreeItem.class.getResourceAsStream("/icon/folder.png"), 18, 18, true, true);
 	private static ExecutorService executorService = Executors.newCachedThreadPool();
@@ -43,7 +43,7 @@ public class FolderTreeItem extends TreeItem<BoxObject> implements Observer {
 		super.setGraphic(value);
 		this.folder = folder;
 		this.navigation = navigation;
-		this.nameProperty = new SimpleStringProperty(folder.getName());
+        nameProperty = new SimpleStringProperty(folder.getName());
 
 		if (navigation instanceof Observable) {
 			((Observable) navigation).addObserver(this);
@@ -126,7 +126,7 @@ public class FolderTreeItem extends TreeItem<BoxObject> implements Observer {
 	private Collection<TreeItem<BoxObject>> calculateChildren() throws QblStorageException {
 		List<TreeItem<BoxObject>> children = new LinkedList<>();
 		for (BoxFolder folder : navigation.listFolders()) {
-			BoxNavigation subNavigation = this.navigation.navigate(folder);
+			BoxNavigation subNavigation = navigation.navigate(folder);
 			children.add(initSubFolderItem(folder, subNavigation));
 		}
 

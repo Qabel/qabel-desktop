@@ -38,7 +38,8 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 	private Account account;
 	private DefaultSyncer syncer;
 
-	@Before
+	@Override
+    @Before
 	public void setUp() {
 		super.setUp();
 		try {
@@ -51,7 +52,8 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 		config = new DefaultBoxSyncConfig(tmpDir, Paths.get("/"), identity, account);
 	}
 
-	@After
+	@Override
+    @After
 	public void tearDown() throws InterruptedException {
 		if (syncer != null) {
 			syncer.shutdown();
@@ -76,17 +78,31 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 
 		waitUntil(() -> manager.getTransactions().size() == 1);
 		syncer.stop();
-		new File(tmpDir.toFile(), "file").createNewFile();
-		syncer.startWatcher();
+		File file = new File(tmpDir.toFile(), "file");
+		file.createNewFile();
 
-		waitUntil(() -> manager.getTransactions().size() == 3, () -> "expected 6 transactions but got " + manager.getTransactions().size() + ": " + manager.getTransactions());
 		// pre restart
-		assertTrue(Files.isDirectory(manager.getTransactions().get(0).getSource()));
+		waitUntil(() -> manager.getTransactions().size() == 1, () -> "expected 1 transaction but got " + manager.getTransactions().size() + ": " + manager.getTransactions());
+		assertContainsTransaction(config.getLocalPath());
 
+		// restart syncer
+		syncer.startWatcher();
 		// after restart (everything is re-notified)
-		assertTrue(Files.isDirectory(manager.getTransactions().get(1).getSource()));	// root
-		assertEquals("file", manager.getTransactions().get(2).getSource().getFileName().toString());
+		waitUntil(() -> manager.getTransactions().size() > 2);
+
+		assertContainsTransaction(config.getLocalPath());
+		assertContainsTransaction(file.toPath());
 		assertEquals(3, manager.getTransactions().size());
+	}
+
+	public void assertContainsTransaction(Path localPath) {
+		for (Transaction t : manager.getTransactions()) {
+			if (t.getSource().equals(localPath)) {
+				assertTrue(true);
+				return;
+			}
+		}
+		fail(localPath + " not found in " + manager.getTransactions());
 	}
 
 	@Test

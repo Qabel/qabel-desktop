@@ -1,13 +1,13 @@
 {
-  "contacts": [
-    {
-      "public_key": "0c403e258baf03d19955d5b5fea1fecabc82ac65f304962af8e47c2135a30a36",
-      "drop_urls": [
-        "http://localhost:5000/ANnjT_ERN32FVEfttk1VpvlAn677Q1NeIZTKzc-_umE"
-      ],
-      "phone": "000",
-      "alias": "TestAlias",
-      "email": "abc"
-    }
-  ]
+    "contacts": [
+        {
+            "public_key": "0c403e258baf03d19955d5b5fea1fecabc82ac65f304962af8e47c2135a30a36",
+            "drop_urls": [
+                "http://localhost:5000/ANnjT_ERN32FVEfttk1VpvlAn677Q1NeIZTKzc-_umE"
+            ],
+            "phone": "000",
+            "alias": "TestAlias",
+            "email": "abc"
+        }
+    ]
 }

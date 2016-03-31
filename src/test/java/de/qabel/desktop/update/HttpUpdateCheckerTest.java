@@ -125,44 +125,44 @@ public class HttpUpdateCheckerTest {
 		}
 
 		@Override
-		public HttpResponse execute(HttpUriRequest request) throws IOException, ClientProtocolException {
+		public HttpResponse execute(HttpUriRequest request) throws IOException {
 			CloseableHttpResponse response = this.response;
 			this.response = null;
 			return response;
 		}
 
 		@Override
-		public HttpResponse execute(HttpUriRequest request, HttpContext context) throws IOException, ClientProtocolException {
+		public HttpResponse execute(HttpUriRequest request, HttpContext context) throws IOException {
 			return null;
 		}
 
 		@Override
-		public HttpResponse execute(HttpHost target, HttpRequest request) throws IOException, ClientProtocolException {
+		public HttpResponse execute(HttpHost target, HttpRequest request) throws IOException {
 			return null;
 		}
 
 		@Override
-		public HttpResponse execute(HttpHost target, HttpRequest request, HttpContext context) throws IOException, ClientProtocolException {
+		public HttpResponse execute(HttpHost target, HttpRequest request, HttpContext context) throws IOException {
 			return null;
 		}
 
 		@Override
-		public <T> T execute(HttpUriRequest request, ResponseHandler<? extends T> responseHandler) throws IOException, ClientProtocolException {
+		public <T> T execute(HttpUriRequest request, ResponseHandler<? extends T> responseHandler) throws IOException {
 			return null;
 		}
 
 		@Override
-		public <T> T execute(HttpUriRequest request, ResponseHandler<? extends T> responseHandler, HttpContext context) throws IOException, ClientProtocolException {
+		public <T> T execute(HttpUriRequest request, ResponseHandler<? extends T> responseHandler, HttpContext context) throws IOException {
 			return null;
 		}
 
 		@Override
-		public <T> T execute(HttpHost target, HttpRequest request, ResponseHandler<? extends T> responseHandler) throws IOException, ClientProtocolException {
+		public <T> T execute(HttpHost target, HttpRequest request, ResponseHandler<? extends T> responseHandler) throws IOException {
 			return null;
 		}
 
 		@Override
-		public <T> T execute(HttpHost target, HttpRequest request, ResponseHandler<? extends T> responseHandler, HttpContext context) throws IOException, ClientProtocolException {
+		public <T> T execute(HttpHost target, HttpRequest request, ResponseHandler<? extends T> responseHandler, HttpContext context) throws IOException {
 			return null;
 		}
 	}

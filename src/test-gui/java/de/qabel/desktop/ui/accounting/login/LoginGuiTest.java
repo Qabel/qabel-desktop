@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.util.Random;
 
+import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static junit.framework.Assert.assertTrue;
 
 

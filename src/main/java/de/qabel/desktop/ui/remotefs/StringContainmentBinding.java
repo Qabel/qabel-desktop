@@ -11,8 +11,7 @@ public class StringContainmentBinding extends BooleanBinding {
 	private final Callable<BoxObject> valueProvider;
 
 	public StringContainmentBinding(StringProperty filterProperty, Callable<BoxObject> valueProvider) {
-		super();
-		this.filterProperty = filterProperty;
+        this.filterProperty = filterProperty;
 		this.valueProvider = valueProvider;
 		super.bind(filterProperty);
 	}

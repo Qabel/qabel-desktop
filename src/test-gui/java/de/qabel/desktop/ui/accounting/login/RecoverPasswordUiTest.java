@@ -3,6 +3,7 @@ package de.qabel.desktop.ui.accounting.login;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Test;
 
+import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static junit.framework.Assert.assertTrue;
 
 

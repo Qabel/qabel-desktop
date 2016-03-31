@@ -9,6 +9,7 @@ import de.qabel.desktop.ui.AbstractGuiTest;
 import javafx.scene.control.ButtonType;
 import org.junit.Test;
 
+import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.junit.Assert.assertEquals;
 
 public class AccountingGuiTest extends AbstractGuiTest<AccountingController> {

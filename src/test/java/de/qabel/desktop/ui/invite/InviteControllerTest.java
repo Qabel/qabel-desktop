@@ -13,7 +13,8 @@ import static org.junit.Assert.assertEquals;
 public class InviteControllerTest extends AbstractControllerTest {
 	InviteController controller;
 
-	@Before
+	@Override
+    @Before
 	public void setUp() throws Exception {
 		super.setUp();
 		QabelFXMLView.unloadDefaultResourceBundle();

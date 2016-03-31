@@ -11,6 +11,7 @@ import org.junit.Test;
 import java.util.LinkedList;
 import java.util.List;
 
+import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.junit.Assert.*;
 
 public class ContactActionLogTest extends AbstractControllerTest {
@@ -21,7 +22,8 @@ public class ContactActionLogTest extends AbstractControllerTest {
 	private Contact other = new Contact("alias2", null, new QblECKeyPair().getPub());
 	private List<PersistenceDropMessage> notifications = new LinkedList<>();
 
-	@Before
+	@Override
+    @Before
 	public void setUp() throws Exception {
 		super.setUp();
 		log = new ContactActionLog(contact, repo);

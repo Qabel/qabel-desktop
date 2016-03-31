@@ -24,12 +24,14 @@ import java.nio.file.Paths;
 import static org.junit.Assert.assertEquals;
 
 public class BoxSyncBasedUploadTest extends AbstractSyncTest {
-	@Before
+	@Override
+    @Before
 	public void setUp() {
 		super.setUp();
 	}
 
-	@After
+	@Override
+    @After
 	public void tearDown() throws InterruptedException {
 		super.tearDown();
 	}

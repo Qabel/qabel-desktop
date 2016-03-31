@@ -25,10 +25,10 @@ import static de.qabel.desktop.daemon.management.Transaction.TYPE.CREATE;
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.DELETE;
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.UPDATE;
 
-public class DefaultTransferManager extends Observable implements TransferManager, Runnable {
+public class DefaultTransferManager extends Observable implements TransferManager {
 	private final Logger logger = LoggerFactory.getLogger(DefaultTransferManager.class);
 	private final LinkedBlockingQueue<Transaction> transactions = new LinkedBlockingQueue<>();
-	private final List<Transaction> history = new LinkedList<>();
+	private final List<Transaction> history = Collections.synchronizedList(new LinkedList<>());
 
 	@Override
 	public List<Transaction> getTransactions() {
@@ -37,7 +37,7 @@ public class DefaultTransferManager extends Observable implements TransferManage
 
 	@Override
 	public void addDownload(Download download) {
-		logger.trace("download added: " + download.getSource() + " to " + download.getDestination());
+		//logger.trace("download added: " + download.getSource() + " to " + download.getDestination());
 		transactions.add(download);
 		history.add(download);
 	}
@@ -63,18 +63,19 @@ public class DefaultTransferManager extends Observable implements TransferManage
 
 	@Override
 	public void addUpload(Upload upload) {
-		logger.trace("upload added: " + upload.getSource() + " to " + upload.getDestination());
+		//logger.trace("upload added: " + upload.getSource() + " to " + upload.getDestination());
 		transactions.add(upload);
 		history.add(upload);
 	}
 
+	@Override
 	public void run() {
 		try {
 			while (!Thread.interrupted()) {
 				next();
 			}
 		} catch (InterruptedException e) {
-			logger.trace("loadManager stopped: " + e.getMessage());
+			logger.debug("loadManager stopped: " + e.getMessage());
 		}
 	}
 

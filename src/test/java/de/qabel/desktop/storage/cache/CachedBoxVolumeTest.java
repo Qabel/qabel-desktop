@@ -1,7 +1,6 @@
 package de.qabel.desktop.storage.cache;
 
 import de.qabel.core.crypto.QblECKeyPair;
-import de.qabel.desktop.daemon.sync.SyncUtils;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
@@ -19,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.*;
 
@@ -35,6 +35,7 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 
 	@Override
 	protected void setUpVolume() throws IOException {
+		AbstractNavigation.DEFAULT_AUTOCOMMIT_DELAY = 0;
 		tempFolder = Files.createTempDirectory("");
 
 		readBackend = new LocalReadBackend(tempFolder);
@@ -191,7 +192,7 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 	}
 
 	private ChangeEvent waitForEvent() {
-		AbstractControllerTest.waitUntil(() -> !updates.isEmpty());
+		waitUntil(() -> !updates.isEmpty());
 		return updates.get(0);
 	}
 
@@ -240,7 +241,7 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 		nav2.delete(nav2.getFolder("testfolder"));
 		nav.refresh();
 
-		assertEquals("no notification", 1, updates.size());
+		waitUntil(() -> updates.size() == 1, 10000L, () -> "no notification");
 		ChangeEvent event = updates.get(0);
 		assertTrue("wrong event type " + event.getType(), event.isDelete());
 		assertEquals("/testfolder", event.getPath().toString());
@@ -256,14 +257,14 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 		volume2.navigate().delete(boxFile);
 		nav.refresh();
 
-		assertEquals("no notification", 1, updates.size());
+		waitUntil(() -> updates.size() == 1, () -> "no notification");
 		ChangeEvent event = updates.get(0);
 		assertTrue("wrong event type " + event.getType(), event.isDelete());
 		assertEquals("/testfile", event.getPath().toString());
 	}
 
 	protected void clear(int events) {
-		SyncUtils.waitUntil(() -> updates.size() == events);
+		waitUntil(() -> updates.size() == events);
 		updates.clear();
 	}
 

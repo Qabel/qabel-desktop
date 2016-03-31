@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import java.nio.file.Paths;
 
+import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.junit.Assert.*;
 
 public class SyncSetupControllerTest extends AbstractControllerTest {

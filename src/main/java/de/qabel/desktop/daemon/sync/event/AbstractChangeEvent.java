@@ -12,7 +12,8 @@ public abstract class AbstractChangeEvent extends AbstractWatchEvent implements 
 		this.type = type;
 	}
 
-	public ChangeEvent.TYPE getType() {
+	@Override
+    public ChangeEvent.TYPE getType() {
 		return type;
 	}
 

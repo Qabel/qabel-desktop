@@ -23,9 +23,9 @@ public class PersistenceDropMessage extends Persistable {
 
 	public PersistenceDropMessage(DropMessage dropMessage, Entity from, Entity to, Boolean sent, Boolean seen) {
 		this.dropMessage = dropMessage;
-		this.receiver = to;
+        receiver = to;
 		this.sent = sent;
-		this.sender = from;
+        sender = from;
 		this.seen = seen;
 	}
 

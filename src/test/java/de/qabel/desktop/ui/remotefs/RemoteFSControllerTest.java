@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.UUID;
 
+import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertEquals;
@@ -51,7 +52,8 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 	private Path tempFolder;
 	private RemoteFSView view;
 
-	@Before
+	@Override
+    @Before
 	public void setUp() throws Exception {
 		super.setUp();
 		file = File.createTempFile("File2", ".txt", new File(System.getProperty("java.io.tmpdir")));
@@ -91,7 +93,8 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 		controller = (RemoteFSController) view.getPresenter();
 	}
 
-	@After
+	@Override
+    @After
 	public void tearDown() throws Exception {
 		localWrite.delete(localStorageFile.getName());
 		FileUtils.deleteDirectory(new File(TEST_TMP_DIR));
@@ -307,7 +310,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
 
 		assertTrue(Files.isDirectory(targetFolder));
 		Path filePath = targetFolder.resolve(SUB_FILE);
-		assertTrue(filePath.toString() + " has not been downloaded", Files.exists(filePath));
+		assertTrue(filePath + " has not been downloaded", Files.exists(filePath));
 	}
 
 	@Test

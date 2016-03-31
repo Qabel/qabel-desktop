@@ -18,7 +18,8 @@ public class LocalChangeEventTest extends AbstractSyncTest {
 	private Path file;
 	private Long mtime;
 
-	@Before
+	@Override
+    @Before
 	public void setUp() {
 		super.setUp();
 
@@ -31,7 +32,8 @@ public class LocalChangeEventTest extends AbstractSyncTest {
 		}
 	}
 
-	@After
+	@Override
+    @After
 	public void tearDown() throws InterruptedException {
 		super.tearDown();
 	}
