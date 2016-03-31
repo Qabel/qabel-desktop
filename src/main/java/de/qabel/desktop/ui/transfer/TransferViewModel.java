@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.function.Function;
 
-public class SyncViewModel extends FxProgressCollectionModel<Transaction> {
+public class TransferViewModel extends TransactionFxProgressCollectionModel {
 	private Function<Transaction, String> transactionLabelRenderer = t -> t == null ? "" : this.render(t);
 	private Function<Transaction, Image> transactionImageRenderer = new TransactionIconRenderer();
 	private StringProperty currentTransactionLabel = new SimpleStringProperty("");
@@ -18,12 +18,12 @@ public class SyncViewModel extends FxProgressCollectionModel<Transaction> {
 	private ObjectProperty<Image> currentTransactionImage = new SimpleObjectProperty<>();
 	private BooleanProperty currentTransactionImageVisible = new SimpleBooleanProperty(false);
 
-	public SyncViewModel(HasProgressCollection<?, Transaction> progress) {
+	public TransferViewModel(HasProgressCollection<?, Transaction> progress) {
 		super(progress);
 
 		currentItemProperty().addListener((observable, oldValue, newValue) -> {
 			currentTransactionLabel.setValue(transactionLabelRenderer.apply(newValue));
-			currentTransactionImage.setValue(transactionImageRenderer.apply(newValue));
+			currentTransactionImage.set(newValue == null ? null : transactionImageRenderer.apply(newValue));
 		});
 		onChange(this::update);
 	}
@@ -42,7 +42,10 @@ public class SyncViewModel extends FxProgressCollectionModel<Transaction> {
 	}
 
 	public String render(Transaction transaction) {
-		String filename = transaction.getDestination().getFileName().toString();
+		String filename = transaction.getDestination().toString();
+		if (transaction.getDestination().getFileName() != null) {
+			filename = transaction.getDestination().getFileName().toString();
+		}
 		String direction = transaction instanceof Upload ? "Remote" : "Local";
 		String type = transaction.getType().toString();
 		return filename + " (" + StringUtils.capitalize(type) + " " + (transaction.getSize() / 1024) + "kb)";

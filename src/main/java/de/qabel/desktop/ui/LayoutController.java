@@ -15,9 +15,8 @@ import de.qabel.desktop.ui.feedback.FeedbackView;
 import de.qabel.desktop.ui.invite.InviteView;
 import de.qabel.desktop.ui.remotefs.RemoteFSView;
 import de.qabel.desktop.ui.sync.SyncView;
-import de.qabel.desktop.ui.transfer.FxProgressModel;
-import de.qabel.desktop.ui.transfer.SyncViewModel;
-import de.qabel.desktop.ui.transfer.TransactionFxProgressCollectionModel;
+import de.qabel.desktop.ui.transfer.ComposedProgressBar;
+import de.qabel.desktop.ui.transfer.TransferViewModel;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -33,11 +32,8 @@ import javafx.scene.layout.VBox;
 
 import javax.inject.Inject;
 import java.awt.*;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -89,6 +85,9 @@ public class LayoutController extends AbstractController implements Initializabl
 	@FXML
 	private Pane window;
 
+	@FXML
+	private VBox bottomContainer;
+
 	@Inject
 	private ClientConfiguration clientConfiguration;
 
@@ -133,17 +132,26 @@ public class LayoutController extends AbstractController implements Initializabl
 		updateIdentity();
 		clientConfiguration.addObserver((o, arg) -> Platform.runLater(this::updateIdentity));
 
-		uploadProgress.setProgress(0);
-		uploadProgress.setDisable(true);
+
+		bottomContainer.getChildren().remove(uploadProgress);
+		ComposedProgressBar progressBar = new ComposedProgressBar();
+		progressBar.getStylesheets().addAll(window.getStylesheets());
+		bottomContainer.getChildren().add(0, progressBar);
 
 		WindowedTransactionGroup progress = new WindowedTransactionGroup();
 		if (transferManager instanceof MonitoredTransferManager) {
 			MonitoredTransferManager tm = (MonitoredTransferManager) transferManager;
 			tm.onAdd(progress::add);
 		}
-		TransactionFxProgressCollectionModel progressModel = new TransactionFxProgressCollectionModel(progress);
-		uploadProgress.progressProperty().bind(progressModel.progressProperty());
-		uploadProgress.visibleProperty().bind(progressModel.runningProperty());
+		TransferViewModel progressModel = new TransferViewModel(progress);
+		progressBar.getTotalProgress().progressProperty().bind(progressModel.progressProperty());
+		progressBar.visibleProperty().bind(progressModel.runningProperty());
+		progressBar.getItemStatusLabel().textProperty().bind(progressModel.currentTransactionPercentLabel());
+		progressBar.getSyncStatusLabel().textProperty().bind(
+			progressModel.currentItemsProperty().asString()
+				.concat(" / ")
+				.concat(progressModel.totalItemsProperty())
+		);
 
 		createButtonGraphics();
 

@@ -108,6 +108,17 @@ public class TransactionGroupTest {
 	}
 
 	@Test
+	public void notifiesOnClear() {
+		List<Object> updates = new LinkedList<>();
+		group.add(upload1);
+		group.addObserver((o, arg) -> updates.add(group.currentSize()));
+
+		group.clear();
+		assertEquals(1, updates.size());
+		assertEquals(0L, updates.get(0));
+	}
+
+	@Test
 	public void notifiesConsumers() {
 		List<Transaction> updates = new LinkedList<>();
 		group.onProgress(updates::add);

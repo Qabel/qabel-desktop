@@ -16,7 +16,7 @@
             <center>
                 <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                     <center>
-                        <VBox BorderPane.alignment="CENTER">
+                        <VBox BorderPane.alignment="CENTER" fx:id="statusContentPane">
                             <children>
                                 <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-spacing: 3;">
                                     <padding>
@@ -108,7 +108,7 @@
                         </HBox>
                                     </children>
                                 </VBox>
-                                <StackPane styleClass="composedProgress" style="-fx-width: 100%">
+                                <StackPane fx:id="composedProgress" styleClass="composedProgress" style="-fx-width: 100%">
                                     <VBox.margin>
                                         <Insets left="10.0"/>
                                     </VBox.margin>

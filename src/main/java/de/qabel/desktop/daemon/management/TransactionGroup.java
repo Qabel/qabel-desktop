@@ -63,6 +63,8 @@ public class TransactionGroup extends Observable implements Observer, HasProgres
 		transactionTransferred.clear();
 		size = 0;
 		transferred = 0;
+		setChanged();
+		notifyObservers();
 	}
 
 	@Override

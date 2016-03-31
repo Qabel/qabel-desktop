@@ -11,14 +11,14 @@ import java.nio.file.Paths;
 import static de.qabel.desktop.daemon.management.Transaction.STATE.RUNNING;
 import static org.junit.Assert.*;
 
-public class SyncViewModelTest {
-	private SyncViewModel model;
+public class TransferViewModelTest {
+	private TransferViewModel model;
 	private TransactionGroup transactions;
 
 	@Before
 	public void setUp() {
 		transactions = new TransactionGroup();
-		model = new SyncViewModel(transactions);
+		model = new TransferViewModel(transactions);
 		model.usePlaformThread = false;
 	}
 

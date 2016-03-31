@@ -7,7 +7,8 @@ import de.qabel.desktop.daemon.management.Upload;
 import de.qabel.desktop.daemon.sync.BoxSync;
 import de.qabel.desktop.daemon.sync.worker.Syncer;
 import de.qabel.desktop.ui.AbstractController;
-import de.qabel.desktop.ui.transfer.SyncViewModel;
+import de.qabel.desktop.ui.transfer.ComposedProgressBar;
+import de.qabel.desktop.ui.transfer.TransferViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -17,6 +18,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 
@@ -63,11 +65,17 @@ public class SyncItemController extends AbstractController implements Initializa
 	@FXML
 	private Label currentItemLabel;
 
+	@FXML
+	private StackPane composedProgressPane;
+
+	@FXML
+	private VBox statusContentPane;
+
 	private BoxSync boxSync;
 
 	Alert confirmationDialog;
 	private ResourceBundle resources;
-	private SyncViewModel progressModel;
+	private TransferViewModel progressModel;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -84,7 +92,7 @@ public class SyncItemController extends AbstractController implements Initializa
 
 	public void initModel(Syncer syncer) {
 		boxSync = syncer;
-		progressModel = new SyncViewModel(syncer);
+		progressModel = new TransferViewModel(syncer);
 		progress.progressProperty().bind(progressModel.progressProperty());
 
 		progressModel.progressProperty().addListener((observable, oldValue, newValue) -> {
@@ -99,6 +107,7 @@ public class SyncItemController extends AbstractController implements Initializa
 		currentItemLabel.textProperty().bind(progressModel.currentTransactionLabel());
 		currentItemIcon.visibleProperty().bind(progressModel.currentTransactionImageVisible());
 		currentItemIcon.imageProperty().bind(progressModel.currentTransactionImage());
+		currentItemLabel.visibleProperty().bind(progressModel.currentTransactionImageVisible());
 
 		updateSyncStatus();
 		syncStatusLabel.setText("");
