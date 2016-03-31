@@ -8,21 +8,11 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class ProgressInputStream extends FilterInputStream {
-	private static final ExecutorService executor = Executors.newCachedThreadPool();
+	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 	private Consumer<Long> consumer;
 	private long read = 0;
-	private long lastUpdate = 0;
 
-	/**
-	 * Creates a <code>FilterInputStream</code>
-	 * by assigning the  argument <code>in</code>
-	 * to the field <code>this.in</code> so as
-	 * to remember it for later use.
-	 *
-	 * @param in the underlying input stream, or <code>null</code> if
-	 *           this instance is to be created without an underlying stream.
-	 */
-	protected ProgressInputStream(InputStream in, Consumer<Long> consumer) {
+	public ProgressInputStream(InputStream in, Consumer<Long> consumer) {
 		super(in);
 		this.consumer = consumer;
 	}
@@ -43,15 +33,6 @@ public class ProgressInputStream extends FilterInputStream {
 	}
 
 	private void update() {
-		update(false);
-	}
-
-	private void update(boolean force) {
-		long now = System.currentTimeMillis();
-//		if (force || now < lastUpdate + 100) {
-//			return;
-//		}
-		lastUpdate = now;
 		executor.submit(() -> consumer.accept(read));
 	}
 
@@ -71,7 +52,7 @@ public class ProgressInputStream extends FilterInputStream {
 
 	@Override
 	public void close() throws IOException {
-		update(true);
+		update();
 		super.close();
 	}
 

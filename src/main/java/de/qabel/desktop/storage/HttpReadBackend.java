@@ -40,13 +40,13 @@ public class HttpReadBackend extends AbstractHttpStorageBackend implements Stora
 			CloseableHttpResponse response = httpclient.execute(httpGet);
 			try {
 				int status = response.getStatusLine().getStatusCode();
-				if ((status == 404) || (status == 403)) {
+				if ((status == HttpStatus.SC_NOT_MODIFIED) || (status == HttpStatus.SC_FORBIDDEN)) {
 					throw new QblStorageNotFound("File not found");
 				}
 				if (status == HttpStatus.SC_NOT_MODIFIED) {
 					throw new UnmodifiedException();
 				}
-				if (status != 200) {
+				if (status != HttpStatus.SC_OK) {
 					throw new QblStorageException("Download error");
 				}
 				String modifiedVersion = response.getFirstHeader(HttpHeaders.ETAG).getValue();
