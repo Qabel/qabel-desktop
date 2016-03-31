@@ -8,7 +8,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 public class FxProgressModel {
 	private DoubleProperty progressProperty = new SimpleDoubleProperty(1.0);
 	private HasProgress progress;
-	private Long minimumUpdateDelay = 100l;
+	private Long minimumUpdateDelay = 100L;
 
 	public FxProgressModel() {
 
@@ -26,7 +26,7 @@ public class FxProgressModel {
 	 * delay = null means always update
 	 */
 	public void setMinimumUpdateDelay(Long delay) {
-		this.minimumUpdateDelay = delay;
+		minimumUpdateDelay = delay;
 	}
 
 	public DoubleProperty progressProperty() {
@@ -39,15 +39,19 @@ public class FxProgressModel {
 		updateProgress();
 	}
 
-	long lastUpdate = 0;
+	long lastUpdate;
 
 	private void updateProgress() {
 		final double progress = this.progress.getProgress();
 		long now = System.currentTimeMillis();
-		if (progress != 1.0 && minimumUpdateDelay != null && now < lastUpdate + minimumUpdateDelay) {
+		if (!isFinished() && minimumUpdateDelay != null && now < lastUpdate + minimumUpdateDelay) {
 			return;
 		}
 		lastUpdate = now;
 		Platform.runLater(() -> progressProperty.set(progress));
+	}
+
+	private boolean isFinished() {
+		return progress.currentSize() == progress.totalSize();
 	}
 }

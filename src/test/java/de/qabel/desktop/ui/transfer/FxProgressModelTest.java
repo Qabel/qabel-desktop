@@ -67,4 +67,25 @@ public class FxProgressModelTest extends AbstractControllerTest {
 		progress.setProgress(0.5);
 		waitUntil(() -> updatedProgress[0] == 0.5, () -> "progress is " + updatedProgress[0]);
 	}
+
+	@Test
+	public void hasMinimumUpdateFrequency() throws Exception {
+		model.setMinimumUpdateDelay(1000L);
+		progress.setProgress(0.1);
+		progress.totalSize = 100;
+		model.setProgress(progress);
+		progress.setProgress(0.2);
+		assertProgress(0.1);
+	}
+
+	@Test
+	public void ignoresMinimumUpdateFrequencyOnFinish() throws Exception {
+		model.setMinimumUpdateDelay(1000L);
+		progress.setProgress(0.1);
+		progress.totalSize = 100;
+		model.setProgress(progress);
+		progress.currentSize = 100;
+		progress.setProgress(0.2);
+		assertProgress(0.2);
+	}
 }

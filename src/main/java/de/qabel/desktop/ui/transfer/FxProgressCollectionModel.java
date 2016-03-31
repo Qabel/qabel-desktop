@@ -62,7 +62,10 @@ public class FxProgressCollectionModel<T> {
 		}
 	}
 
+	/**
+	 * T max be null if no item is currently in progress (or between two items)
+     */
 	public void onChange(Consumer<T> changeHandler) {
-		this.changeHandlers.add(changeHandler);
+		changeHandlers.add(changeHandler);
 	}
 }
