@@ -1,10 +1,10 @@
 {
-  "public_key": "1b72b39576ced4ac8e003fae36d96dbda94ab28b2bdaf399719e1402fea9210c",
-  "drop_urls": [
-    "http://localhost:5000/MLx6pxTTpLzynl7FWQmBpL5eVt1SKzjf8zix9i53dds"
-  ],
-  "prefixes": [],
-  "alias": "Test",
-  "private_key": "c3bf2801eb7008400f8c0b9e30f566fb0eb3c7d3e11013abb6214500bf334b68",
-  "id": 0
+    "public_key": "1b72b39576ced4ac8e003fae36d96dbda94ab28b2bdaf399719e1402fea9210c",
+    "drop_urls": [
+        "http://localhost:5000/MLx6pxTTpLzynl7FWQmBpL5eVt1SKzjf8zix9i53dds"
+    ],
+    "prefixes": [],
+    "alias": "Test",
+    "private_key": "c3bf2801eb7008400f8c0b9e30f566fb0eb3c7d3e11013abb6214500bf334b68",
+    "id": 0
 }

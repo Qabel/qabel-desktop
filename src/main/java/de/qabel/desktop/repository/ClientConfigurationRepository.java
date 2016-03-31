@@ -3,7 +3,7 @@ package de.qabel.desktop.repository;
 import de.qabel.desktop.config.ClientConfiguration;
 
 public interface ClientConfigurationRepository {
-	ClientConfiguration load();
+    ClientConfiguration load();
 
-	void save(ClientConfiguration configuration);
+    void save(ClientConfiguration configuration);
 }
