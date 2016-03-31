@@ -147,6 +147,7 @@ public class LayoutController extends AbstractController implements Initializabl
 		progressBar.getTotalProgress().progressProperty().bind(progressModel.progressProperty());
 		progressBar.visibleProperty().bind(progressModel.runningProperty());
 		progressBar.getItemStatusLabel().textProperty().bind(progressModel.currentTransactionPercentLabel());
+		progressBar.getSyncStatusLabel().visibleProperty().bind(progressModel.currentItemsProperty().greaterThanOrEqualTo(0));
 		progressBar.getSyncStatusLabel().textProperty().bind(
 			progressModel.currentItemsProperty().asString()
 				.concat(" / ")
