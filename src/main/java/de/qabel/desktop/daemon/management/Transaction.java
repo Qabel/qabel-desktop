@@ -54,6 +54,8 @@ public interface Transaction extends AutoCloseable, HasProgress<Transaction> {
 
 	boolean isDone();
 
+	boolean hasStarted();
+
 
 	enum TYPE { CREATE, UPDATE, DELETE }
 	enum STATE { INITIALIZING, SCHEDULED, RUNNING, FINISHED, FAILED, WAITING, SKIPPED }

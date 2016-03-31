@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.UUID;
 
+import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertEquals;

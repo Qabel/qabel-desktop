@@ -19,15 +19,37 @@
 }
 
 .text-field:focused {
-	-fx-background-insets: 0px, 4px;
+	-fx-background-insets: 0, 4px;
 	-fx-background-color: black, white;
 }
 
 .text-area:focused {
-	-fx-background-insets: 0px, 4px;
+	-fx-background-insets: 0, 4px;
 	-fx-background-color: black, white;
 }
 
+.composedProgress {
+	-fx-border-width: 1px;
+	-fx-border-radius: 0;
+	-fx-border-color: #222222;
+}
+.progress-bar * {
+	-fx-background-insets: 0;
+	-fx-background-radius: 0;
+	-fx-border-radius: 0;
+}
+.progress-bar > .track {
+	-fx-background-color: white;
+}
+.composedProgress.class {
+	-fx-border-width: 0;
+	-fx-background-insets: 1;
+	-fx-padding: 1px;
+}
+.composedProgress.class > .track {
+	-fx-background-insets: 1;
+	-fx-padding: 1px;
+}
 
 .scroll-bar {
     -fx-background-color: transparent;

@@ -17,6 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import static de.qabel.desktop.AsyncUtils.waitUntil;
+
 public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 	protected final FxRobot robot = new FxRobot();
 	protected T controller;
@@ -131,10 +133,6 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 			}
 		}
 		return robot.moveTo(node);
-	}
-
-	public static void waitUntil(Callable<Boolean> evaluate) {
-		waitUntil(evaluate, 10000L);
 	}
 
 	protected Node waitForNode(String query) {

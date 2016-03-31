@@ -7,8 +7,11 @@ import de.qabel.desktop.daemon.sync.worker.index.SyncIndex;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 
 import java.nio.file.Path;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.function.Consumer;
 
 public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig, Observer {
 	private static final String DEFAULT_NAME = "New Sync Config";
@@ -20,6 +23,7 @@ public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig, O
 	private Boolean paused = false;
 	private String name;
 	private transient Syncer syncer;
+	private final List<Consumer<Syncer>> syncerConsumers = new LinkedList<>();
 
 	public DefaultBoxSyncConfig(Path localPath, Path remotePath, Identity identity, Account account) {
 		this(DEFAULT_NAME, localPath, remotePath, identity, account);
@@ -119,11 +123,25 @@ public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig, O
 	@Override
 	public void setSyncer(Syncer syncer) {
 		this.syncer = syncer;
+		synchronized (syncerConsumers) {
+			syncerConsumers.forEach(sc -> sc.accept(syncer));
+		}
 	}
 
 	@Override
 	public Syncer getSyncer() {
 		return syncer;
+	}
+
+	@Override
+	public void withSyncer(Consumer<Syncer> callback) {
+		if (getSyncer() != null) {
+			callback.accept(getSyncer());
+		} else {
+			synchronized (syncerConsumers) {
+				syncerConsumers.add(callback);
+			}
+		}
 	}
 
 	@Override

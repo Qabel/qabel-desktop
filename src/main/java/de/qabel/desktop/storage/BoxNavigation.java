@@ -26,6 +26,13 @@ public interface BoxNavigation extends ReadableBoxNavigation {
 	void commit() throws QblStorageException;
 
 	/**
+	 * commits the DM if it has been changed (uploads or deletes)
+	 *
+	 * @throws QblStorageException
+	 */
+	void commitIfChanged() throws QblStorageException;
+
+	/**
 	 * Upload a new file to the current folder
 	 *
 	 * @param name name of the file, must be unique
@@ -35,6 +42,9 @@ public interface BoxNavigation extends ReadableBoxNavigation {
 	 * @throws QblStorageException if the upload failed or the name is not unique
 	 */
 	BoxFile upload(String name, File file, ProgressListener listener) throws QblStorageException;
+
+	boolean isUnmodified();
+
 	/**
 	 * Upload a new file to the current folder
 	 *
@@ -128,6 +138,14 @@ public interface BoxNavigation extends ReadableBoxNavigation {
 	 */
 	void setAutocommit(boolean autocommit);
 
+	/**
+	 * Sets the delay between actions and an automated commit.
+	 * Requires autocommit=true
+	 *
+	 * @param delay in milliseconds
+	 */
+	void setAutocommitDelay(long delay);
+
 	DirectoryMetadata getMetadata();
 
 	/**
@@ -162,4 +180,6 @@ public interface BoxNavigation extends ReadableBoxNavigation {
 	 * List all created (and not yet deleted) shares for the given BoxObject
 	 */
 	List<BoxShare> getSharesOf(BoxObject object) throws QblStorageException;
+
+	boolean hasVersionChanged(DirectoryMetadata dm) throws QblStorageException;
 }

@@ -139,9 +139,10 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 	public void unshareFile() throws Exception {
 		rootNavigation.share(identity.getEcPublicKey(), boxFile, "receiver");
 
-		page.getRow(2).share()
-				.unshare()
-				.close();
+		RemoteBrowserRow row = page.getRow(2);
+		RemoteFileDetailsPage share = row.share();
+		share.unshare();
+		share.close();
 
 		StubSharingService.ShareRequest shared = sharingService.shared;
 		assertNull(shared);

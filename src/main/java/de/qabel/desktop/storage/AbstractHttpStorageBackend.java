@@ -35,7 +35,6 @@ public class AbstractHttpStorageBackend {
 
 		httpclient = HttpClients.custom()
 				.disableContentCompression()	// workaround for nginx consuming ETags with gzip
-				.setRetryHandler(new DefaultHttpRequestRetryHandler(0, false))
 				.setConnectionManager(connManager).build();
 	}
 

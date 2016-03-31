@@ -36,34 +36,34 @@ public class HttpReadBackend extends AbstractHttpStorageBackend implements Stora
 		}
 		prepareRequest(httpGet);
 
-		CloseableHttpResponse response;
 		try {
-			response = httpclient.execute(httpGet);
-		} catch (IOException e) {
-			throw new QblStorageException(e);
-		}
-		int status = response.getStatusLine().getStatusCode();
-		if ((status == 404) || (status == 403)) {
-			throw new QblStorageNotFound("File not found");
-		}
-		if (status == HttpStatus.SC_NOT_MODIFIED) {
-			throw new UnmodifiedException();
-		}
-		if (status != 200) {
-			throw new QblStorageException("Download error");
-		}
-		String modifiedVersion = response.getFirstHeader(HttpHeaders.ETAG).getValue();
+			CloseableHttpResponse response = httpclient.execute(httpGet);
+			try {
+				int status = response.getStatusLine().getStatusCode();
+				if (status == HttpStatus.SC_NOT_FOUND || status == HttpStatus.SC_FORBIDDEN) {
+					throw new QblStorageNotFound("File not found");
+				}
+				if (status == HttpStatus.SC_NOT_MODIFIED) {
+					throw new UnmodifiedException();
+				}
+				if (status != HttpStatus.SC_OK) {
+					throw new QblStorageException("Download error");
+				}
+				String modifiedVersion = response.getFirstHeader(HttpHeaders.ETAG).getValue();
 
-		if (ifModifiedVersion != null && modifiedVersion.equals(ifModifiedVersion)) {
-			throw new UnmodifiedException();
-		}
-		HttpEntity entity = response.getEntity();
-		if (entity == null) {
-			throw new QblStorageException("No content");
-		}
-		try {
-			InputStream content = entity.getContent();
-			return new StorageDownload(content, modifiedVersion, entity.getContentLength());
+				if (ifModifiedVersion != null && modifiedVersion.equals(ifModifiedVersion)) {
+					throw new UnmodifiedException();
+				}
+				HttpEntity entity = response.getEntity();
+				if (entity == null) {
+					throw new QblStorageException("No content");
+				}
+				InputStream content = entity.getContent();
+				return new StorageDownload(content, modifiedVersion, entity.getContentLength(), response);
+			} catch (Exception e) {
+				response.close();
+				throw e;
+			}
 		} catch (IOException e) {
 			throw new QblStorageException(e);
 		}

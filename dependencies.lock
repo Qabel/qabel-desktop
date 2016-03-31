@@ -453,7 +453,7 @@
             "requested": "3.2.+"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "1.7.18",
+            "locked": "1.7.19",
             "requested": "1.7.+"
         },
         "org.xerial:sqlite-jdbc": {

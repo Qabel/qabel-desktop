@@ -28,7 +28,7 @@ import static de.qabel.desktop.daemon.management.Transaction.TYPE.UPDATE;
 public class DefaultTransferManager extends Observable implements TransferManager, Runnable {
 	private final Logger logger = LoggerFactory.getLogger(DefaultTransferManager.class);
 	private final LinkedBlockingQueue<Transaction> transactions = new LinkedBlockingQueue<>();
-	private final List<Transaction> history = new LinkedList<>();
+	private final List<Transaction> history = Collections.synchronizedList(new LinkedList<>());
 
 	@Override
 	public List<Transaction> getTransactions() {
@@ -74,7 +74,7 @@ public class DefaultTransferManager extends Observable implements TransferManage
 				next();
 			}
 		} catch (InterruptedException e) {
-			logger.trace("loadManager stopped: " + e.getMessage());
+			logger.debug("loadManager stopped: " + e.getMessage());
 		}
 	}
 

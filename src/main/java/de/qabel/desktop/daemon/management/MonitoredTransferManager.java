@@ -2,9 +2,12 @@ package de.qabel.desktop.daemon.management;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class MonitoredTransferManager implements TransferManager {
+	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 	private List<Consumer<Transaction>> addListeners = new LinkedList<>();
 	private TransferManager manager;
 
@@ -24,7 +27,7 @@ public class MonitoredTransferManager implements TransferManager {
 	}
 
 	private void notifyListeners(Transaction transaction) {
-		addListeners.forEach((c) -> c.accept(transaction));
+		executor.submit(() -> addListeners.forEach((c) -> c.accept(transaction)));
 	}
 
 	@Override

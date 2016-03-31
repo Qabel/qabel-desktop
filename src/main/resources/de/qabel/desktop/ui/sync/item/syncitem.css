@@ -1,6 +1,6 @@
 .progress-indicator .progress, .progress-bar .bar {
     -fx-background-color: #ff5908;
-        -fx-background-radius: 0px;
+	-fx-background-radius: 0px;
 
 }
 .progress-indicator.finished .progress, .progress-bar.finished .bar {
@@ -9,4 +9,13 @@
 
 #progress > .track {
 	-fx-background-radius: 0;
+}
+
+.composedProgress BorderPane {
+    -fx-padding: 0 0.5em 0 0.5em;
+}
+
+#syncStatusLabel {
+    -fx-alignment: center-left;
+    -fx-text-alignment: left;
 }

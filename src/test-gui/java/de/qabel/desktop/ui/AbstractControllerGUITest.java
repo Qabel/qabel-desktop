@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import org.junit.Test;
 
+import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.junit.Assert.assertEquals;
 
 public class AbstractControllerGUITest extends AbstractGuiTest<AlertTestController> {

@@ -11,6 +11,7 @@ import org.junit.Test;
 import java.util.LinkedList;
 import java.util.List;
 
+import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.junit.Assert.*;
 
 public class ContactActionLogTest extends AbstractControllerTest {

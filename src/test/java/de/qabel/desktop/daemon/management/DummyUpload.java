@@ -71,6 +71,16 @@ public class DummyUpload implements Upload {
 	}
 
 	@Override
+	public long totalSize() {
+		return 0;
+	}
+
+	@Override
+	public long currentSize() {
+		return 0;
+	}
+
+	@Override
 	public long getStagingDelayMillis() {
 		return 0;
 	}
@@ -100,6 +110,11 @@ public class DummyUpload implements Upload {
 
 	@Override
 	public boolean isDone() {
+		return false;
+	}
+
+	@Override
+	public boolean hasStarted() {
 		return false;
 	}
 

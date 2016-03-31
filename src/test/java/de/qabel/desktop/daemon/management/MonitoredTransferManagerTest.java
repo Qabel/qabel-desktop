@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.util.LinkedList;
 import java.util.List;
 
+import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.junit.Assert.*;
 
 public class MonitoredTransferManagerTest {
@@ -22,6 +23,7 @@ public class MonitoredTransferManagerTest {
 	public void notifiesOnAddUpload() {
 		Upload t = new UploadStub();
 		manager.addUpload(t);
+		waitUntil(() -> !transactions.isEmpty());
 		assertSame(t, transactions.get(0));
 	}
 
@@ -29,6 +31,7 @@ public class MonitoredTransferManagerTest {
 	public void notifiesOnAddDownload() {
 		Download t = new DownloadStub();
 		manager.addDownload(t);
+		waitUntil(() -> !transactions.isEmpty());
 		assertSame(t, transactions.get(0));
 	}
 

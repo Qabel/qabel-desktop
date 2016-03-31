@@ -44,8 +44,9 @@ public class BlockSharingService implements SharingService {
 		try {
 			URI rootUri = new URI(message.getUrl());
 			String url = rootUri.resolve("blocks/").resolve(boxFile.getBlock()).toString();
-			StorageDownload download = downloader.download(url, null);
-			cryptoUtils.decryptFileAuthenticatedSymmetricAndValidateTag(download.getInputStream(), targetFile.toFile(), new KeyParameter(boxFile.getKey()));
+			try (StorageDownload download = downloader.download(url, null)) {
+				cryptoUtils.decryptFileAuthenticatedSymmetricAndValidateTag(download.getInputStream(), targetFile.toFile(), new KeyParameter(boxFile.getKey()));
+			}
 		} catch (URISyntaxException e) {
 			throw new QblStorageNotFound("no valid uri: " + message.getUrl());
 		}
@@ -54,8 +55,9 @@ public class BlockSharingService implements SharingService {
 	@Override
 	public BoxObject loadFileMetadata(ShareNotificationMessage message, AuthenticatedDownloader downloader) throws IOException, QblStorageException, UnmodifiedException, InvalidKeyException {
 		Path tmpFile = Files.createTempFile("qfm", "");
-		StorageDownload download = downloader.download(message.getUrl(), null);
-		new CryptoUtils().decryptFileAuthenticatedSymmetricAndValidateTag(download.getInputStream(), tmpFile.toFile(), new KeyParameter(message.getKey().getKey()));
+		try (StorageDownload download = downloader.download(message.getUrl(), null)) {
+			new CryptoUtils().decryptFileAuthenticatedSymmetricAndValidateTag(download.getInputStream(), tmpFile.toFile(), new KeyParameter(message.getKey().getKey()));
+		}
 		return FileMetadata.openExisting(tmpFile.toFile()).getFile();
 	}
 

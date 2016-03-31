@@ -3,6 +3,7 @@ package de.qabel.desktop.ui;
 import javafx.scene.Node;
 import org.junit.Test;
 
+import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.junit.Assert.*;
 
 public class LayoutControllerTest extends AbstractControllerTest {

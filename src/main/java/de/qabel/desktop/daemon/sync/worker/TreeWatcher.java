@@ -12,6 +12,8 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.*;
@@ -23,6 +25,8 @@ import static java.nio.file.StandardWatchEventKinds.*;
  * and throw a WatchRegisteredEvent for each file or directory inside the tree, even if it already existed on start.
  */
 public class TreeWatcher extends Thread {
+	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+	private static final ExecutorService fileExecutor = Executors.newSingleThreadExecutor();
 	private Logger logger = LoggerFactory.getLogger(TreeWatcher.class);
 	private Path root;
 	private Consumer<de.qabel.desktop.daemon.sync.event.WatchEvent> consumer;
@@ -82,6 +86,9 @@ public class TreeWatcher extends Thread {
 
 				WatchEvent<Path> ev = (WatchEvent<Path>) event;
 				Path name = ev.context();
+				if (isQabelTmpFile(name)) {
+					continue;
+				}
 				Path parent = keys.get(instance);
 				Path child = parent.resolve(name);
 
@@ -99,21 +106,30 @@ public class TreeWatcher extends Thread {
 					registerRecursive(child);
 				}
 
-				boolean valid = instance.reset();
-				if (!valid) {
-					keys.remove(instance);
-
-					if (nothingToDo()) {
-						break;
-					}
-				}
 			} catch (Exception e) {
 				if (e instanceof InterruptedException) {
 					throw e;
 				}
 				logger.error("watcher errored: " + e.getMessage(), e);
+			} finally {
+				try {
+					boolean valid = instance.reset();
+					if (!valid) {
+						keys.remove(instance);
+
+						if (nothingToDo()) {
+							break;
+						}
+					}
+				} catch (Exception e) {
+					logger.error("failed to close dir watch: " + e.getMessage(), e);
+				}
 			}
 		}
+	}
+
+	private boolean isQabelTmpFile(Path name) {
+		return name.getFileName().toString().endsWith(".qpart~");
 	}
 
 	protected boolean nothingToDo() {
@@ -134,28 +150,27 @@ public class TreeWatcher extends Thread {
 		Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
 			@Override
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-				consumer.accept(new WatchRegisteredEvent(file));
+				WatchRegisteredEvent watchEvent = new WatchRegisteredEvent(file);
+				fileExecutor.submit(() -> consumer.accept(watchEvent));
 				if (watching) {
-					consumer.accept(
-							new LocalChangeEvent(
-									file,
-									CREATE
-							)
-					);
+					final LocalChangeEvent event = new LocalChangeEvent(file, CREATE);
+					fileExecutor.submit(() -> consumer.accept(event));
 				}
 				return super.visitFile(file, attrs);
 			}
 
 			@Override
 			public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-				logger.trace("watching " + dir);
-				WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
-				keys.put(key, dir);
+				logger.trace("watching dir " + dir);
 				try {
-					consumer.accept(new WatchRegisteredEvent(dir));
+					WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+					keys.put(key, dir);
+					WatchRegisteredEvent event = new WatchRegisteredEvent(dir);
+					executor.submit(() -> consumer.accept(event));
 				} catch (Exception e) {
 					logger.error(e.getMessage(), e);
 				}
+
 				return FileVisitResult.CONTINUE;
 			}
 		});
