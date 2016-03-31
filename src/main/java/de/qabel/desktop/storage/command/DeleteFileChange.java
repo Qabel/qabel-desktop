@@ -5,7 +5,7 @@ import de.qabel.desktop.storage.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DeleteFileChange implements DirectoryMetadataChange {
+public class DeleteFileChange implements DirectoryMetadataChange<DeleteFileChange.FileDeletionResult> {
 	private static final Logger logger = LoggerFactory.getLogger(DeleteFileChange.class.getSimpleName());
 	private BoxFile file;
 	private IndexNavigation indexNavigation;

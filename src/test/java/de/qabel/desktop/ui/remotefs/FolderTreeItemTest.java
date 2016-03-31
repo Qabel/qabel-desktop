@@ -301,6 +301,11 @@ public class FolderTreeItemTest extends AbstractControllerTest {
 		}
 
 		@Override
+		public boolean hasVersionChanged(DirectoryMetadata dm) throws QblStorageException {
+			return false;
+		}
+
+		@Override
 		public boolean hasFile(String name) throws QblStorageException {
 			return false;
 		}

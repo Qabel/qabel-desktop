@@ -441,12 +441,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 
 	@Override
 	public synchronized void delete(BoxFile file) throws QblStorageException {
-		DeleteFileChange change = new DeleteFileChange(file, getIndexNavigation(), writeBackend);
-		DeleteFileChange.FileDeletionResult result = change.execute(dm);
-		changes.add(change);
-		deleteQueue.add(result.getDeletedBlockRef());
-
-		autocommit();
+		deleteWithBlock(new DeleteFileChange(file, getIndexNavigation(), writeBackend));
 	}
 
 	@Override
@@ -506,9 +501,13 @@ public abstract class AbstractNavigation implements BoxNavigation {
 			folderNav.delete(subFolder);
 		}
 		folderNav.commit();
-		DeleteFolderChange deleteFolderChange = new DeleteFolderChange(folder);
-		DeleteFolderChange.FolderDeletionResult result = deleteFolderChange.execute(dm);
-		changes.add(deleteFolderChange);
+
+		deleteWithBlock(new DeleteFolderChange(folder));
+	}
+
+	private void deleteWithBlock(DirectoryMetadataChange<? extends DeletionResult> command) throws QblStorageException {
+		DeletionResult result = command.execute(dm);
+		changes.add(command);
 		deleteQueue.add(result.getDeletedBlockRef());
 		autocommit();
 	}
@@ -605,5 +604,10 @@ public abstract class AbstractNavigation implements BoxNavigation {
 		return getIndexNavigation().listShares().stream()
 				.filter(share -> share.getRef().equals(object.getRef()))
 				.collect(Collectors.toCollection(LinkedList::new));
+	}
+
+	@Override
+	public boolean hasVersionChanged(DirectoryMetadata dm) throws QblStorageException {
+		return !Arrays.equals(getMetadata().getVersion(), dm.getVersion());
 	}
 }

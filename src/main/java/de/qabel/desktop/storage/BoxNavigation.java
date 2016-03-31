@@ -180,4 +180,6 @@ public interface BoxNavigation extends ReadableBoxNavigation {
 	 * List all created (and not yet deleted) shares for the given BoxObject
 	 */
 	List<BoxShare> getSharesOf(BoxObject object) throws QblStorageException;
+
+	boolean hasVersionChanged(DirectoryMetadata dm) throws QblStorageException;
 }

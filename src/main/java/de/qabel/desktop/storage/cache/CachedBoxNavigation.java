@@ -226,12 +226,17 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 		return nav.getSharesOf(object);
 	}
 
+	@Override
+	public boolean hasVersionChanged(DirectoryMetadata dm) throws QblStorageException {
+		return nav.hasVersionChanged(dm);
+	}
+
 	public void refresh() throws QblStorageException {
 		synchronized (this) {
 			synchronized (nav) {
 				if (nav.isUnmodified()) {
 					DirectoryMetadata dm = nav.reloadMetadata();
-					if (!Arrays.equals(nav.getMetadata().getVersion(), dm.getVersion())) {
+					if (hasVersionChanged(dm)) {
 						Set<BoxFolder> oldFolders = new HashSet<>(nav.listFolders());
 						Set<BoxFile> oldFiles = new HashSet<>(nav.listFiles());
 
