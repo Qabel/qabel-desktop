@@ -13,6 +13,8 @@ import de.qabel.desktop.repository.*;
 import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory;
 import de.qabel.desktop.ui.connector.DropConnector;
 
+import java.io.IOException;
+
 public interface DesktopServices {
     TransferManager getTransferManager();
 
@@ -42,7 +44,7 @@ public interface DesktopServices {
 
     SharingService getSharingService();
 
-    BoxVolumeFactory getBoxVolumeFactory();
+    BoxVolumeFactory getBoxVolumeFactory() throws IOException;
 
     AccountingHTTP getAccountingClient();
 }

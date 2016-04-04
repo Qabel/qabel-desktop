@@ -34,7 +34,7 @@ public class FileMetadata extends AbstractMetadata {
 
     public static FileMetadata openNew(QblECPublicKey owner, BoxFile boxFile, File tmpDir) throws QblStorageException {
         try {
-            File path = File.createTempFile("dir", "db", tmpDir);
+            File path = File.createTempFile("dir", "db6", tmpDir);
 
             Connection connection = DriverManager.getConnection(JDBC_PREFIX + path.getAbsolutePath());
             connection.setAutoCommit(true);

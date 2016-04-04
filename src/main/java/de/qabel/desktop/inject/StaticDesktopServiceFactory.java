@@ -28,6 +28,7 @@ import de.qabel.desktop.ui.connector.DropConnector;
 import de.qabel.desktop.ui.connector.HttpDropConnector;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -277,7 +278,7 @@ public class StaticDesktopServiceFactory extends DefaultServiceFactory implement
 
     @Override
     @Create(name = "boxVolumeFactory")
-    public synchronized BoxVolumeFactory getBoxVolumeFactory() {
+    public synchronized BoxVolumeFactory getBoxVolumeFactory() throws IOException {
         if (boxVolumeFactory == null) {
             boxVolumeFactory = new BlockBoxVolumeFactory(
                 getClientConfiguration().getDeviceId().getBytes(),

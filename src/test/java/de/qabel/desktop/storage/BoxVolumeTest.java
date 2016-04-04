@@ -4,13 +4,10 @@ package de.qabel.desktop.storage;
 import de.qabel.core.config.Contact;
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
-import de.qabel.core.crypto.QblECPublicKey;
-import de.qabel.desktop.AsyncUtils;
-import de.qabel.desktop.BlockSharingService;
-import de.qabel.desktop.SharingService;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.exceptions.QblStorageNameConflict;
 import de.qabel.desktop.exceptions.QblStorageNotFound;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -19,6 +16,7 @@ import org.junit.Test;
 import org.meanbean.util.AssertionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.misc.GC;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,12 +42,14 @@ public abstract class BoxVolumeTest {
 	protected String prefix = UUID.randomUUID().toString();
 	private final String testFileName = "src/test/java/de/qabel/desktop/storage/testFile.txt";
 	protected Contact contact;
+    protected File volumeTmpDir;
 
 	@Before
 	public void setUp() throws IOException, QblStorageException {
 		CryptoUtils utils = new CryptoUtils();
 		deviceID = utils.getRandomBytes(16);
 		deviceID2 = utils.getRandomBytes(16);
+        volumeTmpDir = Files.createTempDirectory("qbl_test").toFile();
 
 		keyPair = new QblECKeyPair();
 		contact = new Contact("contact", new LinkedList<>(), new QblECKeyPair().getPub());
@@ -66,9 +66,45 @@ public abstract class BoxVolumeTest {
 	@After
 	public void cleanUp() throws IOException {
 		cleanVolume();
+        FileUtils.deleteDirectory(volumeTmpDir);
 	}
 
 	protected abstract void cleanVolume() throws IOException;
+
+    @Test
+    public void testCleansUpTmpUploads() throws Exception {
+        BoxNavigation nav = volume.navigate();
+        uploadFile(nav);
+
+        assertNoTmpFiles();
+    }
+
+    private void assertNoTmpFiles() {
+        List<File> nonDmFiles = new LinkedList<>();
+        for (File file : volumeTmpDir.listFiles()) {
+            if (file.getName().startsWith("dir")) {
+                continue;   // allow DM tmp files for now cause we don't have a strategy to clean them
+            }
+            nonDmFiles.add(file);
+        }
+
+        if (!nonDmFiles.isEmpty()) {
+            String message = "tmp dir was not cleaned: \n";
+            for (File file : nonDmFiles) {
+                message += file.getAbsolutePath() + "\n";
+            }
+            fail(message);
+        }
+    }
+
+    @Test
+    public void testCleansUpTmpDownloads() throws Exception {
+        BoxNavigation nav = volume.navigate();
+        BoxFile upload = uploadFile(nav);
+        nav.download(upload).close();
+
+        assertNoTmpFiles();
+    }
 
 	@Test
 	public void testCreateIndex() throws QblStorageException {
@@ -113,11 +149,12 @@ public abstract class BoxVolumeTest {
 	}
 
 	private void checkFile(BoxFile boxFile, BoxNavigation nav) throws QblStorageException, IOException {
-		InputStream dlStream = nav.download(boxFile);
-		assertNotNull("Download stream is null", dlStream);
-		byte[] dl = IOUtils.toByteArray(dlStream);
-		File file = new File(testFileName);
-		assertThat(dl, is(Files.readAllBytes(file.toPath())));
+		try (InputStream dlStream = nav.download(boxFile)) {
+            assertNotNull("Download stream is null", dlStream);
+            byte[] dl = IOUtils.toByteArray(dlStream);
+            File file = new File(testFileName);
+            assertThat(dl, is(Files.readAllBytes(file.toPath())));
+        }
 	}
 
 	@Test
