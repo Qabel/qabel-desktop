@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 public class ProgressInputStream extends FilterInputStream {
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
     private Consumer<Long> consumer;
-    private long read = 0;
+    private long read;
 
     public ProgressInputStream(InputStream in, Consumer<Long> consumer) {
         super(in);

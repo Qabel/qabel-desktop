@@ -13,7 +13,8 @@ import static org.junit.Assert.assertThat;
 public class QabelFXMLViewTest extends AbstractControllerTest {
 	AccountingController controller;
 
-	@Before
+	@Override
+    @Before
 	public void setUp() throws Exception {
 		super.setUp();
 		QabelFXMLView.unloadDefaultResourceBundle();

@@ -73,7 +73,8 @@ public class AbstractControllerTest {
 
 	private static void startPlatform() throws NoSuchFieldException, IllegalAccessException, InterruptedException {
 		new Thread() {
-			public void run() {
+			@Override
+            public void run() {
 				Application.launch(TestApplication.class);
 			}
 		}.start();
@@ -124,7 +125,7 @@ public class AbstractControllerTest {
 	}
 
 	protected Function<String, Object> generateInjection(String name, Object instance) {
-		return (requestedName) -> requestedName.equals(name) ? instance : null;
+		return requestedName -> requestedName.equals(name) ? instance : null;
 	}
 
 	protected void runLaterAndWait(Runnable runnable) {

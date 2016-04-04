@@ -38,7 +38,8 @@ public class BoxObjectCellValueFactoryTest extends AbstractControllerTest {
 	private Path tempFolder;
 
 
-	@Before
+	@Override
+    @Before
 	public void setUp() throws Exception {
 		super.setUp();
 
@@ -72,7 +73,8 @@ public class BoxObjectCellValueFactoryTest extends AbstractControllerTest {
 
 	}
 
-	@After
+	@Override
+    @After
 	public void tearDown() throws Exception {
 		try {
 			FileUtils.deleteDirectory(tempFolder.toFile());

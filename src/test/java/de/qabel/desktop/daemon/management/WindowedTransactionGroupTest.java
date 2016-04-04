@@ -49,7 +49,8 @@ public class WindowedTransactionGroupTest extends TransactionGroupTest {
 		assertEquals(0.5, group.getProgress(), 0.001);
 	}
 
-	@Test
+	@Override
+    @Test
 	public void notifiesOnProgressChangeViaAdd() {
 		List<Object> updates = new LinkedList<>();
 		TransactionStub upload1 = new TransactionStub();

@@ -4,7 +4,7 @@ import de.qabel.desktop.storage.BoxVolume;
 
 import java.nio.file.Path;
 
-public class TransactionStub extends AbstractTransaction implements Transaction {
+public class TransactionStub extends AbstractTransaction {
 	public BoxVolume volume;
 	public Path source;
 	public Path destination;
@@ -13,11 +13,11 @@ public class TransactionStub extends AbstractTransaction implements Transaction 
 	public boolean isDir = true;
 	public STATE state = STATE.INITIALIZING;
 	public Long mtime = 0L;
-	public boolean closed = false;
+	public boolean closed;
 	public long transactionAge = 2000L;
 	public Long size = 0L;
-	public long progress = 0L;
-	public long stagingDelay = 0L;
+	public long progress;
+	public long stagingDelay;
 
 	public TransactionStub() {
 		super(0L);

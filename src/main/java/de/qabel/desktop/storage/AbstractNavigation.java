@@ -29,7 +29,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
     public static final String BLOCKS_PREFIX = "blocks/";
 
     @Deprecated
-    public static long DEFAULT_AUTOCOMMIT_DELAY = 0;
+    public static long DEFAULT_AUTOCOMMIT_DELAY;
 
     DirectoryMetadata dm;
     final QblECKeyPair keyPair;
@@ -43,11 +43,11 @@ public abstract class AbstractNavigation implements BoxNavigation {
     private final Set<FileUpdate> updatedFiles = new HashSet<>();
     private final List<DirectoryMetadataChange> changes = new LinkedList<>();
     private final String prefix;
-    private IndexNavigation indexNavigation = null;
+    private IndexNavigation indexNavigation;
 
     private boolean autocommit = true;
     private long autocommitDelay = DEFAULT_AUTOCOMMIT_DELAY;
-    private long lastAutocommitStart = 0;
+    private long lastAutocommitStart;
 
     protected AbstractNavigation(String prefix, DirectoryMetadata dm, QblECKeyPair keyPair, byte[] deviceId,
                                  StorageReadBackend readBackend, StorageWriteBackend writeBackend) {
@@ -68,7 +68,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
 
     @Override
     public void setAutocommitDelay(long delay) {
-        this.autocommitDelay = delay;
+        autocommitDelay = delay;
     }
 
     @Override
@@ -133,7 +133,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
             logger.info("Could not reload metadata");
         }
         // the remote version has changed from the _old_ version
-        if ((updatedDM != null) && (!Arrays.equals(version, updatedDM.getVersion()))) {
+        if (updatedDM != null && !Arrays.equals(version, updatedDM.getVersion())) {
             logger.info("Conflicting version");
             // ignore our local directory metadata
             // all changes that are not inserted in the new dm are _lost_!
@@ -188,7 +188,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
     }
 
     private String conflictName(BoxFile local) {
-        return local.name + "_conflict_" + local.getMtime().toString();
+        return local.name + "_conflict_" + local.getMtime();
     }
 
     protected abstract void uploadDirectoryMetadata() throws QblStorageException;
@@ -303,7 +303,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
                 if (lastAutocommitStart != autocommitStart) {
                     return;
                 }
-                AbstractNavigation.this.commitIfChanged();
+                commitIfChanged();
             } catch (QblStorageException e) {
                 logger.error("failed late commit: " + e.getMessage(), e);
             }

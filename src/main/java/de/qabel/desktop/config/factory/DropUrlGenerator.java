@@ -14,7 +14,7 @@ public class DropUrlGenerator {
 	}
 
 	public DropUrlGenerator(URI dropServerUrl) {
-		this.dropServer = new DropServer(dropServerUrl, null, true);
+        dropServer = new DropServer(dropServerUrl, null, true);
 	}
 
 	public DropURL generateUrl() {

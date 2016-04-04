@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class BoxFileSystemProvider extends FileSystemProvider {
-	private static byte[] deviceId = null;
+	private static byte[] deviceId;
 
 	public static void setDeviceId(byte[] deviceId) {
 		BoxFileSystemProvider.deviceId = deviceId;

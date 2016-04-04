@@ -3,7 +3,7 @@ package de.qabel.desktop.daemon.sync.event;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class LocalDeleteEvent extends AbstractChangeEvent implements ChangeEvent {
+public class LocalDeleteEvent extends AbstractChangeEvent {
 	public LocalDeleteEvent(Path path, boolean isDirecotry, Long mtime, TYPE type) {
 		super(path, isDirecotry, mtime, type);
 	}

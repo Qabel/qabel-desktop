@@ -74,7 +74,7 @@ public class BoxFile extends BoxObject {
         this.size = size;
         this.mtime = mtime;
         this.meta = meta;
-        this.metakey = metaKey;
+        metakey = metaKey;
         this.key = key;
     }
 

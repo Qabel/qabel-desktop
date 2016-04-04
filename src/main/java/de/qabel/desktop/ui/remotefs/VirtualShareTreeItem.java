@@ -22,7 +22,7 @@ import java.util.concurrent.Executors;
 
 public class VirtualShareTreeItem extends TreeItem<BoxObject> {
 	private static Logger logger = LoggerFactory.getLogger(VirtualShareTreeItem.class.getSimpleName());
-	private boolean initialized = false;
+	private boolean initialized;
 	private static ExecutorService executorService = Executors.newSingleThreadExecutor();
 	private ShareNotifications notifications;
 	private SharingService sharingService;
@@ -42,7 +42,7 @@ public class VirtualShareTreeItem extends TreeItem<BoxObject> {
 
 		notifications.addObserver((o, arg) -> executorService.submit(() -> {
 			initialized = false;
-			this.reload();
+            reload();
 		}));
 	}
 

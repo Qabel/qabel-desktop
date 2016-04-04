@@ -14,13 +14,12 @@ public class QabelFXMLView extends FXMLView {
 
 
     public QabelFXMLView() {
-        super();
-        this.bundle = getDefaultResourceBundle();
+        bundle = getDefaultResourceBundle();
     }
 
     public QabelFXMLView(Function<String, Object> injectionContext) {
         super(injectionContext);
-        this.bundle = getDefaultResourceBundle();
+        bundle = getDefaultResourceBundle();
     }
 
     public static ResourceBundle getDefaultResourceBundle() {

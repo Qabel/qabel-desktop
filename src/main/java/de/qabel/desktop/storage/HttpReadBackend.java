@@ -13,11 +13,12 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class HttpReadBackend extends AbstractHttpStorageBackend implements StorageReadBackend, AuthenticatedDownloader {
+public class HttpReadBackend extends AbstractHttpStorageBackend implements StorageReadBackend {
     public HttpReadBackend(String root) throws URISyntaxException {
         super(root);
     }
 
+    @Override
     public StorageDownload download(String name) throws QblStorageException {
         try {
             return download(name, null);
@@ -29,7 +30,7 @@ public class HttpReadBackend extends AbstractHttpStorageBackend implements Stora
     @Override
     public StorageDownload download(String name, String ifModifiedVersion) throws QblStorageException, UnmodifiedException {
         logger.info("Downloading " + name);
-        URI uri = this.root.resolve(name);
+        URI uri = root.resolve(name);
         HttpGet httpGet = new HttpGet(uri);
         if (ifModifiedVersion != null) {
             httpGet.addHeader(HttpHeaders.IF_NONE_MATCH, ifModifiedVersion);

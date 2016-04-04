@@ -13,10 +13,10 @@ public abstract class BoxObject extends Observable implements Comparable<BoxObje
     @Override
     public int compareTo(BoxObject another) {
         if (this instanceof BoxFile && another instanceof BoxFile) {
-            return this.name.compareTo(another.name);
+            return name.compareTo(another.name);
         }
         if (this instanceof BoxFolder && another instanceof BoxFolder) {
-            return this.name.compareTo(another.name);
+            return name.compareTo(another.name);
         }
         if (this instanceof BoxFile) {
             return -1;

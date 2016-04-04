@@ -8,7 +8,7 @@ import java.nio.file.Path;
 
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.DELETE;
 
-public class LocalChangeEvent extends AbstractChangeEvent implements ChangeEvent {
+public class LocalChangeEvent extends AbstractChangeEvent {
 	public LocalChangeEvent(Path path, ChangeEvent.TYPE type) throws IOException {
 		this(path, Files.isDirectory(path), Files.getLastModifiedTime(path).toMillis(), type);
 	}
@@ -23,7 +23,7 @@ public class LocalChangeEvent extends AbstractChangeEvent implements ChangeEvent
 			long currentMtime = Files.getLastModifiedTime(getPath()).toMillis();
 			boolean valid = currentMtime == getMtime();
 			if (!valid) {
-				LoggerFactory.getLogger(getClass()).debug("event invalid: mtime " + currentMtime + " != " + getMtime() + " on " + getPath().toString());
+				LoggerFactory.getLogger(getClass()).debug("event invalid: mtime " + currentMtime + " != " + getMtime() + " on " + getPath());
 			}
 			return valid;
 		} catch (IOException e) {

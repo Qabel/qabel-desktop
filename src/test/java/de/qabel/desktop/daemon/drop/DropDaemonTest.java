@@ -25,8 +25,8 @@ import static org.junit.Assert.assertEquals;
 
 public class DropDaemonTest extends AbstractControllerTest {
 
-	DropConnector dropConnector = new InMemoryHttpDropConnector();;
-	Contact c;
+	DropConnector dropConnector = new InMemoryHttpDropConnector();
+    Contact c;
 	String fakeURL = "http://localhost:12345/abcdefghijklmnopqrstuvwxyzabcdefgworkingUrl";
 
 	@Test

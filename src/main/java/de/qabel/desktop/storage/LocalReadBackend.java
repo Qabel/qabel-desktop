@@ -17,6 +17,7 @@ public class LocalReadBackend implements StorageReadBackend {
         this.root = root;
     }
 
+    @Override
     public StorageDownload download(String name) throws QblStorageException {
         try {
             return download(name, null);
@@ -25,6 +26,7 @@ public class LocalReadBackend implements StorageReadBackend {
         }
     }
 
+    @Override
     public StorageDownload download(String name, String ifModifiedVersion) throws QblStorageException, UnmodifiedException {
         Path file = root.resolve(name);
 
@@ -36,7 +38,7 @@ public class LocalReadBackend implements StorageReadBackend {
             // best effort
         }
 
-        logger.info("Downloading file path " + file.toString());
+        logger.info("Downloading file path " + file);
         try {
             return new StorageDownload(
                 Files.newInputStream(file),

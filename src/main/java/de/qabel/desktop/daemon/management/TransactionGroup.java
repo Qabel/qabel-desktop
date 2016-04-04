@@ -8,8 +8,8 @@ public class TransactionGroup extends Observable implements Observer, HasProgres
 	protected final Set<Transaction> transactions = new HashSet<>();
 	protected final Map<Transaction, Long> transactionSize = new WeakHashMap<>();
 	protected final Map<Transaction, Long> transactionTransferred = new WeakHashMap<>();
-	private long size = 0;
-	private long transferred = 0;
+	private long size;
+	private long transferred;
 	private Runnable progressListener;
 
 	public boolean isEmpty() {

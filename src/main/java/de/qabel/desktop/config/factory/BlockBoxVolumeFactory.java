@@ -13,7 +13,7 @@ import de.qabel.desktop.storage.cache.CachedBoxVolume;
 import java.io.File;
 import java.net.URISyntaxException;
 
-public class BlockBoxVolumeFactory extends AbstractBoxVolumeFactory implements BoxVolumeFactory {
+public class BlockBoxVolumeFactory extends AbstractBoxVolumeFactory {
 	private byte[] deviceId;
 
 	public BlockBoxVolumeFactory(byte[] deviceId, AccountingHTTP accountingHTTP, IdentityRepository identityRepository) {

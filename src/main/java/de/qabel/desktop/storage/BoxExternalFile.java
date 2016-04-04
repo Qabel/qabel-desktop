@@ -10,7 +10,7 @@ public class BoxExternalFile extends BoxFile implements BoxExternal {
     public BoxExternalFile(QblECPublicKey owner, String prefix, String block, String name, Long size, Long mtime, byte[] key) {
         super(prefix, block, name, size, mtime, key);
         this.owner = owner;
-        this.isAccessible = true;
+        isAccessible = true;
     }
 
     public BoxExternalFile(QblECPublicKey owner, String prefix, String block, String name, byte[] key, boolean isAccessible) {

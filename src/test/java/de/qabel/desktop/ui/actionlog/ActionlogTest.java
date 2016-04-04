@@ -22,7 +22,8 @@ public class ActionlogTest extends AbstractControllerTest {
 	private Contact contact = new Contact("alias", null, new QblECKeyPair().getPub());
 	private List<PersistenceDropMessage> notifications = new LinkedList<>();
 
-	@Before
+	@Override
+    @Before
 	public void setUp() throws Exception {
 		super.setUp();
 		log = new Actionlog(repo);

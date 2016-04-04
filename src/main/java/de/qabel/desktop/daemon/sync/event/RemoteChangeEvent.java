@@ -5,7 +5,7 @@ import de.qabel.desktop.storage.BoxObject;
 
 import java.nio.file.Path;
 
-public class RemoteChangeEvent extends AbstractChangeEvent implements ChangeEvent {
+public class RemoteChangeEvent extends AbstractChangeEvent {
 	private final BoxObject boxObject;
 	private final BoxNavigation navigation;
 

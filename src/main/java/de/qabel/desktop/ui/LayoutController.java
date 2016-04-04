@@ -102,7 +102,7 @@ public class LayoutController extends AbstractController implements Initializabl
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.resourceBundle = resources;
+        resourceBundle = resources;
 
         navi.getChildren().clear();
         AccountingView accountingView = new AccountingView();
