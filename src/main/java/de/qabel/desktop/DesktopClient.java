@@ -195,7 +195,7 @@ public class DesktopClient extends Application {
                 );
                 services.getDropMessageRendererFactory().addRenderer(DropMessageRepository.PAYLOAD_TYPE_SHARE_NOTIFICATION, renderer);
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.warn(e.getMessage(), e);
             }
         });
     }
