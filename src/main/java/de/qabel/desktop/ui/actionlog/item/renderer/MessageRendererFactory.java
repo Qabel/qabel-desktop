@@ -8,7 +8,7 @@ public class MessageRendererFactory {
 	private Map<String, MessageRenderer> renderers = new HashMap<>();
 
 	public void addRenderer(String payloadType, MessageRenderer renderer) {
-		this.renderers.put(payloadType, renderer);
+        renderers.put(payloadType, renderer);
 	}
 
 	public boolean hasRenderer(String payloadType) {
@@ -16,7 +16,7 @@ public class MessageRendererFactory {
 	}
 
 	public MessageRenderer getRenderer(String payloadType) {
-		MessageRenderer renderer = this.renderers.get(payloadType);
+		MessageRenderer renderer = renderers.get(payloadType);
 		if (renderer == null) {
 			return fallbackRenderer;
 		}

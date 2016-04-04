@@ -6,6 +6,5 @@ import java.util.function.Function;
 
 public class DummySyncItemView extends QabelFXMLView{
 	public DummySyncItemView() {
-		super();
-	}
+    }
 }

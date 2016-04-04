@@ -9,25 +9,25 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class FxNetworkStatus implements Observer {
-	private NetworkStatus status;
-	private BooleanProperty onlineProperty;
+    private NetworkStatus status;
+    private BooleanProperty onlineProperty;
 
-	public FxNetworkStatus(NetworkStatus status) {
-		this.status = status;
-		onlineProperty = new SimpleBooleanProperty(status.isOnline());
-		status.addObserver(this);
-	}
+    public FxNetworkStatus(NetworkStatus status) {
+        this.status = status;
+        onlineProperty = new SimpleBooleanProperty(status.isOnline());
+        status.addObserver(this);
+    }
 
-	public BooleanProperty onlineProperty() {
-		return onlineProperty;
-	}
+    public BooleanProperty onlineProperty() {
+        return onlineProperty;
+    }
 
-	@Override
-	public void update(Observable o, Object arg) {
-		if (o != status) {
-			return;
-		}
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o != status) {
+            return;
+        }
 
-		Platform.runLater(() -> onlineProperty.setValue(status.isOnline()));
-	}
+        Platform.runLater(() -> onlineProperty.setValue(status.isOnline()));
+    }
 }

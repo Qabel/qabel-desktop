@@ -23,7 +23,8 @@ public class TreeWatcherTest extends AbstractSyncTest {
 	private List<WatchEvent> events = new LinkedList<>();
 	private TreeWatcher watcher;
 
-	@Before
+	@Override
+    @Before
 	public void setUp() {
 		super.setUp();
 
@@ -35,7 +36,8 @@ public class TreeWatcherTest extends AbstractSyncTest {
 		});
 	}
 
-	@After
+	@Override
+    @After
 	public void tearDown() throws InterruptedException {
 		if (watcher != null && watcher.isAlive()) {
 			watcher.interrupt();

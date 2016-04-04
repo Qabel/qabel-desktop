@@ -72,7 +72,7 @@ public class SyncIntegrationTest {
 			syncer1 = new DefaultSyncer(config1, volume1, manager1);
 			syncer1.getUploadFactory().setSyncDelayMills(0L);
 
-			this.syncer2 = syncer2();
+            syncer2 = syncer2();
 
 			syncer1.setPollInterval(100, TimeUnit.MILLISECONDS);
 			syncer1.run();
@@ -183,7 +183,7 @@ public class SyncIntegrationTest {
 		assertEquals(BoxFileSystem.get("/sync/dir").toString(), history.get(1).getSource().toString());
 
 		waitUntil(() -> history.size() > 2, () -> {
-			SyncIntegrationTest i = SyncIntegrationTest.this;
+			SyncIntegrationTest i = this;
 			return "too few events: " + history;
 		});
 		for (int i = 2; i < history.size(); i++) {

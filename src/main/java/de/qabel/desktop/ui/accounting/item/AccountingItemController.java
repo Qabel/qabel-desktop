@@ -58,7 +58,7 @@ public class AccountingItemController extends AbstractController implements Init
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		this.resourceBundle = resources;
+        resourceBundle = resources;
 
 		alias.textProperty().addListener((o, a, b) -> updateAvatar());
 		alias.setText(identity.getAlias());

@@ -90,7 +90,7 @@ public class LoginController extends AbstractController implements Initializable
 		progressBar.visibleProperty().bind(buttonBar.visibleProperty().not());
 		progressBar.managedProperty().bind(progressBar.visibleProperty());
 		buttonBar.managedProperty().bind(buttonBar.visibleProperty());
-		this.resourceBundle = resources;
+        resourceBundle = resources;
 
 
 		if (config.hasAccount()) {
@@ -243,7 +243,7 @@ public class LoginController extends AbstractController implements Initializable
 
 	private void toLoginFailureState(String message) {
 		buttonBar.setVisible(true);
-		showError(message, this.loginButton);
+		showError(message, loginButton);
 	}
 
 	private void showError(String message, Button button) {

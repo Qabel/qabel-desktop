@@ -36,282 +36,284 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class StaticDesktopServiceFactory extends DefaultServiceFactory implements DesktopServices, ServiceFactory {
-	private static Map<String, Method> creators = new HashMap<>();
+public class StaticDesktopServiceFactory extends DefaultServiceFactory implements DesktopServices {
+    private static Map<String, Method> creators = new HashMap<>();
 
-	static {
-		for (Method method : StaticDesktopServiceFactory.class.getDeclaredMethods()) {
-			method.setAccessible(true);
-			if (method.isAnnotationPresent(Create.class)) {
-				String createdInstance = method.getAnnotation(Create.class).name();
-				creators.put(createdInstance, method);
-			} else if (method.isAnnotationPresent(Creates.class)) {
-				for (Create create : method.getAnnotation(Creates.class).value()) {
-					creators.put(create.name(), method);
-				}
-			}
-		}
-	}
+    static {
+        for (Method method : StaticDesktopServiceFactory.class.getDeclaredMethods()) {
+            method.setAccessible(true);
+            if (method.isAnnotationPresent(Create.class)) {
+                String createdInstance = method.getAnnotation(Create.class).name();
+                creators.put(createdInstance, method);
+            } else if (method.isAnnotationPresent(Creates.class)) {
+                for (Create create : method.getAnnotation(Creates.class).value()) {
+                    creators.put(create.name(), method);
+                }
+            }
+        }
+    }
 
-	private RuntimeConfiguration runtimeConfiguration;
+    private RuntimeConfiguration runtimeConfiguration;
 
-	public StaticDesktopServiceFactory(RuntimeConfiguration runtimeConfiguration) {
-		this.runtimeConfiguration = runtimeConfiguration;
-	}
+    public StaticDesktopServiceFactory(RuntimeConfiguration runtimeConfiguration) {
+        this.runtimeConfiguration = runtimeConfiguration;
+    }
 
-	@Override
-	public Object getByType(Class type) {
-		Object instance = super.getByType(type);
-		if (instance != null) {
-			return instance;
-		}
-		for (Method method : creators.values()) {
-			if (type.isAssignableFrom(method.getReturnType())) {
-				return invoke(method);
-			}
-		}
-		return null;
-	}
+    @Override
+    public Object getByType(Class type) {
+        Object instance = super.getByType(type);
+        if (instance != null) {
+            return instance;
+        }
+        for (Method method : creators.values()) {
+            if (type.isAssignableFrom(method.getReturnType())) {
+                return invoke(method);
+            }
+        }
+        return null;
+    }
 
-	@Override
-	public synchronized Object get(String key) {
-		if (!cache.containsKey(key)) {
-			cache.put(key, generate(key));
-		}
-		return super.get(key);
-	}
+    @Override
+    public synchronized Object get(String key) {
+        if (!cache.containsKey(key)) {
+            cache.put(key, generate(key));
+        }
+        return super.get(key);
+    }
 
-	private Object generate(String key) {
-		if (!creators.containsKey(key)) {
-			throw new IllegalArgumentException("failed to create instance for " + key);
-		}
+    private Object generate(String key) {
+        if (!creators.containsKey(key)) {
+            throw new IllegalArgumentException("failed to create instance for " + key);
+        }
 
-		Method method = creators.get(key);
-		return invoke(method);
-	}
+        Method method = creators.get(key);
+        return invoke(method);
+    }
 
-	private Object invoke(Method method) {
-		try {
-			return method.invoke(this);
-		} catch (IllegalAccessException|InvocationTargetException e) {
-			throw new IllegalStateException("failed to call public method on correct class: " + e.getMessage(), e);
-		}
-	}
+    private Object invoke(Method method) {
+        try {
+            return method.invoke(this);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new IllegalStateException("failed to call public method on correct class: " + e.getMessage(), e);
+        }
+    }
 
-	private TransferManager transferManager;
+    private TransferManager transferManager;
 
-	@Override
-	@Create(name = "loadManager")
-	@Create(name = "transferManager")
-	public synchronized TransferManager getTransferManager() {
-		if (transferManager == null) {
-			transferManager = new MonitoredTransferManager(new DefaultTransferManager());
-		}
-		return transferManager;
-	}
+    @Override
+    @Create(name = "loadManager")
+    @Create(name = "transferManager")
+    public synchronized TransferManager getTransferManager() {
+        if (transferManager == null) {
+            transferManager = new MonitoredTransferManager(new DefaultTransferManager());
+        }
+        return transferManager;
+    }
 
-	private IdentityRepository identityRepository;
+    private IdentityRepository identityRepository;
 
-	@Override
-	@Create(name = "identityRepository")
-	public synchronized IdentityRepository getIdentityRepository() {
-		if (identityRepository == null) {
-			identityRepository = new PersistenceIdentityRepository(getPersistence());
-		}
-		return identityRepository;
-	}
+    @Override
+    @Create(name = "identityRepository")
+    public synchronized IdentityRepository getIdentityRepository() {
+        if (identityRepository == null) {
+            identityRepository = new PersistenceIdentityRepository(getPersistence());
+        }
+        return identityRepository;
+    }
 
-	private IdentityBuilderFactory identityBuilderFactory;
+    private IdentityBuilderFactory identityBuilderFactory;
 
-	@Override
-	@Create(name = "identityBuilderFactory")
-	public synchronized IdentityBuilderFactory getIdentityBuilderFactory() {
-		if (identityBuilderFactory == null) {
-			identityBuilderFactory = new IdentityBuilderFactory(getDropUrlGenerator());
-		}
-		return identityBuilderFactory;
-	}
+    @Override
+    @Create(name = "identityBuilderFactory")
+    public synchronized IdentityBuilderFactory getIdentityBuilderFactory() {
+        if (identityBuilderFactory == null) {
+            identityBuilderFactory = new IdentityBuilderFactory(getDropUrlGenerator());
+        }
+        return identityBuilderFactory;
+    }
 
-	AccountRepository accountRepository;
+    AccountRepository accountRepository;
 
-	@Override
-	@Create(name = "accountingRepository")
-	public synchronized AccountRepository getAccountRepository() {
-		if (accountRepository == null) {
-			accountRepository = new PersistenceAccountRepository(getPersistence());
-		}
-		return accountRepository;
-	}
+    @Override
+    @Create(name = "accountingRepository")
+    public synchronized AccountRepository getAccountRepository() {
+        if (accountRepository == null) {
+            accountRepository = new PersistenceAccountRepository(getPersistence());
+        }
+        return accountRepository;
+    }
 
-	private DropUrlGenerator dropUrlGenerator;
+    private DropUrlGenerator dropUrlGenerator;
 
-	@Override
-	@Create(name = "dropUrlGenerator")
-	public synchronized DropUrlGenerator getDropUrlGenerator() {
-		if (dropUrlGenerator == null) {
-			dropUrlGenerator = new DropUrlGenerator(runtimeConfiguration.getDropUri());
-		}
-		return dropUrlGenerator;
-	}
+    @Override
+    @Create(name = "dropUrlGenerator")
+    public synchronized DropUrlGenerator getDropUrlGenerator() {
+        if (dropUrlGenerator == null) {
+            dropUrlGenerator = new DropUrlGenerator(runtimeConfiguration.getDropUri());
+        }
+        return dropUrlGenerator;
+    }
 
-	private Persistence<String> persistence;
+    private Persistence<String> persistence;
 
-	@Create(name = "persistence")
-	private synchronized Persistence<String> getPersistence() {
-		if (persistence == null) {
-			persistence = new SQLitePersistence(runtimeConfiguration.getPersistenceDatabaseFile().toFile().getAbsolutePath());
-		}
-		return persistence;
-	}
+    @Create(name = "persistence")
+    private synchronized Persistence<String> getPersistence() {
+        if (persistence == null) {
+            persistence = new SQLitePersistence(runtimeConfiguration.getPersistenceDatabaseFile().toFile().getAbsolutePath());
+        }
+        return persistence;
+    }
 
-	private ContactRepository contactRepository;
+    private ContactRepository contactRepository;
 
-	@Override
-	@Create(name = "contactRepository")
-	public synchronized ContactRepository getContactRepository() {
-		if (contactRepository == null) {
-			contactRepository = new PersistenceContactRepository(getPersistence());
-		}
-		return contactRepository;
-	}
+    @Override
+    @Create(name = "contactRepository")
+    public synchronized ContactRepository getContactRepository() {
+        if (contactRepository == null) {
+            contactRepository = new PersistenceContactRepository(getPersistence());
+        }
+        return contactRepository;
+    }
 
-	private DropMessageRepository dropMessageRepository;
+    private DropMessageRepository dropMessageRepository;
 
-	@Override
-	@Create(name = "dropMessageRepository")
-	public synchronized DropMessageRepository getDropMessageRepository() {
-		if (dropMessageRepository == null) {
-			dropMessageRepository = new PersistenceDropMessageRepository(getPersistence());
-		}
-		return dropMessageRepository;
-	}
+    @Override
+    @Create(name = "dropMessageRepository")
+    public synchronized DropMessageRepository getDropMessageRepository() {
+        if (dropMessageRepository == null) {
+            dropMessageRepository = new PersistenceDropMessageRepository(getPersistence());
+        }
+        return dropMessageRepository;
+    }
 
-	private ClientConfiguration clientConfiguration;
+    private ClientConfiguration clientConfiguration;
 
-	@Override
-	@Create(name = "clientConfiguration")
-	@Create(name = "config")
-	public synchronized ClientConfiguration getClientConfiguration() {
-		if (clientConfiguration == null) {
-			ClientConfigurationRepository repo = getClientConfigurationRepository();
-			clientConfiguration = repo.load();
-			clientConfiguration.addObserver((o, arg) -> repo.save(clientConfiguration));
+    @Override
+    @Create(name = "clientConfiguration")
+    @Create(name = "config")
+    public synchronized ClientConfiguration getClientConfiguration() {
+        if (clientConfiguration == null) {
+            ClientConfigurationRepository repo = getClientConfigurationRepository();
+            clientConfiguration = repo.load();
+            clientConfiguration.addObserver((o, arg) -> repo.save(clientConfiguration));
 
-			if (!clientConfiguration.hasDeviceId()) {
-				clientConfiguration.setDeviceId(generateNewDeviceId());
-			}
-		}
-		return clientConfiguration;
-	}
+            if (!clientConfiguration.hasDeviceId()) {
+                clientConfiguration.setDeviceId(generateNewDeviceId());
+            }
+        }
+        return clientConfiguration;
+    }
 
-	private String generateNewDeviceId() {
-		return UUID.randomUUID().toString();
-	}
+    private String generateNewDeviceId() {
+        return UUID.randomUUID().toString();
+    }
 
-	private ClientConfigurationRepository clientConfigurationRepository;
+    private ClientConfigurationRepository clientConfigurationRepository;
 
-	@Override
-	public synchronized ClientConfigurationRepository getClientConfigurationRepository() {
-		if (clientConfigurationRepository == null) {
-			clientConfigurationRepository = new PersistenceClientConfigurationRepository(
-					getPersistence(),
-					new ClientConfigurationFactory(),
-					getIdentityRepository(),
-					getAccountRepository()
-			);
-		}
-		return clientConfigurationRepository;
-	}
+    @Override
+    public synchronized ClientConfigurationRepository getClientConfigurationRepository() {
+        if (clientConfigurationRepository == null) {
+            clientConfigurationRepository = new PersistenceClientConfigurationRepository(
+                getPersistence(),
+                new ClientConfigurationFactory(),
+                getIdentityRepository(),
+                getAccountRepository()
+            );
+        }
+        return clientConfigurationRepository;
+    }
 
-	private NetworkStatus networkStatus = new NetworkStatus();
+    private NetworkStatus networkStatus = new NetworkStatus();
 
-	@Override
-	@Create(name = "networkStatus")
-	public NetworkStatus getNetworkStatus() {
-		return networkStatus;
-	}
+    @Override
+    @Create(name = "networkStatus")
+    public NetworkStatus getNetworkStatus() {
+        return networkStatus;
+    }
 
-	private DropConnector dropConnector;
+    private DropConnector dropConnector;
 
-	@Override
-	@Create(name = "dropConnector")
-	public synchronized DropConnector getDropConnector() {
-		if (dropConnector == null) {
-			dropConnector = new HttpDropConnector(getNetworkStatus(), new DropHTTP());
-		}
-		return dropConnector;
-	}
+    @Override
+    @Create(name = "dropConnector")
+    public synchronized DropConnector getDropConnector() {
+        if (dropConnector == null) {
+            dropConnector = new HttpDropConnector(getNetworkStatus(), new DropHTTP());
+        }
+        return dropConnector;
+    }
 
-	@Override
-	@Create(name = "reportHandler")
-	public synchronized CrashReportHandler getCrashReportHandler() {
-		return new HockeyApp();
-	}
+    @Override
+    @Create(name = "reportHandler")
+    public synchronized CrashReportHandler getCrashReportHandler() {
+        return new HockeyApp();
+    }
 
-	private MessageRendererFactory messageRendererFactory;
+    private MessageRendererFactory messageRendererFactory;
 
-	@Override
-	@Create(name = "messageRendererFactory")
-	public synchronized MessageRendererFactory getDropMessageRendererFactory() {
-		if (messageRendererFactory == null) {
-			messageRendererFactory = new MessageRendererFactory();
-			messageRendererFactory.setFallbackRenderer(new PlaintextMessageRenderer());
-		}
-		return messageRendererFactory;
-	}
+    @Override
+    @Create(name = "messageRendererFactory")
+    public synchronized MessageRendererFactory getDropMessageRendererFactory() {
+        if (messageRendererFactory == null) {
+            messageRendererFactory = new MessageRendererFactory();
+            messageRendererFactory.setFallbackRenderer(new PlaintextMessageRenderer());
+        }
+        return messageRendererFactory;
+    }
 
-	private SharingService sharingService;
+    private SharingService sharingService;
 
-	@Override
-	@Create(name = "sharingService")
-	public synchronized SharingService getSharingService() {
-		if (sharingService == null) {
-			sharingService = new BlockSharingService(getDropMessageRepository(), getDropConnector());
-		}
-		return sharingService;
-	}
+    @Override
+    @Create(name = "sharingService")
+    public synchronized SharingService getSharingService() {
+        if (sharingService == null) {
+            sharingService = new BlockSharingService(getDropMessageRepository(), getDropConnector());
+        }
+        return sharingService;
+    }
 
-	private BoxVolumeFactory boxVolumeFactory;
+    private BoxVolumeFactory boxVolumeFactory;
 
-	private AccountingHTTP accountingHTTP;
+    private AccountingHTTP accountingHTTP;
 
-	@Create(name = "boxVolumeFactory")
-	public synchronized BoxVolumeFactory getBoxVolumeFactory() {
-		if (boxVolumeFactory == null) {
-			boxVolumeFactory = new BlockBoxVolumeFactory(
-					getClientConfiguration().getDeviceId().getBytes(),
-					getAccountingClient(),
-					getIdentityRepository()
-			);
-		}
-		return boxVolumeFactory;
-	}
+    @Override
+    @Create(name = "boxVolumeFactory")
+    public synchronized BoxVolumeFactory getBoxVolumeFactory() {
+        if (boxVolumeFactory == null) {
+            boxVolumeFactory = new BlockBoxVolumeFactory(
+                getClientConfiguration().getDeviceId().getBytes(),
+                getAccountingClient(),
+                getIdentityRepository()
+            );
+        }
+        return boxVolumeFactory;
+    }
 
-	@Create(name = "accountingClient")
-	public synchronized AccountingHTTP getAccountingClient() {
-		if (accountingHTTP == null) {
-			Account acc = getClientConfiguration().getAccount();
-			if (acc == null) {
-				throw new IllegalStateException("cannot get accounting client without valid account");
-			}
-			try {
-				AccountingServer server = new AccountingServer(
-						new URI(acc.getProvider()),
-						new URI(MagicEvilBlockUriProvider.getBlockUri(acc)),
-						acc.getUser(),
-						acc.getAuth()
-				);
-				accountingHTTP = new AccountingHTTP(server, new AccountingProfile());
-			} catch (URISyntaxException e) {
-				throw new IllegalStateException("cannot get accounting client without valid account: " + e.getMessage(), e);
-			}
-		}
-		return accountingHTTP;
-	}
+    @Override
+    @Create(name = "accountingClient")
+    public synchronized AccountingHTTP getAccountingClient() {
+        if (accountingHTTP == null) {
+            Account acc = getClientConfiguration().getAccount();
+            if (acc == null) {
+                throw new IllegalStateException("cannot get accounting client without valid account");
+            }
+            try {
+                AccountingServer server = new AccountingServer(
+                    new URI(acc.getProvider()),
+                    new URI(MagicEvilBlockUriProvider.getBlockUri(acc)),
+                    acc.getUser(),
+                    acc.getAuth()
+                );
+                accountingHTTP = new AccountingHTTP(server, new AccountingProfile());
+            } catch (URISyntaxException e) {
+                throw new IllegalStateException("cannot get accounting client without valid account: " + e.getMessage(), e);
+            }
+        }
+        return accountingHTTP;
+    }
 
-	@Create(name = "primaryStage")
-	public Stage getPrimaryStage() {
-		return runtimeConfiguration.getPrimaryStage();
-	}
+    @Create(name = "primaryStage")
+    public Stage getPrimaryStage() {
+        return runtimeConfiguration.getPrimaryStage();
+    }
 
 }

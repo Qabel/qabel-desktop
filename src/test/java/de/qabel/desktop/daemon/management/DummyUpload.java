@@ -95,11 +95,13 @@ public class DummyUpload implements Upload {
 		return false;
 	}
 
-	public long getTransferred() {
+	@Override
+    public long getTransferred() {
 		return 0;
 	}
 
-	public void setTransferred(long progress) {
+	@Override
+    public void setTransferred(long progress) {
 
 	}
 

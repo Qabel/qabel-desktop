@@ -35,7 +35,8 @@ public class HttpDropConnectorTest extends AbstractControllerTest {
 	private NetworkStatus networkStatus;
 	private DropHTTP dHTTP;
 
-	@Before
+	@Override
+    @Before
 	public void setUp() throws Exception {
 		super.setUp();
 		fakeURL = "http://localhost:12345/abcdefghijklmnopqrstuvwxyzabcdefgworkingUrl";

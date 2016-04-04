@@ -25,7 +25,7 @@ import static de.qabel.desktop.daemon.management.Transaction.TYPE.CREATE;
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.DELETE;
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.UPDATE;
 
-public class DefaultTransferManager extends Observable implements TransferManager, Runnable {
+public class DefaultTransferManager extends Observable implements TransferManager {
 	private final Logger logger = LoggerFactory.getLogger(DefaultTransferManager.class);
 	private final LinkedBlockingQueue<Transaction> transactions = new LinkedBlockingQueue<>();
 	private final List<Transaction> history = Collections.synchronizedList(new LinkedList<>());
@@ -68,7 +68,8 @@ public class DefaultTransferManager extends Observable implements TransferManage
 		history.add(upload);
 	}
 
-	public void run() {
+	@Override
+    public void run() {
 		try {
 			while (!Thread.interrupted()) {
 				next();

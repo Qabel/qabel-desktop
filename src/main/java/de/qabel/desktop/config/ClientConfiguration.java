@@ -10,51 +10,49 @@ import java.util.Map;
 import java.util.Observer;
 
 public interface ClientConfiguration {
-	boolean hasAccount();
+    boolean hasAccount();
 
-	Account getAccount();
+    Account getAccount();
 
-	/**
-	 * @param account BoxAccount to use
-	 * @throws IllegalStateException when an account already exists
-	 */
-	void setAccount(Account account) throws IllegalStateException;
+    /**
+     * @param account BoxAccount to use
+     * @throws IllegalStateException when an account already exists
+     */
+    void setAccount(Account account) throws IllegalStateException;
 
-	Identity getSelectedIdentity();
+    Identity getSelectedIdentity();
 
-	void selectIdentity(Identity identity);
+    void selectIdentity(Identity identity);
 
-	ObservableList<BoxSyncConfig> getBoxSyncConfigs();
+    ObservableList<BoxSyncConfig> getBoxSyncConfigs();
 
-	/**
-	 * @param o
-	 * @see java.util.Observable#addObserver(Observer)
-	 */
-	void addObserver(Observer o);
+    /**
+     * @see java.util.Observable#addObserver(Observer)
+     */
+    void addObserver(Observer o);
 
-	/**
-	 * @param o
-	 * @see java.util.Observable#deleteObserver(Observer)
-	 */
-	void deleteObserver(Observer o);
+    /**
+     * @see java.util.Observable#deleteObserver(Observer)
+     */
+    void deleteObserver(Observer o);
 
-	boolean hasDeviceId();
+    boolean hasDeviceId();
 
-	void setDeviceId(String deviceId);
+    void setDeviceId(String deviceId);
 
-	String getDeviceId();
+    String getDeviceId();
 
-	Date getLastDropPoll(Identity identity);
+    Date getLastDropPoll(Identity identity);
 
-	void setLastDropPoll(Identity identity, Date lastDropPoll);
+    void setLastDropPoll(Identity identity, Date lastDropPoll);
 
-	HashMap<String, Date> getLastDropMap();
+    HashMap<String, Date> getLastDropMap();
 
-	void setLastDropMap(HashMap<String, Date> lastDropMap);
+    void setLastDropMap(HashMap<String, Date> lastDropMap);
 
-	ShareNotifications getShareNotification(Identity identity);
+    ShareNotifications getShareNotification(Identity identity);
 
-	void setShareNotifications(Map<String, ShareNotifications> shareNotifications);
+    void setShareNotifications(Map<String, ShareNotifications> shareNotifications);
 
-	Map<String,ShareNotifications> getShareNotifications();
+    Map<String, ShareNotifications> getShareNotifications();
 }

@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.function.Function;
 
 public class TransferViewModel extends TransactionFxProgressCollectionModel {
-	private Function<Transaction, String> transactionLabelRenderer = t -> t == null ? "" : this.render(t);
+	private Function<Transaction, String> transactionLabelRenderer = t -> t == null ? "" : render(t);
 	private Function<Transaction, Image> transactionImageRenderer = new TransactionIconRenderer();
 	private StringProperty currentTransactionLabel = new SimpleStringProperty("");
 	private LongProperty currentTransactionPercent = new SimpleLongProperty();
@@ -48,7 +48,7 @@ public class TransferViewModel extends TransactionFxProgressCollectionModel {
 		}
 		String direction = transaction instanceof Upload ? "Remote" : "Local";
 		String type = transaction.getType().toString();
-		return filename + " (" + StringUtils.capitalize(type) + " " + (transaction.getSize() / 1024) + "kb)";
+		return filename + " (" + StringUtils.capitalize(type) + " " + transaction.getSize() / 1024 + "kb)";
 	}
 
 	public StringProperty currentTransactionLabel() {

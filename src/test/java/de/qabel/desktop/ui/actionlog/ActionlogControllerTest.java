@@ -100,7 +100,8 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 		});
 	}
 
-	@Before
+	@Override
+    @Before
 	public void setUp() throws Exception {
 		super.setUp();
 		i = identityBuilderFactory.factory().withAlias("TestAlias").build();

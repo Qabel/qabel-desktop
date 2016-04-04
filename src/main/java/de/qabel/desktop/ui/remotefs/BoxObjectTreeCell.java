@@ -11,8 +11,7 @@ public class BoxObjectTreeCell extends TreeCell<BoxObject> {
 	private static Image folderImg = new Image(BoxObjectTreeCell.class.getResourceAsStream("/icon/folder.png"), 16, 16, true, true);
 
 	public BoxObjectTreeCell() {
-		super();
-		itemProperty().addListener((observable, oldValue, newValue) -> {
+        itemProperty().addListener((observable, oldValue, newValue) -> {
 			setText(newValue == null ? "?" : newValue.getName());
 			setGraphic(new ImageView(newValue instanceof BoxFolder ? folderImg : fileImg));
 		});

@@ -6,7 +6,7 @@ import de.qabel.desktop.storage.cache.CachedBoxVolume;
 import de.qabel.desktop.storage.cache.CachedIndexNavigation;
 
 public class BoxVolumeStub extends CachedBoxVolume {
-	public boolean indexCreated = false;
+	public boolean indexCreated;
 	public String rootRef = "/root/";
 	public CachedIndexNavigation rootNavigation = new BoxNavigationStub(null, null);
 

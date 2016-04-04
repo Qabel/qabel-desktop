@@ -9,7 +9,7 @@ public abstract class AbstractWatchEvent implements WatchEvent {
 
 	public AbstractWatchEvent(Path path, boolean isDirectory, Long mtime) {
 		this.path = path;
-		this.isDir = isDirectory;
+        isDir = isDirectory;
 		this.mtime = mtime;
 	}
 

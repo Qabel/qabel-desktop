@@ -5,7 +5,7 @@ import java.util.List;
 
 public class TransferManagerStub implements TransferManager {
 	private List<Transaction> transactions = new LinkedList<>();
-	public boolean hasRun = false;
+	public boolean hasRun;
 
 	@Override
 	public List<Transaction> getTransactions() {

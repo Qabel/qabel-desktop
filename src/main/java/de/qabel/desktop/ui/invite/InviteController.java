@@ -21,9 +21,10 @@ public class InviteController extends AbstractController implements Initializabl
 	private TextArea textarea;
 
 	private ResourceBundle bundle;
-	public void initialize(URL location, ResourceBundle resources) {
+	@Override
+    public void initialize(URL location, ResourceBundle resources) {
 
-		this.bundle = resources;
+        bundle = resources;
 		textarea.setText(bundle.getString("inviteText"));
 		textarea.setEditable(false);
 	}

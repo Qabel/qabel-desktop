@@ -10,18 +10,18 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class OfflineController extends AbstractController implements Initializable {
-	@Inject
-	private NetworkStatus networkStatus;
+    @Inject
+    private NetworkStatus networkStatus;
 
-	@FXML
-	Pane offlineIndicator;
+    @FXML
+    Pane offlineIndicator;
 
-	private FxNetworkStatus fxNetworkStatus;
+    private FxNetworkStatus fxNetworkStatus;
 
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		fxNetworkStatus = new FxNetworkStatus(networkStatus);
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        fxNetworkStatus = new FxNetworkStatus(networkStatus);
 
-		offlineIndicator.visibleProperty().bind(fxNetworkStatus.onlineProperty().not());
-	}
+        offlineIndicator.visibleProperty().bind(fxNetworkStatus.onlineProperty().not());
+    }
 }
