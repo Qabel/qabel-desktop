@@ -10,23 +10,35 @@ import java.util.Observer;
 import java.util.function.Consumer;
 
 public interface BoxSyncConfig {
-	String getName();
-	Identity getIdentity();
-	Account getAccount();
-	Path getLocalPath();
-	Path getRemotePath();
+    String getName();
 
-	void setName(String name);
-	void setLocalPath(Path localPath);
-	void setRemotePath(Path remotePath);
-	void pause();
-	void unpause();
-	boolean isPaused();
-	void addObserver(Observer o);
-	SyncIndex getSyncIndex();
+    Identity getIdentity();
 
-	void setSyncer(Syncer syncer);
-	Syncer getSyncer();
+    Account getAccount();
 
-	void withSyncer(Consumer<Syncer> callback);
+    Path getLocalPath();
+
+    Path getRemotePath();
+
+    void setName(String name);
+
+    void setLocalPath(Path localPath);
+
+    void setRemotePath(Path remotePath);
+
+    void pause();
+
+    void unpause();
+
+    boolean isPaused();
+
+    void addObserver(Observer o);
+
+    SyncIndex getSyncIndex();
+
+    void setSyncer(Syncer syncer);
+
+    Syncer getSyncer();
+
+    void withSyncer(Consumer<Syncer> callback);
 }

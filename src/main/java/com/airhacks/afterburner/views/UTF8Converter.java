@@ -14,32 +14,32 @@ import java.util.ResourceBundle;
 
 
 public class UTF8Converter extends ResourceBundle.Control {
-	private static final Logger logger = LoggerFactory.getLogger(UTF8Converter.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(UTF8Converter.class.getSimpleName());
 
-	@Override
-	public ResourceBundle newBundle
-			(String name, Locale locale, String format, ClassLoader loader, boolean reload) throws IOException {
+    @Override
+    public ResourceBundle newBundle
+        (String name, Locale locale, String format, ClassLoader loader, boolean reload) throws IOException {
 
-		InputStream stream = null;
-		String bundleName = toBundleName(name, locale);
-		String resourceName = toResourceName(bundleName, "properties");
-		URL url = loader.getResource(resourceName);
+        InputStream stream = null;
+        String bundleName = toBundleName(name, locale);
+        String resourceName = toResourceName(bundleName, "properties");
+        URL url = loader.getResource(resourceName);
 
-		if (!reload) {
-			stream = loader.getResourceAsStream(resourceName);
-		} else if (url != null) {
-			URLConnection connection = url.openConnection();
+        if (!reload) {
+            stream = loader.getResourceAsStream(resourceName);
+        } else if (url != null) {
+            URLConnection connection = url.openConnection();
 
-			if (connection != null) {
-				connection.setUseCaches(false);
-				stream = connection.getInputStream();
-			}
-		}
+            if (connection != null) {
+                connection.setUseCaches(false);
+                stream = connection.getInputStream();
+            }
+        }
 
-		if (stream == null) {
-			return null;
-		}
-		return new PropertyResourceBundle(new InputStreamReader(stream, "UTF-8"));
-	}
+        if (stream == null) {
+            return null;
+        }
+        return new PropertyResourceBundle(new InputStreamReader(stream, "UTF-8"));
+    }
 }
 

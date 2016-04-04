@@ -1,11 +1,11 @@
 package de.qabel.desktop.update;
 
 public interface UpdateChecker {
-	abstract VersionInformation loadInfos();
+    abstract VersionInformation loadInfos();
 
-	boolean isCurrent(String version);
+    boolean isCurrent(String version);
 
-	LatestVersionInfo getDesktopVersion();
+    LatestVersionInfo getDesktopVersion();
 
-	boolean isAllowed(String version);
+    boolean isAllowed(String version);
 }

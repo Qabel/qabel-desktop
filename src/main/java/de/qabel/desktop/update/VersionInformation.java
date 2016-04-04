@@ -1,13 +1,13 @@
 package de.qabel.desktop.update;
 
 public class VersionInformation {
-	private AppInfos appinfos;
+    private AppInfos appinfos;
 
-	public VersionInformation(AppInfos appinfos) {
-		this.appinfos = appinfos;
-	}
+    public VersionInformation(AppInfos appinfos) {
+        this.appinfos = appinfos;
+    }
 
-	public AppInfos getAppinfos() {
-		return appinfos;
-	}
+    public AppInfos getAppinfos() {
+        return appinfos;
+    }
 }

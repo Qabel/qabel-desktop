@@ -7,9 +7,9 @@ import de.qabel.desktop.repository.exception.PersistenceException;
 import java.util.List;
 
 public interface AccountRepository {
-	Account find(String id) throws EntityNotFoundExcepion;
+    Account find(String id) throws EntityNotFoundExcepion;
 
-	List<Account> findAll();
+    List<Account> findAll();
 
-	void save(Account account) throws PersistenceException;
+    void save(Account account) throws PersistenceException;
 }

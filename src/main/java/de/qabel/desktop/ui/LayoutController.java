@@ -20,9 +20,9 @@ import de.qabel.desktop.ui.transfer.TransferViewModel;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -39,235 +39,234 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class LayoutController extends AbstractController implements Initializable {
-	private ExecutorService executor = Executors.newCachedThreadPool();
-	ResourceBundle resourceBundle;
-	ActionlogView actionlogView;
+    private ExecutorService executor = Executors.newCachedThreadPool();
+    ResourceBundle resourceBundle;
+    ActionlogView actionlogView;
 
-	@FXML
-	public Label alias;
-	@FXML
-	public Label mail;
-	@FXML
-	VBox navi;
-	@FXML
-	private VBox scrollContent;
+    @FXML
+    public Label alias;
+    @FXML
+    public Label mail;
+    @FXML
+    VBox navi;
+    @FXML
+    private VBox scrollContent;
 
-	@FXML
-	private HBox activeNavItem;
+    @FXML
+    private HBox activeNavItem;
 
-	@FXML
-	private Pane avatarContainer;
+    @FXML
+    private Pane avatarContainer;
 
-	@FXML
-	private Pane selectedIdentity;
+    @FXML
+    private Pane selectedIdentity;
 
-	@FXML
-	private ScrollPane scroll;
+    @FXML
+    private ScrollPane scroll;
 
-	@FXML
-	private ProgressBar uploadProgress;
+    @FXML
+    private ProgressBar uploadProgress;
 
-	@FXML
-	private ImageView feedbackButton;
+    @FXML
+    private ImageView feedbackButton;
 
-	@FXML
-	private ImageView inviteButton;
+    @FXML
+    private ImageView inviteButton;
 
-	@FXML
-	private ImageView configButton;
+    @FXML
+    private ImageView configButton;
 
-	@FXML
-	private ImageView faqButton;
+    @FXML
+    private ImageView faqButton;
 
-	@FXML
-	private ImageView infoButton;
+    @FXML
+    private ImageView infoButton;
 
-	@FXML
-	private Pane window;
+    @FXML
+    private Pane window;
 
-	@FXML
-	private VBox bottomContainer;
+    @FXML
+    private VBox bottomContainer;
 
-	@Inject
-	private ClientConfiguration clientConfiguration;
+    @Inject
+    private ClientConfiguration clientConfiguration;
 
-	@Inject
-	private TransferManager transferManager;
+    @Inject
+    private TransferManager transferManager;
 
-	private HBox browseNav;
-	private HBox contactsNav;
-	private HBox syncNav;
-	private HBox accountingNav;
-	private HBox aboutNav;
+    private HBox browseNav;
+    private HBox contactsNav;
+    private HBox syncNav;
+    private HBox accountingNav;
+    private HBox aboutNav;
 
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		this.resourceBundle = resources;
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        this.resourceBundle = resources;
 
-		navi.getChildren().clear();
-		AccountingView accountingView = new AccountingView();
-		actionlogView = new ActionlogView();
-		accountingNav = createNavItem(resourceBundle.getString("layoutIdentity"), accountingView);
-		navi.getChildren().add(accountingNav);
+        navi.getChildren().clear();
+        AccountingView accountingView = new AccountingView();
+        actionlogView = new ActionlogView();
+        accountingNav = createNavItem(resourceBundle.getString("layoutIdentity"), accountingView);
+        navi.getChildren().add(accountingNav);
 
-		browseNav = createNavItem(resourceBundle.getString("layoutBrowse"), new RemoteFSView());
-		contactsNav = createNavItem(resourceBundle.getString("layoutContacts"), new ContactView());
-		syncNav = createNavItem(resourceBundle.getString("layoutSync"), new SyncView());
-		aboutNav = createNavItem(resourceBundle.getString("layoutAbout"), new AboutView());
-
-
-		navi.getChildren().add(browseNav);
-		navi.getChildren().add(contactsNav);
-		navi.getChildren().add(syncNav);
-		navi.getChildren().add(aboutNav);
+        browseNav = createNavItem(resourceBundle.getString("layoutBrowse"), new RemoteFSView());
+        contactsNav = createNavItem(resourceBundle.getString("layoutContacts"), new ContactView());
+        syncNav = createNavItem(resourceBundle.getString("layoutSync"), new SyncView());
+        aboutNav = createNavItem(resourceBundle.getString("layoutAbout"), new AboutView());
 
 
-		scrollContent.setFillWidth(true);
-
-		if (clientConfiguration.getSelectedIdentity() == null) {
-			accountingView.getView(scrollContent.getChildren()::setAll);
-			setActiveNavItem(accountingNav);
-		}
-
-		updateIdentity();
-		clientConfiguration.addObserver((o, arg) -> Platform.runLater(this::updateIdentity));
+        navi.getChildren().add(browseNav);
+        navi.getChildren().add(contactsNav);
+        navi.getChildren().add(syncNav);
+        navi.getChildren().add(aboutNav);
 
 
-		bottomContainer.getChildren().remove(uploadProgress);
-		ComposedProgressBar progressBar = new ComposedProgressBar();
-		progressBar.getStylesheets().addAll(window.getStylesheets());
-		bottomContainer.getChildren().add(0, progressBar);
+        scrollContent.setFillWidth(true);
 
-		WindowedTransactionGroup progress = new WindowedTransactionGroup();
-		if (transferManager instanceof MonitoredTransferManager) {
-			MonitoredTransferManager tm = (MonitoredTransferManager) transferManager;
-			tm.onAdd(progress::add);
-		}
-		TransferViewModel progressModel = new TransferViewModel(progress);
-		progressBar.getTotalProgress().progressProperty().bind(progressModel.progressProperty());
-		progressBar.visibleProperty().bind(progressModel.runningProperty());
-		progressBar.getItemStatusLabel().textProperty().bind(progressModel.currentTransactionPercentLabel());
-		progressBar.getSyncStatusLabel().visibleProperty().bind(progressModel.currentItemsProperty().greaterThanOrEqualTo(0));
-		progressBar.getSyncStatusLabel().textProperty().bind(
-			progressModel.currentItemsProperty().asString()
-				.concat(" / ")
-				.concat(progressModel.totalItemsProperty())
-		);
+        if (clientConfiguration.getSelectedIdentity() == null) {
+            accountingView.getView(scrollContent.getChildren()::setAll);
+            setActiveNavItem(accountingNav);
+        }
 
-		createButtonGraphics();
-
-		new OfflineView().getViewAsync(window.getChildren()::add);
-	}
-
-	private void createButtonGraphics() {
-		Image heartGraphic = new Image(getClass().getResourceAsStream("/img/heart.png"));
+        updateIdentity();
+        clientConfiguration.addObserver((o, arg) -> Platform.runLater(this::updateIdentity));
 
 
+        bottomContainer.getChildren().remove(uploadProgress);
+        ComposedProgressBar progressBar = new ComposedProgressBar();
+        progressBar.getStylesheets().addAll(window.getStylesheets());
+        bottomContainer.getChildren().add(0, progressBar);
 
-		inviteButton.setImage(heartGraphic);
-		inviteButton.getStyleClass().add("inline-button");
-		inviteButton.setOnMouseClicked(e -> {
-			scrollContent.getChildren().setAll(new InviteView().getView());
-			activeNavItem.getStyleClass().remove("active");
-		});
-		Tooltip inviteTooltip = new Tooltip(resourceBundle.getString("layoutIconInviteTooltip"));
-		Tooltip.install(inviteButton, inviteTooltip);
+        WindowedTransactionGroup progress = new WindowedTransactionGroup();
+        if (transferManager instanceof MonitoredTransferManager) {
+            MonitoredTransferManager tm = (MonitoredTransferManager) transferManager;
+            tm.onAdd(progress::add);
+        }
+        TransferViewModel progressModel = new TransferViewModel(progress);
+        progressBar.getTotalProgress().progressProperty().bind(progressModel.progressProperty());
+        progressBar.visibleProperty().bind(progressModel.runningProperty());
+        progressBar.getItemStatusLabel().textProperty().bind(progressModel.currentTransactionPercentLabel());
+        progressBar.getSyncStatusLabel().visibleProperty().bind(progressModel.currentItemsProperty().greaterThanOrEqualTo(0));
+        progressBar.getSyncStatusLabel().textProperty().bind(
+            progressModel.currentItemsProperty().asString()
+                .concat(" / ")
+                .concat(progressModel.totalItemsProperty())
+        );
 
-		Image exclamationGraphic = new Image(getClass().getResourceAsStream("/img/exclamation.png"));
-		feedbackButton.setImage(exclamationGraphic);
-		feedbackButton.getStyleClass().add("inline-button");
-		feedbackButton.setOnMouseClicked(e -> {
-			scrollContent.getChildren().setAll(new FeedbackView().getView());
-			activeNavItem.getStyleClass().remove("active");
-		});
-		Tooltip feebackTooltip = new Tooltip(resourceBundle.getString("layoutIconFeebackTooltip"));
-		Tooltip.install(feedbackButton, feebackTooltip);
+        createButtonGraphics();
+
+        new OfflineView().getViewAsync(window.getChildren()::add);
+    }
+
+    private void createButtonGraphics() {
+        Image heartGraphic = new Image(getClass().getResourceAsStream("/img/heart.png"));
+
+
+        inviteButton.setImage(heartGraphic);
+        inviteButton.getStyleClass().add("inline-button");
+        inviteButton.setOnMouseClicked(e -> {
+            scrollContent.getChildren().setAll(new InviteView().getView());
+            activeNavItem.getStyleClass().remove("active");
+        });
+        Tooltip inviteTooltip = new Tooltip(resourceBundle.getString("layoutIconInviteTooltip"));
+        Tooltip.install(inviteButton, inviteTooltip);
+
+        Image exclamationGraphic = new Image(getClass().getResourceAsStream("/img/exclamation.png"));
+        feedbackButton.setImage(exclamationGraphic);
+        feedbackButton.getStyleClass().add("inline-button");
+        feedbackButton.setOnMouseClicked(e -> {
+            scrollContent.getChildren().setAll(new FeedbackView().getView());
+            activeNavItem.getStyleClass().remove("active");
+        });
+        Tooltip feebackTooltip = new Tooltip(resourceBundle.getString("layoutIconFeebackTooltip"));
+        Tooltip.install(feedbackButton, feebackTooltip);
 
 		/*
-		Image gearGraphic = new Image(getClass().getResourceAsStream("/img/gear.png"));
+        Image gearGraphic = new Image(getClass().getResourceAsStream("/img/gear.png"));
 		configButton.setImage(gearGraphic);
 		configButton.getStyleClass().add("inline-button");
 		*/
 
-		Image faqGraphics = new Image(getClass().getResourceAsStream("/img/faq.png"));
-		faqButton.setImage(faqGraphics);
-		faqButton.getStyleClass().add("inline-button");
-		faqButton.setOnMouseClicked(e -> {
-			executor.submit(() -> {
-				try {
-					Desktop.getDesktop().browse(new URI(resourceBundle.getString("faqUrl")));
-				} catch (Exception e1) {
-					alert("failed to open FAQ: " + e1.getMessage(), e1);
-				}
-			});
-		});
-		Tooltip faq = new Tooltip(resourceBundle.getString("layoutIconFaqTooltip"));
-		Tooltip.install(faqButton, faq);
+        Image faqGraphics = new Image(getClass().getResourceAsStream("/img/faq.png"));
+        faqButton.setImage(faqGraphics);
+        faqButton.getStyleClass().add("inline-button");
+        faqButton.setOnMouseClicked(e -> {
+            executor.submit(() -> {
+                try {
+                    Desktop.getDesktop().browse(new URI(resourceBundle.getString("faqUrl")));
+                } catch (Exception e1) {
+                    alert("failed to open FAQ: " + e1.getMessage(), e1);
+                }
+            });
+        });
+        Tooltip faq = new Tooltip(resourceBundle.getString("layoutIconFaqTooltip"));
+        Tooltip.install(faqButton, faq);
 
 		/*
 		Image infoGraphic = new Image(getClass().getResourceAsStream("/img/info.png"));
 		infoButton.setImage(infoGraphic);
 		infoButton.getStyleClass().add("inline-button");
 		*/
-	}
+    }
 
 
-	private String lastAlias;
-	private Identity lastIdentity;
+    private String lastAlias;
+    private Identity lastIdentity;
 
-	private void updateIdentity() {
-		Identity identity = clientConfiguration.getSelectedIdentity();
+    private void updateIdentity() {
+        Identity identity = clientConfiguration.getSelectedIdentity();
 
-		browseNav.setManaged(identity != null);
-		contactsNav.setManaged(identity != null);
-		syncNav.setManaged(identity != null);
-		selectedIdentity.setVisible(identity != null);
+        browseNav.setManaged(identity != null);
+        contactsNav.setManaged(identity != null);
+        syncNav.setManaged(identity != null);
+        selectedIdentity.setVisible(identity != null);
 
-		avatarContainer.setVisible(identity != null);
-		if (identity == null) {
-			return;
-		}
+        avatarContainer.setVisible(identity != null);
+        if (identity == null) {
+            return;
+        }
 
-		final String currentAlias = identity.getAlias();
-		if (currentAlias.equals(lastAlias)) {
-			return;
-		}
+        final String currentAlias = identity.getAlias();
+        if (currentAlias.equals(lastAlias)) {
+            return;
+        }
 
-		new AvatarView(e -> currentAlias).getViewAsync(avatarContainer.getChildren()::setAll);
-		alias.setText(currentAlias);
-		lastAlias = currentAlias;
+        new AvatarView(e -> currentAlias).getViewAsync(avatarContainer.getChildren()::setAll);
+        alias.setText(currentAlias);
+        lastAlias = currentAlias;
 
-		if (clientConfiguration.getAccount() == null) {
-			return;
-		}
-		mail.setText(clientConfiguration.getAccount().getUser());
-	}
+        if (clientConfiguration.getAccount() == null) {
+            return;
+        }
+        mail.setText(clientConfiguration.getAccount().getUser());
+    }
 
-	private HBox createNavItem(String label, FXMLView view) {
-		Button button = new Button(label);
-		HBox naviItem = new HBox(button);
-		button.setOnAction(e -> {
-			try {
-				scrollContent.getChildren().setAll(view.getView());
-				setActiveNavItem(naviItem);
-			} catch (Exception exception) {
-				exception.printStackTrace();
-				alert(exception.getMessage(), exception);
-			}
-		});
-		naviItem.getStyleClass().add("navi-item");
-		return naviItem;
-	}
+    private HBox createNavItem(String label, FXMLView view) {
+        Button button = new Button(label);
+        HBox naviItem = new HBox(button);
+        button.setOnAction(e -> {
+            try {
+                scrollContent.getChildren().setAll(view.getView());
+                setActiveNavItem(naviItem);
+            } catch (Exception exception) {
+                exception.printStackTrace();
+                alert(exception.getMessage(), exception);
+            }
+        });
+        naviItem.getStyleClass().add("navi-item");
+        return naviItem;
+    }
 
-	private void setActiveNavItem(HBox naviItem) {
-		if (activeNavItem != null) {
-			activeNavItem.getStyleClass().remove("active");
-		}
-		naviItem.getStyleClass().add("active");
-		activeNavItem = naviItem;
-	}
+    private void setActiveNavItem(HBox naviItem) {
+        if (activeNavItem != null) {
+            activeNavItem.getStyleClass().remove("active");
+        }
+        naviItem.getStyleClass().add("active");
+        activeNavItem = naviItem;
+    }
 
-	public Object getScroller() {
-		return scroll;
-	}
+    public Object getScroller() {
+        return scroll;
+    }
 }
