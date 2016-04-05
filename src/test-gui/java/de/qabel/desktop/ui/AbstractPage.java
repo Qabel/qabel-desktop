@@ -32,7 +32,8 @@ public class AbstractPage {
 			try {
 				baseFXRobot.waitForIdle();
 				Node node = waitForNode(query);
-				return clickOn(node);
+                moveTo(node);
+				return clickOn(waitForNode(query));
 			} catch (NullPointerException retry) {
 			}
 		}
