@@ -149,4 +149,20 @@ public class LoginPage extends AbstractPage {
         clickOn(EMAIL_INPUT).write(email);
         return this;
     }
+
+    /**
+     * Click the recover password link that expands fields for requesting a new password
+     */
+    public LoginPage expandRecoverPassword() {
+        clickOn("#recoverPassword");
+        return this;
+    }
+
+    /**
+     * Submit the request for a password reset
+     */
+    public LoginPage requestNewPassword() {
+        clickOn("#newPassword");
+        return this;
+    }
 }

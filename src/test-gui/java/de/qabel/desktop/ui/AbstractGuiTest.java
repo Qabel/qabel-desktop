@@ -130,14 +130,6 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
      * @deprecated use page objects
      */
     @Deprecated
-	protected FxRobot moveTo(String query) {
-		return moveTo(getFirstNode(query));
-	}
-
-    /**
-     * @deprecated use page objects
-     */
-    @Deprecated
 	protected FxRobot moveTo(Node node) {
 		baseFXRobot.waitForIdle();
 		double x = -1;
@@ -170,23 +162,5 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 			return present;
 		});
 		return nodes[0];
-	}
-
-    /**
-     * @deprecated use page objects
-     */
-    @Deprecated
-	protected Node getFirstNode(String query) {
-		return robot.lookup(query).tryQueryFirst().get();
-	}
-
-    /**
-     * @deprecated use page objects
-     */
-    @Deprecated
-	protected List<Node> getNodes(String query) {
-		List<Node> nodes = new LinkedList<>();
-		nodes.addAll(robot.lookup(query).queryAll());
-		return nodes;
 	}
 }

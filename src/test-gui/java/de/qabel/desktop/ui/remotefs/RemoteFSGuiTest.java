@@ -82,7 +82,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 		clientConfiguration.getShareNotification(identity).add(notification);
 
 		int sharedIndex = 1;
-		expandNode(0);
+		page.expandNode(0);
 
 		RemoteBrowserRow sharedRow = page.getRow(sharedIndex);
 		sharedRow.downloadIcon().hover();
@@ -91,11 +91,6 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 
 		assertThat(controller.shareRoot.getChildren().size(), is(1));
 		assertThat(controller.shareRoot.getChildren().get(0).getValue().getName(), equalTo("share name"));
-	}
-
-	private FxRobot expandNode(int nodeToExpand) {
-		waitUntil(() -> getNodes(".tree-disclosure-node > .arrow").size() >= nodeToExpand, 5000L);
-		return clickOn(getNodes(".tree-disclosure-node > .arrow").get(nodeToExpand));
 	}
 
 	@Test
