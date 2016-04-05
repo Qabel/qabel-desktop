@@ -1,130 +1,110 @@
 package de.qabel.desktop.ui.accounting.login;
 
-import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.desktop.ui.AbstractGuiTest;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Random;
 
-import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static junit.framework.Assert.assertTrue;
 
 
 public class LoginGuiTest extends AbstractGuiTest<LoginController> {
+    private LoginPage page;
+
 	@Override
 	protected LoginView getView() {
 		return new LoginView();
 	}
 
-	private void setup() {
-		runLaterAndWait(() -> {
-			controller.providerChoices.getItems().clear();
-			controller.providerChoices.getItems().add("http://localhost:9696");
-			controller.providerChoices.setValue("http://localhost:9696");
-		});
-		runLaterAndWait(() -> controller.user.clear());
-		runLaterAndWait(() -> controller.password.clear());
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        page = new LoginPage(baseFXRobot, robot, controller);
+    }
+
+    private void setup() {
+        page.clear();
+        page.setServer("http://localhost:9696");
 	}
 
 	@Test
 	public void showsFailureOnInvalidCredentials() {
 		setup();
-		clickOn("#user");
-		runLaterAndWait(() -> controller.user.clear());
-		clickOn("#user").write("invalid user");
-		clickOn("#loginButton");
-		waitUntil(() -> controller.loginButton.getStyleClass().contains("error"));
+        page.enterUsername("invalid user").loginAndExpectError();
 	}
 
 	private Random random = new Random();
 
-	@Test
-	public void correctCreateBoxAccount() {
-		clickOn("#openCreateButton");
-		int i = random.nextInt(100000);
-		setup();
-		String name = "validUserName" + i;
-		String email = "correctmail" + i + "@example.de";
-		clickOn("#user").write(name);
-		clickOn("#email").write(email);
-		clickOn("#password").write("123456");
-		clickOn("#confirm").write("123456");
-		clickOn("#createButton");
-		assertTrue(!controller.map.containsKey("email"));
-		assertTrue(!controller.map.containsKey("password"));
-		assertTrue(!controller.map.containsKey("username"));
-	}
+    @Test
+    public void correctCreateBoxAccount() {
+        setup();
+        int i = random.nextInt(100000);
+        String name = "validUserName" + i;
+        String email = "correctmail" + i + "@example.de";
+        page.createAccount(name, email, "123456");
+
+        assertTrue(!controller.map.containsKey("email"));
+        assertTrue(!controller.map.containsKey("password"));
+        assertTrue(!controller.map.containsKey("username"));
+    }
+
+    @Test
+    public void correctCreateBoxAccountBinding() {
+        setup();
+        int i = random.nextInt(100000);
+        String name = "validUserName" + i;
+        String email = "correctmail" + i + "@example.de";
+        page.withCreateAccount()
+            .enterUsername(name)
+            .enterEmail(email)
+            .enterPassword("123456")
+            .create();
+
+        assertTrue(!controller.map.containsKey("email"));
+        assertTrue(!controller.map.containsKey("password"));
+        assertTrue(!controller.map.containsKey("username"));
+    }
 
 	@Test
 	public void usernameFail() {
-		clickOn("#openCreateButton");
-
-		setup();
-		String name = "invalid User";
-		String email = "correctmail@example.de";
-		clickOn("#user").write(name);
-		clickOn("#email").write(email);
-		clickOn("#password").write("123456");
-		clickOn("#confirm").write("123456");
-		clickOn("#createButton");
-		waitUntil(() -> controller.map.containsKey("username"), 5000L);
+        setup();
+        page.createAccount("invalid User", "correctmail@example.de", "123456");
+		expectErrorOn("username");
 	}
 
-	@Test
-	public void emailFail() {
-		clickOn("#openCreateButton");
+    public void expectErrorOn(String field) {
+        waitUntil(() -> controller.map.containsKey(field), 5000L);
+    }
 
-		setup();
-		String name = "validUserName";
-		String email = "111";
-		clickOn("#user").write(name);
-		clickOn("#email").write(email);
-		clickOn("#password").write("123456");
-		clickOn("#confirm").write("123456");
-		clickOn("#createButton");
-		waitUntil(() -> controller.map.containsKey("email"), 5000L);
+    @Test
+	public void emailFail() {
+        setup();
+        page.createAccount("validUserName", "111", "123456");
+        expectErrorOn("email");
 	}
 
 	@Test
 	public void passwordFail() {
-		clickOn("#openCreateButton");
 		setup();
-		String name = "validUserName";
-		String email = "correctmail@example.de";
-		clickOn("#user").write(name);
-		clickOn("#email").write(email);
-		clickOn("#password").write("111");
-		clickOn("#confirm").write("111");
-		clickOn("#createButton");
-		waitUntil(() -> controller.map.containsKey("password1"), 5000L);
+        page.createAccount("validUserName", "correctmail@example.de", "111");
+        expectErrorOn("password1");
 	}
 
 	@Test
 	public void passwordsNotEqualFail() {
-		clickOn("#openCreateButton");
-
-		runLaterAndWait(controller.password::clear);
-		runLaterAndWait(controller.user::clear);
-
 		setup();
-		String name = "validUserName";
-		String email = "correctmail@example.de";
-		clickOn("#user").write(name);
-		clickOn("#email").write(email);
 
-		clickOn("#password").write("111111");
-		clickOn("#confirm").write("222222");
-		clickOn("#createButton");
-		waitUntil(() -> controller.map.containsKey("password1"), 5000L);
+        page.createAccount("validUserName", "correctmail@example.de", "111111", "222222");
+        expectErrorOn("password1");
 	}
 
 	@Test
 	public void errorButtonTest() {
 		setup();
-		runLaterAndWait(() -> controller.user.clear());
-		clickOn("#openCreateButton");
-		clickOn("#createButton");
-		waitUntil(() -> controller.createButton.getStyleClass().contains("error"), 5000L);
-		assertTrue(controller.createButton.getStyleClass().contains("error"));
+
+        page.withCreateAccount().create()
+            .waitForCreateError();
 	}
 }
