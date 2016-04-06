@@ -17,13 +17,7 @@ public abstract class AbstractSqliteRepository<T> {
         this.database = database;
         this.hydrator = hydrator;
         queryPrefix = "SELECT ";
-        String[] fields = hydrator.getFields();
-        for (int i = 0; i < fields.length; i++) {
-            if (i > 0) {
-                queryPrefix += ",";
-            }
-            queryPrefix += fields[i];
-        }
+        queryPrefix += String.join(", ", hydrator.getFields());
         queryPrefix += " FROM " + tableName + " ";
     }
 
