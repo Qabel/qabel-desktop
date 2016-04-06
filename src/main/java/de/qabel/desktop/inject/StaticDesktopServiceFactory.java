@@ -22,6 +22,8 @@ import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.inject.config.RuntimeConfiguration;
 import de.qabel.desktop.repository.*;
 import de.qabel.desktop.repository.persistence.*;
+import de.qabel.desktop.repository.sqlite.SqliteIdentityRepository;
+import de.qabel.desktop.repository.sqlite.hydrator.IdentityHydrator;
 import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory;
 import de.qabel.desktop.ui.actionlog.item.renderer.PlaintextMessageRenderer;
 import de.qabel.desktop.ui.connector.DropConnector;
@@ -54,7 +56,7 @@ public class StaticDesktopServiceFactory extends DefaultServiceFactory implement
         }
     }
 
-    private RuntimeConfiguration runtimeConfiguration;
+    protected RuntimeConfiguration runtimeConfiguration;
 
     public StaticDesktopServiceFactory(RuntimeConfiguration runtimeConfiguration) {
         this.runtimeConfiguration = runtimeConfiguration;
@@ -111,7 +113,7 @@ public class StaticDesktopServiceFactory extends DefaultServiceFactory implement
         return transferManager;
     }
 
-    private IdentityRepository identityRepository;
+    protected IdentityRepository identityRepository;
 
     @Override
     @Create(name = "identityRepository")

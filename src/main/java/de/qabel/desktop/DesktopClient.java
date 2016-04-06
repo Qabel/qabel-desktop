@@ -4,12 +4,14 @@ import com.airhacks.afterburner.injection.Injector;
 import com.airhacks.afterburner.views.QabelFXMLView;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
+import de.qabel.core.config.SQLitePersistence;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.daemon.drop.DropDaemon;
 import de.qabel.desktop.daemon.share.ShareNotificationHandler;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
 import de.qabel.desktop.inject.DesktopServices;
+import de.qabel.desktop.inject.NewConfigDesktopServiceFactory;
 import de.qabel.desktop.inject.StaticDesktopServiceFactory;
 import de.qabel.desktop.inject.config.StaticRuntimeConfiguration;
 import de.qabel.desktop.repository.DropMessageRepository;
@@ -17,6 +19,7 @@ import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.repository.sqlite.ClientDatabase;
 import de.qabel.desktop.repository.sqlite.DefaultClientDatabase;
+import de.qabel.desktop.repository.sqlite.LegacyDatabaseMigrator;
 import de.qabel.desktop.repository.sqlite.MigrationException;
 import de.qabel.desktop.storage.AbstractNavigation;
 import de.qabel.desktop.ui.LayoutView;
@@ -92,7 +95,7 @@ public class DesktopClient extends Application {
         }
 
         runtimeConfiguration = new StaticRuntimeConfiguration("https://drop.qabel.de", LEGACY_DATABASE_FILE, getConfigDatabase());
-        StaticDesktopServiceFactory staticDesktopServiceFactory = new StaticDesktopServiceFactory(runtimeConfiguration);
+        StaticDesktopServiceFactory staticDesktopServiceFactory = new NewConfigDesktopServiceFactory(runtimeConfiguration);
         services = staticDesktopServiceFactory;
         Injector.setConfigurationSource(key -> staticDesktopServiceFactory.get((String) key));
         Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(staticDesktopServiceFactory));
@@ -103,15 +106,21 @@ public class DesktopClient extends Application {
     }
 
     private static ClientDatabase getConfigDatabase() {
-        if (!Files.exists(DATABASE_FILE) && Files.exists(LEGACY_DATABASE_FILE)) {
-            // TODO migrate from old config...
-        }
+        boolean needsToMigrateLegacyDatabase = !Files.exists(DATABASE_FILE) && Files.exists(LEGACY_DATABASE_FILE);
+
         try {
             Connection connection = DriverManager.getConnection("jdbc:sqlite://" + DATABASE_FILE.toAbsolutePath());
             connection.createStatement().execute("PRAGMA FOREIGN_KEYS = ON");
             ClientDatabase clientDatabase = new DefaultClientDatabase(connection);
 
             clientDatabase.migrate();
+
+            if (needsToMigrateLegacyDatabase) {
+                LegacyDatabaseMigrator.migrate(
+                    new SQLitePersistence(LEGACY_DATABASE_FILE.toAbsolutePath().toString()),
+                    clientDatabase
+                );
+            }
 
             return clientDatabase;
         } catch (SQLException e) {

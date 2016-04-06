@@ -69,13 +69,36 @@ public class Migration000000001CreateIdentitiyTest extends AbstractSqliteTest {
         migration.up();
         insertIdentity();
         insertDropUrl();
+        insertPrefix();
         migration.down();
 
         assertFalse("table identity was not removed", tableExists("identity"));
         assertFalse("table drop_url was not removed", tableExists("drop_url"));
+        assertFalse("table prefix was not removed", tableExists("prefix"));
     }
 
     private boolean tableExists(String tableName) throws SQLException {
         return new DefaultClientDatabase(connection).tableExists(tableName);
+    }
+
+    @Test
+    public void hasPrefixes() throws Exception {
+        migration.up();
+        assertTrue(tableExists("prefix"));
+        insertIdentity();
+        insertDropUrl();
+
+        PreparedStatement statement = insertPrefix();
+        assertEquals(1, statement.getUpdateCount());
+    }
+
+    public PreparedStatement insertPrefix() throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(
+            "INSERT INTO prefix (identity_id, prefix) VALUES (?, ?)"
+        );
+        statement.setInt(1, 1);
+        statement.setString(2, "my/prefix");
+        statement.execute();
+        return statement;
     }
 }

@@ -9,7 +9,6 @@ import java.sql.SQLException;
 import static org.junit.Assert.*;
 
 public class DefaultClientDatabaseTest extends AbstractSqliteTest {
-
     private DefaultClientDatabase database;
 
     @Override

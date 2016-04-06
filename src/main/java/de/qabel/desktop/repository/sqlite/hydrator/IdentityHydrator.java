@@ -5,7 +5,10 @@ import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.core.drop.DropURL;
 import de.qabel.desktop.config.factory.IdentityFactory;
 import de.qabel.desktop.repository.EntityManager;
+import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.repository.sqlite.Hydrator;
+import de.qabel.desktop.repository.sqlite.SqliteDropUrlRepository;
+import de.qabel.desktop.repository.sqlite.SqlitePrefixRepository;
 import org.spongycastle.util.encoders.Hex;
 
 import java.sql.ResultSet;
@@ -16,12 +19,21 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class IdentityHydrator implements Hydrator<Identity> {
-    private IdentityFactory identityFactory;
-    private EntityManager entityManager;
+    private final SqliteDropUrlRepository dropUrlRepository;
+    private final IdentityFactory identityFactory;
+    private final EntityManager entityManager;
+    private final SqlitePrefixRepository prefixRepository;
 
-    public IdentityHydrator(IdentityFactory identityFactory, EntityManager entityManager) {
+    public IdentityHydrator(
+        IdentityFactory identityFactory,
+        EntityManager entityManager,
+        SqliteDropUrlRepository dropUrlRepository,
+        SqlitePrefixRepository prefixRepository
+    ) {
         this.identityFactory = identityFactory;
         this.entityManager = entityManager;
+        this.dropUrlRepository = dropUrlRepository;
+        this.prefixRepository = prefixRepository;
     }
 
     @Override
@@ -45,6 +57,17 @@ public class IdentityHydrator implements Hydrator<Identity> {
         identity.setId(id);
         identity.setEmail(email);
         identity.setPhone(phone);
+        try {
+            for (DropURL url : dropUrlRepository.findAll(identity)) {
+                identity.addDrop(url);
+            }
+            for (String prefix : prefixRepository.findAll(identity)) {
+                identity.getPrefixes().add(prefix);
+            }
+        } catch (PersistenceException e) {
+            throw new SQLException("failed to load drop urls for identity", e);
+        }
+        entityManager.put(Identity.class, identity);
         return identity;
     }
 

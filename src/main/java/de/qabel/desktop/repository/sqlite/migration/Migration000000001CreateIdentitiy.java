@@ -19,7 +19,7 @@ public class Migration000000001CreateIdentitiy extends AbstractMigration {
     public void up() throws SQLException {
         execute(
             "CREATE TABLE identity (" +
-                "id INT UNSIGNED PRIMARY KEY," +
+                "id INTEGER PRIMARY KEY," +
                 "publicKey VARCHAR(64) NOT NULL," +
                 "privateKey VARCHAR(64) NOT NULL," +
                 "alias VARCHAR(255) NOT NULL," +
@@ -30,9 +30,17 @@ public class Migration000000001CreateIdentitiy extends AbstractMigration {
         execute("CREATE INDEX idx_identity_publicKey ON identity (publicKey)");
         execute(
             "CREATE TABLE drop_url (" +
-                "id INT UNSIGNED PRIMARY KEY," +
-                "identity_id INT UNSIGNED NOT NULL," +
+                "id INTEGER PRIMARY KEY," +
+                "identity_id INTEGER NOT NULL," +
                 "url VARCHAR(2000) NOT NULL," +
+                "FOREIGN KEY (identity_id) REFERENCES identity (id)" +
+            ")"
+        );
+        execute(
+            "CREATE TABLE prefix (" +
+                "id INTEGER PRIMARY KEY," +
+                "identity_id INTEGER NOT NULL," +
+                "prefix VARCHAR(255) NOT NULL," +
                 "FOREIGN KEY (identity_id) REFERENCES identity (id)" +
             ")"
         );
@@ -40,6 +48,7 @@ public class Migration000000001CreateIdentitiy extends AbstractMigration {
 
     @Override
     public void down() throws SQLException {
+        execute("DROP TABLE prefix");
         execute("DROP TABLE drop_url");
         execute("DROP TABLE identity");
     }

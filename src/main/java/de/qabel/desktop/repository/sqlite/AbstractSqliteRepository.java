@@ -1,6 +1,5 @@
 package de.qabel.desktop.repository.sqlite;
 
-import de.qabel.core.config.Identities;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 
@@ -49,7 +48,7 @@ public abstract class AbstractSqliteRepository<T> {
     }
 
     protected Collection<T> findAll(String condition, Object... params) throws PersistenceException {
-        String query = queryPrefix + (condition.isEmpty() ? "" : " WHERE " + condition + ")");
+        String query = queryPrefix + (condition.isEmpty() ? "" : " WHERE " + condition);
         try {
             PreparedStatement statement = database.prepare(query);
             for (int i = 0; i < params.length; i++) {

@@ -59,7 +59,7 @@ public class HttpDropConnectorTest extends AbstractControllerTest {
         connector.send(c, dropMessage);
     }
 
-    @Test
+    @Test(timeout = 1000L)
     public void sendAndReceiveMessagesTest() throws Exception {
         String text = "MessageString";
         String type = "dropMessage";
@@ -85,7 +85,7 @@ public class HttpDropConnectorTest extends AbstractControllerTest {
         assertEquals(c.getEcPublicKey().getReadableKeyIdentifier(), messages.get(messages.size()-1).getSenderKeyId());
     }
 
-    @Test
+    @Test(timeout = 1000L)
     public void setsNetworkState() throws Exception {
         StubDropHttp dropStub = new StubDropHttp();
         dropStub.messages.setData(new ArrayList<>());

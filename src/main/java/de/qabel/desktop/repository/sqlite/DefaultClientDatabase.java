@@ -1,5 +1,6 @@
 package de.qabel.desktop.repository.sqlite;
 
+import de.qabel.core.config.SQLitePersistence;
 import de.qabel.desktop.repository.sqlite.migration.AbstractMigration;
 import de.qabel.desktop.repository.sqlite.migration.Migration000000001CreateIdentitiy;
 import de.qabel.desktop.repository.sqlite.migration.MigrationFailedException;

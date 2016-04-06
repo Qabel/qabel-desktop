@@ -2,11 +2,13 @@ package de.qabel.desktop.repository.sqlite;
 
 import de.qabel.core.config.Identities;
 import de.qabel.core.config.Identity;
+import de.qabel.core.drop.DropURL;
 import de.qabel.desktop.config.factory.DefaultIdentityFactory;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilder;
 import de.qabel.desktop.repository.EntityManager;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.sqlite.hydrator.DropURLHydrator;
 import de.qabel.desktop.repository.sqlite.hydrator.IdentityHydrator;
 import org.junit.After;
 import org.junit.Before;
@@ -17,6 +19,7 @@ import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Arrays;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -35,7 +38,12 @@ public class SqliteIdentityRepositoryTest {
         clientDatabase = new DefaultClientDatabase(connection);
         clientDatabase.migrate();
         em = new EntityManager();
-        IdentityHydrator hydrator = new IdentityHydrator(new DefaultIdentityFactory(), em);
+        IdentityHydrator hydrator = new IdentityHydrator(
+            new DefaultIdentityFactory(),
+            em,
+            new SqliteDropUrlRepository(clientDatabase, new DropURLHydrator()),
+            new SqlitePrefixRepository(clientDatabase)
+        );
         repo = new SqliteIdentityRepository(clientDatabase, hydrator);
         identityBuilder = new IdentityBuilder(new DropUrlGenerator("http://localhost"));
         identityBuilder.withAlias("testuser");
@@ -77,6 +85,7 @@ public class SqliteIdentityRepositoryTest {
         Identity identity = identityBuilder.build();
         identity.setEmail("email");
         identity.setPhone("phone");
+        identity.getPrefixes().add("my prefix");
         repo.save(identity);
         em.clear();
 
@@ -91,6 +100,13 @@ public class SqliteIdentityRepositoryTest {
         assertEquals(identity.getAlias(), loaded.getAlias());
         assertEquals(identity.getEmail(), loaded.getEmail());
         assertEquals(identity.getPhone(), loaded.getPhone());
+        Set<DropURL> oldUrls = identity.getDropUrls();
+        Set<DropURL> newUrls = loaded.getDropUrls();
+        assertTrue(
+            "DropUrls not loaded correctly: " + oldUrls + " != " + newUrls,
+            Arrays.equals(oldUrls.toArray(), newUrls.toArray())
+        );
+        assertTrue(Arrays.equals(identity.getPrefixes().toArray(), loaded.getPrefixes().toArray()));
     }
 
     @Test
@@ -129,5 +145,6 @@ public class SqliteIdentityRepositoryTest {
         assertEquals(identity.getAlias(), loadedIdentity.getAlias());
         assertEquals(identity.getEmail(), loadedIdentity.getEmail());
         assertEquals(identity.getPhone(), loadedIdentity.getPhone());
+        assertTrue(Arrays.equals(identity.getDropUrls().toArray(), loadedIdentity.getDropUrls().toArray()));
     }
 }
