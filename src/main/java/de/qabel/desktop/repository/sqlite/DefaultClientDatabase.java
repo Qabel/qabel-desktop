@@ -2,6 +2,7 @@ package de.qabel.desktop.repository.sqlite;
 
 import de.qabel.desktop.repository.sqlite.migration.AbstractMigration;
 import de.qabel.desktop.repository.sqlite.migration.Migration000000001CreateIdentitiy;
+import de.qabel.desktop.repository.sqlite.migration.MigrationFailedException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -56,7 +57,7 @@ public class DefaultClientDatabase implements ClientDatabase {
             migration.up();
             setVersion(migration.getVersion());
         } catch (SQLException e) {
-            throw new MigrationException(e.getMessage(), e);
+            throw new MigrationFailedException(migration, e.getMessage(), e);
         }
     }
 
