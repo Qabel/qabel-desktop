@@ -9,41 +9,41 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class IdentityBuilder {
-	private DropUrlGenerator dropUrlGenerator;
+    private DropUrlGenerator dropUrlGenerator;
 
-	private String alias;
-	private QblECKeyPair keyPair;
-	private List<DropURL> dropUrls = new LinkedList<>();
+    private String alias;
+    private QblECKeyPair keyPair;
+    private List<DropURL> dropUrls = new LinkedList<>();
 
-	@Inject
-	public IdentityBuilder(DropUrlGenerator dropUrlGenerator) {
-		this.dropUrlGenerator = dropUrlGenerator;
-	}
+    @Inject
+    public IdentityBuilder(DropUrlGenerator dropUrlGenerator) {
+        this.dropUrlGenerator = dropUrlGenerator;
+    }
 
-	public IdentityBuilder withAlias(String alias) {
-		this.alias = alias;
-		return this;
-	}
+    public IdentityBuilder withAlias(String alias) {
+        this.alias = alias;
+        return this;
+    }
 
-	public IdentityBuilder dropAt(DropURL dropUrl) {
-		dropUrls.add(dropUrl);
-		return this;
-	}
+    public IdentityBuilder dropAt(DropURL dropUrl) {
+        dropUrls.add(dropUrl);
+        return this;
+    }
 
 
-	public IdentityBuilder encryptWith(QblECKeyPair keyPair) {
-		this.keyPair = keyPair;
-		return this;
-	}
+    public IdentityBuilder encryptWith(QblECKeyPair keyPair) {
+        this.keyPair = keyPair;
+        return this;
+    }
 
-	public Identity build() {
-		if (dropUrls == null || dropUrls.isEmpty()) {
-			dropAt(dropUrlGenerator.generateUrl());
-		}
-		if (keyPair == null) {
-			keyPair = new QblECKeyPair();
-		}
+    public Identity build() {
+        if (dropUrls == null || dropUrls.isEmpty()) {
+            dropAt(dropUrlGenerator.generateUrl());
+        }
+        if (keyPair == null) {
+            keyPair = new QblECKeyPair();
+        }
 
-		return new Identity(alias, dropUrls, keyPair);
-	}
+        return new Identity(alias, dropUrls, keyPair);
+    }
 }

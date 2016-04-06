@@ -3,19 +3,19 @@ package de.qabel.desktop.daemon.management;
 import de.qabel.desktop.storage.ProgressListener;
 
 public class TransactionRelatedProgressListener extends ProgressListener {
-	private Transaction transaction;
+    private Transaction transaction;
 
-	public TransactionRelatedProgressListener(Transaction transaction) {
-		this.transaction = transaction;
-	}
+    public TransactionRelatedProgressListener(Transaction transaction) {
+        this.transaction = transaction;
+    }
 
-	@Override
-	public void setProgress(long progress) {
-		transaction.setTransferred(progress);
-	}
+    @Override
+    public void setProgress(long progress) {
+        transaction.setTransferred(progress);
+    }
 
-	@Override
-	public void setSize(long size) {
-		transaction.setSize(size);
-	}
+    @Override
+    public void setSize(long size) {
+        transaction.setSize(size);
+    }
 }

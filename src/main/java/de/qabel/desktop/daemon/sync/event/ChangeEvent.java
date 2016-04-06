@@ -2,20 +2,20 @@ package de.qabel.desktop.daemon.sync.event;
 
 public interface ChangeEvent extends WatchEvent {
 
-	enum TYPE {CREATE, UPDATE, DELETE, SHARE, UNSHARE}
+    enum TYPE {CREATE, UPDATE, DELETE, SHARE, UNSHARE}
 
-	TYPE getType();
+    TYPE getType();
 
-	@Override
+    @Override
     boolean isValid();
 
-	boolean isUpdate();
+    boolean isUpdate();
 
-	boolean isCreate();
+    boolean isCreate();
 
-	boolean isDelete();
+    boolean isDelete();
 
-	boolean isShare();
+    boolean isShare();
 
-	boolean isUnshare();
+    boolean isUnshare();
 }

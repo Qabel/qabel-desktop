@@ -8,129 +8,129 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import static de.qabel.desktop.daemon.management.Transaction.STATE.*;
 
 public abstract class AbstractTransaction extends Observable implements Transaction {
-	public static final long METADATA_SIZE = 56320L;
-	private STATE state = INITIALIZING;
-	protected Long mtime;
-	private List<Runnable> successHandler = new CopyOnWriteArrayList<>();
-	private List<Runnable> failureHandler = new CopyOnWriteArrayList<>();
-	private List<Runnable> skippedHandler = new CopyOnWriteArrayList<>();
-	private List<Runnable> progressHandler = new CopyOnWriteArrayList<>();
-	private long creationTime = System.currentTimeMillis();
-	private Long size = METADATA_SIZE;	// metadata size ... imagine a random number here
-	private long transferred;
+    public static final long METADATA_SIZE = 56320L;
+    private STATE state = INITIALIZING;
+    protected Long mtime;
+    private List<Runnable> successHandler = new CopyOnWriteArrayList<>();
+    private List<Runnable> failureHandler = new CopyOnWriteArrayList<>();
+    private List<Runnable> skippedHandler = new CopyOnWriteArrayList<>();
+    private List<Runnable> progressHandler = new CopyOnWriteArrayList<>();
+    private long creationTime = System.currentTimeMillis();
+    private Long size = METADATA_SIZE;  // metadata size ... imagine a random number here
+    private long transferred;
 
-	public AbstractTransaction(Long mtime) {
-		this.mtime = mtime;
-	}
+    public AbstractTransaction(Long mtime) {
+        this.mtime = mtime;
+    }
 
-	@Override
-	public STATE getState() {
-		return state;
-	}
+    @Override
+    public STATE getState() {
+        return state;
+    }
 
-	@Override
-	public void toState(STATE state) {
-		this.state = state;
-		progressHandler.forEach(Runnable::run);
-	}
+    @Override
+    public void toState(STATE state) {
+        this.state = state;
+        progressHandler.forEach(Runnable::run);
+    }
 
-	@Override
-	public Long getMtime() {
-		return mtime;
-	}
+    @Override
+    public Long getMtime() {
+        return mtime;
+    }
 
-	@Override
-	public void close() {
-		if (transferred == 0) {
-			setTransferred(getSize());
-		}
-		if (state == FAILED) {
-			failureHandler.forEach(Runnable::run);
-		} else if (state == FINISHED) {
-			successHandler.forEach(Runnable::run);
-		} else if (state == SKIPPED) {
-			skippedHandler.forEach(Runnable::run);
-		}
-	}
+    @Override
+    public void close() {
+        if (transferred == 0) {
+            setTransferred(getSize());
+        }
+        if (state == FAILED) {
+            failureHandler.forEach(Runnable::run);
+        } else if (state == FINISHED) {
+            successHandler.forEach(Runnable::run);
+        } else if (state == SKIPPED) {
+            skippedHandler.forEach(Runnable::run);
+        }
+    }
 
-	@Override
-	public synchronized Transaction onSuccess(Runnable runnable) {
-		successHandler.add(runnable);
-		return this;
-	}
+    @Override
+    public synchronized Transaction onSuccess(Runnable runnable) {
+        successHandler.add(runnable);
+        return this;
+    }
 
-	@Override
-	public synchronized Transaction onFailure(Runnable runnable) {
-		failureHandler.add(runnable);
-		return this;
-	}
+    @Override
+    public synchronized Transaction onFailure(Runnable runnable) {
+        failureHandler.add(runnable);
+        return this;
+    }
 
-	@Override
-	public synchronized Transaction onSkipped(Runnable runnable) {
-		skippedHandler.add(runnable);
-		return this;
-	}
+    @Override
+    public synchronized Transaction onSkipped(Runnable runnable) {
+        skippedHandler.add(runnable);
+        return this;
+    }
 
-	@Override
-	public synchronized Transaction onProgress(Runnable runnable) {
-		progressHandler.add(runnable);
-		return this;
-	}
+    @Override
+    public synchronized Transaction onProgress(Runnable runnable) {
+        progressHandler.add(runnable);
+        return this;
+    }
 
-	@Override
-	public long totalSize() {
-		return getSize();
-	}
+    @Override
+    public long totalSize() {
+        return getSize();
+    }
 
-	@Override
-	public long currentSize() {
-		return getTransferred();
-	}
+    @Override
+    public long currentSize() {
+        return getTransferred();
+    }
 
-	@Override
-	public long transactionAge() {
-		return System.currentTimeMillis() - creationTime;
-	}
+    @Override
+    public long transactionAge() {
+        return System.currentTimeMillis() - creationTime;
+    }
 
-	@Override
-	public long getSize() {
-		return hasSize() ? size : METADATA_SIZE;
-	}
+    @Override
+    public long getSize() {
+        return hasSize() ? size : METADATA_SIZE;
+    }
 
-	@Override
+    @Override
     public void setSize(long size) {
-		this.size = size;
-		progressHandler.forEach(Runnable::run);
-	}
+        this.size = size;
+        progressHandler.forEach(Runnable::run);
+    }
 
-	@Override
-	public boolean hasSize() {
-		return size != null && size != 0;
-	}
+    @Override
+    public boolean hasSize() {
+        return size != null && size != 0;
+    }
 
-	@Override
+    @Override
     public long getTransferred() {
-		return transferred;
-	}
+        return transferred;
+    }
 
-	@Override
+    @Override
     public void setTransferred(long transferred) {
-		this.transferred = transferred;
-		progressHandler.forEach(Runnable::run);
-	}
+        this.transferred = transferred;
+        progressHandler.forEach(Runnable::run);
+    }
 
-	@Override
-	public double getProgress() {
-		return  getSize() > 0 ? (double)getTransferred() / (double)getSize() : isDone() ? 1.0 : 0.0;
-	}
+    @Override
+    public double getProgress() {
+        return  getSize() > 0 ? (double)getTransferred() / (double)getSize() : isDone() ? 1.0 : 0.0;
+    }
 
-	@Override
-	public boolean isDone() {
-		return state == FINISHED || state == FAILED || state == SKIPPED;
-	}
+    @Override
+    public boolean isDone() {
+        return state == FINISHED || state == FAILED || state == SKIPPED;
+    }
 
-	@Override
-	public boolean hasStarted() {
-		return state != INITIALIZING && state != WAITING && state != SCHEDULED;
-	}
+    @Override
+    public boolean hasStarted() {
+        return state != INITIALIZING && state != WAITING && state != SCHEDULED;
+    }
 }

@@ -20,23 +20,23 @@ public class SyncControllerGuiTest extends AbstractGuiTest<SyncController> {
     }
 
     @Override
-	protected FXMLView getView() {
-		return new SyncView();
-	}
+    protected FXMLView getView() {
+        return new SyncView();
+    }
 
-	@Test
-	public void addViewTriggersSyncView() {
+    @Test
+    public void addViewTriggersSyncView() {
         page.add();
-		assertNotNull("addSync not created", controller.addStage);
-		waitUntil(() -> controller.addStage.isShowing());
-		robot.targetWindow(controller.addStage);
-		clickOn("#cancel");
-	}
+        assertNotNull("addSync not created", controller.addStage);
+        waitUntil(() -> controller.addStage.isShowing());
+        robot.targetWindow(controller.addStage);
+        clickOn("#cancel");
+    }
 
-	@Test
-	public void syncSetupIntegration() {
-		page.add();
-		robot.targetWindow(controller.addStage);
+    @Test
+    public void syncSetupIntegration() {
+        page.add();
+        robot.targetWindow(controller.addStage);
 
         SyncSetupPage setup = new SyncSetupPage(baseFXRobot, robot, null);
         setup.enterName("new sync");
@@ -44,9 +44,9 @@ public class SyncControllerGuiTest extends AbstractGuiTest<SyncController> {
         setup.enterRemotePath("/");
         setup.startSync();
 
-		waitUntil(() -> !controller.addStage.isShowing());
-		robot.targetWindow(scene);
+        waitUntil(() -> !controller.addStage.isShowing());
+        robot.targetWindow(scene);
 
-		assertEquals(1, controller.syncItemNodes.size());
-	}
+        assertEquals(1, controller.syncItemNodes.size());
+    }
 }

@@ -7,21 +7,21 @@ import static org.junit.Assert.*;
 
 public class OfflineControllerGuiTest extends AbstractGuiTest<OfflineController> {
 
-	@Override
-	protected FXMLView getView() {
-		return new OfflineView();
-	}
+    @Override
+    protected FXMLView getView() {
+        return new OfflineView();
+    }
 
-	@Test
-	public void testVisibility() throws Exception {
-		assertFalse(controller.offlineIndicator.isVisible());
+    @Test
+    public void testVisibility() throws Exception {
+        assertFalse(controller.offlineIndicator.isVisible());
 
-		networkStatus.offline();
+        networkStatus.offline();
 
-		waitUntil(() -> controller.offlineIndicator.isVisible());
+        waitUntil(() -> controller.offlineIndicator.isVisible());
 
-		networkStatus.online();
+        networkStatus.online();
 
-		waitUntil(() -> !controller.offlineIndicator.isVisible());
-	}
+        waitUntil(() -> !controller.offlineIndicator.isVisible());
+    }
 }

@@ -7,21 +7,21 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class BlacklistSpy implements Blacklist {
-	private Blacklist blacklist;
-	public List<Path> tests = new LinkedList<>();
-	public int matches;
+    private Blacklist blacklist;
+    public List<Path> tests = new LinkedList<>();
+    public int matches;
 
-	public BlacklistSpy(Blacklist blacklist) {
-		this.blacklist = blacklist;
-	}
+    public BlacklistSpy(Blacklist blacklist) {
+        this.blacklist = blacklist;
+    }
 
-	@Override
-	public boolean matches(Path path) {
-		tests.add(path);
-		boolean match = blacklist.matches(path);
-		if (match) {
-			++matches;
-		}
-		return match;
-	}
+    @Override
+    public boolean matches(Path path) {
+        tests.add(path);
+        boolean match = blacklist.matches(path);
+        if (match) {
+            ++matches;
+        }
+        return match;
+    }
 }

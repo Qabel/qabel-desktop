@@ -8,14 +8,14 @@
 }
 
 .text-field:focused {
-	-fx-background-insets: 0px, 4px;
-	-fx-background-color: black, white;
+    -fx-background-insets: 0px, 4px;
+    -fx-background-color: black, white;
 }
 
 .text-field {
-	-fx-background-insets: 0px, 4px;
-	-fx-background-color: white;
-	-fx-pref-height: 26px
+    -fx-background-insets: 0px, 4px;
+    -fx-background-color: white;
+    -fx-pref-height: 26px
 }
 
 .login-form  .choice-box {
@@ -39,13 +39,13 @@
 .button {
     -fx-font-weight: bold;
     -fx-background-color: white;
-	-fx-background-insets: 0px;
-	-fx-background-radius: 0px;
-	-fx-border-color: none;
+    -fx-background-insets: 0px;
+    -fx-background-radius: 0px;
+    -fx-border-color: none;
     -fx-text-fill: ff690f
 }
 .button.error {
-	-fx-background-insets: 0px, 4px;
+    -fx-background-insets: 0px, 4px;
     -fx-border-color: white;
     -fx-background-color: red;
     -fx-border-width: 0.1em;
@@ -63,8 +63,8 @@
 
 .button:hover {
     -fx-background-color: white;
-	-fx-background-insets: 0px;
-	-fx-border-color: none;
+    -fx-background-insets: 0px;
+    -fx-border-color: none;
     -fx-text-fill: ff690f;
     }
 
@@ -82,13 +82,13 @@
 }
 
 .separator .line{
-     -fx-border-color: linear-gradient(to right, rgba(0,0,0, 0.0) 0%, rgba(255,255,255, 1.0) 50%, rgba(255,255,255, 1.0) 50%, rgba(0,0,0, 0.0)	100% );
+     -fx-border-color: linear-gradient(to right, rgba(0,0,0, 0.0) 0%, rgba(255,255,255, 1.0) 50%, rgba(255,255,255, 1.0) 50%, rgba(0,0,0, 0.0)  100% );
      -fx-border-repeat: repeat;
      -fx-border-attachment: scroll;
      -fx-border-position: 0% 0%;
-	 -fx-border-clip: border-box;
-	 -fx-border-origin: padding-box;
-	 -fx-border-size: auto auto;
+     -fx-border-clip: border-box;
+     -fx-border-origin: padding-box;
+     -fx-border-size: auto auto;
 }
 
 

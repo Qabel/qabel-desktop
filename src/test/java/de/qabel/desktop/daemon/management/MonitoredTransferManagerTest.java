@@ -10,54 +10,54 @@ import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.junit.Assert.*;
 
 public class MonitoredTransferManagerTest {
-	private List<Transaction> transactions = new LinkedList<>();
-	private TransferManagerStub wrappedManager = new TransferManagerStub();
-	private MonitoredTransferManager manager = new MonitoredTransferManager(wrappedManager);
+    private List<Transaction> transactions = new LinkedList<>();
+    private TransferManagerStub wrappedManager = new TransferManagerStub();
+    private MonitoredTransferManager manager = new MonitoredTransferManager(wrappedManager);
 
-	@Before
-	public void setUp() {
-		manager.onAdd(t -> transactions.add(t));
-	}
+    @Before
+    public void setUp() {
+        manager.onAdd(t -> transactions.add(t));
+    }
 
-	@Test
-	public void notifiesOnAddUpload() {
-		Upload t = new UploadStub();
-		manager.addUpload(t);
-		waitUntil(() -> !transactions.isEmpty());
-		assertSame(t, transactions.get(0));
-	}
+    @Test
+    public void notifiesOnAddUpload() {
+        Upload t = new UploadStub();
+        manager.addUpload(t);
+        waitUntil(() -> !transactions.isEmpty());
+        assertSame(t, transactions.get(0));
+    }
 
-	@Test
-	public void notifiesOnAddDownload() {
-		Download t = new DownloadStub();
-		manager.addDownload(t);
-		waitUntil(() -> !transactions.isEmpty());
-		assertSame(t, transactions.get(0));
-	}
+    @Test
+    public void notifiesOnAddDownload() {
+        Download t = new DownloadStub();
+        manager.addDownload(t);
+        waitUntil(() -> !transactions.isEmpty());
+        assertSame(t, transactions.get(0));
+    }
 
-	@Test
-	public void forwardsCalls() {
-		Upload upload = new UploadStub();
-		wrappedManager.addUpload(upload);
+    @Test
+    public void forwardsCalls() {
+        Upload upload = new UploadStub();
+        wrappedManager.addUpload(upload);
 
-		assertEquals(1, manager.getTransactions().size());
-		assertEquals(1, manager.getHistory().size());
-	}
+        assertEquals(1, manager.getTransactions().size());
+        assertEquals(1, manager.getHistory().size());
+    }
 
-	@Test
-	public void addsToWrappedManger() {
-		Upload u = new UploadStub();
-		manager.addUpload(u);
-		Download d = new DownloadStub();
-		manager.addDownload(d);
+    @Test
+    public void addsToWrappedManger() {
+        Upload u = new UploadStub();
+        manager.addUpload(u);
+        Download d = new DownloadStub();
+        manager.addDownload(d);
 
-		assertEquals(2, wrappedManager.getTransactions().size());
-		assertEquals(2, wrappedManager.getHistory().size());
-	}
+        assertEquals(2, wrappedManager.getTransactions().size());
+        assertEquals(2, wrappedManager.getHistory().size());
+    }
 
-	@Test
-	public void runs() {
-		manager.run();
-		assertTrue(wrappedManager.hasRun);
-	}
+    @Test
+    public void runs() {
+        manager.run();
+        assertTrue(wrappedManager.hasRun);
+    }
 }

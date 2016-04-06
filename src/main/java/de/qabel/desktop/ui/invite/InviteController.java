@@ -17,53 +17,53 @@ import java.util.ResourceBundle;
 public class InviteController extends AbstractController implements Initializable {
 
 
-	@FXML
-	private TextArea textarea;
+    @FXML
+    private TextArea textarea;
 
-	private ResourceBundle bundle;
-	@Override
+    private ResourceBundle bundle;
+    @Override
     public void initialize(URL location, ResourceBundle resources) {
 
         bundle = resources;
-		textarea.setText(bundle.getString("inviteText"));
-		textarea.setEditable(false);
-	}
+        textarea.setText(bundle.getString("inviteText"));
+        textarea.setEditable(false);
+    }
 
-	@FXML
-	protected void handleInviteButtonAction(ActionEvent event) throws IOException {
-		new Thread(() -> {
-			Desktop desktop;
-			if (Desktop.isDesktopSupported()
-					&& (desktop = Desktop.getDesktop()).isSupported(Desktop.Action.MAIL)) {
+    @FXML
+    protected void handleInviteButtonAction(ActionEvent event) throws IOException {
+        new Thread(() -> {
+            Desktop desktop;
+            if (Desktop.isDesktopSupported()
+                    && (desktop = Desktop.getDesktop()).isSupported(Desktop.Action.MAIL)) {
 
-				String subject = createEMailSubject();
-				String body = createEMailBody();
+                String subject = createEMailSubject();
+                String body = createEMailBody();
 
-				String mailURIStr = String.format("mailto:%s?subject=%s&cc=%s&body=%s",
-						"", subject, "", body);
+                String mailURIStr = String.format("mailto:%s?subject=%s&cc=%s&body=%s",
+                        "", subject, "", body);
 
-				try {
-					desktop.mail( new URI(mailURIStr));
-				} catch (URISyntaxException | IOException e) {
-					alert("Failt to open mail client", e);
-				}
-			}
-		}
-		).start();
-	}
+                try {
+                    desktop.mail( new URI(mailURIStr));
+                } catch (URISyntaxException | IOException e) {
+                    alert("Failt to open mail client", e);
+                }
+            }
+        }
+        ).start();
+    }
 
-	String createEMailBody() {
-		String body =  bundle.getString("inviteText");
-		body = body.replace("\n", "%0D%0A");
-		body = body.replace(" ", "%20");
-		return body;
-	}
+    String createEMailBody() {
+        String body =  bundle.getString("inviteText");
+        body = body.replace("\n", "%0D%0A");
+        body = body.replace(" ", "%20");
+        return body;
+    }
 
-	String createEMailSubject() {
-		String subject = bundle.getString("inviteEmailSubjectText");
-		subject = subject.replace(" ", "%20");
-		return subject;
-	}
+    String createEMailSubject() {
+        String subject = bundle.getString("inviteEmailSubjectText");
+        subject = subject.replace(" ", "%20");
+        return subject;
+    }
 
 }
 

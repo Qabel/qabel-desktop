@@ -12,10 +12,10 @@ import static junit.framework.Assert.assertTrue;
 public class LoginGuiTest extends AbstractGuiTest<LoginController> {
     private LoginPage page;
 
-	@Override
-	protected LoginView getView() {
-		return new LoginView();
-	}
+    @Override
+    protected LoginView getView() {
+        return new LoginView();
+    }
 
     @Before
     @Override
@@ -27,15 +27,15 @@ public class LoginGuiTest extends AbstractGuiTest<LoginController> {
     private void setup() {
         page.clear();
         page.setServer("http://localhost:9696");
-	}
+    }
 
-	@Test
-	public void showsFailureOnInvalidCredentials() {
-		setup();
+    @Test
+    public void showsFailureOnInvalidCredentials() {
+        setup();
         page.enterUsername("invalid user").loginAndExpectError();
-	}
+    }
 
-	private Random random = new Random();
+    private Random random = new Random();
 
     @Test
     public void correctCreateBoxAccount() {
@@ -67,44 +67,44 @@ public class LoginGuiTest extends AbstractGuiTest<LoginController> {
         assertTrue(!controller.map.containsKey("username"));
     }
 
-	@Test
-	public void usernameFail() {
+    @Test
+    public void usernameFail() {
         setup();
         page.createAccount("invalid User", "correctmail@example.de", "123456");
-		expectErrorOn("username");
-	}
+        expectErrorOn("username");
+    }
 
     public void expectErrorOn(String field) {
         waitUntil(() -> controller.map.containsKey(field), 5000L);
     }
 
     @Test
-	public void emailFail() {
+    public void emailFail() {
         setup();
         page.createAccount("validUserName", "111", "123456");
         expectErrorOn("email");
-	}
+    }
 
-	@Test
-	public void passwordFail() {
-		setup();
+    @Test
+    public void passwordFail() {
+        setup();
         page.createAccount("validUserName", "correctmail@example.de", "111");
         expectErrorOn("password1");
-	}
+    }
 
-	@Test
-	public void passwordsNotEqualFail() {
-		setup();
+    @Test
+    public void passwordsNotEqualFail() {
+        setup();
 
         page.createAccount("validUserName", "correctmail@example.de", "111111", "222222");
         expectErrorOn("password1");
-	}
+    }
 
-	@Test
-	public void errorButtonTest() {
-		setup();
+    @Test
+    public void errorButtonTest() {
+        setup();
 
         page.withCreateAccount().create()
             .waitForCreateError();
-	}
+    }
 }

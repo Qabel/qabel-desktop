@@ -11,25 +11,25 @@ import de.qabel.desktop.storage.cache.CachedBoxVolume;
 import java.io.IOException;
 
 public class DefaultSyncerFactory implements SyncerFactory {
-	private TransferManager manager;
+    private TransferManager manager;
 
-	private BoxVolumeFactory boxVolumeFactory;
-	private final Blacklist blacklist;
+    private BoxVolumeFactory boxVolumeFactory;
+    private final Blacklist blacklist;
 
-	public DefaultSyncerFactory(BoxVolumeFactory boxVolumeFactory, TransferManager manager) throws IOException {
-		this.boxVolumeFactory = boxVolumeFactory;
-		this.manager = manager;
-		blacklist = new FileBasedSyncBlacklist(getClass().getResourceAsStream("/ignore"));
-	}
+    public DefaultSyncerFactory(BoxVolumeFactory boxVolumeFactory, TransferManager manager) throws IOException {
+        this.boxVolumeFactory = boxVolumeFactory;
+        this.manager = manager;
+        blacklist = new FileBasedSyncBlacklist(getClass().getResourceAsStream("/ignore"));
+    }
 
-	@Override
-	public Syncer factory(BoxSyncConfig config) {
-		DefaultSyncer syncer = new DefaultSyncer(
-				config,
-				(CachedBoxVolume) boxVolumeFactory.getVolume(config.getAccount(), config.getIdentity()),
-				manager
-		);
-		syncer.setLocalBlacklist(blacklist);
-		return syncer;
-	}
+    @Override
+    public Syncer factory(BoxSyncConfig config) {
+        DefaultSyncer syncer = new DefaultSyncer(
+                config,
+                (CachedBoxVolume) boxVolumeFactory.getVolume(config.getAccount(), config.getIdentity()),
+                manager
+        );
+        syncer.setLocalBlacklist(blacklist);
+        return syncer;
+    }
 }

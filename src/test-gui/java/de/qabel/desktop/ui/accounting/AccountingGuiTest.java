@@ -21,19 +21,19 @@ public class AccountingGuiTest extends AbstractGuiTest<AccountingController> {
         page = new AccountingPage(baseFXRobot, robot, controller);
     }
 
-	@Override
-	protected FXMLView getView() {
-		return new AccountingView();
-	}
+    @Override
+    protected FXMLView getView() {
+        return new AccountingView();
+    }
 
-	@Test
-	public void testAddsIdentity() throws EntityNotFoundExcepion, PersistenceException {
+    @Test
+    public void testAddsIdentity() throws EntityNotFoundExcepion, PersistenceException {
         controller.clientConfiguration.selectIdentity(null);
         page.add().inputAndConfirm("a new identity");
 
-		Identities identities = identityRepository.findAll();
-		assertEquals(1, identities.getIdentities().size());
-		Identity i = controller.clientConfiguration.getSelectedIdentity();
-		assertEquals("a new identity", identities.getByKeyIdentifier(i.getKeyIdentifier()).getAlias());
-	}
+        Identities identities = identityRepository.findAll();
+        assertEquals(1, identities.getIdentities().size());
+        Identity i = controller.clientConfiguration.getSelectedIdentity();
+        assertEquals("a new identity", identities.getByKeyIdentifier(i.getKeyIdentifier()).getAlias());
+    }
 }

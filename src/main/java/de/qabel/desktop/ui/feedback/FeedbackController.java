@@ -18,49 +18,49 @@ import java.util.ResourceBundle;
 public class FeedbackController extends AbstractController implements Initializable {
 
 
-	@FXML
-	TextArea feedbackField;
+    @FXML
+    TextArea feedbackField;
 
-	@FXML
-	TextField nameField;
+    @FXML
+    TextField nameField;
 
-	@FXML
-	TextField emailField;
+    @FXML
+    TextField emailField;
 
-	@Inject
-	private CrashReportHandler reportHandler;
+    @Inject
+    private CrashReportHandler reportHandler;
 
-	@Override
+    @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-	}
+    }
 
-	@FXML
-	protected void handleSendButtonAction(ActionEvent event) {
-		handleSendButtonAction();
-	}
+    @FXML
+    protected void handleSendButtonAction(ActionEvent event) {
+        handleSendButtonAction();
+    }
 
-	protected void handleSendButtonAction() {
+    protected void handleSendButtonAction() {
 
-		new Thread() {
-			@Override
+        new Thread() {
+            @Override
             public void run() {
-				try {
-					reportHandler.sendFeedback(feedbackField.getText(), nameField.getText(), emailField.getText());
+                try {
+                    reportHandler.sendFeedback(feedbackField.getText(), nameField.getText(), emailField.getText());
 
-					feedbackField.setText("");
-					nameField.setText("");
-					emailField.setText("");
-				} catch (IOException  e) {
-					alert(e);
-				}
-			}
-		}.start();
-
-
+                    feedbackField.setText("");
+                    nameField.setText("");
+                    emailField.setText("");
+                } catch (IOException  e) {
+                    alert(e);
+                }
+            }
+        }.start();
 
 
-	}
+
+
+    }
 }
 
 

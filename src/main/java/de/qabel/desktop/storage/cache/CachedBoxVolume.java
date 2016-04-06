@@ -12,24 +12,24 @@ import de.qabel.desktop.storage.StorageWriteBackend;
 import java.io.File;
 
 public class CachedBoxVolume extends BoxVolume {
-	private CachedIndexNavigation navigation;
+    private CachedIndexNavigation navigation;
 
-	public CachedBoxVolume(StorageReadBackend readBackend, StorageWriteBackend writeBackend, QblECKeyPair keyPair, byte[] deviceId, File tempDir, String prefix) {
-		super(readBackend, writeBackend, keyPair, deviceId, tempDir, prefix);
-	}
+    public CachedBoxVolume(StorageReadBackend readBackend, StorageWriteBackend writeBackend, QblECKeyPair keyPair, byte[] deviceId, File tempDir, String prefix) {
+        super(readBackend, writeBackend, keyPair, deviceId, tempDir, prefix);
+    }
 
-	@Override
-	public synchronized CachedIndexNavigation navigate() throws QblStorageException {
-		if (navigation == null) {
-			IndexNavigation nav;
-			try {
-				nav = super.navigate();
-			} catch (QblStorageNotFound e) {
-				createIndex(getRootRef());
-				nav = super.navigate();
-			}
-			navigation = new CachedIndexNavigation(nav, BoxFileSystem.getRoot());
-		}
-		return navigation;
-	}
+    @Override
+    public synchronized CachedIndexNavigation navigate() throws QblStorageException {
+        if (navigation == null) {
+            IndexNavigation nav;
+            try {
+                nav = super.navigate();
+            } catch (QblStorageNotFound e) {
+                createIndex(getRootRef());
+                nav = super.navigate();
+            }
+            navigation = new CachedIndexNavigation(nav, BoxFileSystem.getRoot());
+        }
+        return navigation;
+    }
 }

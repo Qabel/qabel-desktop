@@ -34,364 +34,364 @@ import java.util.function.Consumer;
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.UPDATE;
 
 public class DefaultSyncer implements Syncer {
-	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
-	private static final ExecutorService fileExecutor = Executors.newSingleThreadExecutor();
-	private BoxSyncBasedUploadFactory uploadFactory = new BoxSyncBasedUploadFactory();
-	private final Logger logger = LoggerFactory.getLogger(getClass());
-	private CachedBoxVolume boxVolume;
-	private BoxSyncConfig config;
-	private TransferManager manager;
-	private int pollInterval = 1;
-	private TimeUnit pollUnit = TimeUnit.MINUTES;
-	private Thread poller;
-	private TreeWatcher watcher;
-	private boolean polling;
-	private final SyncIndex index;
-	private WindowedTransactionGroup progress = new WindowedTransactionGroup();
-	private List<Transaction> history = new LinkedList<>();
-	private Blacklist localBlacklist;
-	private Observer remoteChangeHandler;
+    private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private static final ExecutorService fileExecutor = Executors.newSingleThreadExecutor();
+    private BoxSyncBasedUploadFactory uploadFactory = new BoxSyncBasedUploadFactory();
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private CachedBoxVolume boxVolume;
+    private BoxSyncConfig config;
+    private TransferManager manager;
+    private int pollInterval = 1;
+    private TimeUnit pollUnit = TimeUnit.MINUTES;
+    private Thread poller;
+    private TreeWatcher watcher;
+    private boolean polling;
+    private final SyncIndex index;
+    private WindowedTransactionGroup progress = new WindowedTransactionGroup();
+    private List<Transaction> history = new LinkedList<>();
+    private Blacklist localBlacklist;
+    private Observer remoteChangeHandler;
 
-	public DefaultSyncer(BoxSyncConfig config, CachedBoxVolume boxVolume, TransferManager manager) {
-		this.config = config;
-		this.boxVolume = boxVolume;
-		this.manager = manager;
-		index = config.getSyncIndex();
-		config.setSyncer(this);
-	}
+    public DefaultSyncer(BoxSyncConfig config, CachedBoxVolume boxVolume, TransferManager manager) {
+        this.config = config;
+        this.boxVolume = boxVolume;
+        this.manager = manager;
+        index = config.getSyncIndex();
+        config.setSyncer(this);
+    }
 
-	public void setLocalBlacklist(Blacklist blacklist) {
+    public void setLocalBlacklist(Blacklist blacklist) {
         localBlacklist = blacklist;
-	}
+    }
 
-	@Override
-	public List<Transaction> getHistory() {
-		return history;
-	}
+    @Override
+    public List<Transaction> getHistory() {
+        return history;
+    }
 
-	@Override
-	public void run() {
-		try {
-			startWatcher();
-			registerRemoteChangeHandler();
-			registerRemotePoller();
+    @Override
+    public void run() {
+        try {
+            startWatcher();
+            registerRemoteChangeHandler();
+            registerRemotePoller();
 
-			boxVolume.navigate().notifyAllContents();
-		} catch (QblStorageException | IOException e) {
-			logger.error("failed to start sync: " + e.getMessage(), e);
-		}
-	}
+            boxVolume.navigate().notifyAllContents();
+        } catch (QblStorageException | IOException e) {
+            logger.error("failed to start sync: " + e.getMessage(), e);
+        }
+    }
 
-	protected void registerRemotePoller() throws QblStorageException {
-		CachedBoxNavigation nav = navigateToRemoteDir();
+    protected void registerRemotePoller() throws QblStorageException {
+        CachedBoxNavigation nav = navigateToRemoteDir();
 
-		poller = new Thread(() -> {
-			try {
-				while (!Thread.interrupted()) {
-					try {
-						nav.refresh();
-						polling = true;
-					} catch (QblStorageException e) {
-						logger.warn("polling failed: " + e.getMessage(), e);
-					}
-					Thread.sleep(pollUnit.toMillis(pollInterval));
-				}
-			} catch (InterruptedException e) {
-				logger.debug("poller stopped");
-			} finally {
-				polling = false;
-			}
-		});
-		poller.setName("DefaultSyncer-" + config.getName() + "#Poller");
-		poller.setDaemon(true);
-		poller.start();
-	}
+        poller = new Thread(() -> {
+            try {
+                while (!Thread.interrupted()) {
+                    try {
+                        nav.refresh();
+                        polling = true;
+                    } catch (QblStorageException e) {
+                        logger.warn("polling failed: " + e.getMessage(), e);
+                    }
+                    Thread.sleep(pollUnit.toMillis(pollInterval));
+                }
+            } catch (InterruptedException e) {
+                logger.debug("poller stopped");
+            } finally {
+                polling = false;
+            }
+        });
+        poller.setName("DefaultSyncer-" + config.getName() + "#Poller");
+        poller.setDaemon(true);
+        poller.start();
+    }
 
-	protected void registerRemoteChangeHandler() throws QblStorageException {
-		CachedBoxNavigation nav = navigateToRemoteDir();
+    protected void registerRemoteChangeHandler() throws QblStorageException {
+        CachedBoxNavigation nav = navigateToRemoteDir();
 
-		remoteChangeHandler = (o, arg) -> executor.submit(() -> {
-			try {
-				if (!(arg instanceof ChangeEvent)) {
-					return;
-				}
-				String type = ((ChangeEvent) arg).getType().toString();
-				logger.trace("remote update " + type + " " + ((ChangeEvent) arg).getPath());
-				download((ChangeEvent) arg);
-			} catch (Exception e) {
-				logger.error("failed to handle remote change: " + e.getMessage(), e);
-			}
-		});
-		nav.addObserver(remoteChangeHandler);
-	}
+        remoteChangeHandler = (o, arg) -> executor.submit(() -> {
+            try {
+                if (!(arg instanceof ChangeEvent)) {
+                    return;
+                }
+                String type = ((ChangeEvent) arg).getType().toString();
+                logger.trace("remote update " + type + " " + ((ChangeEvent) arg).getPath());
+                download((ChangeEvent) arg);
+            } catch (Exception e) {
+                logger.error("failed to handle remote change: " + e.getMessage(), e);
+            }
+        });
+        nav.addObserver(remoteChangeHandler);
+    }
 
-	private CachedBoxNavigation navigateToRemoteDir() throws QblStorageException {
-		Path remotePath = config.getRemotePath();
-		CachedBoxNavigation nav = boxVolume.navigate();
+    private CachedBoxNavigation navigateToRemoteDir() throws QblStorageException {
+        Path remotePath = config.getRemotePath();
+        CachedBoxNavigation nav = boxVolume.navigate();
 
-		for (int i = 0; i < remotePath.getNameCount(); i++) {
-			String name = remotePath.getName(i).toString();
-			if (!nav.hasFolder(name)) {
-				index.clear();
-				nav.createFolder(name);
-			}
-			nav = nav.navigate(name);
-		}
-		return nav;
-	}
+        for (int i = 0; i < remotePath.getNameCount(); i++) {
+            String name = remotePath.getName(i).toString();
+            if (!nav.hasFolder(name)) {
+                index.clear();
+                nav.createFolder(name);
+            }
+            nav = nav.navigate(name);
+        }
+        return nav;
+    }
 
-	private void download(ChangeEvent event) {
-		BoxSyncBasedDownload download = new BoxSyncBasedDownload(boxVolume, config, event);
+    private void download(ChangeEvent event) {
+        BoxSyncBasedDownload download = new BoxSyncBasedDownload(boxVolume, config, event);
 
-		if (!download.getDestination().normalize().startsWith(config.getLocalPath().normalize())) {
-			logger.warn("syncer received event from outside sync path: " + download);
-			return;
-		}
+        if (!download.getDestination().normalize().startsWith(config.getLocalPath().normalize())) {
+            logger.warn("syncer received event from outside sync path: " + download);
+            return;
+        }
 
-		if (download.getType() != Transaction.TYPE.DELETE && isUpToDate(download)) {
-			uploadUnnoticedDelete(download);
-			return;
-		}
+        if (download.getType() != Transaction.TYPE.DELETE && isUpToDate(download)) {
+            uploadUnnoticedDelete(download);
+            return;
+        }
 
-		SyncIndexEntry entry = index.get(download.getDestination());
-		if (entry != null && download.getMtime() != null && entry.getLocalMtime() >= download.getMtime()) {
-			return;
-		}
+        SyncIndexEntry entry = index.get(download.getDestination());
+        if (entry != null && download.getMtime() != null && entry.getLocalMtime() >= download.getMtime()) {
+            return;
+        }
 
-		download.onSuccess(() -> index.update(download.getDestination(), download.getMtime(), download.getType() != Transaction.TYPE.DELETE));
-		addDownload(download);
-	}
+        download.onSuccess(() -> index.update(download.getDestination(), download.getMtime(), download.getType() != Transaction.TYPE.DELETE));
+        addDownload(download);
+    }
 
-	private void addDownload(BoxSyncBasedDownload download) {
-		progress.add(download);
-		history.add(download);
-		manager.addDownload(download);
-	}
+    private void addDownload(BoxSyncBasedDownload download) {
+        progress.add(download);
+        history.add(download);
+        manager.addDownload(download);
+    }
 
-	private boolean isUpToDate(BoxSyncBasedDownload download) {
-		return index.isUpToDate(download.getDestination(), download.getMtime(), true);
-	}
+    private boolean isUpToDate(BoxSyncBasedDownload download) {
+        return index.isUpToDate(download.getDestination(), download.getMtime(), true);
+    }
 
-	private void uploadUnnoticedDelete(BoxSyncBasedDownload download) {
-		if (Files.exists(download.getDestination())) {
-			return;
-		}
-		ChangeEvent inverseEvent = new LocalDeleteEvent(
-				download.getDestination(),
-				download.isDir(),
-				System.currentTimeMillis(),
-				ChangeEvent.TYPE.DELETE
-		);
-		upload(inverseEvent);
-	}
+    private void uploadUnnoticedDelete(BoxSyncBasedDownload download) {
+        if (Files.exists(download.getDestination())) {
+            return;
+        }
+        ChangeEvent inverseEvent = new LocalDeleteEvent(
+                download.getDestination(),
+                download.isDir(),
+                System.currentTimeMillis(),
+                ChangeEvent.TYPE.DELETE
+        );
+        upload(inverseEvent);
+    }
 
-	private void upload(WatchEvent event) {
-		BoxSyncBasedUpload upload = uploadFactory.getUpload(boxVolume, config, event);
+    private void upload(WatchEvent event) {
+        BoxSyncBasedUpload upload = uploadFactory.getUpload(boxVolume, config, event);
 
-		if (localBlacklist != null) {
-			if (localBlacklist.matches(upload.getDestination())) {
-				return;
-			}
-		}
+        if (localBlacklist != null) {
+            if (localBlacklist.matches(upload.getDestination())) {
+                return;
+            }
+        }
 
-		if (isUpToDate(upload)) {
-			downloadUnnoticedDelete(upload);
-			return;
-		}
-		SyncIndexEntry entry = index.get(upload.getSource());
-		if (entry != null && entry.isExisting() == (upload.getType() != Transaction.TYPE.DELETE) && entry.getLocalMtime() >= upload.getMtime()) {
-			return;
-		}
-		if (event.isDir() && event instanceof ChangeEvent && ((ChangeEvent)event).getType() == UPDATE) {
-			return;
-		}
+        if (isUpToDate(upload)) {
+            downloadUnnoticedDelete(upload);
+            return;
+        }
+        SyncIndexEntry entry = index.get(upload.getSource());
+        if (entry != null && entry.isExisting() == (upload.getType() != Transaction.TYPE.DELETE) && entry.getLocalMtime() >= upload.getMtime()) {
+            return;
+        }
+        if (event.isDir() && event instanceof ChangeEvent && ((ChangeEvent)event).getType() == UPDATE) {
+            return;
+        }
 
-		upload.onSuccess(() -> {
-			index.update(upload.getSource(), upload.getMtime(), upload.getType() != Transaction.TYPE.DELETE);
-		});
-		upload.onSkipped(() -> {
-			index.update(upload.getSource(), upload.getMtime(), upload.getType() != Transaction.TYPE.DELETE);
-		});
-		addUpload(upload);
-	}
+        upload.onSuccess(() -> {
+            index.update(upload.getSource(), upload.getMtime(), upload.getType() != Transaction.TYPE.DELETE);
+        });
+        upload.onSkipped(() -> {
+            index.update(upload.getSource(), upload.getMtime(), upload.getType() != Transaction.TYPE.DELETE);
+        });
+        addUpload(upload);
+    }
 
-	private void addUpload(BoxSyncBasedUpload upload) {
-		progress.add(upload);
-		history.add(upload);
-		manager.addUpload(upload);
-	}
+    private void addUpload(BoxSyncBasedUpload upload) {
+        progress.add(upload);
+        history.add(upload);
+        manager.addUpload(upload);
+    }
 
-	private boolean isUpToDate(BoxSyncBasedUpload upload) {
-		return index.isUpToDate(upload.getSource(), upload.getMtime(), upload.getType() != Transaction.TYPE.DELETE);
-	}
+    private boolean isUpToDate(BoxSyncBasedUpload upload) {
+        return index.isUpToDate(upload.getSource(), upload.getMtime(), upload.getType() != Transaction.TYPE.DELETE);
+    }
 
-	private void downloadUnnoticedDelete(BoxSyncBasedUpload upload) {
-		Path destination = upload.getDestination();
-		boolean exists;
-		BoxNavigation nav = null;
-		try {
-			nav = upload.getBoxVolume().navigate();
-			for (int i = 0; i < destination.getNameCount() - 1; i++) {
-				nav = nav.navigate(destination.getName(i).toString());
-			}
-			String filename = destination.getFileName().toString();
-			exists = upload.isDir() ? nav.hasFolder(filename) : nav.hasFile(filename);
-		} catch (QblStorageException | IllegalArgumentException e) {
-			logger.warn(e.getMessage(), e);
-			exists = false;
-		}
-		if (!exists) {
-			ChangeEvent inverseEvent = new RemoteChangeEvent(
-					upload.getDestination(),
-					upload.isDir(),
-					System.currentTimeMillis(),
-					ChangeEvent.TYPE.DELETE,
-					null, nav
-			);
-			download(inverseEvent);
-		}
-	}
+    private void downloadUnnoticedDelete(BoxSyncBasedUpload upload) {
+        Path destination = upload.getDestination();
+        boolean exists;
+        BoxNavigation nav = null;
+        try {
+            nav = upload.getBoxVolume().navigate();
+            for (int i = 0; i < destination.getNameCount() - 1; i++) {
+                nav = nav.navigate(destination.getName(i).toString());
+            }
+            String filename = destination.getFileName().toString();
+            exists = upload.isDir() ? nav.hasFolder(filename) : nav.hasFile(filename);
+        } catch (QblStorageException | IllegalArgumentException e) {
+            logger.warn(e.getMessage(), e);
+            exists = false;
+        }
+        if (!exists) {
+            ChangeEvent inverseEvent = new RemoteChangeEvent(
+                    upload.getDestination(),
+                    upload.isDir(),
+                    System.currentTimeMillis(),
+                    ChangeEvent.TYPE.DELETE,
+                    null, nav
+            );
+            download(inverseEvent);
+        }
+    }
 
-	private int localEvents;
+    private int localEvents;
 
-	public boolean isProcessingLocalEvents() {
-		return localEvents > 0;
-	}
+    public boolean isProcessingLocalEvents() {
+        return localEvents > 0;
+    }
 
-	protected void startWatcher() throws IOException {
-		Path localPath = config.getLocalPath();
-		if (!Files.isDirectory(localPath)) {
-			Files.createDirectories(localPath);
-		}
-		if (!Files.isReadable(localPath)) {
-			throw new IllegalStateException("local dir " + localPath + " is not valid");
-		}
-		watcher = new TreeWatcher(localPath, watchEvent -> {
-			try {
-				synchronized (this) {
-					localEvents++;
-				}
-				if (!watchEvent.isValid()) {
-					return;
-				}
-				String type = "";
-				if (watchEvent instanceof ChangeEvent)
-					type = ((ChangeEvent) watchEvent).getType().toString();
-				logger.trace("local update " + type + " " + watchEvent.getPath());
-				upload(watchEvent);
-			} finally {
-				synchronized (this) {
-					localEvents--;
-				}
-			}
-		});
-		watcher.setName("DefaultSyncer-" + config.getName() + "#Watcher");
-		watcher.setDaemon(true);
-		watcher.start();
-	}
+    protected void startWatcher() throws IOException {
+        Path localPath = config.getLocalPath();
+        if (!Files.isDirectory(localPath)) {
+            Files.createDirectories(localPath);
+        }
+        if (!Files.isReadable(localPath)) {
+            throw new IllegalStateException("local dir " + localPath + " is not valid");
+        }
+        watcher = new TreeWatcher(localPath, watchEvent -> {
+            try {
+                synchronized (this) {
+                    localEvents++;
+                }
+                if (!watchEvent.isValid()) {
+                    return;
+                }
+                String type = "";
+                if (watchEvent instanceof ChangeEvent)
+                    type = ((ChangeEvent) watchEvent).getType().toString();
+                logger.trace("local update " + type + " " + watchEvent.getPath());
+                upload(watchEvent);
+            } finally {
+                synchronized (this) {
+                    localEvents--;
+                }
+            }
+        });
+        watcher.setName("DefaultSyncer-" + config.getName() + "#Watcher");
+        watcher.setDaemon(true);
+        watcher.start();
+    }
 
-	@Override
-	public void shutdown() {
-		if (watcher != null && watcher.isAlive()) {
-			watcher.interrupt();
-		}
-		if (poller != null && poller.isAlive()) {
-			poller.interrupt();
-		}
-	}
+    @Override
+    public void shutdown() {
+        if (watcher != null && watcher.isAlive()) {
+            watcher.interrupt();
+        }
+        if (poller != null && poller.isAlive()) {
+            poller.interrupt();
+        }
+    }
 
-	public void join() throws InterruptedException {
-		watcher.join();
-		poller.join();
-	}
+    public void join() throws InterruptedException {
+        watcher.join();
+        poller.join();
+    }
 
-	@Override
-	public void setPollInterval(int amount, TimeUnit unit) {
-		pollInterval = amount;
-		pollUnit = unit;
-	}
+    @Override
+    public void setPollInterval(int amount, TimeUnit unit) {
+        pollInterval = amount;
+        pollUnit = unit;
+    }
 
-	@Override
-	public void stop() throws InterruptedException {
-		watcher.interrupt();
-		poller.interrupt();
-		watcher.join();
-		poller.join();
-		progress.cancel();
-	}
+    @Override
+    public void stop() throws InterruptedException {
+        watcher.interrupt();
+        poller.interrupt();
+        watcher.join();
+        poller.join();
+        progress.cancel();
+    }
 
-	public boolean isPolling() {
-		return polling;
-	}
+    public boolean isPolling() {
+        return polling;
+    }
 
-	public void waitFor() {
-		while (!polling && !watcher.isWatching()) {
-			Thread.yield();
-		}
-	}
+    public void waitFor() {
+        while (!polling && !watcher.isWatching()) {
+            Thread.yield();
+        }
+    }
 
-	public BoxSyncBasedUploadFactory getUploadFactory() {
-		return uploadFactory;
-	}
+    public BoxSyncBasedUploadFactory getUploadFactory() {
+        return uploadFactory;
+    }
 
-	public void setUploadFactory(BoxSyncBasedUploadFactory uploadFactory) {
-		this.uploadFactory = uploadFactory;
-	}
+    public void setUploadFactory(BoxSyncBasedUploadFactory uploadFactory) {
+        this.uploadFactory = uploadFactory;
+    }
 
-	@Override
-	public boolean isSynced() {
-		return progress.isEmpty() && isPolling() && watcher.isWatching() && poller.isAlive() && watcher.isAlive();
-	}
+    @Override
+    public boolean isSynced() {
+        return progress.isEmpty() && isPolling() && watcher.isWatching() && poller.isAlive() && watcher.isAlive();
+    }
 
-	@Override
-	public double getProgress() {
-		return progress.getProgress();
-	}
+    @Override
+    public double getProgress() {
+        return progress.getProgress();
+    }
 
-	@Override
-	public DefaultSyncer onProgress(Runnable runnable) {
-		progress.onProgress(runnable);
-		return this;
-	}
+    @Override
+    public DefaultSyncer onProgress(Runnable runnable) {
+        progress.onProgress(runnable);
+        return this;
+    }
 
-	@Override
-	public long totalSize() {
-		return progress.totalSize();
-	}
+    @Override
+    public long totalSize() {
+        return progress.totalSize();
+    }
 
-	@Override
-	public long currentSize() {
-		return progress.currentSize();
-	}
+    @Override
+    public long currentSize() {
+        return progress.currentSize();
+    }
 
-	@Override
-	public int countFiles() {
-		return 0;
-	}
+    @Override
+    public int countFiles() {
+        return 0;
+    }
 
-	@Override
-	public int countFolders() {
-		return 0;
-	}
+    @Override
+    public int countFolders() {
+        return 0;
+    }
 
-	@Override
-	public boolean hasError() {
-		return false;
-	}
+    @Override
+    public boolean hasError() {
+        return false;
+    }
 
-	@Override
-	public DefaultSyncer onProgress(Consumer<Transaction> consumer) {
-		progress.onProgress(consumer);
-		return this;
-	}
+    @Override
+    public DefaultSyncer onProgress(Consumer<Transaction> consumer) {
+        progress.onProgress(consumer);
+        return this;
+    }
 
-	@Override
-	public long totalElements() {
-		return progress.totalElements();
-	}
+    @Override
+    public long totalElements() {
+        return progress.totalElements();
+    }
 
-	@Override
-	public long finishedElements() {
-		return progress.finishedElements();
-	}
+    @Override
+    public long finishedElements() {
+        return progress.finishedElements();
+    }
 }

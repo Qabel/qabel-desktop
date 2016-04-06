@@ -1,8 +1,8 @@
 package de.qabel.desktop.daemon.management;
 
 public interface Download extends Transaction {
-	void setMtime(Long mtime);
+    void setMtime(Long mtime);
 
-	@Override
+    @Override
     void setSize(long size);
 }

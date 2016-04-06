@@ -14,21 +14,21 @@ import java.util.ResourceBundle;
 
 public class BlankItemController extends AbstractController implements Initializable {
 
-	ResourceBundle resourceBundle;
+    ResourceBundle resourceBundle;
 
-	@FXML
-	Label firstChar;
+    @FXML
+    Label firstChar;
 
-	@Inject
-	Contact contact;
-	@Inject
-	private ClientConfiguration clientConfiguration;
-	@Inject
-	private IdentityRepository identityRepository;
+    @Inject
+    Contact contact;
+    @Inject
+    private ClientConfiguration clientConfiguration;
+    @Inject
+    private IdentityRepository identityRepository;
 
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
-		firstChar.setText(contact.getAlias().substring(0,1).toUpperCase());
-	}
+        firstChar.setText(contact.getAlias().substring(0,1).toUpperCase());
+    }
 }

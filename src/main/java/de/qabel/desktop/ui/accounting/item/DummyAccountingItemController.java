@@ -23,8 +23,8 @@ import java.util.ResourceBundle;
 
 public class DummyAccountingItemController extends AbstractController implements Initializable {
 
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
 
-	}
+    }
 }

@@ -4,7 +4,7 @@ import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.DefaultClientConfiguration;
 
 public class ClientConfigurationFactory {
-	public ClientConfiguration createClientConfiguration() {
-		return new DefaultClientConfiguration();
-	}
+    public ClientConfiguration createClientConfiguration() {
+        return new DefaultClientConfiguration();
+    }
 }

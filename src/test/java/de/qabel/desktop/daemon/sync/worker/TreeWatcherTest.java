@@ -19,139 +19,139 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public class TreeWatcherTest extends AbstractSyncTest {
-	private List<ChangeEvent> changes = new LinkedList<>();
-	private List<WatchEvent> events = new LinkedList<>();
-	private TreeWatcher watcher;
+    private List<ChangeEvent> changes = new LinkedList<>();
+    private List<WatchEvent> events = new LinkedList<>();
+    private TreeWatcher watcher;
 
-	@Override
+    @Override
     @Before
-	public void setUp() {
-		super.setUp();
+    public void setUp() {
+        super.setUp();
 
-		watcher = new TreeWatcher(tmpDir, watchEvent -> {
-			events.add(watchEvent);
-			if (watchEvent instanceof ChangeEvent) {
-				changes.add((ChangeEvent) watchEvent);
-			}
-		});
-	}
+        watcher = new TreeWatcher(tmpDir, watchEvent -> {
+            events.add(watchEvent);
+            if (watchEvent instanceof ChangeEvent) {
+                changes.add((ChangeEvent) watchEvent);
+            }
+        });
+    }
 
-	@Override
+    @Override
     @After
-	public void tearDown() throws InterruptedException {
-		if (watcher != null && watcher.isAlive()) {
-			watcher.interrupt();
-			watcher.join();
-		}
-		super.tearDown();
-	}
+    public void tearDown() throws InterruptedException {
+        if (watcher != null && watcher.isAlive()) {
+            watcher.interrupt();
+            watcher.join();
+        }
+        super.tearDown();
+    }
 
-	@Test(timeout = 10000L)
-	public void detectsChangedFiles() throws IOException {
-		watch();
+    @Test(timeout = 10000L)
+    public void detectsChangedFiles() throws IOException {
+        watch();
 
-		Path file = getPath("/file");
-		file.toFile().createNewFile();
-		waitUntil(() -> !changes.isEmpty(), 1000L);
-		assertEquals(getPath("/file"), changes.get(0).getPath());
-		assertEquals(ChangeEvent.TYPE.CREATE, changes.get(0).getType());
-	}
+        Path file = getPath("/file");
+        file.toFile().createNewFile();
+        waitUntil(() -> !changes.isEmpty(), 1000L);
+        assertEquals(getPath("/file"), changes.get(0).getPath());
+        assertEquals(ChangeEvent.TYPE.CREATE, changes.get(0).getType());
+    }
 
-	protected Path getPath(String suffix) {
-		return Paths.get(tmpDir.toAbsolutePath() + suffix);
-	}
+    protected Path getPath(String suffix) {
+        return Paths.get(tmpDir.toAbsolutePath() + suffix);
+    }
 
-	@Test(timeout = 10000L)
-	public void detectsMultipleChanges() throws IOException {
-		watch();
+    @Test(timeout = 10000L)
+    public void detectsMultipleChanges() throws IOException {
+        watch();
 
-		Path file = getPath("/file");
-		file.toFile().createNewFile();
-		try (BufferedWriter writer = Files.newBufferedWriter(file)) {
-			writer.write("a");
-		}
-		waitUntil(() -> changes.size() > 1, 1000L);
-		assertEquals(getPath("/file"), changes.get(0).getPath());
-		assertEquals(getPath("/file"), changes.get(1).getPath());
-		assertEquals(ChangeEvent.TYPE.UPDATE, changes.get(1).getType());
-	}
+        Path file = getPath("/file");
+        file.toFile().createNewFile();
+        try (BufferedWriter writer = Files.newBufferedWriter(file)) {
+            writer.write("a");
+        }
+        waitUntil(() -> changes.size() > 1, 1000L);
+        assertEquals(getPath("/file"), changes.get(0).getPath());
+        assertEquals(getPath("/file"), changes.get(1).getPath());
+        assertEquals(ChangeEvent.TYPE.UPDATE, changes.get(1).getType());
+    }
 
-	@Test(timeout = 10000L)
-	public void detectsChangesInSubDirs() throws IOException {
-		File subdir = new File(tmpDir.toFile(), "subdir");
-		subdir.mkdirs();
+    @Test(timeout = 10000L)
+    public void detectsChangesInSubDirs() throws IOException {
+        File subdir = new File(tmpDir.toFile(), "subdir");
+        subdir.mkdirs();
 
-		watch();
+        watch();
 
-		File subfile = new File(subdir, "file");
-		subfile.createNewFile();
-		waitUntil(() -> !changes.isEmpty());
-		assertEquals(getPath("/subdir/file"), changes.get(0).getPath());
-	}
+        File subfile = new File(subdir, "file");
+        subfile.createNewFile();
+        waitUntil(() -> !changes.isEmpty());
+        assertEquals(getPath("/subdir/file"), changes.get(0).getPath());
+    }
 
-	@Test(timeout = 10000L)
-	public void detectsChangesInNewDirs() throws Exception {
-		watch();
+    @Test(timeout = 10000L)
+    public void detectsChangesInNewDirs() throws Exception {
+        watch();
 
-		File subdir = new File(tmpDir.toFile(), "subdir");
-		subdir.mkdirs();
-		waitUntil(() -> !changes.isEmpty());
+        File subdir = new File(tmpDir.toFile(), "subdir");
+        subdir.mkdirs();
+        waitUntil(() -> !changes.isEmpty());
 
-		File subfile = new File(subdir, "file");
-		subfile.createNewFile();
-		waitUntil(() -> changes.size() > 1);
-		assertEquals(getPath("/subdir"), changes.get(0).getPath());
-		assertEquals(getPath("/subdir/file"), changes.get(1).getPath());
-	}
+        File subfile = new File(subdir, "file");
+        subfile.createNewFile();
+        waitUntil(() -> changes.size() > 1);
+        assertEquals(getPath("/subdir"), changes.get(0).getPath());
+        assertEquals(getPath("/subdir/file"), changes.get(1).getPath());
+    }
 
-	@Test(timeout = 10000L)
-	public void notifiesAboutExistingFilesAndDirs() throws Exception {
-		File file = new File(tmpDir.toFile(), "existingFile");
-		file.createNewFile();
-		File dir = new File(tmpDir.toFile(), "existingSubdir");
-		dir.mkdirs();
+    @Test(timeout = 10000L)
+    public void notifiesAboutExistingFilesAndDirs() throws Exception {
+        File file = new File(tmpDir.toFile(), "existingFile");
+        file.createNewFile();
+        File dir = new File(tmpDir.toFile(), "existingSubdir");
+        dir.mkdirs();
 
-		watch();
+        watch();
 
-		waitUntil(() -> events.size() > 2);
-		assertEquals(getPath("/"), events.get(0).getPath());
-		assertEquals(getPath("/existingFile"), events.get(1).getPath());
-		assertEquals(getPath("/existingSubdir"), events.get(2).getPath());
-	}
+        waitUntil(() -> events.size() > 2);
+        assertEquals(getPath("/"), events.get(0).getPath());
+        assertEquals(getPath("/existingFile"), events.get(1).getPath());
+        assertEquals(getPath("/existingSubdir"), events.get(2).getPath());
+    }
 
-	@Test(timeout = 10000L)
-	public void notifiesAboutFileDeletes() throws Exception {
-		File file = new File(tmpDir.toFile(), "existingFile");
-		file.createNewFile();
-		watch();
+    @Test(timeout = 10000L)
+    public void notifiesAboutFileDeletes() throws Exception {
+        File file = new File(tmpDir.toFile(), "existingFile");
+        file.createNewFile();
+        watch();
 
-		waitUntil(() -> events.size() == 2);
-		events.clear();
+        waitUntil(() -> events.size() == 2);
+        events.clear();
 
-		file.delete();
-		waitUntil(() -> events.size() == 1);
-		assertEquals(getPath("/existingFile"), events.get(0).getPath());
-	}
+        file.delete();
+        waitUntil(() -> events.size() == 1);
+        assertEquals(getPath("/existingFile"), events.get(0).getPath());
+    }
 
-	@Test(timeout = 10000L)
-	public void notifiesAboutFileDeletesAfterTmpFileWasHandled() throws Exception {
-		File file = new File(tmpDir.toFile(), "existingFile");
-		file.createNewFile();
-		watch();
+    @Test(timeout = 10000L)
+    public void notifiesAboutFileDeletesAfterTmpFileWasHandled() throws Exception {
+        File file = new File(tmpDir.toFile(), "existingFile");
+        file.createNewFile();
+        watch();
 
-		waitUntil(() -> events.size() == 2);
-		events.clear();
+        waitUntil(() -> events.size() == 2);
+        events.clear();
 
-		new File(tmpDir.toFile(), ".test.qpart~").createNewFile();
+        new File(tmpDir.toFile(), ".test.qpart~").createNewFile();
 
-		Thread.sleep(1000);	// make sure both events don't occur in the same watchkey (don't know a better way...)
-		file.delete();
-		waitUntil(() -> events.size() >= 1);
-		waitUntil(() -> events.get(0).getPath().getFileName().toString().equals("existingFile"), () -> "invalid event: " + events.get(0));
-	}
+        Thread.sleep(1000); // make sure both events don't occur in the same watchkey (don't know a better way...)
+        file.delete();
+        waitUntil(() -> events.size() >= 1);
+        waitUntil(() -> events.get(0).getPath().getFileName().toString().equals("existingFile"), () -> "invalid event: " + events.get(0));
+    }
 
-	protected void watch() {
-		watcher.start();
-		waitUntil(watcher::isWatching);
-	}
+    protected void watch() {
+        watcher.start();
+        waitUntil(watcher::isWatching);
+    }
 }

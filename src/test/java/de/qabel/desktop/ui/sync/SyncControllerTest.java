@@ -8,20 +8,20 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class SyncControllerTest extends AbstractControllerTest {
-	@Test
-	public void loadsItems() {
-		BoxSyncConfig boxConfig = new DummyBoxSyncConfig();
-		clientConfiguration.getBoxSyncConfigs().add(boxConfig);
+    @Test
+    public void loadsItems() {
+        BoxSyncConfig boxConfig = new DummyBoxSyncConfig();
+        clientConfiguration.getBoxSyncConfigs().add(boxConfig);
 
-		SyncController controller = createController();
+        SyncController controller = createController();
 
-		assertNotNull(controller.syncItemNodes);
-		assertEquals(1, controller.syncItemNodes.size());
-	}
+        assertNotNull(controller.syncItemNodes);
+        assertEquals(1, controller.syncItemNodes.size());
+    }
 
-	private SyncController createController() {
-		SyncView view = new SyncView();
-		view.getView();
-		return (SyncController)view.getPresenter();
-	}
+    private SyncController createController() {
+        SyncView view = new SyncView();
+        view.getView();
+        return (SyncController)view.getPresenter();
+    }
 }

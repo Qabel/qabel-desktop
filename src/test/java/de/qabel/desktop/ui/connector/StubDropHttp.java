@@ -7,10 +7,10 @@ import java.net.URI;
 import java.util.Collection;
 
 public class StubDropHttp extends DropHTTP {
-	public HTTPResult<Collection<byte[]>> messages = new HTTPResult<>();
+    public HTTPResult<Collection<byte[]>> messages = new HTTPResult<>();
 
-	@Override
-	public HTTPResult<Collection<byte[]>> receiveMessages(URI uri, long sinceDate) {
-		return messages;
-	}
+    @Override
+    public HTTPResult<Collection<byte[]>> receiveMessages(URI uri, long sinceDate) {
+        return messages;
+    }
 }

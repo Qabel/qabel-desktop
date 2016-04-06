@@ -24,300 +24,300 @@ import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.junit.Assert.*;
 
 public class FolderTreeItemTest extends AbstractControllerTest {
-	private FakeBoxNavigation navigation;
-	private FolderTreeItem item;
-
-	@Test(timeout = 1000)
-	public void adjustsNameProperty() {
-		navigation = new FakeBoxNavigation();
-		item = new FolderTreeItem(createSomeFolder(), navigation);
-		StringProperty nameProperty = item.getNameProperty();
-
-		assertEquals("name", nameProperty.get());
-
-		((FakeBoxNavigation) item.getNavigation()).loading = true;
-		item.getChildren();
-
-		assertEquals("name (loading)", nameProperty.get());
-
-		((FakeBoxNavigation) item.getNavigation()).loading = false;
-		load();
-
-		waitUntil(() -> nameProperty.get().equals("name"));
-		assertEquals("name", nameProperty.get());
-	}
-
-	@Test(timeout = 1000)
-	public void isLeafWithoutFiles() {
-		navigation = new FakeBoxNavigation();
-		item = new FolderTreeItem(createSomeFolder(), navigation);
-		load();
-		waitUntil(() -> item.isLeaf());
-	}
-
-	@Test(timeout = 1000)
-	public void synchronouslyReturnsEmptyList() {
-		navigation = new FakeBoxNavigation();
-		item = new FolderTreeItem(createSomeFolder(), navigation);
-		navigation.folders.add(new BoxFolder("ref2", "name2", new byte[0]));
-		navigation.loading = true;
-
-		assertEquals(0, item.getChildren().size());
-		navigation.loading = false;
-	}
-
-	@Test(timeout = 1000)
-	public void loadsChildrenAsynchonously() throws InterruptedException {
-		navigation = new FakeBoxNavigation();
-		item = new FolderTreeItem(createSomeFolder(), navigation);
-		navigation.folders.add(createSomeFolder());
-
-		ObservableList<TreeItem<BoxObject>> children = load();
-
-		waitUntil(() -> children.size() == 1);
-		assertFalse(item.isLeaf());
-	}
-
-	private BoxFolder createSomeFolder() {
-		return new BoxFolder("ref", "name", new byte[0]);
-	}
-
-	private ObservableList<TreeItem<BoxObject>> load() {
-		ObservableList<TreeItem<BoxObject>> children = item.getChildren();
-		((FakeBoxNavigation) item.getNavigation()).loading = false;
-		while (item.isLoading())
-			Thread.yield();
-		return children;
-	}
-
-	@Test(timeout = 1000)
-	public void loadsFiles() throws Exception {
-		navigation = new FakeBoxNavigation();
-		item = new FolderTreeItem(createSomeFolder(), navigation);
-		navigation.files.add(createSomeFile());
-
-		ObservableList<TreeItem<BoxObject>> children = load();
-		waitUntil(() -> children.size() == 1);
-	}
-
-	@Test
-	public void updatesOnNavChange() throws Exception {
-		navigation = new FakeBoxNavigation();
-		item = new FolderTreeItem(createSomeFolder(), navigation);
-		item.setExpanded(true);
-		List children = load();
-		assertEquals(0, children.size());
-
-		navigation.files.add(createSomeFile());
-		navigation.setChanged();
-		navigation.notifyObservers(new RemoteChangeEvent(
-				Paths.get("/name2"),
-				false,
-				navigation.files.get(0).getMtime(),
-				ChangeEvent.TYPE.CREATE,
-				navigation.files.get(0),
-				navigation
-		));
-		waitUntil(() -> children.size() == 1);
-	}
-
-	private BoxFile createSomeFile() {
-		return new BoxFile("prefix", "ref2", "name2", 0L, 0L, new byte[0]);
-	}
-
-	private class FakeBoxNavigation extends Observable implements BoxNavigation {
-		public boolean loading;
-
-		public List<BoxFile> files = new LinkedList<>();
-		public List<BoxFolder> folders = new LinkedList<>();
-
-		@Override
-		public DirectoryMetadata reloadMetadata() throws QblStorageException {
-			return null;
-		}
+    private FakeBoxNavigation navigation;
+    private FolderTreeItem item;
+
+    @Test(timeout = 1000)
+    public void adjustsNameProperty() {
+        navigation = new FakeBoxNavigation();
+        item = new FolderTreeItem(createSomeFolder(), navigation);
+        StringProperty nameProperty = item.getNameProperty();
+
+        assertEquals("name", nameProperty.get());
+
+        ((FakeBoxNavigation) item.getNavigation()).loading = true;
+        item.getChildren();
+
+        assertEquals("name (loading)", nameProperty.get());
+
+        ((FakeBoxNavigation) item.getNavigation()).loading = false;
+        load();
+
+        waitUntil(() -> nameProperty.get().equals("name"));
+        assertEquals("name", nameProperty.get());
+    }
+
+    @Test(timeout = 1000)
+    public void isLeafWithoutFiles() {
+        navigation = new FakeBoxNavigation();
+        item = new FolderTreeItem(createSomeFolder(), navigation);
+        load();
+        waitUntil(() -> item.isLeaf());
+    }
+
+    @Test(timeout = 1000)
+    public void synchronouslyReturnsEmptyList() {
+        navigation = new FakeBoxNavigation();
+        item = new FolderTreeItem(createSomeFolder(), navigation);
+        navigation.folders.add(new BoxFolder("ref2", "name2", new byte[0]));
+        navigation.loading = true;
+
+        assertEquals(0, item.getChildren().size());
+        navigation.loading = false;
+    }
+
+    @Test(timeout = 1000)
+    public void loadsChildrenAsynchonously() throws InterruptedException {
+        navigation = new FakeBoxNavigation();
+        item = new FolderTreeItem(createSomeFolder(), navigation);
+        navigation.folders.add(createSomeFolder());
+
+        ObservableList<TreeItem<BoxObject>> children = load();
+
+        waitUntil(() -> children.size() == 1);
+        assertFalse(item.isLeaf());
+    }
+
+    private BoxFolder createSomeFolder() {
+        return new BoxFolder("ref", "name", new byte[0]);
+    }
+
+    private ObservableList<TreeItem<BoxObject>> load() {
+        ObservableList<TreeItem<BoxObject>> children = item.getChildren();
+        ((FakeBoxNavigation) item.getNavigation()).loading = false;
+        while (item.isLoading())
+            Thread.yield();
+        return children;
+    }
+
+    @Test(timeout = 1000)
+    public void loadsFiles() throws Exception {
+        navigation = new FakeBoxNavigation();
+        item = new FolderTreeItem(createSomeFolder(), navigation);
+        navigation.files.add(createSomeFile());
+
+        ObservableList<TreeItem<BoxObject>> children = load();
+        waitUntil(() -> children.size() == 1);
+    }
+
+    @Test
+    public void updatesOnNavChange() throws Exception {
+        navigation = new FakeBoxNavigation();
+        item = new FolderTreeItem(createSomeFolder(), navigation);
+        item.setExpanded(true);
+        List children = load();
+        assertEquals(0, children.size());
+
+        navigation.files.add(createSomeFile());
+        navigation.setChanged();
+        navigation.notifyObservers(new RemoteChangeEvent(
+                Paths.get("/name2"),
+                false,
+                navigation.files.get(0).getMtime(),
+                ChangeEvent.TYPE.CREATE,
+                navigation.files.get(0),
+                navigation
+        ));
+        waitUntil(() -> children.size() == 1);
+    }
+
+    private BoxFile createSomeFile() {
+        return new BoxFile("prefix", "ref2", "name2", 0L, 0L, new byte[0]);
+    }
+
+    private class FakeBoxNavigation extends Observable implements BoxNavigation {
+        public boolean loading;
+
+        public List<BoxFile> files = new LinkedList<>();
+        public List<BoxFolder> folders = new LinkedList<>();
+
+        @Override
+        public DirectoryMetadata reloadMetadata() throws QblStorageException {
+            return null;
+        }
 
-		@Override
-		public void setMetadata(DirectoryMetadata dm) {
+        @Override
+        public void setMetadata(DirectoryMetadata dm) {
 
-		}
+        }
 
-		@Override
-		public void commit() throws QblStorageException {
+        @Override
+        public void commit() throws QblStorageException {
 
-		}
+        }
 
-		@Override
-		public void commitIfChanged() throws QblStorageException {
+        @Override
+        public void commitIfChanged() throws QblStorageException {
 
-		}
+        }
 
-		@Override
-		public BoxNavigation navigate(BoxFolder target) throws QblStorageException {
-			return null;
-		}
+        @Override
+        public BoxNavigation navigate(BoxFolder target) throws QblStorageException {
+            return null;
+        }
 
-		@Override
-		public BoxNavigation navigate(BoxExternal target) {
-			return null;
-		}
+        @Override
+        public BoxNavigation navigate(BoxExternal target) {
+            return null;
+        }
 
-		@Override
-		public List<BoxFile> listFiles() throws QblStorageException {
-			while (loading)
-				Thread.yield();
-			return files;
-		}
+        @Override
+        public List<BoxFile> listFiles() throws QblStorageException {
+            while (loading)
+                Thread.yield();
+            return files;
+        }
 
-		@Override
-		public List<BoxFolder> listFolders() throws QblStorageException {
-			while (loading)
-				Thread.yield();
-			return folders;
-		}
+        @Override
+        public List<BoxFolder> listFolders() throws QblStorageException {
+            while (loading)
+                Thread.yield();
+            return folders;
+        }
 
-		@Override
-		public List<BoxExternal> listExternals() throws QblStorageException {
-			return null;
-		}
+        @Override
+        public List<BoxExternal> listExternals() throws QblStorageException {
+            return null;
+        }
 
-		@Override
-		public BoxFile upload(String name, File file, ProgressListener listener) throws QblStorageException {
-			return null;
-		}
+        @Override
+        public BoxFile upload(String name, File file, ProgressListener listener) throws QblStorageException {
+            return null;
+        }
 
-		@Override
-		public boolean isUnmodified() {
-			return false;
-		}
+        @Override
+        public boolean isUnmodified() {
+            return false;
+        }
 
-		@Override
-		public BoxFile upload(String name, File file) throws QblStorageException {
-			return null;
-		}
+        @Override
+        public BoxFile upload(String name, File file) throws QblStorageException {
+            return null;
+        }
 
-		@Override
-		public BoxFile overwrite(String name, File file, ProgressListener listener) throws QblStorageException {
-			return null;
-		}
+        @Override
+        public BoxFile overwrite(String name, File file, ProgressListener listener) throws QblStorageException {
+            return null;
+        }
 
-		@Override
-		public BoxFile overwrite(String name, File file) throws QblStorageException {
-			return null;
-		}
+        @Override
+        public BoxFile overwrite(String name, File file) throws QblStorageException {
+            return null;
+        }
 
-		@Override
-		public InputStream download(BoxFile file, ProgressListener listener) throws QblStorageException {
-			return null;
-		}
+        @Override
+        public InputStream download(BoxFile file, ProgressListener listener) throws QblStorageException {
+            return null;
+        }
 
-		@Override
-		public InputStream download(BoxFile file) throws QblStorageException {
-			return null;
-		}
+        @Override
+        public InputStream download(BoxFile file) throws QblStorageException {
+            return null;
+        }
 
-		@Override
-		public FileMetadata getFileMetadata(BoxFile boxFile) throws IOException, InvalidKeyException, QblStorageException {
-			return null;
-		}
+        @Override
+        public FileMetadata getFileMetadata(BoxFile boxFile) throws IOException, InvalidKeyException, QblStorageException {
+            return null;
+        }
 
-		@Override
-		public BoxFolder createFolder(String name) throws QblStorageException {
-			return null;
-		}
+        @Override
+        public BoxFolder createFolder(String name) throws QblStorageException {
+            return null;
+        }
 
-		@Override
-		public void delete(BoxFile file) throws QblStorageException {
+        @Override
+        public void delete(BoxFile file) throws QblStorageException {
 
-		}
+        }
 
-		@Override
-		public void unshare(BoxObject boxObject) throws QblStorageException {
+        @Override
+        public void unshare(BoxObject boxObject) throws QblStorageException {
 
-		}
+        }
 
-		@Override
-		public void delete(BoxFolder folder) throws QblStorageException {
+        @Override
+        public void delete(BoxFolder folder) throws QblStorageException {
 
-		}
+        }
 
-		@Override
-		public void delete(BoxExternal external) throws QblStorageException {
+        @Override
+        public void delete(BoxExternal external) throws QblStorageException {
 
-		}
+        }
 
-		@Override
-		public void setAutocommit(boolean autocommit) {
+        @Override
+        public void setAutocommit(boolean autocommit) {
 
-		}
+        }
 
-		@Override
-		public void setAutocommitDelay(long delay) {
+        @Override
+        public void setAutocommitDelay(long delay) {
 
-		}
+        }
 
-		@Override
-		public BoxNavigation navigate(String folderName) throws QblStorageException {
-			return null;
-		}
+        @Override
+        public BoxNavigation navigate(String folderName) throws QblStorageException {
+            return null;
+        }
 
-		@Override
-		public BoxFolder getFolder(String name) throws QblStorageException {
-			return null;
-		}
+        @Override
+        public BoxFolder getFolder(String name) throws QblStorageException {
+            return null;
+        }
 
-		@Override
-		public boolean hasFolder(String name) throws QblStorageException {
-			return false;
-		}
+        @Override
+        public boolean hasFolder(String name) throws QblStorageException {
+            return false;
+        }
 
-		@Override
-		public BoxFile getFile(String name) throws QblStorageException {
-			return null;
-		}
+        @Override
+        public BoxFile getFile(String name) throws QblStorageException {
+            return null;
+        }
 
-		@Override
-		public DirectoryMetadata getMetadata() {
-			return null;
-		}
+        @Override
+        public DirectoryMetadata getMetadata() {
+            return null;
+        }
 
-		@Override
-		public BoxExternalReference createFileMetadata(QblECPublicKey owner, BoxFile boxFile) throws QblStorageException {
-			return null;
-		}
+        @Override
+        public BoxExternalReference createFileMetadata(QblECPublicKey owner, BoxFile boxFile) throws QblStorageException {
+            return null;
+        }
 
-		@Override
-		public void updateFileMetadata(BoxFile boxFile) throws QblStorageException, IOException, InvalidKeyException {
+        @Override
+        public void updateFileMetadata(BoxFile boxFile) throws QblStorageException, IOException, InvalidKeyException {
 
-		}
+        }
 
-		@Override
-		public BoxExternalReference share(QblECPublicKey owner, BoxFile file, String receiver) throws QblStorageException {
-			return null;
-		}
+        @Override
+        public BoxExternalReference share(QblECPublicKey owner, BoxFile file, String receiver) throws QblStorageException {
+            return null;
+        }
 
-		@Override
-		public List<BoxShare> getSharesOf(BoxObject object) throws QblStorageException {
-			return null;
-		}
+        @Override
+        public List<BoxShare> getSharesOf(BoxObject object) throws QblStorageException {
+            return null;
+        }
 
-		@Override
-		public boolean hasVersionChanged(DirectoryMetadata dm) throws QblStorageException {
-			return false;
-		}
+        @Override
+        public boolean hasVersionChanged(DirectoryMetadata dm) throws QblStorageException {
+            return false;
+        }
 
-		@Override
-		public boolean hasFile(String name) throws QblStorageException {
-			return false;
-		}
+        @Override
+        public boolean hasFile(String name) throws QblStorageException {
+            return false;
+        }
 
-		@Override
-		public synchronized void setChanged() {
-			super.setChanged();
-		}
+        @Override
+        public synchronized void setChanged() {
+            super.setChanged();
+        }
 
-		@Override
-		public void notifyObservers() {
-			super.notifyObservers();
-		}
-	}
+        @Override
+        public void notifyObservers() {
+            super.notifyObservers();
+        }
+    }
 }

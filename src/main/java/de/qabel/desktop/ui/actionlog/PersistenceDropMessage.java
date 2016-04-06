@@ -13,78 +13,78 @@ import java.util.function.Consumer;
 
 
 public class PersistenceDropMessage extends Persistable {
-	DropMessage dropMessage;
-	Entity receiver;
-	Entity sender;
-	Boolean sent;
-	Boolean seen = true;
+    DropMessage dropMessage;
+    Entity receiver;
+    Entity sender;
+    Boolean sent;
+    Boolean seen = true;
 
-	private transient List<Consumer<PersistenceDropMessage>> observers;
+    private transient List<Consumer<PersistenceDropMessage>> observers;
 
-	public PersistenceDropMessage(DropMessage dropMessage, Entity from, Entity to, Boolean sent, Boolean seen) {
-		this.dropMessage = dropMessage;
+    public PersistenceDropMessage(DropMessage dropMessage, Entity from, Entity to, Boolean sent, Boolean seen) {
+        this.dropMessage = dropMessage;
         receiver = to;
-		this.sent = sent;
+        this.sent = sent;
         sender = from;
-		this.seen = seen;
-	}
+        this.seen = seen;
+    }
 
-	public Entity getSender() {
-		return sender;
-	}
+    public Entity getSender() {
+        return sender;
+    }
 
-	public void setSender(Entity sender) {
-		this.sender = sender;
-		notifyObservers();
-	}
+    public void setSender(Entity sender) {
+        this.sender = sender;
+        notifyObservers();
+    }
 
-	public DropMessage getDropMessage() {
-		return dropMessage;
-	}
+    public DropMessage getDropMessage() {
+        return dropMessage;
+    }
 
-	public void setDropMessage(DropMessage dropMessage) {
-		this.dropMessage = dropMessage;
-		notifyObservers();
-	}
+    public void setDropMessage(DropMessage dropMessage) {
+        this.dropMessage = dropMessage;
+        notifyObservers();
+    }
 
-	public Entity getReceiver() {
-		return receiver;
-	}
+    public Entity getReceiver() {
+        return receiver;
+    }
 
-	public void setReceiver(Entity receiver) {
-		this.receiver = receiver;
-		notifyObservers();
-	}
+    public void setReceiver(Entity receiver) {
+        this.receiver = receiver;
+        notifyObservers();
+    }
 
-	public Boolean isSent() {
-		return sent;
-	}
+    public Boolean isSent() {
+        return sent;
+    }
 
-	public Boolean isSeen() {
-		return seen;
-	}
+    public Boolean isSeen() {
+        return seen;
+    }
 
-	public void setSeen(Boolean seen) {
-		this.seen = seen;
-		notifyObservers();
-	}
+    public void setSeen(Boolean seen) {
+        this.seen = seen;
+        notifyObservers();
+    }
 
-	private synchronized List<Consumer<PersistenceDropMessage>> getObservers() {
-		if (observers == null) {
-			observers = Collections.synchronizedList(new LinkedList<>());
-		}
-		return observers;
-	}
+    private synchronized List<Consumer<PersistenceDropMessage>> getObservers() {
+        if (observers == null) {
+            observers = Collections.synchronizedList(new LinkedList<>());
+        }
+        return observers;
+    }
 
-	public synchronized void addObserver(Consumer<PersistenceDropMessage> observer) {
-		getObservers().add(observer);
-	}
+    public synchronized void addObserver(Consumer<PersistenceDropMessage> observer) {
+        getObservers().add(observer);
+    }
 
-	public synchronized void deleteObserver(Consumer<PersistenceDropMessage> observer) {
-		getObservers().remove(observer);
-	}
+    public synchronized void deleteObserver(Consumer<PersistenceDropMessage> observer) {
+        getObservers().remove(observer);
+    }
 
-	public synchronized void notifyObservers() {
-		getObservers().stream().forEach(consumer -> consumer.accept(this));
-	}
+    public synchronized void notifyObservers() {
+        getObservers().stream().forEach(consumer -> consumer.accept(this));
+    }
 }

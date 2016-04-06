@@ -6,52 +6,52 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 
 public class FxProgressModel {
-	private DoubleProperty progressProperty = new SimpleDoubleProperty(1.0);
-	private HasProgress progress;
-	private Long minimumUpdateDelay = 100L;
+    private DoubleProperty progressProperty = new SimpleDoubleProperty(1.0);
+    private HasProgress progress;
+    private Long minimumUpdateDelay = 100L;
 
-	public FxProgressModel() {
+    public FxProgressModel() {
 
-	}
+    }
 
-	public FxProgressModel(HasProgress progress) {
-		this();
-		setProgress(progress);
-	}
+    public FxProgressModel(HasProgress progress) {
+        this();
+        setProgress(progress);
+    }
 
-	/**
-	 * Sets the minimum delay between two progress changes.
-	 * This reduces the load by minimizing the UI refreshes when the progress is adjusted very fine grained.
-	 * When progress is set to 1.0, it will always be updated, no matter what the delay is.
-	 * delay = null means always update
-	 */
-	public void setMinimumUpdateDelay(Long delay) {
-		minimumUpdateDelay = delay;
-	}
+    /**
+     * Sets the minimum delay between two progress changes.
+     * This reduces the load by minimizing the UI refreshes when the progress is adjusted very fine grained.
+     * When progress is set to 1.0, it will always be updated, no matter what the delay is.
+     * delay = null means always update
+     */
+    public void setMinimumUpdateDelay(Long delay) {
+        minimumUpdateDelay = delay;
+    }
 
-	public DoubleProperty progressProperty() {
-		return progressProperty;
-	}
+    public DoubleProperty progressProperty() {
+        return progressProperty;
+    }
 
-	public void setProgress(HasProgress progress) {
-		this.progress = progress;
-		progress.onProgress(this::updateProgress);
-		updateProgress();
-	}
+    public void setProgress(HasProgress progress) {
+        this.progress = progress;
+        progress.onProgress(this::updateProgress);
+        updateProgress();
+    }
 
-	long lastUpdate;
+    long lastUpdate;
 
-	private void updateProgress() {
-		final double progress = this.progress.getProgress();
-		long now = System.currentTimeMillis();
-		if (!isFinished() && minimumUpdateDelay != null && now < lastUpdate + minimumUpdateDelay) {
-			return;
-		}
-		lastUpdate = now;
-		Platform.runLater(() -> progressProperty.set(progress));
-	}
+    private void updateProgress() {
+        final double progress = this.progress.getProgress();
+        long now = System.currentTimeMillis();
+        if (!isFinished() && minimumUpdateDelay != null && now < lastUpdate + minimumUpdateDelay) {
+            return;
+        }
+        lastUpdate = now;
+        Platform.runLater(() -> progressProperty.set(progress));
+    }
 
-	private boolean isFinished() {
-		return progress.currentSize() == progress.totalSize();
-	}
+    private boolean isFinished() {
+        return progress.currentSize() == progress.totalSize();
+    }
 }

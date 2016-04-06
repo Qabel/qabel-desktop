@@ -11,41 +11,41 @@ import static junit.framework.TestCase.assertEquals;
 
 public class ContactGuiTest extends AbstractGuiTest<ContactController> {
 
-	int namingElements = 1;
+    int namingElements = 1;
 
-	@Override
-	protected FXMLView getView() {
-		return new ContactView();
-	}
+    @Override
+    protected FXMLView getView() {
+        return new ContactView();
+    }
 
-	@Test
-	public void testDeleteContact() throws Exception {
+    @Test
+    public void testDeleteContact() throws Exception {
 
 
-		Identity identity = identityBuilderFactory.factory().withAlias("MainIdentity").build();
-		createNewContactAndSaveInRepo("1", identity);
-		createNewContactAndSaveInRepo("2", identity);
-		createNewContactAndSaveInRepo("3", identity);
+        Identity identity = identityBuilderFactory.factory().withAlias("MainIdentity").build();
+        createNewContactAndSaveInRepo("1", identity);
+        createNewContactAndSaveInRepo("2", identity);
+        createNewContactAndSaveInRepo("3", identity);
 
-		runLaterAndWait(() -> clientConfiguration.selectIdentity(identity));
+        runLaterAndWait(() -> clientConfiguration.selectIdentity(identity));
 
-		int elements = contactRepository.find(identity).getContacts().size();
+        int elements = contactRepository.find(identity).getContacts().size();
 
-		runLaterAndWait(() -> controller.loadContacts());
-		clickOn("#delete");
+        runLaterAndWait(() -> controller.loadContacts());
+        clickOn("#delete");
 
-		assertEquals(elements + namingElements - 1, controller.contactList.getChildren().size());
-	}
+        assertEquals(elements + namingElements - 1, controller.contactList.getChildren().size());
+    }
 
-	private void createNewContactAndSaveInRepo(String name, Identity identity) throws PersistenceException {
-		Identity i3 = identityBuilderFactory.factory().withAlias("I" + name).build();
-		Contact c3 = new Contact("C" + name, i3.getDropUrls(), i3.getEcPublicKey());
-		contactRepository.save(c3, identity);
-	}
+    private void createNewContactAndSaveInRepo(String name, Identity identity) throws PersistenceException {
+        Identity i3 = identityBuilderFactory.factory().withAlias("I" + name).build();
+        Contact c3 = new Contact("C" + name, i3.getDropUrls(), i3.getEcPublicKey());
+        contactRepository.save(c3, identity);
+    }
 
-	@Test
-	public void testDummyContact() throws Exception {
-		assertEquals(1, controller.contactList.getChildren().size());
-	}
+    @Test
+    public void testDummyContact() throws Exception {
+        assertEquals(1, controller.contactList.getChildren().size());
+    }
 
 }

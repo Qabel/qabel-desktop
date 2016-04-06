@@ -23,47 +23,47 @@ import java.util.Collections;
 import java.util.ResourceBundle;
 
 public class SyncController extends AbstractController implements Initializable {
-	@FXML
-	private VBox syncItemContainer;
+    @FXML
+    private VBox syncItemContainer;
 
-	ObservableList<Node> syncItemNodes;
+    ObservableList<Node> syncItemNodes;
 
-	Stage addStage;
+    Stage addStage;
 
-	@Inject
-	private ClientConfiguration clientConfiguration;
+    @Inject
+    private ClientConfiguration clientConfiguration;
 
-	SyncSetupController syncSetupController;
+    SyncSetupController syncSetupController;
 
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		syncItemNodes = syncItemContainer.getChildren();
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        syncItemNodes = syncItemContainer.getChildren();
 
-		ObservableList<BoxSyncConfig> boxSyncConfigs = reload();
-		boxSyncConfigs.addListener((ListChangeListener<BoxSyncConfig>) c -> reload());
-	}
+        ObservableList<BoxSyncConfig> boxSyncConfigs = reload();
+        boxSyncConfigs.addListener((ListChangeListener<BoxSyncConfig>) c -> reload());
+    }
 
-	private ObservableList<BoxSyncConfig> reload() {
-		syncItemNodes.clear();
-		ObservableList<BoxSyncConfig> boxSyncConfigs = clientConfiguration.getBoxSyncConfigs();
+    private ObservableList<BoxSyncConfig> reload() {
+        syncItemNodes.clear();
+        ObservableList<BoxSyncConfig> boxSyncConfigs = clientConfiguration.getBoxSyncConfigs();
 
-		if(Collections.unmodifiableList(boxSyncConfigs).size() == 0){
-			syncItemNodes.add(new DummySyncItemView().getView());
-			return boxSyncConfigs;
-		}
-		for (BoxSyncConfig syncConfig : Collections.unmodifiableList(boxSyncConfigs)) {
-			syncItemNodes.add(new SyncItemView(s -> s.equals("syncConfig") ? syncConfig : null).getView());
-		}
-		return boxSyncConfigs;
-	}
+        if(Collections.unmodifiableList(boxSyncConfigs).size() == 0){
+            syncItemNodes.add(new DummySyncItemView().getView());
+            return boxSyncConfigs;
+        }
+        for (BoxSyncConfig syncConfig : Collections.unmodifiableList(boxSyncConfigs)) {
+            syncItemNodes.add(new SyncItemView(s -> s.equals("syncConfig") ? syncConfig : null).getView());
+        }
+        return boxSyncConfigs;
+    }
 
-	public void addSync(ActionEvent actionEvent) {
-		addStage = new Stage();
-		SyncSetupView view = new SyncSetupView();
-		Scene scene = new Scene(view.getView());
-		addStage.setScene(scene);
-		syncSetupController = (SyncSetupController) view.getPresenter();
-		syncSetupController.setStage(addStage);
-		addStage.show();
-	}
+    public void addSync(ActionEvent actionEvent) {
+        addStage = new Stage();
+        SyncSetupView view = new SyncSetupView();
+        Scene scene = new Scene(view.getView());
+        addStage.setScene(scene);
+        syncSetupController = (SyncSetupController) view.getPresenter();
+        syncSetupController.setStage(addStage);
+        addStage.show();
+    }
 }

@@ -8,20 +8,20 @@ import java.nio.file.Paths;
 import static org.junit.Assert.*;
 
 public class FileBasedSyncBlacklistTest {
-	private Blacklist blacklist;
+    private Blacklist blacklist;
 
-	@Before
-	public void setUp() throws Exception {
-		blacklist = new FileBasedSyncBlacklist(Paths.get(getClass().getResource("/ignore").toURI()));
-	}
+    @Before
+    public void setUp() throws Exception {
+        blacklist = new FileBasedSyncBlacklist(Paths.get(getClass().getResource("/ignore").toURI()));
+    }
 
-	@Test
-	public void testExcludesDownload() {
-		assertTrue(blacklist.matches(Paths.get(".mydoc.docx.qpart~")));
-	}
+    @Test
+    public void testExcludesDownload() {
+        assertTrue(blacklist.matches(Paths.get(".mydoc.docx.qpart~")));
+    }
 
-	@Test
-	public void testDoesNotExcludeNormalWordDocument() {
-		assertFalse(blacklist.matches(Paths.get("mydoc.docx")));
-	}
+    @Test
+    public void testDoesNotExcludeNormalWordDocument() {
+        assertFalse(blacklist.matches(Paths.get("mydoc.docx")));
+    }
 }

@@ -9,6 +9,6 @@ import java.util.Date;
 import java.util.List;
 
 public interface DropConnector {
-	void send(Contact c, DropMessage d) throws QblNetworkInvalidResponseException;
-	List<DropMessage> receive(Identity i, Date siceDate);
+    void send(Contact c, DropMessage d) throws QblNetworkInvalidResponseException;
+    List<DropMessage> receive(Identity i, Date siceDate);
 }

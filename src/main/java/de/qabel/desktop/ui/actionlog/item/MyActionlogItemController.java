@@ -17,51 +17,51 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class MyActionlogItemController extends AbstractController implements Initializable, ActionlogItem {
-	ResourceBundle resourceBundle;
+    ResourceBundle resourceBundle;
 
-	@FXML
-	Pane messageContainer;
-	@FXML
-	Label dateLabel;
+    @FXML
+    Pane messageContainer;
+    @FXML
+    Label dateLabel;
 
-	@Inject
-	private DropMessage dropMessage;
-	@Inject
-	MessageRendererFactory messageRendererFactory;
+    @Inject
+    private DropMessage dropMessage;
+    @Inject
+    MessageRendererFactory messageRendererFactory;
 
-	PrettyTime p;
+    PrettyTime p;
 
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		MessageRenderer renderer = messageRendererFactory.getRenderer(dropMessage.getDropPayloadType());
-		Node renderedMessage = renderer.render(dropMessage.getDropPayload(), resources);
-		renderedMessage.getStyleClass().add("sent");
-		messageContainer.getChildren().addAll(renderedMessage);
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        MessageRenderer renderer = messageRendererFactory.getRenderer(dropMessage.getDropPayloadType());
+        Node renderedMessage = renderer.render(dropMessage.getDropPayload(), resources);
+        renderedMessage.getStyleClass().add("sent");
+        messageContainer.getChildren().addAll(renderedMessage);
 
-		p = new PrettyTime(resources.getLocale());
-		dateLabel.setText(p.format(dropMessage.getCreationDate()));
-	}
-
-
-	@Override
-	public void refreshDate() {
-		Platform.runLater(()-> dateLabel.setText(p.format(dropMessage.getCreationDate())));
-	}
+        p = new PrettyTime(resources.getLocale());
+        dateLabel.setText(p.format(dropMessage.getCreationDate()));
+    }
 
 
-	public Label getDateLabel() {
-		return dateLabel;
-	}
+    @Override
+    public void refreshDate() {
+        Platform.runLater(()-> dateLabel.setText(p.format(dropMessage.getCreationDate())));
+    }
 
-	public void setDateLabel(Label dateLabel) {
-		this.dateLabel = dateLabel;
-	}
 
-	public DropMessage getDropMessage() {
-		return dropMessage;
-	}
+    public Label getDateLabel() {
+        return dateLabel;
+    }
 
-	public void setDropMessage(DropMessage dropMessage) {
-		this.dropMessage = dropMessage;
-	}
+    public void setDateLabel(Label dateLabel) {
+        this.dateLabel = dateLabel;
+    }
+
+    public DropMessage getDropMessage() {
+        return dropMessage;
+    }
+
+    public void setDropMessage(DropMessage dropMessage) {
+        this.dropMessage = dropMessage;
+    }
 }
