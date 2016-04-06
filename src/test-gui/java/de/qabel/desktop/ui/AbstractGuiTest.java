@@ -86,22 +86,34 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 	@Override
 	public void tearDown() throws Exception {
 		if (stage != null) {
-			Platform.runLater(() -> stage.close());
+			Platform.runLater(() -> { try { stage.close(); } catch (Exception ignored) {}});
 		}
 		super.tearDown();
 	}
 
+    /**
+     * @deprecated use page objects
+     */
+    @Deprecated
 	protected FxRobot clickOn(String query) {
 		baseFXRobot.waitForIdle();
 		Node node = waitForNode(query);
 		return clickOn(node);
 	}
 
+    /**
+     * @deprecated use page objects
+     */
+    @Deprecated
 	private boolean hasMoved(Node node, double x, double y) {
 		PointQuery point = robot.point(node);
 		return point.getPosition().getX() == x && point.getPosition().getY() == y;
 	}
 
+    /**
+     * @deprecated use page objects
+     */
+    @Deprecated
 	protected FxRobot clickOn(Node node) {
 		moveTo(node);
 		FxRobot fxRobot;
@@ -114,10 +126,10 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 		return fxRobot;
 	}
 
-	protected FxRobot moveTo(String query) {
-		return moveTo(getFirstNode(query));
-	}
-
+    /**
+     * @deprecated use page objects
+     */
+    @Deprecated
 	protected FxRobot moveTo(Node node) {
 		baseFXRobot.waitForIdle();
 		double x = -1;
@@ -135,6 +147,10 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 		return robot.moveTo(node);
 	}
 
+    /**
+     * @deprecated use page objects
+     */
+    @Deprecated
 	protected Node waitForNode(String query) {
 		Node[] nodes = new Node[1];
 		waitUntil(() -> {
@@ -146,15 +162,5 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 			return present;
 		});
 		return nodes[0];
-	}
-
-	protected Node getFirstNode(String query) {
-		return robot.lookup(query).tryQueryFirst().get();
-	}
-
-	protected List<Node> getNodes(String query) {
-		List<Node> nodes = new LinkedList<>();
-		nodes.addAll(robot.lookup(query).queryAll());
-		return nodes;
 	}
 }

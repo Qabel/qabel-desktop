@@ -9,8 +9,6 @@ import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.daemon.sync.worker.FakeSyncer;
 import de.qabel.desktop.ui.AbstractGuiTest;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Labeled;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -20,4 +20,9 @@ public class RemoteBrowserPage extends AbstractPage {
 		assertRowCountAtLeast(rowIndex + 1);
 		return new RemoteBrowserRow(baseFXRobot, robot, controller, rowIndex);
 	}
+
+    public FxRobot expandNode(int nodeToExpand) {
+        waitUntil(() -> getNodes(".tree-disclosure-node > .arrow").size() >= nodeToExpand, 5000L);
+        return clickOn(getNodes(".tree-disclosure-node > .arrow").get(nodeToExpand));
+    }
 }

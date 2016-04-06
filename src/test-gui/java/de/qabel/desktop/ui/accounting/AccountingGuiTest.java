@@ -6,13 +6,21 @@ import de.qabel.core.config.Identity;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractGuiTest;
-import javafx.scene.control.ButtonType;
+import org.junit.Before;
 import org.junit.Test;
 
-import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.junit.Assert.assertEquals;
 
 public class AccountingGuiTest extends AbstractGuiTest<AccountingController> {
+    private AccountingPage page;
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        page = new AccountingPage(baseFXRobot, robot, controller);
+    }
+
 	@Override
 	protected FXMLView getView() {
 		return new AccountingView();
@@ -20,12 +28,8 @@ public class AccountingGuiTest extends AbstractGuiTest<AccountingController> {
 
 	@Test
 	public void testAddsIdentity() throws EntityNotFoundExcepion, PersistenceException {
-		clickOn("#add");
-		waitUntil(() -> controller.dialog != null);
-		runLaterAndWait(() -> controller.dialog.getEditor().setText("a new identity"));
-		controller.clientConfiguration.selectIdentity(null);
-
-		clickOn(controller.dialog.getDialogPane().lookupButton(ButtonType.OK));
+        controller.clientConfiguration.selectIdentity(null);
+        page.add().inputAndConfirm("a new identity");
 
 		Identities identities = identityRepository.findAll();
 		assertEquals(1, identities.getIdentities().size());
