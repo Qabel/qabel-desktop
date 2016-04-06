@@ -27,13 +27,14 @@ public class Migration000000001CreateIdentitiyTest extends AbstractSqliteTest {
 
     public PreparedStatement insertIdentity() throws SQLException {
         PreparedStatement statement = connection.prepareStatement(
-            "INSERT INTO identity (id, primaryKey, alias, email, phone) VALUES (?, ?, ?, ?, ?)"
+            "INSERT INTO identity (id, publicKey, privateKey, alias, email, phone) VALUES (?, ?, ?, ?, ?, ?)"
         );
         statement.setInt(1, 1);
         statement.setString(2, Hex.toHexString("12345678901234567890123456789012".getBytes()));
-        statement.setString(3, "my name");
-        statement.setString(4, "mail@example.com");
-        statement.setString(5, "01234567890");
+        statement.setString(3, Hex.toHexString("12345678901234567890123456789012".getBytes()));
+        statement.setString(4, "my name");
+        statement.setString(5, "mail@example.com");
+        statement.setString(6, "01234567890");
         statement.execute();
         return statement;
     }

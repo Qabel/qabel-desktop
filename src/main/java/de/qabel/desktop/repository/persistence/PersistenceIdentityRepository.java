@@ -46,7 +46,6 @@ public class PersistenceIdentityRepository extends AbstractCachedPersistenceRepo
         return identities;
     }
 
-
     @Override
     public void save(Identity identity) throws PersistenceException {
         boolean result;

@@ -19,17 +19,18 @@ public class Migration000000001CreateIdentitiy extends AbstractMigration {
     public void up() throws SQLException {
         execute(
             "CREATE TABLE identity (" +
-                "id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY," +
-                "primaryKey VARCHAR(64) NOT NULL," +
+                "id INT UNSIGNED PRIMARY KEY," +
+                "publicKey VARCHAR(64) NOT NULL," +
+                "privateKey VARCHAR(64) NOT NULL," +
                 "alias VARCHAR(255) NOT NULL," +
-                "email VARCHAR(255) NOT NULL," +
-                "phone VARCHAR(255) NOT NULL" +
+                "email VARCHAR(255) NULL," +
+                "phone VARCHAR(255) NULL" +
             ")"
         );
-        execute("CREATE INDEX idx_identity_primaryKey ON identity (primaryKey)");
+        execute("CREATE INDEX idx_identity_publicKey ON identity (publicKey)");
         execute(
             "CREATE TABLE drop_url (" +
-                "id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY," +
+                "id INT UNSIGNED PRIMARY KEY," +
                 "identity_id INT UNSIGNED NOT NULL," +
                 "url VARCHAR(2000) NOT NULL," +
                 "FOREIGN KEY (identity_id) REFERENCES identity (id)" +

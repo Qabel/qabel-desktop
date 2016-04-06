@@ -6,9 +6,6 @@ import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class InMemoryIdentityRepository implements IdentityRepository {
     private Identities identities = new Identities();
 
