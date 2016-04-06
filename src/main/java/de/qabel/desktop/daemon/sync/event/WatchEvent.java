@@ -3,10 +3,10 @@ package de.qabel.desktop.daemon.sync.event;
 import java.nio.file.Path;
 
 public interface WatchEvent {
-	Path getPath();
-	boolean isDir();
+    Path getPath();
+    boolean isDir();
 
-	boolean isValid();
+    boolean isValid();
 
-	Long getMtime();
+    Long getMtime();
 }

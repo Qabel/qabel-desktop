@@ -16,38 +16,38 @@ import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.junit.Assert.*;
 
 public class ActionlogTest extends AbstractControllerTest {
-	private StubDropMessageRepository repo = new StubDropMessageRepository();
-	private Actionlog log;
-	private DropMessage msg;
-	private Contact contact = new Contact("alias", null, new QblECKeyPair().getPub());
-	private List<PersistenceDropMessage> notifications = new LinkedList<>();
+    private StubDropMessageRepository repo = new StubDropMessageRepository();
+    private Actionlog log;
+    private DropMessage msg;
+    private Contact contact = new Contact("alias", null, new QblECKeyPair().getPub());
+    private List<PersistenceDropMessage> notifications = new LinkedList<>();
 
-	@Override
+    @Override
     @Before
-	public void setUp() throws Exception {
-		super.setUp();
-		log = new Actionlog(repo);
-		msg = new DropMessage(contact, "payload", "type");
-		log.addObserver(message -> notifications.add(message));
-	}
+    public void setUp() throws Exception {
+        super.setUp();
+        log = new Actionlog(repo);
+        msg = new DropMessage(contact, "payload", "type");
+        log.addObserver(message -> notifications.add(message));
+    }
 
-	@Test
-	public void testActionlogKnowsUnseenMessages() throws Exception {
-		repo.addMessage(msg, contact, identity, false);
+    @Test
+    public void testActionlogKnowsUnseenMessages() throws Exception {
+        repo.addMessage(msg, contact, identity, false);
 
-		assertEquals(1, log.getUnseenMessageCount());
-		waitUntil(() -> notifications.size() == 1);
-		assertEquals(repo.lastMessage, notifications.get(0));
-	}
+        assertEquals(1, log.getUnseenMessageCount());
+        waitUntil(() -> notifications.size() == 1);
+        assertEquals(repo.lastMessage, notifications.get(0));
+    }
 
-	@Test
-	public void actionlogKnowsWhenMessageWasSeen() throws Exception {
-		repo.addMessage(msg, contact, identity, false);
-		waitUntil(() -> notifications.size() == 1);
-		notifications.clear();
-		repo.lastMessage.setSeen(true);
+    @Test
+    public void actionlogKnowsWhenMessageWasSeen() throws Exception {
+        repo.addMessage(msg, contact, identity, false);
+        waitUntil(() -> notifications.size() == 1);
+        notifications.clear();
+        repo.lastMessage.setSeen(true);
 
-		assertEquals(0, log.getUnseenMessageCount());
-		waitUntil(() -> notifications.size() == 1);
-	}
+        assertEquals(0, log.getUnseenMessageCount());
+        waitUntil(() -> notifications.size() == 1);
+    }
 }

@@ -30,195 +30,195 @@ import java.util.ResourceBundle;
 
 public class SyncItemController extends AbstractController implements Initializable {
 
-	@Inject
-	private ClientConfiguration clientConfiguration;
+    @Inject
+    private ClientConfiguration clientConfiguration;
 
-	@Inject
-	private BoxSyncConfig syncConfig;
+    @Inject
+    private BoxSyncConfig syncConfig;
 
-	@FXML
-	private Label name;
+    @FXML
+    private Label name;
 
-	@FXML
-	private Label localPath;
+    @FXML
+    private Label localPath;
 
-	@FXML
-	private Label remotePath;
+    @FXML
+    private Label remotePath;
 
-	@FXML
-	private ProgressBar progress;
+    @FXML
+    private ProgressBar progress;
 
-	@FXML
-	private ColumnConstraints itemProgressColumn;
+    @FXML
+    private ColumnConstraints itemProgressColumn;
 
-	@FXML
-	private ImageView syncImage;
+    @FXML
+    private ImageView syncImage;
 
-	@FXML
-	private ImageView currentItemIcon;
+    @FXML
+    private ImageView currentItemIcon;
 
-	@FXML
-	private Label syncStatusLabel;
+    @FXML
+    private Label syncStatusLabel;
 
-	@FXML
-	private Label itemStatusLabel;
+    @FXML
+    private Label itemStatusLabel;
 
-	@FXML
-	private Label currentItemLabel;
+    @FXML
+    private Label currentItemLabel;
 
-	@FXML
-	private StackPane composedProgressPane;
+    @FXML
+    private StackPane composedProgressPane;
 
-	@FXML
-	private VBox statusContentPane;
+    @FXML
+    private VBox statusContentPane;
 
-	private BoxSync boxSync;
+    private BoxSync boxSync;
 
-	Alert confirmationDialog;
-	private ResourceBundle resources;
-	private TransferViewModel progressModel;
+    Alert confirmationDialog;
+    private ResourceBundle resources;
+    private TransferViewModel progressModel;
 
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		this.resources = resources;
-		FXBoxSyncConfig fxConfig = new FXBoxSyncConfig(syncConfig);
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        this.resources = resources;
+        FXBoxSyncConfig fxConfig = new FXBoxSyncConfig(syncConfig);
 
-		name.textProperty().bind(fxConfig.nameProperty());
-		localPath.textProperty().bind(fxConfig.localPathProperty());
-		remotePath.textProperty().bind(fxConfig.remotePathProperty());
+        name.textProperty().bind(fxConfig.nameProperty());
+        localPath.textProperty().bind(fxConfig.localPathProperty());
+        remotePath.textProperty().bind(fxConfig.remotePathProperty());
 
 
-		syncConfig.withSyncer(this::initModel);
-	}
+        syncConfig.withSyncer(this::initModel);
+    }
 
-	public void initModel(Syncer syncer) {
-		boxSync = syncer;
-		progressModel = new TransferViewModel(syncer);
-		progress.progressProperty().bind(progressModel.progressProperty());
+    public void initModel(Syncer syncer) {
+        boxSync = syncer;
+        progressModel = new TransferViewModel(syncer);
+        progress.progressProperty().bind(progressModel.progressProperty());
 
-		progressModel.progressProperty().addListener((observable, oldValue, newValue) -> {
-			updateSyncStatus();
-		});
-		progressModel.currentItemProperty().addListener(observable -> {
-			updateSyncStatus(progressModel.currentItemProperty().get());
-		});
+        progressModel.progressProperty().addListener((observable, oldValue, newValue) -> {
+            updateSyncStatus();
+        });
+        progressModel.currentItemProperty().addListener(observable -> {
+            updateSyncStatus(progressModel.currentItemProperty().get());
+        });
 
-		itemStatusLabel.textProperty().bind(progressModel.currentTransactionPercentLabel());
-		itemProgressColumn.percentWidthProperty().bind(progressModel.currentTransactionPercent());
-		currentItemLabel.textProperty().bind(progressModel.currentTransactionLabel());
-		currentItemIcon.visibleProperty().bind(progressModel.currentTransactionImageVisible());
-		currentItemIcon.imageProperty().bind(progressModel.currentTransactionImage());
-		currentItemLabel.visibleProperty().bind(progressModel.currentTransactionImageVisible());
+        itemStatusLabel.textProperty().bind(progressModel.currentTransactionPercentLabel());
+        itemProgressColumn.percentWidthProperty().bind(progressModel.currentTransactionPercent());
+        currentItemLabel.textProperty().bind(progressModel.currentTransactionLabel());
+        currentItemIcon.visibleProperty().bind(progressModel.currentTransactionImageVisible());
+        currentItemIcon.imageProperty().bind(progressModel.currentTransactionImage());
+        currentItemLabel.visibleProperty().bind(progressModel.currentTransactionImageVisible());
 
-		updateSyncStatus();
-		syncStatusLabel.setText("");
-	}
+        updateSyncStatus();
+        syncStatusLabel.setText("");
+    }
 
-	public void open() {
-		new Thread(() -> {
-			tryOrAlert(() -> Desktop.getDesktop().open(syncConfig.getLocalPath().toFile()));
-		}).start();
-	}
+    public void open() {
+        new Thread(() -> {
+            tryOrAlert(() -> Desktop.getDesktop().open(syncConfig.getLocalPath().toFile()));
+        }).start();
+    }
 
-	public void delete() {
-		tryOrAlert(() -> {
-			String contentText = getString(resources, "deleteSyncConfirmation", syncConfig.getName());
-			confirmationDialog = new Alert(Alert.AlertType.CONFIRMATION, contentText, ButtonType.YES, ButtonType.CANCEL);
-			confirmationDialog.setTitle(resources.getString("deleteSyncConfirmationHeadline"));
-			confirmationDialog.setHeaderText(null);
-			confirmationDialog.showAndWait()
-					.ifPresent(buttonType -> {
-						try {
-							if (buttonType != ButtonType.YES) {
-								return;
-							}
-							if (syncConfig.getSyncer() != null) {
-								try {
-									syncConfig.getSyncer().stop();
-								} catch (InterruptedException e) {
-									// best effort
-									alert("error while stopping sync: " + e.getMessage(), e);
-								} finally {
-									syncConfig.setSyncer(null);
-									clientConfiguration.getBoxSyncConfigs().remove(syncConfig);
-								}
-							}
-						} finally {
-							confirmationDialog = null;
-						}
-					});
-		});
-	}
+    public void delete() {
+        tryOrAlert(() -> {
+            String contentText = getString(resources, "deleteSyncConfirmation", syncConfig.getName());
+            confirmationDialog = new Alert(Alert.AlertType.CONFIRMATION, contentText, ButtonType.YES, ButtonType.CANCEL);
+            confirmationDialog.setTitle(resources.getString("deleteSyncConfirmationHeadline"));
+            confirmationDialog.setHeaderText(null);
+            confirmationDialog.showAndWait()
+                    .ifPresent(buttonType -> {
+                        try {
+                            if (buttonType != ButtonType.YES) {
+                                return;
+                            }
+                            if (syncConfig.getSyncer() != null) {
+                                try {
+                                    syncConfig.getSyncer().stop();
+                                } catch (InterruptedException e) {
+                                    // best effort
+                                    alert("error while stopping sync: " + e.getMessage(), e);
+                                } finally {
+                                    syncConfig.setSyncer(null);
+                                    clientConfiguration.getBoxSyncConfigs().remove(syncConfig);
+                                }
+                            }
+                        } finally {
+                            confirmationDialog = null;
+                        }
+                    });
+        });
+    }
 
-	private void updateSyncStatus(Transaction transaction) {
-		updateSyncStatus();
-	}
+    private void updateSyncStatus(Transaction transaction) {
+        updateSyncStatus();
+    }
 
-	private String renderTransaction(Transaction transaction) {
-		String filename = transaction.getDestination().getFileName().toString();
-		String direction = transaction instanceof Upload ? "Remote" : "Local";
-		String type = transaction.getType().toString();
-		return filename + " (" + StringUtils.capitalize(type) + " " + transaction.getSize() / 1024 + "kb)";
-	}
+    private String renderTransaction(Transaction transaction) {
+        String filename = transaction.getDestination().getFileName().toString();
+        String direction = transaction instanceof Upload ? "Remote" : "Local";
+        String type = transaction.getType().toString();
+        return filename + " (" + StringUtils.capitalize(type) + " " + transaction.getSize() / 1024 + "kb)";
+    }
 
-	private void updateSyncStatus() {
-		if (boxSync == null)
-			return;
+    private void updateSyncStatus() {
+        if (boxSync == null)
+            return;
 
-		syncImage.setImage(new Image(getClass().getResourceAsStream(getImage(boxSync.isSynced()))));
-		syncStatusLabel.setText(getSyncStatusText());
-	}
+        syncImage.setImage(new Image(getClass().getResourceAsStream(getImage(boxSync.isSynced()))));
+        syncStatusLabel.setText(getSyncStatusText());
+    }
 
-	private String getSyncStatusText() {
-		if (boxSync.isSynced()) {
-			return "Ready";
-		}
+    private String getSyncStatusText() {
+        if (boxSync.isSynced()) {
+            return "Ready";
+        }
 
-		long totalTransfers = progressModel.totalItemsProperty().get();
-		if (totalTransfers == 0) {
-			return "Collecting files... " + syncConfig.getSyncer().getHistory().size();
-		}
-		return "Syncing: " + progressModel.currentItemsProperty().get() + " / " + totalTransfers;
-	}
+        long totalTransfers = progressModel.totalItemsProperty().get();
+        if (totalTransfers == 0) {
+            return "Collecting files... " + syncConfig.getSyncer().getHistory().size();
+        }
+        return "Syncing: " + progressModel.currentItemsProperty().get() + " / " + totalTransfers;
+    }
 
-	@FXML
-	public void showHistory() {
-		tryOrAlert(() -> {
-			Alert alert = new Alert(Alert.AlertType.INFORMATION);
-			alert.setHeaderText(null);
-			alert.setTitle("Sync History");
+    @FXML
+    public void showHistory() {
+        tryOrAlert(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText(null);
+            alert.setTitle("Sync History");
 
-			StringBuilder history = new StringBuilder();
-			syncConfig.getSyncer().getHistory().stream()
-					.sorted((o1, o2) -> (int)(o1.transactionAge() - o2.transactionAge()))
-					.forEach(transaction -> {
-						if (history.length() != 0) {
-							history.append("\n");
-						}
-						history.append(renderTransaction(transaction)).append(" ").append(transaction.getState());
-					});
+            StringBuilder history = new StringBuilder();
+            syncConfig.getSyncer().getHistory().stream()
+                    .sorted((o1, o2) -> (int)(o1.transactionAge() - o2.transactionAge()))
+                    .forEach(transaction -> {
+                        if (history.length() != 0) {
+                            history.append("\n");
+                        }
+                        history.append(renderTransaction(transaction)).append(" ").append(transaction.getState());
+                    });
 
-			TextArea textArea = new TextArea(history.toString());
-			VBox.setMargin(textArea, new Insets(10, 0, 5, 0));
-			textArea.setEditable(false);
-			textArea.setWrapText(false);
+            TextArea textArea = new TextArea(history.toString());
+            VBox.setMargin(textArea, new Insets(10, 0, 5, 0));
+            textArea.setEditable(false);
+            textArea.setWrapText(false);
 
-			VBox.setVgrow(textArea, Priority.ALWAYS);
+            VBox.setVgrow(textArea, Priority.ALWAYS);
 
-			VBox expansion = new VBox();
+            VBox expansion = new VBox();
 
-			expansion.getChildren().add(textArea);
+            expansion.getChildren().add(textArea);
 
-			alert.getDialogPane().setContent(expansion);
-			alert.setResizable(true);
-			alert.showAndWait();
-		});
-	}
+            alert.getDialogPane().setContent(expansion);
+            alert.setResizable(true);
+            alert.showAndWait();
+        });
+    }
 
-	private String getImage(boolean synced) {
-		if (synced) {
-			return "/ic_folder_black_synced.png";
-		}
-		return "/ic_folder_black_syncing.png";
-	}
+    private String getImage(boolean synced) {
+        if (synced) {
+            return "/ic_folder_black_synced.png";
+        }
+        return "/ic_folder_black_syncing.png";
+    }
 }

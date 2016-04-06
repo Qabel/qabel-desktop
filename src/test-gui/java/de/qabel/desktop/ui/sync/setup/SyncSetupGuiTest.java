@@ -18,18 +18,18 @@ public class SyncSetupGuiTest extends AbstractGuiTest<SyncSetupController> {
     }
 
     @Override
-	protected FXMLView getView() {
-		return new SyncSetupView();
-	}
+    protected FXMLView getView() {
+        return new SyncSetupView();
+    }
 
-	@Test
-	public void testInputReacts() {
-		page.enterName("testname");
+    @Test
+    public void testInputReacts() {
+        page.enterName("testname");
         page.enterLocalPath("localPath");
         page.enterRemotePath("remotePath");
 
-		assertEquals("testname", controller.name.getText());
-		assertEquals("localPath", controller.localPath.getText());
-		assertEquals("remotePath", controller.remotePath.getText());
-	}
+        assertEquals("testname", controller.name.getText());
+        assertEquals("localPath", controller.localPath.getText());
+        assertEquals("remotePath", controller.remotePath.getText());
+    }
 }

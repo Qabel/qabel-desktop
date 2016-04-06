@@ -14,25 +14,25 @@ import java.util.List;
 
 public class InMemoryHttpDropConnector implements DropConnector {
 
-	HashMap<String, List<DropMessage>> contactLists = new HashMap<>();
+    HashMap<String, List<DropMessage>> contactLists = new HashMap<>();
 
-	@Override
-	public void send(Contact c, DropMessage d) throws QblNetworkInvalidResponseException {
+    @Override
+    public void send(Contact c, DropMessage d) throws QblNetworkInvalidResponseException {
 
-		List lst = contactLists.get(c.getKeyIdentifier());
-		if(lst == null){
-			lst = new LinkedList<DropMessage>();
-			lst.add(d);
-		}
-		contactLists.put(c.getKeyIdentifier(), lst);
-	}
+        List lst = contactLists.get(c.getKeyIdentifier());
+        if(lst == null){
+            lst = new LinkedList<DropMessage>();
+            lst.add(d);
+        }
+        contactLists.put(c.getKeyIdentifier(), lst);
+    }
 
-	@Override
-	public List<DropMessage> receive(Identity i, Date siceDate) {
-		List<DropMessage> lst = contactLists.get(i.getKeyIdentifier());
-		if(lst == null){
-			return new LinkedList<>();
-		}
-		return contactLists.get(i.getKeyIdentifier());
-	}
+    @Override
+    public List<DropMessage> receive(Identity i, Date siceDate) {
+        List<DropMessage> lst = contactLists.get(i.getKeyIdentifier());
+        if(lst == null){
+            return new LinkedList<>();
+        }
+        return contactLists.get(i.getKeyIdentifier());
+    }
 }

@@ -5,5 +5,5 @@ import de.qabel.core.config.Identity;
 import de.qabel.desktop.storage.BoxVolume;
 
 public interface BoxVolumeFactory {
-	BoxVolume getVolume(Account account, Identity identity);
+    BoxVolume getVolume(Account account, Identity identity);
 }

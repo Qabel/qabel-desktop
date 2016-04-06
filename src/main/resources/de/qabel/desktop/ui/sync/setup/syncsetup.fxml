@@ -8,12 +8,12 @@
 <VBox prefWidth="600" styleClass="dialog" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.sync.setup.SyncSetupController">
    <children>
 
-	   <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"  styleClass="row">
-		   <children>
-			   <Label prefWidth="150.0" text="Name" />
-			   <TextField fx:id="name" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%syncSetupText" />
-		   </children>
-	   </HBox>
+       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"  styleClass="row">
+           <children>
+               <Label prefWidth="150.0" text="Name" />
+               <TextField fx:id="name" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%syncSetupText" />
+           </children>
+       </HBox>
 
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">
          <children>
@@ -41,7 +41,7 @@
                <HBox.margin>
                   <Insets right="15.0" />
                </HBox.margin>
-			</Button>
+            </Button>
             <Button fx:id="start" defaultButton="true" onAction="#createSyncConfig" text="%syncSetupStartSync" />
          </children>
       </HBox>

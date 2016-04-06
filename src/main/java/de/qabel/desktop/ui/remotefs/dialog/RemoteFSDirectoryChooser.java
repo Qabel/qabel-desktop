@@ -11,23 +11,23 @@ import java.util.ResourceBundle;
 
 public class RemoteFSDirectoryChooser extends RemoteFSChooser {
 
-	public RemoteFSDirectoryChooser(ResourceBundle resources, BoxVolume volume) throws QblStorageException {
-		super(resources, volume);
-	}
+    public RemoteFSDirectoryChooser(ResourceBundle resources, BoxVolume volume) throws QblStorageException {
+        super(resources, volume);
+    }
 
-	@Override
-	public void changed(ObservableValue<? extends TreeItem<BoxObject>> observable, TreeItem<BoxObject> oldValue, TreeItem<BoxObject> newValue) {
-		if (!(newValue instanceof FolderTreeItem)) {
-			selectedProperty.setValue(null);
-			return;
-		}
-		FolderTreeItem folderItem = (FolderTreeItem)newValue;
-		ReadableBoxNavigation navigation = folderItem.getNavigation();
-		if (!(navigation instanceof PathNavigation)) {
-			selectedProperty.setValue(null);
-			return;
-		}
-		Path result = ((PathNavigation) navigation).getPath();
-		selectedProperty.setValue(result);
-	}
+    @Override
+    public void changed(ObservableValue<? extends TreeItem<BoxObject>> observable, TreeItem<BoxObject> oldValue, TreeItem<BoxObject> newValue) {
+        if (!(newValue instanceof FolderTreeItem)) {
+            selectedProperty.setValue(null);
+            return;
+        }
+        FolderTreeItem folderItem = (FolderTreeItem)newValue;
+        ReadableBoxNavigation navigation = folderItem.getNavigation();
+        if (!(navigation instanceof PathNavigation)) {
+            selectedProperty.setValue(null);
+            return;
+        }
+        Path result = ((PathNavigation) navigation).getPath();
+        selectedProperty.setValue(result);
+    }
 }

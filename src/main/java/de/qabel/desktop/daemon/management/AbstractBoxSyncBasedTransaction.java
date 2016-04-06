@@ -8,45 +8,45 @@ import de.qabel.desktop.storage.BoxVolume;
 import java.nio.file.Path;
 
 public abstract class AbstractBoxSyncBasedTransaction extends AbstractTransaction {
-	protected final BoxSyncConfig boxSyncConfig;
-	protected final WatchEvent event;
-	protected final BoxVolume volume;
+    protected final BoxSyncConfig boxSyncConfig;
+    protected final WatchEvent event;
+    protected final BoxVolume volume;
 
-	public AbstractBoxSyncBasedTransaction(BoxVolume volume, WatchEvent event, BoxSyncConfig boxSyncConfig) {
-		super(event.getMtime());
-		this.volume = volume;
-		this.event = event;
-		this.boxSyncConfig = boxSyncConfig;
-	}
+    public AbstractBoxSyncBasedTransaction(BoxVolume volume, WatchEvent event, BoxSyncConfig boxSyncConfig) {
+        super(event.getMtime());
+        this.volume = volume;
+        this.event = event;
+        this.boxSyncConfig = boxSyncConfig;
+    }
 
-	@Override
+    @Override
     public Transaction.TYPE getType() {
-		if (!(event instanceof ChangeEvent)) {
-			return Transaction.TYPE.CREATE;
-		}
+        if (!(event instanceof ChangeEvent)) {
+            return Transaction.TYPE.CREATE;
+        }
 
-		switch (((ChangeEvent) event).getType()) {
-			case CREATE:
-				return Transaction.TYPE.CREATE;
-			case DELETE:
-				return Transaction.TYPE.DELETE;
-			default:
-				return Transaction.TYPE.UPDATE;
-		}
-	}
+        switch (((ChangeEvent) event).getType()) {
+            case CREATE:
+                return Transaction.TYPE.CREATE;
+            case DELETE:
+                return Transaction.TYPE.DELETE;
+            default:
+                return Transaction.TYPE.UPDATE;
+        }
+    }
 
-	@Override
+    @Override
     public BoxVolume getBoxVolume() {
-		return volume;
-	}
+        return volume;
+    }
 
-	@Override
+    @Override
     public Path getSource() {
-		return event.getPath();
-	}
+        return event.getPath();
+    }
 
-	@Override
+    @Override
     public boolean isDir() {
-		return event.isDir();
-	}
+        return event.isDir();
+    }
 }

@@ -20,47 +20,47 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class OtherActionlogItemController extends AbstractController implements Initializable, ActionlogItem {
-	ResourceBundle resourceBundle;
+    ResourceBundle resourceBundle;
 
-	@FXML
-	Label dateLabel;
-	@FXML
-	Pane avatarContainer;
-	@FXML
-	Pane messageContainer;
+    @FXML
+    Label dateLabel;
+    @FXML
+    Pane avatarContainer;
+    @FXML
+    Pane messageContainer;
 
-	@Inject
-	DropMessage dropMessage;
-	@Inject
-	Contact contact;
-	@Inject
-	MessageRendererFactory messageRendererFactory;
+    @Inject
+    DropMessage dropMessage;
+    @Inject
+    Contact contact;
+    @Inject
+    MessageRendererFactory messageRendererFactory;
 
-	PrettyTime p;
+    PrettyTime p;
 
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
 
-		MessageRenderer renderer = messageRendererFactory.getRenderer(dropMessage.getDropPayloadType());
-		Node renderedMessage = renderer.render(dropMessage.getDropPayload(), resources);
-		messageContainer.getChildren().addAll(renderedMessage);
+        MessageRenderer renderer = messageRendererFactory.getRenderer(dropMessage.getDropPayloadType());
+        Node renderedMessage = renderer.render(dropMessage.getDropPayload(), resources);
+        messageContainer.getChildren().addAll(renderedMessage);
 
-		p = new PrettyTime(resources.getLocale());
-		dateLabel.setText(p.format(dropMessage.getCreationDate()));
+        p = new PrettyTime(resources.getLocale());
+        dateLabel.setText(p.format(dropMessage.getCreationDate()));
 
-		dateLabel.setWrapText(true);
+        dateLabel.setWrapText(true);
 
-		dateLabel.setTextAlignment(TextAlignment.JUSTIFY);
-		updateAvatar();
-	}
+        dateLabel.setTextAlignment(TextAlignment.JUSTIFY);
+        updateAvatar();
+    }
 
-	private void updateAvatar() {
-		new AvatarView(e -> contact.getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
-	}
+    private void updateAvatar() {
+        new AvatarView(e -> contact.getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
+    }
 
 
-	@Override
-	public void refreshDate() {
-		Platform.runLater(()-> dateLabel.setText(p.format(dropMessage.getCreationDate())));
-	}
+    @Override
+    public void refreshDate() {
+        Platform.runLater(()-> dateLabel.setText(p.format(dropMessage.getCreationDate())));
+    }
 }

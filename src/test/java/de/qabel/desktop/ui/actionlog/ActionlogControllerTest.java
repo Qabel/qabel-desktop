@@ -29,93 +29,93 @@ import static org.junit.Assert.assertTrue;
 
 
 public class ActionlogControllerTest extends AbstractControllerTest {
-	ActionlogController controller;
-	Identity i;
-	ActionlogView view;
-	Contact c;
-	String text = "MessageString";
-	DropMessage dm;
+    ActionlogController controller;
+    Identity i;
+    ActionlogView view;
+    Contact c;
+    String text = "MessageString";
+    DropMessage dm;
 
-	@Test
-	public void addMessageToActionlogTest() throws Exception {
-		contactRepository.save((Contact) dm.getSender(), i);
-		controller.addMessageToActionlog(dm);
-		assertEquals(1, controller.messages.getChildren().size());
-	}
+    @Test
+    public void addMessageToActionlogTest() throws Exception {
+        contactRepository.save((Contact) dm.getSender(), i);
+        controller.addMessageToActionlog(dm);
+        assertEquals(1, controller.messages.getChildren().size());
+    }
 
-	@Test
-	public void addOwnMessageToActionlogTest() throws Exception {
-		controller.addOwnMessageToActionlog(dm);
-		assertEquals(1, controller.messages.getChildren().size());
-	}
+    @Test
+    public void addOwnMessageToActionlogTest() throws Exception {
+        controller.addOwnMessageToActionlog(dm);
+        assertEquals(1, controller.messages.getChildren().size());
+    }
 
-	@Test
-	public void marksSeenMessages() throws Exception {
-		controller.setContact(c);
-		waitUntil(() -> controller.contact == c);
-		dropMessageRepository.addMessage(dm, c, i, false);
-		waitUntil(() -> dropMessageRepository.lastMessage.isSeen());
-	}
+    @Test
+    public void marksSeenMessages() throws Exception {
+        controller.setContact(c);
+        waitUntil(() -> controller.contact == c);
+        dropMessageRepository.addMessage(dm, c, i, false);
+        waitUntil(() -> dropMessageRepository.lastMessage.isSeen());
+    }
 
-	@Test
-	public void switchBetweenIdentitesTest() throws Exception {
-		clientConfiguration.selectIdentity(i);
-		controller.sendDropMessage(c, "msg1");
-		i = identityBuilderFactory.factory().withAlias("NewIdentity").build();
-		c = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
+    @Test
+    public void switchBetweenIdentitesTest() throws Exception {
+        clientConfiguration.selectIdentity(i);
+        controller.sendDropMessage(c, "msg1");
+        i = identityBuilderFactory.factory().withAlias("NewIdentity").build();
+        c = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
 
-		String msg2 = "msg2";
-		controller.sendDropMessage(c, msg2);
-		clientConfiguration.selectIdentity(i);
+        String msg2 = "msg2";
+        controller.sendDropMessage(c, msg2);
+        clientConfiguration.selectIdentity(i);
 
-		List<PersistenceDropMessage> lst = dropMessageRepository.loadConversation(c, i);
+        List<PersistenceDropMessage> lst = dropMessageRepository.loadConversation(c, i);
 
-		assertEquals(1, lst.size());
-		assertEquals(msg2, TextMessage.fromJson(lst.get(0).dropMessage.getDropPayload()).getText());
-	}
+        assertEquals(1, lst.size());
+        assertEquals(msg2, TextMessage.fromJson(lst.get(0).dropMessage.getDropPayload()).getText());
+    }
 
-	@Test
-	public void refreshTime() throws Exception {
-		controller.sleepTime = 1;
-		controller.dateRefresher.interrupt();
-		DropMessage d = new DropMessage(i, new TextMessage("payload").toJson(), "test");
-		Contact sender = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
+    @Test
+    public void refreshTime() throws Exception {
+        controller.sleepTime = 1;
+        controller.dateRefresher.interrupt();
+        DropMessage d = new DropMessage(i, new TextMessage("payload").toJson(), "test");
+        Contact sender = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
 
-		Map<String, Object> injectionContext = new HashMap<>();
-		injectionContext.put("dropMessage", d);
-		injectionContext.put("contact", sender);
+        Map<String, Object> injectionContext = new HashMap<>();
+        injectionContext.put("dropMessage", d);
+        injectionContext.put("contact", sender);
 
-		MyActionlogItemView my = new MyActionlogItemView(injectionContext::get);
-		MyActionlogItemController messagesController = (MyActionlogItemController) my.getPresenter();
-		controller.messageControllers.add(messagesController);
+        MyActionlogItemView my = new MyActionlogItemView(injectionContext::get);
+        MyActionlogItemController messagesController = (MyActionlogItemController) my.getPresenter();
+        controller.messageControllers.add(messagesController);
 
-		messagesController.setDropMessage(d);
-		String old = messagesController.getDateLabel().getText();
-		messagesController.getDateLabel().setText("");
+        messagesController.setDropMessage(d);
+        String old = messagesController.getDateLabel().getText();
+        messagesController.getDateLabel().setText("");
 
 
-		waitUntil(() -> {
-			String newString = messagesController.getDateLabel().getText();
-			return old.equals(newString);
-		});
-	}
+        waitUntil(() -> {
+            String newString = messagesController.getDateLabel().getText();
+            return old.equals(newString);
+        });
+    }
 
-	@Override
+    @Override
     @Before
-	public void setUp() throws Exception {
-		super.setUp();
-		i = identityBuilderFactory.factory().withAlias("TestAlias").build();
-		c = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
-		createController(i);
-		controller = (ActionlogController) view.getPresenter();
+    public void setUp() throws Exception {
+        super.setUp();
+        i = identityBuilderFactory.factory().withAlias("TestAlias").build();
+        c = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
+        createController(i);
+        controller = (ActionlogController) view.getPresenter();
 
-		dm = new DropMessage(c, new TextMessage(text).toJson(), DropMessageRepository.PAYLOAD_TYPE_MESSAGE);
-	}
+        dm = new DropMessage(c, new TextMessage(text).toJson(), DropMessageRepository.PAYLOAD_TYPE_MESSAGE);
+    }
 
-	private void createController(Identity i) {
-		view = new ActionlogView();
-		clientConfiguration.selectIdentity(i);
-		clientConfiguration.setAccount(new Account("Provider", "user", "auth"));
-		controller = (ActionlogController) view.getPresenter();
-	}
+    private void createController(Identity i) {
+        view = new ActionlogView();
+        clientConfiguration.selectIdentity(i);
+        clientConfiguration.setAccount(new Account("Provider", "user", "auth"));
+        controller = (ActionlogController) view.getPresenter();
+    }
 }

@@ -15,44 +15,44 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class FilterableTreeItem extends TreeItem<BoxObject> implements Filterable, Observer {
-	private BooleanProperty visibleProperty = new SimpleBooleanProperty(true);
-	private StringProperty filterProperty = new SimpleStringProperty("");
+    private BooleanProperty visibleProperty = new SimpleBooleanProperty(true);
+    private StringProperty filterProperty = new SimpleStringProperty("");
 
-	public FilterableTreeItem(BoxObject value) {
-		super(value);
-		initialize();
-	}
+    public FilterableTreeItem(BoxObject value) {
+        super(value);
+        initialize();
+    }
 
-	public FilterableTreeItem(BoxObject value, ImageView imageView) {
-		super(value, imageView);
-		initialize();
-	}
+    public FilterableTreeItem(BoxObject value, ImageView imageView) {
+        super(value, imageView);
+        initialize();
+    }
 
-	private void initialize() {
-		visibleProperty.bind(filterProperty.isEmpty().or(containsIgnoreCase(filterProperty)));
-		getValue().addObserver(this);
-	}
+    private void initialize() {
+        visibleProperty.bind(filterProperty.isEmpty().or(containsIgnoreCase(filterProperty)));
+        getValue().addObserver(this);
+    }
 
-	private BooleanBinding containsIgnoreCase(StringProperty filterProperty) {
-		return new StringContainmentBinding(filterProperty, this::getValue);
-	}
+    private BooleanBinding containsIgnoreCase(StringProperty filterProperty) {
+        return new StringContainmentBinding(filterProperty, this::getValue);
+    }
 
-	@Override
-	public BooleanProperty visibleProperty() {
-		return visibleProperty;
-	}
+    @Override
+    public BooleanProperty visibleProperty() {
+        return visibleProperty;
+    }
 
-	@Override
-	public StringProperty filterProperty() {
-		return filterProperty;
-	}
+    @Override
+    public StringProperty filterProperty() {
+        return filterProperty;
+    }
 
-	@Override
-	public void update(Observable o, Object arg) {
-		if (o != getValue()) {
-			return;
-		}
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o != getValue()) {
+            return;
+        }
 
-		Event.fireEvent(this, new TreeModificationEvent<>(valueChangedEvent(), this));
-	}
+        Event.fireEvent(this, new TreeModificationEvent<>(valueChangedEvent(), this));
+    }
 }

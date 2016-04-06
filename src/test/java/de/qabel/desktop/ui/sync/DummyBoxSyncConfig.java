@@ -7,7 +7,7 @@ import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import java.nio.file.Paths;
 
 public class DummyBoxSyncConfig extends DefaultBoxSyncConfig {
-	public DummyBoxSyncConfig() {
-		super(Paths.get("wayne"), Paths.get("train"), new Identity("a", null, null), new Account("a", "b", "c"));
-	}
+    public DummyBoxSyncConfig() {
+        super(Paths.get("wayne"), Paths.get("train"), new Identity("a", null, null), new Account("a", "b", "c"));
+    }
 }

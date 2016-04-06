@@ -5,33 +5,33 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class SyncIndexEntry implements Serializable {
-	private String localPath;
-	private Long localMtime;
-	private boolean existing;
+    private String localPath;
+    private Long localMtime;
+    private boolean existing;
 
-	public SyncIndexEntry(Path localPath, Long localMtime, boolean existing) {
-		this.localPath = localPath.toString();
-		this.localMtime = localMtime;
-		this.existing = existing;
-	}
+    public SyncIndexEntry(Path localPath, Long localMtime, boolean existing) {
+        this.localPath = localPath.toString();
+        this.localMtime = localMtime;
+        this.existing = existing;
+    }
 
-	public Path getLocalPath() {
-		return Paths.get(localPath);
-	}
+    public Path getLocalPath() {
+        return Paths.get(localPath);
+    }
 
-	public Long getLocalMtime() {
-		return localMtime;
-	}
+    public Long getLocalMtime() {
+        return localMtime;
+    }
 
-	public boolean isExisting() {
-		return existing;
-	}
+    public boolean isExisting() {
+        return existing;
+    }
 
-	public void setLocalMtime(Long localMtime) {
-		this.localMtime = localMtime;
-	}
+    public void setLocalMtime(Long localMtime) {
+        this.localMtime = localMtime;
+    }
 
-	public void setExisting(boolean existing) {
-		this.existing = existing;
-	}
+    public void setExisting(boolean existing) {
+        this.existing = existing;
+    }
 }

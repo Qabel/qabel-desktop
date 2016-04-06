@@ -10,23 +10,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InMemoryIdentityRepository implements IdentityRepository {
-	private Identities identities = new Identities();
+    private Identities identities = new Identities();
 
-	@Override
-	public Identity find(String id) throws EntityNotFoundExcepion {
-		if (identities.getByKeyIdentifier(id) == null) {
-			throw new EntityNotFoundExcepion("id " + id + " not found");
-		}
-		return identities.getByKeyIdentifier(id);
-	}
+    @Override
+    public Identity find(String id) throws EntityNotFoundExcepion {
+        if (identities.getByKeyIdentifier(id) == null) {
+            throw new EntityNotFoundExcepion("id " + id + " not found");
+        }
+        return identities.getByKeyIdentifier(id);
+    }
 
-	@Override
-	public Identities findAll() throws EntityNotFoundExcepion {
-		return identities;
-	}
+    @Override
+    public Identities findAll() throws EntityNotFoundExcepion {
+        return identities;
+    }
 
-	@Override
-	public void save(Identity identity) throws PersistenceException {
-		identities.put(identity);
-	}
+    @Override
+    public void save(Identity identity) throws PersistenceException {
+        identities.put(identity);
+    }
 }

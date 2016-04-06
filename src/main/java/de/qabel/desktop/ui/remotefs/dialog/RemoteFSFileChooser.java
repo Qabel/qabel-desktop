@@ -10,27 +10,27 @@ import java.nio.file.Path;
 import java.util.ResourceBundle;
 
 public class RemoteFSFileChooser extends RemoteFSChooser {
-	public RemoteFSFileChooser(ResourceBundle resources, BoxVolume volume) throws QblStorageException {
-		super(resources, volume);
-	}
+    public RemoteFSFileChooser(ResourceBundle resources, BoxVolume volume) throws QblStorageException {
+        super(resources, volume);
+    }
 
-	@Override
-	public void changed(ObservableValue<? extends TreeItem<BoxObject>> observable, TreeItem<BoxObject> oldValue, TreeItem<BoxObject> newValue) {
-		if (!(newValue.getValue() instanceof BoxFile)) {
-			selectedProperty.setValue(null);
-			return;
-		}
-		if (!(newValue.getParent() instanceof FolderTreeItem)) {
-			return;
-		}
+    @Override
+    public void changed(ObservableValue<? extends TreeItem<BoxObject>> observable, TreeItem<BoxObject> oldValue, TreeItem<BoxObject> newValue) {
+        if (!(newValue.getValue() instanceof BoxFile)) {
+            selectedProperty.setValue(null);
+            return;
+        }
+        if (!(newValue.getParent() instanceof FolderTreeItem)) {
+            return;
+        }
 
-		FolderTreeItem folderItem = (FolderTreeItem)newValue.getParent();
-		ReadableBoxNavigation navigation = folderItem.getNavigation();
-		if (!(navigation instanceof PathNavigation)) {
-			selectedProperty.setValue(null);
-			return;
-		}
-		Path result = ((PathNavigation) navigation).getPath().resolve(newValue.getValue().getName());
-		selectedProperty.setValue(result);
-	}
+        FolderTreeItem folderItem = (FolderTreeItem)newValue.getParent();
+        ReadableBoxNavigation navigation = folderItem.getNavigation();
+        if (!(navigation instanceof PathNavigation)) {
+            selectedProperty.setValue(null);
+            return;
+        }
+        Path result = ((PathNavigation) navigation).getPath().resolve(newValue.getValue().getName());
+        selectedProperty.setValue(result);
+    }
 }

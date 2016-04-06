@@ -5,7 +5,7 @@ import com.airhacks.afterburner.views.QabelFXMLView;
 import java.util.function.Function;
 
 public class ContactItemView extends QabelFXMLView {
-	public ContactItemView(Function<String, Object> injectionContext) {
-		super(injectionContext);
-	}
+    public ContactItemView(Function<String, Object> injectionContext) {
+        super(injectionContext);
+    }
 }

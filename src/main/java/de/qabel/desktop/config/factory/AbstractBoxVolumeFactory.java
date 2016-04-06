@@ -10,34 +10,34 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public abstract class AbstractBoxVolumeFactory implements BoxVolumeFactory {
-	protected AccountingHTTP accountingHTTP;
-	protected IdentityRepository identityRepository;
+    protected AccountingHTTP accountingHTTP;
+    protected IdentityRepository identityRepository;
 
-	public AbstractBoxVolumeFactory(AccountingHTTP accountingHTTP, IdentityRepository identityRepository) {
-		this.accountingHTTP = accountingHTTP;
-		this.identityRepository = identityRepository;
-	}
+    public AbstractBoxVolumeFactory(AccountingHTTP accountingHTTP, IdentityRepository identityRepository) {
+        this.accountingHTTP = accountingHTTP;
+        this.identityRepository = identityRepository;
+    }
 
-	public String choosePrefix(Identity identity) {
-		try {
-			for (String prefix : accountingHTTP.getPrefixes()) {
-				if (identity.getPrefixes().contains(prefix)) {
-					return prefix;
-				}
-			}
+    public String choosePrefix(Identity identity) {
+        try {
+            for (String prefix : accountingHTTP.getPrefixes()) {
+                if (identity.getPrefixes().contains(prefix)) {
+                    return prefix;
+                }
+            }
 
-			return createNewPrefix(identity);
-		} catch (Exception e) {
-			throw new IllegalStateException("failed to find valid prefix: " + e.getMessage(), e);
-		}
-	}
+            return createNewPrefix(identity);
+        } catch (Exception e) {
+            throw new IllegalStateException("failed to find valid prefix: " + e.getMessage(), e);
+        }
+    }
 
-	private String createNewPrefix(Identity identity) throws IOException, QblInvalidCredentials, PersistenceException {
-		accountingHTTP.createPrefix();
-		ArrayList<String> prefixes = accountingHTTP.getPrefixes();
-		String prefix = prefixes.get(prefixes.size() - 1);
-		identity.getPrefixes().add(prefix);
-		identityRepository.save(identity);
-		return prefix;
-	}
+    private String createNewPrefix(Identity identity) throws IOException, QblInvalidCredentials, PersistenceException {
+        accountingHTTP.createPrefix();
+        ArrayList<String> prefixes = accountingHTTP.getPrefixes();
+        String prefix = prefixes.get(prefixes.size() - 1);
+        identity.getPrefixes().add(prefix);
+        identityRepository.save(identity);
+        return prefix;
+    }
 }

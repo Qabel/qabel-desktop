@@ -12,71 +12,71 @@ import static de.qabel.desktop.daemon.management.Transaction.STATE.RUNNING;
 import static org.junit.Assert.*;
 
 public class TransferViewModelTest {
-	private TransferViewModel model;
-	private TransactionGroup transactions;
+    private TransferViewModel model;
+    private TransactionGroup transactions;
 
-	@Before
-	public void setUp() {
-		transactions = new TransactionGroup();
-		model = new TransferViewModel(transactions);
-		model.usePlaformThread = false;
-	}
+    @Before
+    public void setUp() {
+        transactions = new TransactionGroup();
+        model = new TransferViewModel(transactions);
+        model.usePlaformThread = false;
+    }
 
-	@Test
-	public void usefulDefaultProperties() {
-		assertFalse(isTransactionImageVisible());
-		assertEquals("", getPercentLabel());
-		assertEquals("", getTransactionLabel());
-	}
+    @Test
+    public void usefulDefaultProperties() {
+        assertFalse(isTransactionImageVisible());
+        assertEquals("", getPercentLabel());
+        assertEquals("", getTransactionLabel());
+    }
 
-	@Test
-	public void updatesProgress() {
-		transactions.add(createRunningTransaction(100L, 50L));
-		assertEquals(50, getPercent());
-		assertEquals("50 %", getPercentLabel());
-		assertTrue(isTransactionImageVisible());
-	}
+    @Test
+    public void updatesProgress() {
+        transactions.add(createRunningTransaction(100L, 50L));
+        assertEquals(50, getPercent());
+        assertEquals("50 %", getPercentLabel());
+        assertTrue(isTransactionImageVisible());
+    }
 
-	private boolean isTransactionImageVisible() {
-		return model.currentTransactionImageVisible().get();
-	}
+    private boolean isTransactionImageVisible() {
+        return model.currentTransactionImageVisible().get();
+    }
 
-	private String getPercentLabel() {
-		return model.currentTransactionPercentLabel().get();
-	}
+    private String getPercentLabel() {
+        return model.currentTransactionPercentLabel().get();
+    }
 
-	private long getPercent() {
-		return model.currentTransactionPercent().get();
-	}
+    private long getPercent() {
+        return model.currentTransactionPercent().get();
+    }
 
-	private String getTransactionLabel() {
-		return model.currentTransactionLabel().get();
-	}
+    private String getTransactionLabel() {
+        return model.currentTransactionLabel().get();
+    }
 
-	@Test
-	public void usesTransactionLabelRenderer() {
-		model.setTransactionLabelRenderer(t -> "custom label");
-		transactions.add(createRunningTransaction());
-		assertEquals("custom label", getTransactionLabel());
-	}
+    @Test
+    public void usesTransactionLabelRenderer() {
+        model.setTransactionLabelRenderer(t -> "custom label");
+        transactions.add(createRunningTransaction());
+        assertEquals("custom label", getTransactionLabel());
+    }
 
-	private TransactionStub createRunningTransaction() {
-		return createRunningTransaction(100L, 0L);
-	}
+    private TransactionStub createRunningTransaction() {
+        return createRunningTransaction(100L, 0L);
+    }
 
-	private TransactionStub createRunningTransaction(Long size, Long transferred) {
-		return createTransaction(size, transferred, RUNNING);
-	}
+    private TransactionStub createRunningTransaction(Long size, Long transferred) {
+        return createTransaction(size, transferred, RUNNING);
+    }
 
-	private TransactionStub createTransaction(Long size, Long transferred, Transaction.STATE state) {
-		TransactionStub transaction = new TransactionStub();
-		transaction.toState(state);
-		transaction.setSize(size);
-		transaction.setTransferred(transferred);
+    private TransactionStub createTransaction(Long size, Long transferred, Transaction.STATE state) {
+        TransactionStub transaction = new TransactionStub();
+        transaction.toState(state);
+        transaction.setSize(size);
+        transaction.setTransferred(transferred);
 
-		// more data to satisfy renderers
-		transaction.destination = Paths.get("exampleFile");
+        // more data to satisfy renderers
+        transaction.destination = Paths.get("exampleFile");
 
-		return transaction;
-	}
+        return transaction;
+    }
 }

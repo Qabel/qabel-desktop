@@ -182,11 +182,11 @@ public class LayoutController extends AbstractController implements Initializabl
         Tooltip feebackTooltip = new Tooltip(resourceBundle.getString("layoutIconFeebackTooltip"));
         Tooltip.install(feedbackButton, feebackTooltip);
 
-		/*
+        /*
         Image gearGraphic = new Image(getClass().getResourceAsStream("/img/gear.png"));
-		configButton.setImage(gearGraphic);
-		configButton.getStyleClass().add("inline-button");
-		*/
+        configButton.setImage(gearGraphic);
+        configButton.getStyleClass().add("inline-button");
+        */
 
         Image faqGraphics = new Image(getClass().getResourceAsStream("/img/faq.png"));
         faqButton.setImage(faqGraphics);
@@ -203,11 +203,11 @@ public class LayoutController extends AbstractController implements Initializabl
         Tooltip faq = new Tooltip(resourceBundle.getString("layoutIconFaqTooltip"));
         Tooltip.install(faqButton, faq);
 
-		/*
-		Image infoGraphic = new Image(getClass().getResourceAsStream("/img/info.png"));
-		infoButton.setImage(infoGraphic);
-		infoButton.getStyleClass().add("inline-button");
-		*/
+        /*
+        Image infoGraphic = new Image(getClass().getResourceAsStream("/img/info.png"));
+        infoButton.setImage(infoGraphic);
+        infoButton.getStyleClass().add("inline-button");
+        */
     }
 
 

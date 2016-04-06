@@ -7,13 +7,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class BoxObjectTreeCell extends TreeCell<BoxObject> {
-	private static Image fileImg = new Image(BoxObjectTreeCell.class.getResourceAsStream("/icon/file.png"), 16, 16, true, true);
-	private static Image folderImg = new Image(BoxObjectTreeCell.class.getResourceAsStream("/icon/folder.png"), 16, 16, true, true);
+    private static Image fileImg = new Image(BoxObjectTreeCell.class.getResourceAsStream("/icon/file.png"), 16, 16, true, true);
+    private static Image folderImg = new Image(BoxObjectTreeCell.class.getResourceAsStream("/icon/folder.png"), 16, 16, true, true);
 
-	public BoxObjectTreeCell() {
+    public BoxObjectTreeCell() {
         itemProperty().addListener((observable, oldValue, newValue) -> {
-			setText(newValue == null ? "?" : newValue.getName());
-			setGraphic(new ImageView(newValue instanceof BoxFolder ? folderImg : fileImg));
-		});
-	}
+            setText(newValue == null ? "?" : newValue.getName());
+            setGraphic(new ImageView(newValue instanceof BoxFolder ? folderImg : fileImg));
+        });
+    }
 }

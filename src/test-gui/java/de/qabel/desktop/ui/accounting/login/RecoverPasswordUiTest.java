@@ -19,23 +19,23 @@ public class RecoverPasswordUiTest extends AbstractGuiTest<LoginController> {
     }
 
     @Override
-	protected LoginView getView() {
-		return new LoginView();
-	}
+    protected LoginView getView() {
+        return new LoginView();
+    }
 
-	@Test
-	public void incorrectEMail() {
+    @Test
+    public void incorrectEMail() {
         page.expandRecoverPassword()
             .requestNewPassword();
-		waitUntil(() -> controller.newPassword.getStyleClass().contains("error"));
-	}
+        waitUntil(() -> controller.newPassword.getStyleClass().contains("error"));
+    }
 
-	@Test
-	public void EMailSendCorrect() {
+    @Test
+    public void EMailSendCorrect() {
         page.expandRecoverPassword()
             .enterEmail("valid.mail@example.com")
             .requestNewPassword();
 
-		waitUntil(controller.newPassword::isDisabled);
-	}
+        waitUntil(controller.newPassword::isDisabled);
+    }
 }

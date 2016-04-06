@@ -6,21 +6,21 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class PatternBlacklist implements Blacklist {
-	private List<Pattern> patterns = new LinkedList<>();
+    private List<Pattern> patterns = new LinkedList<>();
 
-	@Override
-	public boolean matches(Path path) {
-		for (int i = 0; i < path.getNameCount(); i++) {
-			for (Pattern pattern : patterns) {
-				if (pattern.matcher(path.getName(i).toString()).matches()) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    @Override
+    public boolean matches(Path path) {
+        for (int i = 0; i < path.getNameCount(); i++) {
+            for (Pattern pattern : patterns) {
+                if (pattern.matcher(path.getName(i).toString()).matches()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-	public void add(Pattern pattern) {
-		patterns.add(pattern);
-	}
+    public void add(Pattern pattern) {
+        patterns.add(pattern);
+    }
 }

@@ -5,9 +5,9 @@ import de.qabel.core.config.Persistence;
 import java.util.Observable;
 
 public abstract class AbstractPersistenceRepository extends Observable{
-	protected Persistence<String> persistence;
+    protected Persistence<String> persistence;
 
-	public AbstractPersistenceRepository(Persistence<String> persistence) {
-		this.persistence = persistence;
-	}
+    public AbstractPersistenceRepository(Persistence<String> persistence) {
+        this.persistence = persistence;
+    }
 }

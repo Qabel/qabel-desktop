@@ -8,30 +8,30 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
 public class TransactionFxProgressCollectionModel extends FxProgressCollectionModel<Transaction> {
-	private ObjectProperty<Transaction> currentTransaction = new SimpleObjectProperty<>();
-	private BooleanProperty running = new SimpleBooleanProperty(false);
+    private ObjectProperty<Transaction> currentTransaction = new SimpleObjectProperty<>();
+    private BooleanProperty running = new SimpleBooleanProperty(false);
 
-	public TransactionFxProgressCollectionModel(HasProgressCollection<?, Transaction> progress) {
-		super(progress);
-		onChange(this::update);
-	}
+    public TransactionFxProgressCollectionModel(HasProgressCollection<?, Transaction> progress) {
+        super(progress);
+        onChange(this::update);
+    }
 
-	private void update(Transaction transaction) {
-		if (transaction == null || transaction.getState() != Transaction.STATE.RUNNING) {
-			boolean running = totalItemsProperty().isNotEqualTo(currentItemsProperty()).get();
+    private void update(Transaction transaction) {
+        if (transaction == null || transaction.getState() != Transaction.STATE.RUNNING) {
+            boolean running = totalItemsProperty().isNotEqualTo(currentItemsProperty()).get();
             currentTransaction.setValue(running ? transaction : null);
-			this.running.setValue(running);
-			return;
-		}
-		running.setValue(true);
-		currentTransaction.setValue(transaction);
-	}
+            this.running.setValue(running);
+            return;
+        }
+        running.setValue(true);
+        currentTransaction.setValue(transaction);
+    }
 
-	public BooleanProperty runningProperty() {
-		return running;
-	}
+    public BooleanProperty runningProperty() {
+        return running;
+    }
 
-	public ObjectProperty<Transaction> currentTransactionProperty() {
-		return currentTransaction;
-	}
+    public ObjectProperty<Transaction> currentTransactionProperty() {
+        return currentTransaction;
+    }
 }

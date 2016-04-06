@@ -7,25 +7,25 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 public class BoxNavigationCache<C extends BoxNavigation> {
-	private Map<String, C> navs = new WeakHashMap<>();
+    private Map<String, C> navs = new WeakHashMap<>();
 
-	public void cache(BoxFolder folder, C nav) {
-		navs.put(folder.getRef(), nav);
-	}
+    public void cache(BoxFolder folder, C nav) {
+        navs.put(folder.getRef(), nav);
+    }
 
-	public boolean has(BoxFolder folder) {
-		return navs.containsKey(folder.getRef());
-	}
+    public boolean has(BoxFolder folder) {
+        return navs.containsKey(folder.getRef());
+    }
 
-	public C get(BoxFolder folder) {
-		return navs.get(folder.getRef());
-	}
+    public C get(BoxFolder folder) {
+        return navs.get(folder.getRef());
+    }
 
-	public void remove(BoxFolder folder) {
-		navs.remove(folder.getRef());
-	}
+    public void remove(BoxFolder folder) {
+        navs.remove(folder.getRef());
+    }
 
-	public Iterable<C> getAll() {
-		return navs.values();
-	}
+    public Iterable<C> getAll() {
+        return navs.values();
+    }
 }

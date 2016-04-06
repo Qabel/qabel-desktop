@@ -5,65 +5,65 @@ import de.qabel.desktop.storage.BoxVolume;
 import java.nio.file.Path;
 
 public interface Transaction extends AutoCloseable, HasProgress<Transaction> {
-	long transactionAge();
+    long transactionAge();
 
-	TYPE getType();
+    TYPE getType();
 
-	BoxVolume getBoxVolume();
+    BoxVolume getBoxVolume();
 
-	Path getSource();
+    Path getSource();
 
-	Path getDestination();
+    Path getDestination();
 
-	boolean isValid();
+    boolean isValid();
 
-	boolean isDir();
+    boolean isDir();
 
-	Long getMtime();
+    Long getMtime();
 
-	Transaction onSuccess(Runnable runnable);
+    Transaction onSuccess(Runnable runnable);
 
-	Transaction onFailure(Runnable runnable);
+    Transaction onFailure(Runnable runnable);
 
-	Transaction onSkipped(Runnable runnable);
+    Transaction onSkipped(Runnable runnable);
 
-	long getStagingDelayMillis();
+    long getStagingDelayMillis();
 
-	/**
-	 * Get the size of the transaction.
-	 * Please check hasSize() before calling getSize() to ensure a size exists.
-	 *
-	 * @return size in bytes
-	 * @throws NullPointerException if no size is set
-	 */
-	long getSize();
+    /**
+     * Get the size of the transaction.
+     * Please check hasSize() before calling getSize() to ensure a size exists.
+     *
+     * @return size in bytes
+     * @throws NullPointerException if no size is set
+     */
+    long getSize();
 
-	boolean hasSize();
+    boolean hasSize();
 
-	/**
-	 * @return progress in bytes
-	 */
-	long getTransferred();
+    /**
+     * @return progress in bytes
+     */
+    long getTransferred();
 
-	/**
-	 * @param progress in bytes
-	 */
-	void setTransferred(long progress);
+    /**
+     * @param progress in bytes
+     */
+    void setTransferred(long progress);
 
-	void setSize(long size);
+    void setSize(long size);
 
-	boolean isDone();
+    boolean isDone();
 
-	boolean hasStarted();
+    boolean hasStarted();
 
 
-	enum TYPE { CREATE, UPDATE, DELETE }
-	enum STATE { INITIALIZING, SCHEDULED, RUNNING, FINISHED, FAILED, WAITING, SKIPPED }
+    enum TYPE { CREATE, UPDATE, DELETE }
+    enum STATE { INITIALIZING, SCHEDULED, RUNNING, FINISHED, FAILED, WAITING, SKIPPED }
 
-	STATE getState();
+    STATE getState();
 
-	void toState(STATE state);
+    void toState(STATE state);
 
-	@Override
-	void close();
+    @Override
+    void close();
 }

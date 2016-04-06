@@ -6,32 +6,32 @@ import de.qabel.desktop.storage.BoxObject;
 import java.nio.file.Path;
 
 public class RemoteChangeEvent extends AbstractChangeEvent {
-	private final BoxObject boxObject;
-	private final BoxNavigation navigation;
+    private final BoxObject boxObject;
+    private final BoxNavigation navigation;
 
-	public RemoteChangeEvent(
-			Path path,
-			boolean isDirecotry,
-			Long mtime,
-			ChangeEvent.TYPE type,
-			BoxObject boxObject,
-			BoxNavigation navigation
-	) {
-		super(path, isDirecotry, mtime, type);
-		this.boxObject = boxObject;
-		this.navigation = navigation;
-	}
+    public RemoteChangeEvent(
+            Path path,
+            boolean isDirecotry,
+            Long mtime,
+            ChangeEvent.TYPE type,
+            BoxObject boxObject,
+            BoxNavigation navigation
+    ) {
+        super(path, isDirecotry, mtime, type);
+        this.boxObject = boxObject;
+        this.navigation = navigation;
+    }
 
-	@Override
-	public boolean isValid() {
-		return true;
-	}
+    @Override
+    public boolean isValid() {
+        return true;
+    }
 
-	public BoxObject getBoxObject() {
-		return boxObject;
-	}
+    public BoxObject getBoxObject() {
+        return boxObject;
+    }
 
-	public BoxNavigation getBoxNavigation() {
-		return navigation;
-	}
+    public BoxNavigation getBoxNavigation() {
+        return navigation;
+    }
 }

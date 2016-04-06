@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public interface Syncer extends Runnable, HasProgressCollection<Syncer, Transaction>, BoxSync {
-	List<Transaction> getHistory();
+    List<Transaction> getHistory();
 
-	void shutdown();
-	void setPollInterval(int amount, TimeUnit unit);
+    void shutdown();
+    void setPollInterval(int amount, TimeUnit unit);
 
-	void stop() throws InterruptedException;
+    void stop() throws InterruptedException;
 }

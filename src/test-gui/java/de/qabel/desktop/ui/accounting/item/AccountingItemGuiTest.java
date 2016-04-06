@@ -12,7 +12,7 @@ import static org.junit.Assert.assertTrue;
 
 public class AccountingItemGuiTest extends AbstractGuiTest<AccountingItemController> {
 
-	private Identity identity;
+    private Identity identity;
     private AccountingItemPage page;
 
     @Before
@@ -23,21 +23,21 @@ public class AccountingItemGuiTest extends AbstractGuiTest<AccountingItemControl
     }
 
     @Override
-	protected FXMLView getView() {
-		identity = new Identity("alias", null, null);
-		return new AccountingItemView(generateInjection("identity", identity));
-	}
+    protected FXMLView getView() {
+        identity = new Identity("alias", null, null);
+        return new AccountingItemView(generateInjection("identity", identity));
+    }
 
-	@Test
-	public void testEdit() throws Exception {
+    @Test
+    public void testEdit() throws Exception {
         page.edit().inputAndConfirm("new alias");
-		waitUntil(() -> identity.getAlias().equals("new alias"));
-	}
+        waitUntil(() -> identity.getAlias().equals("new alias"));
+    }
 
-	@Test
-	public void selectsIdentity() {
+    @Test
+    public void selectsIdentity() {
         page.select();
-		waitUntil(() -> identity.equals(clientConfiguration.getSelectedIdentity()));
-		assertTrue(controller.selectedRadio.isSelected());
-	}
+        waitUntil(() -> identity.equals(clientConfiguration.getSelectedIdentity()));
+        assertTrue(controller.selectedRadio.isSelected());
+    }
 }

@@ -20,31 +20,31 @@ public class BlockBoxVolumeFactory extends AbstractBoxVolumeFactory {
     private byte[] deviceId;
 
     public BlockBoxVolumeFactory(byte[] deviceId, AccountingHTTP accountingHTTP, IdentityRepository identityRepository) throws IOException {
-		super(accountingHTTP, identityRepository);
-		this.deviceId = deviceId;
+        super(accountingHTTP, identityRepository);
+        this.deviceId = deviceId;
         tmpDir = Files.createTempDirectory("qbl_tmp").toFile();
     }
 
-	@Override
-	public BoxVolume getVolume(Account account, Identity identity) {
-		String prefix = super.choosePrefix(identity);
+    @Override
+    public BoxVolume getVolume(Account account, Identity identity) {
+        String prefix = super.choosePrefix(identity);
 
-		String root = MagicEvilBlockUriProvider.getBlockUri(account) + "/api/v0/files/" + prefix + "/";
+        String root = MagicEvilBlockUriProvider.getBlockUri(account) + "/api/v0/files/" + prefix + "/";
 
-		try {
-			BlockReadBackend readBackend = new BlockReadBackend(root, accountingHTTP);
-			BlockWriteBackend writeBackend = new BlockWriteBackend(root, accountingHTTP);
+        try {
+            BlockReadBackend readBackend = new BlockReadBackend(root, accountingHTTP);
+            BlockWriteBackend writeBackend = new BlockWriteBackend(root, accountingHTTP);
 
-			return new CachedBoxVolume(
+            return new CachedBoxVolume(
                 readBackend,
                 writeBackend,
                 identity.getPrimaryKeyPair(),
                 deviceId,
                 tmpDir,
                 prefix
-			);
-		} catch (URISyntaxException e) {
-			throw new IllegalStateException("couldn't create a valid block url: " + root);
-		}
-	}
+            );
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException("couldn't create a valid block url: " + root);
+        }
+    }
 }

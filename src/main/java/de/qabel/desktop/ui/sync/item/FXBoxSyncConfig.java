@@ -5,31 +5,31 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class FXBoxSyncConfig {
-	private StringProperty nameProperty;
-	private StringProperty localPathProperty;
-	private StringProperty remotePathProperty;
+    private StringProperty nameProperty;
+    private StringProperty localPathProperty;
+    private StringProperty remotePathProperty;
 
-	public FXBoxSyncConfig(BoxSyncConfig config) {
-		nameProperty = new SimpleStringProperty(config.getName());
-		localPathProperty = new SimpleStringProperty(config.getLocalPath().toAbsolutePath().toString());
-		remotePathProperty = new SimpleStringProperty(config.getRemotePath().toString());
+    public FXBoxSyncConfig(BoxSyncConfig config) {
+        nameProperty = new SimpleStringProperty(config.getName());
+        localPathProperty = new SimpleStringProperty(config.getLocalPath().toAbsolutePath().toString());
+        remotePathProperty = new SimpleStringProperty(config.getRemotePath().toString());
 
-		config.addObserver((o, arg) -> {
-			nameProperty.set(config.getName());
-			localPathProperty.set(config.getLocalPath().toAbsolutePath().toString());
-			remotePathProperty.set(config.getRemotePath().toString());
-		});
-	}
+        config.addObserver((o, arg) -> {
+            nameProperty.set(config.getName());
+            localPathProperty.set(config.getLocalPath().toAbsolutePath().toString());
+            remotePathProperty.set(config.getRemotePath().toString());
+        });
+    }
 
-	public StringProperty nameProperty() {
-		return nameProperty;
-	}
+    public StringProperty nameProperty() {
+        return nameProperty;
+    }
 
-	public StringProperty localPathProperty() {
-		return localPathProperty;
-	}
+    public StringProperty localPathProperty() {
+        return localPathProperty;
+    }
 
-	public StringProperty remotePathProperty() {
-		return remotePathProperty;
-	}
+    public StringProperty remotePathProperty() {
+        return remotePathProperty;
+    }
 }

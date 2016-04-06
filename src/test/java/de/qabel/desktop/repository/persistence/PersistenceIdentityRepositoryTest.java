@@ -16,66 +16,66 @@ import static org.junit.Assert.assertEquals;
 
 public class PersistenceIdentityRepositoryTest extends AbstractPersistenceRepositoryTest<PersistenceIdentityRepository> {
 
-	@Test
-	public void returnsEmptyListWithoutInstances() throws Exception {
-		Identities results = repo.findAll();
-		assertEquals(0, results.getIdentities().size());
-	}
+    @Test
+    public void returnsEmptyListWithoutInstances() throws Exception {
+        Identities results = repo.findAll();
+        assertEquals(0, results.getIdentities().size());
+    }
 
-	@Test
-	public void returnsPersistedEntities() throws Exception {
-		Identity identity = new IdentityBuilder(new DropUrlGenerator("http://localhost:5000")).withAlias("a").build();
-		Identities identities = new Identities();
-		identities.put(identity);
-		persistence.persistEntity(identities);
-		Identities results = repo.findAll();
+    @Test
+    public void returnsPersistedEntities() throws Exception {
+        Identity identity = new IdentityBuilder(new DropUrlGenerator("http://localhost:5000")).withAlias("a").build();
+        Identities identities = new Identities();
+        identities.put(identity);
+        persistence.persistEntity(identities);
+        Identities results = repo.findAll();
 
-		assertEquals(1, results.getIdentities().size());
-		assertEquals(identity, results.getByKeyIdentifier(identity.getKeyIdentifier()));
-	}
+        assertEquals(1, results.getIdentities().size());
+        assertEquals(identity, results.getByKeyIdentifier(identity.getKeyIdentifier()));
+    }
 
-	@Test(expected = EntityNotFoundExcepion.class)
-	public void throwsExcetionIfEntityIsNotFound() throws Exception {
-		repo.find("1");
-	}
+    @Test(expected = EntityNotFoundExcepion.class)
+    public void throwsExcetionIfEntityIsNotFound() throws Exception {
+        repo.find("1");
+    }
 
-	@Test
-	public void findsPersistedEntity() throws Exception {
-		Identity identity = new IdentityBuilder(new DropUrlGenerator("http://localhost:5000")).withAlias("a").build();
-		Identities identities = new Identities();
-		identities.put(identity);
-		persistence.persistEntity(identities);
+    @Test
+    public void findsPersistedEntity() throws Exception {
+        Identity identity = new IdentityBuilder(new DropUrlGenerator("http://localhost:5000")).withAlias("a").build();
+        Identities identities = new Identities();
+        identities.put(identity);
+        persistence.persistEntity(identities);
 
-		Identity id = repo.find(identity.getKeyIdentifier());
-		assertEquals(identity, id);
-	}
+        Identity id = repo.find(identity.getKeyIdentifier());
+        assertEquals(identity, id);
+    }
 
-	@Override
-	protected PersistenceIdentityRepository createRepository(Persistence<String> persistence) {
-		return new PersistenceIdentityRepository(persistence);
-	}
+    @Override
+    protected PersistenceIdentityRepository createRepository(Persistence<String> persistence) {
+        return new PersistenceIdentityRepository(persistence);
+    }
 
-	@Test
-	public void savesNewInstances() throws Exception {
-		Identity identity = new IdentityBuilder(new DropUrlGenerator("http://localhost:5000")).withAlias("a").build();
-		repo.save(identity);
-		assertEquals(identity, repo.find(identity.getKeyIdentifier()));
-	}
+    @Test
+    public void savesNewInstances() throws Exception {
+        Identity identity = new IdentityBuilder(new DropUrlGenerator("http://localhost:5000")).withAlias("a").build();
+        repo.save(identity);
+        assertEquals(identity, repo.find(identity.getKeyIdentifier()));
+    }
 
-	@Test
-	public void updatesExistingInstances() throws Exception {
-		Identity identity = new IdentityBuilder(new DropUrlGenerator("http://localhost:5000")).withAlias("a").build();
-		repo.save(identity);
-		String keyId = identity.getKeyIdentifier();
+    @Test
+    public void updatesExistingInstances() throws Exception {
+        Identity identity = new IdentityBuilder(new DropUrlGenerator("http://localhost:5000")).withAlias("a").build();
+        repo.save(identity);
+        String keyId = identity.getKeyIdentifier();
 
-		identity.setAlias("b");
-		repo.save(identity);
+        identity.setAlias("b");
+        repo.save(identity);
 
-		assertEquals(identity, repo.find(keyId));
-	}
+        assertEquals(identity, repo.find(keyId));
+    }
 
-	@Test(expected = PersistenceException.class)
-	public void throwsPersistenceExceptionOnFailure() throws Exception {
-		repo.save(null);
-	}
+    @Test(expected = PersistenceException.class)
+    public void throwsPersistenceExceptionOnFailure() throws Exception {
+        repo.save(null);
+    }
 }

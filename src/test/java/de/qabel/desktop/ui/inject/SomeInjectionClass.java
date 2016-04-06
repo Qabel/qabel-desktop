@@ -4,13 +4,13 @@ import javax.inject.Inject;
 
 public class SomeInjectionClass {
 
-	SomeClass someClass;
+    SomeClass someClass;
 
-	SomeDefaultInjecttionClass anotherClass;
+    SomeDefaultInjecttionClass anotherClass;
 
-	@Inject
-	public SomeInjectionClass(SomeClass someClass, SomeDefaultInjecttionClass anotherClass) {
-		this.someClass = someClass;
-		this.anotherClass = anotherClass;
-	}
+    @Inject
+    public SomeInjectionClass(SomeClass someClass, SomeDefaultInjecttionClass anotherClass) {
+        this.someClass = someClass;
+        this.anotherClass = anotherClass;
+    }
 }

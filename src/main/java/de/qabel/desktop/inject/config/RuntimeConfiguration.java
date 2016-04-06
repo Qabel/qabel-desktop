@@ -6,7 +6,7 @@ import java.net.URI;
 import java.nio.file.Path;
 
 public interface RuntimeConfiguration {
-	URI getDropUri();
-	Path getPersistenceDatabaseFile();
-	Stage getPrimaryStage();
+    URI getDropUri();
+    Path getPersistenceDatabaseFile();
+    Stage getPrimaryStage();
 }
