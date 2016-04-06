@@ -16,7 +16,6 @@ import org.junit.Test;
 import org.meanbean.util.AssertionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.misc.GC;
 
 import java.io.File;
 import java.io.IOException;

@@ -59,7 +59,7 @@ public class Migration000000001CreateIdentitiyTest extends AbstractSqliteTest {
     }
 
     @Test(expected = SQLException.class)
-    public void dropUrlsAreOnlyAllowedOnExistingIdentites() throws Exception {
+    public void dropUrlsRequireAnIdentity() throws Exception {
         migration.up();
         insertDropUrl();
     }
@@ -100,5 +100,11 @@ public class Migration000000001CreateIdentitiyTest extends AbstractSqliteTest {
         statement.setString(2, "my/prefix");
         statement.execute();
         return statement;
+    }
+
+    @Test(expected = SQLException.class)
+    public void prefixesRequireAnIdentity() throws Exception {
+        migration.up();
+        insertPrefix();
     }
 }
