@@ -157,6 +157,7 @@ public class StaticDesktopServiceFactory extends DefaultServiceFactory implement
 
     private Persistence<String> persistence;
 
+    @Deprecated
     @Create(name = "persistence")
     private synchronized Persistence<String> getPersistence() {
         if (persistence == null) {

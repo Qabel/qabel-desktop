@@ -15,6 +15,9 @@ import de.qabel.desktop.inject.config.StaticRuntimeConfiguration;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
+import de.qabel.desktop.repository.sqlite.ClientDatabase;
+import de.qabel.desktop.repository.sqlite.DefaultClientDatabase;
+import de.qabel.desktop.repository.sqlite.MigrationException;
 import de.qabel.desktop.storage.AbstractNavigation;
 import de.qabel.desktop.ui.LayoutView;
 import de.qabel.desktop.ui.accounting.login.LoginView;
@@ -42,8 +45,12 @@ import java.awt.event.MouseMotionAdapter;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Timer;
@@ -57,7 +64,8 @@ import static javafx.scene.control.Alert.AlertType.WARNING;
 
 public class DesktopClient extends Application {
     private static final Logger logger = LoggerFactory.getLogger(DesktopClient.class.getSimpleName());
-    private static Path DATABASE_FILE = Paths.get(System.getProperty("user.home")).resolve(".qabel/db.sqlite");
+    private static Path LEGACY_DATABASE_FILE = Paths.get(System.getProperty("user.home")).resolve(".qabel/db.sqlite");
+    private static Path DATABASE_FILE = Paths.get(System.getProperty("user.home")).resolve(".qabel/config.sqlite");
     private static DesktopServices services;
     private static StaticRuntimeConfiguration runtimeConfiguration;
     private boolean inBound;
@@ -83,7 +91,7 @@ public class DesktopClient extends Application {
             DATABASE_FILE = new File(args[0]).getAbsoluteFile().toPath();
         }
 
-        runtimeConfiguration = new StaticRuntimeConfiguration("https://drop.qabel.de", DATABASE_FILE);
+        runtimeConfiguration = new StaticRuntimeConfiguration("https://drop.qabel.de", LEGACY_DATABASE_FILE, getConfigDatabase());
         StaticDesktopServiceFactory staticDesktopServiceFactory = new StaticDesktopServiceFactory(runtimeConfiguration);
         services = staticDesktopServiceFactory;
         Injector.setConfigurationSource(key -> staticDesktopServiceFactory.get((String) key));
@@ -92,6 +100,25 @@ public class DesktopClient extends Application {
         System.setProperty("prism.lcdtext", "false");
         UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         launch(args);
+    }
+
+    private static ClientDatabase getConfigDatabase() {
+        if (!Files.exists(DATABASE_FILE) && Files.exists(LEGACY_DATABASE_FILE)) {
+            // TODO migrate from old config...
+        }
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:sqlite://" + DATABASE_FILE.toAbsolutePath());
+            connection.createStatement().execute("PRAGMA FOREIGN_KEYS = ON");
+            ClientDatabase clientDatabase = new DefaultClientDatabase(connection);
+
+            clientDatabase.migrate();
+
+            return clientDatabase;
+        } catch (SQLException e) {
+            throw new IllegalStateException("failed to initialize config database: " + e.getMessage(), e);
+        } catch (MigrationException e) {
+            throw new IllegalStateException("failed to migrate config database:" + e.getMessage(), e);
+        }
     }
 
     public static String appVersion() throws IOException {

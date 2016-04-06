@@ -1,5 +1,7 @@
 package de.qabel.desktop.inject.config;
 
+import de.qabel.desktop.repository.sqlite.ClientDatabase;
+import de.qabel.desktop.repository.sqlite.DefaultClientDatabase;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -12,11 +14,13 @@ public class StaticRuntimeConfiguration implements RuntimeConfiguration {
     private URI dropUrl;
     private Path persistenceDatabaseFile;
     private Stage primaryStage;
+    private ClientDatabase configDatabase;
 
-    public StaticRuntimeConfiguration(String dropUrl, Path persistenceDatabaseFile) throws URISyntaxException, IOException {
+    public StaticRuntimeConfiguration(String dropUrl, Path persistenceDatabaseFile, ClientDatabase configDatabase) throws URISyntaxException, IOException {
         this.dropUrl = new URI(dropUrl);
         persistenceDatabaseFile = persistenceDatabaseFile.normalize();
         this.persistenceDatabaseFile = persistenceDatabaseFile;
+        this.configDatabase = configDatabase;
 
         if (!Files.exists(persistenceDatabaseFile) && !Files.exists(persistenceDatabaseFile.getParent())) {
             Files.createDirectories(persistenceDatabaseFile.getParent());
@@ -40,5 +44,10 @@ public class StaticRuntimeConfiguration implements RuntimeConfiguration {
     @Override
     public Stage getPrimaryStage() {
         return primaryStage;
+    }
+
+    @Override
+    public ClientDatabase getConfigDatabase() {
+        return configDatabase;
     }
 }
