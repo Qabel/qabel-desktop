@@ -40,7 +40,7 @@ public class HttpDropConnectorTest extends AbstractControllerTest {
     public void setUp() throws Exception {
         super.setUp();
         fakeURL = "http://localhost:12345/abcdefghijklmnopqrstuvwxyzabcdefgworkingUrl";
-        workingURL = new DropUrlGenerator("https://test-drop.qabel.de").generateUrl().toString(); //"https://test-drop.qabel.de/abcdefghijklmnopqrstuvwxyzabcdefgworkingUrl";
+        workingURL = new DropUrlGenerator("http://localhost:5000").generateUrl().toString(); //"https://test-drop.qabel.de/abcdefghijklmnopqrstuvwxyzabcdefgworkingUrl";
         networkStatus = new NetworkStatus();
         dHTTP = new DropHTTP();
         connector = new HttpDropConnector(networkStatus, dHTTP);
