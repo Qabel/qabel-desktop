@@ -188,11 +188,15 @@ public class DesktopClient extends Application {
 
     private void addShareMessageRenderer(Identity arg) {
         executorService.submit(() -> {
-            ShareNotificationRenderer renderer = new ShareNotificationRenderer(
-                services.getBoxVolumeFactory().getVolume(config.getAccount(), arg).getReadBackend(),
-                services.getSharingService()
-            );
-            services.getDropMessageRendererFactory().addRenderer(DropMessageRepository.PAYLOAD_TYPE_SHARE_NOTIFICATION, renderer);
+            try {
+                ShareNotificationRenderer renderer = new ShareNotificationRenderer(
+                    services.getBoxVolumeFactory().getVolume(config.getAccount(), arg).getReadBackend(),
+                    services.getSharingService()
+                );
+                services.getDropMessageRendererFactory().addRenderer(DropMessageRepository.PAYLOAD_TYPE_SHARE_NOTIFICATION, renderer);
+            } catch (IOException e) {
+                logger.warn(e.getMessage(), e);
+            }
         });
     }
 

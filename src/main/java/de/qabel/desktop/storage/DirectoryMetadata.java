@@ -86,7 +86,7 @@ public class DirectoryMetadata extends AbstractMetadata {
     public static DirectoryMetadata newDatabase(String root, byte[] deviceId, File tempDir) throws QblStorageException {
         File path;
         try {
-            path = File.createTempFile("dir", "db", tempDir);
+            path = File.createTempFile("dir", "db5", tempDir);
             path.deleteOnExit();
         } catch (IOException e) {
             throw new QblStorageIOFailure(e);
@@ -490,6 +490,7 @@ public class DirectoryMetadata extends AbstractMetadata {
 
     @Override
     protected void finalize() throws Throwable {
+        super.finalize();
         if (getPath().exists()) {
             getPath().delete();
         }

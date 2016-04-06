@@ -6,7 +6,6 @@ import de.qabel.core.config.AccountingServer;
 import de.qabel.core.crypto.QblECKeyPair;
 import org.junit.BeforeClass;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
@@ -17,7 +16,7 @@ public class BoxVolumeBlockTest extends BoxVolumeTest {
 	private BlockReadBackend readBackend;
 	private static AccountingHTTP accountingHTTP;
 
-	@BeforeClass
+    @BeforeClass
 	public static void setUpClass() throws Exception {
 	}
 
@@ -43,12 +42,14 @@ public class BoxVolumeBlockTest extends BoxVolumeTest {
 
 			String root = accountingHTTP.buildBlockUri("api/v0/files/" + prefix).build().toString();
 			readBackend = new BlockReadBackend(root, accountingHTTP);
+
+
 			volume = new BoxVolume(
 					readBackend,
 					new BlockWriteBackend(root, accountingHTTP),
 					keyPair,
 					deviceID,
-					new File(System.getProperty("java.io.tmpdir")),
+                volumeTmpDir,
 					prefix
 			);
 			volume2 = new BoxVolume(
@@ -56,7 +57,7 @@ public class BoxVolumeBlockTest extends BoxVolumeTest {
 					new BlockWriteBackend(root, accountingHTTP),
 					keyPair,
 					deviceID,
-					new File(System.getProperty("java.io.tmpdir")),
+                volumeTmpDir,
 					prefix
 			);
 		} catch (Exception e) {
@@ -66,6 +67,5 @@ public class BoxVolumeBlockTest extends BoxVolumeTest {
 
 	@Override
 	protected void cleanVolume() throws IOException {
-
 	}
 }

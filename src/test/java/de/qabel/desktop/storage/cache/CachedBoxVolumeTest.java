@@ -4,7 +4,6 @@ import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.storage.*;
-import de.qabel.desktop.ui.AbstractControllerTest;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
@@ -41,10 +40,10 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 		readBackend = new LocalReadBackend(tempFolder);
 		volume = new CachedBoxVolume(readBackend,
 				new LocalWriteBackend(tempFolder),
-				keyPair, deviceID, new File(System.getProperty("java.io.tmpdir")), "");
+				keyPair, deviceID, volumeTmpDir, "");
 		volume2 = new CachedBoxVolume(new LocalReadBackend(tempFolder),
 				new LocalWriteBackend(tempFolder),
-				keyPair, deviceID2, new File(System.getProperty("java.io.tmpdir")), "");
+				keyPair, deviceID2, volumeTmpDir, "");
 	}
 
 	@Override

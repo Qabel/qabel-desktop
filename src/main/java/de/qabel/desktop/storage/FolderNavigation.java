@@ -41,7 +41,7 @@ public class FolderNavigation extends AbstractNavigation {
         // duplicate of navigate()
         try (StorageDownload download = readBackend.download(dm.getFileName(), getMHash())) {
             InputStream indexDl = download.getInputStream();
-            File tmp = File.createTempFile("dir", "db", dm.getTempDir());
+            File tmp = File.createTempFile("dir", "db7", dm.getTempDir());
             tmp.deleteOnExit();
             KeyParameter key = new KeyParameter(this.key);
             if (cryptoUtils.decryptFileAuthenticatedSymmetricAndValidateTag(indexDl, tmp, key)) {
