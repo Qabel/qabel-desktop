@@ -34,7 +34,7 @@ public class DefaultIndexNavigation extends AbstractNavigation implements IndexN
             File tmp;
             byte[] encrypted = IOUtils.toByteArray(indexDl);
             DecryptedPlaintext plaintext = cryptoUtils.readBox(keyPair, encrypted);
-            tmp = File.createTempFile("dir", "db", dm.getTempDir());
+            tmp = File.createTempFile("dir", "db4", dm.getTempDir());
             tmp.deleteOnExit();
             logger.info("Using " + tmp + " for the metadata file");
             OutputStream out = new FileOutputStream(tmp);

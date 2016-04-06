@@ -11,15 +11,19 @@ import de.qabel.desktop.storage.BoxVolume;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 
 public class BlockBoxVolumeFactory extends AbstractBoxVolumeFactory {
-	private byte[] deviceId;
+    private final File tmpDir;
+    private byte[] deviceId;
 
-	public BlockBoxVolumeFactory(byte[] deviceId, AccountingHTTP accountingHTTP, IdentityRepository identityRepository) {
+    public BlockBoxVolumeFactory(byte[] deviceId, AccountingHTTP accountingHTTP, IdentityRepository identityRepository) throws IOException {
 		super(accountingHTTP, identityRepository);
 		this.deviceId = deviceId;
-	}
+        tmpDir = Files.createTempDirectory("qbl_tmp").toFile();
+    }
 
 	@Override
 	public BoxVolume getVolume(Account account, Identity identity) {
@@ -32,12 +36,12 @@ public class BlockBoxVolumeFactory extends AbstractBoxVolumeFactory {
 			BlockWriteBackend writeBackend = new BlockWriteBackend(root, accountingHTTP);
 
 			return new CachedBoxVolume(
-					readBackend,
-					writeBackend,
-					identity.getPrimaryKeyPair(),
-					deviceId,
-					new File(System.getProperty("java.io.tmpdir")),
-					prefix
+                readBackend,
+                writeBackend,
+                identity.getPrimaryKeyPair(),
+                deviceId,
+                tmpDir,
+                prefix
 			);
 		} catch (URISyntaxException e) {
 			throw new IllegalStateException("couldn't create a valid block url: " + root);

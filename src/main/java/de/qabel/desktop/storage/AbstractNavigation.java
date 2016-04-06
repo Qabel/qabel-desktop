@@ -73,9 +73,8 @@ public abstract class AbstractNavigation implements BoxNavigation {
 
     @Override
     public synchronized AbstractNavigation navigate(BoxFolder target) throws QblStorageException {
-        try {
-            InputStream indexDl = readBackend.download(target.ref).getInputStream();
-            File tmp = File.createTempFile("dir", "db", dm.getTempDir());
+        try (InputStream indexDl = readBackend.download(target.ref).getInputStream()) {
+            File tmp = File.createTempFile("dir", "db2", dm.getTempDir());
             tmp.deleteOnExit();
             KeyParameter key = new KeyParameter(target.key);
             if (cryptoUtils.decryptFileAuthenticatedSymmetricAndValidateTag(indexDl, tmp, key)) {
@@ -322,14 +321,14 @@ public abstract class AbstractNavigation implements BoxNavigation {
                 throw new QblStorageException("Encryption failed");
             }
             outputStream.flush();
-            InputStream encryptedFile = new FileInputStream(tempFile);
-            if (listener != null) {
-                listener.setSize(tempFile.length());
-                encryptedFile = new ProgressInputStream(encryptedFile, listener);
+            try (InputStream fis = new DeleteOnCloseFileInputStream(tempFile)) {
+                InputStream encryptedFile = fis;
+                if (listener != null) {
+                    listener.setSize(tempFile.length());
+                    encryptedFile = new ProgressInputStream(encryptedFile, listener);
+                }
+                return writeBackend.upload(block, encryptedFile);
             }
-            long upload = writeBackend.upload(block, encryptedFile);
-            tempFile.delete();
-            return upload;
         } catch (IOException | InvalidKeyException e) {
             throw new QblStorageException(e);
         }
@@ -342,21 +341,19 @@ public abstract class AbstractNavigation implements BoxNavigation {
 
     @Override
     public InputStream download(BoxFile boxFile, ProgressListener listener) throws QblStorageException {
-        StorageDownload download = readBackend.download("blocks/" + boxFile.getBlock());
-        InputStream content = download.getInputStream();
-        if (listener != null) {
-            listener.setSize(download.getSize());
-            content = new ProgressInputStream(content, listener);
-        }
-        File temp;
-        KeyParameter key = new KeyParameter(boxFile.key);
-        try {
-            temp = File.createTempFile("upload", "down", dm.getTempDir());
+        try (StorageDownload download = readBackend.download("blocks/" + boxFile.getBlock())) {
+            InputStream content = download.getInputStream();
+            if (listener != null) {
+                listener.setSize(download.getSize());
+                content = new ProgressInputStream(content, listener);
+            }
+            KeyParameter key = new KeyParameter(boxFile.key);
+            File temp = File.createTempFile("upload", "down", dm.getTempDir());
             temp.deleteOnExit();
             if (!cryptoUtils.decryptFileAuthenticatedSymmetricAndValidateTag(content, temp, key)) {
                 throw new QblStorageException("Decryption failed");
             }
-            return new FileInputStream(temp);
+            return new DeleteOnCloseFileInputStream(temp);
         } catch (IOException | InvalidKeyException e) {
             throw new QblStorageException(e);
         }
@@ -420,15 +417,16 @@ public abstract class AbstractNavigation implements BoxNavigation {
     }
 
     private File getMetadataFile(String meta, byte[] key) throws QblStorageException, IOException, InvalidKeyException {
-        InputStream encryptedMetadata = readBackend.download(meta).getInputStream();
+        try (InputStream encryptedMetadata = readBackend.download(meta).getInputStream()) {
 
-        File tmp = File.createTempFile("dir", "db", dm.getTempDir());
-        tmp.deleteOnExit();
-        KeyParameter keyParameter = new KeyParameter(key);
-        if (cryptoUtils.decryptFileAuthenticatedSymmetricAndValidateTag(encryptedMetadata, tmp, keyParameter)) {
-            return tmp;
-        } else {
-            throw new QblStorageNotFound("Invalid key");
+            File tmp = File.createTempFile("dir", "db1", dm.getTempDir());
+            tmp.deleteOnExit();
+            KeyParameter keyParameter = new KeyParameter(key);
+            if (cryptoUtils.decryptFileAuthenticatedSymmetricAndValidateTag(encryptedMetadata, tmp, keyParameter)) {
+                return tmp;
+            } else {
+                throw new QblStorageNotFound("Invalid key");
+            }
         }
     }
 
