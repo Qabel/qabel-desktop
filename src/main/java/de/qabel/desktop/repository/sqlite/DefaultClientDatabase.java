@@ -1,9 +1,10 @@
 package de.qabel.desktop.repository.sqlite;
 
-import de.qabel.core.config.SQLitePersistence;
 import de.qabel.desktop.repository.sqlite.migration.AbstractMigration;
 import de.qabel.desktop.repository.sqlite.migration.Migration000000001CreateIdentitiy;
 import de.qabel.desktop.repository.sqlite.migration.MigrationFailedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,7 +12,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DefaultClientDatabase implements ClientDatabase {
-    private Connection connection;
+    private static final Logger logger = LoggerFactory.getLogger(DefaultClientDatabase.class);
+    private final Connection connection;
 
     public DefaultClientDatabase(Connection connection) {
         this.connection = connection;
@@ -55,8 +57,10 @@ public class DefaultClientDatabase implements ClientDatabase {
 
     public void migrate(AbstractMigration migration) throws MigrationException {
         try {
+            logger.info("Migrating " + migration.getClass().getSimpleName());
             migration.up();
             setVersion(migration.getVersion());
+            logger.info("ClientDatabase now on version " + getVersion());
         } catch (SQLException e) {
             throw new MigrationFailedException(migration, e.getMessage(), e);
         }

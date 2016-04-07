@@ -66,7 +66,7 @@ import static javafx.scene.control.Alert.AlertType.WARNING;
 
 
 public class DesktopClient extends Application {
-    private static final Logger logger = LoggerFactory.getLogger(DesktopClient.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(DesktopClient.class);
     private static Path LEGACY_DATABASE_FILE = Paths.get(System.getProperty("user.home")).resolve(".qabel/db.sqlite");
     private static Path DATABASE_FILE = Paths.get(System.getProperty("user.home")).resolve(".qabel/config.sqlite");
     private static DesktopServices services;
@@ -116,6 +116,7 @@ public class DesktopClient extends Application {
             clientDatabase.migrate();
 
             if (needsToMigrateLegacyDatabase) {
+                logger.warn("found legacy database, migrating to new format");
                 LegacyDatabaseMigrator.migrate(
                     new SQLitePersistence(LEGACY_DATABASE_FILE.toAbsolutePath().toString()),
                     clientDatabase
@@ -185,7 +186,7 @@ public class DesktopClient extends Application {
         scene = new Scene(new LoginView().getView(), 370, 570, true, aa);
         primaryStage.setScene(scene);
 
-        config.addObserver((o, arg) -> {
+        config.addObserver((o, arg) ->
             Platform.runLater(() -> {
                 if (arg instanceof Account) {
                     try {
@@ -206,8 +207,8 @@ public class DesktopClient extends Application {
                 } else if (arg instanceof Identity) {
                     addShareMessageRenderer((Identity) arg);
                 }
-            });
-        });
+            })
+        );
 
         services.getDropMessageRepository().addObserver(new ShareNotificationHandler(config));
 
@@ -246,7 +247,6 @@ public class DesktopClient extends Application {
     }
 
     private void setTrayIcon(Stage primaryStage) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
-
         if (!SystemTray.isSupported()) {
             return;
         }
@@ -270,7 +270,6 @@ public class DesktopClient extends Application {
     }
 
     private void trayIconListener(final JPopupMenu popup, TrayIcon icon) {
-
         Timer notificationTimer = new Timer();
         notificationTimer.schedule(
             new TimerTask() {

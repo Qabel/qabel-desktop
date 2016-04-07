@@ -13,7 +13,6 @@ import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.testfx.api.FxRobot;
 
 import java.nio.file.Paths;
 import java.util.LinkedList;
