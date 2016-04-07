@@ -11,6 +11,7 @@ import de.qabel.desktop.storage.BoxExternalFile;
 import de.qabel.desktop.storage.BoxFile;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.api.FxRobot;
 
@@ -132,6 +133,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
     }
 
     @Test
+    @Ignore(value = "unignore when jenkins can handle GUI actions")
     public void unshareFile() throws Exception {
         rootNavigation.share(identity.getEcPublicKey(), boxFile, "receiver");
 
