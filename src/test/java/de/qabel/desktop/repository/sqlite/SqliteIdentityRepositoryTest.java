@@ -38,13 +38,15 @@ public class SqliteIdentityRepositoryTest {
         clientDatabase = new DefaultClientDatabase(connection);
         clientDatabase.migrate();
         em = new EntityManager();
+        SqliteIdentityDropUrlRepository dropUrlRepository = new SqliteIdentityDropUrlRepository(clientDatabase, new DropURLHydrator());
+        SqlitePrefixRepository prefixRepository = new SqlitePrefixRepository(clientDatabase);
         IdentityHydrator hydrator = new IdentityHydrator(
             new DefaultIdentityFactory(),
             em,
-            new SqliteDropUrlRepository(clientDatabase, new DropURLHydrator()),
-            new SqlitePrefixRepository(clientDatabase)
+            dropUrlRepository,
+            prefixRepository
         );
-        repo = new SqliteIdentityRepository(clientDatabase, hydrator);
+        repo = new SqliteIdentityRepository(clientDatabase, hydrator, dropUrlRepository, prefixRepository);
         identityBuilder = new IdentityBuilder(new DropUrlGenerator("http://localhost"));
         identityBuilder.withAlias("testuser");
     }

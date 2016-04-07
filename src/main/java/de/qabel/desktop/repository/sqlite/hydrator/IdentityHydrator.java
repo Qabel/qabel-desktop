@@ -7,7 +7,7 @@ import de.qabel.desktop.config.factory.IdentityFactory;
 import de.qabel.desktop.repository.EntityManager;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.repository.sqlite.Hydrator;
-import de.qabel.desktop.repository.sqlite.SqliteDropUrlRepository;
+import de.qabel.desktop.repository.sqlite.SqliteIdentityDropUrlRepository;
 import de.qabel.desktop.repository.sqlite.SqlitePrefixRepository;
 import org.spongycastle.util.encoders.Hex;
 
@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class IdentityHydrator implements Hydrator<Identity> {
-    private final SqliteDropUrlRepository dropUrlRepository;
+    private final SqliteIdentityDropUrlRepository dropUrlRepository;
     private final IdentityFactory identityFactory;
     private final EntityManager entityManager;
     private final SqlitePrefixRepository prefixRepository;
@@ -27,7 +27,7 @@ public class IdentityHydrator implements Hydrator<Identity> {
     public IdentityHydrator(
         IdentityFactory identityFactory,
         EntityManager entityManager,
-        SqliteDropUrlRepository dropUrlRepository,
+        SqliteIdentityDropUrlRepository dropUrlRepository,
         SqlitePrefixRepository prefixRepository
     ) {
         this.identityFactory = identityFactory;

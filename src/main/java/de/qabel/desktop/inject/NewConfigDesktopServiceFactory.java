@@ -5,7 +5,7 @@ import de.qabel.desktop.config.factory.IdentityFactory;
 import de.qabel.desktop.inject.config.RuntimeConfiguration;
 import de.qabel.desktop.repository.EntityManager;
 import de.qabel.desktop.repository.IdentityRepository;
-import de.qabel.desktop.repository.sqlite.SqliteDropUrlRepository;
+import de.qabel.desktop.repository.sqlite.SqliteIdentityDropUrlRepository;
 import de.qabel.desktop.repository.sqlite.SqliteIdentityRepository;
 import de.qabel.desktop.repository.sqlite.SqlitePrefixRepository;
 import de.qabel.desktop.repository.sqlite.hydrator.DropURLHydrator;
@@ -21,7 +21,9 @@ public class NewConfigDesktopServiceFactory extends StaticDesktopServiceFactory 
         if (identityRepository == null) {
             identityRepository = new SqliteIdentityRepository(
                 runtimeConfiguration.getConfigDatabase(),
-                getIdentityHydrator()
+                getIdentityHydrator(),
+                getIdentityDropUrlRepository(),
+                getPrefixRepository()
             );
         }
         return identityRepository;
@@ -31,7 +33,7 @@ public class NewConfigDesktopServiceFactory extends StaticDesktopServiceFactory 
         return new IdentityHydrator(
             getIdentityFactory(),
             getEntityManager(),
-            getDropUrlRepository(),
+            getIdentityDropUrlRepository(),
             getPrefixRepository()
         );
     }
@@ -44,10 +46,10 @@ public class NewConfigDesktopServiceFactory extends StaticDesktopServiceFactory 
         return prefixRepository;
     }
 
-    private SqliteDropUrlRepository dropUrlRepository;
-    private synchronized SqliteDropUrlRepository getDropUrlRepository() {
+    private SqliteIdentityDropUrlRepository dropUrlRepository;
+    private synchronized SqliteIdentityDropUrlRepository getIdentityDropUrlRepository() {
         if (dropUrlRepository == null) {
-            dropUrlRepository = new SqliteDropUrlRepository(
+            dropUrlRepository = new SqliteIdentityDropUrlRepository(
                 runtimeConfiguration.getConfigDatabase(),
                 new DropURLHydrator()
             );

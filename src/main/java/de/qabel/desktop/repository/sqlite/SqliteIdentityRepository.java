@@ -10,6 +10,7 @@ import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.repository.sqlite.hydrator.DropURLHydrator;
 import de.qabel.desktop.repository.sqlite.hydrator.IdentityHydrator;
+import org.apache.http.conn.SchemePortResolver;
 import org.spongycastle.util.encoders.Hex;
 
 import java.sql.PreparedStatement;
@@ -19,9 +20,18 @@ import java.util.Collection;
 
 public class SqliteIdentityRepository extends AbstractSqliteRepository<Identity> implements IdentityRepository {
     private static final String TABLE_NAME = "identity";
+    private final SqliteIdentityDropUrlRepository dropUrlRepository;
+    private final SqlitePrefixRepository prefixRepository;
 
-    public SqliteIdentityRepository(ClientDatabase database, IdentityHydrator identityHydrator) {
+    public SqliteIdentityRepository(
+        ClientDatabase database,
+        IdentityHydrator identityHydrator,
+        SqliteIdentityDropUrlRepository dropUrlRepository,
+        SqlitePrefixRepository prefixRepository
+    ) {
         super(database, identityHydrator, TABLE_NAME);
+        this.dropUrlRepository = dropUrlRepository;
+        this.prefixRepository = prefixRepository;
     }
 
     public SqliteIdentityRepository(ClientDatabase database, EntityManager em) {
@@ -30,9 +40,11 @@ public class SqliteIdentityRepository extends AbstractSqliteRepository<Identity>
             new IdentityHydrator(
                 new DefaultIdentityFactory(),
                 em,
-                new SqliteDropUrlRepository(database, new DropURLHydrator()),
+                new SqliteIdentityDropUrlRepository(database, new DropURLHydrator()),
                 new SqlitePrefixRepository(database)
-            )
+            ),
+            new SqliteIdentityDropUrlRepository(database, new DropURLHydrator()),
+            new SqlitePrefixRepository(database)
         );
     }
 
@@ -80,21 +92,10 @@ public class SqliteIdentityRepository extends AbstractSqliteRepository<Identity>
             throw new PersistenceException("Failed to save identity, nothing happened");
         }
 
-        deleteDropUrls(identity);
-        storeDropUrls(identity);
-        deletePrefixes(identity);
-        storePrefixes(identity);
-    }
-
-    private void deleteDropUrls(Identity identity) throws SQLException {
-        PreparedStatement dropDrops = database.prepare("DELETE FROM drop_url WHERE identity_id = ?");
-        dropDrops.setInt(1, identity.getId());
-        dropDrops.execute();
-    }
-    private void deletePrefixes(Identity identity) throws SQLException {
-        PreparedStatement dropPrefixes = database.prepare("DELETE FROM prefix WHERE identity_id = ?");
-        dropPrefixes.setInt(1, identity.getId());
-        dropPrefixes.execute();
+        dropUrlRepository.delete(identity);
+        dropUrlRepository.store(identity);
+        prefixRepository.delete(identity);
+        prefixRepository.store(identity);
     }
 
     private synchronized void insert(Identity identity) throws SQLException, PersistenceException {
@@ -116,27 +117,9 @@ public class SqliteIdentityRepository extends AbstractSqliteRepository<Identity>
         generatedKeys.next();
         identity.setId(generatedKeys.getInt(1));
 
-        storeDropUrls(identity);
-        storePrefixes(identity);
+        dropUrlRepository.store(identity);
+        prefixRepository.store(identity);
 
         hydrator.recognize(identity);
-    }
-
-    private void storePrefixes(Identity identity) throws SQLException {
-        for (String prefix : identity.getPrefixes()) {
-            PreparedStatement prefixStatment = database.prepare("INSERT INTO prefix (identity_id, prefix) VALUES (?, ?)");
-            prefixStatment.setInt(1, identity.getId());
-            prefixStatment.setString(2, prefix);
-            prefixStatment.execute();
-        }
-    }
-
-    private void storeDropUrls(Identity identity) throws SQLException {
-        for (DropURL url : identity.getDropUrls()) {
-            PreparedStatement dropStatement = database.prepare("INSERT INTO drop_url (identity_id, url) VALUES (?, ?)");
-            dropStatement.setInt(1, identity.getId());
-            dropStatement.setString(2, url.toString());
-            dropStatement.execute();
-        }
     }
 }
