@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-public class IdentityHydrator implements Hydrator<Identity> {
+public class IdentityHydrator extends AbstractHydrator<Identity> {
     private final SqliteIdentityDropUrlRepository dropUrlRepository;
     private final IdentityFactory identityFactory;
     private final EntityManager entityManager;
@@ -53,6 +53,7 @@ public class IdentityHydrator implements Hydrator<Identity> {
         String alias = resultSet.getString(i++);
         String email = resultSet.getString(i++);
         String phone = resultSet.getString(i++);
+
         Identity identity = identityFactory.createIdentity(new QblECKeyPair(privateKey), dropUrls, alias);
         identity.setId(id);
         identity.setEmail(email);
@@ -69,15 +70,6 @@ public class IdentityHydrator implements Hydrator<Identity> {
         }
         entityManager.put(Identity.class, identity);
         return identity;
-    }
-
-    @Override
-    public Collection<Identity> hydrateAll(ResultSet resultSet) throws SQLException {
-        List<Identity> identities = new LinkedList<>();
-        while (resultSet.next()) {
-            identities.add(hydrateOne(resultSet));
-        }
-        return identities;
     }
 
     @Override

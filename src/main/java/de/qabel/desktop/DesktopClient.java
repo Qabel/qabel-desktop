@@ -15,12 +15,12 @@ import de.qabel.desktop.inject.NewConfigDesktopServiceFactory;
 import de.qabel.desktop.inject.StaticDesktopServiceFactory;
 import de.qabel.desktop.inject.config.StaticRuntimeConfiguration;
 import de.qabel.desktop.repository.DropMessageRepository;
+import de.qabel.desktop.repository.Transaction;
+import de.qabel.desktop.repository.TransactionManager;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
-import de.qabel.desktop.repository.sqlite.ClientDatabase;
-import de.qabel.desktop.repository.sqlite.DefaultClientDatabase;
-import de.qabel.desktop.repository.sqlite.LegacyDatabaseMigrator;
-import de.qabel.desktop.repository.sqlite.MigrationException;
+import de.qabel.desktop.repository.exception.TransactionException;
+import de.qabel.desktop.repository.sqlite.*;
 import de.qabel.desktop.storage.AbstractNavigation;
 import de.qabel.desktop.ui.LayoutView;
 import de.qabel.desktop.ui.accounting.login.LoginView;
@@ -109,25 +109,42 @@ public class DesktopClient extends Application {
         boolean needsToMigrateLegacyDatabase = !Files.exists(DATABASE_FILE) && Files.exists(LEGACY_DATABASE_FILE);
 
         try {
-            Connection connection = DriverManager.getConnection("jdbc:sqlite://" + DATABASE_FILE.toAbsolutePath());
-            connection.createStatement().execute("PRAGMA FOREIGN_KEYS = ON");
-            ClientDatabase clientDatabase = new DefaultClientDatabase(connection);
+            try {
+                Connection connection = DriverManager.getConnection("jdbc:sqlite://" + DATABASE_FILE.toAbsolutePath());
 
-            clientDatabase.migrate();
+                try {
+                    connection.createStatement().execute("PRAGMA FOREIGN_KEYS = ON");
+                    ClientDatabase clientDatabase = new DefaultClientDatabase(connection);
 
-            if (needsToMigrateLegacyDatabase) {
-                logger.warn("found legacy database, migrating to new format");
-                LegacyDatabaseMigrator.migrate(
-                    new SQLitePersistence(LEGACY_DATABASE_FILE.toAbsolutePath().toString()),
-                    clientDatabase
-                );
+                    clientDatabase.migrate();
+
+                    if (needsToMigrateLegacyDatabase) {
+                        logger.warn("found legacy database, migrating to new format");
+                        TransactionManager tm = new SqliteTransactionManager(connection);
+                        LegacyDatabaseMigrator legacyDatabaseMigrator = new LegacyDatabaseMigrator(
+                            new SQLitePersistence(LEGACY_DATABASE_FILE.toAbsolutePath().toString()),
+                            clientDatabase
+                        );
+                        tm.transactional(legacyDatabaseMigrator::migrate);
+                    }
+
+                    return clientDatabase;
+                } catch (Exception e) {
+                    try { connection.close(); } catch (Exception ignored) {}
+                    throw e;
+                }
+
+            } catch (Exception e) {
+                throw new IllegalStateException("failed to initialize or migrate config database:" + e.getMessage(), e);
             }
-
-            return clientDatabase;
-        } catch (SQLException e) {
-            throw new IllegalStateException("failed to initialize config database: " + e.getMessage(), e);
-        } catch (MigrationException e) {
-            throw new IllegalStateException("failed to migrate config database:" + e.getMessage(), e);
+        } catch (Exception e) {
+            if (needsToMigrateLegacyDatabase) {
+                try {
+                    Files.delete(DATABASE_FILE);
+                } catch (Exception ignored) {
+                }
+            }
+            throw e;
         }
     }
 

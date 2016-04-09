@@ -14,11 +14,12 @@ public abstract class AbstractMigration {
     public abstract int getVersion();
 
     protected void execute(String sql, Object... parameters) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement(sql);
-        for (int i = 1; i < parameters.length; i++) {
-            statement.setObject(i, parameters[i]);
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            for (int i = 1; i < parameters.length; i++) {
+                statement.setObject(i, parameters[i]);
+            }
+            statement.execute();
         }
-        statement.execute();
     }
 
     public abstract void up() throws SQLException;

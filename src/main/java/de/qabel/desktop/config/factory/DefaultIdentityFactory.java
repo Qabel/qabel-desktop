@@ -9,6 +9,6 @@ import java.util.Collection;
 public class DefaultIdentityFactory implements IdentityFactory {
     @Override
     public Identity createIdentity(QblECKeyPair keyPair, Collection<DropURL> dropURLs, String alias) {
-    return new Identity(alias, dropURLs, keyPair);
+        return new Identity(alias, dropURLs, keyPair);
     }
 }

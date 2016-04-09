@@ -20,19 +20,21 @@ public class SqlitePrefixRepository extends AbstractSqliteRepository<String> {
     }
 
     public void delete(Identity identity) throws SQLException {
-        PreparedStatement dropPrefixes = database.prepare("DELETE FROM " + TABLE_NAME + " WHERE identity_id = ?");
-        dropPrefixes.setInt(1, identity.getId());
-        dropPrefixes.execute();
+        try (PreparedStatement dropPrefixes = database.prepare("DELETE FROM " + TABLE_NAME + " WHERE identity_id = ?")) {
+            dropPrefixes.setInt(1, identity.getId());
+            dropPrefixes.execute();
+        }
     }
 
     public void store(Identity identity) throws SQLException {
-        for (String prefix : identity.getPrefixes()) {
-            PreparedStatement prefixStatment = database.prepare(
-                "INSERT INTO " + TABLE_NAME + " (identity_id, prefix) VALUES (?, ?)"
-            );
-            prefixStatment.setInt(1, identity.getId());
-            prefixStatment.setString(2, prefix);
-            prefixStatment.execute();
+        try (PreparedStatement prefixStatment = database.prepare(
+            "INSERT INTO " + TABLE_NAME + " (identity_id, prefix) VALUES (?, ?)"
+        )) {
+            for (String prefix : identity.getPrefixes()) {
+                prefixStatment.setInt(1, identity.getId());
+                prefixStatment.setString(2, prefix);
+                prefixStatment.execute();
+            }
         }
     }
 }

@@ -20,21 +20,23 @@ public class SqliteIdentityDropUrlRepository extends AbstractSqliteRepository<Dr
     }
 
     public void delete(Identity identity) throws SQLException {
-        PreparedStatement dropDrops = database.prepare(
+        try (PreparedStatement dropDrops = database.prepare(
             "DELETE FROM " + TABLE_NAME + " WHERE identity_id = ?"
-        );
-        dropDrops.setInt(1, identity.getId());
-        dropDrops.execute();
+        )) {
+            dropDrops.setInt(1, identity.getId());
+            dropDrops.execute();
+        }
     }
 
     public void store(Identity identity) throws SQLException {
-        for (DropURL url : identity.getDropUrls()) {
-            PreparedStatement dropStatement = database.prepare(
-                "INSERT INTO " + TABLE_NAME + " (identity_id, url) VALUES (?, ?)"
-            );
-            dropStatement.setInt(1, identity.getId());
-            dropStatement.setString(2, url.toString());
-            dropStatement.execute();
+        try (PreparedStatement dropStatement = database.prepare(
+            "INSERT INTO " + TABLE_NAME + " (identity_id, url) VALUES (?, ?)"
+        )) {
+            for (DropURL url : identity.getDropUrls()) {
+                dropStatement.setInt(1, identity.getId());
+                dropStatement.setString(2, url.toString());
+                dropStatement.execute();
+            }
         }
     }
 }

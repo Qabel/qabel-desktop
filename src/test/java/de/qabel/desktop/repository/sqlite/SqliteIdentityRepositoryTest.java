@@ -10,34 +10,28 @@ import de.qabel.desktop.repository.EntityManager;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.sqlite.hydrator.DropURLHydrator;
 import de.qabel.desktop.repository.sqlite.hydrator.IdentityHydrator;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Arrays;
 import java.util.Set;
 
 import static org.junit.Assert.*;
 
-public class SqliteIdentityRepositoryTest {
-    private Connection connection;
-    private ClientDatabase clientDatabase;
-    private Path dbFile;
-    private SqliteIdentityRepository repo;
+public class SqliteIdentityRepositoryTest extends AbstractSqliteRepositoryTest<SqliteIdentityRepository> {
     private IdentityBuilder identityBuilder;
-    private EntityManager em;
 
-    @Before
+    @Override
     public void setUp() throws Exception {
-        dbFile = Files.createTempFile("qabel", "tmpdb");
-        connection = DriverManager.getConnection("jdbc:sqlite://" + dbFile.toAbsolutePath());
-        clientDatabase = new DefaultClientDatabase(connection);
-        clientDatabase.migrate();
-        em = new EntityManager();
+        super.setUp();
+        identityBuilder = new IdentityBuilder(new DropUrlGenerator("http://localhost"));
+        identityBuilder.withAlias("testuser");
+    }
+
+    @Override
+    protected SqliteIdentityRepository createRepo(ClientDatabase clientDatabase, EntityManager em) {
         SqliteIdentityDropUrlRepository dropUrlRepository = new SqliteIdentityDropUrlRepository(clientDatabase, new DropURLHydrator());
         SqlitePrefixRepository prefixRepository = new SqlitePrefixRepository(clientDatabase);
         IdentityHydrator hydrator = new IdentityHydrator(
@@ -46,18 +40,7 @@ public class SqliteIdentityRepositoryTest {
             dropUrlRepository,
             prefixRepository
         );
-        repo = new SqliteIdentityRepository(clientDatabase, hydrator, dropUrlRepository, prefixRepository);
-        identityBuilder = new IdentityBuilder(new DropUrlGenerator("http://localhost"));
-        identityBuilder.withAlias("testuser");
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        try {
-            connection.close();
-        } finally {
-            Files.delete(dbFile);
-        }
+        return new SqliteIdentityRepository(clientDatabase, hydrator, dropUrlRepository, prefixRepository);
     }
 
     @Test
@@ -122,6 +105,17 @@ public class SqliteIdentityRepositoryTest {
         assertNotNull(loaded);
         assertEquals(1, loaded.getIdentities().size());
         assertSame(identity, loaded.getIdentities().toArray()[0]);
+    }
+
+    @Test
+    public void alwaysLoadsTheSameInstance() throws Exception {
+        Identity identity = identityBuilder.build();
+        repo.save(identity);
+        em.clear();
+
+        Identity instance1 = repo.find(identity.getKeyIdentifier());
+        Identity instance2 = repo.find(identity.getKeyIdentifier());
+        assertSame(instance1, instance2);
     }
 
     @Test

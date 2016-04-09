@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 
 public interface Hydrator<T> {
-    String[] getFields();
+    String[] getFields(String tableAlias);
     T hydrateOne(ResultSet resultSet) throws SQLException;
     Collection<T> hydrateAll(ResultSet resultSet) throws SQLException;
 

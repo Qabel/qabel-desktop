@@ -2,7 +2,6 @@ package de.qabel.desktop.repository.sqlite;
 
 import de.qabel.core.config.Identities;
 import de.qabel.core.config.Identity;
-import de.qabel.core.drop.DropURL;
 import de.qabel.desktop.config.factory.DefaultIdentityFactory;
 import de.qabel.desktop.repository.EntityManager;
 import de.qabel.desktop.repository.IdentityRepository;
@@ -10,7 +9,6 @@ import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.repository.sqlite.hydrator.DropURLHydrator;
 import de.qabel.desktop.repository.sqlite.hydrator.IdentityHydrator;
-import org.apache.http.conn.SchemePortResolver;
 import org.spongycastle.util.encoders.Hex;
 
 import java.sql.PreparedStatement;
@@ -77,49 +75,52 @@ public class SqliteIdentityRepository extends AbstractSqliteRepository<Identity>
     }
 
     private synchronized void update(Identity identity) throws SQLException, PersistenceException {
-        PreparedStatement statement = database.prepare(
+        try (PreparedStatement statement = database.prepare(
             "UPDATE identity SET privateKey=?, publicKey=?, alias=?, email=?, phone=? WHERE id=?"
-        );
-        int i = 1;
-        statement.setString(i++, Hex.toHexString(identity.getPrimaryKeyPair().getPrivateKey()));
-        statement.setString(i++, identity.getKeyIdentifier());
-        statement.setString(i++, identity.getAlias());
-        statement.setString(i++, identity.getEmail());
-        statement.setString(i++, identity.getPhone());
-        statement.setInt(i++, identity.getId());
-        statement.execute();
-        if (statement.getUpdateCount() <= 0) {
-            throw new PersistenceException("Failed to save identity, nothing happened");
-        }
+        )) {
+            int i = 1;
+            statement.setString(i++, Hex.toHexString(identity.getPrimaryKeyPair().getPrivateKey()));
+            statement.setString(i++, identity.getKeyIdentifier());
+            statement.setString(i++, identity.getAlias());
+            statement.setString(i++, identity.getEmail());
+            statement.setString(i++, identity.getPhone());
+            statement.setInt(i++, identity.getId());
+            statement.execute();
+            if (statement.getUpdateCount() <= 0) {
+                throw new PersistenceException("Failed to save identity, nothing happened");
+            }
 
-        dropUrlRepository.delete(identity);
-        dropUrlRepository.store(identity);
-        prefixRepository.delete(identity);
-        prefixRepository.store(identity);
+            dropUrlRepository.delete(identity);
+            dropUrlRepository.store(identity);
+            prefixRepository.delete(identity);
+            prefixRepository.store(identity);
+        }
     }
 
     private synchronized void insert(Identity identity) throws SQLException, PersistenceException {
-        PreparedStatement statement = database.prepare(
+        try (PreparedStatement statement = database.prepare(
             "INSERT INTO identity (privateKey, publicKey, alias, email, phone) VALUES (?, ?, ?, ?, ?)"
-        );
-        int i = 1;
-        statement.setString(i++, Hex.toHexString(identity.getPrimaryKeyPair().getPrivateKey()));
-        statement.setString(i++, identity.getKeyIdentifier());
-        statement.setString(i++, identity.getAlias());
-        statement.setString(i++, identity.getEmail());
-        statement.setString(i++, identity.getPhone());
-        statement.execute();
-        if (statement.getUpdateCount() <= 0) {
-            throw new PersistenceException("Failed to save identity, nothing happened");
+        )) {
+            int i = 1;
+            statement.setString(i++, Hex.toHexString(identity.getPrimaryKeyPair().getPrivateKey()));
+            statement.setString(i++, identity.getKeyIdentifier());
+            statement.setString(i++, identity.getAlias());
+            statement.setString(i++, identity.getEmail());
+            statement.setString(i++, identity.getPhone());
+            statement.execute();
+            if (statement.getUpdateCount() <= 0) {
+                throw new PersistenceException("Failed to save identity, nothing happened");
+            }
+
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                generatedKeys.next();
+                identity.setId(generatedKeys.getInt(1));
+            }
+
+            dropUrlRepository.store(identity);
+            prefixRepository.store(identity);
+
+            hydrator.recognize(identity);
         }
-
-        ResultSet generatedKeys = statement.getGeneratedKeys();
-        generatedKeys.next();
-        identity.setId(generatedKeys.getInt(1));
-
-        dropUrlRepository.store(identity);
-        prefixRepository.store(identity);
-
-        hydrator.recognize(identity);
     }
 }

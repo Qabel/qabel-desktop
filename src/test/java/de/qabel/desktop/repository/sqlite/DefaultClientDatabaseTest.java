@@ -1,6 +1,7 @@
 package de.qabel.desktop.repository.sqlite;
 
 import de.qabel.desktop.repository.sqlite.migration.AbstractSqliteTest;
+import de.qabel.desktop.repository.sqlite.migration.FailingMigration;
 import de.qabel.desktop.repository.sqlite.migration.Migration000000001CreateIdentitiy;
 import org.junit.Test;
 
@@ -46,5 +47,15 @@ public class DefaultClientDatabaseTest extends AbstractSqliteTest {
     public void migratesAll() throws Exception {
         database.migrate();
         assertTrue(database.tableExists("identity"));
+    }
+
+    @Test
+    public void rollsBackFailingMigrations() throws Exception {
+        try {
+            database.migrate(new FailingMigration(connection));
+            fail("no exception thrown on failed migration");
+        } catch (MigrationException ignored) {}
+
+        assertFalse("partly executed migration not rolled back fully", tableExists("test1"));
     }
 }

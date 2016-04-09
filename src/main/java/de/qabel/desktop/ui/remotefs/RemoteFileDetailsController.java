@@ -8,6 +8,7 @@ import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.storage.BoxFile;
 import de.qabel.desktop.storage.BoxNavigation;
 import de.qabel.desktop.storage.BoxObject;
@@ -134,7 +135,7 @@ public class RemoteFileDetailsController extends AbstractController implements I
                             return c;
                         }
                     }
-                } catch (EntityNotFoundExcepion e) {
+                } catch (PersistenceException e) {
                     alert(e);
                 }
                 return shareReceiver.getItems().size() > 0 ? shareReceiver.getItems().get(0) : null;
@@ -208,7 +209,7 @@ public class RemoteFileDetailsController extends AbstractController implements I
         tryOrAlert(() -> getContacts().getContacts().forEach(shareReceiver.getItems()::add));
     }
 
-    private Contacts getContacts() throws EntityNotFoundExcepion {
+    private Contacts getContacts() throws PersistenceException {
         return contactRepository.find(clientConfiguration.getSelectedIdentity());
     }
 }

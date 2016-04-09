@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DropURLHydrator implements Hydrator<DropURL> {
+public class DropURLHydrator extends AbstractHydrator<DropURL> {
     @Override
     public String[] getFields() {
         return new String[]{"url"};
@@ -25,15 +25,6 @@ public class DropURLHydrator implements Hydrator<DropURL> {
         } catch (URISyntaxException | QblDropInvalidURL e) {
             throw new SQLException("failed to hydrate DropUrl from " + url, e);
         }
-    }
-
-    @Override
-    public Collection<DropURL> hydrateAll(ResultSet resultSet) throws SQLException {
-        Set<DropURL> urls = new HashSet<>();
-        while (resultSet.next()) {
-            urls.add(hydrateOne(resultSet));
-        }
-        return urls;
     }
 
     @Override

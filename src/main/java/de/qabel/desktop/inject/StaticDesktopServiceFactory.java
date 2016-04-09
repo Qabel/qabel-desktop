@@ -168,7 +168,7 @@ public class StaticDesktopServiceFactory extends DefaultServiceFactory implement
         return persistence;
     }
 
-    private ContactRepository contactRepository;
+    protected ContactRepository contactRepository;
 
     @Override
     @Create(name = "contactRepository")

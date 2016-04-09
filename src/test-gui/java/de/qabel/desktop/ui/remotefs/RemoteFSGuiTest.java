@@ -7,6 +7,7 @@ import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.daemon.sync.worker.BoxNavigationStub;
 import de.qabel.desktop.daemon.sync.worker.BoxVolumeStub;
+import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.storage.BoxExternalFile;
 import de.qabel.desktop.storage.BoxFile;
 import de.qabel.desktop.ui.AbstractGuiTest;
@@ -124,7 +125,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
                 .assertReceivers(2);
     }
 
-    private Contact addContact(String name) {
+    private Contact addContact(String name) throws PersistenceException {
         Contacts contacts = contactRepository.find(identity);
         Contact contact = new Contact(name, new LinkedList<>(), new QblECKeyPair().getPub());
         contacts.put(contact);
