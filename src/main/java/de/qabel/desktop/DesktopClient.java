@@ -118,6 +118,7 @@ public class DesktopClient extends Application {
 
                     clientDatabase.migrate();
 
+                    // TODO cut below here after the config migration transition period (~ 03.05.2016)
                     if (needsToMigrateLegacyDatabase) {
                         logger.warn("found legacy database, migrating to new format");
                         TransactionManager tm = new SqliteTransactionManager(connection);

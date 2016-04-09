@@ -3,13 +3,12 @@ package de.qabel.desktop.repository.sqlite;
 import de.qabel.core.config.*;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.drop.DropURL;
-import de.qabel.desktop.config.factory.DefaultIdentityFactory;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilder;
 import de.qabel.desktop.repository.EntityManager;
+import de.qabel.desktop.repository.persistence.PersistenceAccountRepository;
 import de.qabel.desktop.repository.persistence.PersistenceContactRepository;
 import de.qabel.desktop.repository.persistence.PersistenceIdentityRepository;
-import de.qabel.desktop.repository.sqlite.hydrator.IdentityHydrator;
 import de.qabel.desktop.repository.sqlite.migration.AbstractSqliteTest;
 import org.junit.Test;
 
@@ -25,7 +24,7 @@ public class LegacyDatabaseMigratorTest extends AbstractSqliteTest {
     private SQLitePersistence persistence;
     private Path legacyFile;
     private ClientDatabase database;
-    private EntityManager em;
+    private EntityManager em = new EntityManager();
 
     @Override
     public void setUp() throws Exception {
@@ -65,7 +64,6 @@ public class LegacyDatabaseMigratorTest extends AbstractSqliteTest {
 
         migrate(persistence);
 
-        em = new EntityManager();
         Identities identities = getIdentityRepo().findAll();
         assertEquals(1, identities.getIdentities().size());
         Identity newIdentity = (Identity) identities.getIdentities().toArray()[0];
@@ -87,11 +85,26 @@ public class LegacyDatabaseMigratorTest extends AbstractSqliteTest {
 
         migrate(persistence);
 
-        em = new EntityManager();
         identity = getIdentityRepo().find(identity.getKeyIdentifier());
         Contacts contacts = getContactRepo().find(identity);
         assertEquals(1, contacts.getContacts().size());
         assertEquals(contact.getKeyIdentifier(), contacts.getContacts().toArray(new Contact[1])[0].getKeyIdentifier());
+    }
+
+    @Test
+    public void migratesAccounts() throws Exception {
+        PersistenceAccountRepository legacyRepo = new PersistenceAccountRepository(persistence);
+        Account account = new Account("a", "b", "c");
+        legacyRepo.save(account);
+
+        migrate(persistence);
+
+        List<Account> accounts = getAccountRepo().findAll();
+        assertEquals(1, accounts.size());
+        Account newAccount = accounts.get(0);
+        assertEquals("a", newAccount.getProvider());
+        assertEquals("b", newAccount.getUser());
+        assertEquals("c", newAccount.getAuth());
     }
 
     public SqliteIdentityRepository getIdentityRepo() {
@@ -100,5 +113,9 @@ public class LegacyDatabaseMigratorTest extends AbstractSqliteTest {
 
     public SqliteContactRepository getContactRepo() {
         return new SqliteContactRepository(database, em);
+    }
+
+    public SqliteAccountRepository getAccountRepo() {
+        return new SqliteAccountRepository(database, em);
     }
 }

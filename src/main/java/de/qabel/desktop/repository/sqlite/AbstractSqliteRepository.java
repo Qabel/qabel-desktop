@@ -21,7 +21,7 @@ public abstract class AbstractSqliteRepository<T> {
         queryPrefix += " FROM " + tableName + " t ";
     }
 
-    protected T find(String condition, Object... params) throws EntityNotFoundExcepion, PersistenceException {
+    protected T findBy(String condition, Object... params) throws EntityNotFoundExcepion, PersistenceException {
         String query = queryPrefix + " WHERE " + condition + " LIMIT 1";
         try (PreparedStatement statement = database.prepare(query)) {
             for (int i = 0; i < params.length; i++) {

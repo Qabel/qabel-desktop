@@ -2,10 +2,7 @@ package de.qabel.desktop.repository.sqlite;
 
 import de.qabel.desktop.repository.TransactionManager;
 import de.qabel.desktop.repository.exception.PersistenceException;
-import de.qabel.desktop.repository.sqlite.migration.AbstractMigration;
-import de.qabel.desktop.repository.sqlite.migration.Migration000000001CreateIdentitiy;
-import de.qabel.desktop.repository.sqlite.migration.Migration000000002CreateContact;
-import de.qabel.desktop.repository.sqlite.migration.MigrationFailedException;
+import de.qabel.desktop.repository.sqlite.migration.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +21,8 @@ public class DefaultClientDatabase implements ClientDatabase {
     public static AbstractMigration[] getMigrations(Connection connection) {
         return new AbstractMigration[]{
             new Migration000000001CreateIdentitiy(connection),
-            new Migration000000002CreateContact(connection)
+            new Migration000000002CreateContact(connection),
+            new Migration000000003CreateAccount(connection)
         };
     }
 
