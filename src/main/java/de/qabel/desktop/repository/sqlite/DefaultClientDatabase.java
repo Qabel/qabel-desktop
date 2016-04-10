@@ -22,7 +22,11 @@ public class DefaultClientDatabase implements ClientDatabase {
         return new AbstractMigration[]{
             new Migration000000001CreateIdentitiy(connection),
             new Migration000000002CreateContact(connection),
-            new Migration000000003CreateAccount(connection)
+            new Migration000000003CreateAccount(connection),
+            new Migration000000004ClientConfiguration(connection),
+            new Migration000000005DropState(connection),
+            new Migration000000006BoxSync(connection),
+            new Migration000000007ShareNotification(connection)
         };
     }
 

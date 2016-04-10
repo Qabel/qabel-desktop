@@ -23,6 +23,10 @@ public class Migration000000001CreateIdentitiyTest extends AbstractMigrationTest
     }
 
     public int insertIdentity() throws SQLException {
+        return insertIdentity(connection);
+    }
+
+    public static int insertIdentity(Connection connection) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(
             "INSERT INTO identity (id, publicKey, privateKey, alias, email, phone) VALUES (?, ?, ?, ?, ?, ?)"
         )) {

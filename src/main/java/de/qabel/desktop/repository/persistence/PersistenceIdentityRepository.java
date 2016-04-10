@@ -6,6 +6,7 @@ import de.qabel.core.config.Persistence;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
 
@@ -25,6 +26,11 @@ public class PersistenceIdentityRepository extends AbstractCachedPersistenceRepo
             throw new EntityNotFoundExcepion("No identity found for id " + id);
         }
         return entity;
+    }
+
+    @Override
+    public Identity find(int id) throws EntityNotFoundExcepion, PersistenceException {
+        throw new NotImplementedException();
     }
 
     @Override

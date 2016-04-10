@@ -19,6 +19,10 @@ public class Migration000000003CreateAccountTest extends AbstractMigrationTest {
     }
 
     public int insert(String provider, String user, String auth) throws SQLException {
+        return insertAccount(provider, user, auth, connection);
+    }
+
+    public static int insertAccount(String provider, String user, String auth, Connection connection) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(
             "INSERT INTO account (provider, user, auth) VALUES (?, ?, ?)"
         )) {

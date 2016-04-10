@@ -1,14 +1,13 @@
 package de.qabel.desktop.inject;
 
-import de.qabel.desktop.config.factory.ContactFactory;
-import de.qabel.desktop.config.factory.DefaultContactFactory;
-import de.qabel.desktop.config.factory.DefaultIdentityFactory;
-import de.qabel.desktop.config.factory.IdentityFactory;
+import de.qabel.desktop.config.factory.*;
 import de.qabel.desktop.inject.config.RuntimeConfiguration;
+import de.qabel.desktop.repository.AccountRepository;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.EntityManager;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.sqlite.*;
+import de.qabel.desktop.repository.sqlite.hydrator.AccountHydrator;
 import de.qabel.desktop.repository.sqlite.hydrator.ContactHydrator;
 import de.qabel.desktop.repository.sqlite.hydrator.DropURLHydrator;
 import de.qabel.desktop.repository.sqlite.hydrator.IdentityHydrator;
@@ -41,6 +40,24 @@ public class NewConfigDesktopServiceFactory extends StaticDesktopServiceFactory 
             );
         }
         return contactRepository;
+    }
+
+    @Override
+    public synchronized AccountRepository getAccountRepository() {
+        if (accountRepository == null) {
+            accountRepository = new SqliteAccountRepository(
+                runtimeConfiguration.getConfigDatabase(),
+                getAccountHydrator()
+            );
+        }
+        return accountRepository;
+    }
+
+    private AccountHydrator getAccountHydrator() {
+        return new AccountHydrator(
+            getEntityManager(),
+            getAccountFactory()
+        );
     }
 
     private IdentityHydrator getIdentityHydrator() {
@@ -98,6 +115,11 @@ public class NewConfigDesktopServiceFactory extends StaticDesktopServiceFactory 
     private ContactFactory contactFactory = new DefaultContactFactory();
     public ContactFactory getContactFactory() {
         return contactFactory;
+    }
+
+    private AccountFactory accountFactory = new DefaultAccountFactory();
+    public AccountFactory getAccountFactory() {
+        return accountFactory;
     }
 
     private EntityManager entityManager = new EntityManager();

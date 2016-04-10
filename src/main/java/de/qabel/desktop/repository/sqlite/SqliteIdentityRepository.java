@@ -47,8 +47,13 @@ public class SqliteIdentityRepository extends AbstractSqliteRepository<Identity>
     }
 
     @Override
-    public Identity find(String id) throws EntityNotFoundExcepion, PersistenceException {
-        return findBy("publicKey = ?", id);
+    public Identity find(String keyId) throws EntityNotFoundExcepion, PersistenceException {
+        return findBy("publicKey = ?", keyId);
+    }
+
+    @Override
+    public Identity find(int id) throws EntityNotFoundExcepion, PersistenceException {
+        return findBy("id = ?", id);
     }
 
     @Override

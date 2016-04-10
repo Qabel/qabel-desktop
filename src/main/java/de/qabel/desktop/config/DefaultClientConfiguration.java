@@ -8,6 +8,11 @@ import javafx.collections.ObservableList;
 
 import java.util.*;
 
+/**
+ * To be replaced.
+ * This class requires bulky saves etc...
+ */
+@Deprecated
 public class DefaultClientConfiguration extends Observable implements ClientConfiguration {
     private Account account;
     private Identity identity;

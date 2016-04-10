@@ -18,12 +18,25 @@ public class InMemoryIdentityRepository implements IdentityRepository {
     }
 
     @Override
+    public Identity find(int id) throws EntityNotFoundExcepion, PersistenceException {
+        for (Identity identity : identities.getIdentities()) {
+            if (identity.getId() == id) {
+                return identity;
+            }
+        }
+        throw new EntityNotFoundExcepion("fail");
+    }
+
+    @Override
     public Identities findAll() throws EntityNotFoundExcepion {
         return identities;
     }
 
     @Override
     public void save(Identity identity) throws PersistenceException {
+        if (identity.getId() == 0) {
+            identity.setId(identities.getIdentities().size() + 1);
+        }
         identities.put(identity);
     }
 }
