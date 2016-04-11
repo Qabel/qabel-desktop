@@ -7,11 +7,10 @@ import de.qabel.core.config.Account;
 import de.qabel.core.config.AccountingServer;
 import de.qabel.core.exceptions.QblCreateAccountFailException;
 import de.qabel.core.exceptions.QblInvalidCredentials;
-import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.ui.AbstractController;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -66,11 +65,11 @@ public class LoginController extends AbstractController implements Initializable
     Pane progressBar;
 
     ResourceBundle resourceBundle;
-    private ClientConfiguration config;
+    private ClientConfig config;
     private Account account;
 
     @Inject
-    public LoginController(ClientConfiguration config) {
+    public LoginController(ClientConfig config) {
         this.config = config;
     }
 

@@ -1,11 +1,13 @@
 package de.qabel.desktop.daemon.sync;
 
-import de.qabel.desktop.config.BoxSyncConfig;
-import de.qabel.desktop.config.ClientConfiguration;
-import de.qabel.desktop.config.DefaultClientConfiguration;
+import de.qabel.desktop.config.*;
 import de.qabel.desktop.daemon.sync.worker.FakeSyncer;
 import de.qabel.desktop.daemon.sync.worker.FakeSyncerFactory;
+import de.qabel.desktop.repository.BoxSyncConfigRepository;
+import de.qabel.desktop.repository.inmemory.InMemoryBoxSyncConfigRepisitory;
 import de.qabel.desktop.ui.sync.DummyBoxSyncConfig;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,22 +17,26 @@ import static org.junit.Assert.assertTrue;
 
 public class SyncDaemonTest extends AbstractSyncTest {
     private SyncDaemon daemon;
-    private ClientConfiguration clientConfig = new DefaultClientConfiguration();
+    private BoxSyncConfigRepository boxSyncConfigRepo = new InMemoryBoxSyncConfigRepisitory();
     private Thread thread;
     private BoxSyncConfig config;
+    private ObservableList<BoxSyncConfig> boxSyncConfigs;
 
     @Override
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         super.setUp();
-        daemon = new SyncDaemon(clientConfig.getBoxSyncConfigs(), new FakeSyncerFactory());
+        boxSyncConfigs = FXCollections.observableList(boxSyncConfigRepo.findAll());
+        boxSyncConfigRepo.onAdd(boxSyncConfigs::add);
+        boxSyncConfigRepo.onDelete(boxSyncConfigs::remove);
+        daemon = new SyncDaemon(boxSyncConfigs, new FakeSyncerFactory());
         thread = new Thread(daemon);
         config = new DummyBoxSyncConfig();
     }
 
     @Test(timeout = 1000L)
     public void loadsExistingConfigs() {
-        clientConfig.getBoxSyncConfigs().add(config);
+        boxSyncConfigs.add(config);
 
         startDaemon();
         waitForConfig();
@@ -43,7 +49,7 @@ public class SyncDaemonTest extends AbstractSyncTest {
     public void loadsNewConfigs() {
         startDaemon();
 
-        clientConfig.getBoxSyncConfigs().add(config);
+        boxSyncConfigs.add(config);
         waitForConfig();
 
         FakeSyncer fakeSyncer = (FakeSyncer) daemon.getSyncers().get(0);

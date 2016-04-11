@@ -2,7 +2,7 @@ package de.qabel.desktop.inject;
 
 import de.qabel.core.accounting.AccountingHTTP;
 import de.qabel.desktop.SharingService;
-import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.factory.BoxVolumeFactory;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
@@ -30,7 +30,7 @@ public interface DesktopServices {
 
     DropMessageRepository getDropMessageRepository();
 
-    ClientConfiguration getClientConfiguration();
+    ClientConfig getClientConfiguration();
 
     ClientConfigurationRepository getClientConfigurationRepository();
 
@@ -47,4 +47,8 @@ public interface DesktopServices {
     BoxVolumeFactory getBoxVolumeFactory() throws IOException;
 
     AccountingHTTP getAccountingClient();
+
+    ShareNotificationRepository getShareNotificationRepository();
+
+    BoxSyncConfigRepository getBoxSyncConfigRepository();
 }

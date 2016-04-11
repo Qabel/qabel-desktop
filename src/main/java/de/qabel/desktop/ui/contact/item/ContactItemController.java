@@ -3,7 +3,7 @@ package de.qabel.desktop.ui.contact.item;
 
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
-import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.IdentityRepository;
@@ -53,7 +53,7 @@ public class ContactItemController extends AbstractController implements Initial
     @Inject
     private Contact contact;
     @Inject
-    private ClientConfiguration clientConfiguration;
+    private ClientConfig clientConfiguration;
     @Inject
     private IdentityRepository identityRepository;
     @Inject

@@ -81,7 +81,7 @@ public class RepositoryBasedClientConfigTest {
         Date poll = new Date();
         config.setLastDropPoll(identity, poll);
         assertEquals(poll.getTime(), config.getLastDropPoll(identity).getTime());
-        assertNull(config.getLastDropPoll(someone));
+        assertEquals(0L, config.getLastDropPoll(someone).getTime());
     }
 
     @Test

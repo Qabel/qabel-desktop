@@ -4,6 +4,7 @@ import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 
 import java.util.Date;
+import java.util.function.Consumer;
 
 public interface ClientConfig {
     boolean hasAccount();
@@ -16,9 +17,13 @@ public interface ClientConfig {
      */
     void setAccount(Account account) throws IllegalStateException;
 
+    void onSetAccount(Consumer<Account> consumer);
+
     Identity getSelectedIdentity();
 
     void selectIdentity(Identity identity);
+
+    void onSelectIdentity(Consumer<Identity> consumer);
 
     boolean hasDeviceId();
 

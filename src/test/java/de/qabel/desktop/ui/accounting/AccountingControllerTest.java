@@ -1,6 +1,5 @@
 package de.qabel.desktop.ui.accounting;
 
-import com.google.gson.Gson;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.ContactExportImport;
 import de.qabel.core.config.Identities;
@@ -20,7 +19,6 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -53,10 +51,10 @@ public class AccountingControllerTest extends AbstractControllerTest {
 
         AccountingController controller = getAccountingController();
 
-        assertEquals(1, controller.identityList.getChildren().size());
-        assertEquals(1, controller.itemViews.size());
+        assertEquals(2, controller.identityList.getChildren().size());
+        assertEquals(2, controller.itemViews.size());
 
-        assertEquals(identity, ((AccountingItemController) controller.itemViews.get(0).getPresenter()).getIdentity());
+        assertEquals(identity, ((AccountingItemController) controller.itemViews.get(1).getPresenter()).getIdentity());
     }
 
     private AccountingController getAccountingController() {
@@ -71,7 +69,7 @@ public class AccountingControllerTest extends AbstractControllerTest {
         controller.clientConfiguration.selectIdentity(null);
         controller.addIdentityWithAlias("my ident");
         Identities identities = identityRepository.findAll();
-        assertEquals(1, identities.getIdentities().size());
+        assertEquals(2, identities.getIdentities().size());
         identity = controller.clientConfiguration.getSelectedIdentity();
         assertEquals("my ident", identities.getByKeyIdentifier(identity.getKeyIdentifier()).getAlias());
     }
@@ -82,7 +80,7 @@ public class AccountingControllerTest extends AbstractControllerTest {
         controller.importIdentity(new File(System.class.getResource(TEST_JSON).toURI()));
         Identities identities = identityRepository.findAll();
 
-        assertEquals(1, identities.getIdentities().size());
+        assertEquals(2, identities.getIdentities().size());
         Identity i = identities.getByKeyIdentifier("1b72b39576ced4ac8e003fae36d96dbda94ab28b2bdaf399719e1402fea9210c");
         assertEquals("Test", i.getAlias());
     }
@@ -105,7 +103,6 @@ public class AccountingControllerTest extends AbstractControllerTest {
         assertEquals(identity.getDropUrls(), newIdentity.getDropUrls());
         assertEquals(identity.getCreated(), newIdentity.getCreated(), 100000);
         assertEquals(identity.getDeleted(), newIdentity.getDeleted());
-        assertEquals(identity.getId(), newIdentity.getId());
     }
 
     @Test

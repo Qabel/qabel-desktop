@@ -1,11 +1,10 @@
 package de.qabel.desktop.inject;
 
+import de.qabel.desktop.config.ClientConfig;
+import de.qabel.desktop.config.RepositoryBasedClientConfig;
 import de.qabel.desktop.config.factory.*;
 import de.qabel.desktop.inject.config.RuntimeConfiguration;
-import de.qabel.desktop.repository.AccountRepository;
-import de.qabel.desktop.repository.ContactRepository;
-import de.qabel.desktop.repository.EntityManager;
-import de.qabel.desktop.repository.IdentityRepository;
+import de.qabel.desktop.repository.*;
 import de.qabel.desktop.repository.sqlite.*;
 import de.qabel.desktop.repository.sqlite.hydrator.AccountHydrator;
 import de.qabel.desktop.repository.sqlite.hydrator.ContactHydrator;
@@ -51,6 +50,59 @@ public class NewConfigDesktopServiceFactory extends StaticDesktopServiceFactory 
             );
         }
         return accountRepository;
+    }
+
+    @Override
+    public synchronized ClientConfig getClientConfiguration() {
+        if (clientConfiguration == null) {
+            clientConfiguration = new RepositoryBasedClientConfig(
+                getClientConfigRepository(),
+                getAccountRepository(),
+                getIdentityRepository(),
+                getDropStateRepository(),
+                getShareNotificationRepository()
+            );
+        }
+        return clientConfiguration;
+    }
+
+    private ClientConfigRepository clientConfigRepository;
+
+    public synchronized ClientConfigRepository getClientConfigRepository() {
+        if (clientConfigRepository == null) {
+            clientConfigRepository = new SqliteClientConfigRepository(runtimeConfiguration.getConfigDatabase());
+        }
+        return clientConfigRepository;
+    }
+
+    private DropStateRepository dropStateRepository;
+
+    public synchronized DropStateRepository getDropStateRepository() {
+        if (dropStateRepository == null) {
+            dropStateRepository = new SqliteDropStateRepository();
+        }
+        return dropStateRepository;
+    }
+
+    private ShareNotificationRepository shareNotificationRepository;
+
+    public synchronized ShareNotificationRepository getShareNotificationRepository() {
+        if (shareNotificationRepository == null) {
+            shareNotificationRepository = new SqliteShareNotificationRepository(
+                runtimeConfiguration.getConfigDatabase()
+            );
+        }
+        return shareNotificationRepository;
+    }
+
+    private BoxSyncConfigRepository boxSyncConfigRepo;
+
+    @Override
+    public synchronized BoxSyncConfigRepository getBoxSyncConfigRepository() {
+        if (boxSyncConfigRepo == null) {
+            boxSyncConfigRepo = new SqliteBoxSyncConfigRepository();
+        }
+        return boxSyncConfigRepo;
     }
 
     private AccountHydrator getAccountHydrator() {

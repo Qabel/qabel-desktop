@@ -2,10 +2,10 @@ package de.qabel.desktop;
 
 import com.airhacks.afterburner.injection.Injector;
 import com.airhacks.afterburner.views.QabelFXMLView;
-import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.SQLitePersistence;
-import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.BoxSyncConfig;
+import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.daemon.drop.DropDaemon;
 import de.qabel.desktop.daemon.share.ShareNotificationHandler;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
@@ -14,12 +14,9 @@ import de.qabel.desktop.inject.DesktopServices;
 import de.qabel.desktop.inject.NewConfigDesktopServiceFactory;
 import de.qabel.desktop.inject.StaticDesktopServiceFactory;
 import de.qabel.desktop.inject.config.StaticRuntimeConfiguration;
-import de.qabel.desktop.repository.DropMessageRepository;
-import de.qabel.desktop.repository.Transaction;
-import de.qabel.desktop.repository.TransactionManager;
+import de.qabel.desktop.repository.*;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
-import de.qabel.desktop.repository.exception.TransactionException;
 import de.qabel.desktop.repository.sqlite.*;
 import de.qabel.desktop.storage.AbstractNavigation;
 import de.qabel.desktop.ui.LayoutView;
@@ -29,6 +26,8 @@ import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import de.qabel.desktop.update.HttpUpdateChecker;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
@@ -53,7 +52,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Timer;
@@ -75,7 +73,7 @@ public class DesktopClient extends Application {
     private LayoutView view;
     private Stage primaryStage;
     private ExecutorService executorService = Executors.newCachedThreadPool();
-    private ClientConfiguration config;
+    private ClientConfig config;
     private boolean visible;
     private ResourceBundle resources;
 
@@ -204,31 +202,28 @@ public class DesktopClient extends Application {
         scene = new Scene(new LoginView().getView(), 370, 570, true, aa);
         primaryStage.setScene(scene);
 
-        config.addObserver((o, arg) ->
+        config.onSetAccount(account ->
             Platform.runLater(() -> {
-                if (arg instanceof Account) {
-                    try {
-                        new Thread(getSyncDaemon(config)).start();
-                        new Thread(getDropDaemon(config)).start();
-                        view = new LayoutView();
-                        Parent view = this.view.getView();
-                        Scene layoutScene = new Scene(view, 900, 600, true, aa);
-                        Platform.runLater(() -> primaryStage.setScene(layoutScene));
+                try {
+                    new Thread(getSyncDaemon(getBoxSyncConfigRepository())).start();
+                    new Thread(getDropDaemon(config)).start();
+                    view = new LayoutView();
+                    Parent view = this.view.getView();
+                    Scene layoutScene = new Scene(view, 900, 600, true, aa);
+                    Platform.runLater(() -> primaryStage.setScene(layoutScene));
 
-                        if (config.getSelectedIdentity() != null) {
-                            addShareMessageRenderer(config.getSelectedIdentity());
-                        }
-                    } catch (Exception e) {
-                        logger.error("failed to init background services: " + e.getMessage(), e);
-                        //TODO to something with the fault
+                    if (config.getSelectedIdentity() != null) {
+                        addShareMessageRenderer(config.getSelectedIdentity());
                     }
-                } else if (arg instanceof Identity) {
-                    addShareMessageRenderer((Identity) arg);
+                } catch (Exception e) {
+                    logger.error("failed to init background services: " + e.getMessage(), e);
+                    //TODO to something with the fault
                 }
             })
         );
+        config.onSelectIdentity(this::addShareMessageRenderer);
 
-        services.getDropMessageRepository().addObserver(new ShareNotificationHandler(config));
+        services.getDropMessageRepository().addObserver(new ShareNotificationHandler(getShareRepository()));
 
         setTrayIcon(primaryStage);
 
@@ -239,6 +234,14 @@ public class DesktopClient extends Application {
             }
         });
         primaryStage.show();
+    }
+
+    private BoxSyncConfigRepository getBoxSyncConfigRepository() {
+        return services.getBoxSyncConfigRepository();
+    }
+
+    private ShareNotificationRepository getShareRepository() {
+        return services.getShareNotificationRepository();
     }
 
     private void addShareMessageRenderer(Identity arg) {
@@ -255,12 +258,16 @@ public class DesktopClient extends Application {
         });
     }
 
-    protected SyncDaemon getSyncDaemon(ClientConfiguration config) throws IOException {
+    protected SyncDaemon getSyncDaemon(BoxSyncConfigRepository boxSyncConfigRepository) throws Exception {
         new Thread(services.getTransferManager(), "TransactionManager").start();
-        return new SyncDaemon(config.getBoxSyncConfigs(), new DefaultSyncerFactory(services.getBoxVolumeFactory(), services.getTransferManager()));
+        ObservableList<BoxSyncConfig> configs = FXCollections.observableList(boxSyncConfigRepository.findAll());
+        boxSyncConfigRepository.onAdd(config -> configs.add(config));
+        return new SyncDaemon(configs,
+            new DefaultSyncerFactory(services.getBoxVolumeFactory(), services.getTransferManager())
+        );
     }
 
-    protected DropDaemon getDropDaemon(ClientConfiguration config) throws PersistenceException, EntityNotFoundExcepion {
+    protected DropDaemon getDropDaemon(ClientConfig config) throws PersistenceException, EntityNotFoundExcepion {
         return new DropDaemon(config, services.getDropConnector(), services.getContactRepository(), services.getDropMessageRepository());
     }
 

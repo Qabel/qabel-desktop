@@ -68,7 +68,7 @@ public class SyncSetupControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void createsSyncConfigOnSubmit() {
+    public void createsSyncConfigOnSubmit() throws Exception {
         Account account = new Account("a", "b", "c");
         clientConfiguration.setAccount(account);
         final Stage[] stage = new Stage[1];
@@ -83,8 +83,8 @@ public class SyncSetupControllerTest extends AbstractControllerTest {
         controller.setRemotePath("/");
         controller.createSyncConfig();
 
-        assertEquals(1, clientConfiguration.getBoxSyncConfigs().size());
-        BoxSyncConfig config = clientConfiguration.getBoxSyncConfigs().get(0);
+        assertEquals(1, boxSyncConfigRepository.findAll().size());
+        BoxSyncConfig config = boxSyncConfigRepository.findAll().get(0);
         assertEquals("Sync name", config.getName());
         assertEquals(localPath, config.getLocalPath().toString());
         assertEquals("/", config.getRemotePath().toString());

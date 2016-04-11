@@ -3,13 +3,15 @@ package de.qabel.desktop.config;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropURL;
-import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.repository.*;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
 public class RepositoryBasedClientConfig implements ClientConfig {
     public static final String ACCOUNT_KEY = "account";
@@ -18,6 +20,8 @@ public class RepositoryBasedClientConfig implements ClientConfig {
     private final IdentityRepository identityRepo;
     private final DropStateRepository dropStateRepo;
     private final ShareNotificationRepository shareRepo;
+    private final List<Consumer<Identity>> identityListener = new CopyOnWriteArrayList<>();
+    private final List<Consumer<Account>> accountListener = new CopyOnWriteArrayList<>();
 
     public RepositoryBasedClientConfig(
         ClientConfigRepository configRepo,
@@ -56,15 +60,21 @@ public class RepositoryBasedClientConfig implements ClientConfig {
         try {
             accountRepo.save(account);
             configRepo.save("account", String.valueOf(account.getId()));
+            accountListener.forEach(c -> c.accept(account));
         } catch (PersistenceException e) {
             throw new IllegalStateException("failed to set account", e);
         }
     }
 
     @Override
+    public void onSetAccount(Consumer<Account> consumer) {
+        accountListener.add(consumer);
+    }
+
+    @Override
     public Identity getSelectedIdentity() {
         try {
-            if (!configRepo.contains("identity")) {
+            if (!configRepo.contains("identity") || configRepo.find("identity") == null) {
                 return null;
             }
             return identityRepo.find(Integer.valueOf(configRepo.find("identity")));
@@ -76,11 +86,21 @@ public class RepositoryBasedClientConfig implements ClientConfig {
     @Override
     public void selectIdentity(Identity identity) {
         try {
-            identityRepo.save(identity);
-            configRepo.save("identity", String.valueOf(identity.getId()));
+            if (identity == null) {
+                configRepo.save("identity", null);
+            } else {
+                identityRepo.save(identity);
+                configRepo.save("identity", String.valueOf(identity.getId()));
+            }
+            identityListener.forEach(c -> c.accept(identity));
         } catch (PersistenceException e) {
             throw new IllegalStateException("failed to select identity", e);
         }
+    }
+
+    @Override
+    public void onSelectIdentity(Consumer<Identity> consumer) {
+        identityListener.add(consumer);
     }
 
     @Override
@@ -126,7 +146,7 @@ public class RepositoryBasedClientConfig implements ClientConfig {
             String state = dropStateRepo.getDropState(drop);
             return new Date(Long.valueOf(state));
         } catch (Exception e) {
-            return null;
+            return new Date(0L);
         }
     }
 
@@ -144,6 +164,8 @@ public class RepositoryBasedClientConfig implements ClientConfig {
         ShareNotifications result = new ShareNotifications();
         try {
             shareRepo.find(identity).forEach(result::add);
+            shareRepo.onAdd(result::add, identity);
+            shareRepo.onDelete(result::remove, identity);
             return result;
         } catch (PersistenceException e) {
             throw new IllegalStateException("failed to load shares", e);

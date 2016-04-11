@@ -3,7 +3,7 @@ package de.qabel.desktop.ui.contact;
 import com.google.gson.GsonBuilder;
 import de.qabel.core.config.*;
 import de.qabel.core.exceptions.QblDropInvalidURL;
-import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
@@ -60,7 +60,7 @@ public class ContactController extends AbstractController implements Initializab
     VBox contacts;
 
     @Inject
-    private ClientConfiguration clientConfiguration;
+    private ClientConfig clientConfiguration;
 
     @Inject
     private ContactRepository contactRepository;
@@ -154,6 +154,9 @@ public class ContactController extends AbstractController implements Initializab
         contactItems.clear();
 
         i = clientConfiguration.getSelectedIdentity();
+        if (i == null) {
+            return;
+        }
 
         String old = null;
         try {
@@ -221,11 +224,7 @@ public class ContactController extends AbstractController implements Initializab
     private void createObserver() {
 
         contactsFromRepo.addObserver(this);
-        clientConfiguration.addObserver((o, arg) -> {
-            if (!(arg instanceof Identity)) {
-                return;
-            }
-
+        clientConfiguration.onSelectIdentity(i -> {
             contactsFromRepo.removeObserver(this);
             loadContacts();
             contactsFromRepo.addObserver(this);

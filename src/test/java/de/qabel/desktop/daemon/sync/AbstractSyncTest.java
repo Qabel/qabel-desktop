@@ -16,7 +16,7 @@ public abstract class AbstractSyncTest {
     protected Path tmpDir;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         try {
             tmpDir = Files.createTempDirectory(getClass().getSimpleName());
         } catch (Exception e) {

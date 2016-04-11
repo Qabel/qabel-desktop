@@ -4,7 +4,7 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.config.Contacts;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.SharingService;
-import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
@@ -36,7 +36,7 @@ public class RemoteFileDetailsController extends AbstractController implements I
     private ContactRepository contactRepository;
 
     @Inject
-    private ClientConfiguration clientConfiguration;
+    private ClientConfig clientConfiguration;
 
     @Inject
     private BoxObject boxObject;
@@ -68,11 +68,7 @@ public class RemoteFileDetailsController extends AbstractController implements I
     public void initialize(URL location, ResourceBundle resources) {
         this.resources = resources;
 
-        clientConfiguration.addObserver((o, arg) -> {
-            if (arg instanceof Identity) {
-                updateContacts();
-            }
-        });
+        clientConfiguration.onSelectIdentity(i -> updateContacts());
         shareReceiver.setCellFactory(contactAliasCellFactory());
         shareReceiver.setConverter(contactAutocomleteResultConverter());
 

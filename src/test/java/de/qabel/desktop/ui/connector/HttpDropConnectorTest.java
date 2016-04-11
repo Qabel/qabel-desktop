@@ -25,7 +25,6 @@ import static org.junit.Assert.assertTrue;
 
 
 public class HttpDropConnectorTest extends AbstractControllerTest {
-
     Identity i;
     Contact c;
     String fakeURL;

@@ -80,7 +80,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
     public void loadsShares() throws Exception {
         ShareNotificationMessage notification = new ShareNotificationMessage("http://some.url.com", "key", "message");
         sharingService.loadFileMetadata = new BoxExternalFile(identity.getEcPublicKey(), "prefix", "block", "share name", 123L, 123L, new byte[0]);
-        clientConfiguration.getShareNotification(identity).add(notification);
+        shareNotificationRepository.save(identity, notification);
 
         int sharedIndex = 1;
         page.expandNode(0);

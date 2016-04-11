@@ -1,13 +1,13 @@
 package de.qabel.desktop.ui.sync.item;
 
 import de.qabel.desktop.config.BoxSyncConfig;
-import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.daemon.management.Transaction;
 import de.qabel.desktop.daemon.management.Upload;
 import de.qabel.desktop.daemon.sync.BoxSync;
 import de.qabel.desktop.daemon.sync.worker.Syncer;
+import de.qabel.desktop.repository.BoxSyncConfigRepository;
+import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
-import de.qabel.desktop.ui.transfer.ComposedProgressBar;
 import de.qabel.desktop.ui.transfer.TransferViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -31,7 +31,7 @@ import java.util.ResourceBundle;
 public class SyncItemController extends AbstractController implements Initializable {
 
     @Inject
-    private ClientConfiguration clientConfiguration;
+    private BoxSyncConfigRepository boxSyncConfigRepository;
 
     @Inject
     private BoxSyncConfig syncConfig;
@@ -140,9 +140,11 @@ public class SyncItemController extends AbstractController implements Initializa
                                     alert("error while stopping sync: " + e.getMessage(), e);
                                 } finally {
                                     syncConfig.setSyncer(null);
-                                    clientConfiguration.getBoxSyncConfigs().remove(syncConfig);
+                                    boxSyncConfigRepository.delete(syncConfig);
                                 }
                             }
+                        } catch (PersistenceException e) {
+                            throw new IllegalStateException("failed to delete sync: " + e.getMessage(), e);
                         } finally {
                             confirmationDialog = null;
                         }

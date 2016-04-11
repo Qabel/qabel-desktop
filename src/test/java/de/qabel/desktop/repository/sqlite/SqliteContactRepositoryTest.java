@@ -14,9 +14,7 @@ import de.qabel.desktop.repository.sqlite.hydrator.ContactHydrator;
 import de.qabel.desktop.repository.sqlite.hydrator.DropURLHydrator;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -102,8 +100,12 @@ public class SqliteContactRepositoryTest extends AbstractSqliteRepositoryTest<Sq
     }
 
     public void compareDropUrls(Contact loaded) {
-        Set<DropURL> originalUrls = contact.getDropUrls();
-        Set<DropURL> loadedUrls = loaded.getDropUrls();
+        Set<DropURL> dropUrls = contact.getDropUrls();
+        List<DropURL> originalUrls = new LinkedList<>(dropUrls);
+        dropUrls = loaded.getDropUrls();
+        List<DropURL> loadedUrls = new LinkedList<>(dropUrls);
+        Collections.sort(originalUrls, (o1, o2) -> o1.toString().compareTo(o2.toString()));
+        Collections.sort(loadedUrls, (o1, o2) -> o1.toString().compareTo(o2.toString()));
 
         assertTrue(
             "DropUrls not persisted/loaded: " + loadedUrls + " != " + originalUrls,

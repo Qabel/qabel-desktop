@@ -9,9 +9,8 @@ import de.qabel.core.config.SQLitePersistence;
 import de.qabel.core.http.DropHTTP;
 import de.qabel.desktop.BlockSharingService;
 import de.qabel.desktop.MagicEvilBlockUriProvider;
-import de.qabel.desktop.ServiceFactory;
 import de.qabel.desktop.SharingService;
-import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.factory.*;
 import de.qabel.desktop.crashReports.CrashReportHandler;
 import de.qabel.desktop.crashReports.HockeyApp;
@@ -22,8 +21,6 @@ import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.inject.config.RuntimeConfiguration;
 import de.qabel.desktop.repository.*;
 import de.qabel.desktop.repository.persistence.*;
-import de.qabel.desktop.repository.sqlite.SqliteIdentityRepository;
-import de.qabel.desktop.repository.sqlite.hydrator.IdentityHydrator;
 import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory;
 import de.qabel.desktop.ui.actionlog.item.renderer.PlaintextMessageRenderer;
 import de.qabel.desktop.ui.connector.DropConnector;
@@ -39,7 +36,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class StaticDesktopServiceFactory extends DefaultServiceFactory implements DesktopServices {
+public abstract class StaticDesktopServiceFactory extends DefaultServiceFactory implements DesktopServices {
     private static Map<String, Method> creators = new HashMap<>();
 
     static {
@@ -190,16 +187,15 @@ public class StaticDesktopServiceFactory extends DefaultServiceFactory implement
         return dropMessageRepository;
     }
 
-    private ClientConfiguration clientConfiguration;
+    protected ClientConfig clientConfiguration;
 
     @Override
     @Create(name = "clientConfiguration")
     @Create(name = "config")
-    public synchronized ClientConfiguration getClientConfiguration() {
+    public synchronized ClientConfig getClientConfiguration() {
         if (clientConfiguration == null) {
             ClientConfigurationRepository repo = getClientConfigurationRepository();
             clientConfiguration = repo.load();
-            clientConfiguration.addObserver((o, arg) -> repo.save(clientConfiguration));
 
             if (!clientConfiguration.hasDeviceId()) {
                 clientConfiguration.setDeviceId(generateNewDeviceId());
@@ -320,4 +316,9 @@ public class StaticDesktopServiceFactory extends DefaultServiceFactory implement
         return runtimeConfiguration.getPrimaryStage();
     }
 
+    @Create(name = "boxSyncConfigRepository")
+    public abstract BoxSyncConfigRepository getBoxSyncConfigRepository();
+
+    @Create(name = "shareNotificationRepository")
+    public abstract ShareNotificationRepository getShareNotificationRepository();
 }

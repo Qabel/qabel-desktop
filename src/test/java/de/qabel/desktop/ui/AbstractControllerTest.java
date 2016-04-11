@@ -9,7 +9,8 @@ import de.qabel.desktop.AsyncUtils;
 import de.qabel.desktop.BlockSharingService;
 import de.qabel.desktop.ServiceFactory;
 import de.qabel.desktop.SharingService;
-import de.qabel.desktop.config.DefaultClientConfiguration;
+import de.qabel.desktop.config.ClientConfig;
+import de.qabel.desktop.config.RepositoryBasedClientConfig;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.crashReports.CrashReportHandler;
@@ -17,12 +18,10 @@ import de.qabel.desktop.crashReports.StubCrashReportHandler;
 import de.qabel.desktop.daemon.NetworkStatus;
 import de.qabel.desktop.daemon.management.BoxVolumeFactoryStub;
 import de.qabel.desktop.daemon.management.DefaultTransferManager;
-import de.qabel.desktop.repository.ContactRepository;
-import de.qabel.desktop.repository.IdentityRepository;
+import de.qabel.desktop.repository.*;
 import de.qabel.desktop.repository.Stub.InMemoryContactRepository;
 import de.qabel.desktop.repository.Stub.StubDropMessageRepository;
-import de.qabel.desktop.repository.inmemory.InMemoryHttpDropConnector;
-import de.qabel.desktop.repository.inmemory.InMemoryIdentityRepository;
+import de.qabel.desktop.repository.inmemory.*;
 import de.qabel.desktop.inject.DefaultServiceFactory;
 import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory;
 import de.qabel.desktop.ui.actionlog.item.renderer.PlaintextMessageRenderer;
@@ -44,8 +43,8 @@ import static org.junit.Assert.fail;
 
 public class AbstractControllerTest {
     protected ServiceFactory diContainer = new DefaultServiceFactory();
-    protected IdentityRepository identityRepository = new InMemoryIdentityRepository();
-    protected DefaultClientConfiguration clientConfiguration;
+    protected InMemoryIdentityRepository identityRepository = new InMemoryIdentityRepository();
+    protected ClientConfig clientConfiguration;
     protected IdentityBuilderFactory identityBuilderFactory;
     protected ContactRepository contactRepository = new InMemoryContactRepository();
     protected DefaultTransferManager loadManager;
@@ -56,6 +55,11 @@ public class AbstractControllerTest {
     protected SharingService sharingService = new BlockSharingService(dropMessageRepository, httpDropConnector);
     protected NetworkStatus networkStatus = new NetworkStatus();
     protected Identity identity;
+    protected ClientConfigRepository clientConfigRepository = new InMemoryClientConfigRepository();
+    protected AccountRepository accountRepository = new InMemoryAccountRepository();
+    protected DropStateRepository dropStateRepository = new InMemoryDropStateRepository();
+    protected ShareNotificationRepository shareNotificationRepository = new InMemoryShareNotificationRepository();
+    protected BoxSyncConfigRepository boxSyncConfigRepository = new InMemoryBoxSyncConfigRepisitory();
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -86,12 +90,20 @@ public class AbstractControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        clientConfiguration = new DefaultClientConfiguration();
+        clientConfiguration = new RepositoryBasedClientConfig(
+            clientConfigRepository,
+            accountRepository,
+            identityRepository,
+            dropStateRepository,
+            shareNotificationRepository
+        );
         diContainer.put("clientConfiguration", clientConfiguration);
         diContainer.put("dropUrlGenerator", new DropUrlGenerator("http://localhost:5000"));
         identityBuilderFactory = new IdentityBuilderFactory((DropUrlGenerator) diContainer.get("dropUrlGenerator"));
         diContainer.put("identityBuilderFactory", identityBuilderFactory);
-        diContainer.put("account", new Account("a", "b", "c"));
+        Account account = new Account("a", "b", "c");
+        diContainer.put("account", account);
+        clientConfiguration.setAccount(account);
         diContainer.put("identityRepository", identityRepository);
         diContainer.put("contactRepository", contactRepository);
         boxVolumeFactory = new BoxVolumeFactoryStub();
@@ -104,6 +116,7 @@ public class AbstractControllerTest {
         diContainer.put("sharingService", sharingService);
         diContainer.put("reportHandler", crashReportHandler);
         diContainer.put("networkStatus", networkStatus);
+        diContainer.put("boxSyncConfigRepository", boxSyncConfigRepository);
         MessageRendererFactory messageRendererFactory = new MessageRendererFactory();
         messageRendererFactory.setFallbackRenderer(new PlaintextMessageRenderer());
         diContainer.put("messageRendererFactory", messageRendererFactory);

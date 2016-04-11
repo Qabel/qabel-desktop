@@ -3,7 +3,7 @@ package de.qabel.desktop.ui.remotefs;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.SharingService;
 import de.qabel.desktop.cellValueFactory.BoxObjectCellValueFactory;
-import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.ShareNotifications;
 import de.qabel.desktop.config.factory.BoxVolumeFactory;
 import de.qabel.desktop.daemon.management.*;
@@ -76,7 +76,7 @@ public class RemoteFSController extends AbstractController implements Initializa
     ResourceBundle resourceBundle;
 
     @Inject
-    ClientConfiguration clientConfiguration;
+    ClientConfig clientConfiguration;
     @Inject
     BoxVolumeFactory boxVolumeFactory;
     @Inject
@@ -153,12 +153,7 @@ public class RemoteFSController extends AbstractController implements Initializa
     }
 
     private void observeIdentityChanges() {
-        clientConfiguration.addObserver((o, arg) -> {
-            if (!(arg instanceof Identity)) {
-                return;
-            }
-            initTreeTableView();
-        });
+        clientConfiguration.onSelectIdentity(i -> initTreeTableView());
     }
 
     private void initTreeTableView() {

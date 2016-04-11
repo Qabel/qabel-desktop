@@ -40,7 +40,7 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 
     @Override
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         super.setUp();
         try {
             identity = new IdentityBuilderFactory(new DropUrlGenerator("http://localhost:5000")).factory().build();

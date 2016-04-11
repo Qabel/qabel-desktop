@@ -25,7 +25,7 @@ public class TreeWatcherTest extends AbstractSyncTest {
 
     @Override
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         super.setUp();
 
         watcher = new TreeWatcher(tmpDir, watchEvent -> {

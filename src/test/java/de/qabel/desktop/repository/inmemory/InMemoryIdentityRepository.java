@@ -37,6 +37,8 @@ public class InMemoryIdentityRepository implements IdentityRepository {
         if (identity.getId() == 0) {
             identity.setId(identities.getIdentities().size() + 1);
         }
-        identities.put(identity);
+        if (!identities.contains(identity)) {
+            identities.put(identity);
+        }
     }
 }

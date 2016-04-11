@@ -4,7 +4,7 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.exceptions.*;
-import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.daemon.drop.TextMessage;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
@@ -53,7 +53,7 @@ public class ActionlogController extends AbstractController implements Initializ
     ScrollPane scroller;
 
     @Inject
-    ClientConfiguration clientConfiguration;
+    ClientConfig clientConfiguration;
 
     @Inject
     private ContactRepository contactRepository;
@@ -74,7 +74,7 @@ public class ActionlogController extends AbstractController implements Initializ
         startThreads();
         identity = clientConfiguration.getSelectedIdentity();
         dropMessageRepository.addObserver(this);
-        clientConfiguration.addObserver(this);
+        clientConfiguration.onSelectIdentity(identity -> this.identity = identity);
         addListener();
     }
 
@@ -216,8 +216,6 @@ public class ActionlogController extends AbstractController implements Initializ
                     alert(e);
                 }
             });
-        } else if (arg instanceof Identity && o instanceof ClientConfiguration) {
-            identity = clientConfiguration.getSelectedIdentity();
         }
     }
 

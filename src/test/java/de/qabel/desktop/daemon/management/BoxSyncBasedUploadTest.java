@@ -26,7 +26,7 @@ import static org.junit.Assert.assertEquals;
 public class BoxSyncBasedUploadTest extends AbstractSyncTest {
     @Override
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         super.setUp();
     }
 

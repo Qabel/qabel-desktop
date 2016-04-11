@@ -6,6 +6,8 @@ import de.qabel.desktop.repository.exception.PersistenceException;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
 public class InMemoryBoxSyncConfigRepisitory implements BoxSyncConfigRepository {
     private List<BoxSyncConfig> configs = new LinkedList<>();
@@ -21,10 +23,24 @@ public class InMemoryBoxSyncConfigRepisitory implements BoxSyncConfigRepository 
             return;
         }
         configs.add(config);
+        addListener.forEach(c -> c.accept(config));
     }
 
     @Override
     public void delete(BoxSyncConfig config) throws PersistenceException {
         configs.remove(config);
+        deleteListener.forEach(c -> c.accept(config));
+    }
+
+    private List<Consumer<BoxSyncConfig>> addListener = new CopyOnWriteArrayList<>();
+    private List<Consumer<BoxSyncConfig>> deleteListener = new CopyOnWriteArrayList<>();
+    @Override
+    public void onAdd(Consumer<BoxSyncConfig> consumer) {
+        addListener.add(consumer);
+    }
+
+    @Override
+    public void onDelete(Consumer<BoxSyncConfig> consumer) {
+        deleteListener.add(consumer);
     }
 }
