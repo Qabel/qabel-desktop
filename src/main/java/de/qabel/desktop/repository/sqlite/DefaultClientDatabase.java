@@ -20,18 +20,18 @@ public class DefaultClientDatabase implements ClientDatabase {
 
     public static AbstractMigration[] getMigrations(Connection connection) {
         return new AbstractMigration[]{
-            new Migration000000001CreateIdentitiy(connection),
-            new Migration000000002CreateContact(connection),
-            new Migration000000003CreateAccount(connection),
-            new Migration000000004ClientConfiguration(connection),
-            new Migration000000005DropState(connection),
-            new Migration000000006BoxSync(connection),
-            new Migration000000007ShareNotification(connection)
+            new Migration1460367000CreateIdentitiy(connection),
+            new Migration1460367005CreateContact(connection),
+            new Migration1460367010CreateAccount(connection),
+            new Migration1460367015ClientConfiguration(connection),
+            new Migration1460367020DropState(connection),
+            new Migration1460367025BoxSync(connection),
+            new Migration1460367030ShareNotification(connection)
         };
     }
 
     @Override
-    public int getVersion() throws SQLException {
+    public long getVersion() throws SQLException {
         try (Statement statement = connection.createStatement()) {
             try (ResultSet resultSet = statement.executeQuery("PRAGMA USER_VERSION")) {
                 resultSet.next();
@@ -41,7 +41,7 @@ public class DefaultClientDatabase implements ClientDatabase {
     }
 
     @Override
-    public synchronized void migrateTo(int toVersion) throws MigrationException {
+    public synchronized void migrateTo(long toVersion) throws MigrationException {
         try {
             migrate(toVersion, getVersion());
         } catch (SQLException e) {
@@ -50,7 +50,7 @@ public class DefaultClientDatabase implements ClientDatabase {
     }
 
     @Override
-    public void migrate(int toVersion, int fromVersion) throws MigrationException {
+    public void migrate(long toVersion, long fromVersion) throws MigrationException {
         for (AbstractMigration migration : getMigrations(connection)) {
             if (migration.getVersion() <= fromVersion) {
                 continue;
@@ -76,7 +76,7 @@ public class DefaultClientDatabase implements ClientDatabase {
         }
     }
 
-    public synchronized void setVersion(int version) throws SQLException {
+    public synchronized void setVersion(long version) throws SQLException {
         try (Statement statement = connection.createStatement()) {
             statement.execute("PRAGMA USER_VERSION = " + version);
         }

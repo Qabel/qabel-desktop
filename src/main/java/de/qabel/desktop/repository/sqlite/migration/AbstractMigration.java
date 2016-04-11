@@ -11,7 +11,7 @@ public abstract class AbstractMigration {
         this.connection = connection;
     }
 
-    public abstract int getVersion();
+    public abstract long getVersion();
 
     protected void execute(String sql, Object... parameters) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {

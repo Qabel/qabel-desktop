@@ -7,18 +7,18 @@ import java.sql.*;
 
 import static org.junit.Assert.*;
 
-public class Migration000000007ShareNotificationTest extends AbstractMigrationTest {
+public class Migration1460367030ShareNotificationTest extends AbstractMigrationTest {
 
     @Override
     protected AbstractMigration createMigration(Connection connection) {
-        return new Migration000000007ShareNotification(connection);
+        return new Migration1460367030ShareNotification(connection);
     }
 
     @Test
     public void createsTable() throws Exception {
         assertTrue(tableExists("share_notification"));
 
-        Migration000000001CreateIdentitiyTest.insertIdentity(connection);
+        Migration1460367000CreateIdentitiyTest.insertIdentity(connection);
         assertEquals(1, insertNotification(1));
         assertEquals(1, countNotifications());
     }
@@ -30,7 +30,7 @@ public class Migration000000007ShareNotificationTest extends AbstractMigrationTe
 
     @Test
     public void deletesWithIdentity() throws Exception {
-        Migration000000001CreateIdentitiyTest.insertIdentity(connection);
+        Migration1460367000CreateIdentitiyTest.insertIdentity(connection);
         insertNotification(1);
         deleteIdentity(1);
 

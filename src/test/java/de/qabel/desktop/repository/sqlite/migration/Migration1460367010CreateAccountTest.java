@@ -6,10 +6,10 @@ import java.sql.*;
 
 import static org.junit.Assert.*;
 
-public class Migration000000003CreateAccountTest extends AbstractMigrationTest {
+public class Migration1460367010CreateAccountTest extends AbstractMigrationTest {
     @Override
     protected AbstractMigration createMigration(Connection connection) {
-        return new Migration000000003CreateAccount(connection);
+        return new Migration1460367010CreateAccount(connection);
     }
 
     @Test

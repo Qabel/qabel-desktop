@@ -3,14 +3,14 @@ package de.qabel.desktop.repository.sqlite.migration;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class Migration000000004ClientConfiguration extends AbstractMigration {
-    public Migration000000004ClientConfiguration(Connection connection) {
+public class Migration1460367015ClientConfiguration extends AbstractMigration {
+    public Migration1460367015ClientConfiguration(Connection connection) {
         super(connection);
     }
 
     @Override
-    public int getVersion() {
-        return 4;
+    public long getVersion() {
+        return 1460367015;
     }
 
     @Override

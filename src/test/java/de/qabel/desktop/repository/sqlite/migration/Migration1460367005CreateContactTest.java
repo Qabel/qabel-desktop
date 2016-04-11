@@ -10,10 +10,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class Migration000000002CreateContactTest extends AbstractMigrationTest {
+public class Migration1460367005CreateContactTest extends AbstractMigrationTest {
     @Override
     protected AbstractMigration createMigration(Connection connection) {
-        return new Migration000000002CreateContact(connection);
+        return new Migration1460367005CreateContact(connection);
     }
 
     @Test

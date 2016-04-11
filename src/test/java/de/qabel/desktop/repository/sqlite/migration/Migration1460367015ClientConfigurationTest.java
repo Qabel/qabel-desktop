@@ -9,11 +9,11 @@ import java.sql.SQLException;
 
 import static org.junit.Assert.*;
 
-public class Migration000000004ClientConfigurationTest extends AbstractMigrationTest {
+public class Migration1460367015ClientConfigurationTest extends AbstractMigrationTest {
 
     @Override
     protected AbstractMigration createMigration(Connection connection) {
-        return new Migration000000004ClientConfiguration(connection);
+        return new Migration1460367015ClientConfiguration(connection);
     }
 
     @Test

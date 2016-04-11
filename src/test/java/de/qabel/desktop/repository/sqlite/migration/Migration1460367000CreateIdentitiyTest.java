@@ -7,10 +7,10 @@ import java.sql.*;
 
 import static org.junit.Assert.*;
 
-public class Migration000000001CreateIdentitiyTest extends AbstractMigrationTest {
+public class Migration1460367000CreateIdentitiyTest extends AbstractMigrationTest {
     @Override
     protected AbstractMigration createMigration(Connection connection) {
-        return new Migration000000001CreateIdentitiy(connection);
+        return new Migration1460367000CreateIdentitiy(connection);
     }
 
     @Test

@@ -9,7 +9,7 @@ public class FailingMigration extends AbstractMigration {
     }
 
     @Override
-    public int getVersion() {
+    public long getVersion() {
         return 666;
     }
 

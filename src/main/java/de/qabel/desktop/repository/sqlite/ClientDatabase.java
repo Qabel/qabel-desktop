@@ -7,7 +7,7 @@ public interface ClientDatabase {
     /**
      * Read the version of the last executed migration from the database
      */
-    int getVersion() throws SQLException;
+    long getVersion() throws SQLException;
 
     /**
      * migrate from the current version to the maximum known version
@@ -17,7 +17,7 @@ public interface ClientDatabase {
     /**
      * migrate from the current version to the given toVersion
      */
-    void migrateTo(int toVersion) throws MigrationException;
+    void migrateTo(long toVersion) throws MigrationException;
 
     /**
      * migrate from fromVersion to toVersion
@@ -25,7 +25,7 @@ public interface ClientDatabase {
      * @param fromVersion version of the last migration to execute
      * @throws MigrationException
      */
-    void migrate(int toVersion, int fromVersion) throws MigrationException;
+    void migrate(long toVersion, long fromVersion) throws MigrationException;
 
     /**
      * Prepares a statement with the given sql query.

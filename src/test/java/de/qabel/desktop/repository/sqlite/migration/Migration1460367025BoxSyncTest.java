@@ -6,19 +6,19 @@ import java.sql.*;
 
 import static org.junit.Assert.*;
 
-public class Migration000000006BoxSyncTest extends AbstractMigrationTest {
+public class Migration1460367025BoxSyncTest extends AbstractMigrationTest {
 
     @Override
     protected AbstractMigration createMigration(Connection connection) {
-        return new Migration000000006BoxSync(connection);
+        return new Migration1460367025BoxSync(connection);
     }
 
     @Test
     public void createsBoxSyncTable() throws Exception {
         assertTrue(tableExists("box_sync"));
 
-        Migration000000001CreateIdentitiyTest.insertIdentity(connection);
-        Migration000000003CreateAccountTest.insertAccount("p", "u", "a", connection);
+        Migration1460367000CreateIdentitiyTest.insertIdentity(connection);
+        Migration1460367010CreateAccountTest.insertAccount("p", "u", "a", connection);
         assertEquals(1, insertSync());
 
         try (PreparedStatement statement = connection.prepareStatement("SELECT paused FROM box_sync WHERE id = 1")) {
@@ -31,28 +31,28 @@ public class Migration000000006BoxSyncTest extends AbstractMigrationTest {
 
     @Test(expected = SQLException.class)
     public void requiresValidIdentity() throws Exception {
-        Migration000000003CreateAccountTest.insertAccount("p", "u", "a", connection);
+        Migration1460367010CreateAccountTest.insertAccount("p", "u", "a", connection);
         insertSync();
     }
 
     @Test(expected = SQLException.class)
     public void requiresValidAccount() throws Exception {
-        Migration000000001CreateIdentitiyTest.insertIdentity(connection);
+        Migration1460367000CreateIdentitiyTest.insertIdentity(connection);
         insertSync();
     }
 
     @Test(expected = SQLException.class)
     public void preventsDuplicateLocalPaths() throws Exception {
-        Migration000000001CreateIdentitiyTest.insertIdentity(connection);
-        Migration000000003CreateAccountTest.insertAccount("p", "u", "a", connection);
+        Migration1460367000CreateIdentitiyTest.insertIdentity(connection);
+        Migration1460367010CreateAccountTest.insertAccount("p", "u", "a", connection);
         insertSync();
         insertSync();
     }
 
     @Test
     public void cleansUpOnDown() throws Exception {
-        Migration000000001CreateIdentitiyTest.insertIdentity(connection);
-        Migration000000003CreateAccountTest.insertAccount("p", "u", "a", connection);
+        Migration1460367000CreateIdentitiyTest.insertIdentity(connection);
+        Migration1460367010CreateAccountTest.insertAccount("p", "u", "a", connection);
         insertSync();
 
         migration.down();

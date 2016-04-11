@@ -2,7 +2,7 @@ package de.qabel.desktop.repository.sqlite;
 
 import de.qabel.desktop.repository.sqlite.migration.AbstractSqliteTest;
 import de.qabel.desktop.repository.sqlite.migration.FailingMigration;
-import de.qabel.desktop.repository.sqlite.migration.Migration000000001CreateIdentitiy;
+import de.qabel.desktop.repository.sqlite.migration.Migration1460367000CreateIdentitiy;
 import org.junit.Test;
 
 import java.sql.SQLException;
@@ -26,15 +26,15 @@ public class DefaultClientDatabaseTest extends AbstractSqliteTest {
 
     @Test
     public void migratesVersion() throws Exception {
-        database.migrateTo(Migration000000001CreateIdentitiy.VERSION);
-        assertEquals(Migration000000001CreateIdentitiy.VERSION, database.getVersion());
+        database.migrateTo(Migration1460367000CreateIdentitiy.VERSION);
+        assertEquals(Migration1460367000CreateIdentitiy.VERSION, database.getVersion());
         assertTrue("migration was not executed", database.tableExists("identity"));
     }
 
     @Test
     public void ignoresExecutedMigrations() throws Exception {
-        database.migrateTo(Migration000000001CreateIdentitiy.VERSION);
-        database.migrateTo(Migration000000001CreateIdentitiy.VERSION);
+        database.migrateTo(Migration1460367000CreateIdentitiy.VERSION);
+        database.migrateTo(Migration1460367000CreateIdentitiy.VERSION);
     }
 
     @Test
