@@ -21,7 +21,7 @@ public class Migration1460367010CreateAccount extends AbstractMigration {
                 "provider VARCHAR(2000) NOT NULL," +
                 "user VARCHAR(255) NOT NULL," +
                 "auth VARCHAR(255) NOT NULL," +
-                "UNIQUE (provider, user) ON CONFLICT REPLACE" +
+                "UNIQUE (provider, user)" +
             ")"
         );
     }

@@ -49,11 +49,10 @@ public class Migration1460367010CreateAccountTest extends AbstractMigrationTest 
         insert("p", "u", null);
     }
 
-    @Test
+    @Test(expected = SQLException.class)
     public void preventDuplicateUsers() throws Exception {
         assertEquals("credentials have not been inserted", 1, insert("p", "u", "a"));
-        assertEquals("new credentials have not been inserted", 1, insert("p", "u", "a2"));
-        assertEquals("duplicate account was created", 1, countAccounts());
+        insert("p", "u", "a2");
     }
 
     @Test

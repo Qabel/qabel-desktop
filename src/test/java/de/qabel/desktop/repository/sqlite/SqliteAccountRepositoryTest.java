@@ -48,4 +48,15 @@ public class SqliteAccountRepositoryTest extends AbstractSqliteRepositoryTest<Sq
 
         assertSame(account, repo.find(String.valueOf(account.getId())));
     }
+
+    @Test
+    public void updatesExistingAccounts() throws Exception {
+        Account account = new Account("p", "u", "a");
+        repo.save(account);
+        account.setAuth("777");
+        repo.save(account);
+
+        assertEquals(1, repo.findAll().size());
+        assertEquals("777", repo.findAll().get(0).getAuth());
+    }
 }

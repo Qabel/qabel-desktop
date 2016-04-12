@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.Statement;
 
 public abstract class AbstractSqliteRepositoryTest<T> {
     protected Connection connection;
@@ -20,7 +21,9 @@ public abstract class AbstractSqliteRepositoryTest<T> {
     public void setUp() throws Exception {
         dbFile = Files.createTempFile("qabel", "tmpdb");
         connection = DriverManager.getConnection("jdbc:sqlite://" + dbFile.toAbsolutePath());
-        connection.createStatement().execute("PRAGMA FOREIGN_KEYS = ON");
+        try (Statement statement = connection.createStatement()) {
+            statement.execute("PRAGMA FOREIGN_KEYS = ON");
+        }
         clientDatabase = new DesktopClientDatabase(connection);
         clientDatabase.migrate();
         em = new EntityManager();

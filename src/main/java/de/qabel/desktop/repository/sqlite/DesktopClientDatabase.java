@@ -103,6 +103,7 @@ public class DesktopClientDatabase implements ClientDatabase {
 
     @Override
     public PreparedStatement prepare(String sql) throws SQLException {
+        logger.trace(sql);
         return connection.prepareStatement(sql);
     }
 

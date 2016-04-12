@@ -48,14 +48,30 @@ public class SqliteAccountRepository extends AbstractSqliteRepository<Account> i
 
     @Override
     public void save(Account account) throws PersistenceException {
+        try {
+            Account loaded = findBy("`provider` = ? AND `user` = ?", account.getProvider(), account.getUser());
+
+            try (PreparedStatement statement = database.prepare(
+                "UPDATE `account` SET `auth` = ? WHERE ROWID = ?"
+            )) {
+                statement.setString(1, account.getAuth());
+                statement.setInt(2, loaded.getId());
+                statement.execute();
+                account.setId(loaded.getId());
+            } catch (SQLException e) {
+                throw new PersistenceException("failed to update account", e);
+            }
+            return;
+        } catch (EntityNotFoundExcepion ignored) {}
+
         try (PreparedStatement statement = database.prepare(
-            "INSERT INTO account (provider, user, auth) VALUES (?, ?, ?)"
+            "INSERT INTO `account` (`provider`, `user`, `auth`) VALUES (?, ?, ?)"
         )) {
             int i = 1;
             statement.setString(i++, account.getProvider());
             statement.setString(i++, account.getUser());
             statement.setString(i++, account.getAuth());
-            statement.execute();
+            statement.executeUpdate();
 
             try (ResultSet keys = statement.getGeneratedKeys()) {
                 keys.next();

@@ -11,8 +11,12 @@ import de.qabel.desktop.repository.sqlite.*;
 import de.qabel.desktop.repository.sqlite.hydrator.*;
 
 public class NewConfigDesktopServiceFactory extends StaticDesktopServiceFactory {
-    public NewConfigDesktopServiceFactory(RuntimeConfiguration runtimeConfiguration) {
+    public NewConfigDesktopServiceFactory(
+        RuntimeConfiguration runtimeConfiguration,
+        TransactionManager transactionManager
+    ) {
         super(runtimeConfiguration);
+        this.transactionManager = transactionManager;
     }
 
     @Override
@@ -198,5 +202,12 @@ public class NewConfigDesktopServiceFactory extends StaticDesktopServiceFactory 
     private EntityManager entityManager = new EntityManager();
     public EntityManager getEntityManager() {
         return entityManager;
+    }
+
+    private TransactionManager transactionManager;
+
+    @Override
+    public TransactionManager getTransactionManager() {
+        return transactionManager;
     }
 }

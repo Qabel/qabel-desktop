@@ -8,6 +8,8 @@ import de.qabel.core.config.AccountingServer;
 import de.qabel.core.exceptions.QblCreateAccountFailException;
 import de.qabel.core.exceptions.QblInvalidCredentials;
 import de.qabel.desktop.config.ClientConfig;
+import de.qabel.desktop.repository.Transaction;
+import de.qabel.desktop.repository.TransactionManager;
 import de.qabel.desktop.ui.AbstractController;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -75,6 +77,10 @@ public class LoginController extends AbstractController implements Initializable
 
     @Inject
     private Stage primaryStage;
+
+    @Inject
+    private TransactionManager transactionManager;
+
     private String accountUrl = "https://accounting.qabel.org";
     Map map = new HashMap<>();
 
@@ -205,7 +211,10 @@ public class LoginController extends AbstractController implements Initializable
             try {
                 AccountingHTTP http = createAccount();
                 http.login();
-                config.setAccount(account);
+
+                try (Transaction ignored = transactionManager.beginTransaction()) {
+                    config.setAccount(account);
+                }
 
             } catch (URISyntaxException | IOException e) {
                 logger.warn(e.getMessage(), e);
@@ -213,6 +222,8 @@ public class LoginController extends AbstractController implements Initializable
             } catch (QblInvalidCredentials qblInvalidCredentials) {
                 qblInvalidCredentials.printStackTrace();
                 Platform.runLater(() -> toLoginFailureState(qblInvalidCredentials.getMessage()));
+            } catch (Exception e) {
+                Platform.runLater(() -> toLoginFailureState(e.getMessage()));
             }
             Platform.runLater(() -> buttonBar.setVisible(true));
         }).start();

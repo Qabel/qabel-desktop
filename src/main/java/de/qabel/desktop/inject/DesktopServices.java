@@ -12,43 +12,70 @@ import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.repository.*;
 import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory;
 import de.qabel.desktop.ui.connector.DropConnector;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public interface DesktopServices {
+    @Create(name = "loadManager")
+    @Create(name = "transferManager")
     TransferManager getTransferManager();
 
+    @Create(name = "identityRepository")
     IdentityRepository getIdentityRepository();
 
+    @Create(name = "identityBuilderFactory")
     IdentityBuilderFactory getIdentityBuilderFactory();
 
+    @Create(name = "accountingRepository")
     AccountRepository getAccountRepository();
 
+    @Create(name = "dropUrlGenerator")
     DropUrlGenerator getDropUrlGenerator();
 
+    @Create(name = "contactRepository")
     ContactRepository getContactRepository();
 
+    @Create(name = "dropMessageRepository")
     DropMessageRepository getDropMessageRepository();
 
+    @Create(name = "clientConfiguration")
+    @Create(name = "config")
     ClientConfig getClientConfiguration();
 
     ClientConfigurationRepository getClientConfigurationRepository();
 
+    @Create(name = "networkStatus")
     NetworkStatus getNetworkStatus();
 
+    @Create(name = "dropConnector")
     DropConnector getDropConnector();
 
+    @Create(name = "reportHandler")
     CrashReportHandler getCrashReportHandler();
 
+    @Create(name = "messageRendererFactory")
     MessageRendererFactory getDropMessageRendererFactory();
 
+    @Create(name = "sharingService")
     SharingService getSharingService();
 
+    @Create(name = "boxVolumeFactory")
     BoxVolumeFactory getBoxVolumeFactory() throws IOException;
 
+    @Create(name = "accountingClient")
     AccountingHTTP getAccountingClient();
 
+    @Create(name = "shareNotificationRepository")
     ShareNotificationRepository getShareNotificationRepository();
 
+    @Create(name = "boxSyncConfigRepository")
+    @Create(name = "boxSyncRepository")
     BoxSyncRepository getBoxSyncConfigRepository();
+
+    @Create(name = "primaryStage")
+    Stage getPrimaryStage();
+
+    @Create(name = "transactionManager")
+    TransactionManager getTransactionManager();
 }

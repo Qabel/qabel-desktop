@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class AbstractSqliteTest {
     protected Connection connection;
@@ -23,7 +24,9 @@ public class AbstractSqliteTest {
 
     public void connect() throws SQLException {
         connection = DriverManager.getConnection("jdbc:sqlite://" + dbFile.toAbsolutePath());
-        connection.createStatement().execute("PRAGMA FOREIGN_KEYS = ON");
+        try (Statement statement = connection.createStatement()) {
+            statement.execute("PRAGMA FOREIGN_KEYS = ON");
+        }
     }
 
     public void reconnect() throws SQLException {

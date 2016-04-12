@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Observer;
 
 @Deprecated
-public interface ClientConfiguration extends ClientConfig{
+public interface ClientConfiguration extends ClientConfig {
     /**
      * @deprecated use the BoxSyncConfigRepository ()
      */

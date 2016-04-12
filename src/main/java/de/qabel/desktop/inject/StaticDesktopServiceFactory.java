@@ -28,81 +28,20 @@ import de.qabel.desktop.ui.connector.HttpDropConnector;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
-public abstract class StaticDesktopServiceFactory extends DefaultServiceFactory implements DesktopServices {
-    private static Map<String, Method> creators = new HashMap<>();
-
-    static {
-        for (Method method : StaticDesktopServiceFactory.class.getDeclaredMethods()) {
-            method.setAccessible(true);
-            if (method.isAnnotationPresent(Create.class)) {
-                String createdInstance = method.getAnnotation(Create.class).name();
-                creators.put(createdInstance, method);
-            } else if (method.isAnnotationPresent(Creates.class)) {
-                for (Create create : method.getAnnotation(Creates.class).value()) {
-                    creators.put(create.name(), method);
-                }
-            }
-        }
-    }
-
+public abstract class StaticDesktopServiceFactory extends AnnotatedDesktopServiceFactory implements DesktopServices {
     protected RuntimeConfiguration runtimeConfiguration;
 
     public StaticDesktopServiceFactory(RuntimeConfiguration runtimeConfiguration) {
         this.runtimeConfiguration = runtimeConfiguration;
     }
 
-    @Override
-    public Object getByType(Class type) {
-        Object instance = super.getByType(type);
-        if (instance != null) {
-            return instance;
-        }
-        for (Method method : creators.values()) {
-            if (type.isAssignableFrom(method.getReturnType())) {
-                return invoke(method);
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public synchronized Object get(String key) {
-        if (!cache.containsKey(key)) {
-            cache.put(key, generate(key));
-        }
-        return super.get(key);
-    }
-
-    private Object generate(String key) {
-        if (!creators.containsKey(key)) {
-            throw new IllegalArgumentException("failed to create instance for " + key);
-        }
-
-        Method method = creators.get(key);
-        return invoke(method);
-    }
-
-    private Object invoke(Method method) {
-        try {
-            return method.invoke(this);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new IllegalStateException("failed to call public method on correct class: " + e.getMessage(), e);
-        }
-    }
-
     private TransferManager transferManager;
 
     @Override
-    @Create(name = "loadManager")
-    @Create(name = "transferManager")
     public synchronized TransferManager getTransferManager() {
         if (transferManager == null) {
             transferManager = new MonitoredTransferManager(new DefaultTransferManager());
@@ -113,7 +52,6 @@ public abstract class StaticDesktopServiceFactory extends DefaultServiceFactory 
     protected IdentityRepository identityRepository;
 
     @Override
-    @Create(name = "identityRepository")
     public synchronized IdentityRepository getIdentityRepository() {
         if (identityRepository == null) {
             identityRepository = new PersistenceIdentityRepository(getPersistence());
@@ -124,7 +62,6 @@ public abstract class StaticDesktopServiceFactory extends DefaultServiceFactory 
     private IdentityBuilderFactory identityBuilderFactory;
 
     @Override
-    @Create(name = "identityBuilderFactory")
     public synchronized IdentityBuilderFactory getIdentityBuilderFactory() {
         if (identityBuilderFactory == null) {
             identityBuilderFactory = new IdentityBuilderFactory(getDropUrlGenerator());
@@ -135,7 +72,6 @@ public abstract class StaticDesktopServiceFactory extends DefaultServiceFactory 
     AccountRepository accountRepository;
 
     @Override
-    @Create(name = "accountingRepository")
     public synchronized AccountRepository getAccountRepository() {
         if (accountRepository == null) {
             accountRepository = new PersistenceAccountRepository(getPersistence());
@@ -146,7 +82,6 @@ public abstract class StaticDesktopServiceFactory extends DefaultServiceFactory 
     private DropUrlGenerator dropUrlGenerator;
 
     @Override
-    @Create(name = "dropUrlGenerator")
     public synchronized DropUrlGenerator getDropUrlGenerator() {
         if (dropUrlGenerator == null) {
             dropUrlGenerator = new DropUrlGenerator(runtimeConfiguration.getDropUri());
@@ -168,7 +103,6 @@ public abstract class StaticDesktopServiceFactory extends DefaultServiceFactory 
     protected ContactRepository contactRepository;
 
     @Override
-    @Create(name = "contactRepository")
     public synchronized ContactRepository getContactRepository() {
         if (contactRepository == null) {
             contactRepository = new PersistenceContactRepository(getPersistence());
@@ -179,7 +113,6 @@ public abstract class StaticDesktopServiceFactory extends DefaultServiceFactory 
     private DropMessageRepository dropMessageRepository;
 
     @Override
-    @Create(name = "dropMessageRepository")
     public synchronized DropMessageRepository getDropMessageRepository() {
         if (dropMessageRepository == null) {
             dropMessageRepository = new PersistenceDropMessageRepository(getPersistence());
@@ -190,8 +123,6 @@ public abstract class StaticDesktopServiceFactory extends DefaultServiceFactory 
     protected ClientConfig clientConfiguration;
 
     @Override
-    @Create(name = "clientConfiguration")
-    @Create(name = "config")
     public synchronized ClientConfig getClientConfiguration() {
         if (clientConfiguration == null) {
             ClientConfigurationRepository repo = getClientConfigurationRepository();
@@ -226,7 +157,6 @@ public abstract class StaticDesktopServiceFactory extends DefaultServiceFactory 
     private NetworkStatus networkStatus = new NetworkStatus();
 
     @Override
-    @Create(name = "networkStatus")
     public NetworkStatus getNetworkStatus() {
         return networkStatus;
     }
@@ -234,7 +164,6 @@ public abstract class StaticDesktopServiceFactory extends DefaultServiceFactory 
     private DropConnector dropConnector;
 
     @Override
-    @Create(name = "dropConnector")
     public synchronized DropConnector getDropConnector() {
         if (dropConnector == null) {
             dropConnector = new HttpDropConnector(getNetworkStatus(), new DropHTTP());
@@ -243,7 +172,6 @@ public abstract class StaticDesktopServiceFactory extends DefaultServiceFactory 
     }
 
     @Override
-    @Create(name = "reportHandler")
     public synchronized CrashReportHandler getCrashReportHandler() {
         return new HockeyApp();
     }
@@ -251,7 +179,6 @@ public abstract class StaticDesktopServiceFactory extends DefaultServiceFactory 
     private MessageRendererFactory messageRendererFactory;
 
     @Override
-    @Create(name = "messageRendererFactory")
     public synchronized MessageRendererFactory getDropMessageRendererFactory() {
         if (messageRendererFactory == null) {
             messageRendererFactory = new MessageRendererFactory();
@@ -263,7 +190,6 @@ public abstract class StaticDesktopServiceFactory extends DefaultServiceFactory 
     private SharingService sharingService;
 
     @Override
-    @Create(name = "sharingService")
     public synchronized SharingService getSharingService() {
         if (sharingService == null) {
             sharingService = new BlockSharingService(getDropMessageRepository(), getDropConnector());
@@ -276,7 +202,6 @@ public abstract class StaticDesktopServiceFactory extends DefaultServiceFactory 
     private AccountingHTTP accountingHTTP;
 
     @Override
-    @Create(name = "boxVolumeFactory")
     public synchronized BoxVolumeFactory getBoxVolumeFactory() throws IOException {
         if (boxVolumeFactory == null) {
             boxVolumeFactory = new BlockBoxVolumeFactory(
@@ -289,7 +214,6 @@ public abstract class StaticDesktopServiceFactory extends DefaultServiceFactory 
     }
 
     @Override
-    @Create(name = "accountingClient")
     public synchronized AccountingHTTP getAccountingClient() {
         if (accountingHTTP == null) {
             Account acc = getClientConfiguration().getAccount();
@@ -311,14 +235,12 @@ public abstract class StaticDesktopServiceFactory extends DefaultServiceFactory 
         return accountingHTTP;
     }
 
-    @Create(name = "primaryStage")
+    @Override
     public Stage getPrimaryStage() {
         return runtimeConfiguration.getPrimaryStage();
     }
 
-    @Create(name = "boxSyncConfigRepository")
     public abstract BoxSyncRepository getBoxSyncConfigRepository();
 
-    @Create(name = "shareNotificationRepository")
     public abstract ShareNotificationRepository getShareNotificationRepository();
 }

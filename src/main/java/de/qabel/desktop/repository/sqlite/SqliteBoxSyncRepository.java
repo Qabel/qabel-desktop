@@ -65,7 +65,7 @@ public class SqliteBoxSyncRepository extends AbstractSqliteRepository<BoxSyncCon
             statement.setString(i++, config.getRemotePath().toString());
             statement.setBoolean(i++, config.isPaused());
             statement.setInt(i++, config.getId());
-            statement.execute();
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new PersistenceException("failed to update box sync config", e);
         }
@@ -82,7 +82,7 @@ public class SqliteBoxSyncRepository extends AbstractSqliteRepository<BoxSyncCon
             statement.setString(i++, config.getLocalPath().toString());
             statement.setString(i++, config.getRemotePath().toString());
             statement.setBoolean(i++, config.isPaused());
-            statement.execute();
+            statement.executeUpdate();
 
             try (ResultSet resultSet = statement.getGeneratedKeys()) {
                 resultSet.next();

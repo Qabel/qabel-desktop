@@ -36,8 +36,6 @@ public class AccountingControllerTest extends AbstractControllerTest {
     private static final String TEST_IDENTITY = TEST_ALIAS + "_Identity.json";
 
     AccountingController controller;
-    Identity identity;
-
 
     @After
     public void after() throws Exception {
@@ -45,16 +43,16 @@ public class AccountingControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void showsIdentities() throws PersistenceException {
-        Identity identity = new Identity("alias", null, new QblECKeyPair());
-        identityRepository.save(identity);
-
+    public void showsIdentities() throws Exception {
         AccountingController controller = getAccountingController();
 
-        assertEquals(2, controller.identityList.getChildren().size());
-        assertEquals(2, controller.itemViews.size());
+        assertEquals(1, controller.identityList.getChildren().size());
+        assertEquals(1, controller.itemViews.size());
 
-        assertEquals(identity, ((AccountingItemController) controller.itemViews.get(1).getPresenter()).getIdentity());
+        assertEquals(
+            identity.getKeyIdentifier(),
+            ((AccountingItemController) controller.itemViews.get(0).getPresenter()).getIdentity().getKeyIdentifier()
+        );
     }
 
     private AccountingController getAccountingController() {

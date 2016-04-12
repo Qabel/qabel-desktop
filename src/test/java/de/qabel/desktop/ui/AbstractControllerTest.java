@@ -38,8 +38,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
-import static org.junit.Assert.fail;
-
 public class AbstractControllerTest {
     protected ServiceFactory diContainer = new DefaultServiceFactory();
     protected InMemoryIdentityRepository identityRepository = new InMemoryIdentityRepository();
@@ -116,6 +114,8 @@ public class AbstractControllerTest {
         diContainer.put("reportHandler", crashReportHandler);
         diContainer.put("networkStatus", networkStatus);
         diContainer.put("boxSyncConfigRepository", boxSyncRepository);
+        diContainer.put("boxSyncRepository", boxSyncRepository);
+        diContainer.put("transactionManager", new InMemoryTransactionManager());
         MessageRendererFactory messageRendererFactory = new MessageRendererFactory();
         messageRendererFactory.setFallbackRenderer(new PlaintextMessageRenderer());
         diContainer.put("messageRendererFactory", messageRendererFactory);

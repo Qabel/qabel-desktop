@@ -52,6 +52,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Timer;
@@ -76,6 +77,7 @@ public class DesktopClient extends Application {
     private ClientConfig config;
     private boolean visible;
     private ResourceBundle resources;
+    private static Connection connection;
 
     public static void main(String[] args) throws Exception {
         AbstractNavigation.DEFAULT_AUTOCOMMIT_DELAY = 2000;
@@ -93,7 +95,10 @@ public class DesktopClient extends Application {
         }
 
         runtimeConfiguration = new StaticRuntimeConfiguration("https://drop.qabel.de", LEGACY_DATABASE_FILE, getConfigDatabase());
-        StaticDesktopServiceFactory staticDesktopServiceFactory = new NewConfigDesktopServiceFactory(runtimeConfiguration);
+        StaticDesktopServiceFactory staticDesktopServiceFactory = new NewConfigDesktopServiceFactory(
+            runtimeConfiguration,
+            new SqliteTransactionManager(connection)
+        );
         services = staticDesktopServiceFactory;
         Injector.setConfigurationSource(key -> staticDesktopServiceFactory.get((String) key));
         Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(staticDesktopServiceFactory));
@@ -108,10 +113,12 @@ public class DesktopClient extends Application {
 
         try {
             try {
-                Connection connection = DriverManager.getConnection("jdbc:sqlite://" + DATABASE_FILE.toAbsolutePath());
+                connection = DriverManager.getConnection("jdbc:sqlite://" + DATABASE_FILE.toAbsolutePath());
 
                 try {
-                    connection.createStatement().execute("PRAGMA FOREIGN_KEYS = ON");
+                    try (Statement statement = connection.createStatement()) {
+                        statement.execute("PRAGMA FOREIGN_KEYS = ON");
+                    }
                     ClientDatabase clientDatabase = new DesktopClientDatabase(connection);
 
                     clientDatabase.migrate();
