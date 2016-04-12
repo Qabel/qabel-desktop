@@ -3,28 +3,39 @@ package de.qabel.desktop.repository.sqlite;
 import de.qabel.core.config.*;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.drop.DropURL;
+import de.qabel.desktop.config.*;
+import de.qabel.desktop.config.factory.ClientConfigurationFactory;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilder;
+import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
+import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.repository.EntityManager;
 import de.qabel.desktop.repository.persistence.PersistenceAccountRepository;
+import de.qabel.desktop.repository.persistence.PersistenceClientConfigurationRepository;
 import de.qabel.desktop.repository.persistence.PersistenceContactRepository;
 import de.qabel.desktop.repository.persistence.PersistenceIdentityRepository;
 import de.qabel.desktop.repository.sqlite.migration.AbstractSqliteTest;
 import org.junit.Test;
+import org.spongycastle.util.encoders.Hex;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import org.hamcrest.Matchers.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class LegacyDatabaseMigratorTest extends AbstractSqliteTest {
     private SQLitePersistence persistence;
     private Path legacyFile;
     private ClientDatabase database;
     private EntityManager em = new EntityManager();
+    private String key;
 
     @Override
     public void setUp() throws Exception {
@@ -105,6 +116,74 @@ public class LegacyDatabaseMigratorTest extends AbstractSqliteTest {
         assertEquals("a", newAccount.getProvider());
         assertEquals("b", newAccount.getUser());
         assertEquals("c", newAccount.getAuth());
+    }
+
+    @Test
+    public void migratesClientConfig() throws Exception {
+        // arrange
+        PersistenceIdentityRepository legacyIdentityRepo = new PersistenceIdentityRepository(persistence);
+        PersistenceAccountRepository legacyAccountRepo = new PersistenceAccountRepository(persistence);
+        PersistenceClientConfigurationRepository legacyRepo = new PersistenceClientConfigurationRepository(
+            persistence,
+            new ClientConfigurationFactory(),
+            legacyIdentityRepo,
+            legacyAccountRepo
+        );
+        Account account = new Account("a", "b", "c");
+        Identity identity = new IdentityBuilder(new DropUrlGenerator("http://localhost")).withAlias("tester").build();
+        legacyIdentityRepo.save(identity);
+        ClientConfiguration clientConfiguration = new DefaultClientConfiguration();
+        clientConfiguration.setAccount(account);
+        legacyAccountRepo.save(account);
+        clientConfiguration.selectIdentity(identity);
+        clientConfiguration.setDeviceId("deviceId001");
+        clientConfiguration.setLastDropPoll(identity, new Date(12345678L));
+
+        key = Hex.toHexString("key".getBytes());
+        ShareNotificationMessage message = new ShareNotificationMessage("url", key, "message");
+        clientConfiguration.getShareNotification(identity).add(message);
+
+        Path localPath = Paths.get("/tmp/local");
+        Path remotePath = BoxFileSystem.getRoot().resolve("tmp").resolve("remote");
+        BoxSyncConfig boxSyncConfig = new DefaultBoxSyncConfig("name", localPath, remotePath, identity, account);
+        boxSyncConfig.pause();
+        clientConfiguration.getBoxSyncConfigs().add(boxSyncConfig);
+
+        legacyRepo.save(clientConfiguration);
+
+        // act
+        migrate(persistence);
+
+        // assert
+        SqliteIdentityRepository identityRepo = new SqliteIdentityRepository(database, em);
+        ClientConfig config = new RepositoryBasedClientConfig(
+            new SqliteClientConfigRepository(database),
+            new SqliteAccountRepository(database, em),
+            identityRepo,
+            new SqliteDropStateRepository(database),
+            new SqliteShareNotificationRepository(database, em)
+        );
+        identity = identityRepo.find(identity.getKeyIdentifier());
+        assertEquals(identity.getKeyIdentifier(), config.getSelectedIdentity().getKeyIdentifier());
+        assertEquals(account.getProvider(), config.getAccount().getProvider());
+        assertEquals(account.getUser(), config.getAccount().getUser());
+        assertEquals("deviceId001", config.getDeviceId());
+        assertEquals(12345678L, config.getLastDropPoll(identity).getTime());
+
+        List<ShareNotificationMessage> notifications = config.getShareNotification(identity).getNotifications();
+        assertEquals(1, notifications.size());
+        assertEquals("url", notifications.get(0).getUrl());
+
+        BoxSyncRepository syncRepo = new SqliteBoxSyncRepository(database, em);
+        List<BoxSyncConfig> syncConfigs = syncRepo.findAll();
+        assertEquals(1, syncConfigs.size());
+        BoxSyncConfig syncConfig = syncConfigs.get(0);
+        assertEquals(Paths.get("/tmp/local").toString(), syncConfig.getLocalPath().toString());
+        assertEquals("/tmp/remote", syncConfig.getRemotePath().toString());
+        assertEquals("name", syncConfig.getName());
+        assertEquals(identity.getKeyIdentifier(), syncConfig.getIdentity().getKeyIdentifier());
+        assertEquals(account.getUser(), syncConfig.getAccount().getUser());
+        assertFalse(syncConfig.isPaused());
     }
 
     public SqliteIdentityRepository getIdentityRepo() {
