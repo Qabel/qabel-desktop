@@ -21,7 +21,7 @@ public abstract class AbstractSqliteRepositoryTest<T> {
         dbFile = Files.createTempFile("qabel", "tmpdb");
         connection = DriverManager.getConnection("jdbc:sqlite://" + dbFile.toAbsolutePath());
         connection.createStatement().execute("PRAGMA FOREIGN_KEYS = ON");
-        clientDatabase = new DefaultClientDatabase(connection);
+        clientDatabase = new DesktopClientDatabase(connection);
         clientDatabase.migrate();
         em = new EntityManager();
         repo = createRepo(clientDatabase, em);

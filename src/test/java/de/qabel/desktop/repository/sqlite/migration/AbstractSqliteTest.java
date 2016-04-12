@@ -1,6 +1,6 @@
 package de.qabel.desktop.repository.sqlite.migration;
 
-import de.qabel.desktop.repository.sqlite.DefaultClientDatabase;
+import de.qabel.desktop.repository.sqlite.DesktopClientDatabase;
 import org.junit.After;
 import org.junit.Before;
 
@@ -38,6 +38,6 @@ public class AbstractSqliteTest {
     }
 
     protected boolean tableExists(String tableName) throws SQLException {
-        return new DefaultClientDatabase(connection).tableExists(tableName);
+        return new DesktopClientDatabase(connection).tableExists(tableName);
     }
 }

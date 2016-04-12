@@ -50,5 +50,5 @@ public interface DesktopServices {
 
     ShareNotificationRepository getShareNotificationRepository();
 
-    BoxSyncConfigRepository getBoxSyncConfigRepository();
+    BoxSyncRepository getBoxSyncConfigRepository();
 }

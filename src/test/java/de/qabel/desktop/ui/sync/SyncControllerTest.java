@@ -11,7 +11,7 @@ public class SyncControllerTest extends AbstractControllerTest {
     @Test
     public void loadsItems() throws Exception {
         BoxSyncConfig boxConfig = new DummyBoxSyncConfig();
-        boxSyncConfigRepository.save(boxConfig);
+        boxSyncRepository.save(boxConfig);
 
         SyncController controller = createController();
 

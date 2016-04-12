@@ -2,12 +2,14 @@ package de.qabel.desktop.daemon.drop;
 
 import com.google.gson.Gson;
 import de.qabel.core.crypto.QblECPublicKey;
+import de.qabel.desktop.repository.HasId;
 import org.spongycastle.util.encoders.Hex;
 
 import java.io.Serializable;
 
-public class ShareNotificationMessage implements Serializable {
+public class ShareNotificationMessage implements Serializable, HasId {
     private static final long serialVersionUID = -3612862422477244263L;
+    private int id;
     private String url;
     private String key;
     private String msg;
@@ -41,5 +43,15 @@ public class ShareNotificationMessage implements Serializable {
 
     public String getMsg() {
         return msg;
+    }
+
+    @Override
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public int getId() {
+        return id;
     }
 }

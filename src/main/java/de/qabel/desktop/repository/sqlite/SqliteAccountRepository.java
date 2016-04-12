@@ -35,6 +35,11 @@ public class SqliteAccountRepository extends AbstractSqliteRepository<Account> i
     }
 
     @Override
+    public Account find(int id) throws EntityNotFoundExcepion {
+        return find(String.valueOf(id));
+    }
+
+    @Override
     public List<Account> findAll() throws PersistenceException {
         List<Account> accounts = new LinkedList<>();
         accounts.addAll(super.findAll(""));

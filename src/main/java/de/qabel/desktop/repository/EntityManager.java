@@ -15,10 +15,18 @@ public class EntityManager {
     }
 
     public synchronized <T> void put(Class<T> clazz, SyncSettingItem entity) {
+        put(clazz, entity, entity.getId());
+    }
+
+    public synchronized <T> void put(Class<T> clazz, HasId entity) {
+        put(clazz, entity, entity.getId());
+    }
+
+    public <T> void put(Class<T> clazz, Object entity, int id) {
         if (!entities.containsKey(clazz)) {
             entities.put(clazz, new WeakHashMap<>());
         }
-        entities.get(clazz).put(entity.getId(), entity);
+        entities.get(clazz).put(id, entity);
     }
 
     public <T> T get(Class<T> clazz, int id) {

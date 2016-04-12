@@ -4,12 +4,13 @@ import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.daemon.sync.worker.Syncer;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndex;
+import de.qabel.desktop.repository.HasId;
 
 import java.nio.file.Path;
 import java.util.Observer;
 import java.util.function.Consumer;
 
-public interface BoxSyncConfig {
+public interface BoxSyncConfig extends HasId {
     String getName();
 
     Identity getIdentity();

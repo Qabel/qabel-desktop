@@ -83,8 +83,8 @@ public class SyncSetupControllerTest extends AbstractControllerTest {
         controller.setRemotePath("/");
         controller.createSyncConfig();
 
-        assertEquals(1, boxSyncConfigRepository.findAll().size());
-        BoxSyncConfig config = boxSyncConfigRepository.findAll().get(0);
+        assertEquals(1, boxSyncRepository.findAll().size());
+        BoxSyncConfig config = boxSyncRepository.findAll().get(0);
         assertEquals("Sync name", config.getName());
         assertEquals(localPath, config.getLocalPath().toString());
         assertEquals("/", config.getRemotePath().toString());

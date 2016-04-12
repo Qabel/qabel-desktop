@@ -6,7 +6,7 @@ import de.qabel.desktop.repository.exception.PersistenceException;
 import java.util.List;
 import java.util.function.Consumer;
 
-public interface BoxSyncConfigRepository {
+public interface BoxSyncRepository {
     List<BoxSyncConfig> findAll() throws PersistenceException;
     void save(BoxSyncConfig config) throws PersistenceException;
     void delete(BoxSyncConfig config) throws PersistenceException;

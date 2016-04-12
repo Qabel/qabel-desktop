@@ -317,7 +317,7 @@ public abstract class StaticDesktopServiceFactory extends DefaultServiceFactory 
     }
 
     @Create(name = "boxSyncConfigRepository")
-    public abstract BoxSyncConfigRepository getBoxSyncConfigRepository();
+    public abstract BoxSyncRepository getBoxSyncConfigRepository();
 
     @Create(name = "shareNotificationRepository")
     public abstract ShareNotificationRepository getShareNotificationRepository();

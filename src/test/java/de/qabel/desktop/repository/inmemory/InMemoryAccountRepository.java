@@ -22,6 +22,11 @@ public class InMemoryAccountRepository implements AccountRepository {
     }
 
     @Override
+    public Account find(int id) throws EntityNotFoundExcepion {
+        return find(String.valueOf(id));
+    }
+
+    @Override
     public List<Account> findAll() throws PersistenceException {
         return accounts;
     }

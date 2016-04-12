@@ -1,7 +1,7 @@
 package de.qabel.desktop.repository.inmemory;
 
 import de.qabel.desktop.config.BoxSyncConfig;
-import de.qabel.desktop.repository.BoxSyncConfigRepository;
+import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.repository.exception.PersistenceException;
 
 import java.util.LinkedList;
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
-public class InMemoryBoxSyncConfigRepisitory implements BoxSyncConfigRepository {
+public class InMemoryBoxSyncRepisitory implements BoxSyncRepository {
     private List<BoxSyncConfig> configs = new LinkedList<>();
 
     @Override

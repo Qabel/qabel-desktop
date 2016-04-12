@@ -7,7 +7,7 @@ import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import de.qabel.desktop.config.factory.BoxVolumeFactory;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
-import de.qabel.desktop.repository.BoxSyncConfigRepository;
+import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.remotefs.dialog.RemoteFSDirectoryChooser;
 import javafx.application.Platform;
@@ -60,7 +60,7 @@ public class SyncSetupController extends AbstractController implements Initializ
     private ClientConfig clientConfiguration;
 
     @Inject
-    private BoxSyncConfigRepository boxSyncConfigRepository;
+    private BoxSyncRepository boxSyncRepository;
 
     private StringProperty nameProperty;
     private BooleanProperty validProperty = new SimpleBooleanProperty();
@@ -185,7 +185,7 @@ public class SyncSetupController extends AbstractController implements Initializ
             Path lPath = Paths.get(localPathProperty.get());
             Path rPath = BoxFileSystem.get(remotePathProperty.get());
             BoxSyncConfig config = new DefaultBoxSyncConfig(nameProperty.get(), lPath, rPath, clientConfiguration.getSelectedIdentity(), account);
-            boxSyncConfigRepository.save(config);
+            boxSyncRepository.save(config);
             close();
         });
     }

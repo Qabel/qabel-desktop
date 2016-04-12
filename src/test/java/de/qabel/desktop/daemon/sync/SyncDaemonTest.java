@@ -3,8 +3,8 @@ package de.qabel.desktop.daemon.sync;
 import de.qabel.desktop.config.*;
 import de.qabel.desktop.daemon.sync.worker.FakeSyncer;
 import de.qabel.desktop.daemon.sync.worker.FakeSyncerFactory;
-import de.qabel.desktop.repository.BoxSyncConfigRepository;
-import de.qabel.desktop.repository.inmemory.InMemoryBoxSyncConfigRepisitory;
+import de.qabel.desktop.repository.BoxSyncRepository;
+import de.qabel.desktop.repository.inmemory.InMemoryBoxSyncRepisitory;
 import de.qabel.desktop.ui.sync.DummyBoxSyncConfig;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 
 public class SyncDaemonTest extends AbstractSyncTest {
     private SyncDaemon daemon;
-    private BoxSyncConfigRepository boxSyncConfigRepo = new InMemoryBoxSyncConfigRepisitory();
+    private BoxSyncRepository boxSyncConfigRepo = new InMemoryBoxSyncRepisitory();
     private Thread thread;
     private BoxSyncConfig config;
     private ObservableList<BoxSyncConfig> boxSyncConfigs;

@@ -112,7 +112,7 @@ public class DesktopClient extends Application {
 
                 try {
                     connection.createStatement().execute("PRAGMA FOREIGN_KEYS = ON");
-                    ClientDatabase clientDatabase = new DefaultClientDatabase(connection);
+                    ClientDatabase clientDatabase = new DesktopClientDatabase(connection);
 
                     clientDatabase.migrate();
 
@@ -236,7 +236,7 @@ public class DesktopClient extends Application {
         primaryStage.show();
     }
 
-    private BoxSyncConfigRepository getBoxSyncConfigRepository() {
+    private BoxSyncRepository getBoxSyncConfigRepository() {
         return services.getBoxSyncConfigRepository();
     }
 
@@ -258,10 +258,10 @@ public class DesktopClient extends Application {
         });
     }
 
-    protected SyncDaemon getSyncDaemon(BoxSyncConfigRepository boxSyncConfigRepository) throws Exception {
+    protected SyncDaemon getSyncDaemon(BoxSyncRepository boxSyncRepository) throws Exception {
         new Thread(services.getTransferManager(), "TransactionManager").start();
-        ObservableList<BoxSyncConfig> configs = FXCollections.observableList(boxSyncConfigRepository.findAll());
-        boxSyncConfigRepository.onAdd(config -> configs.add(config));
+        ObservableList<BoxSyncConfig> configs = FXCollections.observableList(boxSyncRepository.findAll());
+        boxSyncRepository.onAdd(config -> configs.add(config));
         return new SyncDaemon(configs,
             new DefaultSyncerFactory(services.getBoxVolumeFactory(), services.getTransferManager())
         );

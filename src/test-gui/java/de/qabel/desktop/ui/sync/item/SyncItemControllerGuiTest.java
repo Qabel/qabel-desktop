@@ -35,7 +35,7 @@ public class SyncItemControllerGuiTest extends AbstractGuiTest<SyncItemControlle
         syncer = new FakeSyncer(syncConfig);
         syncConfig.setSyncer(syncer);
         super.setUp();
-        boxSyncConfigRepository.save(syncConfig);
+        boxSyncRepository.save(syncConfig);
         page = new SyncItemPage(baseFXRobot, robot, controller);
     }
 
@@ -68,7 +68,7 @@ public class SyncItemControllerGuiTest extends AbstractGuiTest<SyncItemControlle
     public void deletesSyncCleanly() throws Exception {
         page.delete().yes();
         waitUntil(syncer::isStopped);
-        assertTrue(boxSyncConfigRepository.findAll().isEmpty());
+        assertTrue(boxSyncRepository.findAll().isEmpty());
     }
 
     @Test
@@ -76,6 +76,6 @@ public class SyncItemControllerGuiTest extends AbstractGuiTest<SyncItemControlle
         page.delete().cancel();
         waitUntil(() -> controller.confirmationDialog == null);
         assertFalse(syncer.isStopped());
-        assertFalse(boxSyncConfigRepository.findAll().isEmpty());
+        assertFalse(boxSyncRepository.findAll().isEmpty());
     }
 }

@@ -2,7 +2,7 @@ package de.qabel.desktop.ui.sync;
 
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.ClientConfig;
-import de.qabel.desktop.repository.BoxSyncConfigRepository;
+import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.sync.item.DummySyncItemView;
@@ -36,7 +36,7 @@ public class SyncController extends AbstractController implements Initializable 
     ClientConfig clientConfiguration;
 
     @Inject
-    BoxSyncConfigRepository boxSyncConfigRepository;
+    BoxSyncRepository boxSyncRepository;
 
     SyncSetupController syncSetupController;
 
@@ -44,8 +44,8 @@ public class SyncController extends AbstractController implements Initializable 
     public void initialize(URL location, ResourceBundle resources) {
         syncItemNodes = syncItemContainer.getChildren();
 
-        boxSyncConfigRepository.onAdd(c -> reload());
-        boxSyncConfigRepository.onDelete(c -> reload());
+        boxSyncRepository.onAdd(c -> reload());
+        boxSyncRepository.onDelete(c -> reload());
         reload();
     }
 
@@ -53,7 +53,7 @@ public class SyncController extends AbstractController implements Initializable 
         syncItemNodes.clear();
         List<BoxSyncConfig> configs;
         try {
-            configs = boxSyncConfigRepository.findAll();
+            configs = boxSyncRepository.findAll();
         } catch (PersistenceException e) {
             return;
         }

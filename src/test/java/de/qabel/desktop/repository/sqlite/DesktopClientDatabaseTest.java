@@ -9,13 +9,13 @@ import java.sql.SQLException;
 
 import static org.junit.Assert.*;
 
-public class DefaultClientDatabaseTest extends AbstractSqliteTest {
-    private DefaultClientDatabase database;
+public class DesktopClientDatabaseTest extends AbstractSqliteTest {
+    private DesktopClientDatabase database;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        database = new DefaultClientDatabase(connection);
+        database = new DesktopClientDatabase(connection);
     }
 
     @Test

@@ -13,6 +13,8 @@ public interface AccountRepository {
     @Deprecated
     Account find(String id) throws EntityNotFoundExcepion;
 
+    Account find(int id) throws EntityNotFoundExcepion;
+
     List<Account> findAll() throws PersistenceException;
 
     void save(Account account) throws PersistenceException;

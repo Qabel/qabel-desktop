@@ -5,7 +5,7 @@ import de.qabel.desktop.daemon.management.Transaction;
 import de.qabel.desktop.daemon.management.Upload;
 import de.qabel.desktop.daemon.sync.BoxSync;
 import de.qabel.desktop.daemon.sync.worker.Syncer;
-import de.qabel.desktop.repository.BoxSyncConfigRepository;
+import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.transfer.TransferViewModel;
@@ -31,7 +31,7 @@ import java.util.ResourceBundle;
 public class SyncItemController extends AbstractController implements Initializable {
 
     @Inject
-    private BoxSyncConfigRepository boxSyncConfigRepository;
+    private BoxSyncRepository boxSyncRepository;
 
     @Inject
     private BoxSyncConfig syncConfig;
@@ -140,7 +140,7 @@ public class SyncItemController extends AbstractController implements Initializa
                                     alert("error while stopping sync: " + e.getMessage(), e);
                                 } finally {
                                     syncConfig.setSyncer(null);
-                                    boxSyncConfigRepository.delete(syncConfig);
+                                    boxSyncRepository.delete(syncConfig);
                                 }
                             }
                         } catch (PersistenceException e) {

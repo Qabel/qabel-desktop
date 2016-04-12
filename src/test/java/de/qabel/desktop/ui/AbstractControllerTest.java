@@ -32,7 +32,6 @@ import javafx.application.Platform;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import static de.qabel.desktop.AsyncUtils.*;
 
 import java.lang.reflect.Field;
 import java.util.concurrent.Callable;
@@ -59,7 +58,7 @@ public class AbstractControllerTest {
     protected AccountRepository accountRepository = new InMemoryAccountRepository();
     protected DropStateRepository dropStateRepository = new InMemoryDropStateRepository();
     protected ShareNotificationRepository shareNotificationRepository = new InMemoryShareNotificationRepository();
-    protected BoxSyncConfigRepository boxSyncConfigRepository = new InMemoryBoxSyncConfigRepisitory();
+    protected BoxSyncRepository boxSyncRepository = new InMemoryBoxSyncRepisitory();
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -116,7 +115,7 @@ public class AbstractControllerTest {
         diContainer.put("sharingService", sharingService);
         diContainer.put("reportHandler", crashReportHandler);
         diContainer.put("networkStatus", networkStatus);
-        diContainer.put("boxSyncConfigRepository", boxSyncConfigRepository);
+        diContainer.put("boxSyncConfigRepository", boxSyncRepository);
         MessageRendererFactory messageRendererFactory = new MessageRendererFactory();
         messageRendererFactory.setFallbackRenderer(new PlaintextMessageRenderer());
         diContainer.put("messageRendererFactory", messageRendererFactory);

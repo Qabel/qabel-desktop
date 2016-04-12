@@ -31,7 +31,7 @@ public class LegacyDatabaseMigratorTest extends AbstractSqliteTest {
         super.setUp();
         legacyFile = Files.createTempFile("qabel", "legacydb");
         persistence = new SQLitePersistence(legacyFile.toAbsolutePath().toString());
-        database = new DefaultClientDatabase(connection);
+        database = new DesktopClientDatabase(connection);
         database.migrate();
     }
 

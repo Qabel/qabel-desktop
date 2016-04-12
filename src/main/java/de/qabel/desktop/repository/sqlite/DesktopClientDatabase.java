@@ -8,12 +8,12 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 
-public class DefaultClientDatabase implements ClientDatabase {
-    private static final Logger logger = LoggerFactory.getLogger(DefaultClientDatabase.class);
+public class DesktopClientDatabase implements ClientDatabase {
+    private static final Logger logger = LoggerFactory.getLogger(DesktopClientDatabase.class);
     private final Connection connection;
     private TransactionManager transactionManager;
 
-    public DefaultClientDatabase(Connection connection) {
+    public DesktopClientDatabase(Connection connection) {
         this.connection = connection;
         transactionManager = new SqliteTransactionManager(connection);
     }
