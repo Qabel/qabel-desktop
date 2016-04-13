@@ -97,7 +97,10 @@ public class ActionlogControllerTest extends AbstractControllerTest {
         waitUntil(() -> {
             String newString = messagesController.getDateLabel().getText();
             return old.equals(newString);
-        });
+        },
+            () -> "dateString was not refreshed as expected. expected: '" + old + "'" +
+                ", actual: '" + messagesController.getDateLabel().getText()
+        );
     }
 
     @Override
