@@ -1,14 +1,12 @@
 package de.qabel.desktop.daemon.sync.worker;
 
-import de.qabel.desktop.daemon.sync.event.ChangeEvent;
-import de.qabel.desktop.daemon.sync.event.LocalChangeEvent;
-import de.qabel.desktop.daemon.sync.event.LocalDeleteEvent;
-import de.qabel.desktop.daemon.sync.event.WatchRegisteredEvent;
+import de.qabel.desktop.daemon.sync.event.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.nio.file.WatchEvent;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +29,7 @@ public class TreeWatcher extends Thread {
     private Path root;
     private Consumer<de.qabel.desktop.daemon.sync.event.WatchEvent> consumer;
     private boolean watching;
+    private boolean sequential = false;
 
     private WatchService watcher;
     private Map<WatchKey, Path> keys = new HashMap<>();
@@ -47,6 +46,7 @@ public class TreeWatcher extends Thread {
     public TreeWatcher(Path root, Consumer<de.qabel.desktop.daemon.sync.event.WatchEvent> consumer, boolean sequential) {
         this.root = root;
         this.consumer = consumer;
+        this.sequential = sequential;
         if (sequential) {
             fileExecutor = executor;
         }
@@ -163,10 +163,10 @@ public class TreeWatcher extends Thread {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 WatchRegisteredEvent watchEvent = new WatchRegisteredEvent(file);
-                fileExecutor.submit(() -> consumer.accept(watchEvent));
+                submitEvent(watchEvent, fileExecutor);
                 if (watching) {
                     final LocalChangeEvent event = new LocalChangeEvent(file, CREATE);
-                    fileExecutor.submit(() -> consumer.accept(event));
+                    submitEvent(event, fileExecutor);
                 }
                 return super.visitFile(file, attrs);
             }
@@ -178,7 +178,7 @@ public class TreeWatcher extends Thread {
                     WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
                     keys.put(key, dir);
                     WatchRegisteredEvent event = new WatchRegisteredEvent(dir);
-                    executor.submit(() -> consumer.accept(event));
+                    submitEvent(event, executor);
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
                 }
@@ -186,5 +186,13 @@ public class TreeWatcher extends Thread {
                 return FileVisitResult.CONTINUE;
             }
         });
+    }
+
+    private void submitEvent(de.qabel.desktop.daemon.sync.event.WatchEvent event, ExecutorService executor) {
+        if (sequential) {
+            consumer.accept(event);
+        } else {
+            executor.submit(() -> consumer.accept(event));
+        }
     }
 }
