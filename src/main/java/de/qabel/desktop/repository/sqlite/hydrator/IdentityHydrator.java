@@ -7,7 +7,7 @@ import de.qabel.desktop.config.factory.IdentityFactory;
 import de.qabel.desktop.repository.EntityManager;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.repository.sqlite.Hydrator;
-import de.qabel.desktop.repository.sqlite.SqliteIdentityDropUrlRepository;
+import de.qabel.desktop.repository.sqlite.SqliteDropUrlRepository;
 import de.qabel.desktop.repository.sqlite.SqlitePrefixRepository;
 import org.spongycastle.util.encoders.Hex;
 
@@ -15,11 +15,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 
-public class IdentityHydrator extends AbstractHydrator<Identity> {
-    private final SqliteIdentityDropUrlRepository dropUrlRepository;
+public class IdentityHydrator implements Hydrator<Identity> {
+    private final SqliteDropUrlRepository dropUrlRepository;
     private final IdentityFactory identityFactory;
     private final EntityManager entityManager;
     private final SqlitePrefixRepository prefixRepository;
@@ -27,7 +25,7 @@ public class IdentityHydrator extends AbstractHydrator<Identity> {
     public IdentityHydrator(
         IdentityFactory identityFactory,
         EntityManager entityManager,
-        SqliteIdentityDropUrlRepository dropUrlRepository,
+        SqliteDropUrlRepository dropUrlRepository,
         SqlitePrefixRepository prefixRepository
     ) {
         this.identityFactory = identityFactory;
@@ -37,8 +35,10 @@ public class IdentityHydrator extends AbstractHydrator<Identity> {
     }
 
     @Override
-    public String[] getFields() {
-        return new String[]{"ROWID", "privateKey", "alias", "email", "phone"};
+    public String[] getFields(String... alias) {
+        String i = alias[0] + ".";
+        String c = alias[1] + ".";
+        return new String[]{i+"id", i+"privateKey", c+"id", c+"alias", c+"email", c+"phone"};
     }
 
     @Override
@@ -50,6 +50,7 @@ public class IdentityHydrator extends AbstractHydrator<Identity> {
             return entityManager.get(Identity.class, id);
         }
         byte[] privateKey = Hex.decode(resultSet.getString(i++));
+        int contactId = resultSet.getInt(i++);
         String alias = resultSet.getString(i++);
         String email = resultSet.getString(i++);
         String phone = resultSet.getString(i++);
@@ -59,7 +60,7 @@ public class IdentityHydrator extends AbstractHydrator<Identity> {
         identity.setEmail(email);
         identity.setPhone(phone);
         try {
-            for (DropURL url : dropUrlRepository.findAll(identity)) {
+            for (DropURL url : dropUrlRepository.findAll(contactId)) {
                 identity.addDrop(url);
             }
             for (String prefix : prefixRepository.findAll(identity)) {

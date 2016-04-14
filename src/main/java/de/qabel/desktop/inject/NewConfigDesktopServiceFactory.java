@@ -10,7 +10,7 @@ import de.qabel.desktop.repository.*;
 import de.qabel.desktop.repository.sqlite.*;
 import de.qabel.desktop.repository.sqlite.hydrator.*;
 
-public class NewConfigDesktopServiceFactory extends StaticDesktopServiceFactory {
+public class NewConfigDesktopServiceFactory extends RuntimeDesktopServiceFactory {
     public NewConfigDesktopServiceFactory(
         RuntimeConfiguration runtimeConfiguration,
         TransactionManager transactionManager
@@ -19,31 +19,34 @@ public class NewConfigDesktopServiceFactory extends StaticDesktopServiceFactory 
         this.transactionManager = transactionManager;
     }
 
+    protected SqliteIdentityRepository identityRepository;
     @Override
-    public synchronized IdentityRepository getIdentityRepository() {
+    public synchronized SqliteIdentityRepository getIdentityRepository() {
         if (identityRepository == null) {
             identityRepository = new SqliteIdentityRepository(
                 runtimeConfiguration.getConfigDatabase(),
                 getIdentityHydrator(),
-                getIdentityDropUrlRepository(),
+                getDropUrlRepository(),
                 getPrefixRepository()
             );
         }
         return identityRepository;
     }
 
+    protected SqliteContactRepository contactRepository;
     @Override
-    public synchronized ContactRepository getContactRepository() {
+    public synchronized SqliteContactRepository getContactRepository() {
         if (contactRepository == null) {
             contactRepository = new SqliteContactRepository(
                 runtimeConfiguration.getConfigDatabase(),
                 getContactHydrator(),
-                getContactDropUrlRepository()
+                getDropUrlRepository()
             );
         }
         return contactRepository;
     }
 
+    private SqliteAccountRepository accountRepository;
     @Override
     public synchronized AccountRepository getAccountRepository() {
         if (accountRepository == null) {
@@ -55,6 +58,7 @@ public class NewConfigDesktopServiceFactory extends StaticDesktopServiceFactory 
         return accountRepository;
     }
 
+    private ClientConfig clientConfiguration;
     @Override
     public synchronized ClientConfig getClientConfiguration() {
         if (clientConfiguration == null) {
@@ -117,6 +121,20 @@ public class NewConfigDesktopServiceFactory extends StaticDesktopServiceFactory 
         return boxSyncConfigRepo;
     }
 
+    private SqliteDropMessageRepository dropMessageRepository;
+    @Override
+    public synchronized DropMessageRepository getDropMessageRepository() {
+        if (dropMessageRepository == null) {
+            dropMessageRepository = new SqliteDropMessageRepository(
+                runtimeConfiguration.getConfigDatabase(),
+                entityManager,
+                getIdentityRepository(),
+                getContactRepository()
+            );
+        }
+        return dropMessageRepository;
+    }
+
     private Hydrator<BoxSyncConfig> getBoxSyncConfigHydrator() {
         return new BoxSyncConfigHydrator(
             getEntityManager(),
@@ -141,7 +159,7 @@ public class NewConfigDesktopServiceFactory extends StaticDesktopServiceFactory 
         return new IdentityHydrator(
             getIdentityFactory(),
             getEntityManager(),
-            getIdentityDropUrlRepository(),
+            getDropUrlRepository(),
             getPrefixRepository()
         );
     }
@@ -150,7 +168,7 @@ public class NewConfigDesktopServiceFactory extends StaticDesktopServiceFactory 
         return new ContactHydrator(
             getEntityManager(),
             getContactFactory(),
-            getContactDropUrlRepository()
+            getDropUrlRepository()
         );
     }
 
@@ -162,26 +180,15 @@ public class NewConfigDesktopServiceFactory extends StaticDesktopServiceFactory 
         return prefixRepository;
     }
 
-    private SqliteIdentityDropUrlRepository dropUrlRepository;
-    private synchronized SqliteIdentityDropUrlRepository getIdentityDropUrlRepository() {
+    private SqliteDropUrlRepository dropUrlRepository;
+    private synchronized SqliteDropUrlRepository getDropUrlRepository() {
         if (dropUrlRepository == null) {
-            dropUrlRepository = new SqliteIdentityDropUrlRepository(
+            dropUrlRepository = new SqliteDropUrlRepository(
                 runtimeConfiguration.getConfigDatabase(),
                 new DropURLHydrator()
             );
         }
         return dropUrlRepository;
-    }
-
-    private SqliteContactDropUrlRepository contactDropUrlRepository;
-    private synchronized SqliteContactDropUrlRepository getContactDropUrlRepository() {
-        if (contactDropUrlRepository == null) {
-            contactDropUrlRepository = new SqliteContactDropUrlRepository(
-                runtimeConfiguration.getConfigDatabase(),
-                new DropURLHydrator()
-            );
-        }
-        return contactDropUrlRepository;
     }
 
     private IdentityFactory identityFactory = new DefaultIdentityFactory();

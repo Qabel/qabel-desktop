@@ -15,6 +15,4 @@ public interface ContactRepository {
     void delete(Contact contact, Identity identity) throws PersistenceException;
 
     Contact findByKeyId(Identity identity, String keyId) throws EntityNotFoundExcepion;
-
-
 }

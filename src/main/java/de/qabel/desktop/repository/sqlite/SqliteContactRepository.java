@@ -17,7 +17,7 @@ import java.sql.SQLException;
 
 public class SqliteContactRepository extends AbstractSqliteRepository<Contact> implements ContactRepository {
     public static final String TABLE_NAME = "contact";
-    private final SqliteContactDropUrlRepository dropUrlRepository;
+    private final SqliteDropUrlRepository dropUrlRepository;
 
     public SqliteContactRepository(ClientDatabase database, EntityManager em) {
         this(
@@ -25,15 +25,19 @@ public class SqliteContactRepository extends AbstractSqliteRepository<Contact> i
             new ContactHydrator(
                 em,
                 new DefaultContactFactory(),
-                new SqliteContactDropUrlRepository(database, new DropURLHydrator())
+                new SqliteDropUrlRepository(database, new DropURLHydrator())
             ),
-            new SqliteContactDropUrlRepository(database, new DropURLHydrator())
+            new SqliteDropUrlRepository(database, new DropURLHydrator())
         );
     }
 
-    public SqliteContactRepository(ClientDatabase database, Hydrator<Contact> hydrator, SqliteContactDropUrlRepository dropUrlRepository) {
+    public SqliteContactRepository(ClientDatabase database, Hydrator<Contact> hydrator, SqliteDropUrlRepository dropUrlRepository) {
         super(database, hydrator, TABLE_NAME);
         this.dropUrlRepository = dropUrlRepository;
+    }
+
+    Contact find(Integer id) throws PersistenceException, EntityNotFoundExcepion {
+        return findBy("id=?", id);
     }
 
     @Override
@@ -45,7 +49,8 @@ public class SqliteContactRepository extends AbstractSqliteRepository<Contact> i
             "FROM contact c " +
             "JOIN identity_contacts ic ON (c.id = ic.contact_id) " +
             "JOIN identity i ON (ic.id = i.id) " +
-            "WHERE i.publicKey = ?"
+            "JOIN contact c2 ON (i.contact_id = c2.id) " +
+            "WHERE c2.publicKey = ?"
         )) {
             statement.setString(1, identity.getKeyIdentifier());
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -162,7 +167,8 @@ public class SqliteContactRepository extends AbstractSqliteRepository<Contact> i
                 "SELECT " + String.join(",", hydrator.getFields("c")) + " FROM " + TABLE_NAME + " c " +
                     "JOIN identity_contacts ic ON (c.id = ic.contact_id) " +
                     "JOIN identity i ON (i.id = ic.identity_id) " +
-                    "WHERE i.publicKey = ? AND c.publicKey = ? " +
+                    "JOIN contact c2 ON (c2.id = i.contact_id) " +
+                    "WHERE c2.publicKey = ? AND c.publicKey = ? " +
                     "LIMIT 1"
             )) {
                 statement.setString(1, identity.getKeyIdentifier());

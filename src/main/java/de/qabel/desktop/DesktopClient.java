@@ -12,7 +12,7 @@ import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
 import de.qabel.desktop.inject.DesktopServices;
 import de.qabel.desktop.inject.NewConfigDesktopServiceFactory;
-import de.qabel.desktop.inject.StaticDesktopServiceFactory;
+import de.qabel.desktop.inject.RuntimeDesktopServiceFactory;
 import de.qabel.desktop.inject.config.StaticRuntimeConfiguration;
 import de.qabel.desktop.repository.*;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
@@ -95,7 +95,7 @@ public class DesktopClient extends Application {
         }
 
         runtimeConfiguration = new StaticRuntimeConfiguration("https://drop.qabel.de", LEGACY_DATABASE_FILE, getConfigDatabase());
-        StaticDesktopServiceFactory staticDesktopServiceFactory = new NewConfigDesktopServiceFactory(
+        RuntimeDesktopServiceFactory staticDesktopServiceFactory = new NewConfigDesktopServiceFactory(
             runtimeConfiguration,
             new SqliteTransactionManager(connection)
         );

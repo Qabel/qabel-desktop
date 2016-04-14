@@ -43,8 +43,6 @@ public interface DesktopServices {
     @Create(name = "config")
     ClientConfig getClientConfiguration();
 
-    ClientConfigurationRepository getClientConfigurationRepository();
-
     @Create(name = "networkStatus")
     NetworkStatus getNetworkStatus();
 

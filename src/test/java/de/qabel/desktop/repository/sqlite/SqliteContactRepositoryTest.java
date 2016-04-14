@@ -46,7 +46,7 @@ public class SqliteContactRepositoryTest extends AbstractSqliteRepositoryTest<Sq
 
     @Override
     protected SqliteContactRepository createRepo(ClientDatabase clientDatabase, EntityManager em) throws Exception {
-        SqliteContactDropUrlRepository dropUrlRepository = new SqliteContactDropUrlRepository(clientDatabase, new DropURLHydrator());
+        SqliteDropUrlRepository dropUrlRepository = new SqliteDropUrlRepository(clientDatabase, new DropURLHydrator());
         return new SqliteContactRepository(
             clientDatabase,
             new ContactHydrator(em, new DefaultContactFactory(), dropUrlRepository),

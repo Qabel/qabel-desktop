@@ -32,13 +32,19 @@ public class PersistenceDropMessageRepository extends AbstractCachedPersistenceR
     }
 
     @Override
+    public void save(PersistenceDropMessage message) throws PersistenceException {
+        addMessage(message.getDropMessage(), message.getSender(), message.getReceiver(), message.isSent());
+    }
+
+    @Override
     public List<PersistenceDropMessage> loadConversation(Contact contact, Identity identity) throws PersistenceException {
         List<PersistenceDropMessage> result = new LinkedList<>();
         List<PersistenceDropMessage> messages = persistence.getEntities(PersistenceDropMessage.class);
 
         for (PersistenceDropMessage d : messages) {
             try {
-                if (d.getSender().hashCode() == contact.hashCode() || d.getReceiver().hashCode() == contact.hashCode()) {
+                if (isSender(contact, d) && isReceiver(identity, d)
+                    || isSender(identity, d) && isReceiver(contact, d)) {
                     if (!isCached(d)) {
                         cache(d);
                     } else {
@@ -53,44 +59,11 @@ public class PersistenceDropMessageRepository extends AbstractCachedPersistenceR
         return result;
     }
 
-
-    @Override
-    public List<PersistenceDropMessage> loadNewMessagesFromConversation(List<PersistenceDropMessage> dropMessages, Contact c, Identity identity) {
-        List<PersistenceDropMessage> result = new LinkedList<>();
-
-        Map<String, PersistenceDropMessage> map = new HashMap<>();
-
-        for (PersistenceDropMessage m : dropMessages) {
-            map.put(m.getPersistenceID(), m);
-        }
-
-        List<PersistenceDropMessage> messages = persistence.getEntities(PersistenceDropMessage.class);
-        for (PersistenceDropMessage m : messages) {
-            if (!map.containsKey(m.getPersistenceID())) {
-                try {
-                    if (belongsToConversation(m, c.hashCode(), identity.hashCode())) {
-                        if (!isCached(m)) {
-                            cache(m);
-                        } else {
-                            m = fromCache(m);
-                        }
-                        result.add(m);
-                    }
-                } catch (Exception e) {
-                    logger.error(e.getMessage(), e);
-                }
-            }
-        }
-        return result;
+    private boolean isReceiver(Entity contact, PersistenceDropMessage d) {
+        return d.getReceiver().getKeyIdentifier().equals(contact.getKeyIdentifier());
     }
 
-
-    private boolean belongsToConversation(PersistenceDropMessage dropMessage, int contactKeyIdentifier, int ownKeyIdentifier) {
-
-        int senderIdentifier = dropMessage.getSender().hashCode();
-        int receiverKeyIdentifier = dropMessage.getReceiver().hashCode();
-
-        return senderIdentifier == contactKeyIdentifier && receiverKeyIdentifier == ownKeyIdentifier && !dropMessage.isSent()
-                || senderIdentifier == ownKeyIdentifier && receiverKeyIdentifier == contactKeyIdentifier && dropMessage.isSent();
+    private boolean isSender(Entity contact, PersistenceDropMessage d) {
+        return d.getSender().getKeyIdentifier().equals(contact.getKeyIdentifier());
     }
 }

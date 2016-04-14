@@ -32,6 +32,11 @@ public class StubDropMessageRepository extends Observable implements DropMessage
     }
 
     @Override
+    public void save(PersistenceDropMessage message) throws PersistenceException {
+        addMessage(message.getDropMessage(), message.getSender(), message.getReceiver(), message.isSent());
+    }
+
+    @Override
     public List<PersistenceDropMessage> loadConversation(Contact contact, Identity identity) throws PersistenceException {
         List<PersistenceDropMessage> lst = messagesMap.get(contact.getKeyIdentifier());
         if(lst == null){

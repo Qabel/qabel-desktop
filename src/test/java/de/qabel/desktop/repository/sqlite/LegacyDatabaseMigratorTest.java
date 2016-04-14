@@ -2,6 +2,7 @@ package de.qabel.desktop.repository.sqlite;
 
 import de.qabel.core.config.*;
 import de.qabel.core.crypto.QblECPublicKey;
+import de.qabel.core.drop.DropMessage;
 import de.qabel.core.drop.DropURL;
 import de.qabel.desktop.config.*;
 import de.qabel.desktop.config.factory.ClientConfigurationFactory;
@@ -11,11 +12,9 @@ import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.repository.EntityManager;
-import de.qabel.desktop.repository.persistence.PersistenceAccountRepository;
-import de.qabel.desktop.repository.persistence.PersistenceClientConfigurationRepository;
-import de.qabel.desktop.repository.persistence.PersistenceContactRepository;
-import de.qabel.desktop.repository.persistence.PersistenceIdentityRepository;
+import de.qabel.desktop.repository.persistence.*;
 import de.qabel.desktop.repository.sqlite.migration.AbstractSqliteTest;
+import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 import org.junit.Test;
 import org.spongycastle.util.encoders.Hex;
 
@@ -23,9 +22,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import org.hamcrest.Matchers.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -69,7 +68,7 @@ public class LegacyDatabaseMigratorTest extends AbstractSqliteTest {
 
     @Test
     public void migratesIdentities() throws Exception {
-        PersistenceIdentityRepository legacyRepo = new PersistenceIdentityRepository(persistence);
+        PersistenceIdentityRepository legacyRepo = getLegacyIdentityRepo();
         Identity identity = new IdentityBuilder(new DropUrlGenerator("http://localhost")).withAlias("tester").build();
         legacyRepo.save(identity);
 
@@ -83,8 +82,8 @@ public class LegacyDatabaseMigratorTest extends AbstractSqliteTest {
 
     @Test
     public void migratesContacts() throws Exception {
-        PersistenceContactRepository legacyRepo = new PersistenceContactRepository(persistence);
-        PersistenceIdentityRepository legacyIdentityRepo = new PersistenceIdentityRepository(persistence);
+        PersistenceContactRepository legacyRepo = getLegacyContactRepo();
+        PersistenceIdentityRepository legacyIdentityRepo = getLegacyIdentityRepo();
         Identity identity = new IdentityBuilder(new DropUrlGenerator("http://localhost")).withAlias("tester").build();
         DropURL dropUrl = new DropUrlGenerator("http://localhost").generateUrl();
         List<DropURL> urls = new LinkedList<>();
@@ -102,9 +101,13 @@ public class LegacyDatabaseMigratorTest extends AbstractSqliteTest {
         assertEquals(contact.getKeyIdentifier(), contacts.getContacts().toArray(new Contact[1])[0].getKeyIdentifier());
     }
 
+    private PersistenceContactRepository getLegacyContactRepo() {
+        return new PersistenceContactRepository(persistence);
+    }
+
     @Test
     public void migratesAccounts() throws Exception {
-        PersistenceAccountRepository legacyRepo = new PersistenceAccountRepository(persistence);
+        PersistenceAccountRepository legacyRepo = getLegacyAccountRepo();
         Account account = new Account("a", "b", "c");
         legacyRepo.save(account);
 
@@ -121,8 +124,8 @@ public class LegacyDatabaseMigratorTest extends AbstractSqliteTest {
     @Test
     public void migratesClientConfig() throws Exception {
         // arrange
-        PersistenceIdentityRepository legacyIdentityRepo = new PersistenceIdentityRepository(persistence);
-        PersistenceAccountRepository legacyAccountRepo = new PersistenceAccountRepository(persistence);
+        PersistenceIdentityRepository legacyIdentityRepo = getLegacyIdentityRepo();
+        PersistenceAccountRepository legacyAccountRepo = getLegacyAccountRepo();
         PersistenceClientConfigurationRepository legacyRepo = new PersistenceClientConfigurationRepository(
             persistence,
             new ClientConfigurationFactory(),
@@ -186,6 +189,43 @@ public class LegacyDatabaseMigratorTest extends AbstractSqliteTest {
         assertFalse(syncConfig.isPaused());
     }
 
+    private PersistenceAccountRepository getLegacyAccountRepo() {
+        return new PersistenceAccountRepository(persistence);
+    }
+
+    private PersistenceIdentityRepository getLegacyIdentityRepo() {
+        return new PersistenceIdentityRepository(persistence);
+    }
+
+    @Test
+    public void migratesMessages() throws Exception {
+        Identity legacyIdentity = new IdentityBuilder(new DropUrlGenerator("http://localhost"))
+            .withAlias("tester").build();
+        Contact legacyContact = new Contact("someone", new HashSet<>(), new QblECPublicKey("nokey".getBytes()));
+        getLegacyIdentityRepo().save(legacyIdentity);
+        getLegacyContactRepo().save(legacyContact, legacyIdentity);
+
+        DropMessage legacyDropMessage = new DropMessage(legacyContact, "stuff", "ordinary message");
+        PersistenceDropMessageRepository legacyRepo = new PersistenceDropMessageRepository(persistence);
+        legacyRepo.addMessage(legacyDropMessage, legacyContact, legacyIdentity, false);
+
+        migrate(persistence);
+
+        Identity identity = getIdentityRepo().find(legacyIdentity.getKeyIdentifier());
+        Contact contact = getContactRepo().findByKeyId(identity, legacyContact.getKeyIdentifier());
+        List<PersistenceDropMessage> messages = getDropMessageRepo().loadConversation(contact, identity);
+        assertEquals(1, messages.size());
+        PersistenceDropMessage message = messages.get(0);
+        assertEquals("stuff", message.getDropMessage().getDropPayload());
+        assertEquals("ordinary message", message.getDropMessage().getDropPayloadType());
+        assertFalse(message.isSent());
+        assertFalse(message.isSeen());
+        assertEquals(
+            legacyDropMessage.getCreationDate().getTime(),
+            message.getDropMessage().getCreationDate().getTime()
+        );
+    }
+
     public SqliteIdentityRepository getIdentityRepo() {
         return new SqliteIdentityRepository(database, em);
     }
@@ -196,5 +236,9 @@ public class LegacyDatabaseMigratorTest extends AbstractSqliteTest {
 
     public SqliteAccountRepository getAccountRepo() {
         return new SqliteAccountRepository(database, em);
+    }
+
+    public SqliteDropMessageRepository getDropMessageRepo() {
+        return new SqliteDropMessageRepository(database, em);
     }
 }

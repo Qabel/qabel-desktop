@@ -66,7 +66,7 @@ public class FolderTreeItemTest extends AbstractControllerTest {
         navigation.loading = false;
     }
 
-    @Test(timeout = 1000)
+    @Test(timeout = 10000)
     public void loadsChildrenAsynchonously() throws InterruptedException {
         navigation = new FakeBoxNavigation();
         item = new FolderTreeItem(createSomeFolder(), navigation);

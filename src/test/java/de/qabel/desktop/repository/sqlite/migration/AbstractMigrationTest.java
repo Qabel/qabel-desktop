@@ -11,7 +11,11 @@ public abstract class AbstractMigrationTest extends AbstractSqliteTest {
     public void setUp() throws Exception {
         super.setUp();
         migration = createMigration(connection);
-        new DesktopClientDatabase(connection).migrateTo(migration.getVersion());
+        new DesktopClientDatabase(connection).migrateTo(initialVersion());
+    }
+
+    public long initialVersion() {
+        return migration.getVersion();
     }
 
     protected abstract AbstractMigration createMigration(Connection connection);

@@ -75,6 +75,10 @@ public class Migration1460367005CreateContactTest extends AbstractMigrationTest 
     }
 
     public int insertContact() throws SQLException {
+        return insertContact(connection);
+    }
+
+    public static int insertContact(Connection connection) throws SQLException {
         int updateCount;
         try (PreparedStatement statement = connection.prepareStatement(
             "INSERT INTO contact (publicKey, alias, email, phone) VALUES (?, ?, ?, ?)"

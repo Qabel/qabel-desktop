@@ -1,5 +1,7 @@
 package de.qabel.desktop.repository.sqlite;
 
+import de.qabel.desktop.repository.sqlite.builder.QueryBuilder;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -32,4 +34,12 @@ public interface ClientDatabase {
      * Don't forget to close the statement finally
      */
     PreparedStatement prepare(String sql) throws SQLException;
+
+    default QueryBuilder selectFrom(String fromTable, String tableAlias) {
+        return new QueryBuilder(this, QueryBuilder.TYPE.SELECT).from(fromTable, tableAlias);
+    }
+
+    default QueryBuilder update(String table) {
+        return new QueryBuilder(this, QueryBuilder.TYPE.UPDATE).update(table);
+    }
 }

@@ -71,6 +71,10 @@ public class Migration1460367000CreateIdentitiyTest extends AbstractMigrationTes
     }
 
     public int insertDropUrl() throws SQLException {
+        return insertDropUrl(connection);
+    }
+
+    public static int insertDropUrl(Connection connection) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(
             "INSERT INTO identity_drop_url (identity_id, url) VALUES (?, ?)"
         )) {
@@ -153,6 +157,10 @@ public class Migration1460367000CreateIdentitiyTest extends AbstractMigrationTes
     }
 
     public int insertPrefix() throws SQLException {
+        return insertPrefix(connection);
+    }
+
+    public static int insertPrefix(Connection connection) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(
             "INSERT INTO prefix (identity_id, prefix) VALUES (?, ?)"
         )) {

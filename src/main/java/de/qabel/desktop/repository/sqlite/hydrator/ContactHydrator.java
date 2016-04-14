@@ -6,21 +6,19 @@ import de.qabel.core.drop.DropURL;
 import de.qabel.desktop.config.factory.ContactFactory;
 import de.qabel.desktop.repository.EntityManager;
 import de.qabel.desktop.repository.exception.PersistenceException;
-import de.qabel.desktop.repository.sqlite.Hydrator;
-import de.qabel.desktop.repository.sqlite.SqliteContactDropUrlRepository;
+import de.qabel.desktop.repository.sqlite.SqliteDropUrlRepository;
 import org.spongycastle.util.encoders.Hex;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.LinkedList;
 
 public class ContactHydrator extends AbstractHydrator<Contact> {
     private EntityManager em;
     private ContactFactory contactFactory;
-    private SqliteContactDropUrlRepository dropUrlRepository;
+    private SqliteDropUrlRepository dropUrlRepository;
 
-    public ContactHydrator(EntityManager em, ContactFactory contactFactory, SqliteContactDropUrlRepository dropUrlRepository) {
+    public ContactHydrator(EntityManager em, ContactFactory contactFactory, SqliteDropUrlRepository dropUrlRepository) {
         this.em = em;
         this.contactFactory = contactFactory;
         this.dropUrlRepository = dropUrlRepository;

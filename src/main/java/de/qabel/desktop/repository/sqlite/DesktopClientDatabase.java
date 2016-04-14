@@ -26,7 +26,9 @@ public class DesktopClientDatabase implements ClientDatabase {
             new Migration1460367015ClientConfiguration(connection),
             new Migration1460367020DropState(connection),
             new Migration1460367025BoxSync(connection),
-            new Migration1460367030ShareNotification(connection)
+            new Migration1460367030ShareNotification(connection),
+            new Migration1460367035Entity(connection),
+            new Migration1460367040DropMessage(connection)
         };
     }
 

@@ -3,16 +3,18 @@ package de.qabel.desktop.ui.actionlog;
 import de.qabel.core.config.Entity;
 import de.qabel.core.config.Persistable;
 import de.qabel.core.drop.DropMessage;
+import de.qabel.desktop.repository.HasId;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.WeakHashMap;
-import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
 
-public class PersistenceDropMessage extends Persistable {
+public class PersistenceDropMessage extends Persistable implements HasId {
+    private static final long serialVersionUID = 1681381912370744093L;  // can't touch this
+
+    int id = 0;
     DropMessage dropMessage;
     Entity receiver;
     Entity sender;
@@ -86,5 +88,15 @@ public class PersistenceDropMessage extends Persistable {
 
     public synchronized void notifyObservers() {
         getObservers().stream().forEach(consumer -> consumer.accept(this));
+    }
+
+    @Override
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public int getId() {
+        return id;
     }
 }
