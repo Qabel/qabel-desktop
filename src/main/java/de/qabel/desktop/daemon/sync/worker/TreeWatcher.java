@@ -26,7 +26,7 @@ import static java.nio.file.StandardWatchEventKinds.*;
  */
 public class TreeWatcher extends Thread {
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private static final ExecutorService fileExecutor = Executors.newSingleThreadExecutor();
+    private static ExecutorService fileExecutor = Executors.newSingleThreadExecutor();
     private Logger logger = LoggerFactory.getLogger(TreeWatcher.class);
     private Path root;
     private Consumer<de.qabel.desktop.daemon.sync.event.WatchEvent> consumer;
@@ -36,8 +36,20 @@ public class TreeWatcher extends Thread {
     private Map<WatchKey, Path> keys = new HashMap<>();
 
     public TreeWatcher(Path root, Consumer<de.qabel.desktop.daemon.sync.event.WatchEvent> consumer) {
+        this(root, consumer, false);
+    }
+
+    /**
+     * @param root root path to watch recursively
+     * @param consumer that each event is put into
+     * @param sequential in sequential mode, file events and folder events arrive sequentially instead of in parallel
+     */
+    public TreeWatcher(Path root, Consumer<de.qabel.desktop.daemon.sync.event.WatchEvent> consumer, boolean sequential) {
         this.root = root;
         this.consumer = consumer;
+        if (sequential) {
+            fileExecutor = executor;
+        }
     }
 
     public boolean isWatching() {

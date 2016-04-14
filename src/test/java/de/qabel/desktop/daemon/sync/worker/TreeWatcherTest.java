@@ -28,12 +28,15 @@ public class TreeWatcherTest extends AbstractSyncTest {
     public void setUp() throws Exception {
         super.setUp();
 
-        watcher = new TreeWatcher(tmpDir, watchEvent -> {
-            events.add(watchEvent);
-            if (watchEvent instanceof ChangeEvent) {
-                changes.add((ChangeEvent) watchEvent);
-            }
-        });
+        watcher = new TreeWatcher(
+            tmpDir,
+            watchEvent -> {
+                events.add(watchEvent);
+                if (watchEvent instanceof ChangeEvent) {
+                    changes.add((ChangeEvent) watchEvent);
+                }
+            },
+            true);
     }
 
     @Override
