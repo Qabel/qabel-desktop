@@ -15,8 +15,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class TreeWatcherTest extends AbstractSyncTest {
     private List<ChangeEvent> changes = new LinkedList<>();
@@ -35,8 +39,7 @@ public class TreeWatcherTest extends AbstractSyncTest {
                 if (watchEvent instanceof ChangeEvent) {
                     changes.add((ChangeEvent) watchEvent);
                 }
-            },
-            true);
+            });
     }
 
     @Override
@@ -117,9 +120,22 @@ public class TreeWatcherTest extends AbstractSyncTest {
         watch();
 
         waitUntil(() -> events.size() > 2);
-        assertEquals(getPath("/"), events.get(0).getPath());
-        assertEquals(getPath("/existingFile"), events.get(1).getPath());
-        assertEquals(getPath("/existingSubdir"), events.get(2).getPath());
+        List<String> paths = getEventPathNames();
+
+        assertThat(paths, containsInAnyOrder(
+            pathname("/"),
+            pathname("/existingSubdir"),
+            pathname("/existingFile")
+        ));
+        assertEquals(3, events.size());
+    }
+
+    private List<String> getEventPathNames() {
+        return events.stream().map(WatchEvent::getPath).map(Path::toString).collect(Collectors.toList());
+    }
+
+    private String pathname(String suffix) {
+        return getPath(suffix).toString();
     }
 
     @Test(timeout = 10000L)

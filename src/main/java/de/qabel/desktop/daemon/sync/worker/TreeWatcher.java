@@ -29,27 +29,13 @@ public class TreeWatcher extends Thread {
     private Path root;
     private Consumer<de.qabel.desktop.daemon.sync.event.WatchEvent> consumer;
     private boolean watching;
-    private boolean sequential = false;
 
     private WatchService watcher;
     private Map<WatchKey, Path> keys = new HashMap<>();
 
     public TreeWatcher(Path root, Consumer<de.qabel.desktop.daemon.sync.event.WatchEvent> consumer) {
-        this(root, consumer, false);
-    }
-
-    /**
-     * @param root root path to watch recursively
-     * @param consumer that each event is put into
-     * @param sequential in sequential mode, file events and folder events arrive sequentially instead of in parallel
-     */
-    public TreeWatcher(Path root, Consumer<de.qabel.desktop.daemon.sync.event.WatchEvent> consumer, boolean sequential) {
         this.root = root;
         this.consumer = consumer;
-        this.sequential = sequential;
-        if (sequential) {
-            fileExecutor = executor;
-        }
     }
 
     public boolean isWatching() {
@@ -163,10 +149,10 @@ public class TreeWatcher extends Thread {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 WatchRegisteredEvent watchEvent = new WatchRegisteredEvent(file);
-                submitEvent(watchEvent, fileExecutor);
+                fileExecutor.submit(() -> consumer.accept(watchEvent));
                 if (watching) {
                     final LocalChangeEvent event = new LocalChangeEvent(file, CREATE);
-                    submitEvent(event, fileExecutor);
+                    fileExecutor.submit(() -> consumer.accept(event));
                 }
                 return super.visitFile(file, attrs);
             }
@@ -178,7 +164,7 @@ public class TreeWatcher extends Thread {
                     WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
                     keys.put(key, dir);
                     WatchRegisteredEvent event = new WatchRegisteredEvent(dir);
-                    submitEvent(event, executor);
+                    executor.submit(() -> consumer.accept(event));
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
                 }
@@ -188,11 +174,4 @@ public class TreeWatcher extends Thread {
         });
     }
 
-    private void submitEvent(de.qabel.desktop.daemon.sync.event.WatchEvent event, ExecutorService executor) {
-        if (sequential) {
-            consumer.accept(event);
-        } else {
-            executor.submit(() -> consumer.accept(event));
-        }
-    }
 }
