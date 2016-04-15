@@ -222,7 +222,7 @@ public class DesktopClient extends Application {
 
                     if (config.getSelectedIdentity() != null) {
                         addShareMessageRenderer(config.getSelectedIdentity());
-                    }throw new Exception("wayne");
+                    }
                 } catch (Exception e) {
                     logger.error("failed to init background services: " + e.getMessage(), e);
                     Platform.runLater(() -> {

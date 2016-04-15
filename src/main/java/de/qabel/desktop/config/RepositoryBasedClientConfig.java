@@ -74,12 +74,14 @@ public class RepositoryBasedClientConfig implements ClientConfig {
     @Override
     public Identity getSelectedIdentity() {
         try {
-            if (!configRepo.contains("identity") || configRepo.find("identity") == null) {
+            if (!configRepo.contains("identity")) {
                 return null;
             }
             return identityRepo.find(Integer.valueOf(configRepo.find("identity")));
-        } catch (PersistenceException | EntityNotFoundExcepion e) {
+        } catch (PersistenceException e) {
             throw new IllegalStateException("failed to load identity", e);
+        } catch (EntityNotFoundExcepion e) {
+            return null;
         }
     }
 
