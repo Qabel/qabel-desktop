@@ -138,12 +138,12 @@ public class RepositoryBasedClientConfig implements ClientConfig {
         return getLastDropPoll(drop);
     }
 
-    public String getDrop(Identity identity) {
+    private String getDrop(Identity identity) {
         Set<DropURL> drops = identity.getDropUrls();
         return drops.toArray(new DropURL[drops.size()])[0].toString();
     }
 
-    public Date getLastDropPoll(String drop) {
+    private Date getLastDropPoll(String drop) {
         try {
             String state = dropStateRepo.getDropState(drop);
             return new Date(Long.valueOf(state));
