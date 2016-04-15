@@ -19,6 +19,7 @@ import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.repository.sqlite.*;
 import de.qabel.desktop.storage.AbstractNavigation;
+import de.qabel.desktop.ui.CrashReportAlert;
 import de.qabel.desktop.ui.LayoutView;
 import de.qabel.desktop.ui.accounting.login.LoginView;
 import de.qabel.desktop.ui.actionlog.item.renderer.ShareNotificationRenderer;
@@ -210,7 +211,7 @@ public class DesktopClient extends Application {
         primaryStage.setScene(scene);
 
         config.onSetAccount(account ->
-            Platform.runLater(() -> {
+            executorService.submit(() -> {
                 try {
                     new Thread(getSyncDaemon(getBoxSyncConfigRepository())).start();
                     new Thread(getDropDaemon(config)).start();
@@ -221,10 +222,18 @@ public class DesktopClient extends Application {
 
                     if (config.getSelectedIdentity() != null) {
                         addShareMessageRenderer(config.getSelectedIdentity());
-                    }
+                    }throw new Exception("wayne");
                 } catch (Exception e) {
                     logger.error("failed to init background services: " + e.getMessage(), e);
-                    //TODO to something with the fault
+                    Platform.runLater(() -> {
+                        final CrashReportAlert alert = new CrashReportAlert(
+                            services.getCrashReportHandler(),
+                            "failed to init brackground services",
+                            e
+                        );
+                        alert.showAndWait();
+                        System.exit(-1);
+                    });
                 }
             })
         );

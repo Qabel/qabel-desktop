@@ -48,7 +48,7 @@ public class AbstractControllerTest {
     protected BoxVolumeFactoryStub boxVolumeFactory;
     protected StubDropMessageRepository dropMessageRepository = new StubDropMessageRepository();
     protected DropConnector httpDropConnector = new InMemoryHttpDropConnector();
-    protected CrashReportHandler crashReportHandler = new StubCrashReportHandler();
+    protected StubCrashReportHandler crashReportHandler = new StubCrashReportHandler();
     protected SharingService sharingService = new BlockSharingService(dropMessageRepository, httpDropConnector);
     protected NetworkStatus networkStatus = new NetworkStatus();
     protected Identity identity;
