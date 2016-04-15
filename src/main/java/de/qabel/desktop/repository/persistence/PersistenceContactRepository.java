@@ -42,10 +42,14 @@ public class PersistenceContactRepository extends AbstractCachedPersistenceRepos
     }
 
     @Override
-    public void save(Contact contact, Identity identity) throws PersistenceException {
+    public synchronized void save(Contact contact, Identity identity) throws PersistenceException {
         boolean result;
         try {
-            Contacts personalContacts = contacts.get(identity.getKeyIdentifier());
+            String key = identity.getKeyIdentifier();
+            if (!contacts.containsKey(key)) {
+                contacts.put(key, new Contacts(identity));
+            }
+            Contacts personalContacts = contacts.get(key);
             personalContacts.put(contact);
             result = persistence.updateOrPersistEntity(personalContacts);
         } catch (Exception e) {

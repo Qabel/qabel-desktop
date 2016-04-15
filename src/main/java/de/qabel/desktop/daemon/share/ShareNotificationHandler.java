@@ -2,19 +2,23 @@ package de.qabel.desktop.daemon.share;
 
 import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
-import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.repository.DropMessageRepository;
+import de.qabel.desktop.repository.ShareNotificationRepository;
+import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Observable;
 import java.util.Observer;
 
 public class ShareNotificationHandler implements Observer {
-    private ClientConfiguration clientConfiguration;
+    private static final Logger logger = LoggerFactory.getLogger(ShareNotificationHandler.class);
+    private ShareNotificationRepository shareNotificationRepo;
 
-    public ShareNotificationHandler(ClientConfiguration clientConfiguration) {
-        this.clientConfiguration = clientConfiguration;
+    public ShareNotificationHandler(ShareNotificationRepository shareNotificationRepo) {
+        this.shareNotificationRepo = shareNotificationRepo;
     }
 
     @Override
@@ -35,7 +39,11 @@ public class ShareNotificationHandler implements Observer {
         ShareNotificationMessage share = ShareNotificationMessage.fromJson(dropMessage.getDropPayload());
         Identity identity = (Identity) internalDropMessage.getReceiver();
 
-        clientConfiguration.getShareNotification(identity).add(share);
+        try {
+            shareNotificationRepo.save(identity, share);
+        } catch (PersistenceException e) {
+            logger.error("failed to save share: " + e.getMessage(), e);
+        }
     }
 
     private boolean isShareNotification(DropMessage dropMessage) {

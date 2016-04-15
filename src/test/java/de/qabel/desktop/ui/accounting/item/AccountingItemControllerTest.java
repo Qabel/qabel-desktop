@@ -4,7 +4,7 @@ import de.qabel.core.config.Account;
 import de.qabel.core.config.Identities;
 import de.qabel.core.config.Identity;
 import de.qabel.core.crypto.QblECKeyPair;
-import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import org.junit.Test;
 
@@ -17,7 +17,7 @@ public class AccountingItemControllerTest extends AbstractControllerTest {
     @Test
     public void identityLabelsAreFilledCorrectly() throws Exception {
         Account account = new Account("providerName", "userName", "authString");
-        ((ClientConfiguration) diContainer.get("clientConfiguration")).setAccount(account);
+        ((ClientConfig) diContainer.get("clientConfiguration")).setAccount(account);
         Identity identity = new Identity("my identity", null, null);
         AccountingItemController controller = getController(identity);
 

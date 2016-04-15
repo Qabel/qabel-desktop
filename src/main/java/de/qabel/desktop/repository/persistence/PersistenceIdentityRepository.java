@@ -6,6 +6,7 @@ import de.qabel.core.config.Persistence;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
 
@@ -28,6 +29,11 @@ public class PersistenceIdentityRepository extends AbstractCachedPersistenceRepo
     }
 
     @Override
+    public Identity find(int id) throws EntityNotFoundExcepion, PersistenceException {
+        throw new NotImplementedException();
+    }
+
+    @Override
     public synchronized Identities findAll() throws EntityNotFoundExcepion, PersistenceException {
         if (identities == null) {
             List<Identities> identitiesList = persistence.getEntities(Identities.class);
@@ -45,7 +51,6 @@ public class PersistenceIdentityRepository extends AbstractCachedPersistenceRepo
         }
         return identities;
     }
-
 
     @Override
     public void save(Identity identity) throws PersistenceException {

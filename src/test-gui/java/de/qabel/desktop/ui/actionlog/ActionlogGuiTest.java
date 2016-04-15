@@ -8,14 +8,12 @@ import de.qabel.desktop.daemon.drop.TextMessage;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import javafx.scene.input.KeyCode;
-import junit.framework.Assert;
 import org.junit.Test;
 import org.testfx.api.FxRobot;
 
 import java.util.Date;
 import java.util.List;
 
-import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

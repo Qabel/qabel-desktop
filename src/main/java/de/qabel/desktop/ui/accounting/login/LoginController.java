@@ -7,11 +7,12 @@ import de.qabel.core.config.Account;
 import de.qabel.core.config.AccountingServer;
 import de.qabel.core.exceptions.QblCreateAccountFailException;
 import de.qabel.core.exceptions.QblInvalidCredentials;
-import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.ClientConfig;
+import de.qabel.desktop.repository.Transaction;
+import de.qabel.desktop.repository.TransactionManager;
 import de.qabel.desktop.ui.AbstractController;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -66,16 +67,20 @@ public class LoginController extends AbstractController implements Initializable
     Pane progressBar;
 
     ResourceBundle resourceBundle;
-    private ClientConfiguration config;
+    private ClientConfig config;
     private Account account;
 
     @Inject
-    public LoginController(ClientConfiguration config) {
+    public LoginController(ClientConfig config) {
         this.config = config;
     }
 
     @Inject
     private Stage primaryStage;
+
+    @Inject
+    private TransactionManager transactionManager;
+
     private String accountUrl = "https://accounting.qabel.org";
     Map map = new HashMap<>();
 
@@ -206,7 +211,10 @@ public class LoginController extends AbstractController implements Initializable
             try {
                 AccountingHTTP http = createAccount();
                 http.login();
-                config.setAccount(account);
+
+                try (Transaction ignored = transactionManager.beginTransaction()) {
+                    config.setAccount(account);
+                }
 
             } catch (URISyntaxException | IOException e) {
                 logger.warn(e.getMessage(), e);
@@ -214,6 +222,8 @@ public class LoginController extends AbstractController implements Initializable
             } catch (QblInvalidCredentials qblInvalidCredentials) {
                 qblInvalidCredentials.printStackTrace();
                 Platform.runLater(() -> toLoginFailureState(qblInvalidCredentials.getMessage()));
+            } catch (Exception e) {
+                Platform.runLater(() -> toLoginFailureState(e.getMessage()));
             }
             Platform.runLater(() -> buttonBar.setVisible(true));
         }).start();

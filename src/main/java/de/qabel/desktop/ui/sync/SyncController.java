@@ -1,13 +1,14 @@
 package de.qabel.desktop.ui.sync;
 
 import de.qabel.desktop.config.BoxSyncConfig;
-import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.ClientConfig;
+import de.qabel.desktop.repository.BoxSyncRepository;
+import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.sync.item.DummySyncItemView;
 import de.qabel.desktop.ui.sync.item.SyncItemView;
 import de.qabel.desktop.ui.sync.setup.SyncSetupController;
 import de.qabel.desktop.ui.sync.setup.SyncSetupView;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,6 +21,7 @@ import javafx.stage.Stage;
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class SyncController extends AbstractController implements Initializable {
@@ -31,7 +33,10 @@ public class SyncController extends AbstractController implements Initializable 
     Stage addStage;
 
     @Inject
-    private ClientConfiguration clientConfiguration;
+    ClientConfig clientConfiguration;
+
+    @Inject
+    BoxSyncRepository boxSyncRepository;
 
     SyncSetupController syncSetupController;
 
@@ -39,22 +44,27 @@ public class SyncController extends AbstractController implements Initializable 
     public void initialize(URL location, ResourceBundle resources) {
         syncItemNodes = syncItemContainer.getChildren();
 
-        ObservableList<BoxSyncConfig> boxSyncConfigs = reload();
-        boxSyncConfigs.addListener((ListChangeListener<BoxSyncConfig>) c -> reload());
+        boxSyncRepository.onAdd(c -> reload());
+        boxSyncRepository.onDelete(c -> reload());
+        reload();
     }
 
-    private ObservableList<BoxSyncConfig> reload() {
+    private synchronized void reload() {
         syncItemNodes.clear();
-        ObservableList<BoxSyncConfig> boxSyncConfigs = clientConfiguration.getBoxSyncConfigs();
-
-        if(Collections.unmodifiableList(boxSyncConfigs).size() == 0){
-            syncItemNodes.add(new DummySyncItemView().getView());
-            return boxSyncConfigs;
+        List<BoxSyncConfig> configs;
+        try {
+            configs = boxSyncRepository.findAll();
+        } catch (PersistenceException e) {
+            return;
         }
-        for (BoxSyncConfig syncConfig : Collections.unmodifiableList(boxSyncConfigs)) {
+
+        if(configs.size() == 0){
+            syncItemNodes.add(new DummySyncItemView().getView());
+            return;
+        }
+        for (BoxSyncConfig syncConfig : Collections.unmodifiableList(configs)) {
             syncItemNodes.add(new SyncItemView(s -> s.equals("syncConfig") ? syncConfig : null).getView());
         }
-        return boxSyncConfigs;
     }
 
     public void addSync(ActionEvent actionEvent) {

@@ -7,12 +7,21 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
+/**
+ * To be replaced.
+ * This class requires bulky saves etc...
+ */
+@Deprecated
 public class DefaultClientConfiguration extends Observable implements ClientConfiguration {
     private Account account;
     private Identity identity;
     private HashMap<String, Date> lastDropMap = new HashMap<>();
     private Map<String, ShareNotifications> shareNotifications = new HashMap<>();
+    private List<Consumer<Identity>> identityObserver = new CopyOnWriteArrayList<>();
+    private List<Consumer<Account>> accountObserver = new CopyOnWriteArrayList<>();
 
     private ObservableList<BoxSyncConfig> boxSyncConfigs = FXCollections.synchronizedObservableList(FXCollections.observableList(new LinkedList<>()));
     private String deviceId;
@@ -23,6 +32,13 @@ public class DefaultClientConfiguration extends Observable implements ClientConf
             boxSyncConfigWasChanged();
         });
         observeBoxSyncConfigs();
+        addObserver((o, arg) -> {
+            if (arg instanceof Account) {
+                accountObserver.forEach(c -> c.accept((Account)arg));
+            } else if (arg instanceof Identity) {
+                identityObserver.forEach(c -> c.accept((Identity)arg));
+            }
+        });
     }
 
     private void observeBoxSyncConfigs() {
@@ -55,6 +71,11 @@ public class DefaultClientConfiguration extends Observable implements ClientConf
     }
 
     @Override
+    public void onSetAccount(Consumer<Account> consumer) {
+        accountObserver.add(consumer);
+    }
+
+    @Override
     public Identity getSelectedIdentity() {
         return identity;
     }
@@ -67,6 +88,11 @@ public class DefaultClientConfiguration extends Observable implements ClientConf
         this.identity = identity;
 
         notifyObservers(identity);
+    }
+
+    @Override
+    public void onSelectIdentity(Consumer<Identity> consumer) {
+        identityObserver.add(consumer);
     }
 
     @Override

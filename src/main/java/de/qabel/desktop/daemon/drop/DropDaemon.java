@@ -4,7 +4,7 @@ package de.qabel.desktop.daemon.drop;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
-import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
@@ -19,7 +19,7 @@ import java.util.List;
 
 public class DropDaemon implements Runnable {
 
-    private ClientConfiguration config;
+    private ClientConfig config;
     private Date lastDate;
     private DropConnector httpDropConnector;
     private ContactRepository contactRepository;
@@ -27,7 +27,7 @@ public class DropDaemon implements Runnable {
     private long sleepTime = 10000L;
     private static final Logger logger = LoggerFactory.getLogger(DropDaemon.class.getSimpleName());
 
-    public DropDaemon(ClientConfiguration config,
+    public DropDaemon(ClientConfig config,
                       DropConnector httpDropConnector,
                       ContactRepository contactRepository,
                       DropMessageRepository dropMessageRepository

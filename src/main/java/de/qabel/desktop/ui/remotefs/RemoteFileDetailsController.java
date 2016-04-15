@@ -4,10 +4,11 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.config.Contacts;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.SharingService;
-import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.storage.BoxFile;
 import de.qabel.desktop.storage.BoxNavigation;
 import de.qabel.desktop.storage.BoxObject;
@@ -35,7 +36,7 @@ public class RemoteFileDetailsController extends AbstractController implements I
     private ContactRepository contactRepository;
 
     @Inject
-    private ClientConfiguration clientConfiguration;
+    private ClientConfig clientConfiguration;
 
     @Inject
     private BoxObject boxObject;
@@ -67,11 +68,7 @@ public class RemoteFileDetailsController extends AbstractController implements I
     public void initialize(URL location, ResourceBundle resources) {
         this.resources = resources;
 
-        clientConfiguration.addObserver((o, arg) -> {
-            if (arg instanceof Identity) {
-                updateContacts();
-            }
-        });
+        clientConfiguration.onSelectIdentity(i -> updateContacts());
         shareReceiver.setCellFactory(contactAliasCellFactory());
         shareReceiver.setConverter(contactAutocomleteResultConverter());
 
@@ -134,7 +131,7 @@ public class RemoteFileDetailsController extends AbstractController implements I
                             return c;
                         }
                     }
-                } catch (EntityNotFoundExcepion e) {
+                } catch (PersistenceException e) {
                     alert(e);
                 }
                 return shareReceiver.getItems().size() > 0 ? shareReceiver.getItems().get(0) : null;
@@ -208,7 +205,7 @@ public class RemoteFileDetailsController extends AbstractController implements I
         tryOrAlert(() -> getContacts().getContacts().forEach(shareReceiver.getItems()::add));
     }
 
-    private Contacts getContacts() throws EntityNotFoundExcepion {
+    private Contacts getContacts() throws PersistenceException {
         return contactRepository.find(clientConfiguration.getSelectedIdentity());
     }
 }

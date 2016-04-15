@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class AbstractControllerGUITest extends AbstractGuiTest<AlertTestController> {
     @Override
@@ -19,18 +20,21 @@ public class AbstractControllerGUITest extends AbstractGuiTest<AlertTestControll
     testAlertDialog() {
         Platform.runLater(() -> controller.alert("some error message", new Exception("exceptionmessage")));
         waitUntil(() -> controller.alert != null);
-        waitUntil(() -> controller.exceptionLabel != null);
-        clickOn(".feedback").write("123456");
-        clickOn(".send");
-        Alert alert = controller.alert;
-        waitTillTheEnd(alert.getDialogPane());
+        waitUntil(() -> controller.alert.getExceptionLabel() != null);
 
+        CrashReportAlert alert = controller.alert;
         try {
-            assertEquals("", controller.inputArea.getText());
-            assertEquals("Error", alert.getTitle());
-            assertEquals("some error message", alert.getHeaderText());
-            assertEquals(Alert.AlertType.ERROR, alert.getAlertType());
-            assertEquals("exceptionmessage", controller.exceptionLabel.getText());
+            waitTillTheEnd(alert.getAlert().getDialogPane());
+            assertEquals("Error", alert.getAlert().getTitle());
+            assertEquals("some error message", alert.getAlert().getHeaderText());
+            assertEquals(Alert.AlertType.ERROR, alert.getAlert().getAlertType());
+            assertEquals("exceptionmessage", alert.getExceptionLabel().getText());
+
+            clickOn(".feedback").write("123456");
+            clickOn(".send");
+            waitUntil(alert.getInputArea().getText()::isEmpty);
+            assertEquals("123456", crashReportHandler.text);
+            assertNotNull(crashReportHandler.stacktrace);
         } finally {
             try {
                 runLaterAndWait(alert::close);

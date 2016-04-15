@@ -9,9 +9,9 @@ import static org.junit.Assert.assertNotNull;
 
 public class SyncControllerTest extends AbstractControllerTest {
     @Test
-    public void loadsItems() {
+    public void loadsItems() throws Exception {
         BoxSyncConfig boxConfig = new DummyBoxSyncConfig();
-        clientConfiguration.getBoxSyncConfigs().add(boxConfig);
+        boxSyncRepository.save(boxConfig);
 
         SyncController controller = createController();
 

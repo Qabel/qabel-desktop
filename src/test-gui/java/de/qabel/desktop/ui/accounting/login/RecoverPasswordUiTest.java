@@ -4,10 +4,6 @@ import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Before;
 import org.junit.Test;
 
-import static de.qabel.desktop.AsyncUtils.waitUntil;
-import static junit.framework.Assert.assertTrue;
-
-
 public class RecoverPasswordUiTest extends AbstractGuiTest<LoginController> {
     private LoginPage page;
 

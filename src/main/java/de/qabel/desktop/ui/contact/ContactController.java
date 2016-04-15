@@ -3,7 +3,7 @@ package de.qabel.desktop.ui.contact;
 import com.google.gson.GsonBuilder;
 import de.qabel.core.config.*;
 import de.qabel.core.exceptions.QblDropInvalidURL;
-import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
@@ -60,7 +60,7 @@ public class ContactController extends AbstractController implements Initializab
     VBox contacts;
 
     @Inject
-    private ClientConfiguration clientConfiguration;
+    private ClientConfig clientConfiguration;
 
     @Inject
     private ContactRepository contactRepository;
@@ -135,17 +135,18 @@ public class ContactController extends AbstractController implements Initializab
     }
 
     @FXML
-    protected void handleExportContactsButtonAction(ActionEvent event) throws EntityNotFoundExcepion, IOException, JSONException {
-        try {
+    protected void handleExportContactsButtonAction() throws EntityNotFoundExcepion, IOException, JSONException {
+        tryOrAlert(() -> {
+            try {
+                FileChooser chooser = new FileChooser();
+                chooser.setTitle(resourceBundle.getString("contactDownload"));
+                chooser.setInitialFileName("Contacts.qco");
+                File file = chooser.showSaveDialog(contactList.getScene().getWindow());
 
-            FileChooser chooser = new FileChooser();
-            chooser.setTitle(resourceBundle.getString("contactDownload"));
-            chooser.setInitialFileName("Contacts.qco");
-            File file = chooser.showSaveDialog(contactList.getScene().getWindow());
-
-            exportContacts(file);
-        } catch (NullPointerException ignored) {
-        }
+                exportContacts(file);
+            } catch (NullPointerException ignored) {
+            }
+        });
     }
 
     public void loadContacts() {
@@ -153,9 +154,17 @@ public class ContactController extends AbstractController implements Initializab
         contactItems.clear();
 
         i = clientConfiguration.getSelectedIdentity();
+        if (i == null) {
+            return;
+        }
 
         String old = null;
-        contactsFromRepo = contactRepository.find(i);
+        try {
+            contactsFromRepo = contactRepository.find(i);
+        } catch (PersistenceException e) {
+            alert("failed to load contacts", e);
+            return;
+        }
         if (contactsFromRepo.getContacts().isEmpty()) {
             final Map<String, Object> injectionContext = new HashMap<>();
             DummyItemView itemView = new DummyItemView(injectionContext::get);
@@ -215,18 +224,14 @@ public class ContactController extends AbstractController implements Initializab
     private void createObserver() {
 
         contactsFromRepo.addObserver(this);
-        clientConfiguration.addObserver((o, arg) -> {
-            if (!(arg instanceof Identity)) {
-                return;
-            }
-
+        clientConfiguration.onSelectIdentity(i -> {
             contactsFromRepo.removeObserver(this);
             loadContacts();
             contactsFromRepo.addObserver(this);
         });
     }
 
-    void exportContacts(File file) throws EntityNotFoundExcepion, IOException, JSONException {
+    void exportContacts(File file) throws EntityNotFoundExcepion, IOException, JSONException, PersistenceException {
         Contacts contacts = contactRepository.find(i);
         String jsonContacts = ContactExportImport.exportContacts(contacts);
         writeStringInFile(jsonContacts, file);

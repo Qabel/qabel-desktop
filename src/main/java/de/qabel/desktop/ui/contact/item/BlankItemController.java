@@ -1,7 +1,7 @@
 package de.qabel.desktop.ui.contact.item;
 
 import de.qabel.core.config.Contact;
-import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.ui.AbstractController;
 import javafx.fxml.FXML;
@@ -22,7 +22,7 @@ public class BlankItemController extends AbstractController implements Initializ
     @Inject
     Contact contact;
     @Inject
-    private ClientConfiguration clientConfiguration;
+    private ClientConfig clientConfiguration;
     @Inject
     private IdentityRepository identityRepository;
 

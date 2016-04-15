@@ -20,7 +20,7 @@ public class LocalChangeEventTest extends AbstractSyncTest {
 
     @Override
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         super.setUp();
 
         file = Paths.get(tmpDir + "/testfile");

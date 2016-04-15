@@ -2,11 +2,12 @@ package de.qabel.desktop.ui.sync.setup;
 
 import de.qabel.core.config.Account;
 import de.qabel.desktop.config.BoxSyncConfig;
-import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import de.qabel.desktop.config.factory.BoxVolumeFactory;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.remotefs.dialog.RemoteFSDirectoryChooser;
 import javafx.application.Platform;
@@ -56,7 +57,10 @@ public class SyncSetupController extends AbstractController implements Initializ
     BoxVolumeFactory boxVolumeFactory;
 
     @Inject
-    private ClientConfiguration clientConfiguration;
+    private ClientConfig clientConfiguration;
+
+    @Inject
+    private BoxSyncRepository boxSyncRepository;
 
     private StringProperty nameProperty;
     private BooleanProperty validProperty = new SimpleBooleanProperty();
@@ -176,12 +180,14 @@ public class SyncSetupController extends AbstractController implements Initializ
     }
 
     public void createSyncConfig() {
-        Account account = clientConfiguration.getAccount();
-        Path lPath = Paths.get(localPathProperty.get());
-        Path rPath = BoxFileSystem.get(remotePathProperty.get());
-        BoxSyncConfig config = new DefaultBoxSyncConfig(nameProperty.get(), lPath, rPath, clientConfiguration.getSelectedIdentity(), account);
-        clientConfiguration.getBoxSyncConfigs().add(config);
-        close();
+        tryOrAlert(() -> {
+            Account account = clientConfiguration.getAccount();
+            Path lPath = Paths.get(localPathProperty.get());
+            Path rPath = BoxFileSystem.get(remotePathProperty.get());
+            BoxSyncConfig config = new DefaultBoxSyncConfig(nameProperty.get(), lPath, rPath, clientConfiguration.getSelectedIdentity(), account);
+            boxSyncRepository.save(config);
+            close();
+        });
     }
 
     public void close() {

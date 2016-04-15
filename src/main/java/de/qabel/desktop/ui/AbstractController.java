@@ -21,16 +21,10 @@ import java.util.ResourceBundle;
 
 
 public class AbstractController {
-
-
     @Inject
     private CrashReportHandler reportHandler;
 
-    protected Alert alert;
-    protected Label exceptionLabel;
     protected Gson gson;
-    int statusCode;
-    TextArea inputArea;
 
     protected void alert(Exception e) {
         alert(e.getMessage(), e);
@@ -53,6 +47,8 @@ public class AbstractController {
         void run() throws Exception;
     }
 
+    CrashReportAlert alert;
+
     protected void alert(String message, Exception e) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> alert(message, e));
@@ -60,67 +56,9 @@ public class AbstractController {
         LoggerFactory.getLogger(getClass().getSimpleName()).error(message, e);
         e.printStackTrace();
 
-        alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText(message);
-        Label feedbackLabel = new Label("Feedback");
-        Label stackTraceLabel = new Label("Stack Trace");
-
-        inputArea = new TextArea();
-        inputArea.getStyleClass().add("feedback");
-        VBox.setMargin(inputArea, new Insets(10, 0, 5, 0));
-
-        TextArea textArea = new TextArea(getTraceAsString(e));
-        VBox.setMargin(textArea, new Insets(10, 0, 5, 0));
-        textArea.setEditable(false);
-        textArea.setWrapText(false);
-
-        Button sendButton = new Button();
-        sendButton.setText("send");
-        sendButton.getStyleClass().add("send");
-
-        sendButton.setOnAction(e1 -> {
-            sendStackTrace(inputArea.getText(), textArea.getText());
-            inputArea.setText("");
-        });
-
-        alert.getDialogPane().getChildren().add(sendButton);
-        Button close = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
-        close.setText("close");
-        ButtonBar buttonBar = (ButtonBar) alert.getDialogPane().lookup(".button-bar");
-        buttonBar.getButtons().add(sendButton);
-
-        VBox.setVgrow(inputArea, Priority.ALWAYS);
-        VBox.setVgrow(textArea, Priority.ALWAYS);
-        VBox.setVgrow(sendButton, Priority.ALWAYS);
-
-        exceptionLabel = new Label(e.getMessage());
-        VBox expansion = new VBox();
-
-        expansion.getChildren().add(exceptionLabel);
-        expansion.getChildren().add(feedbackLabel);
-        expansion.getChildren().add(inputArea);
-        expansion.getChildren().add(stackTraceLabel);
-        expansion.getChildren().add(textArea);
-
-        alert.getDialogPane().setContent(expansion);
-        alert.setResizable(true);
+        CrashReportAlert alert = new CrashReportAlert(reportHandler, message, e);
+        this.alert = alert;
         alert.showAndWait();
-    }
-
-    private void sendStackTrace(String feedback, String stacktrace) {
-        try {
-            reportHandler.sendStacktrace(feedback, stacktrace);
-        } catch (IOException e) {
-            alert("CrashReport count not send", e);
-        }
-    }
-
-    private String getTraceAsString(Exception e) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        e.printStackTrace(pw);
-        return sw.toString();
     }
 
     protected void writeStringInFile(String json, File dir) throws IOException {

@@ -2,20 +2,24 @@ package de.qabel.desktop;
 
 import com.airhacks.afterburner.injection.Injector;
 import com.airhacks.afterburner.views.QabelFXMLView;
-import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
-import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.core.config.SQLitePersistence;
+import de.qabel.desktop.config.BoxSyncConfig;
+import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.daemon.drop.DropDaemon;
 import de.qabel.desktop.daemon.share.ShareNotificationHandler;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
 import de.qabel.desktop.inject.DesktopServices;
-import de.qabel.desktop.inject.StaticDesktopServiceFactory;
+import de.qabel.desktop.inject.NewConfigDesktopServiceFactory;
+import de.qabel.desktop.inject.RuntimeDesktopServiceFactory;
 import de.qabel.desktop.inject.config.StaticRuntimeConfiguration;
-import de.qabel.desktop.repository.DropMessageRepository;
+import de.qabel.desktop.repository.*;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
+import de.qabel.desktop.repository.sqlite.*;
 import de.qabel.desktop.storage.AbstractNavigation;
+import de.qabel.desktop.ui.CrashReportAlert;
 import de.qabel.desktop.ui.LayoutView;
 import de.qabel.desktop.ui.accounting.login.LoginView;
 import de.qabel.desktop.ui.actionlog.item.renderer.ShareNotificationRenderer;
@@ -23,6 +27,8 @@ import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import de.qabel.desktop.update.HttpUpdateChecker;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
@@ -42,8 +48,12 @@ import java.awt.event.MouseMotionAdapter;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Timer;
@@ -56,17 +66,19 @@ import static javafx.scene.control.Alert.AlertType.WARNING;
 
 
 public class DesktopClient extends Application {
-    private static final Logger logger = LoggerFactory.getLogger(DesktopClient.class.getSimpleName());
-    private static Path DATABASE_FILE = Paths.get(System.getProperty("user.home")).resolve(".qabel/db.sqlite");
+    private static final Logger logger = LoggerFactory.getLogger(DesktopClient.class);
+    private static Path LEGACY_DATABASE_FILE = Paths.get(System.getProperty("user.home")).resolve(".qabel/db.sqlite");
+    private static Path DATABASE_FILE = Paths.get(System.getProperty("user.home")).resolve(".qabel/config.sqlite");
     private static DesktopServices services;
     private static StaticRuntimeConfiguration runtimeConfiguration;
     private boolean inBound;
     private LayoutView view;
     private Stage primaryStage;
     private ExecutorService executorService = Executors.newCachedThreadPool();
-    private ClientConfiguration config;
+    private ClientConfig config;
     private boolean visible;
     private ResourceBundle resources;
+    private static Connection connection;
 
     public static void main(String[] args) throws Exception {
         AbstractNavigation.DEFAULT_AUTOCOMMIT_DELAY = 2000;
@@ -83,8 +95,11 @@ public class DesktopClient extends Application {
             DATABASE_FILE = new File(args[0]).getAbsoluteFile().toPath();
         }
 
-        runtimeConfiguration = new StaticRuntimeConfiguration("https://drop.qabel.de", DATABASE_FILE);
-        StaticDesktopServiceFactory staticDesktopServiceFactory = new StaticDesktopServiceFactory(runtimeConfiguration);
+        runtimeConfiguration = new StaticRuntimeConfiguration("https://drop.qabel.de", LEGACY_DATABASE_FILE, getConfigDatabase());
+        RuntimeDesktopServiceFactory staticDesktopServiceFactory = new NewConfigDesktopServiceFactory(
+            runtimeConfiguration,
+            new SqliteTransactionManager(connection)
+        );
         services = staticDesktopServiceFactory;
         Injector.setConfigurationSource(key -> staticDesktopServiceFactory.get((String) key));
         Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(staticDesktopServiceFactory));
@@ -92,6 +107,52 @@ public class DesktopClient extends Application {
         System.setProperty("prism.lcdtext", "false");
         UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         launch(args);
+    }
+
+    private static ClientDatabase getConfigDatabase() {
+        boolean needsToMigrateLegacyDatabase = !Files.exists(DATABASE_FILE) && Files.exists(LEGACY_DATABASE_FILE);
+
+        try {
+            try {
+                connection = DriverManager.getConnection("jdbc:sqlite://" + DATABASE_FILE.toAbsolutePath());
+
+                try {
+                    try (Statement statement = connection.createStatement()) {
+                        statement.execute("PRAGMA FOREIGN_KEYS = ON");
+                    }
+                    ClientDatabase clientDatabase = new DesktopClientDatabase(connection);
+
+                    clientDatabase.migrate();
+
+                    // TODO cut below here after the config migration transition period (~ 03.05.2016)
+                    if (needsToMigrateLegacyDatabase) {
+                        logger.warn("found legacy database, migrating to new format");
+                        TransactionManager tm = new SqliteTransactionManager(connection);
+                        LegacyDatabaseMigrator legacyDatabaseMigrator = new LegacyDatabaseMigrator(
+                            new SQLitePersistence(LEGACY_DATABASE_FILE.toAbsolutePath().toString()),
+                            clientDatabase
+                        );
+                        tm.transactional(legacyDatabaseMigrator::migrate);
+                    }
+
+                    return clientDatabase;
+                } catch (Exception e) {
+                    try { connection.close(); } catch (Exception ignored) {}
+                    throw e;
+                }
+
+            } catch (Exception e) {
+                throw new IllegalStateException("failed to initialize or migrate config database:" + e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            if (needsToMigrateLegacyDatabase) {
+                try {
+                    Files.delete(DATABASE_FILE);
+                } catch (Exception ignored) {
+                }
+            }
+            throw e;
+        }
     }
 
     public static String appVersion() throws IOException {
@@ -149,31 +210,36 @@ public class DesktopClient extends Application {
         scene = new Scene(new LoginView().getView(), 370, 570, true, aa);
         primaryStage.setScene(scene);
 
-        config.addObserver((o, arg) -> {
-            Platform.runLater(() -> {
-                if (arg instanceof Account) {
-                    try {
-                        new Thread(getSyncDaemon(config)).start();
-                        new Thread(getDropDaemon(config)).start();
-                        view = new LayoutView();
-                        Parent view = this.view.getView();
-                        Scene layoutScene = new Scene(view, 900, 600, true, aa);
-                        Platform.runLater(() -> primaryStage.setScene(layoutScene));
+        config.onSetAccount(account ->
+            executorService.submit(() -> {
+                try {
+                    new Thread(getSyncDaemon(getBoxSyncConfigRepository())).start();
+                    new Thread(getDropDaemon(config)).start();
+                    view = new LayoutView();
+                    Parent view = this.view.getView();
+                    Scene layoutScene = new Scene(view, 900, 600, true, aa);
+                    Platform.runLater(() -> primaryStage.setScene(layoutScene));
 
-                        if (config.getSelectedIdentity() != null) {
-                            addShareMessageRenderer(config.getSelectedIdentity());
-                        }
-                    } catch (Exception e) {
-                        logger.error("failed to init background services: " + e.getMessage(), e);
-                        //TODO to something with the fault
+                    if (config.getSelectedIdentity() != null) {
+                        addShareMessageRenderer(config.getSelectedIdentity());
                     }
-                } else if (arg instanceof Identity) {
-                    addShareMessageRenderer((Identity) arg);
+                } catch (Exception e) {
+                    logger.error("failed to init background services: " + e.getMessage(), e);
+                    Platform.runLater(() -> {
+                        final CrashReportAlert alert = new CrashReportAlert(
+                            services.getCrashReportHandler(),
+                            "failed to init brackground services",
+                            e
+                        );
+                        alert.showAndWait();
+                        System.exit(-1);
+                    });
                 }
-            });
-        });
+            })
+        );
+        config.onSelectIdentity(this::addShareMessageRenderer);
 
-        services.getDropMessageRepository().addObserver(new ShareNotificationHandler(config));
+        services.getDropMessageRepository().addObserver(new ShareNotificationHandler(getShareRepository()));
 
         setTrayIcon(primaryStage);
 
@@ -184,6 +250,14 @@ public class DesktopClient extends Application {
             }
         });
         primaryStage.show();
+    }
+
+    private BoxSyncRepository getBoxSyncConfigRepository() {
+        return services.getBoxSyncConfigRepository();
+    }
+
+    private ShareNotificationRepository getShareRepository() {
+        return services.getShareNotificationRepository();
     }
 
     private void addShareMessageRenderer(Identity arg) {
@@ -200,17 +274,20 @@ public class DesktopClient extends Application {
         });
     }
 
-    protected SyncDaemon getSyncDaemon(ClientConfiguration config) throws IOException {
+    protected SyncDaemon getSyncDaemon(BoxSyncRepository boxSyncRepository) throws Exception {
         new Thread(services.getTransferManager(), "TransactionManager").start();
-        return new SyncDaemon(config.getBoxSyncConfigs(), new DefaultSyncerFactory(services.getBoxVolumeFactory(), services.getTransferManager()));
+        ObservableList<BoxSyncConfig> configs = FXCollections.observableList(boxSyncRepository.findAll());
+        boxSyncRepository.onAdd(config -> configs.add(config));
+        return new SyncDaemon(configs,
+            new DefaultSyncerFactory(services.getBoxVolumeFactory(), services.getTransferManager())
+        );
     }
 
-    protected DropDaemon getDropDaemon(ClientConfiguration config) throws PersistenceException, EntityNotFoundExcepion {
+    protected DropDaemon getDropDaemon(ClientConfig config) throws PersistenceException, EntityNotFoundExcepion {
         return new DropDaemon(config, services.getDropConnector(), services.getContactRepository(), services.getDropMessageRepository());
     }
 
     private void setTrayIcon(Stage primaryStage) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
-
         if (!SystemTray.isSupported()) {
             return;
         }
@@ -234,7 +311,6 @@ public class DesktopClient extends Application {
     }
 
     private void trayIconListener(final JPopupMenu popup, TrayIcon icon) {
-
         Timer notificationTimer = new Timer();
         notificationTimer.schedule(
             new TimerTask() {

@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.qabel.core.config.*;
 import de.qabel.core.exceptions.QblDropInvalidURL;
-import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.repository.IdentityRepository;
@@ -55,7 +55,7 @@ public class AccountingController extends AbstractController implements Initiali
     private IdentityBuilderFactory identityBuilderFactory;
 
     @Inject
-    ClientConfiguration clientConfiguration;
+    ClientConfig clientConfiguration;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -68,11 +68,7 @@ public class AccountingController extends AbstractController implements Initiali
         resourceBundle = resources;
 
         updateIdentityState();
-        clientConfiguration.addObserver((o, arg) -> {
-            if (arg instanceof Identity) {
-                updateIdentityState();
-            }
-        });
+        clientConfiguration.onSelectIdentity(identity -> updateIdentityState());
     }
 
     private void updateIdentityState() {

@@ -1,7 +1,5 @@
 package de.qabel.desktop.config;
 
-import de.qabel.core.config.Account;
-import de.qabel.core.config.Identity;
 import javafx.collections.ObservableList;
 
 import java.util.Date;
@@ -9,50 +7,51 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Observer;
 
-public interface ClientConfiguration {
-    boolean hasAccount();
-
-    Account getAccount();
-
+@Deprecated
+public interface ClientConfiguration extends ClientConfig {
     /**
-     * @param account BoxAccount to use
-     * @throws IllegalStateException when an account already exists
+     * @deprecated use the BoxSyncConfigRepository ()
      */
-    void setAccount(Account account) throws IllegalStateException;
-
-    Identity getSelectedIdentity();
-
-    void selectIdentity(Identity identity);
-
+    @Deprecated
     ObservableList<BoxSyncConfig> getBoxSyncConfigs();
 
     /**
+     * @deprecated to be replaced by more specific watchers
+     *
      * @see java.util.Observable#addObserver(Observer)
      */
+    @Deprecated
     void addObserver(Observer o);
 
     /**
+     * @deprecated will be legacy when ClientConfiguration#addObserver has been replaced
+     *
      * @see java.util.Observable#deleteObserver(Observer)
      */
+    @Deprecated
     void deleteObserver(Observer o);
 
-    boolean hasDeviceId();
-
-    void setDeviceId(String deviceId);
-
-    String getDeviceId();
-
-    Date getLastDropPoll(Identity identity);
-
-    void setLastDropPoll(Identity identity, Date lastDropPoll);
-
+    /**
+     * @deprecated query specific drops
+     */
+    @Deprecated
     HashMap<String, Date> getLastDropMap();
 
+    /**
+     * @deprecated set specific drop
+     */
+    @Deprecated
     void setLastDropMap(HashMap<String, Date> lastDropMap);
 
-    ShareNotifications getShareNotification(Identity identity);
-
+    /**
+     * @deprecated set specific share
+     */
+    @Deprecated
     void setShareNotifications(Map<String, ShareNotifications> shareNotifications);
 
+    /**
+     * @deprecated query shares for a single identity
+     */
+    @Deprecated
     Map<String, ShareNotifications> getShareNotifications();
 }

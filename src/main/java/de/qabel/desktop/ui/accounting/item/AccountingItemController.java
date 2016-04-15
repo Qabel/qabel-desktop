@@ -1,12 +1,8 @@
 package de.qabel.desktop.ui.accounting.item;
 
-import de.qabel.core.accounting.AccountingHTTP;
-import de.qabel.core.accounting.AccountingProfile;
 import de.qabel.core.config.Account;
-import de.qabel.core.config.AccountingServer;
 import de.qabel.core.config.Identity;
-import de.qabel.core.exceptions.QblInvalidCredentials;
-import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
@@ -21,8 +17,6 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.Pane;
 
 import javax.inject.Inject;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -49,7 +43,7 @@ public class AccountingItemController extends AbstractController implements Init
     private Identity identity;
 
     @Inject
-    private ClientConfiguration clientConfiguration;
+    private ClientConfig clientConfiguration;
 
     @Inject
     private IdentityRepository identityRepository;
@@ -69,7 +63,7 @@ public class AccountingItemController extends AbstractController implements Init
         }
 
         updateSelection();
-        clientConfiguration.addObserver((o, arg) -> updateSelection());
+        clientConfiguration.onSelectIdentity(i -> updateSelection());
     }
 
     private void updateAvatar() {

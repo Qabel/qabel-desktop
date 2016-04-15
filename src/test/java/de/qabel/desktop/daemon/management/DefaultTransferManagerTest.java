@@ -48,7 +48,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
 
     @Override
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         super.setUp();
         try {
             Account account = new Account("a", "b", "c");

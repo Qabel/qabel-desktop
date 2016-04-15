@@ -7,12 +7,13 @@ import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.daemon.sync.worker.BoxNavigationStub;
 import de.qabel.desktop.daemon.sync.worker.BoxVolumeStub;
+import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.storage.BoxExternalFile;
 import de.qabel.desktop.storage.BoxFile;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.testfx.api.FxRobot;
 
 import java.nio.file.Paths;
 import java.util.LinkedList;
@@ -79,7 +80,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
     public void loadsShares() throws Exception {
         ShareNotificationMessage notification = new ShareNotificationMessage("http://some.url.com", "key", "message");
         sharingService.loadFileMetadata = new BoxExternalFile(identity.getEcPublicKey(), "prefix", "block", "share name", 123L, 123L, new byte[0]);
-        clientConfiguration.getShareNotification(identity).add(notification);
+        shareNotificationRepository.save(identity, notification);
 
         int sharedIndex = 1;
         page.expandNode(0);
@@ -124,7 +125,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
                 .assertReceivers(2);
     }
 
-    private Contact addContact(String name) {
+    private Contact addContact(String name) throws PersistenceException {
         Contacts contacts = contactRepository.find(identity);
         Contact contact = new Contact(name, new LinkedList<>(), new QblECKeyPair().getPub());
         contacts.put(contact);
@@ -132,6 +133,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
     }
 
     @Test
+    @Ignore(value = "unignore when jenkins can handle GUI actions")
     public void unshareFile() throws Exception {
         rootNavigation.share(identity.getEcPublicKey(), boxFile, "receiver");
 

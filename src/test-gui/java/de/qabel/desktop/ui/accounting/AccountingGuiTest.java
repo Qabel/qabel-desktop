@@ -18,6 +18,7 @@ public class AccountingGuiTest extends AbstractGuiTest<AccountingController> {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        identityRepository.clear();
         page = new AccountingPage(baseFXRobot, robot, controller);
     }
 

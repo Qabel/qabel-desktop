@@ -25,7 +25,6 @@ import static org.junit.Assert.assertTrue;
 
 
 public class HttpDropConnectorTest extends AbstractControllerTest {
-
     Identity i;
     Contact c;
     String fakeURL;
@@ -40,7 +39,7 @@ public class HttpDropConnectorTest extends AbstractControllerTest {
     public void setUp() throws Exception {
         super.setUp();
         fakeURL = "http://localhost:12345/abcdefghijklmnopqrstuvwxyzabcdefgworkingUrl";
-        workingURL = new DropUrlGenerator("https://test-drop.qabel.de").generateUrl().toString(); //"https://test-drop.qabel.de/abcdefghijklmnopqrstuvwxyzabcdefgworkingUrl";
+        workingURL = new DropUrlGenerator("http://localhost:5000").generateUrl().toString(); //"https://test-drop.qabel.de/abcdefghijklmnopqrstuvwxyzabcdefgworkingUrl";
         networkStatus = new NetworkStatus();
         dHTTP = new DropHTTP();
         connector = new HttpDropConnector(networkStatus, dHTTP);
@@ -59,7 +58,7 @@ public class HttpDropConnectorTest extends AbstractControllerTest {
         connector.send(c, dropMessage);
     }
 
-    @Test
+    @Test(timeout = 1000L)
     public void sendAndReceiveMessagesTest() throws Exception {
         String text = "MessageString";
         String type = "dropMessage";
@@ -85,7 +84,7 @@ public class HttpDropConnectorTest extends AbstractControllerTest {
         assertEquals(c.getEcPublicKey().getReadableKeyIdentifier(), messages.get(messages.size()-1).getSenderKeyId());
     }
 
-    @Test
+    @Test(timeout = 1000L)
     public void setsNetworkState() throws Exception {
         StubDropHttp dropStub = new StubDropHttp();
         dropStub.messages.setData(new ArrayList<>());

@@ -16,6 +16,7 @@ import java.util.function.Consumer;
 public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig, Observer {
     private static final String DEFAULT_NAME = "New Sync Config";
     private SyncIndex syncIndex = new SyncIndex();
+    private int id;
     private Path localPath;
     private Path remotePath;
     private Identity identity;
@@ -35,6 +36,16 @@ public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig, O
         this.identity = identity;
         this.account = account;
         setRemotePath(remotePath);
+    }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override

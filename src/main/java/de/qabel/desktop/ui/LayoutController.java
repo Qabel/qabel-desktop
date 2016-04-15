@@ -2,7 +2,7 @@ package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.core.config.Identity;
-import de.qabel.desktop.config.ClientConfiguration;
+import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.daemon.management.MonitoredTransferManager;
 import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.daemon.management.WindowedTransactionGroup;
@@ -89,7 +89,7 @@ public class LayoutController extends AbstractController implements Initializabl
     private VBox bottomContainer;
 
     @Inject
-    private ClientConfiguration clientConfiguration;
+    private ClientConfig clientConfiguration;
 
     @Inject
     private TransferManager transferManager;
@@ -130,7 +130,7 @@ public class LayoutController extends AbstractController implements Initializabl
         }
 
         updateIdentity();
-        clientConfiguration.addObserver((o, arg) -> Platform.runLater(this::updateIdentity));
+        clientConfiguration.onSelectIdentity(i -> Platform.runLater(this::updateIdentity));
 
 
         bottomContainer.getChildren().remove(uploadProgress);

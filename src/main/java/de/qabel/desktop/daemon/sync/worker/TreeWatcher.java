@@ -1,14 +1,12 @@
 package de.qabel.desktop.daemon.sync.worker;
 
-import de.qabel.desktop.daemon.sync.event.ChangeEvent;
-import de.qabel.desktop.daemon.sync.event.LocalChangeEvent;
-import de.qabel.desktop.daemon.sync.event.LocalDeleteEvent;
-import de.qabel.desktop.daemon.sync.event.WatchRegisteredEvent;
+import de.qabel.desktop.daemon.sync.event.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.nio.file.WatchEvent;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +24,7 @@ import static java.nio.file.StandardWatchEventKinds.*;
  */
 public class TreeWatcher extends Thread {
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private static final ExecutorService fileExecutor = Executors.newSingleThreadExecutor();
+    private static ExecutorService fileExecutor = Executors.newSingleThreadExecutor();
     private Logger logger = LoggerFactory.getLogger(TreeWatcher.class);
     private Path root;
     private Consumer<de.qabel.desktop.daemon.sync.event.WatchEvent> consumer;
@@ -175,4 +173,5 @@ public class TreeWatcher extends Thread {
             }
         });
     }
+
 }
