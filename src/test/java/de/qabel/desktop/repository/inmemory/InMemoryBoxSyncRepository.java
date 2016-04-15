@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
-public class InMemoryBoxSyncRepisitory implements BoxSyncRepository {
+public class InMemoryBoxSyncRepository implements BoxSyncRepository {
     private List<BoxSyncConfig> configs = new LinkedList<>();
 
     @Override
