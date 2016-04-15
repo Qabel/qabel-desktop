@@ -19,8 +19,7 @@ public abstract class AbstractSqliteRepositoryTest<T> {
 
     @Before
     public void setUp() throws Exception {
-        dbFile = Files.createTempFile("qabel", "tmpdb");
-        connection = DriverManager.getConnection("jdbc:sqlite://" + dbFile.toAbsolutePath());
+        connection = DriverManager.getConnection("jdbc:sqlite::memory:");
         try (Statement statement = connection.createStatement()) {
             statement.execute("PRAGMA FOREIGN_KEYS = ON");
         }
@@ -34,10 +33,6 @@ public abstract class AbstractSqliteRepositoryTest<T> {
 
     @After
     public void tearDown() throws Exception {
-        try {
-            connection.close();
-        } finally {
-            Files.delete(dbFile);
-        }
+        connection.close();
     }
 }

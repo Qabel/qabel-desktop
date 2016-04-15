@@ -13,7 +13,6 @@ import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.RepositoryBasedClientConfig;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
-import de.qabel.desktop.crashReports.CrashReportHandler;
 import de.qabel.desktop.crashReports.StubCrashReportHandler;
 import de.qabel.desktop.daemon.NetworkStatus;
 import de.qabel.desktop.daemon.management.BoxVolumeFactoryStub;
@@ -56,7 +55,7 @@ public class AbstractControllerTest {
     protected AccountRepository accountRepository = new InMemoryAccountRepository();
     protected DropStateRepository dropStateRepository = new InMemoryDropStateRepository();
     protected ShareNotificationRepository shareNotificationRepository = new InMemoryShareNotificationRepository();
-    protected BoxSyncRepository boxSyncRepository = new InMemoryBoxSyncRepisitory();
+    protected BoxSyncRepository boxSyncRepository = new InMemoryBoxSyncRepository();
 
     @BeforeClass
     public static void setUpClass() throws Exception {
