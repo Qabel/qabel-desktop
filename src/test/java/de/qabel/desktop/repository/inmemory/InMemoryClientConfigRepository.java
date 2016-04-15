@@ -25,6 +25,10 @@ public class InMemoryClientConfigRepository implements ClientConfigRepository {
 
     @Override
     public void save(String key, String value) throws PersistenceException {
-        values.put(key, value);
+        if (value == null) {
+            values.remove(key);
+        } else {
+            values.put(key, value);
+        }
     }
 }

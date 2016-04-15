@@ -6,6 +6,9 @@ import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class InMemoryIdentityRepository implements IdentityRepository {
     private Identities identities = new Identities();
 
@@ -40,5 +43,10 @@ public class InMemoryIdentityRepository implements IdentityRepository {
         if (!identities.contains(identity)) {
             identities.put(identity);
         }
+    }
+
+    public void clear() {
+        List<Identity> oldIdentities = identities.getIdentities().stream().collect(Collectors.toList());
+        oldIdentities.forEach(identities::remove);
     }
 }

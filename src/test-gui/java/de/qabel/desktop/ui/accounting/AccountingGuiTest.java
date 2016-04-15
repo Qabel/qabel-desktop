@@ -18,6 +18,7 @@ public class AccountingGuiTest extends AbstractGuiTest<AccountingController> {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        identityRepository.clear();
         page = new AccountingPage(baseFXRobot, robot, controller);
     }
 
@@ -32,7 +33,7 @@ public class AccountingGuiTest extends AbstractGuiTest<AccountingController> {
         page.add().inputAndConfirm("a new identity");
 
         Identities identities = identityRepository.findAll();
-        assertEquals(2, identities.getIdentities().size());
+        assertEquals(1, identities.getIdentities().size());
         Identity i = controller.clientConfiguration.getSelectedIdentity();
         assertEquals("a new identity", identities.getByKeyIdentifier(i.getKeyIdentifier()).getAlias());
     }

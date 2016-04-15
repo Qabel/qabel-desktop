@@ -44,14 +44,23 @@ public class SqliteClientConfigRepository implements ClientConfigRepository {
 
     @Override
     public void save(String key, String value) throws PersistenceException {
-        try (PreparedStatement statement = database.prepare(
-            "INSERT INTO client_configuration (`key`, `value`) VALUES (?, ?)"
-        )) {
-            statement.setString(1, key);
-            statement.setString(2, value);
-            statement.execute();
-        } catch (SQLException e) {
-            throw new PersistenceException("failed to save '" + key + "'='" + value + "'", e);
+        if (value == null) {
+            try (PreparedStatement statement = database.prepare("DELETE FROM client_configuration WHERE `key` = ?")) {
+                statement.setString(1, key);
+                statement.execute();
+            } catch (SQLException e) {
+                throw new PersistenceException("failed to delete '" + key + "'");
+            }
+        } else {
+            try (PreparedStatement statement = database.prepare(
+                "INSERT INTO client_configuration (`key`, `value`) VALUES (?, ?)"
+            )) {
+                statement.setString(1, key);
+                statement.setString(2, value);
+                statement.execute();
+            } catch (SQLException e) {
+                throw new PersistenceException("failed to save '" + key + "'='" + value + "'", e);
+            }
         }
     }
 }

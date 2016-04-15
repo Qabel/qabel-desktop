@@ -29,4 +29,11 @@ public class SqliteClientConfigRepositoryTest extends AbstractSqliteRepositoryTe
     public void knowsMissingValues() throws Exception {
         assertFalse(repo.contains("key"));
     }
+
+    @Test
+    public void knowsNullValuesAsMissingValues() throws Exception {
+        repo.save("key", "value");
+        repo.save("key", null);
+        assertFalse(repo.contains("key"));
+    }
 }
