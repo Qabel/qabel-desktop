@@ -1,4 +1,4 @@
-package com.airhacks.afterburner.views;
+package de.qabel.desktop.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

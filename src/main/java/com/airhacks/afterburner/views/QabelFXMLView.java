@@ -1,5 +1,6 @@
 package com.airhacks.afterburner.views;
 
+import de.qabel.desktop.util.UTF8Converter;
 import javafx.scene.Parent;
 
 import java.util.HashMap;

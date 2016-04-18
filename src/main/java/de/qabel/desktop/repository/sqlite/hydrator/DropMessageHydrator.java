@@ -66,9 +66,13 @@ public class DropMessageHydrator extends AbstractHydrator<PersistenceDropMessage
         DropMessage drop = new DropMessage(sender, payload, payloadType);
         // TODO fix this when Persistables can be modified
         try {
-            Field field = DropMessage.class.getDeclaredField("created");
-            field.setAccessible(true);
-            field.set(drop, created);
+            Field createdField = DropMessage.class.getDeclaredField("created");
+            createdField.setAccessible(true);
+            createdField.set(drop, created);
+            Field senderKeyIdField = DropMessage.class.getDeclaredField("senderKeyId");
+            senderKeyIdField.setAccessible(true);
+            senderKeyIdField.set(drop, sender.getKeyIdentifier());
+            drop.registerSender(sender);
         } catch (IllegalAccessException | NoSuchFieldException e) {
             throw new IllegalStateException("failed to set created date on DropMessage", e);
         }

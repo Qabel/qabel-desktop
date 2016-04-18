@@ -2,11 +2,14 @@ package de.qabel.desktop;
 
 import com.airhacks.afterburner.injection.Injector;
 import com.airhacks.afterburner.views.QabelFXMLView;
+import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.SQLitePersistence;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.ClientConfig;
+import de.qabel.desktop.config.LaunchConfig;
 import de.qabel.desktop.daemon.drop.DropDaemon;
+import de.qabel.desktop.daemon.drop.TextMessage;
 import de.qabel.desktop.daemon.share.ShareNotificationHandler;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
@@ -22,8 +25,11 @@ import de.qabel.desktop.storage.AbstractNavigation;
 import de.qabel.desktop.ui.CrashReportAlert;
 import de.qabel.desktop.ui.LayoutView;
 import de.qabel.desktop.ui.accounting.login.LoginView;
+import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 import de.qabel.desktop.ui.actionlog.item.renderer.ShareNotificationRenderer;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
+import de.qabel.desktop.ui.tray.AwtToast;
+import de.qabel.desktop.ui.tray.QabelTray;
 import de.qabel.desktop.update.HttpUpdateChecker;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -35,29 +41,22 @@ import javafx.scene.SceneAntialiasing;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -71,12 +70,10 @@ public class DesktopClient extends Application {
     private static Path DATABASE_FILE = Paths.get(System.getProperty("user.home")).resolve(".qabel/config.sqlite");
     private static DesktopServices services;
     private static StaticRuntimeConfiguration runtimeConfiguration;
-    private boolean inBound;
     private LayoutView view;
     private Stage primaryStage;
     private ExecutorService executorService = Executors.newCachedThreadPool();
     private ClientConfig config;
-    private boolean visible;
     private ResourceBundle resources;
     private static Connection connection;
 
@@ -95,7 +92,15 @@ public class DesktopClient extends Application {
             DATABASE_FILE = new File(args[0]).getAbsoluteFile().toPath();
         }
 
-        runtimeConfiguration = new StaticRuntimeConfiguration("https://drop.qabel.de", LEGACY_DATABASE_FILE, getConfigDatabase());
+        LaunchConfig launchConfig = new LaunchConfigurationReader(
+            DesktopClient.class.getResourceAsStream("/launch.properties")
+        ).load();
+
+        runtimeConfiguration = new StaticRuntimeConfiguration(
+            launchConfig.getDropUrl().toString(),
+            LEGACY_DATABASE_FILE,
+            getConfigDatabase()
+        );
         RuntimeDesktopServiceFactory staticDesktopServiceFactory = new NewConfigDesktopServiceFactory(
             runtimeConfiguration,
             new SqliteTransactionManager(connection)
@@ -201,7 +206,7 @@ public class DesktopClient extends Application {
         config = services.getClientConfiguration();
 
         SceneAntialiasing aa = SceneAntialiasing.BALANCED;
-        primaryStage.getIcons().setAll(new javafx.scene.image.Image(getClass().getResourceAsStream("/logo-invert_small.png")));
+        primaryStage.getIcons().setAll(new Image(getClass().getResourceAsStream("/logo-invert_small.png")));
         Scene scene;
         resources = QabelFXMLView.getDefaultResourceBundle();
 
@@ -239,10 +244,8 @@ public class DesktopClient extends Application {
         );
         config.onSelectIdentity(this::addShareMessageRenderer);
 
-        services.getDropMessageRepository().addObserver(new ShareNotificationHandler(getShareRepository()));
-
-        setTrayIcon(primaryStage);
-
+        QabelTray tray = new QabelTray(primaryStage, new AwtToast());
+        tray.install();
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -250,6 +253,22 @@ public class DesktopClient extends Application {
             }
         });
         primaryStage.show();
+
+        services.getDropMessageRepository().addObserver(new ShareNotificationHandler(getShareRepository()));
+        services.getDropMessageRepository().addObserver(
+            (o, arg) -> {
+                if (!(arg instanceof PersistenceDropMessage)) {
+                    return;
+                }
+                PersistenceDropMessage message = (PersistenceDropMessage)arg;
+                if (message.isSent()) {
+                    return;
+                }
+                Contact sender = (Contact)message.getSender();
+                String content = TextMessage.fromJson(message.getDropMessage().getDropPayload()).getText();
+                Platform.runLater(() -> tray.showNotification("new message from " + sender.getAlias(), content));
+            }
+        );
     }
 
     private BoxSyncRepository getBoxSyncConfigRepository() {
@@ -286,171 +305,4 @@ public class DesktopClient extends Application {
     protected DropDaemon getDropDaemon(ClientConfig config) throws PersistenceException, EntityNotFoundExcepion {
         return new DropDaemon(config, services.getDropConnector(), services.getContactRepository(), services.getDropMessageRepository());
     }
-
-    private void setTrayIcon(Stage primaryStage) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
-        if (!SystemTray.isSupported()) {
-            return;
-        }
-
-        SystemTray sTray = SystemTray.getSystemTray();
-        primaryStage.setOnCloseRequest(arg0 -> primaryStage.hide());
-        JPopupMenu popup = buildSystemTrayJPopupMenu(primaryStage);
-        URL url = System.class.getResource("/logo-invert_small.png");
-        Image img = Toolkit.getDefaultToolkit().getImage(url);
-        TrayIcon icon = new TrayIcon(img, "Qabel");
-
-        icon.setImageAutoSize(true);
-        trayIconListener(popup, icon);
-
-        try {
-            sTray.add(icon);
-        } catch (AWTException e) {
-            logger.error("failed to add tray icon: " + e.getMessage(), e);
-        }
-
-    }
-
-    private void trayIconListener(final JPopupMenu popup, TrayIcon icon) {
-        Timer notificationTimer = new Timer();
-        notificationTimer.schedule(
-            new TimerTask() {
-                @Override
-                public void run() {
-                    if (visible && !inBound) {
-                        visible = !visible;
-                        popup.setVisible(visible);
-                    }
-                    inBound = false;
-                }
-            }, 250, 1500
-        );
-
-        icon.addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                inBound = true;
-            }
-        });
-
-        popup.addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                inBound = true;
-            }
-        });
-
-        icon.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-                if (e.getButton() != MouseEvent.BUTTON1) {
-                    return;
-                }
-
-                Point point = e.getPoint();
-                Rectangle bounds = getScreenViewableBounds(getGraphicsDeviceAt(point));
-                int x = point.x;
-                int y = point.y;
-                if (y < bounds.y) {
-                    y = bounds.y;
-                } else if (y > bounds.y + bounds.height) {
-                    y = bounds.y + bounds.height;
-                }
-                if (x < bounds.x) {
-                    x = bounds.x;
-                } else if (x > bounds.x + bounds.width) {
-                    x = bounds.x + bounds.width;
-                }
-
-                if (x + popup.getWidth() > bounds.x + bounds.width) {
-                    x = bounds.x + bounds.width - popup.getWidth();
-                }
-                if (y + popup.getWidth() > bounds.y + bounds.height) {
-                    y = bounds.y + bounds.height - popup.getHeight();
-                }
-
-                visible = !visible;
-
-                if (visible) {
-                    popup.setLocation(x, y);
-                }
-                popup.setVisible(visible);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                visible = false;
-                popup.setVisible(visible);
-            }
-        });
-
-        popup.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseExited(MouseEvent e) {
-                if (e.getX() < popup.getBounds().getMaxX() &&
-                    e.getX() >= popup.getBounds().getMinX() &&
-                    e.getY() < popup.getBounds().getMaxY() &&
-                    e.getY() >= popup.getBounds().getMinY()) {
-                    return;
-                }
-                visible = false;
-                popup.setVisible(visible);
-            }
-        });
-    }
-
-    protected JPopupMenu buildSystemTrayJPopupMenu(Stage primaryStage) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
-        final JPopupMenu menu = new JPopupMenu();
-        final JMenuItem showMenuItem = new JMenuItem("Show");
-        final JMenuItem exitMenuItem = new JMenuItem("Exit");
-
-        menu.add(showMenuItem);
-        menu.addSeparator();
-        menu.add(exitMenuItem);
-        showMenuItem.addActionListener(ae -> Platform.runLater(primaryStage::show));
-        exitMenuItem.addActionListener(ae -> System.exit(0));
-
-        return menu;
-    }
-
-    public GraphicsDevice getGraphicsDeviceAt(Point pos) {
-
-        GraphicsDevice device = null;
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice lstGDs[] = ge.getScreenDevices();
-        ArrayList<GraphicsDevice> lstDevices = new ArrayList<>(lstGDs.length);
-
-        for (GraphicsDevice gd : lstGDs) {
-            GraphicsConfiguration gc = gd.getDefaultConfiguration();
-            Rectangle screenBounds = gc.getBounds();
-            if (screenBounds.contains(pos)) {
-                lstDevices.add(gd);
-            }
-        }
-
-        if (lstDevices.size() == 1) {
-            device = lstDevices.get(0);
-        }
-        return device;
-    }
-
-    public Rectangle getScreenViewableBounds(GraphicsDevice gd) {
-
-        Rectangle bounds = new Rectangle(0, 0, 0, 0);
-
-        if (gd != null) {
-            GraphicsConfiguration gc = gd.getDefaultConfiguration();
-            bounds = gc.getBounds();
-            Insets insets = Toolkit.getDefaultToolkit().getScreenInsets(gc);
-
-            bounds.x += insets.left;
-            bounds.y += insets.top;
-            bounds.width -= insets.left + insets.right;
-            bounds.height -= insets.top + insets.bottom;
-        }
-        return bounds;
-
-    }
-
 }

@@ -1,5 +1,6 @@
 package de.qabel.desktop.inject;
 
+import de.qabel.desktop.util.UTF8Converter;
 import de.qabel.core.accounting.AccountingHTTP;
 import de.qabel.core.accounting.AccountingProfile;
 import de.qabel.core.config.Account;
@@ -28,6 +29,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.UUID;
 
 public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServiceFactory implements DesktopServices {
@@ -70,6 +73,7 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
         return dropUrlGenerator;
     }
 
+    @Deprecated
     protected String generateNewDeviceId() {
         return UUID.randomUUID().toString();
     }
@@ -146,5 +150,14 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     @Override
     public Stage getPrimaryStage() {
         return runtimeConfiguration.getPrimaryStage();
+    }
+
+    private ResourceBundle resourceBundle;
+    @Override
+    public synchronized ResourceBundle getResourceBundle() {
+        if (resourceBundle == null) {
+            resourceBundle = ResourceBundle.getBundle("ui", Locale.getDefault(), new UTF8Converter());
+        }
+        return resourceBundle;
     }
 }

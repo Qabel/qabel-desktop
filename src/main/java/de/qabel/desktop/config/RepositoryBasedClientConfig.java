@@ -6,14 +6,18 @@ import de.qabel.core.drop.DropURL;
 import de.qabel.desktop.repository.*;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 public class RepositoryBasedClientConfig implements ClientConfig {
+    private static final Logger logger = LoggerFactory.getLogger(RepositoryBasedClientConfig.class);
     public static final String ACCOUNT_KEY = "account";
     private final ClientConfigRepository configRepo;
     private final AccountRepository accountRepo;
@@ -127,9 +131,18 @@ public class RepositoryBasedClientConfig implements ClientConfig {
     public String getDeviceId() {
         try {
             return configRepo.find("device_id");
-        } catch (PersistenceException | EntityNotFoundExcepion e) {
+        } catch (PersistenceException e) {
             throw new IllegalStateException("failed to check device id", e);
+        } catch (EntityNotFoundExcepion e) {
+            logger.warn("missing device_id, generating a new one");
+            String deviceId = generateNewDeviceId();
+            setDeviceId(deviceId);
+            return deviceId;
         }
+    }
+
+    private String generateNewDeviceId() {
+        return UUID.randomUUID().toString();
     }
 
     @Override

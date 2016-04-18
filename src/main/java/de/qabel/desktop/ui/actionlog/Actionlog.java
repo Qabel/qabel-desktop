@@ -1,8 +1,6 @@
 package de.qabel.desktop.ui.actionlog;
 
-import com.sun.javafx.application.PlatformImpl;
 import de.qabel.desktop.repository.DropMessageRepository;
-import javafx.application.Platform;
 
 import java.util.Collections;
 import java.util.HashSet;

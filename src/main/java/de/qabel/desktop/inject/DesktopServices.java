@@ -15,6 +15,7 @@ import de.qabel.desktop.ui.connector.DropConnector;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ResourceBundle;
 
 public interface DesktopServices {
     @Create(name = "loadManager")
@@ -76,4 +77,7 @@ public interface DesktopServices {
 
     @Create(name = "transactionManager")
     TransactionManager getTransactionManager();
+
+    @Create(name = "resourceBundle")
+    ResourceBundle getResourceBundle();
 }

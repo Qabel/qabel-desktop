@@ -70,15 +70,14 @@ public class ActionlogController extends AbstractController implements Initializ
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        startThreads();
+        startDateRefresher();
         identity = clientConfiguration.getSelectedIdentity();
         dropMessageRepository.addObserver(this);
         clientConfiguration.onSelectIdentity(identity -> this.identity = identity);
         addListener();
     }
 
-    private void startThreads() {
+    private void startDateRefresher() {
         dateRefresher = new Thread(() -> {
             while (true) {
                 messageControllers.forEach(ActionlogItem::refreshDate);
