@@ -132,7 +132,7 @@ public class ActionlogController extends AbstractController implements Initializ
             if (receivedDropMessages == null) {
                 Platform.runLater(messages.getChildren()::clear);
                 receivedDropMessages = dropMessageRepository.loadConversation(c, identity);
-                addMessagesToView(receivedDropMessages);
+                Platform.runLater(() -> addMessagesToView(receivedDropMessages));
             } else {
                 List<PersistenceDropMessage> newMessages = dropMessageRepository.loadNewMessagesFromConversation(receivedDropMessages, c, identity);
                 addNewMessagesToReceivedDropMessages(newMessages);
@@ -174,7 +174,11 @@ public class ActionlogController extends AbstractController implements Initializ
 
     void addMessageToActionlog(DropMessage dropMessage) throws EntityNotFoundExcepion {
         Map<String, Object> injectionContext = new HashMap<>();
-        Contact sender = contactRepository.findByKeyId(identity, dropMessage.getSenderKeyId());
+        String senderKeyId = dropMessage.getSenderKeyId();
+        if (senderKeyId == null) {
+            senderKeyId = dropMessage.getSender().getKeyIdentifier();
+        }
+        Contact sender = contactRepository.findByKeyId(identity, senderKeyId);
 
         if(sender == null){
             sender = contactRepository.findByKeyId(identity, dropMessage.getSender().getKeyIdentifier());

@@ -2,10 +2,8 @@ package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.injection.Injector;
 import com.airhacks.afterburner.views.QabelFXMLView;
-import com.sun.javafx.application.PlatformImpl;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
-import de.qabel.desktop.AsyncUtils;
 import de.qabel.desktop.BlockSharingService;
 import de.qabel.desktop.ServiceFactory;
 import de.qabel.desktop.SharingService;
@@ -22,22 +20,16 @@ import de.qabel.desktop.repository.Stub.InMemoryContactRepository;
 import de.qabel.desktop.repository.Stub.StubDropMessageRepository;
 import de.qabel.desktop.repository.inmemory.*;
 import de.qabel.desktop.inject.DefaultServiceFactory;
-import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory;
+import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRendererFactory;
 import de.qabel.desktop.ui.actionlog.item.renderer.PlaintextMessageRenderer;
 import de.qabel.desktop.ui.connector.DropConnector;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
-import javafx.application.Application;
-import javafx.application.Platform;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 
-import java.lang.reflect.Field;
-import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
-public class AbstractControllerTest {
+public class AbstractControllerTest extends AbstractFxTest {
     protected ServiceFactory diContainer = new DefaultServiceFactory();
     protected InMemoryIdentityRepository identityRepository = new InMemoryIdentityRepository();
     protected ClientConfig clientConfiguration;
@@ -56,33 +48,6 @@ public class AbstractControllerTest {
     protected DropStateRepository dropStateRepository = new InMemoryDropStateRepository();
     protected ShareNotificationRepository shareNotificationRepository = new InMemoryShareNotificationRepository();
     protected BoxSyncRepository boxSyncRepository = new InMemoryBoxSyncRepository();
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        Platform.setImplicitExit(false);
-        try {
-            Platform.runLater(() -> {
-            });
-        } catch (IllegalStateException e) {
-            startPlatform();
-        } catch (Exception e) {
-            e.printStackTrace();
-            startPlatform();
-        }
-    }
-
-    private static void startPlatform() throws NoSuchFieldException, IllegalAccessException, InterruptedException {
-        new Thread() {
-            @Override
-            public void run() {
-                Application.launch(TestApplication.class);
-            }
-        }.start();
-        Field field = PlatformImpl.class.getDeclaredField("initialized");
-        field.setAccessible(true);
-        while (!((AtomicBoolean) field.get(null)).get())
-            Thread.sleep(10);
-    }
 
     @Before
     public void setUp() throws Exception {
@@ -115,9 +80,9 @@ public class AbstractControllerTest {
         diContainer.put("boxSyncConfigRepository", boxSyncRepository);
         diContainer.put("boxSyncRepository", boxSyncRepository);
         diContainer.put("transactionManager", new InMemoryTransactionManager());
-        MessageRendererFactory messageRendererFactory = new MessageRendererFactory();
-        messageRendererFactory.setFallbackRenderer(new PlaintextMessageRenderer());
-        diContainer.put("messageRendererFactory", messageRendererFactory);
+        FXMessageRendererFactory FXMessageRendererFactory = new FXMessageRendererFactory();
+        FXMessageRendererFactory.setFallbackRenderer(new PlaintextMessageRenderer());
+        diContainer.put("messageRendererFactory", FXMessageRendererFactory);
         Injector.setConfigurationSource(key -> diContainer.get((String)key));
         Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(diContainer));
 
@@ -137,30 +102,5 @@ public class AbstractControllerTest {
 
     protected Function<String, Object> generateInjection(String name, Object instance) {
         return requestedName -> requestedName.equals(name) ? instance : null;
-    }
-
-    protected void runLaterAndWait(Runnable runnable) {
-        boolean[] hasRun = new boolean[]{false};
-        Platform.runLater(() -> {
-            runnable.run();
-            hasRun[0] = true;
-        });
-        waitUntil(() -> hasRun[0], 5000L);
-    }
-
-    public static void waitUntil(Callable<Boolean> evaluate) {
-        AsyncUtils.waitUntil(evaluate);
-    }
-
-    public static void waitUntil(Callable<Boolean> evaluate, long timeout) {
-        AsyncUtils.waitUntil(evaluate, timeout);
-    }
-
-    public static void waitUntil(Callable<Boolean> evaluate, Callable<String> errorMessage) {
-        AsyncUtils.waitUntil(evaluate, errorMessage);
-    }
-
-    public static void waitUntil(Callable<Boolean> evaluate, long timeout, Callable<String> errorMessage) {
-        AsyncUtils.waitUntil(evaluate, timeout, errorMessage);
     }
 }

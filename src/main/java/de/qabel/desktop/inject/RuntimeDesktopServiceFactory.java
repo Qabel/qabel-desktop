@@ -1,5 +1,6 @@
 package de.qabel.desktop.inject;
 
+import de.qabel.desktop.util.Translator;
 import de.qabel.desktop.util.UTF8Converter;
 import de.qabel.core.accounting.AccountingHTTP;
 import de.qabel.core.accounting.AccountingProfile;
@@ -20,7 +21,7 @@ import de.qabel.desktop.daemon.management.DefaultTransferManager;
 import de.qabel.desktop.daemon.management.MonitoredTransferManager;
 import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.inject.config.RuntimeConfiguration;
-import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory;
+import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRendererFactory;
 import de.qabel.desktop.ui.actionlog.item.renderer.PlaintextMessageRenderer;
 import de.qabel.desktop.ui.connector.DropConnector;
 import de.qabel.desktop.ui.connector.HttpDropConnector;
@@ -40,7 +41,7 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     private DropUrlGenerator dropUrlGenerator;
     private NetworkStatus networkStatus = new NetworkStatus();
     private DropConnector dropConnector;
-    private MessageRendererFactory messageRendererFactory;
+    private FXMessageRendererFactory FXMessageRendererFactory;
     private SharingService sharingService;
     private BoxVolumeFactory boxVolumeFactory;
     private AccountingHTTP accountingHTTP;
@@ -97,12 +98,12 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     }
 
     @Override
-    public synchronized MessageRendererFactory getDropMessageRendererFactory() {
-        if (messageRendererFactory == null) {
-            messageRendererFactory = new MessageRendererFactory();
-            messageRendererFactory.setFallbackRenderer(new PlaintextMessageRenderer());
+    public synchronized FXMessageRendererFactory getDropMessageRendererFactory() {
+        if (FXMessageRendererFactory == null) {
+            FXMessageRendererFactory = new FXMessageRendererFactory();
+            FXMessageRendererFactory.setFallbackRenderer(new PlaintextMessageRenderer());
         }
-        return messageRendererFactory;
+        return FXMessageRendererFactory;
     }
 
     @Override
@@ -159,5 +160,10 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
             resourceBundle = ResourceBundle.getBundle("ui", Locale.getDefault(), new UTF8Converter());
         }
         return resourceBundle;
+    }
+
+    @Override
+    public Translator getTranslator() {
+        return new Translator(getResourceBundle());
     }
 }

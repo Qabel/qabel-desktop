@@ -14,6 +14,7 @@ import de.qabel.desktop.ui.accounting.avatar.AvatarView;
 import de.qabel.desktop.ui.accounting.item.SelectionEvent;
 import de.qabel.desktop.ui.actionlog.Actionlog;
 import de.qabel.desktop.ui.actionlog.ContactActionLog;
+import de.qabel.desktop.ui.actionlog.FxActionlog;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 import de.qabel.desktop.ui.contact.ContactController;
 import javafx.application.Platform;
@@ -77,23 +78,14 @@ public class ContactItemController extends AbstractController implements Initial
         updateAvatar();
 
         indicator.setVisible(false);
-        final Actionlog actionlog = new ContactActionLog(contact, dropMessageRepository);
+        final FxActionlog actionlog = new FxActionlog(new ContactActionLog(contact, dropMessageRepository));
 
-        actionlog.addObserver(message -> {
-            refreshIndicator(actionlog);
-        });
+        indicator.visibleProperty().bind(indicator.textProperty().isNotEqualTo("0"));
+        indicator.textProperty().bind(actionlog.unseenMessageCountAsStringProperty());
     }
 
     public Indicator getIndicator() {
         return indicator;
-    }
-
-    private void refreshIndicator(Actionlog actionlog) {
-        Platform.runLater(() -> {
-            int unseenMessageCount = actionlog.getUnseenMessageCount();
-            indicator.setVisible(unseenMessageCount > 0);
-            indicator.setText(String.valueOf(unseenMessageCount));
-        });
     }
 
     public void addSelectionListener(Consumer<SelectionEvent> consumer) {

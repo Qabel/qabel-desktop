@@ -193,4 +193,14 @@ public class SqliteContactRepositoryTest extends AbstractSqliteRepositoryTest<Sq
         Contact loaded = repo.findByKeyId(identity, contact.getKeyIdentifier());
         assertSame(contact, loaded);
     }
+
+    @Test
+    public void addsRelationshipIfContactIsAlreadyPresent() throws Exception {
+        repo.save(contact, identity);
+
+        Contact newImport = new Contact(contact.getAlias(), contact.getDropUrls(), contact.getEcPublicKey());
+        repo.save(newImport, otherIdentity);
+        repo.findByKeyId(otherIdentity, contact.getKeyIdentifier());
+        repo.findByKeyId(identity, contact.getKeyIdentifier());
+    }
 }

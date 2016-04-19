@@ -5,6 +5,7 @@ import com.airhacks.afterburner.views.QabelFXMLView;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.SQLitePersistence;
+import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.LaunchConfig;
@@ -31,6 +32,7 @@ import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import de.qabel.desktop.ui.tray.AwtToast;
 import de.qabel.desktop.ui.tray.QabelTray;
 import de.qabel.desktop.update.HttpUpdateChecker;
+import de.qabel.desktop.util.Translator;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -265,8 +267,13 @@ public class DesktopClient extends Application {
                     return;
                 }
                 Contact sender = (Contact)message.getSender();
-                String content = TextMessage.fromJson(message.getDropMessage().getDropPayload()).getText();
-                Platform.runLater(() -> tray.showNotification("new message from " + sender.getAlias(), content));
+                DropMessage dropMessage = message.getDropMessage();
+                String content = services.getDropMessageRendererFactory()
+                    .getRenderer(dropMessage.getDropPayloadType())
+                    .renderString(dropMessage.getDropPayload(), services.getResourceBundle());
+                Translator translator = services.getTranslator();
+                String title = translator.getString("newMessageNotification", sender.getAlias());
+                Platform.runLater(() -> tray.showNotification(title, content));
             }
         );
     }

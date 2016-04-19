@@ -4,8 +4,8 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
-import de.qabel.desktop.ui.actionlog.item.renderer.MessageRenderer;
-import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory;
+import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRenderer;
+import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRendererFactory;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -34,14 +34,14 @@ public class OtherActionlogItemController extends AbstractController implements 
     @Inject
     Contact contact;
     @Inject
-    MessageRendererFactory messageRendererFactory;
+    FXMessageRendererFactory messageRendererFactory;
 
     PrettyTime p;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        MessageRenderer renderer = messageRendererFactory.getRenderer(dropMessage.getDropPayloadType());
+        FXMessageRenderer renderer = messageRendererFactory.getRenderer(dropMessage.getDropPayloadType());
         Node renderedMessage = renderer.render(dropMessage.getDropPayload(), resources);
         messageContainer.getChildren().addAll(renderedMessage);
 

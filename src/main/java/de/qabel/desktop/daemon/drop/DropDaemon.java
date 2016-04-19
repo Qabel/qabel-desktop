@@ -76,7 +76,11 @@ public class DropDaemon implements Runnable {
             lastDate = config.getLastDropPoll(identity);
             if (lastDate.getTime() < d.getCreationDate().getTime()) {
                 try {
-                    sender = contactRepository.findByKeyId(identity, d.getSenderKeyId());
+                    String senderKeyId = d.getSenderKeyId();
+                    if (senderKeyId == null) {
+                        senderKeyId = d.getSender().getKeyIdentifier();
+                    }
+                    sender = contactRepository.findByKeyId(identity, senderKeyId);
                 } catch (EntityNotFoundExcepion e) {
                     logger.error("Contact: with ID: " + d.getSenderKeyId() + " not found " + e.getMessage(), e);
                     continue;

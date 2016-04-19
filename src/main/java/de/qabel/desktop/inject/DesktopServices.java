@@ -10,8 +10,9 @@ import de.qabel.desktop.crashReports.CrashReportHandler;
 import de.qabel.desktop.daemon.NetworkStatus;
 import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.repository.*;
-import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory;
+import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRendererFactory;
 import de.qabel.desktop.ui.connector.DropConnector;
+import de.qabel.desktop.util.Translator;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -54,7 +55,7 @@ public interface DesktopServices {
     CrashReportHandler getCrashReportHandler();
 
     @Create(name = "messageRendererFactory")
-    MessageRendererFactory getDropMessageRendererFactory();
+    FXMessageRendererFactory getDropMessageRendererFactory();
 
     @Create(name = "sharingService")
     SharingService getSharingService();
@@ -80,4 +81,7 @@ public interface DesktopServices {
 
     @Create(name = "resourceBundle")
     ResourceBundle getResourceBundle();
+
+    @Create(name = "translator")
+    Translator getTranslator();
 }
