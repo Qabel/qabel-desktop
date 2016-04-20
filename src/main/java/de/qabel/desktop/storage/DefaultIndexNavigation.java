@@ -17,7 +17,7 @@ import java.util.WeakHashMap;
 public class DefaultIndexNavigation extends AbstractNavigation implements IndexNavigation {
     private Map<Integer, String> directoryMetadataMHashes = new WeakHashMap<>();
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultIndexNavigation.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(DefaultIndexNavigation.class);
 
     DefaultIndexNavigation(String prefix, DirectoryMetadata dm, QblECKeyPair keyPair, byte[] deviceId,
                            StorageReadBackend readBackend, StorageWriteBackend writeBackend) {

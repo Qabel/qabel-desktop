@@ -10,7 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class LocalReadBackend implements StorageReadBackend {
-    private static final Logger logger = LoggerFactory.getLogger(LocalReadBackend.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(LocalReadBackend.class);
     private final Path root;
 
     public LocalReadBackend(Path root) {

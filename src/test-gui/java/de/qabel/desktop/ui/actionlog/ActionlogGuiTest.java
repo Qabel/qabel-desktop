@@ -42,7 +42,7 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
     }
 
     private List<DropMessage> receiveMessages() {
-        return controller.dropConnector.receive(controller.identity, new Date(0L));
+        return controller.dropConnector.receive(controller.identity, new Date(0L)).dropMessages;
     }
 
     @Test

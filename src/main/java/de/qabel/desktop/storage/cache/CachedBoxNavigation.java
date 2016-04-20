@@ -21,7 +21,7 @@ import java.util.concurrent.Executors;
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.*;
 
 public class CachedBoxNavigation<T extends BoxNavigation> extends Observable implements BoxNavigation, PathNavigation {
-    private static final Logger logger = LoggerFactory.getLogger(CachedBoxNavigation.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(CachedBoxNavigation.class);
     protected final T nav;
     private final BoxNavigationCache<CachedBoxNavigation> cache = new BoxNavigationCache<>();
     private final Path path;

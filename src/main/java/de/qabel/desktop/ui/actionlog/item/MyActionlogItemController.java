@@ -2,8 +2,8 @@ package de.qabel.desktop.ui.actionlog.item;
 
 import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.ui.AbstractController;
-import de.qabel.desktop.ui.actionlog.item.renderer.MessageRenderer;
-import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory;
+import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRenderer;
+import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRendererFactory;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -17,8 +17,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class MyActionlogItemController extends AbstractController implements Initializable, ActionlogItem {
-    ResourceBundle resourceBundle;
-
     @FXML
     Pane messageContainer;
     @FXML
@@ -27,13 +25,13 @@ public class MyActionlogItemController extends AbstractController implements Ini
     @Inject
     private DropMessage dropMessage;
     @Inject
-    MessageRendererFactory messageRendererFactory;
+    FXMessageRendererFactory messageRendererFactory;
 
     PrettyTime p;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        MessageRenderer renderer = messageRendererFactory.getRenderer(dropMessage.getDropPayloadType());
+        FXMessageRenderer renderer = messageRendererFactory.getRenderer(dropMessage.getDropPayloadType());
         Node renderedMessage = renderer.render(dropMessage.getDropPayload(), resources);
         renderedMessage.getStyleClass().add("sent");
         messageContainer.getChildren().addAll(renderedMessage);

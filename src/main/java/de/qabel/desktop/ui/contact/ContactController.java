@@ -6,6 +6,7 @@ import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.IdentityRepository;
+import de.qabel.desktop.repository.TransactionManager;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
@@ -67,6 +68,9 @@ public class ContactController extends AbstractController implements Initializab
 
     @Inject
     private IdentityRepository identityRepository;
+
+    @Inject
+    private TransactionManager transactionManager;
 
     List<ContactItemController> contactItems = new LinkedList<>();
 
@@ -240,18 +244,20 @@ public class ContactController extends AbstractController implements Initializab
     void importContacts(File file) throws IOException, URISyntaxException, QblDropInvalidURL, PersistenceException, JSONException {
         String content = readFile(file);
         i = clientConfiguration.getSelectedIdentity();
-        try {
-            Contacts contacts = ContactExportImport.parseContactsForIdentity(i, content);
-            for (Contact c : contacts.getContacts()) {
+        transactionManager.transactional(() -> {
+            try {
+                Contacts contacts = ContactExportImport.parseContactsForIdentity(i, content);
+                for (Contact c : contacts.getContacts()) {
+                    contactRepository.save(c, i);
+                }
+            } catch (Exception ignore) {
+                Contact c = ContactExportImport.parseContactForIdentity(content);
                 contactRepository.save(c, i);
             }
-        } catch (Exception ignore) {
-            Contact c = ContactExportImport.parseContactForIdentity(content);
-            contactRepository.save(c, i);
-        }
+        });
     }
 
-    protected void buildGson() throws EntityNotFoundExcepion, PersistenceException {
+    private void buildGson() throws EntityNotFoundExcepion, PersistenceException {
         final GsonBuilder builder = new GsonBuilder();
         builder.serializeNulls();
         Identities ids = identityRepository.findAll();

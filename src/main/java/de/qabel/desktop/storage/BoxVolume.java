@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.UUID;
 
 public class BoxVolume {
-    private static final Logger logger = LoggerFactory.getLogger(BoxVolume.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(BoxVolume.class);
 
     StorageReadBackend readBackend;
     public StorageWriteBackend writeBackend;

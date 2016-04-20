@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 public class FileBasedSyncBlacklist extends PatternBlacklist {
-    private static final Logger logger = LoggerFactory.getLogger(FileBasedSyncBlacklist.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(FileBasedSyncBlacklist.class);
     private static final Pattern TMP_DOWNLOAD_PATTERN = Pattern.compile("\\..*\\.qpart~");
 
     public FileBasedSyncBlacklist(Path patterns) throws IOException {

@@ -19,6 +19,7 @@ import de.qabel.desktop.ui.connector.DropConnector;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
@@ -38,7 +39,7 @@ import static java.lang.Thread.*;
 
 public class ActionlogController extends AbstractController implements Initializable, Observer {
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private static final Logger logger = LoggerFactory.getLogger(ActionlogController.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(ActionlogController.class);
 
     int sleepTime = 60000;
     List<ActionlogItemView> messageView = new LinkedList<>();
@@ -70,15 +71,18 @@ public class ActionlogController extends AbstractController implements Initializ
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        startThreads();
+        startDateRefresher();
         identity = clientConfiguration.getSelectedIdentity();
         dropMessageRepository.addObserver(this);
         clientConfiguration.onSelectIdentity(identity -> this.identity = identity);
         addListener();
     }
 
-    private void startThreads() {
+    public List<PersistenceDropMessage> getReceivedDropMessages() {
+        return receivedDropMessages;
+    }
+
+    private void startDateRefresher() {
         dateRefresher = new Thread(() -> {
             while (true) {
                 messageControllers.forEach(ActionlogItem::refreshDate);
@@ -136,7 +140,7 @@ public class ActionlogController extends AbstractController implements Initializ
                 addMessagesToView(receivedDropMessages);
             } else {
                 List<PersistenceDropMessage> newMessages = dropMessageRepository.loadNewMessagesFromConversation(receivedDropMessages, c, identity);
-                addNewMessagesToReceivedDropMessages(newMessages);
+                receivedDropMessages.addAll(newMessages);
                 addMessagesToView(newMessages);
             }
 
@@ -145,21 +149,9 @@ public class ActionlogController extends AbstractController implements Initializ
         }
     }
 
-    private void addNewMessagesToReceivedDropMessages(List<PersistenceDropMessage> newMessages) {
-        for (PersistenceDropMessage d : newMessages) {
-            if (!d.isSeen()) {
-                d.setSeen(true);
-            }
-            receivedDropMessages.add(d);
-        }
-    }
-
     private void addMessagesToView(List<PersistenceDropMessage> dropMessages) {
-        Platform.runLater(() -> {
-            for (PersistenceDropMessage d : dropMessages) {
-                if (!d.isSeen()) {
-                    d.setSeen(true);
-                }
+        for (PersistenceDropMessage d : dropMessages) {
+            Platform.runLater(() -> {
                 if (d.isSent()) {
                     addOwnMessageToActionlog(d.getDropMessage());
                 } else {
@@ -169,13 +161,32 @@ public class ActionlogController extends AbstractController implements Initializ
                         logger.warn("failed to show message: " + e.getMessage(), e);
                     }
                 }
-            }
-        });
+                markSeen(d);
+            });
+        }
+    }
+
+    private void markSeen(PersistenceDropMessage d) {
+        if (!d.isSeen()) {
+            d.setSeen(true);
+            System.out.println("marked message seen " + d);
+            executor.submit(() -> {
+                try {
+                    dropMessageRepository.save(d);
+                } catch (PersistenceException e) {
+                    logger.error("failed to mark message seen", e);
+                }
+            });
+        }
     }
 
     void addMessageToActionlog(DropMessage dropMessage) throws EntityNotFoundExcepion {
         Map<String, Object> injectionContext = new HashMap<>();
-        Contact sender = contactRepository.findByKeyId(identity, dropMessage.getSenderKeyId());
+        String senderKeyId = dropMessage.getSenderKeyId();
+        if (senderKeyId == null) {
+            senderKeyId = dropMessage.getSender().getKeyIdentifier();
+        }
+        Contact sender = contactRepository.findByKeyId(identity, senderKeyId);
 
         if(sender == null){
             sender = contactRepository.findByKeyId(identity, dropMessage.getSender().getKeyIdentifier());
@@ -208,22 +219,19 @@ public class ActionlogController extends AbstractController implements Initializ
 
     @Override
     public void update(Observable o, Object arg) {
-        if (o instanceof DropMessageRepository) {
-            Platform.runLater(() -> {
-                try {
-                    loadMessages(contact);
-                } catch (EntityNotFoundExcepion e) {
-                    alert(e);
-                }
-            });
+        if (arg instanceof PersistenceDropMessage) {
+            if (contact == null) {
+                throw new IllegalStateException("cannot load messages without contact");
+            }
+            executor.submit(() -> tryOrAlert(() -> loadMessages(contact)));
         }
     }
 
     public void setContact(Contact contact) {
+        receivedDropMessages = null;
+        this.contact = contact;
         executor.submit(() -> {
             try {
-                receivedDropMessages = null;
-                this.contact = contact;
                 loadMessages(this.contact);
             } catch (Exception e) {
                 alert(e);

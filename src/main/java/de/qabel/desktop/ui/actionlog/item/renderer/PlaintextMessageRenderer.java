@@ -6,11 +6,16 @@ import javafx.scene.control.Label;
 
 import java.util.ResourceBundle;
 
-public class PlaintextMessageRenderer implements MessageRenderer {
+public class PlaintextMessageRenderer implements FXMessageRenderer {
     @Override
     public Node render(String dropPayload, ResourceBundle resourceBundle) {
-        Label label = new Label(TextMessage.fromJson(dropPayload).getText());
+        Label label = new Label(renderString(dropPayload, resourceBundle));
         label.getStyleClass().add("message-text");
         return label;
+    }
+
+    @Override
+    public String renderString(String dropPayload, ResourceBundle resourceBundle) {
+        return TextMessage.fromJson(dropPayload).getText();
     }
 }

@@ -5,6 +5,7 @@ import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.exceptions.QblNetworkInvalidResponseException;
 import de.qabel.desktop.ui.connector.DropConnector;
+import de.qabel.desktop.ui.connector.DropPollResponse;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.List;
 
 
 public class InMemoryHttpDropConnector implements DropConnector {
+    private Date date = new Date();
 
     HashMap<String, List<DropMessage>> contactLists = new HashMap<>();
 
@@ -28,11 +30,11 @@ public class InMemoryHttpDropConnector implements DropConnector {
     }
 
     @Override
-    public List<DropMessage> receive(Identity i, Date siceDate) {
+    public DropPollResponse receive(Identity i, Date siceDate) {
         List<DropMessage> lst = contactLists.get(i.getKeyIdentifier());
         if(lst == null){
-            return new LinkedList<>();
+            return new DropPollResponse(new LinkedList<>(), date);
         }
-        return contactLists.get(i.getKeyIdentifier());
+        return new DropPollResponse(contactLists.get(i.getKeyIdentifier()), date);
     }
 }

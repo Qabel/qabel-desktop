@@ -20,8 +20,13 @@ public class InMemoryContactRepository implements ContactRepository {
         if(contacts == null){
             contacts = new Contacts(identity);
         }
-        contacts.put(contact);
-        contactsMap.put(identity.getKeyIdentifier(), contacts);
+        try {
+            findByKeyId(identity, contact.getKeyIdentifier());
+            throw new PersistenceException("cannot persist already persisted contact");
+        } catch (EntityNotFoundExcepion e) {
+            contacts.put(contact);
+            contactsMap.put(identity.getKeyIdentifier(), contacts);
+        }
     }
 
     @Override
@@ -33,7 +38,11 @@ public class InMemoryContactRepository implements ContactRepository {
     @Override
     public Contact findByKeyId(Identity identity, String keyId) throws EntityNotFoundExcepion {
         Contacts contacts = find(identity);
-        return contacts.getByKeyIdentifier(keyId);
+        Contact contact = contacts.getByKeyIdentifier(keyId);
+        if (contact == null) {
+            throw new EntityNotFoundExcepion("no contact found for keyId " + keyId);
+        }
+        return contact;
     }
 
     @Override
@@ -43,7 +52,7 @@ public class InMemoryContactRepository implements ContactRepository {
             contacts = new Contacts(identity);
             contactsMap.put(identity.getKeyIdentifier(), contacts);
         }
-        return contactsMap.get(identity.getKeyIdentifier());
+        return  contactsMap.get(identity.getKeyIdentifier());
     }
 
 

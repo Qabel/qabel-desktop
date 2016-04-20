@@ -2,7 +2,6 @@ package de.qabel.desktop.ui.actionlog;
 
 import de.qabel.core.config.Contact;
 import de.qabel.core.crypto.QblECKeyPair;
-import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.repository.Stub.StubDropMessageRepository;
 import de.qabel.desktop.ui.AbstractControllerTest;
@@ -12,7 +11,6 @@ import org.junit.Test;
 import java.util.LinkedList;
 import java.util.List;
 
-import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.junit.Assert.*;
 
 public class ActionlogTest extends AbstractControllerTest {

@@ -8,6 +8,7 @@ import de.qabel.core.drop.DropURL;
 import de.qabel.core.exceptions.*;
 import de.qabel.desktop.daemon.drop.TextMessage;
 import de.qabel.desktop.repository.DropMessageRepository;
+import de.qabel.desktop.repository.Stub.StubDropMessageRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractControllerTest;
@@ -35,6 +36,7 @@ public class ActionlogControllerTest extends AbstractControllerTest {
     Contact c;
     String text = "MessageString";
     DropMessage dm;
+    StubDropMessageRepository repo;
 
     @Test
     public void addMessageToActionlogTest() throws Exception {
@@ -53,8 +55,10 @@ public class ActionlogControllerTest extends AbstractControllerTest {
     public void marksSeenMessages() throws Exception {
         controller.setContact(c);
         waitUntil(() -> controller.contact == c);
-        dropMessageRepository.addMessage(dm, c, i, false);
-        waitUntil(() -> dropMessageRepository.lastMessage.isSeen());
+        PersistenceDropMessage message = new PersistenceDropMessage(dm, c, i, false, false);
+        System.out.println("saving message " + message);
+        dropMessageRepository.save(message);
+        waitUntil(message::isSeen, 10000L); // is done in cascaded async calls => higher timeout
     }
 
     @Test
@@ -106,10 +110,13 @@ public class ActionlogControllerTest extends AbstractControllerTest {
     @Override
     @Before
     public void setUp() throws Exception {
+        repo = new StubDropMessageRepository();
+        dropMessageRepository = repo;
         super.setUp();
         i = identityBuilderFactory.factory().withAlias("TestAlias").build();
         c = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
         createController(i);
+        controller.setContact(c);
         controller = (ActionlogController) view.getPresenter();
 
         dm = new DropMessage(c, new TextMessage(text).toJson(), DropMessageRepository.PAYLOAD_TYPE_MESSAGE);

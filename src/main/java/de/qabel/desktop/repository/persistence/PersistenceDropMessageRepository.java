@@ -15,7 +15,7 @@ import java.util.*;
 
 
 public class PersistenceDropMessageRepository extends AbstractCachedPersistenceRepository<PersistenceDropMessage> implements DropMessageRepository {
-    private static final Logger logger = LoggerFactory.getLogger(PersistenceDropMessageRepository.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(PersistenceDropMessageRepository.class);
 
     public PersistenceDropMessageRepository(Persistence<String> persistence) {
         super(persistence);

@@ -29,7 +29,7 @@ import java.net.URL;
 import java.util.*;
 
 public class LoginController extends AbstractController implements Initializable {
-    private static final Logger logger = LoggerFactory.getLogger(LoginController.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     @FXML
     ChoiceBox<String> providerChoices;
@@ -88,6 +88,7 @@ public class LoginController extends AbstractController implements Initializable
     public void initialize(URL location, ResourceBundle resources) {
         List<String> providerList = new LinkedList<>();
         providerList.add("https://accounting.qabel.org");
+        providerList.add("http://localhost:9696");
         ObservableList<String> providers = new ObservableListWrapper<>(providerList);
         providerChoices.setItems(providers);
         providerChoices.setValue(accountUrl);
@@ -97,6 +98,8 @@ public class LoginController extends AbstractController implements Initializable
         buttonBar.managedProperty().bind(buttonBar.visibleProperty());
         resourceBundle = resources;
 
+        confirm.visibleProperty().bindBidirectional(confirm.managedProperty());
+        email.visibleProperty().bindBidirectional(email.managedProperty());
 
         if (config.hasAccount()) {
             Account account = config.getAccount();

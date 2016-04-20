@@ -18,7 +18,7 @@ import java.util.WeakHashMap;
 public class FolderNavigation extends AbstractNavigation {
     private Map<Integer, String> directoryMetadataMHashes = new WeakHashMap<>();
 
-    private static final Logger logger = LoggerFactory.getLogger(FolderNavigation.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(FolderNavigation.class);
 
     private final byte[] key;
 

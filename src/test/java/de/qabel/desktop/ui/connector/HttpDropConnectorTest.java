@@ -73,15 +73,18 @@ public class HttpDropConnectorTest extends AbstractControllerTest {
         c = new Contact(identity.getAlias(), collection, identity.getEcPublicKey());
 
         DropMessage dropMessage = new DropMessage(identity, text, type);
-        List<DropMessage> oldMessages = connector.receive(identity, sinceDate);
+        DropPollResponse oldMessages = connector.receive(identity, sinceDate);
 
         connector.send(c, dropMessage);
-        List<DropMessage> messages = connector.receive(identity, sinceDate);
+        DropPollResponse messages = connector.receive(identity, sinceDate);
 
-        assertEquals(oldMessages.size()+1, messages.size());
-        assertEquals(text, messages.get(messages.size()-1).getDropPayload());
-        assertEquals(type, messages.get(messages.size()-1).getDropPayloadType());
-        assertEquals(c.getEcPublicKey().getReadableKeyIdentifier(), messages.get(messages.size()-1).getSenderKeyId());
+        assertEquals(oldMessages.dropMessages.size()+1, messages.dropMessages.size());
+        assertEquals(text, messages.dropMessages.get(messages.dropMessages.size()-1).getDropPayload());
+        assertEquals(type, messages.dropMessages.get(messages.dropMessages.size()-1).getDropPayloadType());
+        assertEquals(
+            c.getEcPublicKey().getReadableKeyIdentifier(),
+            messages.dropMessages.get(messages.dropMessages.size()-1).getSenderKeyId()
+        );
     }
 
     @Test(timeout = 1000L)

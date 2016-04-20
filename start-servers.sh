@@ -37,8 +37,7 @@ echo "installing dependencies..."
 pip install -q -U pip
 pip install -q -r requirements.txt
 if [ ! -d config.py ]; then
-  cp config.py.example config.py
-  sed --in-place "s/'qabel_drop'/'qabel_drop','host':'localhost','port':'5432','username':'qabel','password':'qabel_test'/" config.py
+  cp drop_server/config.py.example drop_server/config.py
 fi
 python manage.py create_db
 python manage.py runserver --host 0.0.0.0 --port 5000 > drop.log 2>&1 &

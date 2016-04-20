@@ -5,6 +5,7 @@ import de.qabel.core.config.Identities;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
+import de.qabel.desktop.repository.inmemory.InMemoryIdentityRepository;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +19,7 @@ public class AccountingGuiTest extends AbstractGuiTest<AccountingController> {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        identityRepository.clear();
+        ((InMemoryIdentityRepository)identityRepository).clear();
         page = new AccountingPage(baseFXRobot, robot, controller);
     }
 

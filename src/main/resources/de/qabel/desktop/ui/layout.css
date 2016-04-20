@@ -28,14 +28,13 @@
 }
 
 .navi .navi-item.active {
-    -fx-padding: 0px 0px 0px 0px;
 }
 
 .navi .button {
     -fx-pref-width: 220px;
     -fx-cursor: hand;
     -fx-border-radius: 0, 0, 0, 0;
-    -fx-padding: 10px 10 5px 45px;
+    -fx-padding: 10px 10 10px 45px;
     -fx-background-radius: 0;
     -fx-background-color: transparent;
     -fx-text-fill: white;
@@ -64,17 +63,22 @@
     -fx-text-fill: white;
 }
 
+.navi .navi-item.active {
+    -fx-background-color: white;
+}
+
 .navi .navi-item.active .button {
     -fx-font-weight: bold;
     -fx-text-fill: #ff690f;
-    -fx-background-radius: 0;
-    -fx-width: 220px;
-    -fx-pref-width: 220px;
-    -fx-max-width: 220px;
-    -fx-background-color: white;
-    -fx-padding: 10px 10 5px 65px;
-    -fx-alignment: CENTER_LEFT;
-    -fx-font-size: 1.2em;
+}
+
+.navi-item .indicator {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #222222;
+}
+.navi-item.active .indicator {
+    -fx-background-color: #222222;
+    -fx-text-fill: #ffffff;
 }
 
 .scroll-pane {

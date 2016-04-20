@@ -1,12 +1,11 @@
 package de.qabel.desktop.ui.contact;
 
-import de.qabel.core.config.Account;
-import de.qabel.core.config.Contact;
-import de.qabel.core.config.Contacts;
-import de.qabel.core.config.Identity;
+import de.qabel.core.config.*;
 import de.qabel.core.crypto.QblECKeyPair;
+import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.exceptions.QblDropInvalidURL;
+import de.qabel.desktop.repository.Stub.StubDropMessageRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractControllerTest;
@@ -18,14 +17,15 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
 import static de.qabel.desktop.AsyncUtils.waitUntil;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class ContactControllerTest extends AbstractControllerTest {
 
@@ -149,8 +149,29 @@ public class ContactControllerTest extends AbstractControllerTest {
         dropMessageRepository.addMessage(new DropMessage(contact, "a", "b"), contact, identity, false);
         waitUntil(() -> controller.contactItems.get(0).getIndicator().isVisible());
 
-        dropMessageRepository.lastMessage.setSeen(true);
+        ((StubDropMessageRepository)dropMessageRepository).lastMessage.setSeen(true);
         waitUntil(() -> !controller.contactItems.get(0).getIndicator().isVisible());
+    }
+
+    @Test
+    public void importValidContactAfterFailedImport() throws Exception {
+        Contact contact1 = new Contact("one", new HashSet<>(), new QblECPublicKey("one".getBytes()));
+        Contact contact2 = new Contact("two", new HashSet<>(), new QblECPublicKey("two".getBytes()));
+
+        Path c1 = Files.createTempFile("testcontact", "one");
+        Path c2 = Files.createTempFile("testcontact", "two");
+        Files.write(c1, ContactExportImport.exportContact(contact1).getBytes());
+        Files.write(c2, ContactExportImport.exportContact(contact2).getBytes());
+
+        controller = getController();
+        controller.importContacts(c1.toFile());
+        try {
+            controller.importContacts(c1.toFile());
+            fail("duplicate import failed, cannot continue test");
+        } catch (Exception ignored) {}
+
+        controller.importContacts(c2.toFile());
+        assertEquals(2, contactRepository.find(identity).getContacts().size());
     }
 
     private Contact getContact(String name) throws PersistenceException {

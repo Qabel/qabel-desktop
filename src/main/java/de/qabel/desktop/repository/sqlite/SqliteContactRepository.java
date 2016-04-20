@@ -48,7 +48,7 @@ public class SqliteContactRepository extends AbstractSqliteRepository<Contact> i
             "SELECT " + String.join(",", hydrator.getFields("c")) + " " +
             "FROM contact c " +
             "JOIN identity_contacts ic ON (c.id = ic.contact_id) " +
-            "JOIN identity i ON (ic.id = i.id) " +
+            "JOIN identity i ON (ic.identity_id = i.id) " +
             "JOIN contact c2 ON (i.contact_id = c2.id) " +
             "WHERE c2.publicKey = ?"
         )) {
@@ -91,27 +91,31 @@ public class SqliteContactRepository extends AbstractSqliteRepository<Contact> i
     }
 
     private void insert(Contact contact, Identity identity) throws SQLException {
-        try (PreparedStatement statement = database.prepare(
-            "INSERT INTO contact (publicKey, alias, phone, email) VALUES (?, ?, ?, ?)"
-        )) {
-            int i = 1;
-            statement.setString(i++, contact.getKeyIdentifier());
-            statement.setString(i++, contact.getAlias());
-            statement.setString(i++, contact.getPhone());
-            statement.setString(i++, contact.getEmail());
-            statement.execute();
-            try (ResultSet keys = statement.getGeneratedKeys()) {
-                keys.next();
-                contact.setId(keys.getInt(1));
+        try {
+            Contact existing = findBy("publicKey=?", contact.getKeyIdentifier());
+            contact.setId(existing.getId());
+        } catch (PersistenceException | EntityNotFoundExcepion e) {
+            try (PreparedStatement statement = database.prepare(
+                "INSERT INTO contact (publicKey, alias, phone, email) VALUES (?, ?, ?, ?)"
+            )) {
+                int i = 1;
+                statement.setString(i++, contact.getKeyIdentifier());
+                statement.setString(i++, contact.getAlias());
+                statement.setString(i++, contact.getPhone());
+                statement.setString(i++, contact.getEmail());
+                statement.execute();
+                try (ResultSet keys = statement.getGeneratedKeys()) {
+                    keys.next();
+                    contact.setId(keys.getInt(1));
+                }
             }
         }
-
         insertConnection(contact, identity);
     }
 
     private void insertConnection(Contact contact, Identity identity) throws SQLException {
         try (PreparedStatement statement = database.prepare(
-            "INSERT INTO identity_contacts (identity_id, contact_id) VALUES (?, ?)"
+            "INSERT OR IGNORE INTO identity_contacts (identity_id, contact_id) VALUES (?, ?)"
         )) {
             int i = 1;
             statement.setInt(i++, identity.getId());

@@ -6,10 +6,13 @@ import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.daemon.management.MonitoredTransferManager;
 import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.daemon.management.WindowedTransactionGroup;
+import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.ui.about.AboutView;
 import de.qabel.desktop.ui.accounting.AccountingView;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
+import de.qabel.desktop.ui.actionlog.Actionlog;
 import de.qabel.desktop.ui.actionlog.ActionlogView;
+import de.qabel.desktop.ui.actionlog.FxActionlog;
 import de.qabel.desktop.ui.contact.ContactView;
 import de.qabel.desktop.ui.feedback.FeedbackView;
 import de.qabel.desktop.ui.invite.InviteView;
@@ -53,7 +56,7 @@ public class LayoutController extends AbstractController implements Initializabl
     private VBox scrollContent;
 
     @FXML
-    private HBox activeNavItem;
+    private NaviItem activeNavItem;
 
     @FXML
     private Pane avatarContainer;
@@ -94,11 +97,14 @@ public class LayoutController extends AbstractController implements Initializabl
     @Inject
     private TransferManager transferManager;
 
-    private HBox browseNav;
-    private HBox contactsNav;
-    private HBox syncNav;
-    private HBox accountingNav;
-    private HBox aboutNav;
+    @Inject
+    private DropMessageRepository dropMessageRepository;
+
+    NaviItem browseNav;
+    NaviItem contactsNav;
+    NaviItem syncNav;
+    NaviItem accountingNav;
+    NaviItem aboutNav;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -157,6 +163,11 @@ public class LayoutController extends AbstractController implements Initializabl
         createButtonGraphics();
 
         new OfflineView().getViewAsync(window.getChildren()::add);
+
+        FxActionlog log = new FxActionlog(new Actionlog(dropMessageRepository));
+        Indicator newMessageIndicator = contactsNav.getIndicator();
+        newMessageIndicator.textProperty().bind(log.unseenMessageCountProperty().asString());
+        newMessageIndicator.visibleProperty().bind(newMessageIndicator.textProperty().isNotEqualTo("0"));
     }
 
     private void createButtonGraphics() {
@@ -242,10 +253,9 @@ public class LayoutController extends AbstractController implements Initializabl
         mail.setText(clientConfiguration.getAccount().getUser());
     }
 
-    private HBox createNavItem(String label, FXMLView view) {
-        Button button = new Button(label);
-        HBox naviItem = new HBox(button);
-        button.setOnAction(e -> {
+    private NaviItem createNavItem(String label, FXMLView view) {
+        NaviItem naviItem = new NaviItem(label, view);
+        naviItem.setOnAction(e -> {
             try {
                 scrollContent.getChildren().setAll(view.getView());
                 setActiveNavItem(naviItem);
@@ -254,15 +264,14 @@ public class LayoutController extends AbstractController implements Initializabl
                 alert(exception.getMessage(), exception);
             }
         });
-        naviItem.getStyleClass().add("navi-item");
         return naviItem;
     }
 
-    private void setActiveNavItem(HBox naviItem) {
+    private void setActiveNavItem(NaviItem naviItem) {
         if (activeNavItem != null) {
-            activeNavItem.getStyleClass().remove("active");
+            activeNavItem.setActive(false);
         }
-        naviItem.getStyleClass().add("active");
+        naviItem.setActive(true);
         activeNavItem = naviItem;
     }
 

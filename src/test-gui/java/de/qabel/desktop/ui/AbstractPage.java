@@ -42,7 +42,7 @@ public class AbstractPage {
 
     private boolean hasMoved(Node node, double x, double y) {
         PointQuery point = robot.point(node);
-        return point.getPosition().getX() == x && point.getPosition().getY() == y;
+        return point.getPosition().getX() != x || point.getPosition().getY() != y;
     }
 
     protected FxRobot clickOn(Node node) {

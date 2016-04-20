@@ -5,6 +5,8 @@ import de.qabel.core.config.Identity;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.drop.DropMessage;
+import de.qabel.desktop.config.factory.DropUrlGenerator;
+import de.qabel.desktop.config.factory.IdentityBuilder;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.EntityManager;
@@ -23,7 +25,7 @@ import static org.junit.Assert.*;
 public class SqliteDropMessageRepositoryTest extends AbstractSqliteRepositoryTest<DropMessageRepository> {
     private IdentityRepository identityRepository;
     private ContactRepository contactRepository;
-    private Identity identity = new Identity("identity", new HashSet<>(), new QblECKeyPair());
+    private Identity identity;
     private Contact contact = new Contact("contact", new HashSet<>(), new QblECPublicKey("key".getBytes()));
     private DropMessage drop;
     private PersistenceDropMessage message;
@@ -40,6 +42,7 @@ public class SqliteDropMessageRepositoryTest extends AbstractSqliteRepositoryTes
     @Override
     public void setUp() throws Exception {
         super.setUp();
+        identity = new IdentityBuilder(new DropUrlGenerator("http://localhost:5000")).withAlias("identity").build();
         identityRepository.save(identity);
         contactRepository.save(contact, identity);
         drop = new DropMessage(contact, "payload", "type");
@@ -92,6 +95,7 @@ public class SqliteDropMessageRepositoryTest extends AbstractSqliteRepositoryTes
         assertSame(contact, loaded.getSender());
         assertEquals(false, loaded.isSent());
         assertEquals(true, loaded.isSeen());
+        assertEquals(contact.getKeyIdentifier(), loaded.getDropMessage().getSenderKeyId());
     }
 
     private List<PersistenceDropMessage> loadConversation() throws PersistenceException {

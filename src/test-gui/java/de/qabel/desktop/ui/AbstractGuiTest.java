@@ -36,7 +36,6 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
             diContainer.put("primaryStage", stage);
         });
 
-
         Object presenter = launchNode(getView());
         controller = (T) presenter;
     }
@@ -73,6 +72,18 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
                 return false;
             }
         }, 10000L);
+
+        double x = -1;
+        double y = -1;
+        while(hasMoved(sceneNode, x, y)) {
+            Point2D position = robot.point(sceneNode).getPosition();
+            x = position.getX();
+            y = position.getY();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ignored) {
+            }
+        }
     }
 
     protected int getHeight() {
@@ -107,7 +118,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
     @Deprecated
     private boolean hasMoved(Node node, double x, double y) {
         PointQuery point = robot.point(node);
-        return point.getPosition().getX() == x && point.getPosition().getY() == y;
+        return point.getPosition().getX() != x || point.getPosition().getY() != y;
     }
 
     /**

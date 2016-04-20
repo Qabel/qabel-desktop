@@ -4,6 +4,7 @@ import de.qabel.desktop.SharingService;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.exceptions.QblStorageNotFound;
 import de.qabel.desktop.storage.AuthenticatedDownloader;
+import de.qabel.desktop.storage.BoxFile;
 import de.qabel.desktop.storage.BoxObject;
 import javafx.application.Platform;
 import javafx.scene.Node;
@@ -17,7 +18,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ShareNotificationRenderer implements MessageRenderer {
+public class ShareNotificationRenderer implements FXMessageRenderer {
     private static final ExecutorService renderExecutor = Executors.newSingleThreadExecutor();
     private AuthenticatedDownloader downloader;
     private SharingService sharingService;
@@ -61,5 +62,20 @@ public class ShareNotificationRenderer implements MessageRenderer {
             });
 
         return result;
+    }
+
+    @Override
+    public String renderString(String dropPayload, ResourceBundle resourceBundle) {
+        ShareNotificationMessage message = ShareNotificationMessage.fromJson(dropPayload);
+        String filename;
+        try {
+            BoxObject file = sharingService.loadFileMetadata(message, downloader);
+            filename = file.getName();
+        } catch (QblStorageNotFound e) {
+            filename = resourceBundle.getString("sharedFileNoLongerAvailable");
+        } catch (Exception e) {
+            filename = resourceBundle.getString("remoteFileFailedToFetchShareMetadata");
+        }
+        return filename + "\n(\"" + message.getMsg() + "\")";
     }
 }

@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class VirtualShareTreeItem extends TreeItem<BoxObject> {
-    private static Logger logger = LoggerFactory.getLogger(VirtualShareTreeItem.class.getSimpleName());
+    private static Logger logger = LoggerFactory.getLogger(VirtualShareTreeItem.class);
     private boolean initialized;
     private static ExecutorService executorService = Executors.newSingleThreadExecutor();
     private ShareNotifications notifications;
