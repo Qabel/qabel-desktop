@@ -29,7 +29,7 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 public abstract class BoxVolumeTest {
-    private static final Logger logger = LoggerFactory.getLogger(BoxVolumeTest.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(BoxVolumeTest.class);
     private final String DEFAULT_UPLOAD_FILENAME = "foobar";
 
     protected BoxVolume volume;

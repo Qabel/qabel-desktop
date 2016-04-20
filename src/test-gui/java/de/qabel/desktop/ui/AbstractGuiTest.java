@@ -36,7 +36,6 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
             diContainer.put("primaryStage", stage);
         });
 
-
         Object presenter = launchNode(getView());
         controller = (T) presenter;
     }

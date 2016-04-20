@@ -18,6 +18,7 @@ public class FxActionlog {
         this.actionlog = actionlog;
 
         actionlog.addObserver(this::update);
+        unseenMessageCount.setValue(actionlog.getUnseenMessageCount());
     }
 
     public void onNewMessage(Consumer<PersistenceDropMessage> message) {

@@ -78,7 +78,11 @@ public class ContactItemController extends AbstractController implements Initial
         updateAvatar();
 
         indicator.setVisible(false);
-        final FxActionlog actionlog = new FxActionlog(new ContactActionLog(contact, dropMessageRepository));
+        final FxActionlog actionlog = new FxActionlog(new ContactActionLog(
+            clientConfiguration.getSelectedIdentity(),
+            contact,
+            dropMessageRepository
+        ));
 
         indicator.visibleProperty().bind(indicator.textProperty().isNotEqualTo("0"));
         indicator.textProperty().bind(actionlog.unseenMessageCountAsStringProperty());

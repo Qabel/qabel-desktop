@@ -29,7 +29,7 @@ import java.net.URL;
 import java.util.*;
 
 public class LoginController extends AbstractController implements Initializable {
-    private static final Logger logger = LoggerFactory.getLogger(LoginController.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     @FXML
     ChoiceBox<String> providerChoices;

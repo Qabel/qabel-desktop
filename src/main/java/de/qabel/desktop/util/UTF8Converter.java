@@ -14,7 +14,7 @@ import java.util.ResourceBundle;
 
 
 public class UTF8Converter extends ResourceBundle.Control {
-    private static final Logger logger = LoggerFactory.getLogger(UTF8Converter.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(UTF8Converter.class);
 
     @Override
     public ResourceBundle newBundle

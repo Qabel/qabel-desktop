@@ -30,14 +30,15 @@ import org.junit.Before;
 import java.util.function.Function;
 
 public class AbstractControllerTest extends AbstractFxTest {
+    protected TransactionManager transactionManager = new InMemoryTransactionManager();
     protected ServiceFactory diContainer = new DefaultServiceFactory();
-    protected InMemoryIdentityRepository identityRepository = new InMemoryIdentityRepository();
+    protected IdentityRepository identityRepository = new InMemoryIdentityRepository();
     protected ClientConfig clientConfiguration;
     protected IdentityBuilderFactory identityBuilderFactory;
     protected ContactRepository contactRepository = new InMemoryContactRepository();
     protected DefaultTransferManager loadManager;
     protected BoxVolumeFactoryStub boxVolumeFactory;
-    protected StubDropMessageRepository dropMessageRepository = new StubDropMessageRepository();
+    protected DropMessageRepository dropMessageRepository = new StubDropMessageRepository();
     protected DropConnector httpDropConnector = new InMemoryHttpDropConnector();
     protected StubCrashReportHandler crashReportHandler = new StubCrashReportHandler();
     protected SharingService sharingService = new BlockSharingService(dropMessageRepository, httpDropConnector);
@@ -79,7 +80,7 @@ public class AbstractControllerTest extends AbstractFxTest {
         diContainer.put("networkStatus", networkStatus);
         diContainer.put("boxSyncConfigRepository", boxSyncRepository);
         diContainer.put("boxSyncRepository", boxSyncRepository);
-        diContainer.put("transactionManager", new InMemoryTransactionManager());
+        diContainer.put("transactionManager", transactionManager);
         FXMessageRendererFactory FXMessageRendererFactory = new FXMessageRendererFactory();
         FXMessageRendererFactory.setFallbackRenderer(new PlaintextMessageRenderer());
         diContainer.put("messageRendererFactory", FXMessageRendererFactory);

@@ -47,5 +47,4 @@ public class ContactGuiTest extends AbstractGuiTest<ContactController> {
     public void testDummyContact() throws Exception {
         assertEquals(1, controller.contactList.getChildren().size());
     }
-
 }

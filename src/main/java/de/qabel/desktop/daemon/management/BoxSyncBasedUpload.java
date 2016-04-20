@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
 public class BoxSyncBasedUpload extends AbstractBoxSyncBasedTransaction implements Upload {
-    public static Logger logger = LoggerFactory.getLogger(BoxSyncBasedUpload.class.getSimpleName());
+    public static Logger logger = LoggerFactory.getLogger(BoxSyncBasedUpload.class);
 
     private long stagingDelayMills = TimeUnit.SECONDS.toMillis(2);
 

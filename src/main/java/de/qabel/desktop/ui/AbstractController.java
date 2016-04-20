@@ -53,7 +53,7 @@ public class AbstractController {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> alert(message, e));
         }
-        LoggerFactory.getLogger(getClass().getSimpleName()).error(message, e);
+        LoggerFactory.getLogger(getClass()).error(message, e);
         e.printStackTrace();
 
         CrashReportAlert alert = new CrashReportAlert(reportHandler, message, e);

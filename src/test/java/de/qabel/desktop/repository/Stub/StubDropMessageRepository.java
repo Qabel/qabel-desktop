@@ -17,23 +17,23 @@ public class StubDropMessageRepository extends Observable implements DropMessage
 
     @Override
     public void addMessage(DropMessage dropMessage, Entity from, Entity to, boolean send) throws PersistenceException {
-        PersistenceDropMessage pdm = new PersistenceDropMessage(dropMessage,from, to,send, send);
+        PersistenceDropMessage pdm = new PersistenceDropMessage(dropMessage,from, to, send, send);
+        save(pdm);
+    }
+
+    @Override
+    public void save(PersistenceDropMessage pdm) throws PersistenceException {
         lastMessage = pdm;
 
-        List<PersistenceDropMessage> lst = messagesMap.get(to.getKeyIdentifier());
+        List<PersistenceDropMessage> lst = messagesMap.get(pdm.getReceiver().getKeyIdentifier());
         if(lst == null){
             lst = new LinkedList<>();
             lst.add(pdm);
         }
-        messagesMap.put(to.getKeyIdentifier(), lst);
+        messagesMap.put(pdm.getReceiver().getKeyIdentifier(), lst);
 
         setChanged();
         notifyObservers(pdm);
-    }
-
-    @Override
-    public void save(PersistenceDropMessage message) throws PersistenceException {
-        addMessage(message.getDropMessage(), message.getSender(), message.getReceiver(), message.isSent());
     }
 
     @Override

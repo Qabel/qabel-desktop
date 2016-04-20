@@ -9,7 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class DeleteOnCloseFileInputStream extends FileInputStream {
-    private static final Logger logger = LoggerFactory.getLogger(DeleteOnCloseFileInputStream.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(DeleteOnCloseFileInputStream.class);
     private final File file;
 
     public DeleteOnCloseFileInputStream(String name) throws FileNotFoundException {

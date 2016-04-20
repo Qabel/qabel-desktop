@@ -13,7 +13,7 @@ import java.sql.Statement;
 
 public abstract class AbstractMetadata {
     public static final int TYPE_NONE = -1;
-    protected static final Logger logger = LoggerFactory.getLogger(DirectoryMetadata.class.getSimpleName());
+    protected static final Logger logger = LoggerFactory.getLogger(DirectoryMetadata.class);
     protected static final String JDBC_PREFIX = "jdbc:sqlite:";
     protected final Connection connection;
     protected File tempDir;

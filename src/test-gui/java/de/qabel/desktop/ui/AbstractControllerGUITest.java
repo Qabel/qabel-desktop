@@ -17,11 +17,11 @@ public class AbstractControllerGUITest extends AbstractGuiTest<AlertTestControll
 
     @Test
     public void
-    testAlertDialog() {
+    testAlertDialog() throws Exception {
         Platform.runLater(() -> controller.alert("some error message", new Exception("exceptionmessage")));
         waitUntil(() -> controller.alert != null);
         waitUntil(() -> controller.alert.getExceptionLabel() != null);
-
+        waitForNode(".feedback");
         CrashReportAlert alert = controller.alert;
         try {
             waitTillTheEnd(alert.getAlert().getDialogPane());

@@ -78,6 +78,7 @@ public class DropMessageHydrator extends AbstractHydrator<PersistenceDropMessage
         }
 
         PersistenceDropMessage messsage = new PersistenceDropMessage(drop, sender, receiver, sent, seen);
+        messsage.setId(id);
         recognize(messsage);
         return messsage;
     }

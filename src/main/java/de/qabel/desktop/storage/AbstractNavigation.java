@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractNavigation implements BoxNavigation {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private static final Logger logger = LoggerFactory.getLogger(AbstractNavigation.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(AbstractNavigation.class);
     public static final String BLOCKS_PREFIX = "blocks/";
 
     @Deprecated
@@ -461,7 +461,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
             }
         });
         if (!(boxObject instanceof BoxFile)) {
-            throw new NotImplementedException("unshare not implemented for " + boxObject.getClass().getSimpleName());
+            throw new NotImplementedException("unshare not implemented for " + boxObject.getClass());
         }
         removeFileMetadata((BoxFile) boxObject);
         autocommit();

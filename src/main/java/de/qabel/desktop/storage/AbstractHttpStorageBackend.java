@@ -11,7 +11,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class AbstractHttpStorageBackend {
-    protected static final Logger logger = LoggerFactory.getLogger(AbstractHttpStorageBackend.class.getSimpleName());
+    protected static final Logger logger = LoggerFactory.getLogger(AbstractHttpStorageBackend.class);
     // Number of http connections to S3
     // The default was too low, 20 works. Further testing may be required
     // to find the best amount of connections.

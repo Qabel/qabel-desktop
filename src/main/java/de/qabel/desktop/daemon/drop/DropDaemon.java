@@ -25,7 +25,7 @@ public class DropDaemon implements Runnable {
     private ContactRepository contactRepository;
     private DropMessageRepository dropMessageRepository;
     private long sleepTime = 10000L;
-    private static final Logger logger = LoggerFactory.getLogger(DropDaemon.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(DropDaemon.class);
 
     public DropDaemon(ClientConfig config,
                       DropConnector httpDropConnector,
@@ -67,12 +67,12 @@ public class DropDaemon implements Runnable {
         try {
             dropMessages = httpDropConnector.receive(identity, lastDate);
         } catch (NullPointerException e) {
+            logger.warn("failed to receive dropMessage " + e.getMessage(), e);
             return;
         }
         Contact sender;
 
         for (DropMessage d : dropMessages) {
-
             lastDate = config.getLastDropPoll(identity);
             if (lastDate.getTime() < d.getCreationDate().getTime()) {
                 try {
