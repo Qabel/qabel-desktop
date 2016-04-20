@@ -16,6 +16,9 @@ import org.junit.Test;
 
 import java.util.*;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
 
 public class SqliteContactRepositoryTest extends AbstractSqliteRepositoryTest<SqliteContactRepository> {
@@ -202,5 +205,14 @@ public class SqliteContactRepositoryTest extends AbstractSqliteRepositoryTest<Sq
         repo.save(newImport, otherIdentity);
         repo.findByKeyId(otherIdentity, contact.getKeyIdentifier());
         repo.findByKeyId(identity, contact.getKeyIdentifier());
+    }
+
+    @Test
+    public void multipleContactsArePossible() throws Exception {
+        repo.save(contact, identity);
+        repo.save(otherContact, identity);
+
+        Contacts contacts = repo.find(identity);
+        assertThat(contacts.getContacts(), hasSize(2));
     }
 }

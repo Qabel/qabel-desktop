@@ -48,7 +48,7 @@ public class SqliteContactRepository extends AbstractSqliteRepository<Contact> i
             "SELECT " + String.join(",", hydrator.getFields("c")) + " " +
             "FROM contact c " +
             "JOIN identity_contacts ic ON (c.id = ic.contact_id) " +
-            "JOIN identity i ON (ic.id = i.id) " +
+            "JOIN identity i ON (ic.identity_id = i.id) " +
             "JOIN contact c2 ON (i.contact_id = c2.id) " +
             "WHERE c2.publicKey = ?"
         )) {
