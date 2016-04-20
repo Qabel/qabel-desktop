@@ -10,7 +10,6 @@ import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.LaunchConfig;
 import de.qabel.desktop.daemon.drop.DropDaemon;
-import de.qabel.desktop.daemon.drop.TextMessage;
 import de.qabel.desktop.daemon.share.ShareNotificationHandler;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
@@ -61,12 +60,15 @@ import java.sql.Statement;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static javafx.scene.control.Alert.AlertType.INFORMATION;
 import static javafx.scene.control.Alert.AlertType.WARNING;
 
 
 public class DesktopClient extends Application {
+    private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private static final Logger logger = LoggerFactory.getLogger(DesktopClient.class);
     private static Path LEGACY_DATABASE_FILE = Paths.get(System.getProperty("user.home")).resolve(".qabel/db.sqlite");
     private static Path DATABASE_FILE = Paths.get(System.getProperty("user.home")).resolve(".qabel/config.sqlite");
@@ -258,23 +260,27 @@ public class DesktopClient extends Application {
 
         services.getDropMessageRepository().addObserver(new ShareNotificationHandler(getShareRepository()));
         services.getDropMessageRepository().addObserver(
-            (o, arg) -> {
-                if (!(arg instanceof PersistenceDropMessage)) {
-                    return;
-                }
-                PersistenceDropMessage message = (PersistenceDropMessage)arg;
-                if (message.isSent()) {
-                    return;
-                }
-                Contact sender = (Contact)message.getSender();
-                DropMessage dropMessage = message.getDropMessage();
-                String content = services.getDropMessageRendererFactory()
-                    .getRenderer(dropMessage.getDropPayloadType())
-                    .renderString(dropMessage.getDropPayload(), services.getResourceBundle());
-                Translator translator = services.getTranslator();
-                String title = translator.getString("newMessageNotification", sender.getAlias());
-                Platform.runLater(() -> tray.showNotification(title, content));
-            }
+            (o, arg) -> scheduler.schedule(
+                () -> {
+                    if (!(arg instanceof PersistenceDropMessage)) {
+                        return;
+                    }
+                    PersistenceDropMessage message = (PersistenceDropMessage) arg;
+                    if (message.isSent() || message.isSeen()) {
+                        return;
+                    }
+                    Contact sender = (Contact) message.getSender();
+                    DropMessage dropMessage = message.getDropMessage();
+                    String content = services.getDropMessageRendererFactory()
+                        .getRenderer(dropMessage.getDropPayloadType())
+                        .renderString(dropMessage.getDropPayload(), services.getResourceBundle());
+                    Translator translator = services.getTranslator();
+                    String title = translator.getString("newMessageNotification", sender.getAlias());
+                    Platform.runLater(() -> tray.showNotification(title, content));
+                },
+                1,
+                TimeUnit.SECONDS
+            )
         );
     }
 

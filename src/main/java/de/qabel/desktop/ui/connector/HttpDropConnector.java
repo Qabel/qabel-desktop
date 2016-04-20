@@ -14,6 +14,7 @@ import de.qabel.desktop.daemon.NetworkStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.*;
 
 public class HttpDropConnector implements DropConnector {
@@ -45,17 +46,22 @@ public class HttpDropConnector implements DropConnector {
     }
 
     @Override
-    public List<DropMessage> receive(Identity i, Date since) {
+    public DropPollResponse receive(Identity i, Date since) {
         DropURL d = convertCollectionIntoDropUrl(i.getDropUrls());
-        HTTPResult<Collection<byte[]>> result = receiveMessages(since, d);
+        try {
+            HTTPResult<Collection<byte[]>> result = receiveMessages(since, d);
 
-        if (result.getResponseCode() == 0) {
+            if (result.getResponseCode() == 0) {
+                networkStatus.offline();
+            } else {
+                networkStatus.online();
+            }
+            return createDropMessagesFromHttpResult(result, i);
+        } catch (IOException e) {
+            logger.error("failed to poll drop: " + e.getMessage(), e);
             networkStatus.offline();
-        } else {
-            networkStatus.online();
+            throw new IllegalStateException("failed to poll drop, cannot continue", e);
         }
-
-        return createDropMessagesFromHttpResult(result, i);
     }
 
     private DropURL convertCollectionIntoDropUrl(Set<DropURL> dropUrls) {
@@ -65,11 +71,11 @@ public class HttpDropConnector implements DropConnector {
         throw new IllegalArgumentException("No drop URL found");
     }
 
-    private HTTPResult<Collection<byte[]>> receiveMessages(Date sinceDate, DropURL d) {
+    private HTTPResult<Collection<byte[]>> receiveMessages(Date sinceDate, DropURL d) throws IOException {
         return dHTTP.receiveMessages(d.getUri(), sinceDate == null ? 0 : sinceDate.getTime());
     }
 
-    private LinkedList<DropMessage> createDropMessagesFromHttpResult(
+    private DropPollResponse createDropMessagesFromHttpResult(
             HTTPResult<Collection<byte[]>> result,
             Identity identity) {
         LinkedList<DropMessage> dropMessages = new LinkedList<>();
@@ -94,6 +100,6 @@ public class HttpDropConnector implements DropConnector {
                 logger.trace("can't create Drop Message from HTTP result: " + e.getMessage());
             }
         }
-        return dropMessages;
+        return new DropPollResponse(dropMessages, result.lastModified());
     }
 }
