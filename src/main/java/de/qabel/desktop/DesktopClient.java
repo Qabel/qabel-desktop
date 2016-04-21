@@ -123,6 +123,10 @@ public class DesktopClient extends Application {
 
         try {
             try {
+                Path configDir = DATABASE_FILE.toAbsolutePath().getParent();
+                if (!Files.isDirectory(configDir)) {
+                    Files.createDirectory(configDir);
+                }
                 connection = DriverManager.getConnection("jdbc:sqlite://" + DATABASE_FILE.toAbsolutePath());
 
                 try {

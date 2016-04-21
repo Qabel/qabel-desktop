@@ -78,10 +78,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             wget http://downloads.sourceforge.net/project/innounp/innounp/innounp%200.45/innounp045.rar
 
             unp innounp045.rar
-            wine innounp.exe -dinno -c"{app}" -x is-unicode.exe
             if [ -d /vagrant/installer/inno ]; then
                 rm -r /vagrant/installer/inno
             fi
+            wine innounp.exe -dinno -c"{app}" -x is-unicode.exe
             mv inno /vagrant/installer/
             rm -f innounp.exe
             rm -f is-unicode.exe
