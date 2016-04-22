@@ -89,7 +89,9 @@ public class DropDaemon implements Runnable {
                     System.out.println("setting response date to " + response.date);
                 }
             }
-            config.setLastDropPoll(identity, response.date);
+            if (response.date != null) {
+                config.setLastDropPoll(identity, response.date);
+            }
         } catch (NullPointerException e) {
             logger.warn("failed to receive dropMessage " + e.getMessage(), e);
             return;

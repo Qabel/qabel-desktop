@@ -10,7 +10,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "ubuntu/wily64"
+  config.vm.box = "ubuntu/xenial64"
   config.ssh.forward_x11 = true
 
   if Vagrant.has_plugin?("vagrant-cachier")
@@ -78,10 +78,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             wget http://downloads.sourceforge.net/project/innounp/innounp/innounp%200.45/innounp045.rar
 
             unp innounp045.rar
-            wine innounp.exe -dinno -c"{app}" -x is-unicode.exe
             if [ -d /vagrant/installer/inno ]; then
                 rm -r /vagrant/installer/inno
             fi
+            wine innounp.exe -dinno -c"{app}" -x is-unicode.exe
             mv inno /vagrant/installer/
             rm -f innounp.exe
             rm -f is-unicode.exe
