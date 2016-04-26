@@ -101,6 +101,7 @@ xvfb-run -s "-screen 0 1280x1024x8" ./gradlew test
 * **distZip**: create a zip file containing all dependencies (like libcurve) and start-scripts
 * **run**: start the desktop-client
 * **downloadLicenses**: downloads licenses from dependencies and generates an overview at `build/reports`
+* **lock**: locks current dependencies to exact versions
 
 ##### creating a versioned release
 

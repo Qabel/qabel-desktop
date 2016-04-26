@@ -49,13 +49,6 @@ public class QabelTray {
         } catch (AWTException e) {
             logger.error("failed to add tray icon: " + e.getMessage(), e);
         }
-
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                tray.remove(icon);
-            }
-        });
     }
 
     public void showNotification(String title, String message) {
