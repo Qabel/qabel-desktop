@@ -15,11 +15,13 @@ public class DefaultBoxSyncConfigTest {
     private Account account = new Account("a", "b", "c");
     private DefaultBoxSyncConfig config;
     private boolean[] updated = new boolean[]{false};
+    private Path localPath;
+    private Path remotePath;
 
     @Before
     public void setUp() {
-        Path localPath = Paths.get("wayne");
-        Path remotePath = Paths.get("train");
+        localPath = Paths.get("wayne").toAbsolutePath();
+        remotePath = Paths.get("train");
         config = new DefaultBoxSyncConfig(localPath, remotePath, identity, account);
 
         config.addObserver((o, arg) -> updated[0] = true);
@@ -45,7 +47,7 @@ public class DefaultBoxSyncConfigTest {
 
     @Test
     public void notifiesOnLocalPathChange() {
-        config.setLocalPath(Paths.get("dwain"));
+        config.setLocalPath(Paths.get("dwain").toAbsolutePath());
         assertUpdated();
         assertEquals("dwain", config.getLocalPath().getFileName().toString());
     }
@@ -104,6 +106,15 @@ public class DefaultBoxSyncConfigTest {
     @Test
     public void showsItsAccount() {
         assertSame(account, config.getAccount());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void preventsHardToDebugRelativeLocalPath() {
+        config.setLocalPath(Paths.get("a"));
+    }
+    @Test(expected = IllegalArgumentException.class)
+    public void preventsHardToDebugRelativeLocalPathOnConstructor() {
+        config = new DefaultBoxSyncConfig(Paths.get("a"), remotePath, identity, account);
     }
 
     private void resetObserver() {

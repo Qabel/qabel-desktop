@@ -32,9 +32,9 @@ public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig, O
 
     public DefaultBoxSyncConfig(String name, Path localPath, Path remotePath, Identity identity, Account account) {
         this.name = name;
-        this.localPath = localPath;
         this.identity = identity;
         this.account = account;
+        setLocalPath(localPath);
         setRemotePath(remotePath);
     }
 
@@ -50,7 +50,10 @@ public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig, O
 
     @Override
     public void setLocalPath(Path localPath) {
-        if (!this.localPath.equals(localPath)) {
+        if (!localPath.isAbsolute()) {
+            throw new IllegalArgumentException("localPath must be absolute");
+        }
+        if (!localPath.equals(this.localPath)) {
             setChanged();
         }
         this.localPath = localPath;

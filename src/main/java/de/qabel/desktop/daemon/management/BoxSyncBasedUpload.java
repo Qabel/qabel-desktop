@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 public class BoxSyncBasedUpload extends AbstractBoxSyncBasedTransaction implements Upload {
     public static Logger logger = LoggerFactory.getLogger(BoxSyncBasedUpload.class);
 
-    private long stagingDelayMills = TimeUnit.SECONDS.toMillis(2);
+    private long stagingDelayMills = TimeUnit.SECONDS.toMillis(1);
 
     public BoxSyncBasedUpload(BoxVolume volume, BoxSyncConfig boxSyncConfig,  WatchEvent event) {
         super(volume, event, boxSyncConfig);
@@ -39,8 +39,16 @@ public class BoxSyncBasedUpload extends AbstractBoxSyncBasedTransaction implemen
 
     @Override
     public Path getDestination() {
-        Path relativePath = boxSyncConfig.getLocalPath().relativize(getSource());
-        return boxSyncConfig.getRemotePath().resolve(relativePath);
+        try {
+            Path relativePath = boxSyncConfig.getLocalPath().toAbsolutePath().relativize(getSource());
+            return boxSyncConfig.getRemotePath().resolve(relativePath);
+        } catch (IllegalArgumentException e) {
+            logger.error("path resolution error, failed to relativize "
+                + getSource().getClass() + " " + getSource()
+                + " by using " + boxSyncConfig.getLocalPath().getClass() + " " + boxSyncConfig.getLocalPath().toAbsolutePath()
+            );
+            throw e;
+        }
     }
 
     @Override

@@ -80,7 +80,7 @@ public class RemoteFSController extends AbstractController implements Initializa
     @Inject
     BoxVolumeFactory boxVolumeFactory;
     @Inject
-    TransferManager loadManager;
+    TransferManager transferManager;
     @Inject
     DropMessageRepository dropMessageRepository;
     @Inject
@@ -397,7 +397,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 
     void upload(Path source, Path destination) {
         Upload upload = new ManualUpload(CREATE, volume, source, destination);
-        loadManager.addUpload(upload);
+        transferManager.addUpload(upload);
     }
 
     private void uploadFolder(TreeItem<BoxObject> item) {
@@ -514,7 +514,7 @@ public class RemoteFSController extends AbstractController implements Initializa
         Files.walkFileTree(source, new FileVisitor<Path>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                loadManager.addUpload(new ManualUpload(CREATE, volume, dir, resolveDestination(dir), true));
+                transferManager.addUpload(new ManualUpload(CREATE, volume, dir, resolveDestination(dir), true));
                 return FileVisitResult.CONTINUE;
             }
 
@@ -524,7 +524,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                loadManager.addUpload(new ManualUpload(CREATE, volume, file, resolveDestination(file), false));
+                transferManager.addUpload(new ManualUpload(CREATE, volume, file, resolveDestination(file), false));
                 return FileVisitResult.CONTINUE;
             }
 
@@ -542,7 +542,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 
 
     void createFolder(Path destination) throws QblStorageException {
-        loadManager.addUpload(new ManualUpload(CREATE, volume, null, destination, true));
+        transferManager.addUpload(new ManualUpload(CREATE, volume, null, destination, true));
     }
 
     void deleteBoxObject(ButtonType confim, Path path, BoxObject object) throws QblStorageException {
@@ -550,7 +550,7 @@ public class RemoteFSController extends AbstractController implements Initializa
             return;
         }
 
-        loadManager.addUpload(new ManualUpload(DELETE, volume, null, path, object instanceof BoxFolder));
+        transferManager.addUpload(new ManualUpload(DELETE, volume, null, path, object instanceof BoxFolder));
     }
 
     void downloadBoxObject(BoxObject boxObject, ReadableBoxNavigation nav, Path source, Path destination) throws QblStorageException {
@@ -563,7 +563,7 @@ public class RemoteFSController extends AbstractController implements Initializa
     }
 
     private void downloadBoxFolder(ReadableBoxNavigation nav, Path source, Path destination) throws QblStorageException {
-        loadManager.addDownload(new ManualDownload(CREATE, volume, source, destination, true));
+        transferManager.addDownload(new ManualDownload(CREATE, volume, source, destination, true));
 
         for (BoxFile file : nav.listFiles()) {
             downloadFile(file, nav, source.resolve(file.getName()), destination.resolve(file.getName()));
@@ -574,7 +574,7 @@ public class RemoteFSController extends AbstractController implements Initializa
     }
 
     private void downloadFile(BoxFile file, ReadableBoxNavigation nav, Path source, Path destination) {
-        loadManager.addDownload(new ManualDownload(file.getMtime(), CREATE, volume, source, destination, false));
+        transferManager.addDownload(new ManualDownload(file.getMtime(), CREATE, volume, source, destination, false));
     }
 
     private ReadableBoxNavigation getNavigator(BoxFolder folder) throws QblStorageException {

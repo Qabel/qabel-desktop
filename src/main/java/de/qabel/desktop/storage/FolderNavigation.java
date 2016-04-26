@@ -30,14 +30,14 @@ public class FolderNavigation extends AbstractNavigation {
 
     @Override
     protected void uploadDirectoryMetadata() throws QblStorageException {
-        logger.info("Uploading directory metadata");
+        logger.trace("Uploading directory metadata");
         KeyParameter secretKey = new KeyParameter(key);
         uploadEncrypted(dm.getPath(), secretKey, dm.getFileName());
     }
 
     @Override
     public DirectoryMetadata reloadMetadata() throws QblStorageException {
-        logger.info("Reloading directory metadata");
+        logger.trace("Reloading directory metadata");
         // duplicate of navigate()
         try (StorageDownload download = readBackend.download(dm.getFileName(), getMHash())) {
             InputStream indexDl = download.getInputStream();

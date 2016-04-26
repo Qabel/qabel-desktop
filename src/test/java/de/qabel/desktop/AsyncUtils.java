@@ -1,7 +1,9 @@
 package de.qabel.desktop;
 
-import java.util.concurrent.Callable;
+import de.qabel.desktop.ui.AbstractController;
+import javafx.application.Platform;
 
+import java.util.concurrent.Callable;
 import static org.junit.Assert.fail;
 
 public class AsyncUtils {
@@ -30,6 +32,38 @@ public class AsyncUtils {
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
+        }
+    }
+
+    public static void runLaterAndWait(Runnable runnable) {
+        boolean[] hasRun = new boolean[]{false};
+        Platform.runLater(() -> {
+            runnable.run();
+            hasRun[0] = true;
+        });
+        waitUntil(() -> hasRun[0], 5000L);
+    }
+
+    public static void assertAsync(AbstractController.CheckedRunnable assertion) {
+        assertAsync(assertion, 2000L);
+    }
+
+    public static void assertAsync(AbstractController.CheckedRunnable assertion, long timeout) {
+        long startTime = System.currentTimeMillis();
+        while (true) {
+            try {
+                Thread.yield();
+                Thread.sleep(10);
+                assertion.run();
+                return;
+            } catch(AssertionError e){
+                if (System.currentTimeMillis() - timeout > startTime) {
+                    throw e;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                fail(e.getMessage());
+            }
         }
     }
 }

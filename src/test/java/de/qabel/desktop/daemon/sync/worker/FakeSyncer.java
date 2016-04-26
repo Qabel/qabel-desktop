@@ -15,6 +15,7 @@ public class FakeSyncer implements Syncer {
 
     public FakeSyncer(BoxSyncConfig config) {
         this.config = config;
+        config.setSyncer(this);
     }
 
     @Override

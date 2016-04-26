@@ -252,7 +252,7 @@ public class DirectoryMetadata extends AbstractMetadata {
     }
 
 
-    List<BoxFile> listFiles() throws QblStorageException {
+    public List<BoxFile> listFiles() throws QblStorageException {
         try (Statement statement = connection.createStatement()) {
             try (ResultSet rs = statement.executeQuery(
                 "SELECT prefix, block, name, size, mtime, key, meta, metakey FROM files")) {
@@ -344,7 +344,7 @@ public class DirectoryMetadata extends AbstractMetadata {
         });
     }
 
-    List<BoxFolder> listFolders() throws QblStorageException {
+    public List<BoxFolder> listFolders() throws QblStorageException {
         try (Statement statement = connection.createStatement()) {
             try (ResultSet rs = statement.executeQuery(
                 "SELECT ref, name, key FROM folders")) {

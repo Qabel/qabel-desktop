@@ -12,6 +12,8 @@ import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.Assert.assertEquals;
@@ -21,9 +23,10 @@ import static org.junit.Assert.assertTrue;
 public class SyncItemControllerGuiTest extends AbstractGuiTest<SyncItemController> {
     private Identity identity;
     private Account account;
-    private BoxSyncConfig syncConfig;
+    BoxSyncConfig syncConfig;
     private FakeSyncer syncer;
-    private SyncItemPage page;
+    SyncItemPage page;
+    private Path local;
 
     @Override
     @Before
@@ -31,7 +34,8 @@ public class SyncItemControllerGuiTest extends AbstractGuiTest<SyncItemControlle
         identityBuilderFactory = new IdentityBuilderFactory(new DropUrlGenerator("http://localhost:5000"));
         identity = identityBuilderFactory.factory().build();
         account = new Account("a", "b", "c");
-        syncConfig = new DefaultBoxSyncConfig("testsync", Paths.get("tmp"), Paths.get("tmp"), identity, account);
+        local = Files.createTempDirectory(Paths.get("/tmp"), "testsync").toAbsolutePath();
+        syncConfig = new DefaultBoxSyncConfig("testsync", local, Paths.get("tmp"), identity, account);
         syncer = new FakeSyncer(syncConfig);
         syncConfig.setSyncer(syncer);
         super.setUp();
@@ -47,7 +51,7 @@ public class SyncItemControllerGuiTest extends AbstractGuiTest<SyncItemControlle
     @Test
     public void showsItemsProperties() {
         assertEquals("testsync", page.name());
-        assertEquals(Paths.get("tmp").toAbsolutePath().toString(), page.localPath());
+        assertEquals(local.toString(), page.localPath());
         assertEquals("/tmp", page.remotePath());
     }
 
@@ -55,12 +59,12 @@ public class SyncItemControllerGuiTest extends AbstractGuiTest<SyncItemControlle
     public void refreshesOnConfigChange() {
         runLaterAndWait(() -> {
             syncConfig.setName("changed");
-            syncConfig.setLocalPath(Paths.get("to something"));
+            syncConfig.setLocalPath(Paths.get("/tmp/to something"));
             syncConfig.setRemotePath(Paths.get("else"));
         });
 
         assertEquals("changed", page.name());
-        assertEquals(Paths.get("to something").toAbsolutePath().toString(), page.localPath());
+        assertEquals(Paths.get("/tmp/to something").toAbsolutePath().toString(), page.localPath());
         assertEquals("/else", page.remotePath());
     }
 

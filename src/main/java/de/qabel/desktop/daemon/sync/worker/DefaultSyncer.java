@@ -298,6 +298,7 @@ public class DefaultSyncer implements Syncer {
         if (poller != null && poller.isAlive()) {
             poller.interrupt();
         }
+        progress.cancel();
     }
 
     public void join() throws InterruptedException {

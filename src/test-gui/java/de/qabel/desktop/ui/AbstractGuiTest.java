@@ -9,15 +9,10 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.testfx.api.FxRobot;
 import org.testfx.service.locator.BoundsLocatorException;
 import org.testfx.service.query.PointQuery;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.Callable;
-
-import static de.qabel.desktop.AsyncUtils.waitUntil;
 
 public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
     protected final FxRobot robot = new FxRobot();
@@ -26,10 +21,13 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
     protected Scene scene;
     protected BaseFXRobot baseFXRobot;
 
+    public T getController() {
+        return controller;
+    }
+
     @Override
     public void setUp() throws Exception {
         super.setUp();
-
         Platform.setImplicitExit(false);
         runLaterAndWait(() -> {
             stage = new Stage();
@@ -59,6 +57,11 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
         baseFXRobot = new BaseFXRobot(scene);
         baseFXRobot.waitForIdle();
         waitTillTheEnd(robot.rootNode(scene));
+        baseFXRobot.waitForIdle();
+        runLaterAndWait(() -> {
+            robot.targetWindow(stage);
+            stage.toFront();
+        });
         return presenter;
     }
 
@@ -99,6 +102,11 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
         if (stage != null) {
             Platform.runLater(() -> { try { stage.close(); } catch (Exception ignored) {}});
         }
+        for (Window window : robot.robotContext().getWindowFinder().listTargetWindows()) {
+            runLaterAndWait(window::hide);
+        }
+        stage = null;
+        System.gc();
         super.tearDown();
     }
 

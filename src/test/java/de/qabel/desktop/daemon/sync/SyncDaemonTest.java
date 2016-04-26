@@ -12,8 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class SyncDaemonTest extends AbstractSyncTest {
     private SyncDaemon daemon;
@@ -39,7 +38,7 @@ public class SyncDaemonTest extends AbstractSyncTest {
         boxSyncConfigs.add(config);
 
         startDaemon();
-        waitForConfig();
+        waitForSyncerStart();
 
         assertTrue(daemon.getSyncers().get(0) instanceof FakeSyncer);
         assertSame(config, ((FakeSyncer)daemon.getSyncers().get(0)).config);
@@ -50,11 +49,28 @@ public class SyncDaemonTest extends AbstractSyncTest {
         startDaemon();
 
         boxSyncConfigs.add(config);
-        waitForConfig();
+        waitForSyncerStart();
 
         FakeSyncer fakeSyncer = (FakeSyncer) daemon.getSyncers().get(0);
         assertSame(config, fakeSyncer.config);
         waitUntil(() -> fakeSyncer.started);
+    }
+
+    @Test(timeout = 10000L)
+    public void restartsWithChangedConfig() {
+        startDaemon();
+        boxSyncConfigs.add(config);
+        waitForSyncerStart();
+
+        FakeSyncer firstSyncer = (FakeSyncer) config.getSyncer();
+        daemon.restart(config);
+        waitUntil(() -> firstSyncer != config.getSyncer(), 10000L);
+        FakeSyncer secondSyncer = (FakeSyncer) config.getSyncer();
+        assertSame(config, secondSyncer.config);
+        waitUntil(() -> secondSyncer.started);
+        assertTrue(firstSyncer.stopped);
+        assertEquals(1, daemon.getSyncers().size());
+        assertSame(secondSyncer, daemon.getSyncers().get(0));
     }
 
     @Override
@@ -73,7 +89,7 @@ public class SyncDaemonTest extends AbstractSyncTest {
         waitUntil(() -> daemon.started);
     }
 
-    protected void waitForConfig() {
+    protected void waitForSyncerStart() {
         waitUntil(() -> daemon.getSyncers().size() == 1);
     }
 }

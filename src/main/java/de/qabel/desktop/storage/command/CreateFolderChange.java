@@ -20,6 +20,13 @@ public class CreateFolderChange implements DirectoryMetadataChange<ChangeResult<
 
     @Override
     public ChangeResult<BoxFolder> execute(DirectoryMetadata parentDM) throws QblStorageException {
+        for (BoxFolder folder : parentDM.listFolders()) {
+            if (folder.getName().equals(name)) {
+                ChangeResult<BoxFolder> result = new ChangeResult<>(folder);
+                result.setSkipped(true);
+                return result;
+            }
+        }
         DirectoryMetadata dm = DirectoryMetadata.newDatabase(null, deviceId, parentDM.getTempDir());
         BoxFolder folder = new BoxFolder(dm.getFileName(), name, secretKey.getKey());
         parentDM.insertFolder(folder);

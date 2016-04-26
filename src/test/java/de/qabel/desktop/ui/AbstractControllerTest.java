@@ -15,6 +15,8 @@ import de.qabel.desktop.crashReports.StubCrashReportHandler;
 import de.qabel.desktop.daemon.NetworkStatus;
 import de.qabel.desktop.daemon.management.BoxVolumeFactoryStub;
 import de.qabel.desktop.daemon.management.DefaultTransferManager;
+import de.qabel.desktop.daemon.sync.SyncDaemon;
+import de.qabel.desktop.daemon.sync.worker.FakeSyncerFactory;
 import de.qabel.desktop.repository.*;
 import de.qabel.desktop.repository.Stub.InMemoryContactRepository;
 import de.qabel.desktop.repository.Stub.StubDropMessageRepository;
@@ -24,6 +26,7 @@ import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRendererFactory;
 import de.qabel.desktop.ui.actionlog.item.renderer.PlaintextMessageRenderer;
 import de.qabel.desktop.ui.connector.DropConnector;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
+import javafx.beans.property.SimpleListProperty;
 import org.junit.After;
 import org.junit.Before;
 
@@ -36,7 +39,7 @@ public class AbstractControllerTest extends AbstractFxTest {
     protected ClientConfig clientConfiguration;
     protected IdentityBuilderFactory identityBuilderFactory;
     protected ContactRepository contactRepository = new InMemoryContactRepository();
-    protected DefaultTransferManager loadManager;
+    protected DefaultTransferManager transferManager;
     protected BoxVolumeFactoryStub boxVolumeFactory;
     protected DropMessageRepository dropMessageRepository = new StubDropMessageRepository();
     protected DropConnector httpDropConnector = new InMemoryHttpDropConnector();
@@ -49,6 +52,8 @@ public class AbstractControllerTest extends AbstractFxTest {
     protected DropStateRepository dropStateRepository = new InMemoryDropStateRepository();
     protected ShareNotificationRepository shareNotificationRepository = new InMemoryShareNotificationRepository();
     protected BoxSyncRepository boxSyncRepository = new InMemoryBoxSyncRepository();
+    protected SyncDaemon syncDaemon;
+    protected Account account;
 
     @Before
     public void setUp() throws Exception {
@@ -63,18 +68,17 @@ public class AbstractControllerTest extends AbstractFxTest {
         diContainer.put("dropUrlGenerator", new DropUrlGenerator("http://localhost:5000"));
         identityBuilderFactory = new IdentityBuilderFactory((DropUrlGenerator) diContainer.get("dropUrlGenerator"));
         diContainer.put("identityBuilderFactory", identityBuilderFactory);
-        Account account = new Account("a", "b", "c");
+        account = new Account("a", "b", "c");
         diContainer.put("account", account);
         clientConfiguration.setAccount(account);
         diContainer.put("identityRepository", identityRepository);
         diContainer.put("contactRepository", contactRepository);
         boxVolumeFactory = new BoxVolumeFactoryStub();
         diContainer.put("boxVolumeFactory", boxVolumeFactory);
-        loadManager = new DefaultTransferManager();
-        diContainer.put("loadManager", loadManager);
+        transferManager = new DefaultTransferManager();
+        diContainer.put("transferManager", transferManager);
         diContainer.put("dropMessageRepository", dropMessageRepository);
         diContainer.put("dropConnector", httpDropConnector);
-        diContainer.put("transferManager", new DefaultTransferManager());
         diContainer.put("sharingService", sharingService);
         diContainer.put("reportHandler", crashReportHandler);
         diContainer.put("networkStatus", networkStatus);
@@ -84,6 +88,10 @@ public class AbstractControllerTest extends AbstractFxTest {
         FXMessageRendererFactory FXMessageRendererFactory = new FXMessageRendererFactory();
         FXMessageRendererFactory.setFallbackRenderer(new PlaintextMessageRenderer());
         diContainer.put("messageRendererFactory", FXMessageRendererFactory);
+
+        syncDaemon = new SyncDaemon(new SimpleListProperty<>(), new FakeSyncerFactory());
+        diContainer.put("syncDaemon", syncDaemon);
+
         Injector.setConfigurationSource(key -> diContainer.get((String)key));
         Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(diContainer));
 

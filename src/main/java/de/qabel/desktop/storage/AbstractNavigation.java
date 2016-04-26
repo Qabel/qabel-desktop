@@ -129,7 +129,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
             updatedDM = reloadMetadata();
             logger.info("Remote version is " + new String(Hex.encodeHex(updatedDM.getVersion())));
         } catch (QblStorageNotFound e) {
-            logger.info("Could not reload metadata");
+            logger.trace("Could not reload metadata, none exists yet");
         }
         // the remote version has changed from the _old_ version
         if (updatedDM != null && !Arrays.equals(version, updatedDM.getVersion())) {

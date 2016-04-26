@@ -6,7 +6,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<BorderPane prefHeight="130.0" prefWidth="600.0" style="-fx-border-color: darkgrey; -fx-border-width: 1 0 0 0;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.sync.item.SyncItemController">
+<BorderPane fx:id="syncItemRoot" styleClass="syncItem" prefHeight="130.0" prefWidth="600.0" style="-fx-border-color: darkgrey; -fx-border-width: 1 0 0 0;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.sync.item.SyncItemController">
             <left>
                 <VBox fx:id="avatarContainer" BorderPane.alignment="CENTER" />
             </left>
@@ -48,6 +48,11 @@
                                                             <Image url="@/icon/folder.png"/>
                                                         </image>
                                                     </ImageView>
+                                                        <ImageView fx:id="editSync" onMouseClicked="#edit" styleClass="inline-button" preserveRatio="true" fitHeight="16" style="-fx-alignment: CENTER-RIGHT">
+                                                            <image>
+                                                                <Image url="@/icon/edit.png"/>
+                                                            </image>
+                                                        </ImageView>
                                                         <ImageView fx:id="deleteSync" onMouseClicked="#delete" styleClass="inline-button" preserveRatio="true" fitHeight="16" style="-fx-alignment: CENTER-RIGHT">
                                                             <image>
                                                                 <Image url="@/icon/delete.png"/>

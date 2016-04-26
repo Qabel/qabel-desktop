@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class SyncControllerGuiTest extends AbstractGuiTest<SyncController> {
-    private SyncPage page;
+    SyncPage page;
 
     @Before
     @Override
@@ -40,7 +40,7 @@ public class SyncControllerGuiTest extends AbstractGuiTest<SyncController> {
 
         SyncSetupPage setup = new SyncSetupPage(baseFXRobot, robot, null);
         setup.enterName("new sync");
-        setup.enterLocalPath("tmp");
+        setup.enterLocalPath("/tmp/wayne");
         setup.enterRemotePath("/");
         setup.startSync();
 
