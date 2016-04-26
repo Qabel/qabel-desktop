@@ -164,7 +164,7 @@ downloadLicenses {
 
     aliases = [
             (apacheTwo) : ['Apache 2.0', 'The Apache Software License, Version 2.0', 'Apache 2', 'Apache License Version 2.0', 'Apache License, Version 2.0', 'Apache License 2.0', license('Apache License', 'http://www.apache.org/licenses/LICENSE-2.0')],
-            (bsd) : ['BSD', license('New BSD License', 'http://www.opensource.org/licenses/bsd-license.php')]
+            (bsd) : ['BSD', license('New BSD License', 'http://www.opensource.org/licenses/bsd-license.php'), 'BSD License']
     ]
 
     licenses = [

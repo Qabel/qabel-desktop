@@ -17,7 +17,7 @@
             <AppenderRef ref="Console"/>
         </logger>
         <logger name="de.qabel.desktop" includeLocation="true">
-            <level>INFO</level>
+            <level>WARN</level>
             <AppenderRef ref="Console"/>
             <AppenderRef ref="RandomAccessFile"/>
         </logger>
