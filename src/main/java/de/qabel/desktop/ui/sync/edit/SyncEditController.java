@@ -47,7 +47,7 @@ public class SyncEditController extends SyncSetupController {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        start = save;
+        super.start = save;
         super.initialize(location, resources);
 
         localPath.setText(syncConfig.getLocalPath().toString());
