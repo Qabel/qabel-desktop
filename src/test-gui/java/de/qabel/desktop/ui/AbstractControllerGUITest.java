@@ -8,6 +8,7 @@ import org.junit.Test;
 import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 public class AbstractControllerGUITest extends AbstractGuiTest<AlertTestController> {
     @Override

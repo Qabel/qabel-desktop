@@ -117,6 +117,10 @@ task guiTest(type: Test) {
     testClassesDir = sourceSets.guiTest.output.classesDir
     classpath = sourceSets.guiTest.runtimeClasspath
     outputs.upToDateWhen { false }
+    testLogging {
+        events 'started'
+        exceptionFormat 'full'
+    }
 }
 check.dependsOn guiTest
 guiTest.mustRunAfter test
