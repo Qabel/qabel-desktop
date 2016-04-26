@@ -10,6 +10,6 @@ public abstract class AbstractStepdefs<T extends AbstractController> extends Abs
     }
 
     public static void waitUntil(Callable<Boolean> evaluate) {
-        AbstractFxTest.waitUntil(evaluate, 15000L);
+        AbstractFxTest.waitUntil(evaluate, 30000L);
     }
 }
