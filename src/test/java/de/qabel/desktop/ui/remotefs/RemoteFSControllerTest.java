@@ -204,7 +204,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
         assertThat(newNav.navigate("subFolder").listFiles().get(0).getName(), is("subsubFile"));
     }
 
-    @Test(timeout=10000000L)
+    @Test(timeout=10000L)
     public void testCreateFolder() throws Exception {
 
         File dir = new File(TEST_TMP_DIR);
