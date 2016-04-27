@@ -104,7 +104,9 @@ public class AbstractPage {
         try {
             fakeClick(query);
             return robot;
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+            System.err.println("failed to fake click on '" + query + "', falling back to real click");
+        }
         for (int i = 0; i < 10; i++) {
             try {
                 baseFXRobot.waitForIdle();

@@ -23,6 +23,7 @@ public class AbstractControllerGUITest extends AbstractGuiTest<AlertTestControll
         waitForNode(".feedback");
         CrashReportAlert alert = controller.alert;
         try {
+            runLaterAndWait(alert.getAlert().getDialogPane()::requestFocus);
             waitTillTheEnd(alert.getAlert().getDialogPane());
             assertEquals("Error", alert.getAlert().getTitle());
             assertEquals("some error message", alert.getAlert().getHeaderText());

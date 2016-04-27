@@ -29,7 +29,6 @@ public class AScreenshotOnFailureWatcher extends TestWatcher {
             double y = window.getY();
             double width = window.getWidth();
             double height = window.getHeight();
-            System.out.println("capturing " + window.getScene());
             try {
                 BufferedImage cap = new Robot().createScreenCapture(
                     new Rectangle((int)x, (int)y, (int)width, (int)height)
