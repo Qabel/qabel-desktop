@@ -89,7 +89,6 @@ public class AbstractControllerTest extends AbstractFxTest {
 
     @Before
     public void setUp() throws Exception {
-        logger.info("miiiiiiep");
         clientConfiguration = new RepositoryBasedClientConfig(
             clientConfigRepository,
             accountRepository,

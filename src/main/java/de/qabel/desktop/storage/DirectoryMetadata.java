@@ -114,6 +114,9 @@ public class DirectoryMetadata extends AbstractMetadata {
         try {
             connection = DriverManager.getConnection(JDBC_PREFIX + path.getAbsolutePath());
             connection.setAutoCommit(true);
+            try (Statement statement = connection.createStatement()) {
+                statement.execute("PRAGMA journal_mode=MEMORY");
+            }
         } catch (SQLException e) {
             throw new QblStorageCorruptMetadata(e);
         }

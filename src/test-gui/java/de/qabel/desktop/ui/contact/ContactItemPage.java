@@ -17,4 +17,8 @@ public class ContactItemPage extends AbstractPage {
         String indicatorText = controller.getIndicator().getText();
         return indicatorText.isEmpty() ? null : Integer.parseInt(indicatorText);
     }
+
+    public void delete() {
+        clickOn("#delete");
+    }
 }

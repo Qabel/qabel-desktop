@@ -14,7 +14,7 @@ public class ContactPage extends AbstractPage {
     }
 
     public ContactItemPage getFirstItem() {
-        waitUntil(() -> controller.contactItems.size() == 1);
+        waitUntil(() -> controller.contactItems.size() >= 1);
         ContactItemController itemController = controller.contactItems.get(0);
         return new ContactItemPage(baseFXRobot, robot, itemController);
     }
