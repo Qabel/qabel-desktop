@@ -23,8 +23,8 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
     protected Scene scene;
     protected BaseFXRobot baseFXRobot;
 
-    public AScreenshotOnFailureWatcher screenshotWatcher = new AScreenshotOnFailureWatcher(robot);
-    public PlatformTearDownWatcher platformWatcher = new PlatformTearDownWatcher(robot);
+    private AScreenshotOnFailureWatcher screenshotWatcher = new AScreenshotOnFailureWatcher(robot);
+    private PlatformTearDownWatcher platformWatcher = new PlatformTearDownWatcher();
 
     @Rule
     public TestRule chain = RuleChain.outerRule(platformWatcher).around(screenshotWatcher);
@@ -68,10 +68,6 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
         baseFXRobot.waitForIdle();
         waitTillTheEnd(robot.rootNode(scene));
         baseFXRobot.waitForIdle();
-        /*runLaterAndWait(() -> {
-            robot.targetWindow(stage);
-            stage.toFront();
-        });*/
         return presenter;
     }
 
