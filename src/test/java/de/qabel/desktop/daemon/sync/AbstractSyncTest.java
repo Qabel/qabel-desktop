@@ -1,6 +1,7 @@
 package de.qabel.desktop.daemon.sync;
 
 import de.qabel.desktop.AsyncUtils;
+import de.qabel.desktop.ui.AbstractControllerTest;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -29,7 +30,7 @@ public abstract class AbstractSyncTest {
         try {
             FileUtils.deleteDirectory(tmpDir.toFile());
         } catch (IOException e) {
-            e.printStackTrace();
+            AbstractControllerTest.createLogger().warn("failed to remote tmpDir", e);
         }
     }
 

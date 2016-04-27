@@ -1,6 +1,7 @@
 package de.qabel.desktop;
 
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.AbstractControllerTest;
 import javafx.application.Platform;
 import org.hamcrest.Matcher;
 
@@ -33,7 +34,7 @@ public class AsyncUtils {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            AbstractControllerTest.createLogger().error(e.getMessage(), e);
             fail(e.getMessage());
         }
     }
@@ -64,7 +65,7 @@ public class AsyncUtils {
                 Thread.yield();
                 try { Thread.sleep(10); } catch (InterruptedException ignored) {}
             } catch (Exception e) {
-                e.printStackTrace();
+                AbstractControllerTest.createLogger().error(e.getMessage(), e);
                 fail(e.getMessage());
             }
         }

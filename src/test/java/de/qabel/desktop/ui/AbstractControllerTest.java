@@ -27,12 +27,21 @@ import de.qabel.desktop.ui.actionlog.item.renderer.PlaintextMessageRenderer;
 import de.qabel.desktop.ui.connector.DropConnector;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import javafx.beans.property.SimpleListProperty;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.simple.SimpleLogger;
+import org.apache.logging.log4j.util.PropertiesUtil;
+import org.apache.logging.slf4j.Log4jLogger;
 import org.junit.After;
 import org.junit.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.Properties;
 import java.util.function.Function;
+import java.util.logging.LogManager;
 
 public class AbstractControllerTest extends AbstractFxTest {
+    protected static Logger logger;
     protected TransactionManager transactionManager = new InMemoryTransactionManager();
     protected ServiceFactory diContainer = new DefaultServiceFactory();
     protected IdentityRepository identityRepository = new InMemoryIdentityRepository();
@@ -55,8 +64,32 @@ public class AbstractControllerTest extends AbstractFxTest {
     protected SyncDaemon syncDaemon;
     protected Account account;
 
+    static {
+        logger = createLogger();
+    }
+
+    public static Logger createLogger() {
+        SimpleLogger test = new SimpleLogger(
+            "testLogger",
+            Level.ALL,
+            false,
+            true,
+            false,
+            false,
+            "",
+            null,
+            new PropertiesUtil(new Properties()),
+            System.err
+        );
+        return new Log4jLogger(
+            test,
+            "testLogger"
+        );
+    }
+
     @Before
     public void setUp() throws Exception {
+        logger.info("miiiiiiep");
         clientConfiguration = new RepositoryBasedClientConfig(
             clientConfigRepository,
             accountRepository,
@@ -105,7 +138,7 @@ public class AbstractControllerTest extends AbstractFxTest {
         try {
             Injector.forgetAll();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("failed to tear down injector", e);
         }
     }
 

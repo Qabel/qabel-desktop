@@ -20,7 +20,7 @@ public class AbstractFxTest {
         } catch (IllegalStateException e) {
             startPlatform();
         } catch (Exception e) {
-            e.printStackTrace();
+            AbstractControllerTest.createLogger().error("something strange happened, trying to start platform anyways");
             startPlatform();
         }
     }

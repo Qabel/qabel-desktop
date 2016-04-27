@@ -54,7 +54,7 @@ public class AScreenshotOnFailureWatcher extends TestWatcher {
                     )
                 );
             } catch (Exception e1) {
-                e1.printStackTrace();
+                AbstractControllerTest.createLogger().error("failed to take screenshot", e1);
             }
         });
     }
