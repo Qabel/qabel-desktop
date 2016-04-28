@@ -122,6 +122,13 @@ task guiTest(type: Test) {
         exceptionFormat 'full'
     }
 }
+
+test {
+    testLogging {
+        events 'started'
+    }
+}
+
 check.dependsOn guiTest
 guiTest.mustRunAfter test
 
