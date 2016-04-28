@@ -1,6 +1,7 @@
 package de.qabel.desktop.ui;
 
 import com.google.common.base.Optional;
+import com.sun.javafx.event.EventDispatchChainImpl;
 import com.sun.javafx.robot.FXRobot;
 import de.qabel.desktop.AsyncUtils;
 import javafx.application.Platform;
@@ -76,7 +77,6 @@ public class AbstractPage {
         EventHandler<? super MouseEvent> releasedHandler = node.getOnMouseReleased();
 
         Platform.runLater(() -> {
-            //node.buildEventDispatchChain(new EventDispatchChainImpl()).dispatchEvent(event);
             if (pressedHandler != null) {
                 pressedHandler.handle(event);
             }
@@ -85,6 +85,9 @@ public class AbstractPage {
             }
             if (releasedHandler != null) {
                 releasedHandler.handle(event);
+            }
+            if (pressedHandler == null && clickedHandler == null && releasedHandler == null) {
+                node.buildEventDispatchChain(new EventDispatchChainImpl()).dispatchEvent(event);
             }
         });
     }
@@ -101,7 +104,9 @@ public class AbstractPage {
         try {
             fakeClick(query);
             return robot;
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+            System.err.println("failed to fake click on '" + query + "', falling back to real click");
+        }
         for (int i = 0; i < 10; i++) {
             try {
                 baseFXRobot.waitForIdle();

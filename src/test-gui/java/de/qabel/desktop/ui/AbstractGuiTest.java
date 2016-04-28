@@ -9,7 +9,9 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.Window;
+import org.junit.Rule;
+import org.junit.rules.RuleChain;
+import org.junit.rules.TestRule;
 import org.testfx.api.FxRobot;
 import org.testfx.service.locator.BoundsLocatorException;
 import org.testfx.service.query.PointQuery;
@@ -21,6 +23,13 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
     protected Scene scene;
     protected BaseFXRobot baseFXRobot;
 
+    private AScreenshotOnFailureWatcher screenshotWatcher = new AScreenshotOnFailureWatcher(robot);
+    private PlatformTearDownWatcher platformWatcher = new PlatformTearDownWatcher();
+
+    @Rule
+    public TestRule chain = RuleChain.outerRule(platformWatcher).around(screenshotWatcher);
+
+
     public T getController() {
         return controller;
     }
@@ -31,6 +40,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
         Platform.setImplicitExit(false);
         runLaterAndWait(() -> {
             stage = new Stage();
+            platformWatcher.setStage(stage);
             diContainer.put("primaryStage", stage);
         });
 
@@ -58,10 +68,6 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
         baseFXRobot.waitForIdle();
         waitTillTheEnd(robot.rootNode(scene));
         baseFXRobot.waitForIdle();
-        runLaterAndWait(() -> {
-            robot.targetWindow(stage);
-            stage.toFront();
-        });
         return presenter;
     }
 
@@ -99,14 +105,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 
     @Override
     public void tearDown() throws Exception {
-        if (stage != null) {
-            Platform.runLater(() -> { try { stage.close(); } catch (Exception ignored) {}});
-        }
-        for (Window window : robot.robotContext().getWindowFinder().listTargetWindows()) {
-            runLaterAndWait(window::hide);
-        }
-        stage = null;
-        System.gc();
+        baseFXRobot.waitForIdle();
         super.tearDown();
     }
 

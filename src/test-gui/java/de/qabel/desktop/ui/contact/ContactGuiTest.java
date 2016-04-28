@@ -7,6 +7,8 @@ import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Test;
 
+import static de.qabel.desktop.AsyncUtils.assertAsync;
+import static org.hamcrest.Matchers.*;
 import static junit.framework.TestCase.assertEquals;
 
 public class ContactGuiTest extends AbstractGuiTest<ContactController> {
@@ -20,7 +22,7 @@ public class ContactGuiTest extends AbstractGuiTest<ContactController> {
 
     @Test
     public void testDeleteContact() throws Exception {
-
+        ContactPage page = new ContactPage(baseFXRobot, robot, controller);
 
         Identity identity = identityBuilderFactory.factory().withAlias("MainIdentity").build();
         createNewContactAndSaveInRepo("1", identity);
@@ -32,9 +34,9 @@ public class ContactGuiTest extends AbstractGuiTest<ContactController> {
         int elements = contactRepository.find(identity).getContacts().size();
 
         runLaterAndWait(() -> controller.loadContacts());
-        clickOn("#delete");
+        page.getFirstItem().delete();
 
-        assertEquals(elements + namingElements - 1, controller.contactList.getChildren().size());
+        assertAsync(controller.contactList.getChildren()::size, is(elements + namingElements - 1));
     }
 
     private void createNewContactAndSaveInRepo(String name, Identity identity) throws PersistenceException {

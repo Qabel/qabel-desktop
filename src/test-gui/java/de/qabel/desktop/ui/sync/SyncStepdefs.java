@@ -136,7 +136,10 @@ public class SyncStepdefs extends AbstractStepdefs<SyncController> {
     private BoxNavigation navigate(Path remote) throws QblStorageException {
         BoxNavigation navigation = volume.navigate();
         for (int i = 0; i < remote.getNameCount(); i++) {
-            navigation = navigation.navigate(remote.getName(i).toString());
+            BoxNavigation current = navigation;
+            String folderName = remote.getName(i).toString();
+            waitUntil(() -> current.hasFolder(folderName));
+            navigation = navigation.navigate(folderName);
         }
         return navigation;
     }

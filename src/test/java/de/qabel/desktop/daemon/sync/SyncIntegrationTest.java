@@ -8,15 +8,16 @@ import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilder;
 import de.qabel.desktop.daemon.management.*;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncer;
-import de.qabel.desktop.daemon.sync.worker.index.SyncIndexEntry;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.storage.LocalReadBackend;
 import de.qabel.desktop.storage.LocalWriteBackend;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
+import de.qabel.desktop.ui.AbstractControllerTest;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.*;
 
 public class SyncIntegrationTest {
+    private static final Logger logger = AbstractControllerTest.createLogger();
     public static final long TIMEOUT = 10000L;
     protected Path remoteDir;
     protected Path tmpDir1;
@@ -83,7 +85,7 @@ public class SyncIntegrationTest {
             managerThread2 = new Thread(manager2);
             managerThread2.start();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("failed to start sync", e);
             fail("failed to start sync: " + e.getMessage());
         }
     }
@@ -106,17 +108,17 @@ public class SyncIntegrationTest {
         try {
             FileUtils.deleteDirectory(remoteDir.toFile());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("failed to delete temporary remote dir " + remoteDir, e);
         }
         try {
             FileUtils.deleteDirectory(tmpDir1.toFile());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("failed to delete temporary dir " + tmpDir1, e);
         }
         try {
             FileUtils.deleteDirectory(tmpDir2.toFile());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("failed to delete temporary dir " + tmpDir2, e);
         }
     }
 

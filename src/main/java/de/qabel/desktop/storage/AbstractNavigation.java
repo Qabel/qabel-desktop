@@ -434,6 +434,9 @@ public abstract class AbstractNavigation implements BoxNavigation {
 
     @Override
     public synchronized BoxFolder createFolder(String name) throws QblStorageException {
+        if (hasFolder(name)) {
+            return getFolder(name);
+        }
         CreateFolderChange createFolderChange = new CreateFolderChange(name, deviceId);
         ChangeResult<BoxFolder> result = createFolderChange.execute(dm);
         changes.add(createFolderChange);

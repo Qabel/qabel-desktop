@@ -27,9 +27,7 @@ import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 public class RemoteFSControllerTest extends AbstractControllerTest {
@@ -153,7 +151,8 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
             waitUntil(() -> rootNode.getChildren().size() == 1);
 
         } catch (QblStorageException e) {
-            e.printStackTrace();
+            logger.error("unexpected error on test", e);
+            fail(e.getMessage());
         }
     }
 
