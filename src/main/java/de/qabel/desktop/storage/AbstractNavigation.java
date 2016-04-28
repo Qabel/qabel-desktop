@@ -296,7 +296,9 @@ public abstract class AbstractNavigation implements BoxNavigation {
         }
 
         final long autocommitStart = System.currentTimeMillis();
+        lastAutocommitStart = autocommitStart;
 
+        logger.trace("delaying autocommit by " + autocommitDelay + "ms");
         scheduler.schedule(() -> {
             try {
                 if (lastAutocommitStart != autocommitStart) {

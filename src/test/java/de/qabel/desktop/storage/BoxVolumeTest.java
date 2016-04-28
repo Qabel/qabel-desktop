@@ -4,9 +4,11 @@ package de.qabel.desktop.storage;
 import de.qabel.core.config.Contact;
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
+import de.qabel.desktop.AsyncUtils;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.exceptions.QblStorageNameConflict;
 import de.qabel.desktop.exceptions.QblStorageNotFound;
+import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
@@ -172,6 +174,24 @@ public abstract class BoxVolumeTest {
         List<BoxFolder> folders = nav_new.listFolders();
         assertThat(folders.size(), is(1));
         assertThat(boxFolder, equalTo(folders.get(0)));
+    }
+
+    @Test
+    public void testAutocommitDelay() throws Exception {
+        BoxNavigation nav = volume.navigate();
+        nav.setAutocommit(true);
+        nav.setAutocommitDelay(1000);
+        nav.createFolder("a");
+
+        BoxNavigation nav2 = volume2.navigate();
+        assertFalse(nav2.hasFolder("a"));
+        AsyncUtils.waitUntil(() -> {
+            BoxNavigation nav3 = volume2.navigate();
+            if (nav3 instanceof CachedBoxNavigation) {
+                ((CachedBoxNavigation) nav3).refresh();
+            }
+            return nav3.hasFolder("a");
+        }, 2000L);
     }
 
     @Test
