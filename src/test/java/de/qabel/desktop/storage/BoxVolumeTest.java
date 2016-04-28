@@ -178,25 +178,20 @@ public abstract class BoxVolumeTest {
 
     @Test
     public void testAutocommitDelay() throws Exception {
-        long oldDelay = AbstractNavigation.DEFAULT_AUTOCOMMIT_DELAY;
-        try {
-            BoxNavigation nav = volume.navigate();
-            nav.setAutocommit(true);
-            nav.setAutocommitDelay(1000);
-            nav.createFolder("a");
+        BoxNavigation nav = volume.navigate();
+        nav.setAutocommit(true);
+        nav.setAutocommitDelay(1000);
+        nav.createFolder("a");
 
-            BoxNavigation nav2 = volume2.navigate();
-            assertFalse(nav2.hasFolder("a"));
-            AsyncUtils.waitUntil(() -> {
-                BoxNavigation nav3 = volume2.navigate();
-                if (nav3 instanceof CachedBoxNavigation) {
-                    ((CachedBoxNavigation) nav3).refresh();
-                }
-                return nav3.hasFolder("a");
-            }, 2000L);
-        } finally {
-            AbstractNavigation.DEFAULT_AUTOCOMMIT_DELAY = oldDelay;
-        }
+        BoxNavigation nav2 = volume2.navigate();
+        assertFalse(nav2.hasFolder("a"));
+        AsyncUtils.waitUntil(() -> {
+            BoxNavigation nav3 = volume2.navigate();
+            if (nav3 instanceof CachedBoxNavigation) {
+                ((CachedBoxNavigation) nav3).refresh();
+            }
+            return nav3.hasFolder("a");
+        }, 2000L);
     }
 
     @Test
