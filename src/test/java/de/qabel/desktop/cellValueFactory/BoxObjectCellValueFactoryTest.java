@@ -79,7 +79,7 @@ public class BoxObjectCellValueFactoryTest extends AbstractControllerTest {
         try {
             FileUtils.deleteDirectory(tempFolder.toFile());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warn("failed to remove temp folder", e);
         }
         super.tearDown();
     }

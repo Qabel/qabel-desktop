@@ -6,20 +6,15 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.SQLitePersistence;
 import de.qabel.core.drop.DropMessage;
-import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.LaunchConfig;
 import de.qabel.desktop.daemon.drop.DropDaemon;
 import de.qabel.desktop.daemon.share.ShareNotificationHandler;
-import de.qabel.desktop.daemon.sync.SyncDaemon;
-import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
 import de.qabel.desktop.inject.DesktopServices;
 import de.qabel.desktop.inject.NewConfigDesktopServiceFactory;
 import de.qabel.desktop.inject.RuntimeDesktopServiceFactory;
 import de.qabel.desktop.inject.config.StaticRuntimeConfiguration;
 import de.qabel.desktop.repository.*;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
-import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.repository.sqlite.*;
 import de.qabel.desktop.storage.AbstractNavigation;
 import de.qabel.desktop.ui.CrashReportAlert;
@@ -34,8 +29,6 @@ import de.qabel.desktop.update.HttpUpdateChecker;
 import de.qabel.desktop.util.Translator;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
@@ -226,8 +219,9 @@ public class DesktopClient extends Application {
         config.onSetAccount(account ->
             executorService.submit(() -> {
                 try {
-                    new Thread(getSyncDaemon(getBoxSyncConfigRepository())).start();
-                    new Thread(getDropDaemon(config)).start();
+                    startTransferManager();
+                    startSyncDaemon();
+                    startDropDaemon();
                     view = new LayoutView();
                     Parent view = this.view.getView();
                     Scene layoutScene = new Scene(view, 900, 600, true, aa);
@@ -288,8 +282,12 @@ public class DesktopClient extends Application {
         );
     }
 
-    private BoxSyncRepository getBoxSyncConfigRepository() {
-        return services.getBoxSyncConfigRepository();
+    private void startDropDaemon() {
+        new Thread(services.getDropDaemon()).start();
+    }
+
+    private void startSyncDaemon() {
+        new Thread(services.getSyncDaemon()).start();
     }
 
     private ShareNotificationRepository getShareRepository() {
@@ -310,16 +308,8 @@ public class DesktopClient extends Application {
         });
     }
 
-    protected SyncDaemon getSyncDaemon(BoxSyncRepository boxSyncRepository) throws Exception {
+    private void startTransferManager() {
         new Thread(services.getTransferManager(), "TransactionManager").start();
-        ObservableList<BoxSyncConfig> configs = FXCollections.observableList(boxSyncRepository.findAll());
-        boxSyncRepository.onAdd(config -> configs.add(config));
-        return new SyncDaemon(configs,
-            new DefaultSyncerFactory(services.getBoxVolumeFactory(), services.getTransferManager())
-        );
     }
 
-    protected DropDaemon getDropDaemon(ClientConfig config) throws PersistenceException, EntityNotFoundExcepion {
-        return new DropDaemon(config, services.getDropConnector(), services.getContactRepository(), services.getDropMessageRepository());
-    }
 }

@@ -1,6 +1,5 @@
 package de.qabel.desktop.ui.remotefs;
 
-import com.airhacks.afterburner.views.QabelFXMLView;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.core.crypto.CryptoUtils;
@@ -26,12 +25,9 @@ import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.UUID;
 
-import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 public class RemoteFSControllerTest extends AbstractControllerTest {
@@ -55,6 +51,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
     @Override
     @Before
     public void setUp() throws Exception {
+        AbstractNavigation.DEFAULT_AUTOCOMMIT_DELAY = 0L;
         super.setUp();
         file = File.createTempFile("File2", ".txt", new File(System.getProperty("java.io.tmpdir")));
         CryptoUtils utils = new CryptoUtils();
@@ -131,7 +128,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
     public void injectlTest() {
         assertThat(controller.getRessource().getLocale().getCountry(), is("DE"));
         assertThat(controller.getRessource().getLocale().getLanguage(), is("de"));
-        assertThat(controller.loadManager, is(notNullValue()));
+        assertThat(controller.transferManager, is(notNullValue()));
     }
 
     @Test(timeout=10000L)
@@ -154,7 +151,8 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
             waitUntil(() -> rootNode.getChildren().size() == 1);
 
         } catch (QblStorageException e) {
-            e.printStackTrace();
+            logger.error("unexpected error on test", e);
+            fail(e.getMessage());
         }
     }
 
@@ -217,7 +215,6 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
         BoxNavigation newNav = nav.navigate(folder);
         assertThat(newNav.listFiles().size(), is(0));
         assertThat(newNav.listFolders().size(), is(1));
-
     }
 
     @Test(timeout=10000L)
@@ -229,7 +226,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
         tmp.createNewFile();
         controller.upload(tmp.toPath(), Paths.get("/", TEST_FOLDER, "/", "tmp1.txt"));
 
-        assertEquals(1, loadManager.getTransactions().size());
+        assertEquals(1, transferManager.getTransactions().size());
         executeTransactions();
         BoxNavigation newNav = nav.navigate(folder);
         assertThat(newNav.listFiles().size(), is(1));
@@ -238,8 +235,8 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
     }
 
     private void executeTransactions() throws InterruptedException {
-        while (!loadManager.getTransactions().isEmpty()) {
-            loadManager.next();
+        while (!transferManager.getTransactions().isEmpty()) {
+            transferManager.next();
         }
     }
 

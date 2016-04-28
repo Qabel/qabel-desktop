@@ -5,7 +5,6 @@ import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import org.junit.Test;
 
-import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -24,6 +23,7 @@ public class AbstractControllerGUITest extends AbstractGuiTest<AlertTestControll
         waitForNode(".feedback");
         CrashReportAlert alert = controller.alert;
         try {
+            runLaterAndWait(alert.getAlert().getDialogPane()::requestFocus);
             waitTillTheEnd(alert.getAlert().getDialogPane());
             assertEquals("Error", alert.getAlert().getTitle());
             assertEquals("some error message", alert.getAlert().getHeaderText());

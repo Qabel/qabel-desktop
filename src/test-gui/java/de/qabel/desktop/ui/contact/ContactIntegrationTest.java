@@ -10,7 +10,6 @@ import de.qabel.desktop.repository.sqlite.*;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import de.qabel.desktop.ui.actionlog.ActionlogController;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
-import de.qabel.desktop.ui.contact.item.ContactItemController;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,14 +19,15 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.HashSet;
 
+import static de.qabel.desktop.AsyncUtils.assertAsync;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 
 public class ContactIntegrationTest extends AbstractGuiTest<ContactController> {
     private Connection connection;
     private ClientDatabase clientDatabase;
     private EntityManager em = new EntityManager();
     private final Contact contact = new Contact("contact", new HashSet<>(), new QblECPublicKey("contactKey".getBytes()));
+    private ContactPage page;
 
     @Before
     @Override
@@ -72,6 +72,7 @@ public class ContactIntegrationTest extends AbstractGuiTest<ContactController> {
     private ContactController launchNode() {
         Object presenter = super.launchNode(getView());
         controller = (ContactController) presenter;
+        page = new ContactPage(baseFXRobot, robot, controller);
         return controller;
     }
 
@@ -82,27 +83,23 @@ public class ContactIntegrationTest extends AbstractGuiTest<ContactController> {
 
         launchNode();
 
-        waitUntil(() -> controller.contactItems.size() == 1);
-        ContactItemController itemController = controller.contactItems.get(0);
+        ContactItemPage item = page.getFirstItem();
 
-        waitUntil(() -> itemController.getIndicator().getText().equals("1"));
-        clickOn("#avatarContainer");
-        waitUntil(() -> itemController.getIndicator().getText().equals("0"));
-
-        launchNode();
-        waitUntil(() -> controller.contactItems.size() == 1);
+        assertAsync(item::getIndicatorCount, is(1));
+        page.selectFirstItem();
+        assertAsync(item::getIndicatorCount, is(0));
     }
 
     @Test
     public void actionlogReceivesNewMessages() throws Exception {
         launchNode();
-        clickOn("#avatarContainer");
+        page.selectFirstItem();
         waitUntil(() -> controller.actionlogController != null);
         ActionlogController actionlogController = controller.actionlogController;
-        assertThat(actionlogController.getReceivedDropMessages(), is(empty()));
+        assertAsync(actionlogController::getReceivedDropMessages, is(empty()));
 
         dropMessageRepository.save(getUnseenMessage());
-        assertThat(actionlogController.getReceivedDropMessages(), hasSize(1));
+        assertAsync(actionlogController::getReceivedDropMessages, hasSize(1));
     }
 
     private PersistenceDropMessage getSeenMessage() {

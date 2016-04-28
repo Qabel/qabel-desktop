@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefWidth="600" styleClass="dialog,syncEdit" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.sync.edit.SyncEditController">
+   <children>
+
+       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"  styleClass="row">
+           <children>
+               <Label prefWidth="150.0" text="Name" />
+               <TextField fx:id="name" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%syncSetupText" />
+           </children>
+       </HBox>
+
+      <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">
+         <children>
+            <Label prefWidth="150.0" text="%syncSetupLocalFolder" />
+            <TextField fx:id="localPath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+            <Button fx:id="chooseLocalPath" styleClass="choose" text="%syncSetupChooseLocalPath" />
+         </children>
+      </HBox>
+      <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">
+         <children>
+            <Label prefWidth="150.0" text="%syncSetupRemoteFolder" />
+            <TextField fx:id="remotePath" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+            <Button fx:id="chooseRemotePath" styleClass="choose" text="%syncSetupChooseRemotePath" />
+         </children>
+      </HBox>
+      <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="row">
+         <children>
+            <Label prefWidth="150.0" text="%syncSetupIdentity" />
+            <TextField fx:id="identity" disable="true" editable="false" text="%syncSetupIdentity" />
+         </children>
+      </HBox>
+      <HBox alignment="TOP_RIGHT" styleClass="button-bar">
+         <children>
+            <Button fx:id="cancel" cancelButton="true" onAction="#close" text="%syncEditCancel">
+               <HBox.margin>
+                  <Insets right="15.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="save" defaultButton="true" onAction="#save" text="%syncEditConfirm" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

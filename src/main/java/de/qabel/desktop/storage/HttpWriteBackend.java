@@ -19,7 +19,7 @@ public class HttpWriteBackend extends AbstractHttpStorageBackend implements Stor
 
     @Override
     public long upload(String name, InputStream content) throws QblStorageException {
-        logger.info("Uploading " + name);
+        logger.trace("Uploading " + name);
         HttpPost httpPost;
         try {
             URI uri = root.resolve(name);
@@ -44,7 +44,7 @@ public class HttpWriteBackend extends AbstractHttpStorageBackend implements Stor
 
     @Override
     public void delete(String name) throws QblStorageException {
-        logger.info("Deleting " + name);
+        logger.trace("Deleting " + name);
         URI uri;
         CloseableHttpResponse response;
 

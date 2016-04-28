@@ -45,7 +45,7 @@ public class SyncSetupController extends AbstractController implements Initializ
     TextField identity;
 
     @FXML
-    Button start;
+    protected Button start;
 
     @FXML
     Button chooseLocalPath;

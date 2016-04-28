@@ -11,6 +11,7 @@ import de.qabel.desktop.storage.BoxFile;
 import de.qabel.desktop.storage.BoxFolder;
 import de.qabel.desktop.storage.BoxNavigation;
 import de.qabel.desktop.storage.BoxVolume;
+import de.qabel.desktop.ui.AbstractControllerTest;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -435,7 +436,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
             try {
                 manager.next();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                AbstractControllerTest.createLogger().warn("interrupted while processing transfers", e);
             }
         }).start();
     }

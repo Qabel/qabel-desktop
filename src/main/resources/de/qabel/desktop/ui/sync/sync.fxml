@@ -5,7 +5,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<VBox fx:controller="de.qabel.desktop.ui.sync.SyncController" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<VBox styleClass="sync" fx:controller="de.qabel.desktop.ui.sync.SyncController" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
        <Button fx:id="addSync" onAction="#addSync" mnemonicParsing="false" text="%syncAddSync">
            <VBox.margin>

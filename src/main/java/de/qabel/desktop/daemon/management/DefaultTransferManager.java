@@ -98,6 +98,7 @@ public class DefaultTransferManager extends Observable implements TransferManage
             } else {
                 download((Download) transaction);
             }
+            logger.trace("Transaction finished: " + transaction);
         } catch (Exception e) {
             logger.error("Transaction failed: " + e.getMessage(), e);
         } finally {

@@ -8,10 +8,14 @@ import de.qabel.desktop.daemon.sync.worker.Syncer;
 import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.sync.edit.SyncEditController;
+import de.qabel.desktop.ui.sync.edit.SyncEditView;
 import de.qabel.desktop.ui.transfer.TransferViewModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -21,6 +25,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
@@ -29,6 +34,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class SyncItemController extends AbstractController implements Initializable {
+    @FXML
+    Parent syncItemRoot;
 
     @Inject
     private BoxSyncRepository boxSyncRepository;
@@ -84,6 +91,7 @@ public class SyncItemController extends AbstractController implements Initializa
         FXBoxSyncConfig fxConfig = new FXBoxSyncConfig(syncConfig);
 
         name.textProperty().bind(fxConfig.nameProperty());
+        syncItemRoot.getStyleClass().add(fxConfig.nameProperty().get());
         localPath.textProperty().bind(fxConfig.localPathProperty());
         remotePath.textProperty().bind(fxConfig.remotePathProperty());
 
@@ -118,6 +126,10 @@ public class SyncItemController extends AbstractController implements Initializa
         new Thread(() -> {
             tryOrAlert(() -> Desktop.getDesktop().open(syncConfig.getLocalPath().toFile()));
         }).start();
+    }
+
+    public BoxSyncConfig getSyncConfig() {
+        return syncConfig;
     }
 
     public void delete() {
@@ -222,5 +234,18 @@ public class SyncItemController extends AbstractController implements Initializa
             return "/ic_folder_black_synced.png";
         }
         return "/ic_folder_black_syncing.png";
+    }
+
+    Stage editStage;
+    SyncEditController syncEditController;
+
+    public void edit() {
+        editStage = new Stage();
+        SyncEditView view = new SyncEditView(syncConfig);
+        Scene scene = new Scene(view.getView());
+        editStage.setScene(scene);
+        syncEditController = (SyncEditController) view.getPresenter();
+        syncEditController.setStage(editStage);
+        editStage.show();
     }
 }

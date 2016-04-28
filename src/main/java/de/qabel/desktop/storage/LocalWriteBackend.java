@@ -25,7 +25,7 @@ public class LocalWriteBackend implements StorageWriteBackend {
     @Override
     public long upload(String name, InputStream inputStream) throws QblStorageException {
         Path file = root.resolve(name);
-        logger.info("Uploading file path " + file);
+        logger.trace("Uploading file path " + file);
         try {
             Files.createDirectories(root.resolve("blocks"));
             OutputStream output = Files.newOutputStream(file);
@@ -39,7 +39,7 @@ public class LocalWriteBackend implements StorageWriteBackend {
     @Override
     public void delete(String name) throws QblStorageException {
         Path file = root.resolve(name);
-        logger.info("Deleting file path " + file);
+        logger.trace("Deleting file path " + file);
         try {
             Files.delete(file);
         } catch (NoSuchFileException e) {

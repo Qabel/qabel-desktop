@@ -36,7 +36,7 @@ public class DefaultIndexNavigation extends AbstractNavigation implements IndexN
             DecryptedPlaintext plaintext = cryptoUtils.readBox(keyPair, encrypted);
             tmp = File.createTempFile("dir", "db4", dm.getTempDir());
             tmp.deleteOnExit();
-            logger.info("Using " + tmp + " for the metadata file");
+            logger.trace("Using " + tmp + " for the metadata file");
             OutputStream out = new FileOutputStream(tmp);
             out.write(plaintext.getPlaintext());
             out.close();
@@ -56,7 +56,7 @@ public class DefaultIndexNavigation extends AbstractNavigation implements IndexN
             byte[] plaintext = IOUtils.toByteArray(new FileInputStream(dm.path));
             byte[] encrypted = cryptoUtils.createBox(keyPair, keyPair.getPub(), plaintext, 0);
             writeBackend.upload(dm.getFileName(), new ByteArrayInputStream(encrypted));
-            logger.info("Uploading metadata file with name " + dm.getFileName());
+            logger.trace("Uploading metadata file with name " + dm.getFileName());
         } catch (IOException | InvalidKeyException e) {
             throw new QblStorageException(e);
         }

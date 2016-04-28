@@ -20,7 +20,7 @@ public class AbstractFxTest {
         } catch (IllegalStateException e) {
             startPlatform();
         } catch (Exception e) {
-            e.printStackTrace();
+            AbstractControllerTest.createLogger().error("something strange happened, trying to start platform anyways");
             startPlatform();
         }
     }
@@ -39,12 +39,7 @@ public class AbstractFxTest {
     }
 
     protected void runLaterAndWait(Runnable runnable) {
-        boolean[] hasRun = new boolean[]{false};
-        Platform.runLater(() -> {
-            runnable.run();
-            hasRun[0] = true;
-        });
-        waitUntil(() -> hasRun[0], 5000L);
+        AsyncUtils.runLaterAndWait(runnable);
     }
 
     public static void waitUntil(Callable<Boolean> evaluate) {

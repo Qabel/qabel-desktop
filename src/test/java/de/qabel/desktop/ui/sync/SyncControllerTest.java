@@ -1,11 +1,13 @@
 package de.qabel.desktop.ui.sync;
 
+import de.qabel.desktop.AsyncUtils;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 public class SyncControllerTest extends AbstractControllerTest {
     @Test
@@ -16,7 +18,7 @@ public class SyncControllerTest extends AbstractControllerTest {
         SyncController controller = createController();
 
         assertNotNull(controller.syncItemNodes);
-        assertEquals(1, controller.syncItemNodes.size());
+        AsyncUtils.assertAsync(() -> assertThat(controller.syncItemNodes, hasSize(1)));
     }
 
     private SyncController createController() {

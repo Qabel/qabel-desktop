@@ -6,9 +6,11 @@ import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.sync.item.DummySyncItemView;
+import de.qabel.desktop.ui.sync.item.SyncItemController;
 import de.qabel.desktop.ui.sync.item.SyncItemView;
 import de.qabel.desktop.ui.sync.setup.SyncSetupController;
 import de.qabel.desktop.ui.sync.setup.SyncSetupView;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,6 +23,7 @@ import javafx.stage.Stage;
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -29,6 +32,8 @@ public class SyncController extends AbstractController implements Initializable 
     private VBox syncItemContainer;
 
     ObservableList<Node> syncItemNodes;
+
+    List<SyncItemController> syncItemControllers = new LinkedList<>();
 
     Stage addStage;
 
@@ -50,7 +55,8 @@ public class SyncController extends AbstractController implements Initializable 
     }
 
     private synchronized void reload() {
-        syncItemNodes.clear();
+        Platform.runLater(syncItemNodes::clear);
+        syncItemControllers.clear();
         List<BoxSyncConfig> configs;
         try {
             configs = boxSyncRepository.findAll();
@@ -59,15 +65,19 @@ public class SyncController extends AbstractController implements Initializable 
         }
 
         if(configs.size() == 0){
-            syncItemNodes.add(new DummySyncItemView().getView());
+            Platform.runLater(() -> syncItemNodes.add(new DummySyncItemView().getView()));
             return;
         }
         for (BoxSyncConfig syncConfig : Collections.unmodifiableList(configs)) {
-            syncItemNodes.add(new SyncItemView(s -> s.equals("syncConfig") ? syncConfig : null).getView());
+            Platform.runLater(() -> {
+                SyncItemView view = new SyncItemView(s -> s.equals("syncConfig") ? syncConfig : null);
+                syncItemNodes.add(view.getView());
+                syncItemControllers.add((SyncItemController)view.getPresenter());
+            });
         }
     }
 
-    public void addSync(ActionEvent actionEvent) {
+    public void addSync() {
         addStage = new Stage();
         SyncSetupView view = new SyncSetupView();
         Scene scene = new Scene(view.getView());

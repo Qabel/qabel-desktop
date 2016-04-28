@@ -8,7 +8,9 @@ import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.crashReports.CrashReportHandler;
 import de.qabel.desktop.daemon.NetworkStatus;
+import de.qabel.desktop.daemon.drop.DropDaemon;
 import de.qabel.desktop.daemon.management.TransferManager;
+import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.repository.*;
 import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRendererFactory;
 import de.qabel.desktop.ui.connector.DropConnector;
@@ -84,4 +86,10 @@ public interface DesktopServices {
 
     @Create(name = "translator")
     Translator getTranslator();
+
+    @Create(name = "syncDaemon")
+    SyncDaemon getSyncDaemon();
+
+    @Create(name = "dropDaemon")
+    DropDaemon getDropDaemon();
 }

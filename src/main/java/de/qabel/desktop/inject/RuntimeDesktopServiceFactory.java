@@ -1,5 +1,12 @@
 package de.qabel.desktop.inject;
 
+import de.qabel.desktop.config.BoxSyncConfig;
+import de.qabel.desktop.daemon.drop.DropDaemon;
+import de.qabel.desktop.daemon.sync.SyncDaemon;
+import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
+import de.qabel.desktop.daemon.sync.worker.SyncerFactory;
+import de.qabel.desktop.repository.BoxSyncRepository;
+import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.util.Translator;
 import de.qabel.desktop.util.UTF8Converter;
 import de.qabel.core.accounting.AccountingHTTP;
@@ -25,6 +32,8 @@ import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRendererFactory;
 import de.qabel.desktop.ui.actionlog.item.renderer.PlaintextMessageRenderer;
 import de.qabel.desktop.ui.connector.DropConnector;
 import de.qabel.desktop.ui.connector.HttpDropConnector;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -165,5 +174,41 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     @Override
     public Translator getTranslator() {
         return new Translator(getResourceBundle());
+    }
+
+    private SyncDaemon syncDaemon;
+
+    public SyncerFactory getSyncerFactory() throws IOException {
+        return new DefaultSyncerFactory(getBoxVolumeFactory(), getTransferManager());
+    }
+
+    @Override
+    public synchronized SyncDaemon getSyncDaemon() {
+        if (syncDaemon == null) {
+            try {
+                BoxSyncRepository syncRepo = getBoxSyncConfigRepository();
+                ObservableList<BoxSyncConfig> configs = FXCollections.observableList(syncRepo.findAll());
+                syncRepo.onAdd(configs::add);
+                syncDaemon = new SyncDaemon(configs, getSyncerFactory());
+            } catch (PersistenceException | IOException e) {
+                throw new IllegalStateException("failed to create sync daemon: " + e.getMessage(), e);
+            }
+        }
+        return syncDaemon;
+    }
+
+    private DropDaemon dropDaemon;
+
+    @Override
+    public synchronized DropDaemon getDropDaemon() {
+        if (dropDaemon == null) {
+            dropDaemon = new DropDaemon(
+                getClientConfiguration(),
+                getDropConnector(),
+                getContactRepository(),
+                getDropMessageRepository()
+            );
+        }
+        return dropDaemon;
     }
 }
