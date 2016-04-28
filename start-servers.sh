@@ -19,7 +19,7 @@ function waitForPort {
     fi
 }
 
-DIRHASH=$(pwd | shasum | cut -d" " -f1)
+DIRHASH=$(pwd | shasum | cut -d" " -f1 | cut -c1-6)
 
 # qabel-drop
 echo -e "\n### STARTING DROP SERVER"
