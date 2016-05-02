@@ -9,6 +9,7 @@ import de.qabel.desktop.config.factory.ClientConfigurationFactory;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilder;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
+import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.repository.EntityManager;
@@ -148,7 +149,14 @@ public class LegacyDatabaseMigratorTest extends AbstractSqliteTest {
 
         Path localPath = Paths.get("/tmp/local");
         Path remotePath = BoxFileSystem.getRoot().resolve("tmp").resolve("remote");
-        BoxSyncConfig boxSyncConfig = new DefaultBoxSyncConfig("name", localPath, remotePath, identity, account);
+        BoxSyncConfig boxSyncConfig = new DefaultBoxSyncConfig(
+            "name",
+            localPath,
+            remotePath,
+            identity,
+            account,
+            new InMemorySyncIndexFactory()
+        );
         boxSyncConfig.pause();
         clientConfiguration.getBoxSyncConfigs().add(boxSyncConfig);
 

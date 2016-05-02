@@ -9,6 +9,7 @@ import de.qabel.desktop.ServiceFactory;
 import de.qabel.desktop.SharingService;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.RepositoryBasedClientConfig;
+import de.qabel.desktop.config.factory.DefaultBoxSyncConfigFactory;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.crashReports.StubCrashReportHandler;
@@ -17,6 +18,7 @@ import de.qabel.desktop.daemon.management.BoxVolumeFactoryStub;
 import de.qabel.desktop.daemon.management.DefaultTransferManager;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.FakeSyncerFactory;
+import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
 import de.qabel.desktop.repository.*;
 import de.qabel.desktop.repository.Stub.InMemoryContactRepository;
 import de.qabel.desktop.repository.Stub.StubDropMessageRepository;
@@ -120,6 +122,8 @@ public class AbstractControllerTest extends AbstractFxTest {
         FXMessageRendererFactory FXMessageRendererFactory = new FXMessageRendererFactory();
         FXMessageRendererFactory.setFallbackRenderer(new PlaintextMessageRenderer());
         diContainer.put("messageRendererFactory", FXMessageRendererFactory);
+        diContainer.put("boxSyncConfigFactory", new DefaultBoxSyncConfigFactory(new InMemorySyncIndexFactory()));
+        diContainer.put("boxSyncIndexFactory", new InMemorySyncIndexFactory());
 
         syncDaemon = new SyncDaemon(new SimpleListProperty<>(), new FakeSyncerFactory());
         diContainer.put("syncDaemon", syncDaemon);

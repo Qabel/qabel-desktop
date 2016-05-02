@@ -2,6 +2,7 @@ package de.qabel.desktop.repository.sqlite;
 
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.factory.DefaultBoxSyncConfigFactory;
+import de.qabel.desktop.daemon.sync.worker.index.sqlite.SqliteSyncIndexFactory;
 import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.repository.EntityManager;
 import de.qabel.desktop.repository.exception.PersistenceException;
@@ -30,7 +31,7 @@ public class SqliteBoxSyncRepository extends AbstractSqliteRepository<BoxSyncCon
             clientDatabase,
             new BoxSyncConfigHydrator(
                 em,
-                new DefaultBoxSyncConfigFactory(),
+                new DefaultBoxSyncConfigFactory(new SqliteSyncIndexFactory()),
                 new SqliteIdentityRepository(clientDatabase, em),
                 new SqliteAccountRepository(clientDatabase, em)
             )

@@ -32,7 +32,7 @@ DROP_VENV="venv_"${DIRHASH}
 if [ ! -d ${DROP_VENV} ]; then
   virtualenv --no-site-packages --python=python3.4 ${DROP_VENV}
 fi
-source ${DROP_VENV}"/bin/activate"
+source "${DROP_VENV}/bin/activate"
 echo "installing dependencies..."
 pip install -q -U pip
 pip install -q -r requirements.txt
@@ -57,7 +57,7 @@ fi
 if [ ! -d ${ACCOUNTING_VENV} ]; then
   virtualenv --no-site-packages --always-copy --python=python3.4 ${ACCOUNTING_VENV}
 fi
-source ${ACCOUNTING_VENV}"/bin/activate"
+source "${ACCOUNTING_VENV}/bin/activate"
 echo "installing dependencies..."
 pip install -q -U pip
 pip install -q -r requirements.txt

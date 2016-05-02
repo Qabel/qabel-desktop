@@ -7,6 +7,7 @@ import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.ClientConfiguration;
 import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import de.qabel.desktop.config.factory.ClientConfigurationFactory;
+import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.repository.AccountRepository;
 import de.qabel.desktop.repository.ClientConfigurationRepository;
@@ -78,7 +79,8 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
                         Paths.get(dto.localPath),
                         BoxFileSystem.get(dto.remotePath),
                         identityRepository.find(dto.identity),
-                        accountRepository.find(dto.account)
+                        accountRepository.find(dto.account),
+                        new InMemorySyncIndexFactory()
                 );
                 if (dto.syncIndex != null) {
                     boxSyncConfig.setSyncIndex(dto.syncIndex);

@@ -2,6 +2,7 @@ package de.qabel.desktop.config;
 
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
+import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,7 +23,7 @@ public class DefaultBoxSyncConfigTest {
     public void setUp() {
         localPath = Paths.get("wayne").toAbsolutePath();
         remotePath = Paths.get("train");
-        config = new DefaultBoxSyncConfig(localPath, remotePath, identity, account);
+        config = new DefaultBoxSyncConfig(localPath, remotePath, identity, account, new InMemorySyncIndexFactory());
 
         config.addObserver((o, arg) -> updated[0] = true);
     }
@@ -92,13 +93,6 @@ public class DefaultBoxSyncConfigTest {
     }
 
     @Test
-    public void notifiesOnSyncIndexUpdate() {
-        config.getSyncIndex().update(Paths.get("tmp"), 1000L, true);
-
-        assertUpdated();
-    }
-
-    @Test
     public void showsItsIdentits() {
         assertSame(identity, config.getIdentity());
     }
@@ -114,7 +108,7 @@ public class DefaultBoxSyncConfigTest {
     }
     @Test(expected = IllegalArgumentException.class)
     public void preventsHardToDebugRelativeLocalPathOnConstructor() {
-        config = new DefaultBoxSyncConfig(Paths.get("a"), remotePath, identity, account);
+        config = new DefaultBoxSyncConfig(Paths.get("a"), remotePath, identity, account, new InMemorySyncIndexFactory());
     }
 
     private void resetObserver() {

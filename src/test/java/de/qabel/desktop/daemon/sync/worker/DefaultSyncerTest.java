@@ -12,6 +12,7 @@ import de.qabel.desktop.daemon.sync.blacklist.Blacklist;
 import de.qabel.desktop.daemon.sync.blacklist.PatternBlacklist;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
+import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -49,7 +50,7 @@ public class DefaultSyncerTest extends AbstractSyncTest {
         }
         account = new Account("a", "b", "c");
         manager = new MonitoredTransferManager(new DefaultTransferManager());
-        config = new DefaultBoxSyncConfig(tmpDir, Paths.get("/"), identity, account);
+        config = new DefaultBoxSyncConfig(tmpDir, Paths.get("/"), identity, account, new InMemorySyncIndexFactory());
     }
 
     @Override

@@ -9,6 +9,7 @@ import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import de.qabel.desktop.config.factory.ClientConfigurationFactory;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilder;
+import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.repository.AccountRepository;
 import de.qabel.desktop.repository.IdentityRepository;
@@ -104,7 +105,8 @@ public class PersistenceClientConfigurationRepositoryTest extends AbstractPersis
             localPath,
             remotePath,
             identity,
-            account
+            account,
+            new InMemorySyncIndexFactory()
         );
         boxSyncConfig.getSyncIndex().update(localPath, 1000L, true);
         config.getBoxSyncConfigs().add(boxSyncConfig);
