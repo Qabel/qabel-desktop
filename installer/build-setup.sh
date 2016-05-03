@@ -47,3 +47,8 @@ if [ ! -f QabelDesktop.exe ]; then
     exit -1
 fi
 wine inno/ISCC.exe config.iss
+
+mv qabel-desktop-client-${version}-beta.exe qabel-desktop-client-${version}-${targetRelease}.exe
+cd ..
+mv build/distributions/qabel-desktop-linux_amd64-${version}.zip build/distributions/qabel-desktop-linux_amd64-${version}-${targetRelease}.zip
+
