@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -e
+cd "$(dirname "$0")"
+
 if [ ! -d inno ]; then
     echo "downloading inno setup"
     wget -nv http://www.jrsoftware.org/download.php/is-unicode.exe
