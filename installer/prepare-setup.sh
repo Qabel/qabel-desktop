@@ -36,7 +36,7 @@ fi
 
 if [ ! -d jre ]; then
     echo "downloading Java ${JAVA_MINOR} update ${JAVA_PATCH}..."
-    wget -q --show-progress -O jre.tar.gz \
+    wget -q -O jre.tar.gz \
         --no-cookies \
         --header "Cookie: oraclelicense=accept-securebackup-cookie" \
         http://download.oracle.com/otn-pub/java/jdk/${JAVA_MINOR}u${JAVA_PATCH}-b${JAVA_BUILD}/jre-${JAVA_MINOR}u${JAVA_PATCH}-windows-x64.tar.gz
