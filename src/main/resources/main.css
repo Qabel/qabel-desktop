@@ -389,6 +389,10 @@
     -fx-text-fill: #222222;
 }
 
+.tree-table-row-cell:selected .tooltip {
+    -fx-text-fill: #ffffff;
+}
+
 .tree-table-view {
     -fx-background-insets: 0;
 }
