@@ -332,7 +332,7 @@ public abstract class AbstractNavigation implements BoxNavigation {
                 return writeBackend.upload(block, encryptedFile);
             }
         } catch (IOException | InvalidKeyException e) {
-            throw new QblStorageException(e);
+            throw new QblStorageException(e.getMessage(), e);
         }
     }
 
