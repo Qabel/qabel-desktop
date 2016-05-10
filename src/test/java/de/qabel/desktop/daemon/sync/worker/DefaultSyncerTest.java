@@ -201,6 +201,7 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 
         PatternBlacklist blacklist = new PatternBlacklist();
         blacklist.add(Pattern.compile("\\..*\\.qpart~"));
+        blacklist.add(Pattern.compile("\\..*~"));
         BlacklistSpy spy = new BlacklistSpy(blacklist);
 
         syncer = new DefaultSyncer(config, volume, manager);

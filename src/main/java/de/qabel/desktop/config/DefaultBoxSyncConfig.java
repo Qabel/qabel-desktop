@@ -5,7 +5,9 @@ import de.qabel.core.config.Identity;
 import de.qabel.desktop.daemon.sync.worker.Syncer;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndex;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndexFactory;
+import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import de.qabel.desktop.nio.boxfs.BoxPath;
 
 import java.nio.file.Path;
 import java.util.LinkedList;
@@ -16,11 +18,11 @@ import java.util.function.Consumer;
 
 public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig, Observer {
     private static final String DEFAULT_NAME = "New Sync Config";
-    private SyncIndex syncIndex;
-    private SyncIndexFactory syncIndexFactory;
+    private transient SyncIndex syncIndex;
+    private transient SyncIndexFactory syncIndexFactory;
     private int id;
     private Path localPath;
-    private Path remotePath;
+    private BoxPath remotePath;
     private Identity identity;
     private Account account;
     private Boolean paused = false;
@@ -82,7 +84,7 @@ public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig, O
     }
 
     @Override
-    public Path getRemotePath() {
+    public BoxPath getRemotePath() {
         return remotePath;
     }
 
@@ -147,6 +149,9 @@ public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig, O
     @Override
     public synchronized SyncIndex getSyncIndex() {
         if (syncIndex == null) {
+            if (syncIndexFactory == null) {
+                syncIndexFactory = new InMemorySyncIndexFactory();
+            }
             syncIndex = syncIndexFactory.getIndex(this);
         }
         return syncIndex;

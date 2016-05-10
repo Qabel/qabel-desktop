@@ -1,37 +1,50 @@
 package de.qabel.desktop.daemon.sync.worker.index;
 
+import de.qabel.desktop.nio.boxfs.BoxPath;
+
 import java.io.Serializable;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class SyncIndexEntry implements Serializable {
-    private String localPath;
-    private Long localMtime;
-    private boolean existing;
+    private Path relativePath;
+    private SyncState syncedState;
+    private SyncState localState = new SyncState();
+    private SyncState remoteState = new SyncState();
 
-    public SyncIndexEntry(Path localPath, Long localMtime, boolean existing) {
-        this.localPath = localPath.toString();
-        this.localMtime = localMtime;
-        this.existing = existing;
+    public SyncIndexEntry(BoxPath relativePath) {
+        this(relativePath, new SyncState());
     }
 
-    public Path getLocalPath() {
-        return Paths.get(localPath);
+    public SyncIndexEntry(BoxPath relativePath, SyncState syncedState) {
+        this.relativePath = relativePath;
+        this.syncedState = syncedState;
     }
 
-    public Long getLocalMtime() {
-        return localMtime;
+    public Path getRelativePath() {
+        return relativePath;
     }
 
-    public boolean isExisting() {
-        return existing;
+    public SyncState getSyncedState() {
+        return syncedState;
     }
 
-    public void setLocalMtime(Long localMtime) {
-        this.localMtime = localMtime;
+    public SyncState getLocalState() {
+        return localState;
     }
 
-    public void setExisting(boolean existing) {
-        this.existing = existing;
+    public SyncState getRemoteState() {
+        return remoteState;
+    }
+
+    public void setSyncedState(SyncState syncedState) {
+        this.syncedState = syncedState;
+    }
+
+    public void setLocalState(SyncState localState) {
+        this.localState = localState;
+    }
+
+    public void setRemoteState(SyncState remoteState) {
+        this.remoteState = remoteState;
     }
 }

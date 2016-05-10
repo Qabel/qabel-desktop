@@ -12,5 +12,5 @@ public class PersistentBoxSyncConfig implements Serializable {
     public String account;
     public boolean paused;
     public String name;
-    public SyncIndex syncIndex;
+    public transient SyncIndex syncIndex;
 }

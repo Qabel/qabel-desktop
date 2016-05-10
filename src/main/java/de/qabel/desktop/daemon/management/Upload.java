@@ -1,4 +1,8 @@
 package de.qabel.desktop.daemon.management;
 
-public interface Upload extends Transaction {
+import de.qabel.desktop.nio.boxfs.BoxPath;
+
+import java.nio.file.Path;
+
+public interface Upload extends Transaction<Path, BoxPath> {
 }

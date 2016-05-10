@@ -30,4 +30,13 @@ public class LocalChangeEvent extends AbstractChangeEvent {
             return type == DELETE;
         }
     }
+
+    @Override
+    public long getSize() {
+        try {
+            return Files.isDirectory(getPath()) ? 0L : Files.size(getPath());
+        } catch (IOException e) {
+            return 0L;
+        }
+    }
 }

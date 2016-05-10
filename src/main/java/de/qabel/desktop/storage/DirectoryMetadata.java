@@ -16,7 +16,7 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 
 public class DirectoryMetadata extends AbstractMetadata {
-
+    public static final long DEFAULT_SIZE = 56320L;
     private final String fileName;
     byte[] deviceId;
     String root;

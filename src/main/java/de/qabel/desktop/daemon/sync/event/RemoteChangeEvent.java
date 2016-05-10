@@ -1,5 +1,6 @@
 package de.qabel.desktop.daemon.sync.event;
 
+import de.qabel.desktop.storage.BoxFile;
 import de.qabel.desktop.storage.BoxNavigation;
 import de.qabel.desktop.storage.BoxObject;
 
@@ -33,5 +34,10 @@ public class RemoteChangeEvent extends AbstractChangeEvent {
 
     public BoxNavigation getBoxNavigation() {
         return navigation;
+    }
+
+    @Override
+    public long getSize() {
+        return boxObject instanceof BoxFile ? ((BoxFile)boxObject).getSize() : 0L;
     }
 }

@@ -1,5 +1,7 @@
 package de.qabel.desktop.nio.boxfs;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -46,7 +48,7 @@ public class BoxPath implements Path {
     }
 
     @Override
-    public Path getRoot() {
+    public BoxPath getRoot() {
         return isAbsolute() ? new BoxPath(fileSystem, path.substring(0, 1)) : null;
     }
 
@@ -67,11 +69,11 @@ public class BoxPath implements Path {
     }
 
     @Override
-    public Path getParent() {
+    public BoxPath getParent() {
         if (getNameCount() <= (isAbsolute() ? 0 : 1)) {
             return null;
         }
-        Path relativeParent = subpath(0, getNameCount() - 2);
+        BoxPath relativeParent = subpath(0, getNameCount() - 2);
         return isAbsolute() ? getRoot().resolve(relativeParent) : relativeParent;
     }
 
@@ -81,13 +83,13 @@ public class BoxPath implements Path {
     }
 
     @Override
-    public Path getName(int index) {
+    public BoxPath getName(int index) {
         return new BoxPath(fileSystem, elements[index]);
     }
 
     @Override
-    public Path subpath(int beginIndex, int endIndex) {
-        Path result = new BoxPath(fileSystem, "");
+    public BoxPath subpath(int beginIndex, int endIndex) {
+        BoxPath result = new BoxPath(fileSystem, "");
         for (int i = beginIndex; i <= endIndex; i++) {
             result = result.resolve(elements[i]);
         }
@@ -140,12 +142,12 @@ public class BoxPath implements Path {
     }
 
     @Override
-    public Path normalize() {
-        return null;
+    public BoxPath normalize() {
+        throw new NotImplementedException();
     }
 
     @Override
-    public Path resolve(Path other) {
+    public BoxPath resolve(Path other) {
         String separator = separator();
 
         List<String> names = new LinkedList<>();
@@ -175,23 +177,23 @@ public class BoxPath implements Path {
     }
 
     @Override
-    public Path resolve(String other) {
+    public BoxPath resolve(String other) {
         return resolve(new BoxPath(fileSystem, other));
     }
 
     @Override
-    public Path resolveSibling(Path other) {
+    public BoxPath resolveSibling(Path other) {
         return null;
     }
 
     @Override
-    public Path resolveSibling(String other) {
+    public BoxPath resolveSibling(String other) {
         return null;
     }
 
     @Override
-    public Path relativize(Path other) {
-        Path result = new BoxPath(fileSystem, "");
+    public BoxPath relativize(Path other) {
+        BoxPath result = new BoxPath(fileSystem, "");
         for (int i = 0; i < getNameCount(); i++) {
             if (!other.getName(i).toString().equals(getName(i).toString())) {
                 result = result.resolve("..");
@@ -214,12 +216,12 @@ public class BoxPath implements Path {
     }
 
     @Override
-    public Path toAbsolutePath() {
+    public BoxPath toAbsolutePath() {
         return isAbsolute() ? this : new BoxPath(fileSystem, fileSystem.getSeparator()).resolve(this);
     }
 
     @Override
-    public Path toRealPath(LinkOption... options) throws IOException {
+    public BoxPath toRealPath(LinkOption... options) throws IOException {
         return null;
     }
 
@@ -251,5 +253,15 @@ public class BoxPath implements Path {
     @Override
     public String toString() {
         return path;
+    }
+
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof BoxPath && toString().equals(obj.toString());
     }
 }

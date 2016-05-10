@@ -108,7 +108,6 @@ public class PersistenceClientConfigurationRepositoryTest extends AbstractPersis
             account,
             new InMemorySyncIndexFactory()
         );
-        boxSyncConfig.getSyncIndex().update(localPath, 1000L, true);
         config.getBoxSyncConfigs().add(boxSyncConfig);
 
         repo.save(config);
@@ -125,6 +124,5 @@ public class PersistenceClientConfigurationRepositoryTest extends AbstractPersis
         assertEquals(Paths.get("/tmp/some/where").toString(), boxConfig.getLocalPath().toString());
         assertEquals("/over/the/rainbow", boxConfig.getRemotePath().toString());
         assertEquals("named", boxConfig.getName());
-        assertTrue(boxConfig.getSyncIndex().isUpToDate(localPath, 1000L, true));
     }
 }

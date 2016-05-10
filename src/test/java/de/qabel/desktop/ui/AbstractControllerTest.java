@@ -18,7 +18,9 @@ import de.qabel.desktop.daemon.management.BoxVolumeFactoryStub;
 import de.qabel.desktop.daemon.management.DefaultTransferManager;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.FakeSyncerFactory;
+import de.qabel.desktop.daemon.sync.worker.index.SyncIndexFactory;
 import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
+import de.qabel.desktop.daemon.sync.worker.index.sqlite.SqliteSyncIndexFactory;
 import de.qabel.desktop.repository.*;
 import de.qabel.desktop.repository.Stub.InMemoryContactRepository;
 import de.qabel.desktop.repository.Stub.StubDropMessageRepository;
@@ -122,8 +124,9 @@ public class AbstractControllerTest extends AbstractFxTest {
         FXMessageRendererFactory FXMessageRendererFactory = new FXMessageRendererFactory();
         FXMessageRendererFactory.setFallbackRenderer(new PlaintextMessageRenderer());
         diContainer.put("messageRendererFactory", FXMessageRendererFactory);
-        diContainer.put("boxSyncConfigFactory", new DefaultBoxSyncConfigFactory(new InMemorySyncIndexFactory()));
-        diContainer.put("boxSyncIndexFactory", new InMemorySyncIndexFactory());
+        SyncIndexFactory syncIndexFactory = new SqliteSyncIndexFactory();
+        diContainer.put("boxSyncConfigFactory", new DefaultBoxSyncConfigFactory(syncIndexFactory));
+        diContainer.put("boxSyncIndexFactory", syncIndexFactory);
 
         syncDaemon = new SyncDaemon(new SimpleListProperty<>(), new FakeSyncerFactory());
         diContainer.put("syncDaemon", syncDaemon);

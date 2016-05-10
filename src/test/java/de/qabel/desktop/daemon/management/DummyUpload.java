@@ -1,5 +1,6 @@
 package de.qabel.desktop.daemon.management;
 
+import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.storage.BoxVolume;
 
 import java.nio.file.Path;
@@ -26,7 +27,7 @@ public class DummyUpload implements Upload {
     }
 
     @Override
-    public Path getDestination() {
+    public BoxPath getDestination() {
         return null;
     }
 
@@ -87,7 +88,7 @@ public class DummyUpload implements Upload {
 
     @Override
     public long getSize() {
-        return 0;
+        return 0L;
     }
 
     @Override

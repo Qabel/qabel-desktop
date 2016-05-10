@@ -4,14 +4,14 @@ import de.qabel.desktop.storage.BoxVolume;
 
 import java.nio.file.Path;
 
-public abstract class AbstractManualTransaction extends AbstractTransaction {
+public abstract class AbstractManualTransaction<S extends Path, D extends Path> extends AbstractTransaction<S,D> {
     protected final TYPE type;
     protected final BoxVolume volume;
-    protected final Path source;
-    protected final Path destination;
+    protected final S source;
+    protected final D destination;
     protected final boolean isDir;
 
-    public AbstractManualTransaction(Long mtime, boolean isDir, Path destination, Path source, TYPE type, BoxVolume volume) {
+    public AbstractManualTransaction(Long mtime, boolean isDir, D destination, S source, TYPE type, BoxVolume volume) {
         super(mtime);
         this.isDir = isDir;
         this.destination = destination;
@@ -31,12 +31,12 @@ public abstract class AbstractManualTransaction extends AbstractTransaction {
     }
 
     @Override
-    public Path getSource() {
+    public S getSource() {
         return source;
     }
 
     @Override
-    public Path getDestination() {
+    public D getDestination() {
         return destination;
     }
 

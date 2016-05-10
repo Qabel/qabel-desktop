@@ -1,15 +1,9 @@
 package de.qabel.desktop.daemon.sync.worker.index;
 
-import java.nio.file.Path;
+import de.qabel.desktop.nio.boxfs.BoxPath;
 
 public interface SyncIndex {
-    void update(Path localPath, Long localMtime, boolean exists);
-
-    boolean isUpToDate(Path localPath, Long localMtime, boolean existing);
-
-    boolean hasAlreadyBeenDeleted(Path localPath, Long mtime);
-
-    SyncIndexEntry get(Path localPath);
+    SyncIndexEntry get(BoxPath relativePath);
 
     void clear();
 }

@@ -52,7 +52,7 @@ public class BoxFileSystem extends FileSystem {
         return null;
     }
 
-    public static Path getRoot() {
+    public static BoxPath getRoot() {
         return get("/");
     }
 
@@ -61,18 +61,18 @@ public class BoxFileSystem extends FileSystem {
      * is dangerous with filesystems that have other separators
      */
     @Deprecated
-    public static Path get(String first, String... more) {
+    public static BoxPath get(String first, String... more) {
         return new BoxFileSystem().getPath(first, more);
     }
 
-    public static Path get(Path oldPath) {
+    public static BoxPath get(Path oldPath) {
         return new BoxFileSystem().getPath(oldPath);
     }
 
-    public Path getPath(Path oldPath) {
-        Path path = new BoxPath(this, looksAbsolute(oldPath) ? getSeparator() : "");
+    public BoxPath getPath(Path oldPath) {
+        BoxPath path = new BoxPath(this, looksAbsolute(oldPath) ? getSeparator() : "");
         for (int i = 0; i < oldPath.getNameCount(); i++) {
-            path = path.resolve(oldPath.getName(i));
+            path = (BoxPath)path.resolve(oldPath.getName(i));
         }
         return path;
     }
@@ -82,8 +82,8 @@ public class BoxFileSystem extends FileSystem {
     }
 
     @Override
-    public Path getPath(String first, String... more) {
-        Path path = new BoxPath(this, first);
+    public BoxPath getPath(String first, String... more) {
+        BoxPath path = new BoxPath(this, first);
         for (String part : more) {
             path = path.resolve(part);
         }

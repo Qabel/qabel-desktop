@@ -20,4 +20,13 @@ public class WatchRegisteredEvent extends AbstractWatchEvent {
             return false;
         }
     }
+
+    @Override
+    public long getSize() {
+        try {
+            return Files.isDirectory(getPath()) ? 0L : Files.size(getPath());
+        } catch (IOException e) {
+            return 0L;
+        }
+    }
 }

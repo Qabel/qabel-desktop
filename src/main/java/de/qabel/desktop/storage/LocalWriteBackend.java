@@ -32,7 +32,7 @@ public class LocalWriteBackend implements StorageWriteBackend {
             output.write(IOUtils.toByteArray(inputStream));
             return Files.getLastModifiedTime(file).toMillis();
         } catch (IOException e) {
-            throw new QblStorageException(e);
+            throw new QblStorageException(e.getMessage(), e);
         }
     }
 
@@ -45,7 +45,7 @@ public class LocalWriteBackend implements StorageWriteBackend {
         } catch (NoSuchFileException e) {
             // ignore this just like the S3 API
         } catch (IOException e) {
-            throw new QblStorageException(e);
+            throw new QblStorageException(e.getMessage(), e);
         }
     }
 }

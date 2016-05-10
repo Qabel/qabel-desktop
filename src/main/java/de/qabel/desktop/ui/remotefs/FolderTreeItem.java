@@ -2,6 +2,8 @@ package de.qabel.desktop.ui.remotefs;
 
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
+import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.storage.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -50,11 +52,11 @@ public class FolderTreeItem extends TreeItem<BoxObject> implements Observer {
         }
     }
 
-    public Path getPath() {
+    public BoxPath getPath() {
         if (getParent() != null && getParent() instanceof FolderTreeItem) {
             return ((FolderTreeItem) getParent()).getPath().resolve(folder.getName());
         }
-        return Paths.get("/");
+        return BoxFileSystem.getRoot();
     }
 
     public boolean isLoading() {
