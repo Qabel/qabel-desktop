@@ -55,7 +55,7 @@ public class BoxSyncConfigHydrator extends AbstractHydrator<BoxSyncConfig> {
         int identityId = resultSet.getInt(i++);
         int accountId = resultSet.getInt(i++);
         Path localPath = Paths.get(resultSet.getString(i++));
-        Path remotePath = BoxFileSystem.get(resultSet.getString(i++));
+        BoxPath remotePath = BoxFileSystem.get(resultSet.getString(i++));
         boolean paused = resultSet.getBoolean(i++);
 
         try {

@@ -46,7 +46,13 @@ public class BoxSyncBasedUploadTest extends AbstractSyncTest {
         Identity identity = identityBuilderFactory.factory().build();
         Account account = new Account("a", "b", "c");
 
-        BoxSyncConfig boxSyncConfig = new DefaultBoxSyncConfig(tmpDir, Paths.get("/tmp"), identity, account, new InMemorySyncIndexFactory());
+        BoxSyncConfig boxSyncConfig = new DefaultBoxSyncConfig(
+            tmpDir,
+            BoxFileSystem.get("/tmp"),
+            identity,
+            account,
+            new InMemorySyncIndexFactory()
+        );
         WatchEvent event = new WatchRegisteredEvent(file.toPath());
         BoxVolumeStub volume = new BoxVolumeStub();
         Upload upload = new BoxSyncBasedUpload(volume, boxSyncConfig,event);

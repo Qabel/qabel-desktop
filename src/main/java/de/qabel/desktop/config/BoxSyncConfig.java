@@ -26,7 +26,7 @@ public interface BoxSyncConfig extends HasId {
 
     void setLocalPath(Path localPath);
 
-    void setRemotePath(Path remotePath);
+    void setRemotePath(BoxPath remotePath);
 
     void pause();
 

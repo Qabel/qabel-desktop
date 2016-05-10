@@ -13,6 +13,7 @@ import de.qabel.desktop.daemon.sync.blacklist.PatternBlacklist;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
+import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -50,7 +51,13 @@ public class DefaultSyncerTest extends AbstractSyncTest {
         }
         account = new Account("a", "b", "c");
         manager = new MonitoredTransferManager(new DefaultTransferManager());
-        config = new DefaultBoxSyncConfig(tmpDir, Paths.get("/"), identity, account, new InMemorySyncIndexFactory());
+        config = new DefaultBoxSyncConfig(
+            tmpDir,
+            BoxFileSystem.get("/"),
+            identity,
+            account,
+            new InMemorySyncIndexFactory()
+        );
     }
 
     @Override

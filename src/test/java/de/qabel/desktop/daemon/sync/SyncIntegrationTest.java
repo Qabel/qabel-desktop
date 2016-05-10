@@ -72,8 +72,22 @@ public class SyncIntegrationTest {
 
             Identity identity = new IdentityBuilder(new DropUrlGenerator("http://localhost:5000")).build();
             Account account = new Account("a", "b", "c");
-            config1 = new DefaultBoxSyncConfig("config1", tmpDir1, Paths.get("/sync"), identity, account, new SqliteSyncIndexFactory());
-            config2 = new DefaultBoxSyncConfig("config2", tmpDir2, Paths.get("/sync"), identity, account, new SqliteSyncIndexFactory());
+            config1 = new DefaultBoxSyncConfig(
+                "config1",
+                tmpDir1,
+                BoxFileSystem.get("/sync"),
+                identity,
+                account,
+                new SqliteSyncIndexFactory()
+            );
+            config2 = new DefaultBoxSyncConfig(
+                "config2",
+                tmpDir2,
+                BoxFileSystem.get("/sync"),
+                identity,
+                account,
+                new SqliteSyncIndexFactory()
+            );
             LocalReadBackend readBackend = new LocalReadBackend(remoteDir);
             LocalWriteBackend writeBackend = new LocalWriteBackend(remoteDir);
             volume1 = new CachedBoxVolume(readBackend, writeBackend, identity.getPrimaryKeyPair(), new byte[0], new File(System.getProperty("java.io.tmpdir")), "prefix");

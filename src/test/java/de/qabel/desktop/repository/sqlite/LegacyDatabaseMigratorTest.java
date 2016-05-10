@@ -11,6 +11,7 @@ import de.qabel.desktop.config.factory.IdentityBuilder;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.repository.EntityManager;
 import de.qabel.desktop.repository.persistence.*;
@@ -148,7 +149,7 @@ public class LegacyDatabaseMigratorTest extends AbstractSqliteTest {
         clientConfiguration.getShareNotification(identity).add(message);
 
         Path localPath = Paths.get("/tmp/local");
-        Path remotePath = BoxFileSystem.getRoot().resolve("tmp").resolve("remote");
+        BoxPath remotePath = BoxFileSystem.getRoot().resolve("tmp").resolve("remote");
         BoxSyncConfig boxSyncConfig = new DefaultBoxSyncConfig(
             "name",
             localPath,

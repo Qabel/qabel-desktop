@@ -60,7 +60,7 @@ public class SyncItemControllerGuiTest extends AbstractGuiTest<SyncItemControlle
         runLaterAndWait(() -> {
             syncConfig.setName("changed");
             syncConfig.setLocalPath(Paths.get("/tmp/to something"));
-            syncConfig.setRemotePath(Paths.get("else"));
+            syncConfig.setRemotePath(BoxFileSystem.get("else"));
         });
 
         assertEquals("changed", page.name());

@@ -32,7 +32,7 @@ public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig, O
 
     public DefaultBoxSyncConfig(
         Path localPath,
-        Path remotePath,
+        BoxPath remotePath,
         Identity identity,
         Account account,
         SyncIndexFactory syncIndexFactory
@@ -43,7 +43,7 @@ public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig, O
     public DefaultBoxSyncConfig(
         String name,
         Path localPath,
-        Path remotePath,
+        BoxPath remotePath,
         Identity identity,
         Account account,
         SyncIndexFactory syncIndexFactory
@@ -89,7 +89,7 @@ public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig, O
     }
 
     @Override
-    public void setRemotePath(Path remotePath) {
+    public void setRemotePath(BoxPath remotePath) {
         if (!remotePath.isAbsolute()) {
             remotePath = BoxFileSystem.getRoot().resolve(remotePath);
         }

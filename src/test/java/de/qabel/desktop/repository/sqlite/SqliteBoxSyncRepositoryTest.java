@@ -7,6 +7,8 @@ import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilder;
 import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
+import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.repository.EntityManager;
 import org.junit.Test;
 
@@ -47,7 +49,7 @@ public class SqliteBoxSyncRepositoryTest extends AbstractSqliteRepositoryTest<Sq
 
 
         Path localPath = Paths.get("/tmp/wayne");
-        Path remotePath = Paths.get("/tmp/remoteWayne");
+        BoxPath remotePath = BoxFileSystem.get("/tmp/remoteWayne");
         config = new DefaultBoxSyncConfig(
             "testC",
             localPath,

@@ -3,6 +3,8 @@ package de.qabel.desktop.config;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
+import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import de.qabel.desktop.nio.boxfs.BoxPath;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,12 +19,12 @@ public class DefaultBoxSyncConfigTest {
     private DefaultBoxSyncConfig config;
     private boolean[] updated = new boolean[]{false};
     private Path localPath;
-    private Path remotePath;
+    private BoxPath remotePath;
 
     @Before
     public void setUp() {
         localPath = Paths.get("wayne").toAbsolutePath();
-        remotePath = Paths.get("train");
+        remotePath = BoxFileSystem.get("train");
         config = new DefaultBoxSyncConfig(localPath, remotePath, identity, account, new InMemorySyncIndexFactory());
 
         config.addObserver((o, arg) -> updated[0] = true);
@@ -61,7 +63,7 @@ public class DefaultBoxSyncConfigTest {
 
     @Test
     public void notifiesOnRemotePathChange() {
-        config.setRemotePath(Paths.get("western"));
+        config.setRemotePath(BoxFileSystem.get("western"));
         assertUpdated();
         assertEquals("western", config.getRemotePath().getFileName().toString());
     }
