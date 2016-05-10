@@ -1,7 +1,7 @@
 package de.qabel.desktop.repository.sqlite;
 
 import de.qabel.desktop.repository.DropStateRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 
 import java.sql.PreparedStatement;
@@ -17,14 +17,14 @@ public class SqliteDropStateRepository implements DropStateRepository {
     }
 
     @Override
-    public String getDropState(String drop) throws EntityNotFoundExcepion, PersistenceException {
+    public String getDropState(String drop) throws EntityNotFoundException, PersistenceException {
         try (PreparedStatement statement = database.prepare(
             "SELECT `last_request_stamp` FROM " + TABLE_NAME + " WHERE `drop` = ? LIMIT 1"
         )) {
             statement.setString(1, drop);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (!resultSet.next()) {
-                    throw new EntityNotFoundExcepion("no state found for drop '" + drop + "'");
+                    throw new EntityNotFoundException("no state found for drop '" + drop + "'");
                 }
 
                 return resultSet.getString(1);

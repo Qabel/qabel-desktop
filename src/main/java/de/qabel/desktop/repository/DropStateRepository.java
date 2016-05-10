@@ -1,6 +1,6 @@
 package de.qabel.desktop.repository;
 
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 
 /**
@@ -9,6 +9,6 @@ import de.qabel.desktop.repository.exception.PersistenceException;
  * The state can be anything the server says (and understands) like a timestamp, an E-Tag, etc.
  */
 public interface DropStateRepository {
-    String getDropState(String drop) throws EntityNotFoundExcepion, PersistenceException;
+    String getDropState(String drop) throws EntityNotFoundException, PersistenceException;
     void setDropState(String drop, String state) throws PersistenceException;
 }

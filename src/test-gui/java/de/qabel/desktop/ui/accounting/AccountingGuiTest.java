@@ -3,7 +3,7 @@ package de.qabel.desktop.ui.accounting;
 import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.core.config.Identities;
 import de.qabel.core.config.Identity;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.repository.inmemory.InMemoryIdentityRepository;
 import de.qabel.desktop.ui.AbstractGuiTest;
@@ -29,7 +29,7 @@ public class AccountingGuiTest extends AbstractGuiTest<AccountingController> {
     }
 
     @Test
-    public void testAddsIdentity() throws EntityNotFoundExcepion, PersistenceException {
+    public void testAddsIdentity() throws EntityNotFoundException, PersistenceException {
         controller.clientConfiguration.selectIdentity(null);
         page.add().inputAndConfirm("a new identity");
 

@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.nio.file.Path;
 
 public class SyncIndexEntry implements Serializable {
-    private Path relativePath;
+    private BoxPath relativePath;
     private SyncState syncedState;
     private SyncState localState = new SyncState();
     private SyncState remoteState = new SyncState();
@@ -20,7 +20,7 @@ public class SyncIndexEntry implements Serializable {
         this.syncedState = syncedState;
     }
 
-    public Path getRelativePath() {
+    public BoxPath getRelativePath() {
         return relativePath;
     }
 

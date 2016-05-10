@@ -9,7 +9,7 @@ import de.qabel.desktop.config.factory.DefaultContactFactory;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilder;
 import de.qabel.desktop.repository.EntityManager;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.sqlite.hydrator.ContactHydrator;
 import de.qabel.desktop.repository.sqlite.hydrator.DropURLHydrator;
 import org.junit.Test;
@@ -57,7 +57,7 @@ public class SqliteContactRepositoryTest extends AbstractSqliteRepositoryTest<Sq
         );
     }
 
-    @Test(expected = EntityNotFoundExcepion.class)
+    @Test(expected = EntityNotFoundException.class)
     public void throwsExceptionWhenNotFound() throws Exception {
         repo.findByKeyId(identity, pubKey.getReadableKeyIdentifier());
     }
@@ -169,7 +169,7 @@ public class SqliteContactRepositoryTest extends AbstractSqliteRepositoryTest<Sq
         try {
             repo.findByKeyId(identity, contact.getKeyIdentifier());
             fail("entity was not deleted");
-        } catch (EntityNotFoundExcepion ignored) {}
+        } catch (EntityNotFoundException ignored) {}
     }
 
     @Test
@@ -181,7 +181,7 @@ public class SqliteContactRepositoryTest extends AbstractSqliteRepositoryTest<Sq
         try {
             repo.findByKeyId(identity, contact.getKeyIdentifier());
             fail("connection from contact to identity was not deleted");
-        } catch (EntityNotFoundExcepion ignored){}
+        } catch (EntityNotFoundException ignored){}
 
         Contact loaded = repo.findByKeyId(otherIdentity, contact.getKeyIdentifier());
         assertSame(contact, loaded);

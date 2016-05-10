@@ -4,10 +4,9 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.config.ContactExportImport;
 import de.qabel.core.config.Identities;
 import de.qabel.core.config.Identity;
-import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.desktop.exceptions.QblStorageException;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import de.qabel.desktop.ui.accounting.item.AccountingItemController;
@@ -73,7 +72,7 @@ public class AccountingControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void importIdentityTest() throws IOException, QblStorageException, PersistenceException, EntityNotFoundExcepion, URISyntaxException, QblDropInvalidURL, JSONException {
+    public void importIdentityTest() throws IOException, QblStorageException, PersistenceException, EntityNotFoundException, URISyntaxException, QblDropInvalidURL, JSONException {
         setupExport();
         controller.importIdentity(new File(System.class.getResource(TEST_JSON).toURI()));
         Identities identities = identityRepository.findAll();
@@ -84,7 +83,7 @@ public class AccountingControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void exportIdentityTest() throws URISyntaxException, IOException, QblStorageException, PersistenceException, EntityNotFoundExcepion, QblDropInvalidURL, JSONException {
+    public void exportIdentityTest() throws URISyntaxException, IOException, QblStorageException, PersistenceException, EntityNotFoundException, QblDropInvalidURL, JSONException {
         File file = setupImport(TEST_IDENTITY);
         Identity identity = identityBuilderFactory.factory().withAlias("Test").build();
 
@@ -104,7 +103,7 @@ public class AccountingControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void exportContactTest() throws IOException, QblStorageException, URISyntaxException, QblDropInvalidURL, EntityNotFoundExcepion, PersistenceException, JSONException {
+    public void exportContactTest() throws IOException, QblStorageException, URISyntaxException, QblDropInvalidURL, EntityNotFoundException, PersistenceException, JSONException {
         File file = setupImport(TEST_CONTACT);
 
         Identity identity = identityBuilderFactory.factory().build();

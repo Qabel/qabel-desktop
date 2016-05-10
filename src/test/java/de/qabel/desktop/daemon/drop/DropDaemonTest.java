@@ -9,11 +9,9 @@ import de.qabel.core.drop.DropMessage;
 import de.qabel.core.drop.DropURL;
 import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.core.exceptions.QblNetworkInvalidResponseException;
-import de.qabel.desktop.repository.DropMessageRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.repository.inmemory.InMemoryHttpDropConnector;
-import de.qabel.desktop.repository.sqlite.SqliteDropMessageRepository;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 import de.qabel.desktop.ui.connector.DropConnector;
@@ -34,7 +32,7 @@ public class DropDaemonTest extends AbstractControllerTest {
     String fakeURL = "http://localhost:12345/abcdefghijklmnopqrstuvwxyzabcdefgworkingUrl";
 
     @Test
-    public void receiveMessagesTest() throws URISyntaxException, QblDropInvalidURL, QblNetworkInvalidResponseException, PersistenceException, EntityNotFoundExcepion {
+    public void receiveMessagesTest() throws URISyntaxException, QblDropInvalidURL, QblNetworkInvalidResponseException, PersistenceException, EntityNotFoundException {
         Collection<DropURL> collection = new ArrayList<>();
         DropURL dropURL = new DropURL(fakeURL);
         collection.add(dropURL);

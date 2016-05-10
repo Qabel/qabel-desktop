@@ -5,7 +5,7 @@ import de.qabel.core.config.Contacts;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.Persistence;
 import de.qabel.desktop.repository.ContactRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 
 import java.util.HashMap;
@@ -71,12 +71,12 @@ public class PersistenceContactRepository extends AbstractCachedPersistenceRepos
     }
 
     @Override
-    public Contact findByKeyId(Identity identity, String keyId) throws EntityNotFoundExcepion {
+    public Contact findByKeyId(Identity identity, String keyId) throws EntityNotFoundException {
 
         Contacts contacts = find(identity);
         Contact contact = contacts.getByKeyIdentifier(keyId);
         if (contact == null) {
-            throw new EntityNotFoundExcepion("No contact with keyId " + keyId + " found");
+            throw new EntityNotFoundException("No contact with keyId " + keyId + " found");
         }
         return contact;
     }

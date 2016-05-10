@@ -5,12 +5,9 @@ import de.qabel.core.config.Identity;
 import de.qabel.core.config.Persistence;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilder;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import org.junit.Test;
-
-import java.util.LinkedList;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -34,7 +31,7 @@ public class PersistenceIdentityRepositoryTest extends AbstractPersistenceReposi
         assertEquals(identity, results.getByKeyIdentifier(identity.getKeyIdentifier()));
     }
 
-    @Test(expected = EntityNotFoundExcepion.class)
+    @Test(expected = EntityNotFoundException.class)
     public void throwsExcetionIfEntityIsNotFound() throws Exception {
         repo.find("1");
     }

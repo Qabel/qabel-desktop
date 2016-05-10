@@ -1,6 +1,6 @@
 package de.qabel.desktop.repository.sqlite;
 
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 
 import java.sql.PreparedStatement;
@@ -26,19 +26,19 @@ public abstract class AbstractSqliteRepository<T> {
             .toString();
     }
 
-    protected T findBy(String condition, Object... params) throws EntityNotFoundExcepion, PersistenceException {
+    protected T findBy(String condition, Object... params) throws EntityNotFoundException, PersistenceException {
         String query = getQueryPrefix() + " WHERE " + condition + " LIMIT 1";
         return findByQuery(query, params);
     }
 
-    protected T findByQuery(String query, Object[] params) throws EntityNotFoundExcepion, PersistenceException {
+    protected T findByQuery(String query, Object[] params) throws EntityNotFoundException, PersistenceException {
         try (PreparedStatement statement = database.prepare(query)) {
             for (int i = 0; i < params.length; i++) {
                 statement.setObject(i+1, params[i]);
             }
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (!resultSet.next()) {
-                    throw new EntityNotFoundExcepion("no entry for '" + query + "' and " + params + " -> " + params[0]);
+                    throw new EntityNotFoundException("no entry for '" + query + "' and " + params + " -> " + params[0]);
                 }
                 return hydrator.hydrateOne(resultSet);
             }

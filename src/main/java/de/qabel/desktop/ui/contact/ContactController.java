@@ -7,7 +7,7 @@ import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.TransactionManager;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.DetailsController;
@@ -99,7 +99,7 @@ public class ContactController extends AbstractController implements Initializab
             loadContacts();
             createObserver();
 
-        } catch (EntityNotFoundExcepion | PersistenceException e) {
+        } catch (EntityNotFoundException | PersistenceException e) {
             alert(e);
         }
 
@@ -126,7 +126,7 @@ public class ContactController extends AbstractController implements Initializab
     }
 
     @FXML
-    protected void handleImportContactsButtonAction(ActionEvent event) throws IOException, PersistenceException, URISyntaxException, QblDropInvalidURL, EntityNotFoundExcepion, JSONException {
+    protected void handleImportContactsButtonAction(ActionEvent event) throws IOException, PersistenceException, URISyntaxException, QblDropInvalidURL, EntityNotFoundException, JSONException {
         try {
             FileChooser chooser = new FileChooser();
             chooser.setTitle(resourceBundle.getString("contactDownloadFolder"));
@@ -139,7 +139,7 @@ public class ContactController extends AbstractController implements Initializab
     }
 
     @FXML
-    protected void handleExportContactsButtonAction() throws EntityNotFoundExcepion, IOException, JSONException {
+    protected void handleExportContactsButtonAction() throws EntityNotFoundException, IOException, JSONException {
         tryOrAlert(() -> {
             try {
                 FileChooser chooser = new FileChooser();
@@ -235,7 +235,7 @@ public class ContactController extends AbstractController implements Initializab
         });
     }
 
-    void exportContacts(File file) throws EntityNotFoundExcepion, IOException, JSONException, PersistenceException {
+    void exportContacts(File file) throws EntityNotFoundException, IOException, JSONException, PersistenceException {
         Contacts contacts = contactRepository.find(i);
         String jsonContacts = ContactExportImport.exportContacts(contacts);
         writeStringInFile(jsonContacts, file);
@@ -257,7 +257,7 @@ public class ContactController extends AbstractController implements Initializab
         });
     }
 
-    private void buildGson() throws EntityNotFoundExcepion, PersistenceException {
+    private void buildGson() throws EntityNotFoundException, PersistenceException {
         final GsonBuilder builder = new GsonBuilder();
         builder.serializeNulls();
         Identities ids = identityRepository.findAll();

@@ -1,7 +1,7 @@
 package de.qabel.desktop.repository.inmemory;
 
 import de.qabel.desktop.repository.ClientConfigRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 
 import java.util.HashMap;
@@ -11,9 +11,9 @@ public class InMemoryClientConfigRepository implements ClientConfigRepository {
     private Map<String, String> values = new HashMap<>();
 
     @Override
-    public String find(String key) throws EntityNotFoundExcepion, PersistenceException {
+    public String find(String key) throws EntityNotFoundException, PersistenceException {
         if (!contains(key)) {
-            throw new EntityNotFoundExcepion("no entry for " + key);
+            throw new EntityNotFoundException("no entry for " + key);
         }
         return values.get(key);
     }

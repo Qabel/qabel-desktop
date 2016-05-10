@@ -4,23 +4,15 @@ import de.qabel.core.config.Account;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
-import de.qabel.core.drop.DropURL;
-import de.qabel.core.exceptions.*;
 import de.qabel.desktop.daemon.drop.TextMessage;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.Stub.StubDropMessageRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
-import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractControllerTest;
-import de.qabel.desktop.ui.actionlog.item.ActionlogItem;
 import de.qabel.desktop.ui.actionlog.item.MyActionlogItemController;
 import de.qabel.desktop.ui.actionlog.item.MyActionlogItemView;
-import de.qabel.desktop.ui.actionlog.item.OtherActionlogItemView;
-import de.qabel.desktop.ui.connector.HttpDropConnector;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.net.URISyntaxException;
 import java.util.*;
 
 import static de.qabel.desktop.AsyncUtils.waitUntil;

@@ -12,7 +12,7 @@ import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.repository.AccountRepository;
 import de.qabel.desktop.repository.ClientConfigurationRepository;
 import de.qabel.desktop.repository.IdentityRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import javafx.collections.ObservableList;
 
@@ -48,15 +48,15 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
             if (configDto.accountId != null) {
                 try {
                     config.setAccount(accountRepository.find(configDto.accountId));
-                } catch (EntityNotFoundExcepion entityNotFoundExcepion) {
-                    entityNotFoundExcepion.printStackTrace();
+                } catch (EntityNotFoundException entityNotFoundException) {
+                    entityNotFoundException.printStackTrace();
                 }
             }
             if (configDto.identitiyId != null) {
                 try {
                     config.selectIdentity(identityRepository.find(configDto.identitiyId));
-                } catch (EntityNotFoundExcepion | PersistenceException entityNotFoundExcepion) {
-                    entityNotFoundExcepion.printStackTrace();
+                } catch (EntityNotFoundException | PersistenceException entityNotFoundException) {
+                    entityNotFoundException.printStackTrace();
                 }
             }
 
@@ -86,7 +86,7 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
                     boxSyncConfig.setSyncIndex(dto.syncIndex);
                 }
                 boxSyncConfigs.add(boxSyncConfig);
-            } catch (EntityNotFoundExcepion | PersistenceException e) {
+            } catch (EntityNotFoundException | PersistenceException e) {
                 e.printStackTrace();
             }
         }
@@ -124,7 +124,7 @@ public class PersistenceClientConfigurationRepository extends AbstractPersistenc
             try {
                 try {
                     identityRepository.find(identity.getPersistenceID());
-                } catch (EntityNotFoundExcepion e) {
+                } catch (EntityNotFoundException e) {
                     identityRepository.save(identity);
                 }
                 configDto.identitiyId = identity.getKeyIdentifier();

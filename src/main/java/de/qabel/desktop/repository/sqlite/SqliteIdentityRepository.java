@@ -5,7 +5,7 @@ import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.factory.DefaultIdentityFactory;
 import de.qabel.desktop.repository.EntityManager;
 import de.qabel.desktop.repository.IdentityRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.repository.sqlite.hydrator.DropURLHydrator;
 import de.qabel.desktop.repository.sqlite.hydrator.IdentityHydrator;
@@ -55,17 +55,17 @@ public class SqliteIdentityRepository extends AbstractSqliteRepository<Identity>
     }
 
     @Override
-    public Identity find(String keyId) throws EntityNotFoundExcepion, PersistenceException {
+    public Identity find(String keyId) throws EntityNotFoundException, PersistenceException {
         return findBy("c.publicKey=?", keyId);
     }
 
     @Override
-    public Identity find(int id) throws EntityNotFoundExcepion, PersistenceException {
+    public Identity find(int id) throws EntityNotFoundException, PersistenceException {
         return findBy("i.id = ?", id);
     }
 
     @Override
-    public Identities findAll() throws EntityNotFoundExcepion, PersistenceException {
+    public Identities findAll() throws EntityNotFoundException, PersistenceException {
         Collection<Identity> all = super.findAll("");
         Identities identities = new Identities();
         for (Identity identity : all) {

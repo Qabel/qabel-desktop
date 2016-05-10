@@ -4,7 +4,7 @@ import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropURL;
 import de.qabel.desktop.repository.*;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +54,7 @@ public class RepositoryBasedClientConfig implements ClientConfig {
     public Account getAccount() {
         try {
             return accountRepo.find(configRepo.find("account"));
-        } catch (PersistenceException | EntityNotFoundExcepion e) {
+        } catch (PersistenceException | EntityNotFoundException e) {
             throw new IllegalStateException("couldn't load current account", e);
         }
     }
@@ -84,7 +84,7 @@ public class RepositoryBasedClientConfig implements ClientConfig {
             return identityRepo.find(Integer.valueOf(configRepo.find("identity")));
         } catch (PersistenceException e) {
             throw new IllegalStateException("failed to load identity", e);
-        } catch (EntityNotFoundExcepion e) {
+        } catch (EntityNotFoundException e) {
             return null;
         }
     }
@@ -133,7 +133,7 @@ public class RepositoryBasedClientConfig implements ClientConfig {
             return configRepo.find("device_id");
         } catch (PersistenceException e) {
             throw new IllegalStateException("failed to check device id", e);
-        } catch (EntityNotFoundExcepion e) {
+        } catch (EntityNotFoundException e) {
             logger.warn("missing device_id, generating a new one");
             String deviceId = generateNewDeviceId();
             setDeviceId(deviceId);

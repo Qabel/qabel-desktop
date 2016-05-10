@@ -2,7 +2,7 @@ package de.qabel.desktop.repository.inmemory;
 
 import de.qabel.core.config.Account;
 import de.qabel.desktop.repository.AccountRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 
 import java.util.LinkedList;
@@ -12,17 +12,17 @@ public class InMemoryAccountRepository implements AccountRepository {
     private List<Account> accounts = new LinkedList<>();
 
     @Override
-    public Account find(String id) throws EntityNotFoundExcepion {
+    public Account find(String id) throws EntityNotFoundException {
         for (Account account : accounts) {
             if (id.equals(String.valueOf(account.getId()))) {
                 return account;
             }
         }
-        throw new EntityNotFoundExcepion("no account for id " + id);
+        throw new EntityNotFoundException("no account for id " + id);
     }
 
     @Override
-    public Account find(int id) throws EntityNotFoundExcepion {
+    public Account find(int id) throws EntityNotFoundException {
         return find(String.valueOf(id));
     }
 

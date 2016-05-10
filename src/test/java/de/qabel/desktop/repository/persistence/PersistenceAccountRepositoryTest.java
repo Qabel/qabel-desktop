@@ -2,7 +2,7 @@ package de.qabel.desktop.repository.persistence;
 
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Persistence;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import org.junit.Test;
 
 import java.util.List;
@@ -15,7 +15,7 @@ public class PersistenceAccountRepositoryTest extends AbstractPersistenceReposit
         return new PersistenceAccountRepository(persistence);
     }
 
-    @Test(expected = EntityNotFoundExcepion.class)
+    @Test(expected = EntityNotFoundException.class)
     public void throwsEntityNotFoundExceptionIfSingleEntityIsNotFound() throws Exception {
         repo.find("1");
     }

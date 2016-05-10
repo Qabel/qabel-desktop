@@ -6,7 +6,7 @@ import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.desktop.repository.Stub.StubDropMessageRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import org.apache.commons.io.FileUtils;
@@ -52,7 +52,7 @@ public class ContactControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void exportContactsTest() throws URISyntaxException, EntityNotFoundExcepion, IOException, QblDropInvalidURL, PersistenceException, JSONException {
+    public void exportContactsTest() throws URISyntaxException, EntityNotFoundException, IOException, QblDropInvalidURL, PersistenceException, JSONException {
         Identity i = identityBuilderFactory.factory().withAlias(TEST_ALIAS).build();
         clientConfiguration.selectIdentity(i);
 
@@ -91,7 +91,7 @@ public class ContactControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void importContactsTest() throws URISyntaxException, PersistenceException, IOException, QblDropInvalidURL, EntityNotFoundExcepion, JSONException {
+    public void importContactsTest() throws URISyntaxException, PersistenceException, IOException, QblDropInvalidURL, EntityNotFoundException, JSONException {
         Identity i = identityBuilderFactory.factory().withAlias(TEST_ALIAS).build();
         clientConfiguration.selectIdentity(i);
         File f = new File(System.class.getResource(TEST_JSON).toURI());

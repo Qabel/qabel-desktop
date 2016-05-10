@@ -1,7 +1,7 @@
 package de.qabel.desktop.repository.sqlite;
 
 import de.qabel.desktop.repository.ClientConfigRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 
 import java.sql.PreparedStatement;
@@ -16,14 +16,14 @@ public class SqliteClientConfigRepository implements ClientConfigRepository {
     }
 
     @Override
-    public String find(String key) throws EntityNotFoundExcepion, PersistenceException {
+    public String find(String key) throws EntityNotFoundException, PersistenceException {
         try (PreparedStatement statement = database.prepare(
             "SELECT `value` FROM client_configuration WHERE `key` = ? LIMIT 1"
         )) {
             statement.setString(1, key);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (!resultSet.next()) {
-                    throw new EntityNotFoundExcepion("key not found: " + key);
+                    throw new EntityNotFoundException("key not found: " + key);
                 }
                 return resultSet.getString(1);
             }
@@ -37,7 +37,7 @@ public class SqliteClientConfigRepository implements ClientConfigRepository {
         try {
             find(key);
             return true;
-        } catch (EntityNotFoundExcepion e) {
+        } catch (EntityNotFoundException e) {
             return false;
         }
     }

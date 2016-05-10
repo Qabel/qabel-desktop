@@ -2,12 +2,10 @@ package de.qabel.desktop.ui.remotefs;
 
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Contacts;
-import de.qabel.core.config.Identity;
 import de.qabel.desktop.SharingService;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.storage.BoxFile;
 import de.qabel.desktop.storage.BoxNavigation;

@@ -4,7 +4,7 @@ import de.qabel.core.config.Identities;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.Persistence;
 import de.qabel.desktop.repository.IdentityRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -18,23 +18,23 @@ public class PersistenceIdentityRepository extends AbstractCachedPersistenceRepo
     private Identities identities;
 
     @Override
-    public Identity find(String id) throws EntityNotFoundExcepion, PersistenceException {
+    public Identity find(String id) throws EntityNotFoundException, PersistenceException {
         Identities identities = findAll();
         Identity entity = identities.getByKeyIdentifier(id);
 
         if (entity == null) {
-            throw new EntityNotFoundExcepion("No identity found for id " + id);
+            throw new EntityNotFoundException("No identity found for id " + id);
         }
         return entity;
     }
 
     @Override
-    public Identity find(int id) throws EntityNotFoundExcepion, PersistenceException {
+    public Identity find(int id) throws EntityNotFoundException, PersistenceException {
         throw new NotImplementedException();
     }
 
     @Override
-    public synchronized Identities findAll() throws EntityNotFoundExcepion, PersistenceException {
+    public synchronized Identities findAll() throws EntityNotFoundException, PersistenceException {
         if (identities == null) {
             List<Identities> identitiesList = persistence.getEntities(Identities.class);
             try {

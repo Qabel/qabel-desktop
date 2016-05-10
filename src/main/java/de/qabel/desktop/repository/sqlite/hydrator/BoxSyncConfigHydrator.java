@@ -3,22 +3,19 @@ package de.qabel.desktop.repository.sqlite.hydrator;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.BoxSyncConfig;
-import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import de.qabel.desktop.config.factory.BoxSyncConfigFactory;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.repository.AccountRepository;
 import de.qabel.desktop.repository.EntityManager;
 import de.qabel.desktop.repository.IdentityRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
-import de.qabel.desktop.repository.sqlite.Hydrator;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
 
 public class BoxSyncConfigHydrator extends AbstractHydrator<BoxSyncConfig> {
     private final EntityManager em;
@@ -69,7 +66,7 @@ public class BoxSyncConfigHydrator extends AbstractHydrator<BoxSyncConfig> {
             }
             recognize(config);
             return config;
-        } catch (EntityNotFoundExcepion | PersistenceException e) {
+        } catch (EntityNotFoundException | PersistenceException e) {
             throw new SQLException("failed to load relations of boxSyncConfig: " + e.getMessage(), e);
         }
     }

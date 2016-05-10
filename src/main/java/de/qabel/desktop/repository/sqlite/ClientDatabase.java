@@ -1,5 +1,6 @@
 package de.qabel.desktop.repository.sqlite;
 
+import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.repository.sqlite.builder.QueryBuilder;
 
 import java.sql.PreparedStatement;
@@ -33,7 +34,7 @@ public interface ClientDatabase {
      * Prepares a statement with the given sql query.
      * Don't forget to close the statement finally
      */
-    PreparedStatement prepare(String sql) throws SQLException;
+    PreparedStatement prepare(/*language=SQL*/String sql) throws SQLException;
 
     default QueryBuilder selectFrom(String fromTable, String tableAlias) {
         return new QueryBuilder(this, QueryBuilder.TYPE.SELECT).from(fromTable, tableAlias);
@@ -42,4 +43,6 @@ public interface ClientDatabase {
     default QueryBuilder update(String table) {
         return new QueryBuilder(this, QueryBuilder.TYPE.UPDATE).update(table);
     }
+
+    void close() throws PersistenceException;
 }
