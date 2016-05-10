@@ -92,14 +92,6 @@ public class BoxObjectCellValueFactoryTest extends AbstractControllerTest {
     }
 
     @Test
-    public void testSize() {
-
-        column = getColumnValue("size", rootNodeFile);
-        BoxFile subnode = (BoxFile) rootNodeFile.getChildren().get(0).getValue();
-        assertThat(column.getValue(), is(subnode.getSize().toString()));
-    }
-
-    @Test
     public void testFormattedFileSize() {
 
         column = getColumnValue("size", rootNodeFile);
