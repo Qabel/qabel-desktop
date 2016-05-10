@@ -4,6 +4,7 @@ import de.qabel.core.config.Persistence;
 import de.qabel.core.config.SQLitePersistence;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.factory.*;
+import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
 import de.qabel.desktop.inject.config.RuntimeConfiguration;
 import de.qabel.desktop.repository.*;
 import de.qabel.desktop.repository.persistence.*;
@@ -97,4 +98,9 @@ public abstract class StaticDesktopServiceFactory extends RuntimeDesktopServiceF
     public abstract BoxSyncRepository getBoxSyncConfigRepository();
 
     public abstract ShareNotificationRepository getShareNotificationRepository();
+
+    @Override
+    public BoxSyncConfigFactory getBoxSyncConfigFactory() {
+        return new DefaultBoxSyncConfigFactory(new InMemorySyncIndexFactory());
+    }
 }

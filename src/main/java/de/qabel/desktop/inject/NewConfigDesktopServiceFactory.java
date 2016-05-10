@@ -146,7 +146,8 @@ public class NewConfigDesktopServiceFactory extends RuntimeDesktopServiceFactory
         );
     }
 
-    private BoxSyncConfigFactory getBoxSyncConfigFactory() {
+    @Override
+    public BoxSyncConfigFactory getBoxSyncConfigFactory() {
         return new DefaultBoxSyncConfigFactory(getSyncIndexFactory());
     }
 

@@ -3,6 +3,7 @@ package de.qabel.desktop.inject;
 import de.qabel.core.accounting.AccountingHTTP;
 import de.qabel.desktop.SharingService;
 import de.qabel.desktop.config.ClientConfig;
+import de.qabel.desktop.config.factory.BoxSyncConfigFactory;
 import de.qabel.desktop.config.factory.BoxVolumeFactory;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
@@ -92,4 +93,7 @@ public interface DesktopServices {
 
     @Create(name = "dropDaemon")
     DropDaemon getDropDaemon();
+
+    @Create(name = "boxSyncConfigFactory")
+    BoxSyncConfigFactory getBoxSyncConfigFactory();
 }

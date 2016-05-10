@@ -26,14 +26,6 @@
             "locked": "1.10",
             "requested": "1.10"
         },
-        "info.cukes:cucumber-java": {
-            "locked": "1.2.4",
-            "requested": "1.2.+"
-        },
-        "info.cukes:cucumber-junit": {
-            "locked": "1.2.4",
-            "requested": "1.2.+"
-        },
         "javax.inject:javax.inject": {
             "locked": "1",
             "requested": "1"
@@ -120,14 +112,6 @@
             "locked": "1.10",
             "requested": "1.10"
         },
-        "info.cukes:cucumber-java": {
-            "locked": "1.2.4",
-            "requested": "1.2.+"
-        },
-        "info.cukes:cucumber-junit": {
-            "locked": "1.2.4",
-            "requested": "1.2.+"
-        },
         "javax.inject:javax.inject": {
             "locked": "1",
             "requested": "1"
@@ -205,6 +189,10 @@
         "com.madgag.spongycastle:prov": {
             "locked": "1.53.0.0",
             "requested": "1.53.0.0"
+        },
+        "com.tngtech.java:junit-dataprovider": {
+            "locked": "1.10.4",
+            "requested": "1.10.+"
         },
         "commons-cli:commons-cli": {
             "locked": "1.2",
@@ -315,6 +303,10 @@
         "com.madgag.spongycastle:prov": {
             "locked": "1.53.0.0",
             "requested": "1.53.0.0"
+        },
+        "com.tngtech.java:junit-dataprovider": {
+            "locked": "1.10.4",
+            "requested": "1.10.+"
         },
         "commons-cli:commons-cli": {
             "locked": "1.2",
@@ -434,14 +426,6 @@
             "locked": "1.10",
             "requested": "1.10"
         },
-        "info.cukes:cucumber-java": {
-            "locked": "1.2.4",
-            "requested": "1.2.+"
-        },
-        "info.cukes:cucumber-junit": {
-            "locked": "1.2.4",
-            "requested": "1.2.+"
-        },
         "javax.inject:javax.inject": {
             "locked": "1",
             "requested": "1"
@@ -519,6 +503,10 @@
         "com.madgag.spongycastle:prov": {
             "locked": "1.53.0.0",
             "requested": "1.53.0.0"
+        },
+        "com.tngtech.java:junit-dataprovider": {
+            "locked": "1.10.4",
+            "requested": "1.10.+"
         },
         "commons-cli:commons-cli": {
             "locked": "1.2",
@@ -629,6 +617,10 @@
         "com.madgag.spongycastle:prov": {
             "locked": "1.53.0.0",
             "requested": "1.53.0.0"
+        },
+        "com.tngtech.java:junit-dataprovider": {
+            "locked": "1.10.4",
+            "requested": "1.10.+"
         },
         "commons-cli:commons-cli": {
             "locked": "1.2",
