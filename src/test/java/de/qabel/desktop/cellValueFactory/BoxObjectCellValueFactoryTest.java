@@ -100,6 +100,14 @@ public class BoxObjectCellValueFactoryTest extends AbstractControllerTest {
     }
 
     @Test
+    public void testFormattedFileSize() {
+
+        column = getColumnValue("size", rootNodeFile);
+        BoxFile subnode = (BoxFile) rootNodeFile.getChildren().get(0).getValue();
+        assertThat(column.getValue(), is(FileUtils.byteCountToDisplaySize(subnode.getSize())));
+    }
+
+    @Test
     public void testNameFile() {
 
         column = getColumnValue("name", rootNodeFile);
@@ -122,7 +130,8 @@ public class BoxObjectCellValueFactoryTest extends AbstractControllerTest {
 
         column = getColumnValue("mtime", rootNodeFile);
         BoxFile subnode = (BoxFile) rootNodeFile.getChildren().get(0).getValue();
-        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        //DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         String date = dateFormat.format(subnode.getMtime());
         assertThat(column.getValue(), is(date));
     }

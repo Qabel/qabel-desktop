@@ -8,6 +8,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.util.Callback;
+import org.apache.commons.io.FileUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -19,6 +20,7 @@ public class BoxObjectCellValueFactory implements Callback<TreeTableColumn.CellD
     public static final String NAME = "name";
 
     private String searchValue;
+    private String fileSizeDisplay;
 
     public BoxObjectCellValueFactory(String searchValue) {
         this.searchValue = searchValue;
@@ -43,9 +45,10 @@ public class BoxObjectCellValueFactory implements Callback<TreeTableColumn.CellD
         if (bf instanceof BoxFile) {
             switch (searchValue) {
                 case SIZE:
-                    return new ReadOnlyStringWrapper(((BoxFile) bf).getSize().toString());
+                    fileSizeDisplay = FileUtils.byteCountToDisplaySize(((BoxFile) bf).getSize());
+                    return new ReadOnlyStringWrapper(fileSizeDisplay);
                 case MTIME:
-                    DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+                    DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
                     return new ReadOnlyStringWrapper(dateFormat.format(((BoxFile) bf).getMtime()));
             }
         }
