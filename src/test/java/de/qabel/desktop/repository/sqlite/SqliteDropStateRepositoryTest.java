@@ -1,7 +1,7 @@
 package de.qabel.desktop.repository.sqlite;
 
 import de.qabel.desktop.repository.EntityManager;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -13,7 +13,7 @@ public class SqliteDropStateRepositoryTest extends AbstractSqliteRepositoryTest<
         return new SqliteDropStateRepository(clientDatabase);
     }
 
-    @Test(expected = EntityNotFoundExcepion.class)
+    @Test(expected = EntityNotFoundException.class)
     public void throwsExceptionIfNoStateWasFound() throws Exception {
         repo.getDropState("not existing");
     }

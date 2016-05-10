@@ -4,7 +4,7 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.config.Contacts;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.repository.ContactRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 
 import java.util.HashMap;
@@ -23,7 +23,7 @@ public class InMemoryContactRepository implements ContactRepository {
         try {
             findByKeyId(identity, contact.getKeyIdentifier());
             throw new PersistenceException("cannot persist already persisted contact");
-        } catch (EntityNotFoundExcepion e) {
+        } catch (EntityNotFoundException e) {
             contacts.put(contact);
             contactsMap.put(identity.getKeyIdentifier(), contacts);
         }
@@ -36,11 +36,11 @@ public class InMemoryContactRepository implements ContactRepository {
     }
 
     @Override
-    public Contact findByKeyId(Identity identity, String keyId) throws EntityNotFoundExcepion {
+    public Contact findByKeyId(Identity identity, String keyId) throws EntityNotFoundException {
         Contacts contacts = find(identity);
         Contact contact = contacts.getByKeyIdentifier(keyId);
         if (contact == null) {
-            throw new EntityNotFoundExcepion("no contact found for keyId " + keyId);
+            throw new EntityNotFoundException("no contact found for keyId " + keyId);
         }
         return contact;
     }

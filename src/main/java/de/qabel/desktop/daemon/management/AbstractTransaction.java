@@ -1,5 +1,6 @@
 package de.qabel.desktop.daemon.management;
 
+import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
@@ -7,7 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import static de.qabel.desktop.daemon.management.Transaction.STATE.*;
 
-public abstract class AbstractTransaction extends Observable implements Transaction {
+public abstract class AbstractTransaction<S extends Path, D extends Path> extends Observable implements Transaction<S,D> {
     public static final long METADATA_SIZE = 56320L;
     private STATE state = INITIALIZING;
     protected Long mtime;
@@ -94,7 +95,7 @@ public abstract class AbstractTransaction extends Observable implements Transact
 
     @Override
     public long getSize() {
-        return hasSize() ? size : METADATA_SIZE;
+        return size;
     }
 
     @Override

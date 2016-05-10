@@ -4,11 +4,10 @@ package de.qabel.desktop.daemon.drop;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
-import de.qabel.core.drop.DropURL;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.connector.DropConnector;
 import de.qabel.desktop.ui.connector.DropPollResponse;
@@ -49,8 +48,8 @@ public class DropDaemon implements Runnable {
                 } catch (PersistenceException e) {
                     logger.error("Persitence fail: " + e.getMessage(), e);
                     continue;
-                } catch (EntityNotFoundExcepion entityNotFoundExcepion) {
-                    entityNotFoundExcepion.printStackTrace();
+                } catch (EntityNotFoundException entityNotFoundException) {
+                    entityNotFoundException.printStackTrace();
                 }
                 Thread.sleep(sleepTime);
             } catch (InterruptedException e) {
@@ -60,7 +59,7 @@ public class DropDaemon implements Runnable {
         }
     }
 
-    void receiveMessages() throws PersistenceException, EntityNotFoundExcepion {
+    void receiveMessages() throws PersistenceException, EntityNotFoundException {
         Identity identity = config.getSelectedIdentity();
         if (identity == null) {
             return;
@@ -81,7 +80,7 @@ public class DropDaemon implements Runnable {
                             senderKeyId = d.getSender().getKeyIdentifier();
                         }
                         sender = contactRepository.findByKeyId(identity, senderKeyId);
-                    } catch (EntityNotFoundExcepion e) {
+                    } catch (EntityNotFoundException e) {
                         logger.error("Contact: with ID: " + d.getSenderKeyId() + " not found " + e.getMessage(), e);
                         continue;
                     }

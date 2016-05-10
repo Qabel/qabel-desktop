@@ -4,10 +4,10 @@ import de.qabel.desktop.storage.BoxVolume;
 
 import java.nio.file.Path;
 
-public class TransactionStub extends AbstractTransaction {
+public class TransactionStub<S extends Path, D extends Path> extends AbstractTransaction<S, D> {
     public BoxVolume volume;
-    public Path source;
-    public Path destination;
+    public S source;
+    public D destination;
     public boolean valid = true;
     public TYPE type = TYPE.CREATE;
     public boolean isDir = true;
@@ -39,12 +39,12 @@ public class TransactionStub extends AbstractTransaction {
     }
 
     @Override
-    public Path getSource() {
+    public S getSource() {
         return source;
     }
 
     @Override
-    public Path getDestination() {
+    public D getDestination() {
         return destination;
     }
 

@@ -5,6 +5,8 @@ import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.RepositoryBasedClientConfig;
 import de.qabel.desktop.config.factory.*;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
+import de.qabel.desktop.daemon.sync.worker.index.SyncIndexFactory;
+import de.qabel.desktop.daemon.sync.worker.index.sqlite.SqliteSyncIndexFactory;
 import de.qabel.desktop.inject.config.RuntimeConfiguration;
 import de.qabel.desktop.repository.*;
 import de.qabel.desktop.repository.sqlite.*;
@@ -145,7 +147,11 @@ public class NewConfigDesktopServiceFactory extends RuntimeDesktopServiceFactory
     }
 
     private BoxSyncConfigFactory getBoxSyncConfigFactory() {
-        return new DefaultBoxSyncConfigFactory();
+        return new DefaultBoxSyncConfigFactory(getSyncIndexFactory());
+    }
+
+    private SyncIndexFactory getSyncIndexFactory() {
+        return new SqliteSyncIndexFactory();
     }
 
     private AccountHydrator getAccountHydrator() {

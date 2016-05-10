@@ -14,8 +14,10 @@ import de.qabel.desktop.config.factory.CachedBoxVolumeFactory;
 import de.qabel.desktop.config.factory.LocalBoxVolumeFactory;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
+import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.storage.BoxNavigation;
 import de.qabel.desktop.storage.BoxVolume;
@@ -37,7 +39,7 @@ public class SyncStepdefs extends AbstractStepdefs<SyncController> {
     private Path tmpDir;
     private BoxVolumeFactory boxVolumeFactory;
     private Path localPath;
-    private Path remotePath;
+    private BoxPath remotePath;
     private BoxVolume volume;
     private String syncName;
     private SyncDaemon syncDaemon;
@@ -94,7 +96,8 @@ public class SyncStepdefs extends AbstractStepdefs<SyncController> {
             localPath,
             remotePath,
             identity,
-            account
+            account,
+            new InMemorySyncIndexFactory()
         );
         volume = boxVolumeFactory.getVolume(account, identity);
         boxSyncRepository.save(syncConfig);

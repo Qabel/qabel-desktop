@@ -3,10 +3,11 @@ package de.qabel.desktop.ui.sync.setup;
 import de.qabel.core.config.Account;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.ClientConfig;
-import de.qabel.desktop.config.DefaultBoxSyncConfig;
+import de.qabel.desktop.config.factory.BoxSyncConfigFactory;
 import de.qabel.desktop.config.factory.BoxVolumeFactory;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.remotefs.dialog.RemoteFSDirectoryChooser;
@@ -61,6 +62,9 @@ public class SyncSetupController extends AbstractController implements Initializ
 
     @Inject
     private BoxSyncRepository boxSyncRepository;
+
+    @Inject
+    private BoxSyncConfigFactory boxSyncConfigFactory;
 
     private StringProperty nameProperty;
     private BooleanProperty validProperty = new SimpleBooleanProperty();
@@ -183,8 +187,14 @@ public class SyncSetupController extends AbstractController implements Initializ
         tryOrAlert(() -> {
             Account account = clientConfiguration.getAccount();
             Path lPath = Paths.get(localPathProperty.get());
-            Path rPath = BoxFileSystem.get(remotePathProperty.get());
-            BoxSyncConfig config = new DefaultBoxSyncConfig(nameProperty.get(), lPath, rPath, clientConfiguration.getSelectedIdentity(), account);
+            BoxPath rPath = BoxFileSystem.get(remotePathProperty.get());
+            BoxSyncConfig config = boxSyncConfigFactory.createConfig(
+                nameProperty.get(),
+                clientConfiguration.getSelectedIdentity(),
+                account,
+                lPath,
+                rPath
+            );
             boxSyncRepository.save(config);
             close();
         });

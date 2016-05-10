@@ -7,14 +7,11 @@ import de.qabel.desktop.config.factory.DefaultIdentityFactory;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilder;
 import de.qabel.desktop.repository.EntityManager;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.sqlite.hydrator.DropURLHydrator;
 import de.qabel.desktop.repository.sqlite.hydrator.IdentityHydrator;
-import org.junit.Before;
 import org.junit.Test;
 
-import java.nio.file.Files;
-import java.sql.DriverManager;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -49,7 +46,7 @@ public class SqliteIdentityRepositoryTest extends AbstractSqliteRepositoryTest<S
         assertEquals(0, results.getIdentities().size());
     }
 
-    @Test(expected = EntityNotFoundExcepion.class)
+    @Test(expected = EntityNotFoundException.class)
     public void throwsExceptionOnMissingFind() throws Exception {
         repo.find("123");
     }

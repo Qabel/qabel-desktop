@@ -9,7 +9,7 @@ import de.qabel.desktop.config.RepositoryBasedClientConfig;
 import de.qabel.desktop.config.factory.*;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.repository.EntityManager;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.repository.persistence.*;
 import de.qabel.desktop.repository.sqlite.hydrator.*;
@@ -106,7 +106,7 @@ public class LegacyDatabaseMigrator {
         }
     }
 
-    private void migrateContacts() throws EntityNotFoundExcepion, PersistenceException {
+    private void migrateContacts() throws EntityNotFoundException, PersistenceException {
         for (Identity identity : legacyIdentityRepo.findAll().getIdentities()) {
             Identity newIdentity = identityRepo.find(identity.getKeyIdentifier());
             for (Contact contact : legacyContactRepo.find(identity).getContacts()) {
@@ -115,19 +115,19 @@ public class LegacyDatabaseMigrator {
         }
     }
 
-    private void migrateIdentities() throws EntityNotFoundExcepion, PersistenceException {
+    private void migrateIdentities() throws EntityNotFoundException, PersistenceException {
         for (Identity identity : legacyIdentityRepo.findAll().getIdentities()) {
             identityRepo.save(identity);
         }
     }
 
-    private void migrateAccounts() throws EntityNotFoundExcepion, PersistenceException {
+    private void migrateAccounts() throws EntityNotFoundException, PersistenceException {
         for (Account account : legacyAccountRepo.findAll()) {
             accountRepo.save(account);
         }
     }
 
-    private void migrateMessages() throws EntityNotFoundExcepion, PersistenceException {
+    private void migrateMessages() throws EntityNotFoundException, PersistenceException {
         for (Identity identity : legacyIdentityRepo.findAll().getIdentities()) {
             Identity newIdentity = identityRepo.find(identity.getKeyIdentifier());
             for (Contact contact : legacyContactRepo.find(identity).getContacts()) {

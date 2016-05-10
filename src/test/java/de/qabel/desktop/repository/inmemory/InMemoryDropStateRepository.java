@@ -1,7 +1,7 @@
 package de.qabel.desktop.repository.inmemory;
 
 import de.qabel.desktop.repository.DropStateRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 
 import java.util.HashMap;
@@ -11,9 +11,9 @@ public class InMemoryDropStateRepository implements DropStateRepository {
     private Map<String, String> states = new HashMap<>();
 
     @Override
-    public String getDropState(String drop) throws EntityNotFoundExcepion, PersistenceException {
+    public String getDropState(String drop) throws EntityNotFoundException, PersistenceException {
         if (!states.containsKey(drop)) {
-            throw new EntityNotFoundExcepion("drop not found: " + drop);
+            throw new EntityNotFoundException("drop not found: " + drop);
         }
         return states.get(drop);
     }

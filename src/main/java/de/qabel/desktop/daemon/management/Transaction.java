@@ -4,16 +4,16 @@ import de.qabel.desktop.storage.BoxVolume;
 
 import java.nio.file.Path;
 
-public interface Transaction extends AutoCloseable, HasProgress<Transaction> {
+public interface Transaction<S extends Path, D extends Path> extends AutoCloseable, HasProgress<Transaction> {
     long transactionAge();
 
     TYPE getType();
 
     BoxVolume getBoxVolume();
 
-    Path getSource();
+    S getSource();
 
-    Path getDestination();
+    D getDestination();
 
     boolean isValid();
 

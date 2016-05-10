@@ -10,6 +10,7 @@ import de.qabel.desktop.daemon.sync.AbstractSyncTest;
 import de.qabel.desktop.daemon.sync.event.WatchEvent;
 import de.qabel.desktop.daemon.sync.event.WatchRegisteredEvent;
 import de.qabel.desktop.daemon.sync.worker.BoxVolumeStub;
+import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.storage.BoxVolume;
@@ -45,7 +46,13 @@ public class BoxSyncBasedUploadTest extends AbstractSyncTest {
         Identity identity = identityBuilderFactory.factory().build();
         Account account = new Account("a", "b", "c");
 
-        BoxSyncConfig boxSyncConfig = new DefaultBoxSyncConfig(tmpDir, Paths.get("/tmp"), identity, account);
+        BoxSyncConfig boxSyncConfig = new DefaultBoxSyncConfig(
+            tmpDir,
+            BoxFileSystem.get("/tmp"),
+            identity,
+            account,
+            new InMemorySyncIndexFactory()
+        );
         WatchEvent event = new WatchRegisteredEvent(file.toPath());
         BoxVolumeStub volume = new BoxVolumeStub();
         Upload upload = new BoxSyncBasedUpload(volume, boxSyncConfig,event);

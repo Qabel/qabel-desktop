@@ -8,6 +8,8 @@ import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.daemon.sync.worker.FakeSyncer;
+import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
+import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +35,7 @@ public class SyncItemControllerGuiTest extends AbstractGuiTest<SyncItemControlle
         identity = identityBuilderFactory.factory().build();
         account = new Account("a", "b", "c");
         local = Files.createTempDirectory(Paths.get("/tmp"), "testsync").toAbsolutePath();
-        syncConfig = new DefaultBoxSyncConfig("testsync", local, Paths.get("tmp"), identity, account);
+        syncConfig = new DefaultBoxSyncConfig("testsync", local, BoxFileSystem.get("/tmp"), identity, account, new InMemorySyncIndexFactory());
         syncer = new FakeSyncer(syncConfig);
         syncConfig.setSyncer(syncer);
         super.setUp();
@@ -58,7 +60,7 @@ public class SyncItemControllerGuiTest extends AbstractGuiTest<SyncItemControlle
         runLaterAndWait(() -> {
             syncConfig.setName("changed");
             syncConfig.setLocalPath(Paths.get("/tmp/to something"));
-            syncConfig.setRemotePath(Paths.get("else"));
+            syncConfig.setRemotePath(BoxFileSystem.get("else"));
         });
 
         assertEquals("changed", page.name());

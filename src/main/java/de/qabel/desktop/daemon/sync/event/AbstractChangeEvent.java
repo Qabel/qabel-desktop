@@ -44,4 +44,9 @@ public abstract class AbstractChangeEvent extends AbstractWatchEvent implements 
     public boolean isUnshare() {
         return type == UNSHARE;
     }
+
+    @Override
+    public long getSize() {
+        return 0L;
+    }
 }

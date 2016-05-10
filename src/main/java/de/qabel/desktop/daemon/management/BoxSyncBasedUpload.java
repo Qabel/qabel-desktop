@@ -3,6 +3,7 @@ package de.qabel.desktop.daemon.management;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.WatchEvent;
+import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.storage.BoxVolume;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
-public class BoxSyncBasedUpload extends AbstractBoxSyncBasedTransaction implements Upload {
+public class BoxSyncBasedUpload extends AbstractBoxSyncBasedTransaction<Path, BoxPath> implements Upload {
     public static Logger logger = LoggerFactory.getLogger(BoxSyncBasedUpload.class);
 
     private long stagingDelayMills = TimeUnit.SECONDS.toMillis(1);
@@ -38,7 +39,7 @@ public class BoxSyncBasedUpload extends AbstractBoxSyncBasedTransaction implemen
     }
 
     @Override
-    public Path getDestination() {
+    public BoxPath getDestination() {
         try {
             Path relativePath = boxSyncConfig.getLocalPath().toAbsolutePath().relativize(getSource());
             return boxSyncConfig.getRemotePath().resolve(relativePath);
@@ -69,5 +70,10 @@ public class BoxSyncBasedUpload extends AbstractBoxSyncBasedTransaction implemen
     public String toString() {
         String file = isDir() ? "DIR" : "FILE";
         return "Upload[" + getType() + " " + file + " " + getSource() + " to " + getDestination() + "]";
+    }
+
+    @Override
+    public Path getSource() {
+        return event.getPath();
     }
 }

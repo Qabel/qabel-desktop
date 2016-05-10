@@ -10,6 +10,7 @@ import de.qabel.desktop.daemon.management.*;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.storage.*;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
@@ -389,13 +390,13 @@ public class RemoteFSController extends AbstractController implements Initializa
         chooser.setTitle(title);
         List<File> list = chooser.showOpenMultipleDialog(treeTable.getScene().getWindow());
         for (File file : list) {
-            Path destination = ((FolderTreeItem) item).getPath().resolve(file.getName());
+            BoxPath destination = ((FolderTreeItem) item).getPath().resolve(file.getName());
             Path source = file.toPath();
             upload(source, destination);
         }
     }
 
-    void upload(Path source, Path destination) {
+    void upload(Path source, BoxPath destination) {
         Upload upload = new ManualUpload(CREATE, volume, source, destination);
         transferManager.addUpload(upload);
     }
@@ -438,7 +439,7 @@ public class RemoteFSController extends AbstractController implements Initializa
                             volume.getReadBackend()
                     );
             } else {
-                Path path;
+                BoxPath path;
                 FolderTreeItem folderTreeItem;
                 if (item.getValue() instanceof BoxFolder) {
                     folderTreeItem = (FolderTreeItem) item;
@@ -494,7 +495,7 @@ public class RemoteFSController extends AbstractController implements Initializa
                 Optional<ButtonType> result = alert.showAndWait();
 
                 FolderTreeItem updateTreeItem = (FolderTreeItem) item.getParent();
-                Path path = updateTreeItem.getPath().resolve(item.getValue().getName());
+                BoxPath path = updateTreeItem.getPath().resolve(item.getValue().getName());
 
                 deleteBoxObject(result.get(), path, item.getValue());
             }
@@ -503,13 +504,12 @@ public class RemoteFSController extends AbstractController implements Initializa
         }
     }
 
-
     void chooseUploadDirectory(File directory, TreeItem<BoxObject> item) throws IOException {
-        Path destination = BoxFileSystem.get(((FolderTreeItem) item).getPath()).resolve(directory.getName());
+        BoxPath destination = BoxFileSystem.get(((FolderTreeItem) item).getPath()).resolve(directory.getName());
         uploadDirectory(directory.toPath(), destination);
     }
 
-    void uploadDirectory(Path source, Path destination) throws IOException {
+    void uploadDirectory(Path source, BoxPath destination) throws IOException {
 
         Files.walkFileTree(source, new FileVisitor<Path>() {
             @Override
@@ -518,7 +518,7 @@ public class RemoteFSController extends AbstractController implements Initializa
                 return FileVisitResult.CONTINUE;
             }
 
-            private Path resolveDestination(Path dir) {
+            private BoxPath resolveDestination(Path dir) {
                 return destination.resolve(source.relativize(dir));
             }
 
@@ -541,11 +541,11 @@ public class RemoteFSController extends AbstractController implements Initializa
     }
 
 
-    void createFolder(Path destination) throws QblStorageException {
+    void createFolder(BoxPath destination) throws QblStorageException {
         transferManager.addUpload(new ManualUpload(CREATE, volume, null, destination, true));
     }
 
-    void deleteBoxObject(ButtonType confim, Path path, BoxObject object) throws QblStorageException {
+    void deleteBoxObject(ButtonType confim, BoxPath path, BoxObject object) throws QblStorageException {
         if (confim != ButtonType.OK) {
             return;
         }
@@ -553,7 +553,7 @@ public class RemoteFSController extends AbstractController implements Initializa
         transferManager.addUpload(new ManualUpload(DELETE, volume, null, path, object instanceof BoxFolder));
     }
 
-    void downloadBoxObject(BoxObject boxObject, ReadableBoxNavigation nav, Path source, Path destination) throws QblStorageException {
+    void downloadBoxObject(BoxObject boxObject, ReadableBoxNavigation nav, BoxPath source, Path destination) throws QblStorageException {
         destination = destination.resolve(boxObject.getName());
         if (boxObject instanceof BoxFile) {
             downloadFile((BoxFile)boxObject, nav, source, destination);
@@ -562,7 +562,7 @@ public class RemoteFSController extends AbstractController implements Initializa
         }
     }
 
-    private void downloadBoxFolder(ReadableBoxNavigation nav, Path source, Path destination) throws QblStorageException {
+    private void downloadBoxFolder(ReadableBoxNavigation nav, BoxPath source, Path destination) throws QblStorageException {
         transferManager.addDownload(new ManualDownload(CREATE, volume, source, destination, true));
 
         for (BoxFile file : nav.listFiles()) {
@@ -573,7 +573,7 @@ public class RemoteFSController extends AbstractController implements Initializa
         }
     }
 
-    private void downloadFile(BoxFile file, ReadableBoxNavigation nav, Path source, Path destination) {
+    private void downloadFile(BoxFile file, ReadableBoxNavigation nav, BoxPath source, Path destination) {
         transferManager.addDownload(new ManualDownload(file.getMtime(), CREATE, volume, source, destination, false));
     }
 

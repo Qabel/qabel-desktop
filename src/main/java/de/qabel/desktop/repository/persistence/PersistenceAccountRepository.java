@@ -3,7 +3,7 @@ package de.qabel.desktop.repository.persistence;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Persistence;
 import de.qabel.desktop.repository.AccountRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -15,20 +15,20 @@ public class PersistenceAccountRepository extends AbstractCachedPersistenceRepos
     }
 
     @Override
-    public Account find(String id) throws EntityNotFoundExcepion {
+    public Account find(String id) throws EntityNotFoundException {
         if (isCached(id)) {
             return fromCache(id);
         }
         Account entity = persistence.getEntity(id, Account.class);
         if (entity == null) {
-            throw new EntityNotFoundExcepion("No Account found for id " + id);
+            throw new EntityNotFoundException("No Account found for id " + id);
         }
         cache(entity);
         return entity;
     }
 
     @Override
-    public Account find(int id) throws EntityNotFoundExcepion {
+    public Account find(int id) throws EntityNotFoundException {
         throw new NotImplementedException();
     }
 

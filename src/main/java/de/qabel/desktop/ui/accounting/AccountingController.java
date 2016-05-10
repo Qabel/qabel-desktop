@@ -8,7 +8,7 @@ import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.repository.IdentityRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.item.AccountingItemView;
@@ -62,7 +62,7 @@ public class AccountingController extends AbstractController implements Initiali
         loadIdentities();
         try {
             gson = buildGson();
-        } catch (EntityNotFoundExcepion | PersistenceException e) {
+        } catch (EntityNotFoundException | PersistenceException e) {
             alert(e);
         }
         resourceBundle = resources;
@@ -197,7 +197,7 @@ public class AccountingController extends AbstractController implements Initiali
         return chooser.showSaveDialog(identityList.getScene().getWindow());
     }
 
-    Gson buildGson() throws EntityNotFoundExcepion, PersistenceException {
+    Gson buildGson() throws EntityNotFoundException, PersistenceException {
         final GsonBuilder builder = new GsonBuilder();
         builder.excludeFieldsWithoutExposeAnnotation();
         builder.registerTypeAdapter(Contacts.class, new ContactsTypeAdapter(identityRepository.findAll()));

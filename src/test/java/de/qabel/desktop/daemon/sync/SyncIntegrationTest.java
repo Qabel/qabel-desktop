@@ -7,8 +7,14 @@ import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilder;
 import de.qabel.desktop.daemon.management.*;
+import de.qabel.desktop.daemon.sync.blacklist.PatternBlacklist;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncer;
+import de.qabel.desktop.daemon.sync.worker.index.SyncState;
+import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
+import de.qabel.desktop.daemon.sync.worker.index.sqlite.SqliteSyncIndex;
+import de.qabel.desktop.daemon.sync.worker.index.sqlite.SqliteSyncIndexFactory;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.storage.LocalReadBackend;
 import de.qabel.desktop.storage.LocalWriteBackend;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
@@ -27,6 +33,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 
@@ -46,6 +53,7 @@ public class SyncIntegrationTest {
     private MonitoredTransferManager manager2;
     private BoxSyncConfig config1;
     private BoxSyncConfig config2;
+    private PatternBlacklist blacklist;
 
     @Before
     public void setUp() {
@@ -58,10 +66,28 @@ public class SyncIntegrationTest {
         }
 
         try {
+            blacklist = new PatternBlacklist();
+            blacklist.add(Pattern.compile("\\..*\\.qpart~"));
+            blacklist.add(Pattern.compile("\\..*~"));
+
             Identity identity = new IdentityBuilder(new DropUrlGenerator("http://localhost:5000")).build();
             Account account = new Account("a", "b", "c");
-            config1 = new DefaultBoxSyncConfig("config1", tmpDir1, Paths.get("/sync"), identity, account);
-            config2 = new DefaultBoxSyncConfig("config2", tmpDir2, Paths.get("/sync"), identity, account);
+            config1 = new DefaultBoxSyncConfig(
+                "config1",
+                tmpDir1,
+                BoxFileSystem.get("/sync"),
+                identity,
+                account,
+                new SqliteSyncIndexFactory()
+            );
+            config2 = new DefaultBoxSyncConfig(
+                "config2",
+                tmpDir2,
+                BoxFileSystem.get("/sync"),
+                identity,
+                account,
+                new SqliteSyncIndexFactory()
+            );
             LocalReadBackend readBackend = new LocalReadBackend(remoteDir);
             LocalWriteBackend writeBackend = new LocalWriteBackend(remoteDir);
             volume1 = new CachedBoxVolume(readBackend, writeBackend, identity.getPrimaryKeyPair(), new byte[0], new File(System.getProperty("java.io.tmpdir")), "prefix");
@@ -72,6 +98,7 @@ public class SyncIntegrationTest {
             manager2 = new MonitoredTransferManager(new DefaultTransferManager());
 
             syncer1 = new DefaultSyncer(config1, volume1, manager1);
+            syncer1.setLocalBlacklist(blacklist);
             syncer1.getUploadFactory().setSyncDelayMills(0L);
 
             syncer2 = syncer2();
@@ -93,6 +120,7 @@ public class SyncIntegrationTest {
     private DefaultSyncer syncer2() {
         DefaultSyncer syncer2;
         syncer2 = new DefaultSyncer(config2, volume2, manager2);
+        syncer2.setLocalBlacklist(blacklist);
         syncer2.getUploadFactory().setSyncDelayMills(0L);
         syncer2.setPollInterval(100, TimeUnit.MILLISECONDS);
         return syncer2;
@@ -218,9 +246,10 @@ public class SyncIntegrationTest {
         waitUntil(file2::exists);
         syncer2.shutdown();
         syncer2.join();
+        config2.getSyncIndex().clear();
 
         // delete file while syncer2 is offline
-        file2.delete();
+        assertTrue(file2.delete());
 
         // (re-)start syncer2 to detect a delete and upload the delete
         syncer2 = syncer2();
@@ -239,7 +268,10 @@ public class SyncIntegrationTest {
         file.createNewFile();
 
         // mark file up2date on syncer2
-        config2.getSyncIndex().update(Paths.get(tmpDir2.toString(), "file"), Files.getLastModifiedTime(path).toMillis(), true);
+        SyncState uploadedState = new SyncState(true, file.lastModified(), file.length());
+        String relativeDir = config2.getLocalPath().relativize(tmpDir2).toString();
+        BoxPath remoteFilePath = config2.getRemotePath().resolve(relativeDir).resolve("file");
+        config2.getSyncIndex().get(remoteFilePath).setSyncedState(uploadedState);
         syncer2.run();
         syncer2.waitFor();
 

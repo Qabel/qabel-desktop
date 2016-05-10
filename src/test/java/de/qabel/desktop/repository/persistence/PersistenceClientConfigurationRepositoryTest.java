@@ -9,7 +9,9 @@ import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import de.qabel.desktop.config.factory.ClientConfigurationFactory;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilder;
+import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.repository.AccountRepository;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.PersistenceException;
@@ -98,15 +100,15 @@ public class PersistenceClientConfigurationRepositoryTest extends AbstractPersis
         accountRepo.save(account);
 
         Path localPath = Paths.get("/tmp/some/where");
-        Path remotePath = BoxFileSystem.get("over/the/rainbow");
+        BoxPath remotePath = BoxFileSystem.get("over/the/rainbow");
         DefaultBoxSyncConfig boxSyncConfig = new DefaultBoxSyncConfig(
             "named",
             localPath,
             remotePath,
             identity,
-            account
+            account,
+            new InMemorySyncIndexFactory()
         );
-        boxSyncConfig.getSyncIndex().update(localPath, 1000L, true);
         config.getBoxSyncConfigs().add(boxSyncConfig);
 
         repo.save(config);
@@ -123,6 +125,5 @@ public class PersistenceClientConfigurationRepositoryTest extends AbstractPersis
         assertEquals(Paths.get("/tmp/some/where").toString(), boxConfig.getLocalPath().toString());
         assertEquals("/over/the/rainbow", boxConfig.getRemotePath().toString());
         assertEquals("named", boxConfig.getName());
-        assertTrue(boxConfig.getSyncIndex().isUpToDate(localPath, 1000L, true));
     }
 }

@@ -113,63 +113,65 @@ public class DefaultTransferManager extends Observable implements TransferManage
 
     void download(Download download) throws Exception {
         try (Download ignored = download) {
-            if (!download.isValid()) {
-                throw new TransferSkippedException("download says it's invalid");
-            }
+            try {
+                if (!download.isValid()) {
+                    throw new TransferSkippedException("download says it's invalid");
+                }
 
-            Path destination = download.getDestination();
-            Path source = download.getSource();
+                Path destination = download.getDestination();
+                Path source = download.getSource();
 
-            switch (download.getType()) {
-                case UPDATE:
-                case CREATE:
-                    if (download.isDir()) {
-                        Files.createDirectories(destination);
-                        download.setMtime(Files.getLastModifiedTime(destination).toMillis());
-                        break;
-                    }
-
-                    Path parent = source.getParent();
-                    BoxNavigation nav = navigate(parent, download.getBoxVolume());
-                    BoxFile file = nav.getFile(source.getFileName().toString());
-                    download.setSize(file.getSize());
-                    if (remoteChanged(download, file)) {
-                        throw new TransferSkippedException("remote has changed");
-                    }
-                    if (localIsNewer(destination, file)) {
-                        throw new TransferSkippedException("local is newer");
-                    }
-
-                    ProgressListener listener = new TransactionRelatedProgressListener(download);
-                    try (InputStream stream = new BufferedInputStream(nav.download(file, listener))) {
-                        Path tmpFile = createTempFileForDownload(destination);
-                        try {
-                            Files.copy(stream, tmpFile, StandardCopyOption.REPLACE_EXISTING);
-                            Files.setLastModifiedTime(tmpFile, FileTime.fromMillis(download.getMtime()));
-                            Files.move(tmpFile, destination, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-                            if (Files.getLastModifiedTime(destination).toMillis() != download.getMtime()) {
-                                Files.setLastModifiedTime(destination, FileTime.fromMillis(download.getMtime()));
-                            }
-                        } finally {
-                            Files.deleteIfExists(tmpFile);
+                switch (download.getType()) {
+                    case UPDATE:
+                    case CREATE:
+                        if (download.isDir()) {
+                            Files.createDirectories(destination);
+                            download.setMtime(Files.getLastModifiedTime(destination).toMillis());
+                            break;
                         }
-                    }
-                    break;
-                case DELETE:
-                    if (download.isDir()) {
-                        FileUtils.deleteDirectory(destination.toFile());
-                    } else {
-                        Files.deleteIfExists(destination);
-                    }
-                    break;
+
+                        Path parent = source.getParent();
+                        BoxNavigation nav = navigate(parent, download.getBoxVolume());
+                        BoxFile file = nav.getFile(source.getFileName().toString());
+                        download.setSize(file.getSize());
+                        if (remoteChanged(download, file)) {
+                            throw new TransferSkippedException("remote has changed");
+                        }
+                        if (localIsNewer(destination, file)) {
+                            throw new TransferSkippedException("local is newer");
+                        }
+
+                        ProgressListener listener = new TransactionRelatedProgressListener(download);
+                        try (InputStream stream = new BufferedInputStream(nav.download(file, listener))) {
+                            Path tmpFile = createTempFileForDownload(destination);
+                            try {
+                                Files.copy(stream, tmpFile, StandardCopyOption.REPLACE_EXISTING);
+                                Files.setLastModifiedTime(tmpFile, FileTime.fromMillis(download.getMtime()));
+                                Files.move(tmpFile, destination, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                                if (Files.getLastModifiedTime(destination).toMillis() != download.getMtime()) {
+                                    Files.setLastModifiedTime(destination, FileTime.fromMillis(download.getMtime()));
+                                }
+                            } finally {
+                                Files.deleteIfExists(tmpFile);
+                            }
+                        }
+                        break;
+                    case DELETE:
+                        if (download.isDir()) {
+                            FileUtils.deleteDirectory(destination.toFile());
+                        } else {
+                            Files.deleteIfExists(destination);
+                        }
+                        break;
+                }
+                download.toState(FINISHED);
+            } catch (TransferSkippedException e) {
+                download.toState(SKIPPED);
+                logger.debug("skipped download " + " (" + e.getMessage() + ")");
+            } catch (Exception e) {
+                download.toState(FAILED);
+                throw e;
             }
-            download.toState(FINISHED);
-        } catch (TransferSkippedException e) {
-            download.toState(SKIPPED);
-            logger.debug("skipped download "  + " (" + e.getMessage() + ")");
-        } catch (Exception e) {
-            download.toState(FAILED);
-            throw e;
         }
     }
 
@@ -193,19 +195,21 @@ public class DefaultTransferManager extends Observable implements TransferManage
 
     void upload(Upload upload) throws QblStorageException {
         try (Upload ignored = upload) {
-            if (!upload.isValid()) {
-                throw new TransferSkippedException("upload says it's invalid");
-            }
+            try {
+                if (!upload.isValid()) {
+                    throw new TransferSkippedException("upload says it's invalid");
+                }
 
-            executeUpload(upload);
-            upload.toState(FINISHED);
-            logger.trace("finished upload " + upload);
-        } catch (TransferSkippedException e) {
-            upload.toState(SKIPPED);
-            logger.trace("skipped upload " + upload + " (" + e.getMessage() + ")");
-        } catch (Exception e) {
-            upload.toState(FAILED);
-            throw e;
+                executeUpload(upload);
+                upload.toState(FINISHED);
+                logger.trace("finished upload " + upload);
+            } catch (TransferSkippedException e) {
+                upload.toState(SKIPPED);
+                logger.trace("skipped upload " + upload + " (" + e.getMessage() + ")");
+            } catch (Exception e) {
+                upload.toState(FAILED);
+                throw e;
+            }
         }
     }
 

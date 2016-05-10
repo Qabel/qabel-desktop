@@ -8,7 +8,7 @@ import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.daemon.drop.TextMessage;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.actionlog.item.ActionlogItem;
@@ -19,7 +19,6 @@ import de.qabel.desktop.ui.connector.DropConnector;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
@@ -102,7 +101,7 @@ public class ActionlogController extends AbstractController implements Initializ
                 try {
                     submit();
                     keyEvent.consume();
-                } catch (QblException | PersistenceException | EntityNotFoundExcepion e) {
+                } catch (QblException | PersistenceException | EntityNotFoundException e) {
                     alert(e);
                 }
             } else if (keyEvent.getCode().equals(KeyCode.ENTER) && keyEvent.isShiftDown()) {
@@ -118,7 +117,7 @@ public class ActionlogController extends AbstractController implements Initializ
         });
     }
 
-    protected void submit() throws QblDropPayloadSizeException, EntityNotFoundExcepion, PersistenceException, QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException, QblNetworkInvalidResponseException {
+    protected void submit() throws QblDropPayloadSizeException, EntityNotFoundException, PersistenceException, QblDropInvalidMessageSizeException, QblVersionMismatchException, QblSpoofedSenderException, QblNetworkInvalidResponseException {
         if (textarea.getText().equals("") || contact == null) {
             return;
         }
@@ -132,7 +131,7 @@ public class ActionlogController extends AbstractController implements Initializ
         dropMessageRepository.addMessage(d, identity, c, true);
     }
 
-    void loadMessages(Contact c) throws EntityNotFoundExcepion {
+    void loadMessages(Contact c) throws EntityNotFoundException {
         try {
             if (receivedDropMessages == null) {
                 Platform.runLater(messages.getChildren()::clear);
@@ -157,7 +156,7 @@ public class ActionlogController extends AbstractController implements Initializ
                 } else {
                     try {
                         addMessageToActionlog(d.getDropMessage());
-                    } catch (EntityNotFoundExcepion e) {
+                    } catch (EntityNotFoundException e) {
                         logger.warn("failed to show message: " + e.getMessage(), e);
                     }
                 }
@@ -180,7 +179,7 @@ public class ActionlogController extends AbstractController implements Initializ
         }
     }
 
-    void addMessageToActionlog(DropMessage dropMessage) throws EntityNotFoundExcepion {
+    void addMessageToActionlog(DropMessage dropMessage) throws EntityNotFoundException {
         Map<String, Object> injectionContext = new HashMap<>();
         String senderKeyId = dropMessage.getSenderKeyId();
         if (senderKeyId == null) {

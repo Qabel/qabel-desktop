@@ -4,6 +4,7 @@ import com.airhacks.afterburner.views.FXMLView;
 import cucumber.api.junit.Cucumber;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.DefaultBoxSyncConfig;
+import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import de.qabel.desktop.ui.sync.item.SyncItemController;
@@ -23,7 +24,8 @@ public class SyncCucumberTest extends AbstractGuiTest<SyncItemController> {
             Paths.get("localPath"),
             BoxFileSystem.getRoot().resolve("remotePath"),
             identity,
-            account
+            account,
+            new InMemorySyncIndexFactory()
         );
         return new SyncItemView(s -> syncConfig);
     }

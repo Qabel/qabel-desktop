@@ -4,7 +4,10 @@ import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.daemon.sync.worker.Syncer;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndex;
+import de.qabel.desktop.daemon.sync.worker.index.SyncIndexFactory;
+import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import de.qabel.desktop.nio.boxfs.BoxPath;
 
 import java.nio.file.Path;
 import java.util.LinkedList;
@@ -15,10 +18,11 @@ import java.util.function.Consumer;
 
 public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig, Observer {
     private static final String DEFAULT_NAME = "New Sync Config";
-    private SyncIndex syncIndex = new SyncIndex();
+    private transient SyncIndex syncIndex;
+    private transient SyncIndexFactory syncIndexFactory;
     private int id;
     private Path localPath;
-    private Path remotePath;
+    private BoxPath remotePath;
     private Identity identity;
     private Account account;
     private Boolean paused = false;
@@ -26,14 +30,28 @@ public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig, O
     private transient Syncer syncer;
     private final List<Consumer<Syncer>> syncerConsumers = new LinkedList<>();
 
-    public DefaultBoxSyncConfig(Path localPath, Path remotePath, Identity identity, Account account) {
-        this(DEFAULT_NAME, localPath, remotePath, identity, account);
+    public DefaultBoxSyncConfig(
+        Path localPath,
+        BoxPath remotePath,
+        Identity identity,
+        Account account,
+        SyncIndexFactory syncIndexFactory
+    ) {
+        this(DEFAULT_NAME, localPath, remotePath, identity, account, syncIndexFactory);
     }
 
-    public DefaultBoxSyncConfig(String name, Path localPath, Path remotePath, Identity identity, Account account) {
+    public DefaultBoxSyncConfig(
+        String name,
+        Path localPath,
+        BoxPath remotePath,
+        Identity identity,
+        Account account,
+        SyncIndexFactory syncIndexFactory
+    ) {
         this.name = name;
         this.identity = identity;
         this.account = account;
+        this.syncIndexFactory = syncIndexFactory;
         setLocalPath(localPath);
         setRemotePath(remotePath);
     }
@@ -66,12 +84,12 @@ public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig, O
     }
 
     @Override
-    public Path getRemotePath() {
+    public BoxPath getRemotePath() {
         return remotePath;
     }
 
     @Override
-    public void setRemotePath(Path remotePath) {
+    public void setRemotePath(BoxPath remotePath) {
         if (!remotePath.isAbsolute()) {
             remotePath = BoxFileSystem.getRoot().resolve(remotePath);
         }
@@ -129,8 +147,13 @@ public class DefaultBoxSyncConfig extends Observable implements BoxSyncConfig, O
     }
 
     @Override
-    public SyncIndex getSyncIndex() {
-        syncIndex.addObserver(this);
+    public synchronized SyncIndex getSyncIndex() {
+        if (syncIndex == null) {
+            if (syncIndexFactory == null) {
+                syncIndexFactory = new InMemorySyncIndexFactory();
+            }
+            syncIndex = syncIndexFactory.getIndex(this);
+        }
         return syncIndex;
     }
 

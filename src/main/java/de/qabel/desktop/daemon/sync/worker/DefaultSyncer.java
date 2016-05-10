@@ -5,7 +5,6 @@ import de.qabel.desktop.daemon.management.TransferManager;
 
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.daemon.management.*;
-import de.qabel.desktop.daemon.sync.BoxSync;
 import de.qabel.desktop.daemon.sync.blacklist.Blacklist;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.LocalDeleteEvent;
@@ -13,8 +12,12 @@ import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.daemon.sync.event.WatchEvent;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndex;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndexEntry;
+import de.qabel.desktop.daemon.sync.worker.index.SyncState;
 import de.qabel.desktop.exceptions.QblStorageException;
+import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.storage.BoxNavigation;
+import de.qabel.desktop.storage.DirectoryMetadata;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
 import org.slf4j.Logger;
@@ -31,6 +34,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+import static de.qabel.desktop.daemon.management.Transaction.TYPE.*;
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.UPDATE;
 
 public class DefaultSyncer implements Syncer {
@@ -148,17 +152,28 @@ public class DefaultSyncer implements Syncer {
             return;
         }
 
-        if (download.getType() != Transaction.TYPE.DELETE && isUpToDate(download)) {
+        SyncIndexEntry entry = index.get(BoxFileSystem.getRoot().relativize(download.getSource()));
+        long size = download.isDir() ? DirectoryMetadata.DEFAULT_SIZE : download.getSize();
+        Long mtime = download.isDir() ? null : download.getMtime();
+        SyncState targetState = new SyncState(download.getType() != DELETE, mtime, size);
+
+        entry.setRemoteState(targetState);
+        if (targetState.equals(entry.getLocalState())) {
+            logger.trace("download matches local state, dropping " + download);
+            return;
+        }
+        if (entry.getSyncedState().equals(targetState)) {
+            logger.trace("download matches synced state, checking for unnoticed delete");
             uploadUnnoticedDelete(download);
             return;
         }
 
-        SyncIndexEntry entry = index.get(download.getDestination());
-        if (entry != null && download.getMtime() != null && entry.getLocalMtime() >= download.getMtime()) {
-            return;
-        }
-
-        download.onSuccess(() -> index.update(download.getDestination(), download.getMtime(), download.getType() != Transaction.TYPE.DELETE));
+        download.onSuccess(() -> entry.setSyncedState(targetState));
+        download.onSkipped(() -> {
+            if (download.isValid()) {
+                entry.setSyncedState(targetState);
+            }
+        });
         addDownload(download);
     }
 
@@ -168,11 +183,10 @@ public class DefaultSyncer implements Syncer {
         manager.addDownload(download);
     }
 
-    private boolean isUpToDate(BoxSyncBasedDownload download) {
-        return index.isUpToDate(download.getDestination(), download.getMtime(), true);
-    }
-
     private void uploadUnnoticedDelete(BoxSyncBasedDownload download) {
+        if (download.getType() == DELETE) {
+            return;
+        }
         if (Files.exists(download.getDestination())) {
             return;
         }
@@ -193,24 +207,35 @@ public class DefaultSyncer implements Syncer {
                 return;
             }
         }
+        SyncState targetState;
+        targetState = new SyncState(
+            upload.getType() != DELETE,
+            upload.isDir() ? null : upload.getMtime(),
+            upload.isDir() ? DirectoryMetadata.DEFAULT_SIZE : upload.getSize()
+        );
+        BoxPath targetPath = config.getRemotePath().resolve(config.getLocalPath().relativize(upload.getSource()));
+        targetPath = BoxFileSystem.getRoot().relativize(targetPath);
+        SyncIndexEntry entry = index.get(targetPath);
 
-        if (isUpToDate(upload)) {
-            downloadUnnoticedDelete(upload);
+        entry.setLocalState(targetState);
+        if (targetState.equals(entry.getRemoteState())) {
+            logger.trace("upload matches remote state, dropping " + upload);
             return;
         }
-        SyncIndexEntry entry = index.get(upload.getSource());
-        if (entry != null && entry.isExisting() == (upload.getType() != Transaction.TYPE.DELETE) && entry.getLocalMtime() >= upload.getMtime()) {
+        if (targetState.equals(entry.getSyncedState())) {
+            logger.trace("upload matches synced state, dropping " + upload);
+            downloadUnnoticedDelete(upload);
             return;
         }
         if (event.isDir() && event instanceof ChangeEvent && ((ChangeEvent)event).getType() == UPDATE) {
             return;
         }
 
-        upload.onSuccess(() -> {
-            index.update(upload.getSource(), upload.getMtime(), upload.getType() != Transaction.TYPE.DELETE);
-        });
+        upload.onSuccess(() -> entry.setSyncedState(targetState));
         upload.onSkipped(() -> {
-            index.update(upload.getSource(), upload.getMtime(), upload.getType() != Transaction.TYPE.DELETE);
+            if (upload.isValid()) {
+                entry.setSyncedState(targetState);
+            }
         });
         addUpload(upload);
     }
@@ -221,11 +246,10 @@ public class DefaultSyncer implements Syncer {
         manager.addUpload(upload);
     }
 
-    private boolean isUpToDate(BoxSyncBasedUpload upload) {
-        return index.isUpToDate(upload.getSource(), upload.getMtime(), upload.getType() != Transaction.TYPE.DELETE);
-    }
-
     private void downloadUnnoticedDelete(BoxSyncBasedUpload upload) {
+        if (upload.getType() == DELETE) {
+            return;
+        }
         Path destination = upload.getDestination();
         boolean exists;
         BoxNavigation nav = null;
@@ -271,7 +295,7 @@ public class DefaultSyncer implements Syncer {
                 synchronized (this) {
                     localEvents++;
                 }
-                if (!watchEvent.isValid()) {
+                if (!watchEvent.isValid()) { // documentation is vague when this happens and what it means
                     return;
                 }
                 String type = "";

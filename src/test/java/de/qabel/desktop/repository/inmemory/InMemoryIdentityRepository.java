@@ -3,7 +3,7 @@ package de.qabel.desktop.repository.inmemory;
 import de.qabel.core.config.Identities;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.repository.IdentityRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 
 import java.util.List;
@@ -13,25 +13,25 @@ public class InMemoryIdentityRepository implements IdentityRepository {
     private Identities identities = new Identities();
 
     @Override
-    public Identity find(String id) throws EntityNotFoundExcepion {
+    public Identity find(String id) throws EntityNotFoundException {
         if (identities.getByKeyIdentifier(id) == null) {
-            throw new EntityNotFoundExcepion("id " + id + " not found");
+            throw new EntityNotFoundException("id " + id + " not found");
         }
         return identities.getByKeyIdentifier(id);
     }
 
     @Override
-    public Identity find(int id) throws EntityNotFoundExcepion, PersistenceException {
+    public Identity find(int id) throws EntityNotFoundException, PersistenceException {
         for (Identity identity : identities.getIdentities()) {
             if (identity.getId() == id) {
                 return identity;
             }
         }
-        throw new EntityNotFoundExcepion("fail");
+        throw new EntityNotFoundException("fail");
     }
 
     @Override
-    public Identities findAll() throws EntityNotFoundExcepion {
+    public Identities findAll() throws EntityNotFoundException {
         return identities;
     }
 

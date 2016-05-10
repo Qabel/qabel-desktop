@@ -7,6 +7,8 @@ import de.qabel.desktop.config.factory.IdentityBuilder;
 import de.qabel.desktop.config.factory.LocalBoxVolumeFactory;
 import de.qabel.desktop.daemon.sync.AbstractSyncTest;
 import de.qabel.desktop.exceptions.QblStorageException;
+import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.storage.BoxFile;
 import de.qabel.desktop.storage.BoxFolder;
 import de.qabel.desktop.storage.BoxNavigation;
@@ -38,6 +40,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
     private UploadStub upload;
     private DefaultTransferManager manager;
     private DownloadStub download;
+    private BoxPath syncRoot = BoxFileSystem.getRoot().resolve("syncRoot");
 
     private Path tmpPath(String dir) {
         return Paths.get(tmpDir.toString(), dir);
@@ -87,7 +90,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
     @Test
     public void createsRootDirectory() throws QblStorageException {
         upload.source = tmpPath("/syncRoot");
-        upload.destination = Paths.get("syncRoot");
+        upload.destination = syncRoot;
         upload.source.toFile().mkdirs();
         upload.isDir = true;
 
@@ -101,7 +104,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
     @Test
     public void closesUpload() throws Exception {
         upload.source = tmpPath("/syncRoot");
-        upload.destination = Paths.get("syncRoot");
+        upload.destination = syncRoot;
         upload.source.toFile().mkdir();
         upload.isDir = true;
 
@@ -116,7 +119,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
         nav().createFolder("syncRoot");
         upload.source = tmpPath("/syncRoot/subdir");
         upload.source.toFile().mkdirs();
-        upload.destination = Paths.get("/syncRoot/targetSubdir");
+        upload.destination = syncRoot.resolve("targetSubdir");
 
         upload.isDir = true;
         manager.upload(upload);
@@ -130,7 +133,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
     public void uploadsFiles() throws Exception {
         nav().createFolder("syncRoot");
         upload.source = tmpPath("file");
-        upload.destination = Paths.get("/syncRoot", "targetFile");
+        upload.destination = syncRoot.resolve("targetFile");
         File sourceFile = upload.source.toFile();
         write("testcontent", upload.source);
         upload.isDir = false;
@@ -156,11 +159,11 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
         setupUpload.volume = volume;
         setupUpload.source = tmpPath("syncRoot/folder");
         setupUpload.source.toFile().mkdirs();
-        setupUpload.destination = Paths.get("/syncRoot", "folder");
+        setupUpload.destination = syncRoot.resolve("folder");
         manager.upload(setupUpload);
 
         upload.source = tmpPath("syncRoot/folder");
-        upload.destination = Paths.get("/syncRoot/folder");
+        upload.destination = syncRoot.resolve("folder");
         upload.type = DELETE;
         upload.isDir = false;   // may not be detectable if folder is already gone
 
@@ -177,11 +180,11 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
         fileUpload.volume = volume;
         fileUpload.source = tmpPath("file");
         write("wayne", fileUpload.source);
-        fileUpload.destination = Paths.get("/syncRoot", "targetFile");
+        fileUpload.destination = syncRoot.resolve("targetFile");
         manager.upload(fileUpload);
 
         upload.source = tmpPath("file");
-        upload.destination = Paths.get("/syncRoot", "targetFile");
+        upload.destination = syncRoot.resolve("targetFile");
         upload.type = DELETE;
         upload.mtime = System.currentTimeMillis() + NEWER;
         upload.isDir = false;
@@ -197,7 +200,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
         nav().createFolder("syncRoot");
         upload.isDir = false;
         upload.source = tmpPath("file");
-        upload.destination = Paths.get("/syncRoot", "targetFile");
+        upload.destination = syncRoot.resolve("targetFile");
         write("testcontent", upload.source);
         upload.mtime = modifyMtime(upload.source, OLDER);
         manager.upload(upload);
@@ -220,7 +223,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
         nav().createFolder("syncRoot");
         upload.source = tmpPath("file");
         write("testcontent", upload.source);
-        upload.destination = Paths.get("/syncRoot", "targetFile");
+        upload.destination = syncRoot.resolve("targetFile");
         upload.mtime = modifyMtime(upload.source, NEWER);
         upload.isDir = false;
         upload.type = CREATE;
@@ -239,7 +242,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
         nav().createFolder("syncRoot");
         upload.type = UPDATE;
         upload.source = tmpPath("file");
-        upload.destination = Paths.get("/syncRoot", "targetFile");
+        upload.destination = syncRoot.resolve("targetFile");
         File sourceFile = upload.source.toFile();
         sourceFile.createNewFile();
         write("testcontent", upload.source);
@@ -262,7 +265,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
     @Test
     public void downloadsFolders() throws Exception {
         nav().createFolder("syncRoot");
-        download.source = Paths.get("/syncRoot");
+        download.source = syncRoot;
         download.destination = tmpPath("syncLocal");
         download.type = CREATE;
         download.isDir = true;
@@ -275,7 +278,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
     @Test
     public void closesDownload() throws Exception {
         nav().createFolder("syncRoot");
-        download.source = Paths.get("/syncRoot");
+        download.source = syncRoot;
         download.destination = tmpPath("syncLocal");
         download.type = CREATE;
         download.isDir = true;
@@ -368,7 +371,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
     }
 
     private void setDownload(Path destination, long mtimeDiff, Transaction.TYPE type, boolean isDir) throws IOException {
-        download.source = Paths.get("/testfile");
+        download.source = BoxFileSystem.getRoot().resolve("testfile");
         download.destination = destination;
         download.mtime = lastUpload != null ? lastUpload.getMtime() + mtimeDiff : Files.getLastModifiedTime(destination).toMillis() + mtimeDiff;
         download.type = type;
@@ -383,7 +386,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
         write("newercontent", source);
         long mtime = modifyMtime(source, OLDER);
         upload.source = source;
-        upload.destination = Paths.get("/testfile");
+        upload.destination = BoxFileSystem.getRoot().resolve("testfile");
         upload.mtime = mtime;
         upload.type = UPDATE;
         upload.isDir = false;
@@ -398,7 +401,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
         uploadFile("content", "testfile");
 
         upload.source = tmpPath("wayne");
-        upload.destination = Paths.get("/testfile");
+        upload.destination = BoxFileSystem.getRoot().resolve("testfile");
         upload.mtime = lastUpload.getMtime() + OLDER;
         upload.type = DELETE;
         upload.isDir = false;
@@ -416,7 +419,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
         File file = path.toFile();
         file.createNewFile();
         upload.source = path;
-        upload.destination = Paths.get("/testfile");
+        upload.destination = BoxFileSystem.getRoot().resolve("testfile");
         upload.mtime = Files.getLastModifiedTime(path).toMillis();
         upload.type = CREATE;
         upload.transactionAge = 0L;
@@ -445,7 +448,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
     public void downloadsAreNotStaged() throws Exception {
         download.stagingDelay = 2000L;
 
-        download.source = Paths.get("/wayne");
+        download.source = BoxFileSystem.getRoot().resolve("wayne");
         download.destination = tmpPath("wayne");
         download.mtime = 1000L;
         download.type = CREATE;
@@ -461,7 +464,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
         Path file = tmpPath("file");
         Files.write(file, "1234567890".getBytes());
         volume.navigate().upload("file", file.toFile());
-        download.source = Paths.get("/file");
+        download.source = BoxFileSystem.getRoot().resolve("file");
         download.destination = tmpPath("wayne");
         download.mtime = 10L;
         download.type = CREATE;
@@ -480,7 +483,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
         Path file = tmpPath("file");
         Files.write(file, "1234567890".getBytes());
         BoxFile remote = volume.navigate().upload("file", file.toFile());
-        download.source = Paths.get("/file");
+        download.source = BoxFileSystem.getRoot().resolve("file");
         download.destination = tmpPath("wayne");
         download.mtime = remote.getMtime();
         download.type = CREATE;

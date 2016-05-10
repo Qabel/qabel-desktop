@@ -6,7 +6,7 @@ import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.factory.DefaultContactFactory;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.EntityManager;
-import de.qabel.desktop.repository.exception.EntityNotFoundExcepion;
+import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.repository.sqlite.hydrator.ContactHydrator;
 import de.qabel.desktop.repository.sqlite.hydrator.DropURLHydrator;
@@ -36,7 +36,7 @@ public class SqliteContactRepository extends AbstractSqliteRepository<Contact> i
         this.dropUrlRepository = dropUrlRepository;
     }
 
-    Contact find(Integer id) throws PersistenceException, EntityNotFoundExcepion {
+    Contact find(Integer id) throws PersistenceException, EntityNotFoundException {
         return findBy("id=?", id);
     }
 
@@ -94,7 +94,7 @@ public class SqliteContactRepository extends AbstractSqliteRepository<Contact> i
         try {
             Contact existing = findBy("publicKey=?", contact.getKeyIdentifier());
             contact.setId(existing.getId());
-        } catch (PersistenceException | EntityNotFoundExcepion e) {
+        } catch (PersistenceException | EntityNotFoundException e) {
             try (PreparedStatement statement = database.prepare(
                 "INSERT INTO contact (publicKey, alias, phone, email) VALUES (?, ?, ?, ?)"
             )) {
@@ -165,7 +165,7 @@ public class SqliteContactRepository extends AbstractSqliteRepository<Contact> i
     }
 
     @Override
-    public synchronized Contact findByKeyId(Identity identity, String keyId) throws EntityNotFoundExcepion {
+    public synchronized Contact findByKeyId(Identity identity, String keyId) throws EntityNotFoundException {
         try {
             try (PreparedStatement statement = database.prepare(
                 "SELECT " + String.join(",", hydrator.getFields("c")) + " FROM " + TABLE_NAME + " c " +
@@ -179,14 +179,14 @@ public class SqliteContactRepository extends AbstractSqliteRepository<Contact> i
                 statement.setString(2, keyId);
                 try (ResultSet results = statement.executeQuery()) {
                     if (!results.next()) {
-                        throw new EntityNotFoundExcepion(
+                        throw new EntityNotFoundException(
                             "no contact found for identity '" + identity.getAlias() + "' and key '" + keyId + "'");
                     }
                     return hydrator.hydrateOne(results);
                 }
             }
         } catch (SQLException e) {
-            throw new EntityNotFoundExcepion("exception while searching contact: " + e.getMessage(), e);
+            throw new EntityNotFoundException("exception while searching contact: " + e.getMessage(), e);
         }
     }
 }

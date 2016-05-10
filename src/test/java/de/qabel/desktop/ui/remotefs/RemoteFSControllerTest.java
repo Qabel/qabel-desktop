@@ -5,6 +5,8 @@ import de.qabel.core.config.Identity;
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.exceptions.QblStorageException;
+import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.storage.*;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
 import de.qabel.desktop.ui.AbstractControllerTest;
@@ -37,6 +39,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
     public static final String SUB_FILE = "tmp1.txt";
     public static final String TMP_DIR = System.getProperty("java.io.tmpdir") + "/tmpQbl";
     public static final String TEST_TMP_DIR = TMP_DIR + "/" + TEST_FOLDER;
+    public static final BoxPath testFolder = BoxFileSystem.getRoot().resolve(TEST_FOLDER);
 
     private BoxNavigation nav;
     private LocalWriteBackend localWrite;
@@ -193,7 +196,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
         File subdir = new File(dir, "subFolder");
         new File(subdir, "subsubFolder").mkdirs();
         new File(subdir, "subsubFile").createNewFile();
-        controller.uploadDirectory(dir.toPath(), Paths.get("/", TEST_FOLDER));
+        controller.uploadDirectory(dir.toPath(), testFolder);
         executeTransactions();
 
         BoxNavigation newNav = nav.navigate(folder);
@@ -209,7 +212,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
         File dir = new File(TEST_TMP_DIR);
         dir.mkdirs();
         BoxFolder folder = createBoxFolder(dir);
-        controller.createFolder(Paths.get("/", TEST_FOLDER, dir.getName()));
+        controller.createFolder(testFolder.resolve(dir.getName()));
         executeTransactions();
 
         BoxNavigation newNav = nav.navigate(folder);
@@ -224,7 +227,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
         BoxFolder folder = createBoxFolder(dir);
         File tmp = new File(dir, "tmp1.txt");
         tmp.createNewFile();
-        controller.upload(tmp.toPath(), Paths.get("/", TEST_FOLDER, "/", "tmp1.txt"));
+        controller.upload(tmp.toPath(), testFolder.resolve("tmp1.txt"));
 
         assertEquals(1, transferManager.getTransactions().size());
         executeTransactions();
@@ -244,7 +247,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
     public void testDontDeleteBoxFolder() throws Exception {
         initTreeTable();
         BoxFolder folder = controller.nav.listFolders().get(0);
-        controller.deleteBoxObject(ButtonType.NO, Paths.get("/", TEST_FOLDER), folder);
+        controller.deleteBoxObject(ButtonType.NO, testFolder, folder);
         executeTransactions();
 
         assertThat(controller.nav.listFolders().size(), is(1));
@@ -256,7 +259,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
         initTreeTable();
 
         BoxFolder folder = nav.listFolders().get(0);
-        controller.deleteBoxObject(ButtonType.OK, Paths.get("/", TEST_FOLDER), folder);
+        controller.deleteBoxObject(ButtonType.OK, testFolder, folder);
         executeTransactions();
 
         assertThat(controller.nav.listFolders().size(), is(0));
@@ -270,7 +273,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
         BoxFolder folder = nav.listFolders().get(0);
         BoxFile file = nav.navigate(folder).listFiles().get(0);
 
-        controller.deleteBoxObject(ButtonType.OK, Paths.get("/", TEST_FOLDER, SUB_FILE), file);
+        controller.deleteBoxObject(ButtonType.OK, testFolder.resolve(SUB_FILE), file);
         executeTransactions();
 
         BoxNavigation newNav = nav.navigate(folder);
@@ -281,7 +284,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
     public void TestDeleteBoxFileFromRootNode() throws QblStorageException, IOException {
         initTreeTable();
         BoxFolder folder = nav.listFolders().get(0);
-        controller.deleteBoxObject(ButtonType.OK, Paths.get("/", TEST_FOLDER), folder);
+        controller.deleteBoxObject(ButtonType.OK, testFolder, folder);
         assertThat(nav.listFiles().size(), is(0));
     }
 
@@ -289,7 +292,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
     public void testDownloadFolderFromRootNode() throws Exception {
         BoxFolder folder = nav.createFolder("folder");
         Path targetDir = Paths.get(TMP_DIR, "folder");
-        controller.downloadBoxObject(folder, nav.navigate("folder"), Paths.get("/folder"), targetDir);
+        controller.downloadBoxObject(folder, nav.navigate("folder"), BoxFileSystem.getRoot().resolve("folder"), targetDir);
         executeTransactions();
 
         assertTrue("folder was not downloaded", Files.isDirectory(targetDir));
@@ -302,7 +305,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
         BoxFolder folder = nodeNav.createFolder(TEST_SUB_FOLDER);
         nodeNav.navigate(folder).upload(SUB_FILE, file);
         Path targetFolder = tempFolder.resolve(folder.getName());
-        controller.downloadBoxObject(folder, nodeNav.navigate(folder), Paths.get("/", node.getName(), folder.getName()), tempFolder);
+        controller.downloadBoxObject(folder, nodeNav.navigate(folder), BoxFileSystem.getRoot().resolve(node.getName()).resolve(folder.getName()), tempFolder);
         executeTransactions();
 
         assertTrue(Files.isDirectory(targetFolder));
@@ -315,7 +318,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
         BoxFolder node = nav.createFolder("folder");
         nav.navigate("folder").createFolder("subfolder");
         Path targetFolder = tempFolder.resolve("folder");
-        controller.downloadBoxObject(node, nav.navigate("folder"), Paths.get("/folder"), tempFolder);
+        controller.downloadBoxObject(node, nav.navigate("folder"), BoxFileSystem.getRoot().resolve("folder"), tempFolder);
         executeTransactions();
 
         assertTrue(Files.isDirectory(targetFolder.resolve("subfolder")));
@@ -329,7 +332,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
         testDir.mkdirs();
         File tmpFile = new File(testDir, SUB_FILE);
         tmpFile.createNewFile();
-        Path remotePath = Paths.get("/" + SUB_FILE);
+        BoxPath remotePath = BoxFileSystem.get("/" + SUB_FILE);
         controller.upload(tmpFile.toPath(), remotePath);
         executeTransactions();
 
@@ -350,7 +353,8 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
         BoxNavigation newNav = nav.navigate(root);
         BoxFile file = newNav.listFiles().get(0);
 
-        controller.downloadBoxObject(file, newNav, Paths.get("/", TEST_FOLDER, "/", SUB_FILE), Paths.get(TMP_DIR));
+        BoxPath remotePath = BoxFileSystem.getRoot().resolve(TEST_FOLDER).resolve(SUB_FILE);
+        controller.downloadBoxObject(file, newNav, remotePath, Paths.get(TMP_DIR));
         executeTransactions();
         File testFile = new File(TMP_DIR + "/" + SUB_FILE);
         assertTrue(testFile.exists());

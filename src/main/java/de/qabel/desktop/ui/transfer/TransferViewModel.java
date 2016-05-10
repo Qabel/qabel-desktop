@@ -48,7 +48,9 @@ public class TransferViewModel extends TransactionFxProgressCollectionModel {
         }
         String direction = transaction instanceof Upload ? "Remote" : "Local";
         String type = transaction.getType().toString();
-        return filename + " (" + StringUtils.capitalize(type) + " " + transaction.getSize() / 1024 + "kb)";
+        Long size = transaction.getSize();
+        size = size == null ? 0L : size;
+        return filename + " (" + StringUtils.capitalize(type) + " " + size / 1024 + "kb)";
     }
 
     public StringProperty currentTransactionLabel() {

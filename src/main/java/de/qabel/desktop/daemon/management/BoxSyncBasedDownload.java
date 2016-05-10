@@ -2,12 +2,14 @@ package de.qabel.desktop.daemon.management;
 
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.daemon.sync.event.WatchEvent;
+import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.storage.BoxVolume;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class BoxSyncBasedDownload extends AbstractBoxSyncBasedTransaction implements Download {
+public class BoxSyncBasedDownload extends AbstractBoxSyncBasedTransaction<BoxPath, Path> implements Download {
     public BoxSyncBasedDownload(BoxVolume volume, BoxSyncConfig boxSyncConfig,  WatchEvent event) {
         super(volume, event, boxSyncConfig);
     }
@@ -37,5 +39,15 @@ public class BoxSyncBasedDownload extends AbstractBoxSyncBasedTransaction implem
     @Override
     public long getStagingDelayMillis() {
         return 0;
+    }
+
+    @Override
+    public BoxPath getSource() {
+        return BoxFileSystem.get(event.getPath());
+    }
+
+    @Override
+    public long getSize() {
+        return event.getSize();
     }
 }

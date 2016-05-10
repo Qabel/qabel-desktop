@@ -4,6 +4,7 @@ import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.daemon.sync.worker.Syncer;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndex;
+import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.repository.HasId;
 
 import java.nio.file.Path;
@@ -19,13 +20,13 @@ public interface BoxSyncConfig extends HasId {
 
     Path getLocalPath();
 
-    Path getRemotePath();
+    BoxPath getRemotePath();
 
     void setName(String name);
 
     void setLocalPath(Path localPath);
 
-    void setRemotePath(Path remotePath);
+    void setRemotePath(BoxPath remotePath);
 
     void pause();
 
