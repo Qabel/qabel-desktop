@@ -46,8 +46,8 @@ public class SyncStateTest {
         SyncState state1 = new SyncState(true, null, null);
         SyncState state2 = new SyncState(true, 0L, 0L);
 
-        assertThat(state1.equals(state1), is(true));
-        assertThat(state1.equals(state2), is(true));
+        assertThat(state1, equalTo(state1));
+        assertThat(state1, equalTo(state2));
     }
 
     @Test
@@ -56,20 +56,20 @@ public class SyncStateTest {
         SyncState state2 = new SyncState(true, 10L, null);
         SyncState state3 = new SyncState(true, 10L, 10L);
 
-        assertThat(state1.equals(state2), is(false));
-        assertThat(state2.equals(state1), is(false));
-        assertThat(state3.equals(state2), is(false));
+        assertThat(state1, not(equalTo(state2)));
+        assertThat(state2, not(equalTo(state1)));
+        assertThat(state3, not(equalTo(state2)));
     }
 
     @SuppressWarnings("ObjectEqualsNull")
     @Test
     public void doesntCompareWithNull() {
-        assertThat(new SyncState().equals(null), is(false));
+        assertThat(new SyncState(), not(equalTo(null)));
     }
 
     @SuppressWarnings("EqualsBetweenInconvertibleTypes")
     @Test
     public void doesntCompareWithOtherClasses() {
-        assertThat(new SyncState().equals("test"), is(false));
+        assertThat(new SyncState(), not(equalTo("test")));
     }
 }
