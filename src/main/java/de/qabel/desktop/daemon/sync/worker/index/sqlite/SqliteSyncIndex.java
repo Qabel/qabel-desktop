@@ -5,6 +5,8 @@ import de.qabel.desktop.daemon.sync.worker.index.SyncIndexEntry;
 import de.qabel.desktop.daemon.sync.worker.index.SyncState;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.nio.boxfs.BoxPath;
+import de.qabel.desktop.util.LazyMap;
+import de.qabel.desktop.util.LazyWeakHashMap;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,7 +16,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 public class SqliteSyncIndex implements SyncIndex {
-    private Map<BoxPath, SqliteSyncIndexEntry> entries = new WeakHashMap<>();
+    private LazyMap<BoxPath, SqliteSyncIndexEntry> entries = new LazyWeakHashMap<>();
     private Connection connection;
 
     public SqliteSyncIndex(Connection connection) {
@@ -39,14 +41,11 @@ public class SqliteSyncIndex implements SyncIndex {
     }
 
     @Override
-    public synchronized SyncIndexEntry get(BoxPath relativePath) {
+    public SyncIndexEntry get(BoxPath relativePath) {
         if (relativePath.isAbsolute()) {
             relativePath = BoxFileSystem.getRoot().relativize(relativePath);
         }
-        if (!entries.containsKey(relativePath)) {
-            entries.put(relativePath,  new SqliteSyncIndexEntry(relativePath, loadEntry(relativePath), connection));
-        }
-        return entries.get(relativePath);
+        return entries.getOrDefault(relativePath, r -> new SqliteSyncIndexEntry(r, loadEntry(r), connection));
     }
 
     private SyncState loadEntry(BoxPath relativePath) {

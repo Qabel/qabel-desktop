@@ -5,25 +5,20 @@ import de.qabel.desktop.daemon.sync.worker.index.SyncIndex;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndexEntry;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.nio.boxfs.BoxPath;
+import de.qabel.desktop.util.LazyHashMap;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class InMemorySyncIndex implements SyncIndex {
-    private final Map<String, SyncIndexEntry> index = new HashMap<>();
+    private final LazyHashMap<BoxPath, SyncIndexEntry> index = new LazyHashMap<>();
 
     @Override
     public SyncIndexEntry get(BoxPath relativePath) {
         if (relativePath.isAbsolute()) {
             relativePath = BoxFileSystem.getRoot().relativize(relativePath);
         }
-        String key = relativePath.toString();
-        synchronized (index) {
-            if (!index.containsKey(key)) {
-                index.put(key, new SyncIndexEntry(relativePath));
-            }
-            return index.get(key);
-        }
+        return index.getOrDefault(relativePath, SyncIndexEntry::new);
     }
 
     @Override
