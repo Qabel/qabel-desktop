@@ -100,6 +100,7 @@ dependencies {
 
     testCompile 'info.cukes:cucumber-java:1.2.+'
     testCompile 'info.cukes:cucumber-junit:1.2.+'
+    testCompile 'com.tngtech.java:junit-dataprovider:1.10.+'    // Apache v2
 }
 
 task copyToLib(type: Copy) {

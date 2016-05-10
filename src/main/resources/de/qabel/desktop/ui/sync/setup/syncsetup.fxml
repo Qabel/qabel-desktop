@@ -42,7 +42,7 @@
                   <Insets right="15.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="start" defaultButton="true" onAction="#createSyncConfig" text="%syncSetupStartSync" />
+            <Button fx:id="start" defaultButton="true" onAction="#createSyncConfigFromForm" text="%syncSetupStartSync" />
          </children>
       </HBox>
    </children>
