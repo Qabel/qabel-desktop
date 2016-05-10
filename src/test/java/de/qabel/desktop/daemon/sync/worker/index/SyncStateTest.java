@@ -54,8 +54,11 @@ public class SyncStateTest {
     public void nullsafeUnequals() {
         SyncState state1 = new SyncState(true, null, 10L);
         SyncState state2 = new SyncState(true, 10L, null);
+        SyncState state3 = new SyncState(true, 10L, 10L);
+
         assertThat(state1.equals(state2), is(false));
         assertThat(state2.equals(state1), is(false));
+        assertThat(state3.equals(state2), is(false));
     }
 
     @SuppressWarnings("ObjectEqualsNull")

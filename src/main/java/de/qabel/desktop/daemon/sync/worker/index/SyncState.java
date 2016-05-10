@@ -42,22 +42,22 @@ public class SyncState {
         }
 
         SyncState otherState = (SyncState) obj;
-        if (otherState.getMtime() == null && getMtime() != null && getMtime() != 0L) {
+        if (otherState.getMtime() == null && !nullOrZero(getMtime())) {
             return false;
         }
-        if (otherState.getSize() == null && getSize() != null && getSize() != 0L) {
+        if (otherState.getSize() == null && !nullOrZero(getSize())) {
             return false;
         }
 
         return otherState.isExisting() == existing
-            && (otherState.getMtime() == null && getMtime() == null
-                || otherState.getMtime() == null && getMtime() == 0L
-                || otherState.getMtime() == 0L && getMtime() == null
+            && (nullOrZero(otherState.getMtime()) == nullOrZero(mtime)
                 || otherState.getMtime().equals(mtime))
-            && (otherState.getSize() == null && getSize() == null
-                || otherState.getSize() == null && getSize() == 0L
-                || otherState.getSize() == 0L && getSize() == null
+            && (nullOrZero(otherState.getSize()) == nullOrZero(getSize())
                 || otherState.getSize().equals(size));
+    }
+
+    private static boolean nullOrZero(Long value) {
+        return value == null || value == 0L;
     }
 
     @Override
