@@ -52,6 +52,7 @@ public class AbstractController {
     protected void alert(String message, Exception e) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> alert(message, e));
+            return;
         }
         LoggerFactory.getLogger(getClass()).error(message, e);
         e.printStackTrace();

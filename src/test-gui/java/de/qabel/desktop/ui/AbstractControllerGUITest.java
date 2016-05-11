@@ -17,7 +17,7 @@ public class AbstractControllerGUITest extends AbstractGuiTest<AlertTestControll
     @Test
     public void
     testAlertDialog() throws Exception {
-        Platform.runLater(() -> controller.alert("some error message", new Exception("exceptionmessage")));
+        controller.alert("some error message", new Exception("exceptionmessage"));
         waitUntil(() -> controller.alert != null);
         waitUntil(() -> controller.alert.getExceptionLabel() != null);
         waitForNode(".feedback");
