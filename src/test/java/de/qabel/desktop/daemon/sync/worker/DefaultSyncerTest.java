@@ -140,7 +140,7 @@ public class DefaultSyncerTest extends AbstractSyncTest {
         syncer = new DefaultSyncer(config, new BoxVolumeStub(), manager);
         syncer.run();
 
-        waitUntil(() -> manager.getTransactions().size() == 1);
+        waitUntil(() -> manager.getTransactions().size() == 1, () -> manager.getTransactions().toString());
         syncer.stop();
         manager.cleanup();
         assertEquals(0, manager.getTransactions().size());

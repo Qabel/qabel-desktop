@@ -6,6 +6,7 @@ import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.daemon.management.*;
 import de.qabel.desktop.daemon.sync.blacklist.Blacklist;
+import de.qabel.desktop.daemon.sync.blacklist.PatternBlacklist;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.LocalDeleteEvent;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
@@ -33,11 +34,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.*;
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.UPDATE;
 
 public class DefaultSyncer implements Syncer {
+    private static final Pattern DEFAULT_BLACKLIST_PATTERN = Pattern.compile("\\..*~");
     private ExecutorService executor;
     private static final ExecutorService fileExecutor = Executors.newSingleThreadExecutor();
     private BoxSyncBasedUploadFactory uploadFactory = new BoxSyncBasedUploadFactory();
@@ -62,6 +65,9 @@ public class DefaultSyncer implements Syncer {
         this.boxVolume = boxVolume;
         this.manager = manager;
         config.setSyncer(this);
+        PatternBlacklist defaultBlacklist = new PatternBlacklist();
+        defaultBlacklist.add(DEFAULT_BLACKLIST_PATTERN);
+        localBlacklist = defaultBlacklist;
     }
 
     public void setLocalBlacklist(Blacklist blacklist) {
