@@ -44,7 +44,7 @@ public class DefaultTransferManager extends Observable implements TransferManage
 
     @Override
     public List<Transaction> getHistory() {
-        return Collections.unmodifiableList(history);
+        return history;
     }
 
     @Override
@@ -81,6 +81,10 @@ public class DefaultTransferManager extends Observable implements TransferManage
 
     public void next() throws InterruptedException {
         Transaction transaction = transactions.take();
+        if (transaction.isDone()) {
+            return;
+        }
+
         transaction.toState(WAITING);
         setChanged();
         notifyObservers(transaction);

@@ -63,6 +63,7 @@ public class TreeWatcher extends Thread {
             logger.error(e.getMessage(), e);
         } catch (InterruptedException e) {
             logger.warn(e.getMessage(), e);
+        } finally {
             unregisterKeys();
         }
     }

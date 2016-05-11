@@ -14,6 +14,7 @@ import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import de.qabel.desktop.storage.BoxFile;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -30,7 +31,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.CREATE;
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.DELETE;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
 public class DefaultSyncerTest extends AbstractSyncTest {
@@ -135,9 +139,27 @@ public class DefaultSyncerTest extends AbstractSyncTest {
     }
 
     @Test
+    public void stopStopsRemoteWacher() throws Exception {
+        BoxNavigationStub nav = new BoxNavigationStub(null, BoxFileSystem.getRoot());
+        BoxVolumeStub volume = new BoxVolumeStub();
+        volume.rootNavigation = nav;
+        syncer = new DefaultSyncer(config, volume, manager);
+        syncer.run();
+
+        waitUntil(() -> manager.getTransactions().size() == 1 && syncer.isPolling());
+        syncer.stop();
+        manager.getHistory().clear();
+
+        nav.pushNotification(new BoxFile("a", "b", "c", 1L, 2L, new byte[0]), CREATE);
+        // wait for something to not happen?
+        Thread.sleep(100);
+        assertThat(manager.getHistory(), is(empty()));
+    }
+
+    @Test
     public void addsFoldersAsDownloads() throws Exception {
         BoxNavigationStub nav = new BoxNavigationStub(null, null);
-        nav.event = new RemoteChangeEvent(Paths.get("/tmp/someFolder"), true, 1000L, ChangeEvent.TYPE.CREATE, null, nav);
+        nav.event = new RemoteChangeEvent(Paths.get("/tmp/someFolder"), true, 1000L, CREATE, null, nav);
         BoxVolumeStub volume = new BoxVolumeStub();
         volume.rootNavigation = nav;
         syncer = new DefaultSyncer(config, volume, manager);

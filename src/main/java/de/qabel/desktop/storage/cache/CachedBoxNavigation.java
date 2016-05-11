@@ -256,6 +256,9 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
         }
 
         for (BoxFolder folder : listFolders()) {
+            if (Thread.currentThread().isInterrupted()) {
+                return;
+            }
             try {
                 navigate(folder).refresh();
             } catch (QblStorageException e) {
@@ -333,6 +336,10 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
     }
 
     public void notifyAllContents() throws QblStorageException {
+        if (Thread.currentThread().isInterrupted()) {
+            return;
+        }
+
         // TODO notify async and sync files first (better UX on files)
         for (BoxFolder folder : nav.listFolders()) {
             notify(folder, CREATE);
