@@ -8,11 +8,9 @@ import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.daemon.management.*;
 import de.qabel.desktop.daemon.sync.AbstractSyncTest;
-import de.qabel.desktop.daemon.sync.blacklist.Blacklist;
 import de.qabel.desktop.daemon.sync.blacklist.PatternBlacklist;
-import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
-import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
+import de.qabel.desktop.daemon.sync.worker.index.sqlite.SqliteSyncIndexFactory;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.storage.BoxFile;
 import org.apache.commons.io.FileUtils;
@@ -60,7 +58,7 @@ public class DefaultSyncerTest extends AbstractSyncTest {
             BoxFileSystem.get("/"),
             identity,
             account,
-            new InMemorySyncIndexFactory()
+            new SqliteSyncIndexFactory()
         );
     }
 
@@ -81,6 +79,16 @@ public class DefaultSyncerTest extends AbstractSyncTest {
         syncer.run();
 
         waitUntil(() -> manager.getTransactions().size() == 2);
+    }
+
+    @Test
+    public void createsLocalDirIfNotExisting() throws Exception {
+        Path newDir = tmpDir.resolve("subdir");
+        config.setLocalPath(newDir);
+        syncer = new DefaultSyncer(config, new BoxVolumeStub(), manager);
+        syncer.run();
+
+        waitUntil(() -> Files.isDirectory(newDir));
     }
 
     @Test
