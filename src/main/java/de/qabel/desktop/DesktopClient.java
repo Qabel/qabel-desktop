@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.Security;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
@@ -61,6 +62,7 @@ import static javafx.scene.control.Alert.AlertType.WARNING;
 
 
 public class DesktopClient extends Application {
+    private static final String AWS_RECOMMENDED_DNS_CACHE_TTL = "60";
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private static final Logger logger = LoggerFactory.getLogger(DesktopClient.class);
     private static Path LEGACY_DATABASE_FILE = Paths.get(System.getProperty("user.home")).resolve(".qabel/db.sqlite");
@@ -77,6 +79,7 @@ public class DesktopClient extends Application {
     public static void main(String[] args) throws Exception {
         AbstractNavigation.DEFAULT_AUTOCOMMIT_DELAY = 2000;
 
+        Security.setProperty("networkaddress.cache.ttl",  AWS_RECOMMENDED_DNS_CACHE_TTL);
         String defaultEncoding = System.getProperty("file.encoding");
         if (!defaultEncoding.equals("UTF-8")) {
             logger.warn("default encoding " + defaultEncoding + " is not UTF-8");
