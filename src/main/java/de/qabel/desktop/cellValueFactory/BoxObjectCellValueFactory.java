@@ -20,7 +20,6 @@ public class BoxObjectCellValueFactory implements Callback<TreeTableColumn.CellD
     public static final String NAME = "name";
 
     private String searchValue;
-    private String fileSizeDisplay;
 
     public BoxObjectCellValueFactory(String searchValue) {
         this.searchValue = searchValue;
@@ -45,8 +44,8 @@ public class BoxObjectCellValueFactory implements Callback<TreeTableColumn.CellD
         if (bf instanceof BoxFile) {
             switch (searchValue) {
                 case SIZE:
-                    fileSizeDisplay = FileUtils.byteCountToDisplaySize(((BoxFile) bf).getSize());
-                    return new ReadOnlyStringWrapper(fileSizeDisplay);
+                    String fileSizeFormat = FileUtils.byteCountToDisplaySize(((BoxFile) bf).getSize());
+                    return new ReadOnlyStringWrapper(fileSizeFormat);
                 case MTIME:
                     DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
                     return new ReadOnlyStringWrapper(dateFormat.format(((BoxFile) bf).getMtime()));

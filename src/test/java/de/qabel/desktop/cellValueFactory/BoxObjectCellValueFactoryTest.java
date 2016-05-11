@@ -95,8 +95,7 @@ public class BoxObjectCellValueFactoryTest extends AbstractControllerTest {
     public void testFormattedFileSize() {
 
         column = getColumnValue("size", rootNodeFile);
-        BoxFile subnode = (BoxFile) rootNodeFile.getChildren().get(0).getValue();
-        assertThat(column.getValue(), is(FileUtils.byteCountToDisplaySize(subnode.getSize())));
+        assertThat(column.getValue(), is(("1 bytes")));
     }
 
     @Test
@@ -121,11 +120,7 @@ public class BoxObjectCellValueFactoryTest extends AbstractControllerTest {
     public void testDate() {
 
         column = getColumnValue("mtime", rootNodeFile);
-        BoxFile subnode = (BoxFile) rootNodeFile.getChildren().get(0).getValue();
-        //DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        String date = dateFormat.format(subnode.getMtime());
-        assertThat(column.getValue(), is(date));
+        assertThat(column.getValue(), is("01/01/1970"));
     }
 
     private ObservableValue<String> getColumnValue(String searchString, TreeItem<BoxObject> rootNode) {
