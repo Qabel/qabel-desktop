@@ -144,17 +144,19 @@ public class SyncItemController extends AbstractController implements Initializa
                             if (buttonType != ButtonType.YES) {
                                 return;
                             }
-                            if (syncConfig.getSyncer() != null) {
-                                try {
-                                    syncConfig.getSyncer().stop();
-                                } catch (InterruptedException e) {
-                                    // best effort
-                                    alert("error while stopping sync: " + e.getMessage(), e);
-                                } finally {
-                                    syncConfig.setSyncer(null);
-                                    boxSyncRepository.delete(syncConfig);
+                            boxSyncRepository.delete(syncConfig);
+                            new Thread(() -> {
+                                if (syncConfig.getSyncer() != null) {
+                                    try {
+                                        syncConfig.getSyncer().stop();
+                                    } catch (InterruptedException e) {
+                                        // best effort
+                                        alert("error while stopping sync: " + e.getMessage(), e);
+                                    } finally {
+                                        syncConfig.setSyncer(null);
+                                    }
                                 }
-                            }
+                            }).start();
                         } catch (PersistenceException e) {
                             throw new IllegalStateException("failed to delete sync: " + e.getMessage(), e);
                         } finally {
@@ -189,6 +191,9 @@ public class SyncItemController extends AbstractController implements Initializa
         }
 
         long totalTransfers = progressModel.totalItemsProperty().get();
+        if (syncConfig.getSyncer() == null) {
+            return "unknown";
+        }
         if (totalTransfers == 0) {
             return "Collecting files... " + syncConfig.getSyncer().getHistory().size();
         }

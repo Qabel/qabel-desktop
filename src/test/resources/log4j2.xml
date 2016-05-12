@@ -12,10 +12,6 @@
         </Console>
     </Appenders>
     <Loggers>
-        <logger name="de.qabel.desktop.daemon" includeLocation="true">
-            <level>TRACE</level>
-            <AppenderRef ref="Console"/>
-        </logger>
         <logger name="de.qabel.desktop" includeLocation="true">
             <level>TRACE</level>
             <AppenderRef ref="Console"/>

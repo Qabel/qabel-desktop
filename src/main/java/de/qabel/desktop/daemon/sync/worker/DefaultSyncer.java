@@ -6,6 +6,7 @@ import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.daemon.management.*;
 import de.qabel.desktop.daemon.sync.blacklist.Blacklist;
+import de.qabel.desktop.daemon.sync.blacklist.PatternBlacklist;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.LocalDeleteEvent;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
@@ -33,12 +34,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.*;
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.UPDATE;
 
 public class DefaultSyncer implements Syncer {
-    private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private static final Pattern DEFAULT_BLACKLIST_PATTERN = Pattern.compile("\\..*~");
+    private ExecutorService executor;
     private static final ExecutorService fileExecutor = Executors.newSingleThreadExecutor();
     private BoxSyncBasedUploadFactory uploadFactory = new BoxSyncBasedUploadFactory();
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -50,18 +53,21 @@ public class DefaultSyncer implements Syncer {
     private Thread poller;
     private TreeWatcher watcher;
     private boolean polling;
-    private final SyncIndex index;
+    private SyncIndex index;
     private WindowedTransactionGroup progress = new WindowedTransactionGroup();
     private List<Transaction> history = new LinkedList<>();
     private Blacklist localBlacklist;
     private Observer remoteChangeHandler;
+    private CachedBoxNavigation nav;
 
     public DefaultSyncer(BoxSyncConfig config, CachedBoxVolume boxVolume, TransferManager manager) {
         this.config = config;
         this.boxVolume = boxVolume;
         this.manager = manager;
-        index = config.getSyncIndex();
         config.setSyncer(this);
+        PatternBlacklist defaultBlacklist = new PatternBlacklist();
+        defaultBlacklist.add(DEFAULT_BLACKLIST_PATTERN);
+        localBlacklist = defaultBlacklist;
     }
 
     public void setLocalBlacklist(Blacklist blacklist) {
@@ -76,6 +82,10 @@ public class DefaultSyncer implements Syncer {
     @Override
     public void run() {
         try {
+            executor = Executors.newFixedThreadPool(10);
+            ensureLocalDir();
+            index = config.getSyncIndex();
+
             startWatcher();
             registerRemoteChangeHandler();
             registerRemotePoller();
@@ -112,7 +122,7 @@ public class DefaultSyncer implements Syncer {
     }
 
     protected void registerRemoteChangeHandler() throws QblStorageException {
-        CachedBoxNavigation nav = navigateToRemoteDir();
+        nav = navigateToRemoteDir();
 
         remoteChangeHandler = (o, arg) -> executor.submit(() -> {
             try {
@@ -283,13 +293,7 @@ public class DefaultSyncer implements Syncer {
     }
 
     protected void startWatcher() throws IOException {
-        Path localPath = config.getLocalPath();
-        if (!Files.isDirectory(localPath)) {
-            Files.createDirectories(localPath);
-        }
-        if (!Files.isReadable(localPath)) {
-            throw new IllegalStateException("local dir " + localPath + " is not valid");
-        }
+        Path localPath = ensureLocalDir();
         watcher = new TreeWatcher(localPath, watchEvent -> {
             try {
                 synchronized (this) {
@@ -314,20 +318,32 @@ public class DefaultSyncer implements Syncer {
         watcher.start();
     }
 
+    private Path ensureLocalDir() throws IOException {
+        Path localPath = config.getLocalPath();
+        if (!Files.isDirectory(localPath)) {
+            Files.createDirectories(localPath);
+        }
+        if (!Files.isReadable(localPath)) {
+            throw new IllegalStateException("local dir " + localPath + " is not valid");
+        }
+        return localPath;
+    }
+
     @Override
     public void shutdown() {
-        if (watcher != null && watcher.isAlive()) {
-            watcher.interrupt();
-        }
-        if (poller != null && poller.isAlive()) {
-            poller.interrupt();
-        }
+        interrupt();
         progress.cancel();
     }
 
     public void join() throws InterruptedException {
+        logger.trace("waiting for watcher");
         watcher.join();
+        logger.trace("waiting for poller");
         poller.join();
+        logger.trace("waiting for background tasks of sync");
+        if (!executor.isShutdown()) {
+            executor.shutdownNow();
+        }
     }
 
     @Override
@@ -338,11 +354,24 @@ public class DefaultSyncer implements Syncer {
 
     @Override
     public void stop() throws InterruptedException {
-        watcher.interrupt();
-        poller.interrupt();
-        watcher.join();
-        poller.join();
+        interrupt();
+        join();
+        logger.trace("cancelling transfers");
         progress.cancel();
+    }
+
+    private void interrupt() {
+        logger.trace("stopping syncer for " + config.getName());
+        if (nav != null) {
+            nav.deleteObserver(remoteChangeHandler);
+        }
+        if (watcher != null && watcher.isAlive()) {
+            watcher.interrupt();
+        }
+        if (poller != null && poller.isAlive()) {
+            poller.interrupt();
+        }
+        executor.shutdown();
     }
 
     public boolean isPolling() {

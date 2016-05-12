@@ -27,11 +27,10 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.util.List;
 
-import static de.qabel.desktop.daemon.management.Transaction.STATE.FAILED;
-import static de.qabel.desktop.daemon.management.Transaction.STATE.FINISHED;
-import static de.qabel.desktop.daemon.management.Transaction.STATE.SKIPPED;
+import static de.qabel.desktop.daemon.management.Transaction.STATE.*;
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.*;
 import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.*;
 
 public class DefaultTransferManagerTest extends AbstractSyncTest {
     public static final long NEWER = 10000L;
@@ -415,6 +414,18 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
     public void skipsTempFilesWithStagingArea() throws Exception {
         upload.stagingDelay = 500L;
 
+        File file = createValidUpload();
+        manager.addUpload(upload);
+        managerNext();
+
+        waitUntil(() -> upload.getState() == WAITING);
+        file.delete();
+        upload.valid = false;
+
+        waitUntil(() -> upload.getState() == SKIPPED);
+    }
+
+    private File createValidUpload() throws IOException {
         Path path = tmpPath("file");
         File file = path.toFile();
         file.createNewFile();
@@ -424,14 +435,17 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
         upload.type = CREATE;
         upload.transactionAge = 0L;
         upload.isDir = false;
+        return file;
+    }
+
+    @Test(timeout = 1000L)
+    public void skipsCancelledDownloads() throws Exception {
+        createValidUpload();
+        upload.toState(FAILED);
         manager.addUpload(upload);
-        managerNext();
-
-        waitUntil(() -> upload.getState() == Transaction.STATE.WAITING);
-        file.delete();
-        upload.valid = false;
-
-        waitUntil(() -> upload.getState() == SKIPPED);
+        manager.next();
+        assertThat(manager.getTransactions(), is(empty()));
+        assertThat(upload.state, is(FAILED));
     }
 
     protected void managerNext() {
