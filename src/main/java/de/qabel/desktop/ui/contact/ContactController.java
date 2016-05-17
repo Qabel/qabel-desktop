@@ -23,6 +23,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -30,6 +31,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import org.apache.commons.io.FilenameUtils;
 import org.json.JSONException;
 
 import javax.inject.Inject;
@@ -127,14 +129,16 @@ public class ContactController extends AbstractController implements Initializab
 
     @FXML
     protected void handleImportContactsButtonAction(ActionEvent event) throws IOException, PersistenceException, URISyntaxException, QblDropInvalidURL, EntityNotFoundException, JSONException {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle(resourceBundle.getString("contactDownloadFolder"));
+        FileChooser.ExtensionFilter qcoExtensionFilter = new FileChooser.ExtensionFilter(resourceBundle.getString("qcoExtensionFilterLabel"), "*.qco");
+        chooser.getExtensionFilters().add(qcoExtensionFilter);
+        File file = chooser.showOpenDialog(contactList.getScene().getWindow());
         try {
-            FileChooser chooser = new FileChooser();
-            chooser.setTitle(resourceBundle.getString("contactDownloadFolder"));
-            File file = chooser.showOpenDialog(contactList.getScene().getWindow());
-
             importContacts(file);
             loadContacts();
-        } catch (NullPointerException ignored) {
+        } catch ( IOException | PersistenceException | JSONException e) {
+            alert(resourceBundle.getString("alertImportContactFail"), e);
         }
     }
 

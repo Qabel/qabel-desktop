@@ -93,15 +93,16 @@ public class AccountingController extends AbstractController implements Initiali
 
     @FXML
     protected void handleImportIdentityButtonAction(ActionEvent event) throws URISyntaxException, QblDropInvalidURL {
-
         FileChooser chooser = new FileChooser();
         chooser.setTitle(resourceBundle.getString("accountingDownloadFolder"));
+        FileChooser.ExtensionFilter qidExtensionFilter = new FileChooser.ExtensionFilter(resourceBundle.getString("qidExtensionFilterLabel"), "*.qid");
+        chooser.getExtensionFilters().add(qidExtensionFilter);
         File file = chooser.showOpenDialog(identityList.getScene().getWindow());
         try {
             importIdentity(file);
             loadIdentities();
         } catch (IOException | PersistenceException | JSONException e) {
-            alert("Import identity fail", e);
+            alert(resourceBundle.getString("alertImportIdentityFail"), e);
         } catch (NullPointerException ignored) {
         }
     }
