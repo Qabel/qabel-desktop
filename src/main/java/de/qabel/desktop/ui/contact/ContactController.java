@@ -139,6 +139,7 @@ public class ContactController extends AbstractController implements Initializab
             loadContacts();
         } catch ( IOException | PersistenceException | JSONException e) {
             alert(resourceBundle.getString("alertImportContactFail"), e);
+        } catch (NullPointerException ignored) {
         }
     }
 
