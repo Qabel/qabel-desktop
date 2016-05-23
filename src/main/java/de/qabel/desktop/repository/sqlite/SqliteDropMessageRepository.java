@@ -129,6 +129,7 @@ public class SqliteDropMessageRepository extends AbstractSqliteRepository<Persis
              .orderBy("d.created ASC")
              .build()
         ) {
+            statement.setMaxRows(100);
             statement.setInt(1, identity.getId());
             statement.setInt(2, contact.getId());
             try (ResultSet resultSet = statement.executeQuery()) {

@@ -89,4 +89,16 @@ public class VirtualShareTreeItem extends TreeItem<BoxObject> {
     private BoxObject loadFileMetadata(ShareNotificationMessage message) throws IOException, QblStorageException, InvalidKeyException, UnmodifiedException {
         return sharingService.loadFileMetadata(message, readBackend);
     }
+
+    public synchronized void refresh() {
+        for (ShareNotificationMessage notification : notifications.getNotifications()) {
+            try {
+                sharingService.loadFileMetadata(notification, readBackend);
+                initialized = false;
+                reload();
+                return;
+            } catch (IOException | InvalidKeyException | QblStorageException | UnmodifiedException ignored) {
+            }
+        }
+    }
 }
