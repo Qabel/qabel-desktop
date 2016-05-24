@@ -12,8 +12,7 @@ import java.util.*;
 
 public class StubDropMessageRepository extends Observable implements DropMessageRepository {
     public PersistenceDropMessage lastMessage;
-    private HashMap<String,List<PersistenceDropMessage>> messagesMap = new HashMap<>();
-
+    private List<PersistenceDropMessage> messages = new LinkedList<>();
 
     @Override
     public void addMessage(DropMessage dropMessage, Entity from, Entity to, boolean send) throws PersistenceException {
@@ -22,27 +21,31 @@ public class StubDropMessageRepository extends Observable implements DropMessage
     }
 
     @Override
-    public void save(PersistenceDropMessage pdm) throws PersistenceException {
-        lastMessage = pdm;
-
-        List<PersistenceDropMessage> lst = messagesMap.get(pdm.getReceiver().getKeyIdentifier());
-        if(lst == null){
-            lst = new LinkedList<>();
-            lst.add(pdm);
-        }
-        messagesMap.put(pdm.getReceiver().getKeyIdentifier(), lst);
-
+    public synchronized void save(PersistenceDropMessage pdm) throws PersistenceException {
+        messages.add(pdm);
         setChanged();
         notifyObservers(pdm);
     }
 
     @Override
-    public List<PersistenceDropMessage> loadConversation(Contact contact, Identity identity) throws PersistenceException {
-        List<PersistenceDropMessage> lst = messagesMap.get(contact.getKeyIdentifier());
-        if(lst == null){
-            return new LinkedList<>();
+    public synchronized List<PersistenceDropMessage> loadConversation(Contact contact, Identity identity) throws PersistenceException {
+        List<PersistenceDropMessage> result = new LinkedList<>();
+        for (PersistenceDropMessage message : messages) {
+            if (isPartOfConversation(message, identity, contact)) {
+                result.add(message);
+            }
         }
-        return lst;
+        return result;
+    }
+
+    private boolean isPartOfConversation(PersistenceDropMessage message, Identity identity, Contact contact) {
+        String expectedKey1 = identity.getKeyIdentifier();
+        String expectedKey2 = contact.getKeyIdentifier();
+        String actualKey1 = message.getReceiver().getKeyIdentifier();
+        String actualKey2 = message.getSender().getKeyIdentifier();
+
+        return expectedKey1.equals(actualKey1) && expectedKey2.equals(actualKey2)
+            || expectedKey2.equals(actualKey1) && expectedKey1.equals(actualKey2);
     }
 
     @Override
