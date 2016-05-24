@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Simple Logger with Level all, and appender to console and file -->
+
+<Configuration>
+    <Appenders>
+        <RandomAccessFile name="RandomAccessFile" fileName="${sys:log.root}/log/desktop.log" immediateFlush="true" append="false">
+            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </RandomAccessFile>
+
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <root level="all">
+            <AppenderRef ref="RandomAccessFile" level="trace"/>
+            <AppenderRef ref="Console" level="trace"/>
+        </root>
+    </Loggers>
+</Configuration>
