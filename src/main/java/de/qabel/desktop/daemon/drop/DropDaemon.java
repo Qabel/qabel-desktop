@@ -50,6 +50,8 @@ public class DropDaemon implements Runnable {
                     continue;
                 } catch (EntityNotFoundException entityNotFoundException) {
                     entityNotFoundException.printStackTrace();
+                } catch (Exception e) {
+                    logger.error("Unexpected error while polling drops: " + e.getMessage(), e);
                 }
                 Thread.sleep(sleepTime);
             } catch (InterruptedException e) {
@@ -85,7 +87,7 @@ public class DropDaemon implements Runnable {
                         continue;
                     }
                     dropMessageRepository.addMessage(d, sender, identity, false);
-                    System.out.println("setting response date to " + response.date);
+                    logger.debug("setting response date to " + response.date);
                 }
             }
             if (response.date != null) {
@@ -95,5 +97,9 @@ public class DropDaemon implements Runnable {
             logger.warn("failed to receive dropMessage " + e.getMessage(), e);
             return;
         }
+    }
+
+    void setSleepTime(long sleepTime) {
+        this.sleepTime = sleepTime;
     }
 }
