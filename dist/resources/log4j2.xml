@@ -13,8 +13,8 @@
     </Appenders>
     <Loggers>
         <root level="all">
-            <AppenderRef ref="RandomAccessFile" level="trace"/>
-            <AppenderRef ref="Console" level="trace"/>
+            <AppenderRef ref="RandomAccessFile" level="WARN"/>
+            <AppenderRef ref="Console" level="WARN"/>
         </root>
     </Loggers>
 </Configuration>
