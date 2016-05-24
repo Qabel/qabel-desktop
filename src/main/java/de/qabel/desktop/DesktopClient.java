@@ -8,7 +8,6 @@ import de.qabel.core.config.SQLitePersistence;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.LaunchConfig;
-import de.qabel.desktop.daemon.drop.DropDaemon;
 import de.qabel.desktop.daemon.share.ShareNotificationHandler;
 import de.qabel.desktop.inject.DesktopServices;
 import de.qabel.desktop.inject.NewConfigDesktopServiceFactory;
@@ -64,7 +63,7 @@ import static javafx.scene.control.Alert.AlertType.WARNING;
 public class DesktopClient extends Application {
     private static final String AWS_RECOMMENDED_DNS_CACHE_TTL = "60";
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private static final Logger logger = LoggerFactory.getLogger(DesktopClient.class);
+    private static Logger logger;
     private static Path LEGACY_DATABASE_FILE = Paths.get(System.getProperty("user.home")).resolve(".qabel/db.sqlite");
     private static Path DATABASE_FILE = Paths.get(System.getProperty("user.home")).resolve(".qabel/config.sqlite");
     private static DesktopServices services;
@@ -77,6 +76,8 @@ public class DesktopClient extends Application {
     private static Connection connection;
 
     public static void main(String[] args) throws Exception {
+        System.setProperty("log.root", DATABASE_FILE.getParent().toAbsolutePath().toString());
+        logger = LoggerFactory.getLogger(DesktopClient.class);
         AbstractNavigation.DEFAULT_AUTOCOMMIT_DELAY = 2000;
 
         Security.setProperty("networkaddress.cache.ttl",  AWS_RECOMMENDED_DNS_CACHE_TTL);
