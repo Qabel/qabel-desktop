@@ -16,23 +16,23 @@ import java.util.List;
 public class InMemoryHttpDropConnector implements DropConnector {
     private Date date = new Date();
     private RuntimeException exception;
-    private int polls = 0;
+    private int polls;
 
-    HashMap<String, List<DropMessage>> contactLists = new HashMap<>();
+    private HashMap<String, List<DropMessage>> contactLists = new HashMap<>();
 
     @Override
     public void send(Contact c, DropMessage d) throws QblNetworkInvalidResponseException {
 
-        List lst = contactLists.get(c.getKeyIdentifier());
+        List<DropMessage> lst = contactLists.get(c.getKeyIdentifier());
         if(lst == null){
-            lst = new LinkedList<DropMessage>();
-            lst.add(d);
+            lst = new LinkedList<>();
         }
+        lst.add(d);
         contactLists.put(c.getKeyIdentifier(), lst);
     }
 
     @Override
-    public DropPollResponse receive(Identity i, Date siceDate) {
+    public DropPollResponse receive(Identity i, Date sinceDate) {
         polls++;
         if (exception != null) {
             throw exception;

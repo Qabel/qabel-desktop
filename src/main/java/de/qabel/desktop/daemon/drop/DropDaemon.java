@@ -7,6 +7,7 @@ import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
+import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.connector.DropConnector;
@@ -19,24 +20,25 @@ import java.util.List;
 
 
 public class DropDaemon implements Runnable {
-
     private ClientConfig config;
-    private Date lastDate;
     private DropConnector httpDropConnector;
     private ContactRepository contactRepository;
     private DropMessageRepository dropMessageRepository;
+    private IdentityRepository identityRepository;
     private long sleepTime = 10000L;
     private static final Logger logger = LoggerFactory.getLogger(DropDaemon.class);
 
     public DropDaemon(ClientConfig config,
                       DropConnector httpDropConnector,
                       ContactRepository contactRepository,
-                      DropMessageRepository dropMessageRepository
+                      DropMessageRepository dropMessageRepository,
+                      IdentityRepository identityRepository
     ) {
         this.config = config;
         this.httpDropConnector = httpDropConnector;
         this.contactRepository = contactRepository;
         this.dropMessageRepository = dropMessageRepository;
+        this.identityRepository = identityRepository;
     }
 
     @Override
@@ -45,11 +47,6 @@ public class DropDaemon implements Runnable {
             try {
                 try {
                     receiveMessages();
-                } catch (PersistenceException e) {
-                    logger.error("Persitence fail: " + e.getMessage(), e);
-                    continue;
-                } catch (EntityNotFoundException entityNotFoundException) {
-                    entityNotFoundException.printStackTrace();
                 } catch (Exception e) {
                     logger.error("Unexpected error while polling drops: " + e.getMessage(), e);
                 }
@@ -62,13 +59,18 @@ public class DropDaemon implements Runnable {
     }
 
     void receiveMessages() throws PersistenceException, EntityNotFoundException {
-        Identity identity = config.getSelectedIdentity();
-        if (identity == null) {
-            return;
+        for (Identity identity : identityRepository.findAll().getIdentities()) {
+            try {
+                receiveMessages(identity);
+            } catch (Exception e) {
+                logger.error("Unexpected error while polling drops: " + e.getMessage(), e);
+            }
         }
+    }
 
+    private void receiveMessages(Identity identity) throws PersistenceException, EntityNotFoundException {
         try {
-            lastDate = config.getLastDropPoll(identity);
+            Date lastDate = config.getLastDropPoll(identity);
             DropPollResponse response = httpDropConnector.receive(identity, new Date(lastDate.getTime() + 1000L));
             List<DropMessage> dropMessages = response.dropMessages;
 
@@ -95,7 +97,6 @@ public class DropDaemon implements Runnable {
             }
         } catch (NullPointerException e) {
             logger.warn("failed to receive dropMessage " + e.getMessage(), e);
-            return;
         }
     }
 
