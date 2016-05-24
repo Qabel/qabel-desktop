@@ -78,7 +78,6 @@ public class DesktopClient extends Application {
     public static void main(String[] args) throws Exception {
         System.setProperty("log.root", DATABASE_FILE.getParent().toAbsolutePath().toString());
         logger = LoggerFactory.getLogger(DesktopClient.class);
-        logger.error("miep");
         AbstractNavigation.DEFAULT_AUTOCOMMIT_DELAY = 2000;
 
         Security.setProperty("networkaddress.cache.ttl",  AWS_RECOMMENDED_DNS_CACHE_TTL);
