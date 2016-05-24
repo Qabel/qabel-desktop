@@ -11,7 +11,6 @@
             <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
     </Appenders>
-
     <Loggers>
         <root level="all">
             <AppenderRef ref="RandomAccessFile" level="WARN"/>
