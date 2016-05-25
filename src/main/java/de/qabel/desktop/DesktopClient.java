@@ -108,8 +108,6 @@ public class DesktopClient extends Application {
             new SqliteTransactionManager(connection)
         );
         services = staticDesktopServiceFactory;
-        Injector.setConfigurationSource(key -> staticDesktopServiceFactory.get((String) key));
-        Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(staticDesktopServiceFactory));
         AfterburnerInjector.setConfigurationSource(key -> staticDesktopServiceFactory.get((String) key));
         AfterburnerInjector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(staticDesktopServiceFactory));
 

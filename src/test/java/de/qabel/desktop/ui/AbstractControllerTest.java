@@ -129,8 +129,6 @@ public class AbstractControllerTest extends AbstractFxTest {
         syncDaemon = new SyncDaemon(new SimpleListProperty<>(), new FakeSyncerFactory());
         diContainer.put("syncDaemon", syncDaemon);
 
-        Injector.setConfigurationSource(key -> diContainer.get((String)key));
-        Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(diContainer));
         AfterburnerInjector.setConfigurationSource(key -> diContainer.get((String)key));
         AfterburnerInjector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(diContainer));
 
