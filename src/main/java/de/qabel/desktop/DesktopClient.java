@@ -21,6 +21,7 @@ import de.qabel.desktop.ui.LayoutView;
 import de.qabel.desktop.ui.accounting.login.LoginView;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 import de.qabel.desktop.ui.actionlog.item.renderer.ShareNotificationRenderer;
+import de.qabel.desktop.ui.inject.AfterburnerInjector;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import de.qabel.desktop.ui.tray.AwtToast;
 import de.qabel.desktop.ui.tray.QabelTray;
@@ -109,6 +110,8 @@ public class DesktopClient extends Application {
         services = staticDesktopServiceFactory;
         Injector.setConfigurationSource(key -> staticDesktopServiceFactory.get((String) key));
         Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(staticDesktopServiceFactory));
+        AfterburnerInjector.setConfigurationSource(key -> staticDesktopServiceFactory.get((String) key));
+        AfterburnerInjector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(staticDesktopServiceFactory));
 
         System.setProperty("prism.lcdtext", "false");
         UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());

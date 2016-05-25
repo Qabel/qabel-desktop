@@ -28,6 +28,7 @@ import de.qabel.desktop.inject.DefaultServiceFactory;
 import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRendererFactory;
 import de.qabel.desktop.ui.actionlog.item.renderer.PlaintextMessageRenderer;
 import de.qabel.desktop.ui.connector.DropConnector;
+import de.qabel.desktop.ui.inject.AfterburnerInjector;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import javafx.beans.property.SimpleListProperty;
 import org.apache.logging.log4j.Level;
@@ -130,6 +131,8 @@ public class AbstractControllerTest extends AbstractFxTest {
 
         Injector.setConfigurationSource(key -> diContainer.get((String)key));
         Injector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(diContainer));
+        AfterburnerInjector.setConfigurationSource(key -> diContainer.get((String)key));
+        AfterburnerInjector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(diContainer));
 
         identity = identityBuilderFactory.factory().withAlias("TestAlias").build();
         clientConfiguration.selectIdentity(identity);
@@ -140,6 +143,7 @@ public class AbstractControllerTest extends AbstractFxTest {
     public void tearDown() throws Exception {
         try {
             Injector.forgetAll();
+            AfterburnerInjector.forgetAll();
         } catch (Exception e) {
             logger.error("failed to tear down injector", e);
         }
