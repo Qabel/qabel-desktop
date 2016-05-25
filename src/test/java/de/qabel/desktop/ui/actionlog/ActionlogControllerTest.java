@@ -6,7 +6,7 @@ import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.daemon.drop.TextMessage;
 import de.qabel.desktop.repository.DropMessageRepository;
-import de.qabel.desktop.repository.Stub.StubDropMessageRepository;
+import de.qabel.desktop.repository.inmemory.InMemoryDropMessageRepository;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import de.qabel.desktop.ui.actionlog.item.MyActionlogItemController;
 import de.qabel.desktop.ui.actionlog.item.MyActionlogItemView;
@@ -28,7 +28,7 @@ public class ActionlogControllerTest extends AbstractControllerTest {
     Contact c;
     String text = "MessageString";
     DropMessage dm;
-    StubDropMessageRepository repo;
+    InMemoryDropMessageRepository repo;
 
     @Test
     public void addMessageToActionlogTest() throws Exception {
@@ -60,14 +60,13 @@ public class ActionlogControllerTest extends AbstractControllerTest {
         i = identityBuilderFactory.factory().withAlias("NewIdentity").build();
         c = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
 
-        String msg2 = "msg2";
-        controller.sendDropMessage(c, msg2);
         clientConfiguration.selectIdentity(i);
+        controller.sendDropMessage(c, "msg2");
 
         List<PersistenceDropMessage> lst = dropMessageRepository.loadConversation(c, i);
 
         assertEquals(1, lst.size());
-        assertEquals(msg2, TextMessage.fromJson(lst.get(0).dropMessage.getDropPayload()).getText());
+        assertEquals("msg2", TextMessage.fromJson(lst.get(0).dropMessage.getDropPayload()).getText());
     }
 
     @Test
@@ -102,7 +101,7 @@ public class ActionlogControllerTest extends AbstractControllerTest {
     @Override
     @Before
     public void setUp() throws Exception {
-        repo = new StubDropMessageRepository();
+        repo = new InMemoryDropMessageRepository();
         dropMessageRepository = repo;
         super.setUp();
         i = identityBuilderFactory.factory().withAlias("TestAlias").build();

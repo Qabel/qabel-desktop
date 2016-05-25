@@ -19,11 +19,10 @@ import de.qabel.desktop.daemon.management.DefaultTransferManager;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.FakeSyncerFactory;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndexFactory;
-import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
 import de.qabel.desktop.daemon.sync.worker.index.sqlite.SqliteSyncIndexFactory;
 import de.qabel.desktop.repository.*;
-import de.qabel.desktop.repository.Stub.InMemoryContactRepository;
-import de.qabel.desktop.repository.Stub.StubDropMessageRepository;
+import de.qabel.desktop.repository.inmemory.InMemoryContactRepository;
+import de.qabel.desktop.repository.inmemory.InMemoryDropMessageRepository;
 import de.qabel.desktop.repository.inmemory.*;
 import de.qabel.desktop.inject.DefaultServiceFactory;
 import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRendererFactory;
@@ -38,11 +37,9 @@ import org.apache.logging.slf4j.Log4jLogger;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 import java.util.function.Function;
-import java.util.logging.LogManager;
 
 public class AbstractControllerTest extends AbstractFxTest {
     protected static Logger logger;
@@ -54,7 +51,7 @@ public class AbstractControllerTest extends AbstractFxTest {
     protected ContactRepository contactRepository = new InMemoryContactRepository();
     protected DefaultTransferManager transferManager;
     protected BoxVolumeFactoryStub boxVolumeFactory;
-    protected DropMessageRepository dropMessageRepository = new StubDropMessageRepository();
+    protected DropMessageRepository dropMessageRepository = new InMemoryDropMessageRepository();
     protected DropConnector httpDropConnector = new InMemoryHttpDropConnector();
     protected StubCrashReportHandler crashReportHandler = new StubCrashReportHandler();
     protected SharingService sharingService = new BlockSharingService(dropMessageRepository, httpDropConnector);

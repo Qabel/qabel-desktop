@@ -25,14 +25,14 @@ public class AbstractControllerGUITest extends AbstractGuiTest<AlertTestControll
         try {
             runLaterAndWait(alert.getAlert().getDialogPane()::requestFocus);
             waitTillTheEnd(alert.getAlert().getDialogPane());
-            assertEquals("Error", alert.getAlert().getTitle());
-            assertEquals("some error message", alert.getAlert().getHeaderText());
-            assertEquals(Alert.AlertType.ERROR, alert.getAlert().getAlertType());
-            assertEquals("exceptionmessage", alert.getExceptionLabel().getText());
+            CrashReportAlertPage page = new CrashReportAlertPage(baseFXRobot, robot, alert);
 
-            clickOn(".feedback").write("123456");
-            clickOn(".send");
-            waitUntil(alert.getInputArea().getText()::isEmpty);
+            assertEquals("Error", page.getTitle());
+            assertEquals("some error message", page.getHeaderText());
+            assertEquals(Alert.AlertType.ERROR, page.getType());
+            assertEquals("exceptionmessage", page.getExceptionLabel());
+
+            page.setFeedback("123456").send();
             assertEquals("123456", crashReportHandler.text);
             assertNotNull(crashReportHandler.stacktrace);
         } finally {

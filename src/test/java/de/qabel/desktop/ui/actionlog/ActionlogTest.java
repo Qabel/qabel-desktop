@@ -3,7 +3,7 @@ package de.qabel.desktop.ui.actionlog;
 import de.qabel.core.config.Contact;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.core.drop.DropMessage;
-import de.qabel.desktop.repository.Stub.StubDropMessageRepository;
+import de.qabel.desktop.repository.inmemory.InMemoryDropMessageRepository;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +14,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class ActionlogTest extends AbstractControllerTest {
-    private StubDropMessageRepository repo = new StubDropMessageRepository();
+    private InMemoryDropMessageRepository repo = new InMemoryDropMessageRepository();
     private Actionlog log;
     private DropMessage msg;
     private Contact contact = new Contact("alias", null, new QblECKeyPair().getPub());
