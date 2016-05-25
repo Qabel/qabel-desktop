@@ -5,7 +5,7 @@ import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.exceptions.QblDropInvalidURL;
-import de.qabel.desktop.repository.Stub.StubDropMessageRepository;
+import de.qabel.desktop.repository.inmemory.InMemoryDropMessageRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractControllerTest;
@@ -149,7 +149,7 @@ public class ContactControllerTest extends AbstractControllerTest {
         dropMessageRepository.addMessage(new DropMessage(contact, "a", "b"), contact, identity, false);
         waitUntil(() -> controller.contactItems.get(0).getIndicator().isVisible());
 
-        ((StubDropMessageRepository)dropMessageRepository).lastMessage.setSeen(true);
+        ((InMemoryDropMessageRepository)dropMessageRepository).lastMessage.setSeen(true);
         waitUntil(() -> !controller.contactItems.get(0).getIndicator().isVisible());
     }
 

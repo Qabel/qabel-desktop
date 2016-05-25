@@ -1,4 +1,4 @@
-package de.qabel.desktop.repository.Stub;
+package de.qabel.desktop.repository.inmemory;
 
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Entity;
@@ -10,7 +10,7 @@ import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 
 import java.util.*;
 
-public class StubDropMessageRepository extends Observable implements DropMessageRepository {
+public class InMemoryDropMessageRepository extends Observable implements DropMessageRepository {
     public PersistenceDropMessage lastMessage;
     private List<PersistenceDropMessage> messages = new LinkedList<>();
 
@@ -23,6 +23,7 @@ public class StubDropMessageRepository extends Observable implements DropMessage
     @Override
     public synchronized void save(PersistenceDropMessage pdm) throws PersistenceException {
         messages.add(pdm);
+        lastMessage = pdm;
         setChanged();
         notifyObservers(pdm);
     }

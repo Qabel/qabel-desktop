@@ -1,4 +1,4 @@
-package de.qabel.desktop.repository.Stub;
+package de.qabel.desktop.repository.inmemory;
 
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Contacts;

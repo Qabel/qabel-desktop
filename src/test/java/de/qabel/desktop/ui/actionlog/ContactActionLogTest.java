@@ -3,7 +3,7 @@ package de.qabel.desktop.ui.actionlog;
 import de.qabel.core.config.Contact;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.core.drop.DropMessage;
-import de.qabel.desktop.repository.Stub.StubDropMessageRepository;
+import de.qabel.desktop.repository.inmemory.InMemoryDropMessageRepository;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,11 +11,14 @@ import org.junit.Test;
 import java.util.LinkedList;
 import java.util.List;
 
+import static de.qabel.desktop.AsyncUtils.assertAsync;
 import static de.qabel.desktop.AsyncUtils.waitUntil;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
 public class ContactActionLogTest extends AbstractControllerTest {
-    private StubDropMessageRepository repo = new StubDropMessageRepository();
+    private InMemoryDropMessageRepository repo = new InMemoryDropMessageRepository();
     private Actionlog log;
     private DropMessage msg;
     private DropMessage otherMsg;
@@ -62,11 +65,11 @@ public class ContactActionLogTest extends AbstractControllerTest {
         repo.addMessage(msg, identity, contact, false);
 
         log = new ContactActionLog(identity, contact, repo);
-        assertEquals(1, log.getUnseenMessageCount());
+        assertThat(log.getUnseenMessageCount(), is(1));
         for (PersistenceDropMessage message : repo.loadConversation(contact, identity)) {
             message.setSeen(true);
         }
-        waitUntil(() -> log.getUnseenMessageCount() == 0);
+        assertAsync(log::getUnseenMessageCount, is(0));
     }
 
     @Test
@@ -79,6 +82,6 @@ public class ContactActionLogTest extends AbstractControllerTest {
 
         repo.addMessage(msg, identity, contact, false);
         log = new ContactActionLog(identity, contact, repo);
-        assertEquals(0, log.getUnseenMessageCount());
+        assertThat(log.getUnseenMessageCount(), is(1));
     }
 }
