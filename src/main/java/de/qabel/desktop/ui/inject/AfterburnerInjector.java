@@ -2,233 +2,197 @@ package de.qabel.desktop.ui.inject;
 
 import com.airhacks.afterburner.configuration.Configurator;
 import com.airhacks.afterburner.injection.PresenterFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-import java.util.WeakHashMap;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-
 public class AfterburnerInjector implements PresenterFactory {
-        private static final Map<Class<?>, Object> modelsAndServices = new WeakHashMap<>();
-        private static final Set<Object> presenters = Collections.newSetFromMap(new WeakHashMap<>());
+    private static final Logger logger = LoggerFactory.getLogger(AfterburnerInjector.class);
+    private static final Map<Class<?>, Object> modelsAndServices = new WeakHashMap<>();
+    private static final Set<Object> presenters = Collections.newSetFromMap(new WeakHashMap<>());
+    private static Function<Class<?>, Object> instanceSupplier = getDefaultInstanceSupplier();
+    private static Consumer<String> LOG = getDefaultLogger();
+    private static final Configurator configurator = new Configurator();
 
-        private static Function<Class<?>, Object> instanceSupplier = getDefaultInstanceSupplier();
-
-        private static Consumer<String> LOG = getDefaultLogger();
-
-        private static final Configurator configurator = new Configurator();
-
-
-        @Override
-        public <T> T instantiatePresenter(Class<T> clazz, Function<String, Object> injectionContext) {
-            @SuppressWarnings("unchecked")
-            T presenter = registerExistingAndInject( (T)instanceSupplier.apply(clazz), injectionContext);
-            return presenter;
-        }
-
-        public static void setInstanceSupplier(Function<Class<?>, Object> instanceSupplier) {
-            AfterburnerInjector.instanceSupplier = instanceSupplier;
-        }
-
-        public static void setLogger(Consumer<String> logger) {
-            LOG = logger;
-        }
-
-        public static void setConfigurationSource(Function<Object, Object> configurationSupplier) {
-            configurator.set(configurationSupplier);
-        }
-
-        public static void resetInstanceSupplier() {
-            instanceSupplier = getDefaultInstanceSupplier();
-        }
-
-        public static void resetConfigurationSource() {
-            configurator.forgetAll();
-        }
-
-        /**
-         * Caches the passed presenter internally and injects all fields
-         *
-         * @param instance An already existing (legacy) presenter interesting in
-         * injection
-         * @return presenter with injected fields
-         */
-        public static <T> T registerExistingAndInject(T instance) {
-            return registerExistingAndInject(instance, null);
-        }
-
-        public static <T> T registerExistingAndInject(T instance, Function<String, Object> additionalInjectionContext) {
-            T product = injectAndInitialize(instance, additionalInjectionContext);
-            presenters.add(product);
-            return product;
-        }
-
-
+    @Override
+    public <T> T instantiatePresenter(Class<T> clazz, Function<String, Object> injectionContext) {
         @SuppressWarnings("unchecked")
-        public static <T> T instantiateModelOrService(Class<T> clazz) {
-            T product = (T) modelsAndServices.get(clazz);
-            if (product == null) {
-                product = injectAndInitialize((T)instanceSupplier.apply(clazz));
-                modelsAndServices.putIfAbsent(clazz, product);
-            }
-            return clazz.cast(product);
+        T presenter = registerExistingAndInject((T) instanceSupplier.apply(clazz), injectionContext);
+        return presenter;
+    }
+
+    public static void setInstanceSupplier(Function<Class<?>, Object> instanceSupplier) {
+        AfterburnerInjector.instanceSupplier = instanceSupplier;
+    }
+
+    public static void setConfigurationSource(Function<Object, Object> configurationSupplier) {
+        configurator.set(configurationSupplier);
+    }
+
+    private static void resetInstanceSupplier() {
+        instanceSupplier = getDefaultInstanceSupplier();
+    }
+
+    private static void resetConfigurationSource() {
+        configurator.forgetAll();
+    }
+
+    private static <T> T registerExistingAndInject(T instance, Function<String, Object> additionalInjectionContext) {
+        T product = injectAndInitialize(instance, additionalInjectionContext);
+        presenters.add(product);
+        return product;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T instantiateModelOrService(Class<T> clazz) {
+        T product = (T) modelsAndServices.get(clazz);
+        if (product == null) {
+            product = injectAndInitialize((T) instanceSupplier.apply(clazz));
+            modelsAndServices.putIfAbsent(clazz, product);
         }
+        return clazz.cast(product);
+    }
 
-        public static <T> void setModelOrService(Class<T> clazz, T instance) {
-            modelsAndServices.put(clazz, instance);
-        }
+    private static <T> T injectAndInitialize(T product) {
+        return injectAndInitialize(product, null);
+    }
 
-        static <T> T injectAndInitialize(T product) {
-            return injectAndInitialize(product, null);
-        }
+    private static <T> T injectAndInitialize(T product, Function<String, Object> additionalInjectionContext) {
+        injectMembers(product, additionalInjectionContext);
+        initialize(product);
+        return product;
+    }
 
+    private static void injectMembers(final Object instance, Function<String, Object> additionalInjectionContext) {
+        Class<?> clazz = instance.getClass();
+        injectMembers(clazz, instance, additionalInjectionContext);
+    }
 
-        static <T> T injectAndInitialize(T product, Function<String, Object> additionalInjectionContext) {
-            injectMembers(product, additionalInjectionContext);
-            initialize(product);
-            return product;
-        }
+    private static void injectMembers(Class<?> clazz, final Object instance) throws SecurityException {
+        injectMembers(clazz, instance, null);
+    }
 
-        static void injectMembers(final Object instance) {
-            injectMembers(instance, null);
-        }
-
-        static void injectMembers(final Object instance, Function<String, Object> additionalInjectionContext) {
-            Class<? extends Object> clazz = instance.getClass();
-            injectMembers(clazz, instance, additionalInjectionContext);
-        }
-
-        public static void injectMembers(Class<? extends Object> clazz, final Object instance) throws SecurityException {
-            injectMembers(clazz, instance, null);
-        }
-
-        public static void injectMembers(Class<? extends Object> clazz, final Object instance, Function<String, Object> additionalInjectionContext) throws SecurityException {
-            LOG.accept("Injecting members for class " + clazz + " and instance " + instance);
-            Field[] fields = clazz.getDeclaredFields();
-            for (final Field field : fields) {
-                if (field.isAnnotationPresent(Inject.class)) {
-                    LOG.accept("Field annotated with @Inject found: " + field);
-                    Class<?> type = field.getType();
-                    String key = field.getName();
-                    Object value = null;
-                    if (additionalInjectionContext != null) {
-                        value = additionalInjectionContext.apply(key);
+    private static void injectMembers(Class<?> clazz, final Object instance, Function<String, Object> additionalInjectionContext) throws SecurityException {
+        LOG.accept("Injecting members for class " + clazz + " and instance " + instance);
+        Field[] fields = clazz.getDeclaredFields();
+        for (final Field field : fields) {
+            if (field.isAnnotationPresent(Inject.class)) {
+                LOG.accept("Field annotated with @Inject found: " + field);
+                Class<?> type = field.getType();
+                String key = field.getName();
+                Object value = null;
+                if (additionalInjectionContext != null) {
+                    value = additionalInjectionContext.apply(key);
+                }
+                if (additionalInjectionContext == null || value == null) {
+                    value = configurator.getProperty(clazz, key);
+                    LOG.accept("Value returned by configurator is: " + value);
+                    if (value == null && isNotPrimitiveOrString(type)) {
+                        LOG.accept("Field is not a JDK class");
+                        value = instantiateModelOrService(type);
                     }
-                    if (additionalInjectionContext == null || value == null) {
-                        value = configurator.getProperty(clazz, key);
-                        LOG.accept("Value returned by configurator is: " + value);
-                        if (value == null && isNotPrimitiveOrString(type)) {
-                            LOG.accept("Field is not a JDK class");
-                            value = instantiateModelOrService(type);
-                        }
+                }
+
+                if (value != null) {
+                    LOG.accept("Value is a primitive, injecting...");
+                    injectIntoField(field, instance, value);
+                }
+            }
+        }
+        Class<?> superclass = clazz.getSuperclass();
+        if (superclass != null) {
+            LOG.accept("Injecting members of: " + superclass);
+            injectMembers(superclass, instance);
+        }
+    }
+
+    private static void injectIntoField(final Field field, final Object instance, final Object target) {
+        AccessController.doPrivileged((PrivilegedAction<?>) () -> {
+            boolean wasAccessible = field.isAccessible();
+            try {
+                field.setAccessible(true);
+                field.set(instance, target);
+                return null; // return nothing...
+            } catch (IllegalArgumentException | IllegalAccessException ex) {
+                throw new IllegalStateException("Cannot set field: " + field + " with value " + target, ex);
+            } finally {
+                field.setAccessible(wasAccessible);
+            }
+        });
+    }
+
+    private static void initialize(Object instance) {
+        Class<?> clazz = instance.getClass();
+        invokeMethodWithAnnotation(clazz, instance, PostConstruct.class
+        );
+    }
+
+    private static void destroy(Object instance) {
+        Class<?> clazz = instance.getClass();
+        invokeMethodWithAnnotation(clazz, instance, PreDestroy.class
+        );
+    }
+
+    private static void invokeMethodWithAnnotation(Class<?> clazz, final Object instance, final Class<? extends Annotation> annotationClass) throws IllegalStateException, SecurityException {
+        Method[] declaredMethods = clazz.getDeclaredMethods();
+        for (final Method method : declaredMethods) {
+            if (method.isAnnotationPresent(annotationClass)) {
+                AccessController.doPrivileged((PrivilegedAction<?>) () -> {
+                    boolean wasAccessible = method.isAccessible();
+                    try {
+                        method.setAccessible(true);
+                        return method.invoke(instance);
+                    } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+                        throw new IllegalStateException("Problem invoking " + annotationClass + " : " + method, ex);
+                    } finally {
+                        method.setAccessible(wasAccessible);
                     }
-
-                    if (value != null) {
-                        LOG.accept("Value is a primitive, injecting...");
-                        injectIntoField(field, instance, value);
-                    }
-                }
-            }
-            Class<? extends Object> superclass = clazz.getSuperclass();
-            if (superclass != null) {
-                LOG.accept("Injecting members of: " + superclass);
-                injectMembers(superclass, instance);
+                });
             }
         }
-
-        static void injectIntoField(final Field field, final Object instance, final Object target) {
-            AccessController.doPrivileged((PrivilegedAction<?>) () -> {
-                boolean wasAccessible = field.isAccessible();
-                try {
-                    field.setAccessible(true);
-                    field.set(instance, target);
-                    return null; // return nothing...
-                } catch (IllegalArgumentException | IllegalAccessException ex) {
-                    throw new IllegalStateException("Cannot set field: " + field + " with value " + target, ex);
-                } finally {
-                    field.setAccessible(wasAccessible);
-                }
-            });
+        Class<?> superclass = clazz.getSuperclass();
+        if (superclass != null) {
+            invokeMethodWithAnnotation(superclass, instance, annotationClass);
         }
+    }
 
-        static void initialize(Object instance) {
-            Class<? extends Object> clazz = instance.getClass();
-            invokeMethodWithAnnotation(clazz, instance, PostConstruct.class
-            );
-        }
+    public static void forgetAll() {
+        Collection<Object> values = modelsAndServices.values();
+        values.stream().forEach(AfterburnerInjector::destroy);
+        presenters.stream().forEach(AfterburnerInjector::destroy);
+        presenters.clear();
+        modelsAndServices.clear();
+        resetInstanceSupplier();
+        resetConfigurationSource();
+    }
 
-        static void destroy(Object instance) {
-            Class<? extends Object> clazz = instance.getClass();
-            invokeMethodWithAnnotation(clazz, instance, PreDestroy.class
-            );
-        }
-
-        static void invokeMethodWithAnnotation(Class<?> clazz, final Object instance, final Class<? extends Annotation> annotationClass) throws IllegalStateException, SecurityException {
-            Method[] declaredMethods = clazz.getDeclaredMethods();
-            for (final Method method : declaredMethods) {
-                if (method.isAnnotationPresent(annotationClass)) {
-                    AccessController.doPrivileged((PrivilegedAction<?>) () -> {
-                        boolean wasAccessible = method.isAccessible();
-                        try {
-                            method.setAccessible(true);
-                            return method.invoke(instance, new Object[]{});
-                        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-                            throw new IllegalStateException("Problem invoking " + annotationClass + " : " + method, ex);
-                        } finally {
-                            method.setAccessible(wasAccessible);
-                        }
-                    });
-                }
+    private static Function<Class<?>, Object> getDefaultInstanceSupplier() {
+        return c -> {
+            try {
+                return c.newInstance();
+            } catch (InstantiationException | IllegalAccessException ex) {
+                throw new IllegalStateException("Cannot instantiate view: " + c, ex);
             }
-            Class<?> superclass = clazz.getSuperclass();
-            if (superclass != null) {
-                invokeMethodWithAnnotation(superclass, instance, annotationClass);
-            }
-        }
+        };
+    }
 
-        public static void forgetAll() {
-            Collection<Object> values = modelsAndServices.values();
-            values.stream().forEach((object) -> {
-                destroy(object);
-            });
-            presenters.stream().forEach((object) -> {
-                destroy(object);
-            });
-            presenters.clear();
-            modelsAndServices.clear();
-            resetInstanceSupplier();
-            resetConfigurationSource();
-        }
+    private static Consumer<String> getDefaultLogger() {
+        return logger::info;
+    }
 
-        static Function<Class<?>, Object> getDefaultInstanceSupplier() {
-            return (c) -> {
-                try {
-                    return c.newInstance();
-                } catch (InstantiationException | IllegalAccessException ex) {
-                    throw new IllegalStateException("Cannot instantiate view: " + c, ex);
-                }
-            };
-        }
-
-        public static Consumer<String> getDefaultLogger() {
-            return l -> {
-            };
-        }
-
-        private static boolean isNotPrimitiveOrString(Class<?> type) {
-            return !type.isPrimitive() && !type.isAssignableFrom(String.class);
-        }
+    private static boolean isNotPrimitiveOrString(Class<?> type) {
+        return !type.isPrimitive() && !type.isAssignableFrom(String.class);
+    }
 }
