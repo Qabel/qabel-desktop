@@ -1,14 +1,18 @@
 package de.qabel.desktop.ui.about;
 
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.about.aboutPopup.AboutPopupController;
+import de.qabel.desktop.ui.about.aboutPopup.AboutPopupView;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
+
+import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.stage.*;
+import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -16,7 +20,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.Desktop;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
@@ -30,6 +34,14 @@ public class AboutController extends AbstractController implements Initializable
 
     @FXML
     Pane linkContainer;
+
+    @FXML
+    Button thanksButton;
+
+    Stage stagePopup;
+    Scene scenePopup;
+    AboutPopupController popupController;
+    AboutPopupView popupView;
 
     private Map<String, String> jarNames = new HashMap<>();
     private ResourceBundle resourceBundle;
@@ -100,6 +112,33 @@ public class AboutController extends AbstractController implements Initializable
             }
         }
     }
+
+    public void openThanksPopUp(ActionEvent actionEvent) throws IOException{
+        try {
+            InputStream thanksFile = System.class.getResourceAsStream("/files/thanks_file");
+            String contentThanksFile = IOUtils.toString(thanksFile, "UTF-8");
+            showAboutPopUp(contentThanksFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NullPointerException ignored){
+        }
+
+    }
+
+    public void showAboutPopUp(String contentPopup) {
+            stagePopup = new Stage();
+            popupView = new AboutPopupView();
+            scenePopup = new Scene(popupView.getView(),900, 628, true, SceneAntialiasing.BALANCED);
+            scenePopup.setFill(null);
+            stagePopup.setScene(scenePopup);
+            popupController = (AboutPopupController) popupView.getPresenter();
+            popupController.setStage(stagePopup);
+            popupController.setCoordX(linkContainer.getScene().getWindow().getX());
+            popupController.setCoordY(linkContainer.getScene().getWindow().getY());
+            popupController.setTextAreaContent(contentPopup);
+            popupController.showPopup();
+    }
+
 
     private VBox createLabeledLink(String labelText, String url, List<String> comments) {
         VBox container = new VBox();

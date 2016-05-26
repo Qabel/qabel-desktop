@@ -20,4 +20,5 @@ scenicView.properties
 hs_err_*
 db.sqlite
 /*.qco
+/*.qid
 /*.sqlite

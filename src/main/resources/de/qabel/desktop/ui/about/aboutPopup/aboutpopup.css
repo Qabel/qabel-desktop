@@ -1,0 +1,38 @@
+.button-close-popup {
+    -fx-background-image: url('/img/close_white.png');
+    -fx-background-repeat: no-repeat;
+    -fx-background-color:transparent;
+    -fx-pref-width:32px;
+    -fx-pref-height:32px;
+    -fx-border-style:none;
+    -fx-background-insets: 0px;
+    -fx-border-color: none;
+    -fx-padding: 10px;
+
+}
+.button-close-popup:hover {
+    -fx-background-color: gray;
+    -fx-background-insets: 0px;
+    -fx-border-color: none;
+    -fx-text-fill: ff690f;
+}
+
+.button-close-popup:pressed {
+    -fx-border-color: none;
+    -fx-text-fill: none;
+}
+
+.hbox-popup {
+    -fx-background-color: rgba(0,0,0,0.8);
+}
+
+.text-area-popup {
+    -fx-background-color: transparent;
+    -fx-pref-height:550px;
+    -fx-pref-width:400px;
+    -fx-text-alignment:center;
+}
+
+.hbox-button-close{
+    -fx-pref-height:32px;
+}
