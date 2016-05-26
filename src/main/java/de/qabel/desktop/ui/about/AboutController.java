@@ -3,7 +3,6 @@ package de.qabel.desktop.ui.about;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.about.aboutPopup.AboutPopupController;
 import de.qabel.desktop.ui.about.aboutPopup.AboutPopupView;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
@@ -34,9 +33,6 @@ public class AboutController extends AbstractController implements Initializable
 
     @FXML
     Pane linkContainer;
-
-    @FXML
-    Button thanksButton;
 
     Stage stagePopup;
     Scene scenePopup;
@@ -113,13 +109,12 @@ public class AboutController extends AbstractController implements Initializable
         }
     }
 
-    public void openThanksPopUp(ActionEvent actionEvent) throws IOException{
-        try {
-            InputStream thanksFile = System.class.getResourceAsStream("/files/thanks_file");
+    public void openThanksPopUp() {
+        try (InputStream thanksFile = System.class.getResourceAsStream("/files/thanks_file")){
             String contentThanksFile = IOUtils.toString(thanksFile, "UTF-8");
             showAboutPopUp(contentThanksFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            alert("failed to load thanks file" + e.getMessage(), e);
         } catch (NullPointerException ignored){
         }
 
@@ -128,7 +123,7 @@ public class AboutController extends AbstractController implements Initializable
     public void showAboutPopUp(String contentPopup) {
             stagePopup = new Stage();
             popupView = new AboutPopupView();
-            scenePopup = new Scene(popupView.getView(),900, 628, true, SceneAntialiasing.BALANCED);
+            scenePopup = new Scene(popupView.getView(), 900, 628, true, SceneAntialiasing.BALANCED);
             scenePopup.setFill(null);
             stagePopup.setScene(scenePopup);
             popupController = (AboutPopupController) popupView.getPresenter();

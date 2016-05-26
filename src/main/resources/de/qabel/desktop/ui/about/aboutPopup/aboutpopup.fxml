@@ -8,9 +8,8 @@
         <HBox styleClass="hbox-button-close" alignment="CENTER_RIGHT">
             <Button fx:id="btnClosePopup" styleClass="button-close-popup" onAction="#btnClosePopup"></Button>
         </HBox>
-
         <HBox alignment="CENTER">
-            <TextArea fx:id="textAreaPopup" styleClass="text-area-popup" editable="false" mouseTransparent="false" wrapText="false"></TextArea>
+            <TextArea fx:id="textAreaPopup" styleClass="text-area-popup" editable="false" wrapText="false"></TextArea>
         </HBox>
     </children>
 </VBox>
