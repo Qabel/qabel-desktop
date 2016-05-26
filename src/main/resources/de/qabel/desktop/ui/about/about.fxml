@@ -8,16 +8,16 @@
 
 <ScrollPane fx:controller="de.qabel.desktop.ui.about.AboutController" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" >
     <content>
-        <VBox fx:id="linkContainer"  styleClass="linkContainerAbout">
+        <VBox fx:id="linkContainer"  styleClass="linkcontainer-about">
             <children>
-                <ImageView styleClass="imgLogoAbout" pickOnBounds="true" preserveRatio="true" >
+                <ImageView styleClass="img-logo-about" pickOnBounds="true" preserveRatio="true" >
                     <image>
                         <Image url="@/img/logo-with-name.png" />
                     </image>
                 </ImageView>
                 <Label text="%desktopAppVersion" />
-                <Label text="%thanksAllSupportes"/>
-                <Button styleClass="buttonAbout" text="%showSupporters" fx:id="thanksButton" onAction="#openThanksPopUp"></Button>
+                <Label text="%thanksAllLabel"/>
+                <Button styleClass="btn-about" text="%showSupporters" fx:id="btnThanks" onAction="#openThanksPopUp"></Button>
                 <Label styleClass="headline" text="%aboutHeadline" />
                 <Separator />
                 <VBox styleClass="labeled-link">
