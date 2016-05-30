@@ -28,9 +28,7 @@ public class AfterburnerInjector implements PresenterFactory {
 
     @Override
     public <T> T instantiatePresenter(Class<T> clazz, Function<String, Object> injectionContext) {
-        @SuppressWarnings("unchecked")
-        T presenter = registerExistingAndInject((T) instanceSupplier.apply(clazz), injectionContext);
-        return presenter;
+        return registerExistingAndInject((T) instanceSupplier.apply(clazz), injectionContext);
     }
 
     public static void setInstanceSupplier(Function<Class<?>, Object> instanceSupplier) {
@@ -189,7 +187,7 @@ public class AfterburnerInjector implements PresenterFactory {
     }
 
     private static Consumer<String> getDefaultLogger() {
-        return logger::info;
+        return logger::debug;
     }
 
     private static boolean isNotPrimitiveOrString(Class<?> type) {
