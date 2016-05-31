@@ -79,8 +79,7 @@ dependencies {
     compile 'org.apache.httpcomponents:httpmime:4.5.+'       //Apache License
     compile 'org.json:json:20090211'                         //None? https://github.com/stleary/JSON-java
     compile 'javax.inject:javax.inject:1'                    //Apache License http://mvnrepository.com/artifact/javax.inject/javax.inject/1
-    compile name: 'afterburner'                              //Apache License https://github.com/AdamBien/afterburner.fx
-    // see https://github.com/AdamBien/afterburner.fx/pull/54 //compile 'com.airhacks:afterburner.fx:1.6.2' // Apache 2.0
+    compile 'com.airhacks:afterburner.fx:1.7.+'              //Apache License https://github.com/AdamBien/afterburner.fx
 
     compile name: 'qabel-core-0.1'
 

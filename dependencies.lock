@@ -1,10 +1,11 @@
 {
     "compile": {
-        ":afterburner": {
-            "project": true
-        },
         ":qabel-core-0.1": {
             "project": true
+        },
+        "com.airhacks:afterburner.fx": {
+            "locked": "1.7.0",
+            "requested": "1.7.+"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -33,9 +34,6 @@
         "log4j:log4j": {
             "locked": "1.2.16",
             "requested": "1.2.+"
-        },
-        "null:afterburner": {
-            "project": true
         },
         "null:qabel-core-0.1": {
             "project": true
@@ -86,11 +84,12 @@
         }
     },
     "default": {
-        ":afterburner": {
-            "project": true
-        },
         ":qabel-core-0.1": {
             "project": true
+        },
+        "com.airhacks:afterburner.fx": {
+            "locked": "1.7.0",
+            "requested": "1.7.+"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -119,9 +118,6 @@
         "log4j:log4j": {
             "locked": "1.2.16",
             "requested": "1.2.+"
-        },
-        "null:afterburner": {
-            "project": true
         },
         "null:qabel-core-0.1": {
             "project": true
@@ -172,11 +168,12 @@
         }
     },
     "guiTestCompile": {
-        ":afterburner": {
-            "project": true
-        },
         ":qabel-core-0.1": {
             "project": true
+        },
+        "com.airhacks:afterburner.fx": {
+            "locked": "1.7.0",
+            "requested": "1.7.+"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -221,9 +218,6 @@
         "log4j:log4j": {
             "locked": "1.2.16",
             "requested": "1.2.+"
-        },
-        "null:afterburner": {
-            "project": true
         },
         "null:qabel-core-0.1": {
             "project": true
@@ -286,11 +280,12 @@
         }
     },
     "guiTestRuntime": {
-        ":afterburner": {
-            "project": true
-        },
         ":qabel-core-0.1": {
             "project": true
+        },
+        "com.airhacks:afterburner.fx": {
+            "locked": "1.7.0",
+            "requested": "1.7.+"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -335,9 +330,6 @@
         "log4j:log4j": {
             "locked": "1.2.16",
             "requested": "1.2.+"
-        },
-        "null:afterburner": {
-            "project": true
         },
         "null:qabel-core-0.1": {
             "project": true
@@ -400,11 +392,12 @@
         }
     },
     "runtime": {
-        ":afterburner": {
-            "project": true
-        },
         ":qabel-core-0.1": {
             "project": true
+        },
+        "com.airhacks:afterburner.fx": {
+            "locked": "1.7.0",
+            "requested": "1.7.+"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -433,9 +426,6 @@
         "log4j:log4j": {
             "locked": "1.2.17",
             "requested": "1.2.+"
-        },
-        "null:afterburner": {
-            "project": true
         },
         "null:qabel-core-0.1": {
             "project": true
@@ -486,11 +476,12 @@
         }
     },
     "testCompile": {
-        ":afterburner": {
-            "project": true
-        },
         ":qabel-core-0.1": {
             "project": true
+        },
+        "com.airhacks:afterburner.fx": {
+            "locked": "1.7.0",
+            "requested": "1.7.+"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -535,9 +526,6 @@
         "log4j:log4j": {
             "locked": "1.2.16",
             "requested": "1.2.+"
-        },
-        "null:afterburner": {
-            "project": true
         },
         "null:qabel-core-0.1": {
             "project": true
@@ -600,11 +588,12 @@
         }
     },
     "testRuntime": {
-        ":afterburner": {
-            "project": true
-        },
         ":qabel-core-0.1": {
             "project": true
+        },
+        "com.airhacks:afterburner.fx": {
+            "locked": "1.7.0",
+            "requested": "1.7.+"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -649,9 +638,6 @@
         "log4j:log4j": {
             "locked": "1.2.16",
             "requested": "1.2.+"
-        },
-        "null:afterburner": {
-            "project": true
         },
         "null:qabel-core-0.1": {
             "project": true
