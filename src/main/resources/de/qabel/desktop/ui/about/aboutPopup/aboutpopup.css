@@ -1,38 +1,39 @@
-.button-close-popup {
-    -fx-background-image: url('/img/close_white.png');
-    -fx-background-repeat: no-repeat;
-    -fx-background-color:transparent;
-    -fx-pref-width:32px;
-    -fx-pref-height:32px;
-    -fx-border-style:none;
-    -fx-background-insets: 0px;
-    -fx-border-color: none;
-    -fx-padding: 10px;
+.vbox-popup {
+    -fx-background-color: rgba(0,0,0,0.8);
+    -fx-padding: 50px 0px 50px 0px;
 
 }
-.button-close-popup:hover {
-    -fx-background-color: gray;
+
+.button-close-stackpane {
+  -fx-alignment: top-right;
+  -fx-padding: 5px 10px 10px 10px;
+  -fx-background-color:transparent;
+  -fx-border-style:none;
+  -fx-background-insets: 0px;
+  -fx-border-color: none;
+}
+
+.button-close-stackpane:hover {
+    -fx-background-color: transparent;
     -fx-background-insets: 0px;
+    -fx-border-style:none;
     -fx-border-color: none;
     -fx-text-fill: ff690f;
 }
 
-.button-close-popup:pressed {
+.button-close-stackpane:pressed {
     -fx-border-color: none;
     -fx-text-fill: none;
-}
-
-.hbox-popup {
-    -fx-background-color: rgba(0,0,0,0.8);
+    -fx-border-style:none;
 }
 
 .text-area-popup {
-    -fx-background-color: transparent;
-    -fx-pref-height:550px;
-    -fx-pref-width:400px;
-    -fx-text-alignment:center;
+    -fx-max-width:500;
+    -fx-min-width:100;
+    -fx-max-height:1000;
+    -fx-min-height:500;
 }
 
-.hbox-button-close{
-    -fx-pref-height:32px;
+.text-area-popup *.text {
+    -fx-text-alignment: center;
 }

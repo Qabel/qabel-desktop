@@ -278,4 +278,8 @@ public class LayoutController extends AbstractController implements Initializabl
     public Object getScroller() {
         return scroll;
     }
+
+    public Pane getWindow() {
+        return window;
+    }
 }

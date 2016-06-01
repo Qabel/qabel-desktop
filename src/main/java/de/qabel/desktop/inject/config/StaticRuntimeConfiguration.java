@@ -1,6 +1,7 @@
 package de.qabel.desktop.inject.config;
 
 import de.qabel.desktop.repository.sqlite.ClientDatabase;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -14,6 +15,7 @@ public class StaticRuntimeConfiguration implements RuntimeConfiguration {
     private Path persistenceDatabaseFile;
     private Stage primaryStage;
     private ClientDatabase configDatabase;
+    private Pane window;
 
     public StaticRuntimeConfiguration(String dropUrl, Path persistenceDatabaseFile, ClientDatabase configDatabase) throws URISyntaxException, IOException {
         this.dropUrl = new URI(dropUrl);
@@ -48,5 +50,12 @@ public class StaticRuntimeConfiguration implements RuntimeConfiguration {
     @Override
     public ClientDatabase getConfigDatabase() {
         return configDatabase;
+    }
+
+    public void setWindow (Pane window){
+         this.window = window;
+    }
+    public Pane getWindow() {
+        return window;
     }
 }

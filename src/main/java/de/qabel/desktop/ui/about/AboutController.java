@@ -10,12 +10,12 @@ import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.stage.*;
 import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.Desktop;
@@ -34,10 +34,11 @@ public class AboutController extends AbstractController implements Initializable
     @FXML
     Pane linkContainer;
 
-    Stage stagePopup;
-    Scene scenePopup;
-    AboutPopupController popupController;
-    AboutPopupView popupView;
+    @Inject
+    Pane layoutWindow;
+
+    private AboutPopupController popupController;
+    private AboutPopupView popupView;
 
     private Map<String, String> jarNames = new HashMap<>();
     private ResourceBundle resourceBundle;
@@ -110,30 +111,36 @@ public class AboutController extends AbstractController implements Initializable
     }
 
     public void openThanksPopUp() {
-        try (InputStream thanksFile = System.class.getResourceAsStream("/files/thanks_file")){
-            String contentThanksFile = IOUtils.toString(thanksFile, "UTF-8");
-            showAboutPopUp(contentThanksFile);
+        String pathThanksFile = "/files/thanks_file";
+        String contentThanksFile = readFile(pathThanksFile);
+        initializePopup();
+        setTextAreaPopup(contentThanksFile);
+        showAboutPopUp();
+    }
+
+    private void initializePopup() {
+        popupView = new AboutPopupView();
+        popupView.getViewAsync(layoutWindow.getChildren()::add);
+        popupController = (AboutPopupController) popupView.getPresenter();
+    }
+
+    private String readFile(String filePath) {
+        try (InputStream thanksFile = System.class.getResourceAsStream(filePath)){
+            return IOUtils.toString(thanksFile, "UTF-8");
         } catch (IOException e) {
-            alert("failed to load thanks file" + e.getMessage(), e);
+            alert("failed to load the file" + e.getMessage(), e);
         } catch (NullPointerException ignored){
         }
-
+        return null;
     }
 
-    public void showAboutPopUp(String contentPopup) {
-            stagePopup = new Stage();
-            popupView = new AboutPopupView();
-            scenePopup = new Scene(popupView.getView(), 900, 628, true, SceneAntialiasing.BALANCED);
-            scenePopup.setFill(null);
-            stagePopup.setScene(scenePopup);
-            popupController = (AboutPopupController) popupView.getPresenter();
-            popupController.setStage(stagePopup);
-            popupController.setCoordX(linkContainer.getScene().getWindow().getX());
-            popupController.setCoordY(linkContainer.getScene().getWindow().getY());
-            popupController.setTextAreaContent(contentPopup);
-            popupController.showPopup();
+    private void setTextAreaPopup(String contentPopup) {
+        popupController.setTextAreaContent(contentPopup);
     }
 
+    private void showAboutPopUp() {
+        popupController.showPopup();
+    }
 
     private VBox createLabeledLink(String labelText, String url, List<String> comments) {
         VBox container = new VBox();

@@ -34,6 +34,7 @@ import de.qabel.desktop.ui.connector.DropConnector;
 import de.qabel.desktop.ui.connector.HttpDropConnector;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -210,5 +211,9 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
             );
         }
         return dropDaemon;
+    }
+
+    public Pane getLayoutWindow() {
+        return runtimeConfiguration.getWindow();
     }
 }
