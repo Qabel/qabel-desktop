@@ -3,13 +3,15 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="aboutPopup" fx:controller="de.qabel.desktop.ui.about.aboutPopup.AboutPopupController" visible="true" pickOnBounds="false" styleClass="hbox-popup" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane fx:id="aboutPopup" fx:controller="de.qabel.desktop.ui.about.aboutPopup.AboutPopupController"  maxWidth="Infinity" maxHeight="Infinity" visible="false" pickOnBounds="false" styleClass="vbox-popup" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <HBox styleClass="hbox-button-close" alignment="CENTER_RIGHT">
-            <Button fx:id="btnClosePopup" styleClass="button-close-popup" onAction="#btnClosePopup"></Button>
-        </HBox>
         <HBox alignment="CENTER">
-            <TextArea fx:id="textAreaPopup" styleClass="text-area-popup" editable="false" wrapText="false"></TextArea>
+            <StackPane alignment="TOP_RIGHT">
+                <children>
+                    <TextArea fx:id="textAreaPopup" styleClass="text-area-popup" editable="false" wrapText="false"></TextArea>
+                    <Button fx:id="btnClosePopup"  text="X" alignment="TOP_RIGHT" onAction="#btnClosePopup" styleClass="button-close-stackpane"></Button>
+                </children>
+            </StackPane>
         </HBox>
     </children>
-</VBox>
+</StackPane>

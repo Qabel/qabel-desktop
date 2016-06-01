@@ -21,6 +21,7 @@ import de.qabel.desktop.repository.sqlite.DesktopClientDatabase;
 import de.qabel.desktop.repository.sqlite.LegacyDatabaseMigrator;
 import de.qabel.desktop.repository.sqlite.SqliteTransactionManager;
 import de.qabel.desktop.ui.CrashReportAlert;
+import de.qabel.desktop.ui.LayoutController;
 import de.qabel.desktop.ui.LayoutView;
 import de.qabel.desktop.ui.accounting.login.LoginView;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
@@ -240,8 +241,10 @@ public class DesktopClient extends Application {
                     startDropDaemon();
                     view = new LayoutView();
                     Parent view = this.view.getView();
+                    runtimeConfiguration.setWindow(((LayoutController)(this.view.getPresenter())).getWindow());
                     Scene layoutScene = new Scene(view, 900, 600, true, aa);
                     Platform.runLater(() -> primaryStage.setScene(layoutScene));
+                    services.getLayoutWindow();
 
                     if (config.getSelectedIdentity() != null) {
                         addShareMessageRenderer(config.getSelectedIdentity());
