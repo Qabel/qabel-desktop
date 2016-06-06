@@ -1,6 +1,6 @@
 package de.qabel.desktop.ui.remotefs;
 
-import de.qabel.desktop.storage.BoxObject;
+import de.qabel.box.storage.BoxObject;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.StringProperty;
 

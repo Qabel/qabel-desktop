@@ -1,9 +1,12 @@
 package de.qabel.desktop.daemon.management;
 
 
+import de.qabel.box.storage.BoxFile;
+import de.qabel.box.storage.BoxNavigation;
+import de.qabel.box.storage.BoxVolume;
+import de.qabel.box.storage.ProgressListener;
+import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.desktop.daemon.management.exception.TransferSkippedException;
-import de.qabel.desktop.exceptions.QblStorageException;
-import de.qabel.desktop.storage.*;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +21,9 @@ import java.nio.file.attribute.FileTime;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 import static de.qabel.desktop.daemon.management.Transaction.STATE.*;
-import static de.qabel.desktop.daemon.management.Transaction.TYPE.CREATE;
-import static de.qabel.desktop.daemon.management.Transaction.TYPE.DELETE;
-import static de.qabel.desktop.daemon.management.Transaction.TYPE.UPDATE;
+import static de.qabel.desktop.daemon.management.Transaction.TYPE.*;
 
 public class DefaultTransferManager extends Observable implements TransferManager {
     private final Logger logger = LoggerFactory.getLogger(DefaultTransferManager.class);

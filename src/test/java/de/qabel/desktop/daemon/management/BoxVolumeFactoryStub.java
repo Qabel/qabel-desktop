@@ -1,10 +1,10 @@
 package de.qabel.desktop.daemon.management;
 
+import de.qabel.box.storage.BoxVolume;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.factory.BoxVolumeFactory;
 import de.qabel.desktop.daemon.sync.worker.BoxVolumeStub;
-import de.qabel.desktop.storage.BoxVolume;
 
 public class BoxVolumeFactoryStub implements BoxVolumeFactory {
     public Account lastAccount;

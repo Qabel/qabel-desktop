@@ -1,11 +1,13 @@
 package de.qabel.desktop.ui.remotefs;
 
+import de.qabel.box.storage.AuthenticatedDownloader;
+import de.qabel.box.storage.BoxObject;
+import de.qabel.box.storage.UnmodifiedException;
+import de.qabel.box.storage.exceptions.QblStorageException;
+import de.qabel.box.storage.exceptions.QblStorageNotFound;
 import de.qabel.desktop.SharingService;
 import de.qabel.desktop.config.ShareNotifications;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
-import de.qabel.desktop.exceptions.QblStorageException;
-import de.qabel.desktop.exceptions.QblStorageNotFound;
-import de.qabel.desktop.storage.*;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;

@@ -1,18 +1,21 @@
 package de.qabel.desktop.daemon.sync.worker;
 
+import de.qabel.box.storage.BoxFile;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
-import de.qabel.desktop.daemon.management.*;
+import de.qabel.desktop.daemon.management.DefaultTransferManager;
+import de.qabel.desktop.daemon.management.Download;
+import de.qabel.desktop.daemon.management.MonitoredTransferManager;
+import de.qabel.desktop.daemon.management.Transaction;
 import de.qabel.desktop.daemon.sync.AbstractSyncTest;
 import de.qabel.desktop.daemon.sync.blacklist.PatternBlacklist;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.daemon.sync.worker.index.sqlite.SqliteSyncIndexFactory;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
-import de.qabel.desktop.storage.BoxFile;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;

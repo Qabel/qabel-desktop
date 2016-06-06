@@ -1,11 +1,10 @@
 package de.qabel.desktop.ui.actionlog.item.renderer;
 
+import de.qabel.box.storage.AuthenticatedDownloader;
+import de.qabel.box.storage.BoxObject;
+import de.qabel.box.storage.exceptions.QblStorageNotFound;
 import de.qabel.desktop.SharingService;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
-import de.qabel.desktop.exceptions.QblStorageNotFound;
-import de.qabel.desktop.storage.AuthenticatedDownloader;
-import de.qabel.desktop.storage.BoxFile;
-import de.qabel.desktop.storage.BoxObject;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Label;

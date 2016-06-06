@@ -1,6 +1,7 @@
 package de.qabel.desktop.storage;
 
-import de.qabel.desktop.exceptions.QblStorageException;
+import de.qabel.box.storage.*;
+import de.qabel.box.storage.exceptions.QblStorageException;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -1,11 +1,9 @@
 package de.qabel.desktop.daemon.management;
 
+import de.qabel.box.storage.BoxVolume;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.WatchEvent;
-import de.qabel.desktop.nio.boxfs.BoxFileSystem;
-import de.qabel.desktop.nio.boxfs.BoxPath;
-import de.qabel.desktop.storage.BoxVolume;
 
 import java.nio.file.Path;
 

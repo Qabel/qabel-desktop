@@ -1,10 +1,10 @@
 package de.qabel.desktop.config.factory;
 
+import de.qabel.box.storage.BoxVolume;
+import de.qabel.box.storage.LocalReadBackend;
+import de.qabel.box.storage.LocalWriteBackend;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
-import de.qabel.desktop.storage.BoxVolume;
-import de.qabel.desktop.storage.LocalReadBackend;
-import de.qabel.desktop.storage.LocalWriteBackend;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
 
 import java.nio.file.Path;

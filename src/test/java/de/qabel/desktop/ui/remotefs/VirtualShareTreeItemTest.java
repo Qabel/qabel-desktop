@@ -1,10 +1,13 @@
 package de.qabel.desktop.ui.remotefs;
 
+import de.qabel.box.storage.AuthenticatedDownloader;
+import de.qabel.box.storage.BoxExternalFile;
+import de.qabel.box.storage.BoxObject;
+import de.qabel.box.storage.LocalReadBackend;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.StubSharingService;
 import de.qabel.desktop.config.ShareNotifications;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
-import de.qabel.desktop.storage.*;
 import de.qabel.desktop.ui.AbstractFxTest;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -17,8 +20,7 @@ import java.nio.file.Files;
 
 import static de.qabel.desktop.AsyncUtils.assertAsync;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 
 public class VirtualShareTreeItemTest extends AbstractFxTest {
     public static final long SECOND_SHARE_SIZE = 200L;

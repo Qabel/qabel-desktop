@@ -1,6 +1,6 @@
 package de.qabel.desktop.ui.remotefs;
 
-import de.qabel.desktop.storage.BoxObject;
+import de.qabel.box.storage.BoxObject;
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 

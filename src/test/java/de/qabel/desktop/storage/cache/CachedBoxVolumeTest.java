@@ -1,9 +1,10 @@
 package de.qabel.desktop.storage.cache;
 
+import de.qabel.box.storage.*;
+import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.core.crypto.QblECKeyPair;
+import de.qabel.desktop.AsyncUtils;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
-import de.qabel.desktop.exceptions.QblStorageException;
-import de.qabel.desktop.storage.*;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
@@ -50,6 +51,24 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
     protected void cleanVolume() throws IOException {
         FileUtils.deleteDirectory(tempFolder.toFile());
     }
+
+    @Override
+    @Test
+    public void testAutocommitDelay() throws Exception {
+        BoxNavigation nav = volume.navigate();
+        nav.setAutocommit(true);
+        nav.setAutocommitDelay(1000);
+        nav.createFolder("a");
+
+        BoxNavigation nav2 = volume2.navigate();
+        assertFalse(nav2.hasFolder("a"));
+        AsyncUtils.waitUntil(() -> {
+            BoxNavigation nav3 = volume2.navigate();
+            ((CachedBoxNavigation) nav3).refresh();
+            return nav3.hasFolder("a");
+        }, 2000L);
+    }
+
 
     @Test
     public void providesCachedNavigations() throws Exception {

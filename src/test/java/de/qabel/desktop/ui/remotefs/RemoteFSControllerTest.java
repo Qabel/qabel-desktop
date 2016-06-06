@@ -1,13 +1,13 @@
 package de.qabel.desktop.ui.remotefs;
 
+import de.qabel.box.storage.*;
+import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
-import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.nio.boxfs.BoxPath;
-import de.qabel.desktop.storage.*;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import javafx.collections.ObservableList;

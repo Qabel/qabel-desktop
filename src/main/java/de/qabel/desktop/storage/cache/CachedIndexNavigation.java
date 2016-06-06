@@ -1,8 +1,8 @@
 package de.qabel.desktop.storage.cache;
 
-import de.qabel.desktop.exceptions.QblStorageException;
-import de.qabel.desktop.storage.BoxShare;
-import de.qabel.desktop.storage.IndexNavigation;
+import de.qabel.box.storage.BoxShare;
+import de.qabel.box.storage.IndexNavigation;
+import de.qabel.box.storage.exceptions.QblStorageException;
 
 import java.nio.file.Path;
 import java.util.List;

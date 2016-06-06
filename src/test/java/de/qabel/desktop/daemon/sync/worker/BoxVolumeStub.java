@@ -1,7 +1,6 @@
 package de.qabel.desktop.daemon.sync.worker;
 
-import de.qabel.desktop.exceptions.QblStorageException;
-import de.qabel.desktop.storage.cache.CachedBoxNavigation;
+import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
 import de.qabel.desktop.storage.cache.CachedIndexNavigation;
 

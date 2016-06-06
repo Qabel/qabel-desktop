@@ -1,7 +1,7 @@
 package de.qabel.desktop;
 
-import com.airhacks.afterburner.injection.Injector;
 import com.airhacks.afterburner.views.QabelFXMLView;
+import de.qabel.box.storage.AbstractNavigation;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.SQLitePersistence;
@@ -13,9 +13,13 @@ import de.qabel.desktop.inject.DesktopServices;
 import de.qabel.desktop.inject.NewConfigDesktopServiceFactory;
 import de.qabel.desktop.inject.RuntimeDesktopServiceFactory;
 import de.qabel.desktop.inject.config.StaticRuntimeConfiguration;
-import de.qabel.desktop.repository.*;
-import de.qabel.desktop.repository.sqlite.*;
-import de.qabel.desktop.storage.AbstractNavigation;
+import de.qabel.desktop.repository.DropMessageRepository;
+import de.qabel.desktop.repository.ShareNotificationRepository;
+import de.qabel.desktop.repository.TransactionManager;
+import de.qabel.desktop.repository.sqlite.ClientDatabase;
+import de.qabel.desktop.repository.sqlite.DesktopClientDatabase;
+import de.qabel.desktop.repository.sqlite.LegacyDatabaseMigrator;
+import de.qabel.desktop.repository.sqlite.SqliteTransactionManager;
 import de.qabel.desktop.ui.CrashReportAlert;
 import de.qabel.desktop.ui.LayoutView;
 import de.qabel.desktop.ui.accounting.login.LoginView;

@@ -15,12 +15,12 @@ import de.qabel.desktop.config.factory.LocalBoxVolumeFactory;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
 import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
-import de.qabel.desktop.exceptions.QblStorageException;
+import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.repository.BoxSyncRepository;
-import de.qabel.desktop.storage.BoxNavigation;
-import de.qabel.desktop.storage.BoxVolume;
+import de.qabel.box.storage.BoxNavigation;
+import de.qabel.box.storage.BoxVolume;
 import de.qabel.desktop.ui.AbstractStepdefs;
 import de.qabel.desktop.ui.sync.item.SyncItemPage;
 import javafx.collections.FXCollections;
@@ -83,7 +83,7 @@ public class SyncStepdefs extends AbstractStepdefs<SyncController> {
     }
 
     private Path toTmpPath(String folder) throws Exception {
-        return tmpDir.resolve(folder);
+        return tmpDir.resolve(folder).toAbsolutePath();
     }
 
     @Given("^a sync (.+) from '(.+)' to '(/?.+)'$")
@@ -120,7 +120,7 @@ public class SyncStepdefs extends AbstractStepdefs<SyncController> {
     @When("^I change the local folder to '(.+)'$")
     public void iChangeTheLocalFolder(String newPath) throws Throwable {
         SyncItemPage itemPage = page.getSync(syncName);
-        itemPage.edit().enterLocalPath(toTmpPath(newPath).toString()).save();
+        itemPage.edit().enterLocalPath(toTmpPath(newPath).toAbsolutePath().toFile().getAbsolutePath()).save();
     }
 
     @Then("^'(.+)' exists in local '(.+)'$")

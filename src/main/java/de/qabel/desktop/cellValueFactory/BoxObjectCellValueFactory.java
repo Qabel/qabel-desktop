@@ -1,7 +1,7 @@
 package de.qabel.desktop.cellValueFactory;
 
-import de.qabel.desktop.storage.BoxFile;
-import de.qabel.desktop.storage.BoxObject;
+import de.qabel.box.storage.BoxFile;
+import de.qabel.box.storage.BoxObject;
 import de.qabel.desktop.ui.remotefs.FolderTreeItem;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ObservableValue;
