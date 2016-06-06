@@ -1,6 +1,6 @@
 package de.qabel.desktop.daemon.management;
 
-import de.qabel.desktop.storage.ProgressListener;
+import de.qabel.box.storage.ProgressListener;
 
 public class TransactionRelatedProgressListener extends ProgressListener {
     private Transaction transaction;

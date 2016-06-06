@@ -1,11 +1,11 @@
 package de.qabel.desktop.storage.cache;
 
+import de.qabel.box.storage.*;
+import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
-import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
-import de.qabel.desktop.storage.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +14,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.security.InvalidKeyException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Observable;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

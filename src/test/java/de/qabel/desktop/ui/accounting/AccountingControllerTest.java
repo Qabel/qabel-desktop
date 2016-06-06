@@ -1,11 +1,11 @@
 package de.qabel.desktop.ui.accounting;
 
+import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.ContactExportImport;
 import de.qabel.core.config.Identities;
 import de.qabel.core.config.Identity;
 import de.qabel.core.exceptions.QblDropInvalidURL;
-import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractControllerTest;
@@ -19,9 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 public class AccountingControllerTest extends AbstractControllerTest {

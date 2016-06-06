@@ -1,6 +1,6 @@
 package de.qabel.desktop.daemon.management;
 
-import de.qabel.desktop.storage.BoxVolume;
+import de.qabel.box.storage.BoxVolume;
 
 import java.nio.file.Path;
 

@@ -2,11 +2,11 @@ package de.qabel.desktop.ui.accounting;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.core.config.*;
 import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.factory.IdentityBuilderFactory;
-import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.EntityNotFoundException;
 import de.qabel.desktop.repository.exception.PersistenceException;

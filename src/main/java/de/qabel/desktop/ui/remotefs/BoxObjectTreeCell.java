@@ -1,7 +1,7 @@
 package de.qabel.desktop.ui.remotefs;
 
-import de.qabel.desktop.storage.BoxFolder;
-import de.qabel.desktop.storage.BoxObject;
+import de.qabel.box.storage.BoxFolder;
+import de.qabel.box.storage.BoxObject;
 import javafx.scene.control.TreeCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

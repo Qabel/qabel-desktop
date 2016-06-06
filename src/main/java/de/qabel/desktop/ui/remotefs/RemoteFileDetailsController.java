@@ -1,5 +1,9 @@
 package de.qabel.desktop.ui.remotefs;
 
+import de.qabel.box.storage.BoxFile;
+import de.qabel.box.storage.BoxNavigation;
+import de.qabel.box.storage.BoxObject;
+import de.qabel.box.storage.BoxShare;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Contacts;
 import de.qabel.desktop.SharingService;
@@ -7,10 +11,6 @@ import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.repository.ContactRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.exception.PersistenceException;
-import de.qabel.desktop.storage.BoxFile;
-import de.qabel.desktop.storage.BoxNavigation;
-import de.qabel.desktop.storage.BoxObject;
-import de.qabel.desktop.storage.BoxShare;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.ui.AbstractController;
 import javafx.application.Platform;

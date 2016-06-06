@@ -1,12 +1,13 @@
 package de.qabel.desktop.ui.remotefs;
 
-import de.qabel.desktop.storage.BoxFile;
-import de.qabel.desktop.storage.BoxObject;
+import de.qabel.box.storage.BoxFile;
+import de.qabel.box.storage.BoxObject;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class StringContainmentBindingTest {
     private BoxObject value = new BoxFile("prefix", "block", "name", 0L, 0L, new byte[0]);

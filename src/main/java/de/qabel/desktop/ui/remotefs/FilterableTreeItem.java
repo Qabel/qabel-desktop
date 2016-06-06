@@ -1,13 +1,12 @@
 package de.qabel.desktop.ui.remotefs;
 
-import de.qabel.desktop.storage.BoxObject;
+import de.qabel.box.storage.BoxObject;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.Event;
-import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
 

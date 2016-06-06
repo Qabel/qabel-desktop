@@ -1,18 +1,18 @@
 package de.qabel.desktop.daemon.management;
 
+import de.qabel.box.storage.BoxFile;
+import de.qabel.box.storage.BoxFolder;
+import de.qabel.box.storage.BoxNavigation;
+import de.qabel.box.storage.BoxVolume;
+import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.config.factory.IdentityBuilder;
 import de.qabel.desktop.config.factory.LocalBoxVolumeFactory;
 import de.qabel.desktop.daemon.sync.AbstractSyncTest;
-import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.nio.boxfs.BoxPath;
-import de.qabel.desktop.storage.BoxFile;
-import de.qabel.desktop.storage.BoxFolder;
-import de.qabel.desktop.storage.BoxNavigation;
-import de.qabel.desktop.storage.BoxVolume;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
@@ -29,8 +29,9 @@ import java.util.List;
 
 import static de.qabel.desktop.daemon.management.Transaction.STATE.*;
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.*;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
-import static org.hamcrest.Matchers.*;
 
 public class DefaultTransferManagerTest extends AbstractSyncTest {
     public static final long NEWER = 10000L;

@@ -1,10 +1,13 @@
 package de.qabel.desktop.ui.remotefs.dialog;
 
-import de.qabel.desktop.exceptions.QblStorageException;
-import de.qabel.desktop.storage.*;
+import de.qabel.box.storage.BoxObject;
+import de.qabel.box.storage.BoxVolume;
+import de.qabel.box.storage.PathNavigation;
+import de.qabel.box.storage.ReadableBoxNavigation;
+import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.desktop.ui.remotefs.FolderTreeItem;
 import javafx.beans.value.ObservableValue;
-import javafx.scene.control.*;
+import javafx.scene.control.TreeItem;
 
 import java.nio.file.Path;
 import java.util.ResourceBundle;

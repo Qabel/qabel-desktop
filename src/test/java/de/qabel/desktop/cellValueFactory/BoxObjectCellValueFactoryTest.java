@@ -1,8 +1,8 @@
 package de.qabel.desktop.cellValueFactory;
 
+import de.qabel.box.storage.*;
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
-import de.qabel.desktop.storage.*;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TreeItem;
@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.is;

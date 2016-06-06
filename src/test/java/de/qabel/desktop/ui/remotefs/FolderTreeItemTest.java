@@ -1,10 +1,10 @@
 package de.qabel.desktop.ui.remotefs;
 
+import de.qabel.box.storage.*;
+import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
-import de.qabel.desktop.exceptions.QblStorageException;
-import de.qabel.desktop.storage.*;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
@@ -20,8 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 
-import static de.qabel.desktop.AsyncUtils.waitUntil;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class FolderTreeItemTest extends AbstractControllerTest {
     private FakeBoxNavigation navigation;

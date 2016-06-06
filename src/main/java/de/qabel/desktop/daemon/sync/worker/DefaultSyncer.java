@@ -1,8 +1,8 @@
 package de.qabel.desktop.daemon.sync.worker;
 
-import de.qabel.desktop.daemon.management.BoxSyncBasedUpload;
-import de.qabel.desktop.daemon.management.TransferManager;
-
+import de.qabel.box.storage.BoxNavigation;
+import de.qabel.box.storage.DirectoryMetadata;
+import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.daemon.management.*;
 import de.qabel.desktop.daemon.sync.blacklist.Blacklist;
@@ -14,11 +14,8 @@ import de.qabel.desktop.daemon.sync.event.WatchEvent;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndex;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndexEntry;
 import de.qabel.desktop.daemon.sync.worker.index.SyncState;
-import de.qabel.desktop.exceptions.QblStorageException;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.nio.boxfs.BoxPath;
-import de.qabel.desktop.storage.BoxNavigation;
-import de.qabel.desktop.storage.DirectoryMetadata;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
 import org.slf4j.Logger;
@@ -36,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
-import static de.qabel.desktop.daemon.management.Transaction.TYPE.*;
+import static de.qabel.desktop.daemon.management.Transaction.TYPE.DELETE;
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.UPDATE;
 
 public class DefaultSyncer implements Syncer {

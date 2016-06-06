@@ -1,5 +1,6 @@
 package de.qabel.desktop.daemon.management;
 
+import de.qabel.box.storage.BoxVolume;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.BoxSyncConfig;
@@ -12,15 +13,12 @@ import de.qabel.desktop.daemon.sync.event.WatchRegisteredEvent;
 import de.qabel.desktop.daemon.sync.worker.BoxVolumeStub;
 import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
-import de.qabel.desktop.nio.boxfs.BoxPath;
-import de.qabel.desktop.storage.BoxVolume;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import static org.junit.Assert.assertEquals;
 

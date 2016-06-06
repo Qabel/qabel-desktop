@@ -1,13 +1,13 @@
 package de.qabel.desktop.storage.cache;
 
+import de.qabel.box.storage.BoxVolume;
+import de.qabel.box.storage.IndexNavigation;
+import de.qabel.box.storage.StorageReadBackend;
+import de.qabel.box.storage.StorageWriteBackend;
+import de.qabel.box.storage.exceptions.QblStorageException;
+import de.qabel.box.storage.exceptions.QblStorageNotFound;
 import de.qabel.core.crypto.QblECKeyPair;
-import de.qabel.desktop.exceptions.QblStorageException;
-import de.qabel.desktop.exceptions.QblStorageNotFound;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
-import de.qabel.desktop.storage.BoxVolume;
-import de.qabel.desktop.storage.IndexNavigation;
-import de.qabel.desktop.storage.StorageReadBackend;
-import de.qabel.desktop.storage.StorageWriteBackend;
 
 import java.io.File;
 

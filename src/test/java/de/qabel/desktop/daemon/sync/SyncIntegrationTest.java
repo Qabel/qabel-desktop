@@ -1,5 +1,7 @@
 package de.qabel.desktop.daemon.sync;
 
+import de.qabel.box.storage.LocalReadBackend;
+import de.qabel.box.storage.LocalWriteBackend;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.BoxSyncConfig;
@@ -10,13 +12,9 @@ import de.qabel.desktop.daemon.management.*;
 import de.qabel.desktop.daemon.sync.blacklist.PatternBlacklist;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncer;
 import de.qabel.desktop.daemon.sync.worker.index.SyncState;
-import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
-import de.qabel.desktop.daemon.sync.worker.index.sqlite.SqliteSyncIndex;
 import de.qabel.desktop.daemon.sync.worker.index.sqlite.SqliteSyncIndexFactory;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.nio.boxfs.BoxPath;
-import de.qabel.desktop.storage.LocalReadBackend;
-import de.qabel.desktop.storage.LocalWriteBackend;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import org.apache.commons.io.FileUtils;

@@ -1,8 +1,8 @@
 package de.qabel.desktop.daemon.sync.event;
 
-import de.qabel.desktop.storage.BoxFile;
-import de.qabel.desktop.storage.BoxNavigation;
-import de.qabel.desktop.storage.BoxObject;
+import de.qabel.box.storage.BoxFile;
+import de.qabel.box.storage.BoxNavigation;
+import de.qabel.box.storage.BoxObject;
 
 import java.nio.file.Path;
 

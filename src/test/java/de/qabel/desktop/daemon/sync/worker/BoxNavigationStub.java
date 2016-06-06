@@ -1,12 +1,11 @@
 package de.qabel.desktop.daemon.sync.worker;
 
+import de.qabel.box.storage.*;
+import de.qabel.box.storage.exceptions.QblStorageException;
+import de.qabel.box.storage.exceptions.QblStorageNotFound;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE;
-import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
-import de.qabel.desktop.exceptions.QblStorageException;
-import de.qabel.desktop.exceptions.QblStorageNotFound;
-import de.qabel.desktop.storage.*;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.storage.cache.CachedIndexNavigation;
 

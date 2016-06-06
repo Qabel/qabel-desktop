@@ -1,7 +1,7 @@
 package de.qabel.desktop.daemon.management;
 
+import de.qabel.box.storage.ProgressInputStream;
 import de.qabel.desktop.AsyncUtils;
-import de.qabel.desktop.storage.ProgressInputStream;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;

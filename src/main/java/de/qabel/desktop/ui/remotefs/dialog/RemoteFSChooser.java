@@ -1,7 +1,10 @@
 package de.qabel.desktop.ui.remotefs.dialog;
 
-import de.qabel.desktop.exceptions.QblStorageException;
-import de.qabel.desktop.storage.*;
+import de.qabel.box.storage.BoxFolder;
+import de.qabel.box.storage.BoxNavigation;
+import de.qabel.box.storage.BoxObject;
+import de.qabel.box.storage.BoxVolume;
+import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.desktop.ui.remotefs.BoxObjectTreeCell;
 import de.qabel.desktop.ui.remotefs.FolderTreeItem;
 import javafx.beans.property.ObjectPropertyBase;

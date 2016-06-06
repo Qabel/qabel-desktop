@@ -1,7 +1,7 @@
 package de.qabel.desktop.storage.cache;
 
-import de.qabel.desktop.storage.BoxFolder;
-import de.qabel.desktop.storage.BoxNavigation;
+import de.qabel.box.storage.BoxFolder;
+import de.qabel.box.storage.BoxNavigation;
 
 import java.util.Map;
 import java.util.WeakHashMap;
