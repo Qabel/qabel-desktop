@@ -10,7 +10,6 @@ import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -34,10 +33,16 @@ public class AboutController extends AbstractController implements Initializable
     @FXML
     Pane linkContainer;
 
-    @Inject
-    Pane layoutWindow;
+    @FXML
+    private Button btnThanks;
 
-    private AboutPopupController popupController;
+    @Inject
+    private Pane layoutWindow;
+
+    @Inject
+    private String thanksFileContent;
+
+    public AboutPopupController popupController;
     private AboutPopupView popupView;
 
     private Map<String, String> jarNames = new HashMap<>();
@@ -49,6 +54,8 @@ public class AboutController extends AbstractController implements Initializable
         try {
             addDependencyLicenses();
             activateLinks();
+            activateButtons();
+            initializePopup();
         } catch (Exception e) {
             alert("failed to load about contents: " + e.getMessage(), e);
         }
@@ -110,28 +117,21 @@ public class AboutController extends AbstractController implements Initializable
         }
     }
 
+    private void activateButtons() {
+        if (thanksFileContent == null) {
+            btnThanks.setDisable(true);
+        }
+    }
+
     public void openThanksPopUp() {
-        String pathThanksFile = "/files/thanks_file";
-        String contentThanksFile = readFile(pathThanksFile);
-        initializePopup();
-        setTextAreaPopup(contentThanksFile);
+        setTextAreaPopup(thanksFileContent);
         showAboutPopUp();
     }
 
     private void initializePopup() {
         popupView = new AboutPopupView();
-        popupView.getViewAsync(layoutWindow.getChildren()::add);
+        popupView.getView(layoutWindow.getChildren()::add);
         popupController = (AboutPopupController) popupView.getPresenter();
-    }
-
-    private String readFile(String filePath) {
-        try (InputStream thanksFile = System.class.getResourceAsStream(filePath)){
-            return IOUtils.toString(thanksFile, "UTF-8");
-        } catch (IOException e) {
-            alert("failed to load the file" + e.getMessage(), e);
-        } catch (NullPointerException ignored){
-        }
-        return null;
     }
 
     private void setTextAreaPopup(String contentPopup) {

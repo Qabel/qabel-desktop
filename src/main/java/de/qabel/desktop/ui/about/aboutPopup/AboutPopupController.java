@@ -13,22 +13,27 @@ import java.util.ResourceBundle;
 public class AboutPopupController extends AbstractController implements Initializable {
 
     @FXML
-    private TextArea textAreaPopup;
+    public TextArea textAreaPopup;
 
     @FXML
-    private Pane aboutPopup;
+    public Pane aboutPopup;
 
     @Override
-    public void initialize(URL location, ResourceBundle resources){
+    public void initialize(URL location, ResourceBundle resources) {
     }
 
-    public void btnClosePopup() { hidePopup(); }
+    public void btnClosePopup() {
+        hidePopup();
+    }
 
-    public void setTextAreaContent (String content){
+    public void setTextAreaContent (String content) {
         textAreaPopup.setText(content);
     }
 
-    public void hidePopup() { Platform.runLater(() -> aboutPopup.setVisible(false)); }
+    public void hidePopup() {
+        Platform.runLater(() -> aboutPopup.setVisible(false));
+    }
+
     public void showPopup() {
         Platform.runLater(() -> aboutPopup.setVisible(true));
     }

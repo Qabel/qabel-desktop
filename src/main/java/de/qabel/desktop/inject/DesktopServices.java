@@ -108,5 +108,7 @@ public interface DesktopServices {
     @Create(name="layoutWindow")
     Pane getLayoutWindow();
 
+    @Create(name="thanksFileContent")
+    String getThanksFileContent();
 
 }

@@ -244,7 +244,6 @@ public class DesktopClient extends Application {
                     runtimeConfiguration.setWindow(((LayoutController)(this.view.getPresenter())).getWindow());
                     Scene layoutScene = new Scene(view, 900, 600, true, aa);
                     Platform.runLater(() -> primaryStage.setScene(layoutScene));
-                    services.getLayoutWindow();
 
                     if (config.getSelectedIdentity() != null) {
                         addShareMessageRenderer(config.getSelectedIdentity());
@@ -274,6 +273,8 @@ public class DesktopClient extends Application {
             }
         });
         primaryStage.show();
+
+        runtimeConfiguration.loadAboutFiles();
 
         services.getDropMessageRepository().addObserver(new ShareNotificationHandler(getShareRepository()));
         services.getDropMessageRepository().addObserver(
