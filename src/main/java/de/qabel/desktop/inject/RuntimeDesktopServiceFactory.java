@@ -216,4 +216,8 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     public Pane getLayoutWindow() {
         return runtimeConfiguration.getWindow();
     }
+
+    public String getThanksFileContent() {
+        return runtimeConfiguration.getThanksFileContent();
+    }
 }

@@ -12,5 +12,6 @@ public interface RuntimeConfiguration {
     Path getPersistenceDatabaseFile();
     Stage getPrimaryStage();
     Pane getWindow();
+    String getThanksFileContent();
     ClientDatabase getConfigDatabase();
 }
