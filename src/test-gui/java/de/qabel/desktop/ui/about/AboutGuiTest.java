@@ -6,6 +6,8 @@ import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertTrue;
+
 
 public class AboutGuiTest extends AbstractGuiTest<AboutController> {
     private AboutPage page;
@@ -23,7 +25,8 @@ public class AboutGuiTest extends AbstractGuiTest<AboutController> {
     }
 
     @Test
-    public void testThanksButton() {
-        page.btnShowPopup();
+    public void showPopup() {
+        page.showPopup();
+        assertTrue(controller.popupController.aboutPopup.isVisible());
     }
 }

@@ -228,7 +228,7 @@ public class DesktopClient extends Application {
                     startDropDaemon();
                     view = new LayoutView();
                     Parent view = this.view.getView();
-                    runtimeConfiguration.setWindow(((LayoutController)(this.view.getPresenter())).getWindow());
+                    runtimeConfiguration.setWindow(((LayoutController)this.view.getPresenter()).getWindow());
                     Scene layoutScene = new Scene(view, 900, 600, true, aa);
                     Platform.runLater(() -> primaryStage.setScene(layoutScene));
 
