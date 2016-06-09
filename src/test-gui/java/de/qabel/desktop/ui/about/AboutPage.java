@@ -12,22 +12,11 @@ public class AboutPage extends AbstractPage {
     public AboutPage(FXRobot baseFXRobot, FxRobot robot, AboutController controller) {
         super(baseFXRobot, robot);
         this.controller = controller;
+        controller.thanksButton.setDisable(false);
     }
 
-    public void btnShowPopup() {
-        clickOn("#btnThanks");
-        setPopupText();
-        showAboutPopup();
-        waitUntil(() -> controller.popupController.textAreaPopup != null);
-        assertTrue(controller.popupController.aboutPopup.isVisible());
-    }
-
-    private void setPopupText() {
-        controller.popupController.setTextAreaContent("test thanks file");
-    }
-
-    private void showAboutPopup() {
-        controller.popupController.showPopup();
+    public void showPopup() {
+        clickOn("#thanksButton");
+        waitUntil(() -> controller.popupController.aboutPopup.isVisible());
     }
 }
-

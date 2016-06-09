@@ -34,7 +34,7 @@ public class AboutController extends AbstractController implements Initializable
     Pane linkContainer;
 
     @FXML
-    private Button btnThanks;
+    public Button thanksButton;
 
     @Inject
     private Pane layoutWindow;
@@ -118,8 +118,8 @@ public class AboutController extends AbstractController implements Initializable
     }
 
     private void activateButtons() {
-        if (thanksFileContent == null) {
-            btnThanks.setDisable(true);
+        if (thanksFileContent == null || thanksFileContent.isEmpty()) {
+           thanksButton.setDisable(true);
         }
     }
 

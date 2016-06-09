@@ -13,7 +13,7 @@ import java.util.ResourceBundle;
 public class AboutPopupController extends AbstractController implements Initializable {
 
     @FXML
-    public TextArea textAreaPopup;
+    private TextArea textAreaPopup;
 
     @FXML
     public Pane aboutPopup;
@@ -31,10 +31,10 @@ public class AboutPopupController extends AbstractController implements Initiali
     }
 
     public void hidePopup() {
-        Platform.runLater(() -> aboutPopup.setVisible(false));
+        aboutPopup.setVisible(false);
     }
 
     public void showPopup() {
-        Platform.runLater(() -> aboutPopup.setVisible(true));
+        aboutPopup.setVisible(true);
     }
 }

@@ -2,10 +2,11 @@ package de.qabel.desktop.inject.config;
 
 import de.qabel.desktop.config.LaunchConfig;
 import de.qabel.desktop.repository.sqlite.ClientDatabase;
-import javafx.scene.control.Alert;
+import de.qabel.desktop.ui.AbstractController;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.util.Strings;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +15,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class StaticRuntimeConfiguration implements RuntimeConfiguration {
+public class StaticRuntimeConfiguration extends AbstractController implements RuntimeConfiguration {
     private URI dropUri;
     private URI accountingUri;
     private URI blockUri;
@@ -91,7 +92,7 @@ public class StaticRuntimeConfiguration implements RuntimeConfiguration {
         try {
             thanksFileContent = readFile(thanksFilePath);
         } catch (IOException e) {
-            showErrorAlertLoadFiles();
+            alert("failed to load thanks file", e);
         } catch (NullPointerException ignored) {
         }
     }
@@ -101,15 +102,7 @@ public class StaticRuntimeConfiguration implements RuntimeConfiguration {
             return IOUtils.toString(thanksFile, "UTF-8");
         } catch (NullPointerException ignored) {
         }
-        return null;
-    }
-
-    private void showErrorAlertLoadFiles() {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error Dialog");
-        alert.setHeaderText("The file was not found.");
-        alert.setContentText("failed to load file");
-        alert.showAndWait();
+        return Strings.EMPTY;
     }
 
     public String getThanksFileContent() {
