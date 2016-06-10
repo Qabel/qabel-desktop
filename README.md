@@ -5,9 +5,6 @@
 <img align="left" width="0" height="150px" hspace="25"/>
 > The Qabel Desktop Client
 
-[![Build Status](https://jenkins.prae.me/buildStatus/icon?job=qabel-desktop)](https://jenkins.prae.me/job/qabel-desktop/)
-[![version](https://img.shields.io/badge/beta-0.5.0--beta.1-ff690f.svg)](https://qabel.de)
-
 This project provides a Desktop Client for <a href="https://qabel.de"><img alt="Qabel" src="https://files.qabel.de/img/qabel-kl.png" height="18px"/></a> currently targeting Windows. It is a small part of the qabel platform.
 
 <br style="clear: both"/>
