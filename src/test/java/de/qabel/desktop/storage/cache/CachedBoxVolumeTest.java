@@ -3,7 +3,6 @@ package de.qabel.desktop.storage.cache;
 import de.qabel.box.storage.*;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.core.crypto.QblECKeyPair;
-import de.qabel.desktop.AsyncUtils;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -62,7 +61,7 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 
         BoxNavigation nav2 = volume2.navigate();
         assertFalse(nav2.hasFolder("a"));
-        AsyncUtils.waitUntil(() -> {
+        waitUntil(() -> {
             BoxNavigation nav3 = volume2.navigate();
             ((CachedBoxNavigation) nav3).refresh();
             return nav3.hasFolder("a");

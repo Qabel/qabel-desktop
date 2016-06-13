@@ -22,8 +22,12 @@ public class LaunchConfigurationReader {
         try {
             properties.load(propertyStream);
             String dropUrl = get("drop.url");
+            String accountingUrl = get("accounting.url");
+            String blockUrl = get("block.url");
             return new LaunchConfig(
-                new URL(dropUrl)
+                new URL(dropUrl),
+                new URL(accountingUrl),
+                new URL(blockUrl)
             );
         } catch (MalformedURLException e) {
             throw new IllegalStateException("invalid configuration: " + e.getMessage(), e);

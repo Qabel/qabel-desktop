@@ -8,6 +8,8 @@ import java.nio.file.Path;
 
 public interface RuntimeConfiguration {
     URI getDropUri();
+    URI getAccountingUri();
+    URI getBlockUri();
     Path getPersistenceDatabaseFile();
     Stage getPrimaryStage();
 

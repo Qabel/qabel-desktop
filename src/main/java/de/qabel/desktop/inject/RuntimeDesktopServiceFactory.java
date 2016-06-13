@@ -15,7 +15,6 @@ import de.qabel.core.config.Account;
 import de.qabel.core.config.AccountingServer;
 import de.qabel.core.http.DropHTTP;
 import de.qabel.desktop.BlockSharingService;
-import de.qabel.desktop.MagicEvilBlockUriProvider;
 import de.qabel.desktop.SharingService;
 import de.qabel.desktop.config.factory.BlockBoxVolumeFactory;
 import de.qabel.desktop.config.factory.BoxVolumeFactory;
@@ -129,7 +128,8 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
             boxVolumeFactory = new BlockBoxVolumeFactory(
                 getClientConfiguration().getDeviceId().getBytes(),
                 getAccountingClient(),
-                getIdentityRepository()
+                getIdentityRepository(),
+                getBlockUri()
             );
         }
         return boxVolumeFactory;
@@ -145,7 +145,7 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
             try {
                 AccountingServer server = new AccountingServer(
                     new URI(acc.getProvider()),
-                    new URI(MagicEvilBlockUriProvider.getBlockUri(acc)),
+                    getBlockUri(),
                     acc.getUser(),
                     acc.getAuth()
                 );

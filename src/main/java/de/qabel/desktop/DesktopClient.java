@@ -103,7 +103,7 @@ public class DesktopClient extends Application {
         ).load();
 
         runtimeConfiguration = new StaticRuntimeConfiguration(
-            launchConfig.getDropUrl().toString(),
+            launchConfig,
             LEGACY_DATABASE_FILE,
             getConfigDatabase()
         );
@@ -211,6 +211,7 @@ public class DesktopClient extends Application {
         primaryStage = stage;
         setUserAgentStylesheet(STYLESHEET_MODENA);
 
+        resources = QabelFXMLView.getDefaultResourceBundle();
         checkVersion();
         runtimeConfiguration.setPrimaryStage(primaryStage);
         config = services.getClientConfiguration();
@@ -218,7 +219,6 @@ public class DesktopClient extends Application {
         SceneAntialiasing aa = SceneAntialiasing.BALANCED;
         primaryStage.getIcons().setAll(new Image(getClass().getResourceAsStream("/logo-invert_small.png")));
         Scene scene;
-        resources = QabelFXMLView.getDefaultResourceBundle();
 
         Platform.setImplicitExit(false);
         primaryStage.setTitle(resources.getString("title"));
