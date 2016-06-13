@@ -12,7 +12,6 @@ public class AboutPage extends AbstractPage {
     public AboutPage(FXRobot baseFXRobot, FxRobot robot, AboutController controller) {
         super(baseFXRobot, robot);
         this.controller = controller;
-        controller.thanksButton.setDisable(false);
     }
 
     public void showPopup() {
