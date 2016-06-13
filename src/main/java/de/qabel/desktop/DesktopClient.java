@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -98,9 +99,15 @@ public class DesktopClient extends Application {
             DATABASE_FILE = new File(args[0]).getAbsoluteFile().toPath();
         }
 
-        LaunchConfig launchConfig = new LaunchConfigurationReader(
-            DesktopClient.class.getResourceAsStream("/launch.properties")
-        ).load();
+        Path launchConfigOverwrite = Paths.get("launch.properties");
+        LaunchConfig launchConfig;
+        if (Files.exists(launchConfigOverwrite)) {
+            launchConfig = new LaunchConfigurationReader(new FileInputStream(launchConfigOverwrite.toFile())).load();
+        } else {
+             launchConfig = new LaunchConfigurationReader(
+                DesktopClient.class.getResourceAsStream("/launch.properties")
+            ).load();
+        }
 
         runtimeConfiguration = new StaticRuntimeConfiguration(
             launchConfig,

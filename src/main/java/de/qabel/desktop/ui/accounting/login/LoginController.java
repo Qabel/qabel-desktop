@@ -91,7 +91,6 @@ public class LoginController extends AbstractController implements Initializable
     public void initialize(URL location, ResourceBundle resources) {
         List<String> providerList = new LinkedList<>();
         providerList.add(accountingUri.toString());
-        providerList.add("http://localhost:9696");
         ObservableList<String> providers = new ObservableListWrapper<>(providerList);
         providerChoices.setItems(providers);
         providerChoices.setValue(accountingUri.toString());
