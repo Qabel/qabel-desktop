@@ -34,6 +34,18 @@ Qabel consists of multiple Projects:
 Distributions for Windows (and [Android](https://github.com/Qabel/qabel-android)) are provided by the [official Qabel website](https://qabel.de) at https://qabel.de/de/download .
 Everything below this line describes the usage of the Qabel Desktop Client for development purposes.
 
+## Changing server URLs
+
+Even when using the official Qabel Desktop Client distribution, the URLs used for drop-, accounting- and blockserver
+may be changed. To do so, create a file named `launch.properties` in the working directory (where the QabelDesktop.exe lies)
+with a content like this:
+```properties
+drop.url=https://drop.qabel.org
+accounting.url=https://accounting.qabel.org
+block.url=https://block.qabel.org
+```
+this will override the default URLs.
+
 # <a name="getting_started"></a>Getting started
 // TODO move this to a separate install instruction
 
