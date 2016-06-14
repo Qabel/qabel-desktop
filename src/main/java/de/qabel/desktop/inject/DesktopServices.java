@@ -19,6 +19,7 @@ import de.qabel.desktop.util.Translator;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ResourceBundle;
 
 public interface DesktopServices {
@@ -37,6 +38,12 @@ public interface DesktopServices {
 
     @Create(name = "dropUrlGenerator")
     DropUrlGenerator getDropUrlGenerator();
+
+    @Create(name = "accountingUri")
+    URI getAccountingUri();
+
+    @Create(name = "blockUri")
+    URI getBlockUri();
 
     @Create(name = "contactRepository")
     ContactRepository getContactRepository();

@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
@@ -81,17 +82,18 @@ public class LoginController extends AbstractController implements Initializable
     @Inject
     private TransactionManager transactionManager;
 
-    private String accountUrl = "https://accounting.qabel.org";
+    @Inject
+    private URI accountingUri;
+
     Map map = new HashMap<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         List<String> providerList = new LinkedList<>();
-        providerList.add("https://accounting.qabel.org");
-        providerList.add("http://localhost:9696");
+        providerList.add(accountingUri.toString());
         ObservableList<String> providers = new ObservableListWrapper<>(providerList);
         providerChoices.setItems(providers);
-        providerChoices.setValue(accountUrl);
+        providerChoices.setValue(accountingUri.toString());
 
         progressBar.visibleProperty().bind(buttonBar.visibleProperty().not());
         progressBar.managedProperty().bind(progressBar.visibleProperty());

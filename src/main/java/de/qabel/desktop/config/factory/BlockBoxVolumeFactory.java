@@ -6,30 +6,37 @@ import de.qabel.box.storage.BoxVolume;
 import de.qabel.core.accounting.AccountingHTTP;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
-import de.qabel.desktop.MagicEvilBlockUriProvider;
 import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 
 public class BlockBoxVolumeFactory extends AbstractBoxVolumeFactory {
     private final File tmpDir;
+    private final URI blockUri;
     private byte[] deviceId;
 
-    public BlockBoxVolumeFactory(byte[] deviceId, AccountingHTTP accountingHTTP, IdentityRepository identityRepository) throws IOException {
+    public BlockBoxVolumeFactory(
+        byte[] deviceId,
+        AccountingHTTP accountingHTTP,
+        IdentityRepository identityRepository,
+        URI blockUri
+    ) throws IOException {
         super(accountingHTTP, identityRepository);
         this.deviceId = deviceId;
         tmpDir = Files.createTempDirectory("qbl_tmp").toFile();
+        this.blockUri = blockUri;
     }
 
     @Override
     public BoxVolume getVolume(Account account, Identity identity) {
         String prefix = super.choosePrefix(identity);
 
-        String root = MagicEvilBlockUriProvider.getBlockUri(account) + "/api/v0/files/" + prefix + "/";
+        String root = blockUri + "/api/v0/files/" + prefix + "/";
 
         try {
             BlockReadBackend readBackend = new BlockReadBackend(root, accountingHTTP);

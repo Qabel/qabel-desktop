@@ -12,6 +12,8 @@ import de.qabel.desktop.repository.*;
 import de.qabel.desktop.repository.sqlite.*;
 import de.qabel.desktop.repository.sqlite.hydrator.*;
 
+import java.net.URI;
+
 public class NewConfigDesktopServiceFactory extends RuntimeDesktopServiceFactory {
     public NewConfigDesktopServiceFactory(
         RuntimeConfiguration runtimeConfiguration,
@@ -60,7 +62,18 @@ public class NewConfigDesktopServiceFactory extends RuntimeDesktopServiceFactory
         return accountRepository;
     }
 
+    @Override
+    public URI getAccountingUri() {
+        return runtimeConfiguration.getAccountingUri();
+    }
+
+    @Override
+    public URI getBlockUri() {
+        return runtimeConfiguration.getBlockUri();
+    }
+
     private ClientConfig clientConfiguration;
+
     @Override
     public synchronized ClientConfig getClientConfiguration() {
         if (clientConfiguration == null) {

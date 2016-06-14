@@ -24,11 +24,11 @@ repositories {
 }
 
 sourceSets {
-	main {
-		resources {
-			srcDirs = ["src/main/resources", "dist/resources"]
-		}
-	}
+    main {
+        resources {
+            srcDirs = ["src/main/resources"]
+        }
+    }
     guiTest {
         java {
             compileClasspath += main.output + test.output
@@ -37,6 +37,17 @@ sourceSets {
         }
         resources.srcDir file('src/test-gui/resources')
     }
+    dist {
+        java {
+            compileClasspath += main.output
+            runtimeClasspath += main.output
+            srcDirs = []
+        }
+        resources.srcDir file('dist/resources')
+    }
+}
+jar {
+    from sourceSets.dist.output
 }
 
 configurations {
@@ -168,6 +179,7 @@ distZip() {
     from ('libs/') {
         into baseName + '-' + version + '/lib/'
     }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 downloadLicenses {
@@ -196,6 +208,7 @@ task distLicenses(type: Copy) {
     include('dependency-license.xml', 'license-dependency.xml')
     into('dist/resources/')
 }
+
 distLicenses.dependsOn tasks['downloadLicenses']
 jar.dependsOn(distLicenses)
 
