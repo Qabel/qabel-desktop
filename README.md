@@ -59,7 +59,7 @@ The easiest way to get started is using [Vagrant](https://www.vagrantup.com/):
 vagrant up
 vagrant ssh
 cd /vagrant
-./gradlew run
+./gradlew test
 ```
 
 If that doesn't work for you for any reason, you need to follow the long way with <a href="#usage">Usage</a>
