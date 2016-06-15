@@ -16,6 +16,7 @@ import de.qabel.desktop.repository.*;
 import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRendererFactory;
 import de.qabel.desktop.ui.connector.DropConnector;
 import de.qabel.desktop.util.Translator;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -103,4 +104,11 @@ public interface DesktopServices {
 
     @Create(name = "boxSyncConfigFactory")
     BoxSyncConfigFactory getBoxSyncConfigFactory();
+
+    @Create(name="layoutWindow")
+    Pane getLayoutWindow();
+
+    @Create(name="thanksFileContent")
+    String getThanksFileContent();
+
 }

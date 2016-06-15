@@ -1,0 +1,21 @@
+.button-about {
+    -fx-font-weight: bolder;
+    -fx-pref-width:220px;
+    -fx-border-width: 1px 1px 1px 1px;
+    -fx-text-alignment:left;
+    -fx-background-repeat: no-repeat;
+    -fx-background-image: url('/img/chevron_right.png');
+    -fx-background-position:right;
+    -fx-font-size: 14px;
+}
+
+.linkcontainer-about{
+    -fx-alignment: center;
+    -fx-pref-width:586px;
+    -fx-pref-height:529px;
+}
+
+.img-logo-about{
+    -fx-fit-height:50px;
+    -fx-fit-width:200px;
+}
