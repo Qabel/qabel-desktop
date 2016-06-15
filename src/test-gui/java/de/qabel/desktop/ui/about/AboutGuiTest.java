@@ -6,8 +6,7 @@ import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
-
+import static org.junit.Assert.assertEquals;
 
 public class AboutGuiTest extends AbstractGuiTest<AboutController> {
     private AboutPage page;
@@ -27,6 +26,6 @@ public class AboutGuiTest extends AbstractGuiTest<AboutController> {
     @Test
     public void showPopup() {
         page.showPopup();
-        assertTrue(controller.popupController.aboutPopup.isVisible());
+        assertEquals("thanks file content", controller.popupController.getTextAreaContent());
     }
 }

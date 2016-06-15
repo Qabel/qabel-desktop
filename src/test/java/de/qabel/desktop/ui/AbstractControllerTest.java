@@ -126,7 +126,7 @@ public class AbstractControllerTest extends AbstractFxTest {
         SyncIndexFactory syncIndexFactory = new SqliteSyncIndexFactory();
         diContainer.put("boxSyncConfigFactory", new DefaultBoxSyncConfigFactory(syncIndexFactory));
         diContainer.put("boxSyncIndexFactory", syncIndexFactory);
-        diContainer.put("thanksFileContent", "text thanks file content");
+        diContainer.put("thanksFileContent", "thanks file content");
 
         syncDaemon = new SyncDaemon(new SimpleListProperty<>(), new FakeSyncerFactory());
         diContainer.put("syncDaemon", syncDaemon);
@@ -138,6 +138,7 @@ public class AbstractControllerTest extends AbstractFxTest {
         identity = identityBuilderFactory.factory().withAlias("TestAlias").build();
         clientConfiguration.selectIdentity(identity);
         QabelFXMLView.unloadDefaultResourceBundle();
+
     }
 
     @After

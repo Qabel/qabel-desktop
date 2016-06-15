@@ -4,8 +4,6 @@ import com.sun.javafx.robot.FXRobot;
 import de.qabel.desktop.ui.AbstractPage;
 import org.testfx.api.FxRobot;
 
-import static org.junit.Assert.assertTrue;
-
 public class AboutPage extends AbstractPage {
     private AboutController controller;
 
@@ -16,6 +14,6 @@ public class AboutPage extends AbstractPage {
 
     public void showPopup() {
         clickOn("#thanksButton");
-        waitUntil(() -> controller.popupController.aboutPopup.isVisible());
+        waitUntil(controller.popupController.aboutPopup::isVisible);
     }
 }

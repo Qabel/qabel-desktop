@@ -1,7 +1,6 @@
 package de.qabel.desktop.ui.about.aboutPopup;
 
 import de.qabel.desktop.ui.AbstractController;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
@@ -22,12 +21,16 @@ public class AboutPopupController extends AbstractController implements Initiali
     public void initialize(URL location, ResourceBundle resources) {
     }
 
-    public void btnClosePopup() {
+    public void buttonClosePopup() {
         hidePopup();
     }
 
     public void setTextAreaContent (String content) {
         textAreaPopup.setText(content);
+    }
+
+    public String getTextAreaContent (){
+        return textAreaPopup.getText();
     }
 
     public void hidePopup() {

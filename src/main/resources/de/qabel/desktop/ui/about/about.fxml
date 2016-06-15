@@ -15,7 +15,7 @@
                         <Image url="@/img/logo-with-name.png" />
                     </image>
                 </ImageView>
-                <Label text="%desktopAppVersion" />
+                <Label text="%title" />
                 <Label text="%thanksAllLabel"/>
                 <Button styleClass="button-about" text="%showSupporters" fx:id="thanksButton" onAction="#openThanksPopUp" />
                 <Label styleClass="headline" text="%aboutHeadline" />

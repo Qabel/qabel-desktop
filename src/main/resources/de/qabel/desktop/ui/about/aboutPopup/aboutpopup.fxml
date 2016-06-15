@@ -13,7 +13,7 @@
                        <TextArea fx:id="textAreaPopup" editable="false" styleClass="text-area-popup" wrapText="false" StackPane.alignment="TOP_CENTER" />
                        <Label styleClass="fade_bottom" StackPane.alignment="BOTTOM_LEFT" />
                        <Label styleClass="fade_top" StackPane.alignment="TOP_LEFT" />
-                       <Button fx:id="btnClosePopup" alignment="TOP_RIGHT" onAction="#btnClosePopup" styleClass="button-close-stackpane" text="X" />
+                       <Button fx:id="buttonClosePopup" alignment="TOP_RIGHT" onAction="#buttonClosePopup" styleClass="button-close-stackpane" text="X" />
                    </children>
                </StackPane>
            </children>
