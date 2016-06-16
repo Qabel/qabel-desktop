@@ -1,22 +1,24 @@
 package de.qabel.desktop.ui.about;
 
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.about.aboutPopup.AboutPopupController;
+import de.qabel.desktop.ui.about.aboutPopup.AboutPopupView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
+
+import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.Desktop;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
@@ -31,6 +33,18 @@ public class AboutController extends AbstractController implements Initializable
     @FXML
     Pane linkContainer;
 
+    @FXML
+    private Button thanksButton;
+
+    @Inject
+    private Pane layoutWindow;
+
+    @Inject
+    private String thanksFileContent;
+
+    public AboutPopupController popupController;
+    private AboutPopupView popupView;
+
     private Map<String, String> jarNames = new HashMap<>();
     private ResourceBundle resourceBundle;
 
@@ -40,6 +54,8 @@ public class AboutController extends AbstractController implements Initializable
         try {
             addDependencyLicenses();
             activateLinks();
+            activateButtons();
+            initializePopup();
         } catch (Exception e) {
             alert("failed to load about contents: " + e.getMessage(), e);
         }
@@ -99,6 +115,31 @@ public class AboutController extends AbstractController implements Initializable
                 }
             }
         }
+    }
+
+    private void activateButtons() {
+        if (thanksFileContent.isEmpty()) {
+           thanksButton.setDisable(true);
+        }
+    }
+
+    public void openThanksPopUp() {
+        setTextAreaPopup(thanksFileContent);
+        showAboutPopUp();
+    }
+
+    private void initializePopup() {
+        popupView = new AboutPopupView();
+        popupView.getView(layoutWindow.getChildren()::add);
+        popupController = (AboutPopupController) popupView.getPresenter();
+    }
+
+    private void setTextAreaPopup(String contentPopup) {
+        popupController.setTextAreaContent(contentPopup);
+    }
+
+    private void showAboutPopUp() {
+        popupController.showPopup();
     }
 
     private VBox createLabeledLink(String labelText, String url, List<String> comments) {

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane fx:id="aboutPopup" maxHeight="Infinity" maxWidth="Infinity" pickOnBounds="false" styleClass="vbox-popup" visible="false" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.about.aboutPopup.AboutPopupController">
+    <children>
+        <HBox alignment="CENTER" >
+           <children>
+               <StackPane alignment="TOP_RIGHT" styleClass="container">
+                   <children>
+                       <TextArea fx:id="textAreaPopup" editable="false" styleClass="text-area-popup" wrapText="false" StackPane.alignment="TOP_CENTER" />
+                       <Label styleClass="fade_bottom" StackPane.alignment="BOTTOM_LEFT" />
+                       <Label styleClass="fade_top" StackPane.alignment="TOP_LEFT" />
+                       <Button fx:id="buttonClosePopup" alignment="TOP_RIGHT" onAction="#buttonClosePopup" styleClass="button-close-stackpane" text="X" />
+                   </children>
+               </StackPane>
+           </children>
+        </HBox>
+    </children>
+</StackPane>

@@ -1,0 +1,72 @@
+.vbox-popup {
+    -fx-background-color: rgba(0,0,0,0.8);
+    -fx-padding: 50px 0px 50px 0px;
+}
+
+.button-close-stackpane {
+  -fx-alignment: top-right;
+  -fx-padding: 5px 10px 10px 10px;
+  -fx-background-color: transparent;
+  -fx-border-style: none;
+  -fx-background-insets: 0px;
+  -fx-border-color: none;
+}
+
+.button-close-stackpane:hover {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0px;
+    -fx-border-style: none;
+    -fx-border-color: none;
+    -fx-text-fill: #ff690f;
+}
+
+.button-close-stackpane:pressed {
+    -fx-border-color: none;
+    -fx-text-fill: none;
+    -fx-border-style: none;
+}
+
+.text-area-popup {
+    -fx-max-width: 500px;
+    -fx-min-width: 100px;
+    -fx-max-height: 1000px;
+    -fx-min-height: 500px;
+}
+
+.text-area-popup *.text {
+    -fx-text-alignment: center;
+}
+
+.text-area-popup * {
+    -fx-background-color: white;
+    -fx-overflow: scroll;
+    -fx-display: inline-block;
+    -fx-border-width: 0;
+    -fx-border-radius: 0;
+    -fx-padding: 10px 0px 0px 0px;
+}
+
+.fade_top {
+    -fx-position: absolute;
+    -fx-pref-height: 25px;
+    -fx-pref-width: 440px;
+    -fx-alignment: TOP_LEFT;
+    -fx-background-image:url('/img/fade-top.png');
+}
+
+.fade_bottom {
+    -fx-position: absolute;
+    -fx-pref-height: 40px;
+    -fx-pref-width: 430px;
+    -fx-alignment: BOTTOM_LEFT;
+    -fx-background-image:url('/img/fade-bottom.png');
+}
+
+.container {
+    -fx-min-width:100px;
+    -fx-max-width:500px;
+    -fx-min-height:500px;
+    -fx-max-height:1000px;
+    -fx-position:relative;
+    -fx-background-color:#fff;
+}
