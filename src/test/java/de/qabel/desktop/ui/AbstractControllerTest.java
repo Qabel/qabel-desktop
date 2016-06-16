@@ -138,7 +138,6 @@ public class AbstractControllerTest extends AbstractFxTest {
         identity = identityBuilderFactory.factory().withAlias("TestAlias").build();
         clientConfiguration.selectIdentity(identity);
         QabelFXMLView.unloadDefaultResourceBundle();
-
     }
 
     @After
