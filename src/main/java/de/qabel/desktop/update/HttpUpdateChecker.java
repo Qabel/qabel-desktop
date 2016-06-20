@@ -34,10 +34,15 @@ public class HttpUpdateChecker implements UpdateChecker {
 
     @Override
     public boolean isCurrent(String version) {
+        version = trim(version);
         load();
         Version currentVersion = Version.valueOf(desktopVersion.getCurrentAppVersion());
         Version appVersion = Version.valueOf(version);
         return appVersion.greaterThanOrEqualTo(currentVersion);
+    }
+
+    private String trim(String version) {
+        return version.replace("\n", "");
     }
 
     private void load() {
@@ -54,6 +59,7 @@ public class HttpUpdateChecker implements UpdateChecker {
 
     @Override
     public boolean isAllowed(String version) {
+        version = trim(version);
         load();
         Version minimumVersion = Version.valueOf(desktopVersion.getMinimumAppVersion());
         Version appVersion = Version.valueOf(version);

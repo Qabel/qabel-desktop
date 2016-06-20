@@ -8,14 +8,18 @@ import de.qabel.core.config.SQLitePersistence;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.LaunchConfig;
-import de.qabel.desktop.daemon.drop.DropDaemon;
 import de.qabel.desktop.daemon.share.ShareNotificationHandler;
 import de.qabel.desktop.inject.DesktopServices;
 import de.qabel.desktop.inject.NewConfigDesktopServiceFactory;
 import de.qabel.desktop.inject.RuntimeDesktopServiceFactory;
 import de.qabel.desktop.inject.config.StaticRuntimeConfiguration;
-import de.qabel.desktop.repository.*;
-import de.qabel.desktop.repository.sqlite.*;
+import de.qabel.desktop.repository.DropMessageRepository;
+import de.qabel.desktop.repository.ShareNotificationRepository;
+import de.qabel.desktop.repository.TransactionManager;
+import de.qabel.desktop.repository.sqlite.ClientDatabase;
+import de.qabel.desktop.repository.sqlite.DesktopClientDatabase;
+import de.qabel.desktop.repository.sqlite.LegacyDatabaseMigrator;
+import de.qabel.desktop.repository.sqlite.SqliteTransactionManager;
 import de.qabel.desktop.storage.AbstractNavigation;
 import de.qabel.desktop.ui.CrashReportAlert;
 import de.qabel.desktop.ui.LayoutView;
@@ -202,14 +206,14 @@ public class DesktopClient extends Application {
         primaryStage = stage;
         setUserAgentStylesheet(STYLESHEET_MODENA);
 
-        checkVersion();
+        resources = QabelFXMLView.getDefaultResourceBundle();
         runtimeConfiguration.setPrimaryStage(primaryStage);
         config = services.getClientConfiguration();
 
         SceneAntialiasing aa = SceneAntialiasing.BALANCED;
         primaryStage.getIcons().setAll(new Image(getClass().getResourceAsStream("/logo-invert_small.png")));
         Scene scene;
-        resources = QabelFXMLView.getDefaultResourceBundle();
+        checkVersion();
 
         Platform.setImplicitExit(false);
         primaryStage.setTitle(resources.getString("title"));
