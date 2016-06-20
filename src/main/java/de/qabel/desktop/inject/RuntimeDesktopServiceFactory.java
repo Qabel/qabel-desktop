@@ -1,6 +1,7 @@
 package de.qabel.desktop.inject;
 
 import de.qabel.desktop.config.BoxSyncConfig;
+import de.qabel.desktop.config.FilesAbout;
 import de.qabel.desktop.daemon.drop.DropDaemon;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
@@ -218,7 +219,12 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
         return runtimeConfiguration.getWindow();
     }
 
-    public String getThanksFileContent() {
-        return runtimeConfiguration.getThanksFileContent();
+    public FilesAbout getAboutFilesContent() {
+        return runtimeConfiguration.getAboutFilesContent();
     }
+
+    public String getCurrentVersion() {
+        return runtimeConfiguration.getCurrentVersion();
+    }
+
 }

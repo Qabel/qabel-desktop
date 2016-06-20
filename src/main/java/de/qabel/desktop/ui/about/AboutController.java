@@ -1,131 +1,118 @@
 package de.qabel.desktop.ui.about;
 
+import de.qabel.desktop.config.FilesAbout;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.about.aboutPopup.AboutPopupController;
 import de.qabel.desktop.ui.about.aboutPopup.AboutPopupView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
-import javafx.scene.*;
-import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.awt.Desktop;
-import java.io.*;
-import java.net.URI;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class AboutController extends AbstractController implements Initializable {
-    private static final String LICENSE_DEPENDENCY_MAPPING_LOCATION = "/license-dependency.xml";
-    private static final String DEPENDENCY_LICENSE_MAPPING_LOCATION = "/dependency-license.xml";
-    private static final ExecutorService executor = Executors.newCachedThreadPool();
 
     @FXML
-    Pane linkContainer;
+    private Pane linkContainer;
 
     @FXML
-    private Button thanksButton;
+    private Label appVersion;
+
+    @FXML
+    private Pane QAPLBox;
+
+    @FXML
+    private Pane thanksBox;
+
+    @FXML
+    private Pane termsOfServiceBox;
+
+    @FXML
+    private Pane imprintBox;
+
+    @FXML
+    private Pane privacyNotesBox;
+
+    @FXML
+    private Pane apacheLicenseBox;
+
+    @FXML
+    private Pane silLicenseBox;
+
+    @FXML
+    private Pane attributionLicenseBox;
+
+    @FXML
+    private Pane lgplLicenseBox;
+
+    @FXML
+    private Pane creativeLicenseBox;
 
     @Inject
     private Pane layoutWindow;
 
     @Inject
-    private String thanksFileContent;
+    private String currentVersion;
+
+    @Inject
+    private FilesAbout aboutFilesContent;
 
     public AboutPopupController popupController;
     private AboutPopupView popupView;
 
-    private Map<String, String> jarNames = new HashMap<>();
     private ResourceBundle resourceBundle;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
         try {
-            addDependencyLicenses();
-            activateLinks();
             activateButtons();
             initializePopup();
+            setDesktopVersion();
         } catch (Exception e) {
             alert("failed to load about contents: " + e.getMessage(), e);
         }
     }
 
-    private void addDependencyLicenses() throws ParserConfigurationException, IOException, SAXException {
-        indexJarNames();
-        addLicenses();
+    private void setDesktopVersion(){
+        appVersion.setText(appVersion.getText() + " " + currentVersion);
+
     }
-
-    private void addLicenses() throws ParserConfigurationException, IOException, SAXException {
-        Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-                .parse(getClass().getResourceAsStream(LICENSE_DEPENDENCY_MAPPING_LOCATION));
-        doc.getDocumentElement().normalize();
-
-        NodeList licenses = doc.getElementsByTagName("license");
-        for (int i = 0; i < licenses.getLength(); i++) {
-            org.w3c.dom.Node license = licenses.item(i);
-            String licenseName = license.getAttributes().getNamedItem("name").getNodeValue();
-            String licenseLink = license.getAttributes().getNamedItem("url").getNodeValue();
-            List<String> dependencies = new LinkedList<>();
-
-
-            NodeList childNodes = license.getChildNodes();
-            for (int j = 0; j < childNodes.getLength(); j++) {
-                org.w3c.dom.Node child = childNodes.item(j);
-                if (!child.getNodeName().equals("dependency")) {
-                    continue;
-                }
-
-                String jarName = child.getTextContent();
-                String dependencyName = jarName;
-                if (jarNames.containsKey(jarName)) {
-                    dependencyName = jarNames.get(jarName);
-                }
-                dependencies.add(dependencyName);
-            }
-
-            String title = getString(resourceBundle, "licensedComponents", licenseName);
-            linkContainer.getChildren().add(createLabeledLink(title, licenseLink, dependencies));
-        }
-    }
-
-    private void indexJarNames() throws ParserConfigurationException, IOException, SAXException {
-        Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-                .parse(getClass().getResourceAsStream(DEPENDENCY_LICENSE_MAPPING_LOCATION));
-        doc.getDocumentElement().normalize();
-
-        NodeList deps = doc.getElementsByTagName("dependency");
-        for (int i = 0; i < deps.getLength(); i++) {
-            org.w3c.dom.Node dep = deps.item(i);
-            NodeList childNodes = dep.getChildNodes();
-            for (int j = 0; j < childNodes.getLength(); j++) {
-                org.w3c.dom.Node child = childNodes.item(j);
-                if (child.getNodeName().equals("file")) {
-                    jarNames.put(child.getTextContent(), dep.getAttributes().getNamedItem("name").getNodeValue());
-                }
-            }
-        }
-    }
-
     private void activateButtons() {
-        if (thanksFileContent.isEmpty()) {
-           thanksButton.setDisable(true);
+        if (aboutFilesContent.QAPLContent.isEmpty()) {
+            QAPLBox.setDisable(true);
         }
-    }
-
-    public void openThanksPopUp() {
-        setTextAreaPopup(thanksFileContent);
-        showAboutPopUp();
+        if (aboutFilesContent.imprintContent.isEmpty()) {
+            imprintBox.setDisable(true);
+        }
+        if (aboutFilesContent.silLicenseContent.isEmpty()) {
+            silLicenseBox.setDisable(true);
+        }
+        if (aboutFilesContent.thanksFileContent.isEmpty()) {
+            thanksBox.setDisable(true);
+        }
+        if (aboutFilesContent.apacheLicenseContent.isEmpty()) {
+            apacheLicenseBox.setDisable(true);
+        }
+        if (aboutFilesContent.attributionLicenseContent.isEmpty()) {
+            attributionLicenseBox.setDisable(true);
+        }
+        if (aboutFilesContent.creativeLicenseContent.isEmpty()) {
+            creativeLicenseBox.setDisable(true);
+        }
+        if (aboutFilesContent.lgplLicenseContent.isEmpty()) {
+            lgplLicenseBox.setDisable(true);
+        }
+        if(aboutFilesContent.privateNotesContent.isEmpty()) {
+            privacyNotesBox.setDisable(true);
+        }
+        if(aboutFilesContent.termsOfServiceContent.isEmpty()) {
+            termsOfServiceBox.setDisable(true);
+        }
     }
 
     private void initializePopup() {
@@ -134,56 +121,43 @@ public class AboutController extends AbstractController implements Initializable
         popupController = (AboutPopupController) popupView.getPresenter();
     }
 
-    private void setTextAreaPopup(String contentPopup) {
-        popupController.setTextAreaContent(contentPopup);
+    public void openThanksPopUp() {
+        popupController.showThanksPopup();
     }
 
-    private void showAboutPopUp() {
-        popupController.showPopup();
+    public void openQAPLPopUp() {
+        popupController.showQAPLPopup();
     }
 
-    private VBox createLabeledLink(String labelText, String url, List<String> comments) {
-        VBox container = new VBox();
-        container.getStyleClass().add("labeled-link");
-        Label label = new Label(labelText);
-        Hyperlink hyperlink = new Hyperlink(url);
-        container.getChildren().add(label);
-        container.getChildren().add(hyperlink);
-        VBox commentContainer = new VBox();
-        container.getChildren().add(commentContainer);
-
-        for (String comment : comments) {
-            Label commentLabel = new Label(comment);
-            commentContainer.getChildren().add(commentLabel);
-        }
-
-        return container;
+    public void openImprintPopUp() {
+        popupController.showImprintPopup();
     }
 
-    private void activateLinks() {
-        for (Node node : linkContainer.getChildrenUnmodifiable()) {
+    public void openTermsOfServicePopUp() {
+        popupController.showTermsOfServicePopup();
+    }
 
-            if (!node.getStyleClass().contains("labeled-link") || !(node instanceof Parent)) {
-                continue;
-            }
+    public void openPrivacyPopUp() {
+        popupController.showPrivacyNotesPopup();
+    }
 
-            Parent linkContainer = (Parent)node;
-            for (Node potentialLink : linkContainer.getChildrenUnmodifiable()) {
-                if (!(potentialLink instanceof Hyperlink)) {
-                    continue;
-                }
+    public void openApacheLicensePopUp() {
+        popupController.showApacheLicensePopup();
+    }
 
-                Hyperlink link = (Hyperlink) potentialLink;
-                link.setOnAction(event -> {
-                    executor.submit(() -> {
-                        try {
-                            Desktop.getDesktop().browse(new URI(link.getText()));
-                        } catch (Exception e) {
-                            alert("failed to open link: " + e.getMessage(), e);
-                        }
-                    });
-                });
-            }
-        }
+    public void openSilPopUp() {
+        popupController.showSilLicensePopup();
+    }
+
+    public void openAttributionLicensePopUp() {
+        popupController.showAttributionLicensePopup();
+    }
+
+    public void openLGPLLicensePopUp() {
+        popupController.showLgplLicensePopup();
+    }
+
+    public void openCreativeLicensePopUp() {
+        popupController.showCreativeLicensePopup();
     }
 }
