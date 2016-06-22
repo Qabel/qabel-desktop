@@ -19,6 +19,7 @@ repositories {
     mavenCentral()
     jcenter()
     maven { url "https://mvnrepository.com/artifact" }
+    maven { url "https://jitpack.io" }
     flatDir {
         dir 'libs'
     }
@@ -93,8 +94,7 @@ dependencies {
     compile 'javax.inject:javax.inject:1'                    //Apache License http://mvnrepository.com/artifact/javax.inject/javax.inject/1
     compile 'com.airhacks:afterburner.fx:1.7.+'              //Apache License https://github.com/AdamBien/afterburner.fx
 
-    compile name: 'qabel-core-0.1'
-    compile name: 'qabel-box-0.1'
+    compile 'com.github.audax:qabel-core:kotlin-SNAPSHOT'
 
     compile 'com.google.code.gson:gson:2.+'                  //Apache License https://github.com/google/gson/blob/master/LICENSE
     compile 'org.slf4j:slf4j-api:1.7.+'                      //MIT http://www.slf4j.org/license.html
@@ -110,7 +110,6 @@ dependencies {
 
     compile 'com.github.zafarkhaja:java-semver:0.9.+'        // MIT https://github.com/zafarkhaja/jsemver/blob/master/LICENSE
 
-    compile 'org.jetbrains.kotlin:kotlin-stdlib:1.+'
 
     testCompile name: 'qabel-box-test-0.1'
     testCompile 'info.cukes:cucumber-java:1.2.+'

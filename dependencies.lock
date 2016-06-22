@@ -1,14 +1,12 @@
 {
     "compile": {
-        ":qabel-box-0.1": {
-            "project": true
-        },
-        ":qabel-core-0.1": {
-            "project": true
-        },
         "com.airhacks:afterburner.fx": {
             "locked": "1.7.0",
             "requested": "1.7.+"
+        },
+        "com.github.audax:qabel-core": {
+            "locked": "kotlin-SNAPSHOT",
+            "requested": "kotlin-SNAPSHOT"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -38,12 +36,6 @@
             "locked": "1.2.16",
             "requested": "1.2.+"
         },
-        "null:qabel-box-0.1": {
-            "project": true
-        },
-        "null:qabel-core-0.1": {
-            "project": true
-        },
         "org.apache.commons:commons-lang3": {
             "locked": "3.4",
             "requested": "3.+"
@@ -71,10 +63,6 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4",
             "requested": "2.4.+"
-        },
-        "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.0.2-1",
-            "requested": "1.+"
         },
         "org.json:json": {
             "locked": "20090211",
@@ -94,15 +82,13 @@
         }
     },
     "default": {
-        ":qabel-box-0.1": {
-            "project": true
-        },
-        ":qabel-core-0.1": {
-            "project": true
-        },
         "com.airhacks:afterburner.fx": {
             "locked": "1.7.0",
             "requested": "1.7.+"
+        },
+        "com.github.audax:qabel-core": {
+            "locked": "kotlin-SNAPSHOT",
+            "requested": "kotlin-SNAPSHOT"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -132,12 +118,6 @@
             "locked": "1.2.16",
             "requested": "1.2.+"
         },
-        "null:qabel-box-0.1": {
-            "project": true
-        },
-        "null:qabel-core-0.1": {
-            "project": true
-        },
         "org.apache.commons:commons-lang3": {
             "locked": "3.4",
             "requested": "3.+"
@@ -166,10 +146,6 @@
             "locked": "2.4",
             "requested": "2.4.+"
         },
-        "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.0.2-1",
-            "requested": "1.+"
-        },
         "org.json:json": {
             "locked": "20090211",
             "requested": "20090211"
@@ -188,18 +164,16 @@
         }
     },
     "guiTestCompile": {
-        ":qabel-box-0.1": {
-            "project": true
-        },
         ":qabel-box-test-0.1": {
-            "project": true
-        },
-        ":qabel-core-0.1": {
             "project": true
         },
         "com.airhacks:afterburner.fx": {
             "locked": "1.7.0",
             "requested": "1.7.+"
+        },
+        "com.github.audax:qabel-core": {
+            "locked": "kotlin-SNAPSHOT",
+            "requested": "kotlin-SNAPSHOT"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -245,13 +219,7 @@
             "locked": "1.2.16",
             "requested": "1.2.+"
         },
-        "null:qabel-box-0.1": {
-            "project": true
-        },
         "null:qabel-box-test-0.1": {
-            "project": true
-        },
-        "null:qabel-core-0.1": {
             "project": true
         },
         "org.apache.commons:commons-lang3": {
@@ -281,10 +249,6 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4",
             "requested": "2.4.+"
-        },
-        "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.0.2-1",
-            "requested": "1.+"
         },
         "org.json:json": {
             "locked": "20090211",
@@ -316,18 +280,16 @@
         }
     },
     "guiTestRuntime": {
-        ":qabel-box-0.1": {
-            "project": true
-        },
         ":qabel-box-test-0.1": {
-            "project": true
-        },
-        ":qabel-core-0.1": {
             "project": true
         },
         "com.airhacks:afterburner.fx": {
             "locked": "1.7.0",
             "requested": "1.7.+"
+        },
+        "com.github.audax:qabel-core": {
+            "locked": "kotlin-SNAPSHOT",
+            "requested": "kotlin-SNAPSHOT"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -373,13 +335,7 @@
             "locked": "1.2.16",
             "requested": "1.2.+"
         },
-        "null:qabel-box-0.1": {
-            "project": true
-        },
         "null:qabel-box-test-0.1": {
-            "project": true
-        },
-        "null:qabel-core-0.1": {
             "project": true
         },
         "org.apache.commons:commons-lang3": {
@@ -409,10 +365,6 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4",
             "requested": "2.4.+"
-        },
-        "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.0.2-1",
-            "requested": "1.+"
         },
         "org.json:json": {
             "locked": "20090211",
@@ -444,15 +396,13 @@
         }
     },
     "runtime": {
-        ":qabel-box-0.1": {
-            "project": true
-        },
-        ":qabel-core-0.1": {
-            "project": true
-        },
         "com.airhacks:afterburner.fx": {
             "locked": "1.7.0",
             "requested": "1.7.+"
+        },
+        "com.github.audax:qabel-core": {
+            "locked": "kotlin-SNAPSHOT",
+            "requested": "kotlin-SNAPSHOT"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -482,12 +432,6 @@
             "locked": "1.2.17",
             "requested": "1.2.+"
         },
-        "null:qabel-box-0.1": {
-            "project": true
-        },
-        "null:qabel-core-0.1": {
-            "project": true
-        },
         "org.apache.commons:commons-lang3": {
             "locked": "3.4",
             "requested": "3.+"
@@ -516,12 +460,8 @@
             "locked": "2.4.1",
             "requested": "2.4.+"
         },
-        "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.0.2-1",
-            "requested": "1.+"
-        },
         "org.json:json": {
-            "locked": "20090211",
+            "locked": "20160212",
             "requested": "20090211"
         },
         "org.ocpsoft.prettytime:prettytime": {
@@ -538,18 +478,16 @@
         }
     },
     "testCompile": {
-        ":qabel-box-0.1": {
-            "project": true
-        },
         ":qabel-box-test-0.1": {
-            "project": true
-        },
-        ":qabel-core-0.1": {
             "project": true
         },
         "com.airhacks:afterburner.fx": {
             "locked": "1.7.0",
             "requested": "1.7.+"
+        },
+        "com.github.audax:qabel-core": {
+            "locked": "kotlin-SNAPSHOT",
+            "requested": "kotlin-SNAPSHOT"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -595,13 +533,7 @@
             "locked": "1.2.16",
             "requested": "1.2.+"
         },
-        "null:qabel-box-0.1": {
-            "project": true
-        },
         "null:qabel-box-test-0.1": {
-            "project": true
-        },
-        "null:qabel-core-0.1": {
             "project": true
         },
         "org.apache.commons:commons-lang3": {
@@ -631,10 +563,6 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4",
             "requested": "2.4.+"
-        },
-        "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.0.2-1",
-            "requested": "1.+"
         },
         "org.json:json": {
             "locked": "20090211",
@@ -666,18 +594,16 @@
         }
     },
     "testRuntime": {
-        ":qabel-box-0.1": {
-            "project": true
-        },
         ":qabel-box-test-0.1": {
-            "project": true
-        },
-        ":qabel-core-0.1": {
             "project": true
         },
         "com.airhacks:afterburner.fx": {
             "locked": "1.7.0",
             "requested": "1.7.+"
+        },
+        "com.github.audax:qabel-core": {
+            "locked": "kotlin-SNAPSHOT",
+            "requested": "kotlin-SNAPSHOT"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -723,13 +649,7 @@
             "locked": "1.2.16",
             "requested": "1.2.+"
         },
-        "null:qabel-box-0.1": {
-            "project": true
-        },
         "null:qabel-box-test-0.1": {
-            "project": true
-        },
-        "null:qabel-core-0.1": {
             "project": true
         },
         "org.apache.commons:commons-lang3": {
@@ -759,10 +679,6 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4",
             "requested": "2.4.+"
-        },
-        "org.jetbrains.kotlin:kotlin-stdlib": {
-            "locked": "1.0.2-1",
-            "requested": "1.+"
         },
         "org.json:json": {
             "locked": "20090211",
