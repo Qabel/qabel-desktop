@@ -2,7 +2,6 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
 
 <StackPane fx:id="aboutPopup" maxHeight="Infinity" maxWidth="Infinity" pickOnBounds="false" styleClass="vbox-popup" visible="false" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.about.aboutPopup.AboutPopupController">
     <children>
@@ -11,8 +10,8 @@
                <StackPane alignment="TOP_RIGHT" styleClass="container">
                    <children>
                        <TextArea fx:id="textAreaPopup" editable="false" wrapText="true" StackPane.alignment="TOP_CENTER" />
-                       <Label fx:id="fadeBottomLabel" styleClass="fade_bottom" StackPane.alignment="BOTTOM_LEFT" />
-                       <Label styleClass="fade_top" StackPane.alignment="TOP_LEFT" />
+                       <Label fx:id="fadeBottomLabel" styleClass="fade-bottom" StackPane.alignment="BOTTOM_LEFT" />
+                       <Label styleClass="fade-top" StackPane.alignment="TOP_LEFT" />
                        <Button fx:id="buttonClosePopup" alignment="TOP_RIGHT" onAction="#buttonClosePopup" styleClass="button-close-stackpane" text="X" />
                    </children>
                </StackPane>

@@ -20,6 +20,15 @@ public class FilesAbout extends AbstractController {
     public String attributionLicenseContent;
     public String lgplLicenseContent;
     public String creativeLicenseContent;
+    public String europeanLicenseContent;
+    public String bouncyLicenseContent;
+    public String bsdLicenseContent;
+    public String eclipseLicenseContent;
+    public String jsonLicenseContent;
+    public String mitLicenseContent;
+    public String innoLicenseContent;
+    public String launch4jLicenseContent;
+
     private ResourceBundle resources;
 
     public FilesAbout(){
@@ -35,6 +44,15 @@ public class FilesAbout extends AbstractController {
             attributionLicenseContent = readFile(resources.getString("attributionLicensePath"));
             lgplLicenseContent = readFile(resources.getString("lgplLicensePath"));
             creativeLicenseContent = readFile(resources.getString("creativeLicensePath"));
+            europeanLicenseContent = readFile(resources.getString("europeanLicensePath"));
+            bouncyLicenseContent = readFile(resources.getString("bouncyLicensePath"));
+            bsdLicenseContent = readFile(resources.getString("bsdLicensePath"));
+            eclipseLicenseContent = readFile(resources.getString("eclipseLicensePath"));
+            jsonLicenseContent = readFile(resources.getString("jsonLicensePath"));
+            mitLicenseContent = readFile(resources.getString("mitLicensePath"));
+            innoLicenseContent =  readFile(resources.getString("innoSetupPath"));
+            launch4jLicenseContent =  readFile(resources.getString("launch4jPath"));
+
         } catch (IOException e) {
             alert("failed to load about files", e);
         } catch (NullPointerException ignored) {

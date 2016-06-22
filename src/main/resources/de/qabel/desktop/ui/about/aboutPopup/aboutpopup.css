@@ -67,7 +67,7 @@
     -fx-padding: 10px 10px 10px 10px;
  }
 
-.fade_top {
+.fade-top {
     -fx-position: absolute;
     -fx-pref-height: 25px;
     -fx-pref-width: 400px;
@@ -75,7 +75,7 @@
     -fx-background-image:url('/img/fade-top.png');
 }
 
-.fade_bottom {
+.fade-bottom {
     -fx-position: absolute;
     -fx-pref-height: 40px;
     -fx-pref-width: 395px;

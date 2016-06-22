@@ -6,7 +6,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<ScrollPane fitToWidth="true" maxWidth="Infinity" styleClass="scrollPaneAbout" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.about.AboutController">
+<ScrollPane fitToWidth="true" maxWidth="Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.about.AboutController">
     <content>
         <VBox fx:id="linkContainer" styleClass="linkcontainer-about">
             <children>
@@ -16,10 +16,10 @@
                     </image>
                 </ImageView>
                 <Label fx:id="appVersion" styleClass="label-version" text="%title" />
-                <Label styleClass="label-about-bold" text="%qabelQAPLLabel" />
+                <Label styleClass="label-title-box" text="%qabelQAPLLabel" />
                 <StackPane fx:id="QAPLBox" styleClass="box-button-about">
                     <children>
-                        <Button fx:id="QAPLbutton" onAction="#openQAPLPopUp" styleClass="btn-about" text="%qapl" />
+                        <Button fx:id="QAPLbutton" onAction="#openQAPLPopUp" styleClass="button-about" text="%qapl" />
                         <Hyperlink onAction="#openQAPLPopUp" styleClass="hyperlink-box-about" text="%qaplUrl" StackPane.alignment="BOTTOM_LEFT">
                             <StackPane.margin>
                                 <Insets bottom="10.0" left="10.0" />
@@ -27,26 +27,26 @@
                         </Hyperlink>
                     </children>
                 </StackPane>
-                <HBox styleClass="label-picture">
+                <HBox styleClass="label-with-logo">
                     <children>
-                        <Label styleClass="label-qabel-letter"/>
-                        <Label text="%thanksAllLabel" styleClass="label-picture-left"/>
+                        <Label styleClass="letter-logo"/>
+                        <Label text="%thanksAllLabel" styleClass="label-logo"/>
                     </children>
                 </HBox>
                 <VBox fx:id="thanksBox" styleClass="box-button-about">
                     <children>
-                        <Button fx:id="thanksButton" onAction="#openThanksPopUp" styleClass="btn-about" text="%showSupporters" />
+                        <Button fx:id="thanksButton" onAction="#openThanksPopUp" styleClass="button-about" text="%showSupporters" />
                     </children>
                 </VBox>
-                <HBox styleClass="label-picture">
+                <HBox styleClass="label-with-logo">
                     <children>
-                        <Label styleClass="label-qabel-letter"/>
-                        <Label text="%aboutHeadline" styleClass="label-picture-left"/>
+                        <Label styleClass="letter-logo"/>
+                        <Label text="%aboutHeadline" styleClass="label-logo"/>
                     </children>
                 </HBox>
                 <StackPane fx:id="imprintBox" styleClass="box-button-about">
                     <children>
-                        <Button fx:id="imprintButton" onAction="#openImprintPopUp" styleClass="btn-about" text="%imprint" />
+                        <Button fx:id="imprintButton" onAction="#openImprintPopUp" styleClass="button-about" text="%imprint" />
                         <Hyperlink onAction="#openImprintPopUp" styleClass="hyperlink-box-about" text="%imprintUrl" StackPane.alignment="BOTTOM_LEFT">
                             <StackPane.margin>
                                 <Insets bottom="10.0" left="10.0" />
@@ -56,7 +56,7 @@
                 </StackPane>
                 <StackPane fx:id="termsOfServiceBox" styleClass="box-button-about">
                     <children>
-                        <Button fx:id="termsOfServiceButton" onAction="#openTermsOfServicePopUp" styleClass="btn-about" text="%terms" />
+                        <Button fx:id="termsOfServiceButton" onAction="#openTermsOfServicePopUp" styleClass="button-about" text="%terms" />
                         <Hyperlink onAction="#openTermsOfServicePopUp" styleClass="hyperlink-box-about" text="%termsUrl" StackPane.alignment="BOTTOM_LEFT">
                             <StackPane.margin>
                                 <Insets bottom="10.0" left="10.0" />
@@ -66,7 +66,7 @@
                 </StackPane>
                 <StackPane fx:id="privacyNotesBox" styleClass="box-button-about">
                     <children>
-                        <Button fx:id="privacyNotesButton" onAction="#openPrivacyPopUp" styleClass="btn-about" text="%privacy" />
+                        <Button fx:id="privacyNotesButton" onAction="#openPrivacyPopUp" styleClass="button-about" text="%privacy" />
                         <Hyperlink onAction="#openPrivacyPopUp" styleClass="hyperlink-box-about" text="%privacyUrl" StackPane.alignment="BOTTOM_LEFT">
                             <StackPane.margin>
                                 <Insets bottom="10.0" left="10.0" />
@@ -74,87 +74,103 @@
                         </Hyperlink>
                     </children>
                 </StackPane>
-                <HBox styleClass="label-picture">
+                <HBox styleClass="label-with-logo">
                     <children>
-                        <Label styleClass="label-qabel-letter"/>
-                        <Label text="%thirdPartyAddOns" styleClass="label-picture-left"/>
+                        <Label styleClass="letter-logo"/>
+                        <Label text="%thirdPartyAddOns" styleClass="label-logo"/>
                     </children>
                 </HBox>
-                <Label styleClass="label-about-bold" text="%apacheLicensed" />
-                <Label styleClass="label-about-bold" text="%thirdPartyComponents" />
-                <Label text="%googleFont" />
-                <Label text="%commonsLang" />
-                <Label text="%commonsIo" />
-                <Label text="%mine4jCore" />
-                <StackPane fx:id="apacheLicenseBox" styleClass="box-button-about">
-                    <children>
-                        <Label styleClass="label-about-top-left" text="%labelThirdParty" StackPane.alignment="TOP_LEFT">
-                            <StackPane.margin>
-                                <Insets left="10.0" top="0.0" />
-                            </StackPane.margin>
-                        </Label>
-                        <Button fx:id="apacheLicenseButton" onAction="#openApacheLicensePopUp" styleClass="btn-about" text="%showLicense" />
-                        <Label styleClass="label-about-bottom-left" text="%apacheLicense2" StackPane.alignment="BOTTOM_LEFT">
-                            <StackPane.margin>
-                                <Insets bottom="5.0" left="10.0" />
-                            </StackPane.margin>
-                        </Label>
-                    </children>
-                </StackPane>
-                <Label styleClass="label-about-bold" text="%silOpenFontLicensed" />
-                <Label styleClass="label-about-bold" text="%thirdPartyComponents" />
+
+                <Label styleClass="label-title-box" text="%silOpenFontLicensed" />
+                <Label styleClass="label-title-box" text="%thirdPartyComponents" />
                 <Label text="%materialDesignCommunity" />
                 <StackPane fx:id="silLicenseBox" styleClass="box-button-about">
                     <children>
-                        <Label styleClass="label-about-top-left" text="%communityIcons" StackPane.alignment="TOP_LEFT">
+                        <Label styleClass="label-about" text="%communityIcons" StackPane.alignment="TOP_LEFT">
                             <StackPane.margin>
                                 <Insets left="10.0" top="0.0" />
                             </StackPane.margin>
                         </Label>
-                        <Button fx:id="silLicenseButton" onAction="#openSilPopUp" styleClass="btn-about" text="%showLicense" />
-                        <Label styleClass="label-about-bottom-left" text="%silOpenLicense" StackPane.alignment="BOTTOM_LEFT">
+                        <Button fx:id="silLicenseButton" onAction="#openSilPopUp" styleClass="button-about" text="%showLicense" />
+                        <Label styleClass="label-about" text="%silOpenLicense" StackPane.alignment="BOTTOM_LEFT">
                             <StackPane.margin>
                                 <Insets bottom="5.0" left="10.0" />
                             </StackPane.margin>
                         </Label>
                     </children>
                 </StackPane>
-                <Label styleClass="label-about-bold" text="%attributionLicensed" />
-                <Label styleClass="label-about-bold" text="%thirdPartyComponents" />
+                <Label styleClass="label-title-box" text="%attributionLicensed" />
+                <Label styleClass="label-title-box" text="%thirdPartyComponents" />
                 <Label text="%materialDesignCommunity" />
                 <StackPane fx:id="attributionLicenseBox" styleClass="box-button-about">
                     <children>
-                        <Label styleClass="label-about-top-left" text="%googleMaterialDesign" StackPane.alignment="TOP_LEFT">
+                        <Label styleClass="label-about" text="%googleMaterialDesign" StackPane.alignment="TOP_LEFT">
                             <StackPane.margin>
                                 <Insets left="10.0" top="0.0" />
                             </StackPane.margin>
                         </Label>
-                        <Button fx:id="attributionLicenseButton" onAction="#openAttributionLicensePopUp" styleClass="btn-about" text="%showLicense" />
-                        <Label styleClass="label-about-bottom-left" text="%attributionLicense" StackPane.alignment="BOTTOM_LEFT">
+                        <Button fx:id="attributionLicenseButton" onAction="#openAttributionLicensePopUp" styleClass="button-about" text="%showLicense" />
+                        <Label styleClass="label-about" text="%attributionLicense" StackPane.alignment="BOTTOM_LEFT">
                             <StackPane.margin>
                                 <Insets bottom="5.0" left="10.0" />
                             </StackPane.margin>
                         </Label>
                     </children>
                 </StackPane>
-                <Label styleClass="label-about-bold" text="%lgplLicensed" />
-                <Label styleClass="label-about-bold" text="%thirdPartyComponents" />
+                <Label styleClass="label-title-box" text="%lgplLicensed" />
+                <Label styleClass="label-title-box" text="%thirdPartyComponents" />
                 <StackPane fx:id="lgplLicenseBox" styleClass="box-button-about">
                     <children>
-                        <Button fx:id="lgplLicenseButton" onAction="#openLGPLLicensePopUp" styleClass="btn-about" text="%showLicense" />
-                        <Label styleClass="label-about-bottom-left" text="%lesserGeneralPublicLicense" StackPane.alignment="BOTTOM_LEFT">
+                        <Button fx:id="lgplLicenseButton" onAction="#openLGPLLicensePopUp" styleClass="button-about" text="%showLicense" />
+                        <Label styleClass="label-about" text="%lesserGeneralPublicLicense" StackPane.alignment="BOTTOM_LEFT">
                             <StackPane.margin>
                                 <Insets bottom="5.0" left="10.0" />
                             </StackPane.margin>
                         </Label>
                     </children>
                 </StackPane>
-                <Label styleClass="label-about-bold" text="%creativeCommonsLicensed" />
-                <Label styleClass="label-about-bold" text="%thirdPartyComponents" />
+                <Label styleClass="label-title-box" text="%creativeCommonsLicensed" />
+                <Label styleClass="label-title-box" text="%thirdPartyComponents" />
                 <StackPane fx:id="creativeLicenseBox" styleClass="box-button-about">
                     <children>
-                        <Button fx:id="creativeLicenseButton" onAction="#openCreativeLicensePopUp" styleClass="btn-about" text="%showLicense" />
-                        <Label styleClass="label-about-bottom-left" text="%creativeCommons2" StackPane.alignment="BOTTOM_LEFT">
+                        <Button fx:id="creativeLicenseButton" onAction="#openCreativeLicensePopUp" styleClass="button-about" text="%showLicense" />
+                        <Label styleClass="label-about" text="%creativeCommons2" StackPane.alignment="BOTTOM_LEFT">
+                            <StackPane.margin>
+                                <Insets bottom="5.0" left="10.0" />
+                            </StackPane.margin>
+                        </Label>
+                    </children>
+                </StackPane>
+                <Label styleClass="label-title-box" text="%innoLicense" />
+                <Label styleClass="label-title-box" text="%thirdPartyComponents" />
+                <StackPane fx:id="innoBox" styleClass="box-button-about">
+                    <children>
+                        <Button fx:id="innoLicenseButton" onAction="#openInnoLicensePopUp" styleClass="button-about" text="%showLicense" />
+                        <Label styleClass="label-about" text="%innoUrl" StackPane.alignment="BOTTOM_LEFT">
+                            <StackPane.margin>
+                                <Insets bottom="5.0" left="10.0" />
+                            </StackPane.margin>
+                        </Label>
+                    </children>
+                </StackPane>
+                <Label styleClass="label-title-box" text="%launch4jLicense" />
+                <Label styleClass="label-title-box" text="%thirdPartyComponents" />
+                <StackPane fx:id="launch4jBox" styleClass="box-button-about">
+                    <children>
+                        <Button fx:id="launch4jLicenseButton" onAction="#openLaunch4jLicensePopUp" styleClass="button-about" text="%showLicense" />
+                        <Label styleClass="label-about" text="%launch4jUrl" StackPane.alignment="BOTTOM_LEFT">
+                            <StackPane.margin>
+                                <Insets bottom="5.0" left="10.0" />
+                            </StackPane.margin>
+                        </Label>
+                    </children>
+                </StackPane>
+                <Label styleClass="label-title-box" text="%sourceSansLicense" />
+                <Label styleClass="label-title-box" text="%thirdPartyComponents" />
+                <StackPane fx:id="sourceSansBox" styleClass="box-button-about">
+                    <children>
+                        <Button fx:id="sourceSansButton" onAction="#openSilPopUp" styleClass="button-about" text="%showLicense" />
+                        <Label styleClass="label-about" text="%sourceSansUrl" StackPane.alignment="BOTTOM_LEFT">
                             <StackPane.margin>
                                 <Insets bottom="5.0" left="10.0" />
                             </StackPane.margin>

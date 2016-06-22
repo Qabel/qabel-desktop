@@ -1,5 +1,4 @@
-
-.btn-about {
+.button-about {
     -fx-border-color:none;
     -fx-pref-width:500px;
     -fx-pref-height:60px;
@@ -23,64 +22,29 @@
     -fx-font-size: 11;
 }
 
-.hyperlink-box-about:visited .text {
+.hyperlink-box-about:hover .text, .hyperlink-box-about:pressed .text, hyperlink-box-about:visited .text {
     -fx-fill: #222222;
 }
 
-.hyperlink-box-about:hover .text {
-    -fx-fill: #222222;
-}
-
-.hyperlink-box-about:pressed .text {
-    -fx-fill: #222222;
-}
-
-.linkcontainer-about{
+.linkcontainer-about {
     -fx-alignment: center;
     -fx-padding: 10px 10px 10px 10px;
     -fx-min-width: 586px;
     -fx-min-height: 529px;
-
-
 }
 
-.img-logo-about{
+.img-logo-about {
     -fx-fit-height:50px;
     -fx-fit-width:200px;
 }
 
-.scrollPaneAbout {
-
-}
-
-.label-about-top-left {
-    -fx-alignment: TOP_LEFT;
-}
-
-.label-about-bottom-left {
-    -fx-alignment: BOTTOM_LEFT;
-}
-
-.label-about-top-left  .text {
+.label-about .text {
     -fx-fill: #222222;
     -fx-font-size: 11;
 }
 
-.label-about-bottom-left .text {
-     -fx-fill: #222222;
-     -fx-font-size: 11;
-}
-
-.label-about-bold {
+.label-title-box {
     -fx-font-weight: bold;
-}
-
-.label-qabel-letter {
-    -fx-background-repeat: no-repeat;
-    -fx-background-image: url('/img/label-logo.png');
-    -fx-background-position: left;
-    -fx-pref-height: 35px;
-    -fx-pref-width: 110px;
 }
 
 .box-button-about {
@@ -105,16 +69,20 @@ VBox.spaced {
     -fx-spacing: 0.35em;
 }
 
-.stack-pane-label-about {
-    -fx-pref-width: 500px;
-}
-
-.label-picture{
+.label-with-logo {
     -fx-pref-width:350px;
     -fx-alignment:CENTER;
 }
 
-.label-picture-left{
+.letter-logo {
+    -fx-background-repeat: no-repeat;
+    -fx-background-image: url('/img/label-logo.png');
+    -fx-background-position: left;
+    -fx-pref-height: 35px;
+    -fx-pref-width: 110px;
+}
+
+.label-logo {
     -fx-pref-width: 250px;
 }
 

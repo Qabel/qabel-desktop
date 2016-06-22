@@ -93,6 +93,54 @@ public class AboutPopupController extends AbstractController implements Initiali
         showPopup();
     }
 
+    public void showEuropeanLicensePopup() {
+        setStyleTextArea();
+        setTextAreaContent(aboutFilesContent.europeanLicenseContent);
+        showPopup();
+    }
+
+    public void showBouncyLicensePopup() {
+        setStyleTextArea();
+        setTextAreaContent(aboutFilesContent.bouncyLicenseContent);
+        showPopup();
+    }
+
+    public void showEclipseLicensePopup() {
+        setStyleTextArea();
+        setTextAreaContent(aboutFilesContent.eclipseLicenseContent);
+        showPopup();
+    }
+
+    public void showJsonLicensePopup() {
+        setStyleTextArea();
+        setTextAreaContent(aboutFilesContent.jsonLicenseContent);
+        showPopup();
+    }
+
+    public void showBSDLicensePopup() {
+        setStyleTextArea();
+        setTextAreaContent(aboutFilesContent.bsdLicenseContent);
+        showPopup();
+    }
+
+    public void showMITLicensePopup() {
+        setStyleTextArea();
+        setTextAreaContent(aboutFilesContent.mitLicenseContent);
+        showPopup();
+    }
+
+    public void showInnoLicensePopup() {
+        setStyleTextArea();
+        setTextAreaContent(aboutFilesContent.innoLicenseContent);
+        showPopup();
+    }
+
+    public void showLaunch4JLicensePopup() {
+        setStyleTextArea();
+        setTextAreaContent(aboutFilesContent.launch4jLicenseContent);
+        showPopup();
+    }
+
     public void setTextAreaContent (String content) {
         textAreaPopup.setText(content);
     }
