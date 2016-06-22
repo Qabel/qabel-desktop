@@ -1,5 +1,8 @@
 {
     "compile": {
+        ":jfxrt": {
+            "project": true
+        },
         "com.airhacks:afterburner.fx": {
             "locked": "1.7.0",
             "requested": "1.7.+"
@@ -16,10 +19,6 @@
             "locked": "2.6.2",
             "requested": "2.+"
         },
-        "com.madgag.spongycastle:prov": {
-            "locked": "1.53.0.0",
-            "requested": "1.53.0.0"
-        },
         "commons-cli:commons-cli": {
             "locked": "1.2",
             "requested": "1.2"
@@ -35,6 +34,9 @@
         "log4j:log4j": {
             "locked": "1.2.16",
             "requested": "1.2.+"
+        },
+        "null:jfxrt": {
+            "project": true
         },
         "org.apache.commons:commons-lang3": {
             "locked": "3.4",
@@ -82,6 +84,9 @@
         }
     },
     "default": {
+        ":jfxrt": {
+            "project": true
+        },
         "com.airhacks:afterburner.fx": {
             "locked": "1.7.0",
             "requested": "1.7.+"
@@ -98,10 +103,6 @@
             "locked": "2.6.2",
             "requested": "2.+"
         },
-        "com.madgag.spongycastle:prov": {
-            "locked": "1.53.0.0",
-            "requested": "1.53.0.0"
-        },
         "commons-cli:commons-cli": {
             "locked": "1.2",
             "requested": "1.2"
@@ -117,6 +118,9 @@
         "log4j:log4j": {
             "locked": "1.2.16",
             "requested": "1.2.+"
+        },
+        "null:jfxrt": {
+            "project": true
         },
         "org.apache.commons:commons-lang3": {
             "locked": "3.4",
@@ -164,7 +168,10 @@
         }
     },
     "guiTestCompile": {
-        ":qabel-box-test-0.1": {
+        ":jfxrt": {
+            "project": true
+        },
+        ":qabel-box-test-0.7.0": {
             "project": true
         },
         "com.airhacks:afterburner.fx": {
@@ -182,10 +189,6 @@
         "com.google.code.gson:gson": {
             "locked": "2.6.2",
             "requested": "2.+"
-        },
-        "com.madgag.spongycastle:prov": {
-            "locked": "1.53.0.0",
-            "requested": "1.53.0.0"
         },
         "com.tngtech.java:junit-dataprovider": {
             "locked": "1.10.4",
@@ -219,7 +222,10 @@
             "locked": "1.2.16",
             "requested": "1.2.+"
         },
-        "null:qabel-box-test-0.1": {
+        "null:jfxrt": {
+            "project": true
+        },
+        "null:qabel-box-test-0.7.0": {
             "project": true
         },
         "org.apache.commons:commons-lang3": {
@@ -280,7 +286,10 @@
         }
     },
     "guiTestRuntime": {
-        ":qabel-box-test-0.1": {
+        ":jfxrt": {
+            "project": true
+        },
+        ":qabel-box-test-0.7.0": {
             "project": true
         },
         "com.airhacks:afterburner.fx": {
@@ -298,10 +307,6 @@
         "com.google.code.gson:gson": {
             "locked": "2.6.2",
             "requested": "2.+"
-        },
-        "com.madgag.spongycastle:prov": {
-            "locked": "1.53.0.0",
-            "requested": "1.53.0.0"
         },
         "com.tngtech.java:junit-dataprovider": {
             "locked": "1.10.4",
@@ -335,7 +340,10 @@
             "locked": "1.2.16",
             "requested": "1.2.+"
         },
-        "null:qabel-box-test-0.1": {
+        "null:jfxrt": {
+            "project": true
+        },
+        "null:qabel-box-test-0.7.0": {
             "project": true
         },
         "org.apache.commons:commons-lang3": {
@@ -396,6 +404,9 @@
         }
     },
     "runtime": {
+        ":jfxrt": {
+            "project": true
+        },
         "com.airhacks:afterburner.fx": {
             "locked": "1.7.0",
             "requested": "1.7.+"
@@ -412,10 +423,6 @@
             "locked": "2.7",
             "requested": "2.+"
         },
-        "com.madgag.spongycastle:prov": {
-            "locked": "1.53.0.0",
-            "requested": "1.53.0.0"
-        },
         "commons-cli:commons-cli": {
             "locked": "1.2",
             "requested": "1.2"
@@ -431,6 +438,9 @@
         "log4j:log4j": {
             "locked": "1.2.17",
             "requested": "1.2.+"
+        },
+        "null:jfxrt": {
+            "project": true
         },
         "org.apache.commons:commons-lang3": {
             "locked": "3.4",
@@ -478,7 +488,10 @@
         }
     },
     "testCompile": {
-        ":qabel-box-test-0.1": {
+        ":jfxrt": {
+            "project": true
+        },
+        ":qabel-box-test-0.7.0": {
             "project": true
         },
         "com.airhacks:afterburner.fx": {
@@ -496,10 +509,6 @@
         "com.google.code.gson:gson": {
             "locked": "2.6.2",
             "requested": "2.+"
-        },
-        "com.madgag.spongycastle:prov": {
-            "locked": "1.53.0.0",
-            "requested": "1.53.0.0"
         },
         "com.tngtech.java:junit-dataprovider": {
             "locked": "1.10.4",
@@ -533,7 +542,10 @@
             "locked": "1.2.16",
             "requested": "1.2.+"
         },
-        "null:qabel-box-test-0.1": {
+        "null:jfxrt": {
+            "project": true
+        },
+        "null:qabel-box-test-0.7.0": {
             "project": true
         },
         "org.apache.commons:commons-lang3": {
@@ -594,7 +606,10 @@
         }
     },
     "testRuntime": {
-        ":qabel-box-test-0.1": {
+        ":jfxrt": {
+            "project": true
+        },
+        ":qabel-box-test-0.7.0": {
             "project": true
         },
         "com.airhacks:afterburner.fx": {
@@ -612,10 +627,6 @@
         "com.google.code.gson:gson": {
             "locked": "2.6.2",
             "requested": "2.+"
-        },
-        "com.madgag.spongycastle:prov": {
-            "locked": "1.53.0.0",
-            "requested": "1.53.0.0"
         },
         "com.tngtech.java:junit-dataprovider": {
             "locked": "1.10.4",
@@ -649,7 +660,10 @@
             "locked": "1.2.16",
             "requested": "1.2.+"
         },
-        "null:qabel-box-test-0.1": {
+        "null:jfxrt": {
+            "project": true
+        },
+        "null:qabel-box-test-0.7.0": {
             "project": true
         },
         "org.apache.commons:commons-lang3": {

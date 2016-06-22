@@ -1,7 +1,10 @@
 plugins {
     id "com.github.hierynomus.license" version "0.12.1"     // Apache V2 https://github.com/hierynomus/license-gradle-plugin/blob/master/LICENSE
     id 'nebula.dependency-lock' version '4.2.0'             // Apache V2 https://github.com/nebula-plugins/gradle-dependency-lock-plugin/blob/master/LICENSE
+    id "org.sonarqube" version "2.0.1"
 }
+
+
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'eclipse'
@@ -10,6 +13,7 @@ apply plugin: 'c'
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
 
+sourceCompatibility = 1.8
 mainClassName = "de.qabel.desktop.DesktopClient"
 version = hasProperty('release') ? release : 'dev'
 new File('dist/resources/version').write version.toString()
@@ -18,10 +22,10 @@ def platform = "${System.properties['os.name'].toLowerCase()}_${System.propertie
 repositories {
     mavenCentral()
     jcenter()
-    maven { url "https://mvnrepository.com/artifact" }
     maven { url "https://jitpack.io" }
     flatDir {
         dir 'libs'
+        dir System.getProperty('java.home') + '/lib/ext'        // to please sonarqube
     }
 }
 
@@ -80,6 +84,7 @@ jar.doFirst{
 }
 
 dependencies {
+    compile ':jfxrt:'                                        // built-in javafx to please sonarqube
     testCompile 'junit:junit:4.+'                            // Eclipse Public License - v 1.0 https://github.com/junit-team/junit/blob/master/LICENSE-junit.txt
     testCompile 'org.meanbean:meanbean:2.+'                  // Apache License V2.0 http://meanbean.sourceforge.net
     testCompile 'org.testfx:testfx-core:4.+'                 // EUPL 1.1 https://github.com/TestFX/TestFX/blob/master/LICENSE.txt
@@ -106,12 +111,11 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.+'
 
     compile 'org.xerial:sqlite-jdbc:3.8.+'                   //Apache License https://bitbucket.org/xerial/sqlite-jdbc
-    compile 'com.madgag.spongycastle:prov:1.53.0.0'         //Bounty Castle License http://www.bouncycastle.org/licence.html
 
     compile 'com.github.zafarkhaja:java-semver:0.9.+'        // MIT https://github.com/zafarkhaja/jsemver/blob/master/LICENSE
 
 
-    testCompile name: 'qabel-box-test-0.1'
+    testCompile name: 'qabel-box-test-0.7.0'
     testCompile 'info.cukes:cucumber-java:1.2.+'
     testCompile 'info.cukes:cucumber-junit:1.2.+'
     testCompile 'com.tngtech.java:junit-dataprovider:1.10.+'    // Apache v2
@@ -199,10 +203,6 @@ downloadLicenses {
             ':afterburner:' : apacheTwo
     ]
 
-    excludeDependencies = [
-            ':qabel-core-0.1:'
-    ]
-
     dependencyConfiguration = 'testCompile'
 }
 task distLicenses(type: Copy) {
@@ -217,3 +217,4 @@ jar.dependsOn(distLicenses)
 task lock() {}
 lock.dependsOn(saveLock)
 saveLock.dependsOn(updateLock)
+
