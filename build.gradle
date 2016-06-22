@@ -13,7 +13,6 @@ apply plugin: 'c'
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
 
-sourceCompatibility = 1.8
 mainClassName = "de.qabel.desktop.DesktopClient"
 version = hasProperty('release') ? release : 'dev'
 new File('dist/resources/version').write version.toString()

@@ -172,7 +172,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
     protected Node waitForNode(String query) {
         Node[] nodes = new Node[1];
         waitUntil(() -> {
-            Optional<Node> node = robot.lookup(query).tryQueryFirst();
+            Optional<Node> node = robot.lookup(query).tryQuery();
             boolean present = node.isPresent();
             if (present) {
                 nodes[0] = node.get();
