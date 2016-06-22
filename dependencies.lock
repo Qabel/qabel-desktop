@@ -1,5 +1,8 @@
 {
     "compile": {
+        ":qabel-box-0.1": {
+            "project": true
+        },
         ":qabel-core-0.1": {
             "project": true
         },
@@ -35,6 +38,9 @@
             "locked": "1.2.16",
             "requested": "1.2.+"
         },
+        "null:qabel-box-0.1": {
+            "project": true
+        },
         "null:qabel-core-0.1": {
             "project": true
         },
@@ -65,6 +71,10 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4",
             "requested": "2.4.+"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.0.2-1",
+            "requested": "1.+"
         },
         "org.json:json": {
             "locked": "20090211",
@@ -84,6 +94,9 @@
         }
     },
     "default": {
+        ":qabel-box-0.1": {
+            "project": true
+        },
         ":qabel-core-0.1": {
             "project": true
         },
@@ -119,6 +132,9 @@
             "locked": "1.2.16",
             "requested": "1.2.+"
         },
+        "null:qabel-box-0.1": {
+            "project": true
+        },
         "null:qabel-core-0.1": {
             "project": true
         },
@@ -150,6 +166,10 @@
             "locked": "2.4",
             "requested": "2.4.+"
         },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.0.2-1",
+            "requested": "1.+"
+        },
         "org.json:json": {
             "locked": "20090211",
             "requested": "20090211"
@@ -168,6 +188,12 @@
         }
     },
     "guiTestCompile": {
+        ":qabel-box-0.1": {
+            "project": true
+        },
+        ":qabel-box-test-0.1": {
+            "project": true
+        },
         ":qabel-core-0.1": {
             "project": true
         },
@@ -219,6 +245,12 @@
             "locked": "1.2.16",
             "requested": "1.2.+"
         },
+        "null:qabel-box-0.1": {
+            "project": true
+        },
+        "null:qabel-box-test-0.1": {
+            "project": true
+        },
         "null:qabel-core-0.1": {
             "project": true
         },
@@ -249,6 +281,10 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4",
             "requested": "2.4.+"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.0.2-1",
+            "requested": "1.+"
         },
         "org.json:json": {
             "locked": "20090211",
@@ -280,6 +316,12 @@
         }
     },
     "guiTestRuntime": {
+        ":qabel-box-0.1": {
+            "project": true
+        },
+        ":qabel-box-test-0.1": {
+            "project": true
+        },
         ":qabel-core-0.1": {
             "project": true
         },
@@ -331,6 +373,12 @@
             "locked": "1.2.16",
             "requested": "1.2.+"
         },
+        "null:qabel-box-0.1": {
+            "project": true
+        },
+        "null:qabel-box-test-0.1": {
+            "project": true
+        },
         "null:qabel-core-0.1": {
             "project": true
         },
@@ -361,6 +409,10 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4",
             "requested": "2.4.+"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.0.2-1",
+            "requested": "1.+"
         },
         "org.json:json": {
             "locked": "20090211",
@@ -392,6 +444,9 @@
         }
     },
     "runtime": {
+        ":qabel-box-0.1": {
+            "project": true
+        },
         ":qabel-core-0.1": {
             "project": true
         },
@@ -404,7 +459,7 @@
             "requested": "0.9.+"
         },
         "com.google.code.gson:gson": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "2.+"
         },
         "com.madgag.spongycastle:prov": {
@@ -426,6 +481,9 @@
         "log4j:log4j": {
             "locked": "1.2.17",
             "requested": "1.2.+"
+        },
+        "null:qabel-box-0.1": {
+            "project": true
         },
         "null:qabel-core-0.1": {
             "project": true
@@ -458,6 +516,10 @@
             "locked": "2.4.1",
             "requested": "2.4.+"
         },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.0.2-1",
+            "requested": "1.+"
+        },
         "org.json:json": {
             "locked": "20090211",
             "requested": "20090211"
@@ -476,6 +538,12 @@
         }
     },
     "testCompile": {
+        ":qabel-box-0.1": {
+            "project": true
+        },
+        ":qabel-box-test-0.1": {
+            "project": true
+        },
         ":qabel-core-0.1": {
             "project": true
         },
@@ -527,6 +595,12 @@
             "locked": "1.2.16",
             "requested": "1.2.+"
         },
+        "null:qabel-box-0.1": {
+            "project": true
+        },
+        "null:qabel-box-test-0.1": {
+            "project": true
+        },
         "null:qabel-core-0.1": {
             "project": true
         },
@@ -557,6 +631,10 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4",
             "requested": "2.4.+"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.0.2-1",
+            "requested": "1.+"
         },
         "org.json:json": {
             "locked": "20090211",
@@ -588,6 +666,12 @@
         }
     },
     "testRuntime": {
+        ":qabel-box-0.1": {
+            "project": true
+        },
+        ":qabel-box-test-0.1": {
+            "project": true
+        },
         ":qabel-core-0.1": {
             "project": true
         },
@@ -639,6 +723,12 @@
             "locked": "1.2.16",
             "requested": "1.2.+"
         },
+        "null:qabel-box-0.1": {
+            "project": true
+        },
+        "null:qabel-box-test-0.1": {
+            "project": true
+        },
         "null:qabel-core-0.1": {
             "project": true
         },
@@ -669,6 +759,10 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4",
             "requested": "2.4.+"
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.0.2-1",
+            "requested": "1.+"
         },
         "org.json:json": {
             "locked": "20090211",

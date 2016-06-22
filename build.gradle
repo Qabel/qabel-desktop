@@ -18,6 +18,7 @@ def platform = "${System.properties['os.name'].toLowerCase()}_${System.propertie
 repositories {
     mavenCentral()
     jcenter()
+    maven { url "https://mvnrepository.com/artifact" }
     flatDir {
         dir 'libs'
     }
@@ -108,6 +109,8 @@ dependencies {
     compile 'com.madgag.spongycastle:prov:1.53.0.0'         //Bounty Castle License http://www.bouncycastle.org/licence.html
 
     compile 'com.github.zafarkhaja:java-semver:0.9.+'        // MIT https://github.com/zafarkhaja/jsemver/blob/master/LICENSE
+
+    compile 'org.jetbrains.kotlin:kotlin-stdlib:1.+'
 
     testCompile name: 'qabel-box-test-0.1'
     testCompile 'info.cukes:cucumber-java:1.2.+'
