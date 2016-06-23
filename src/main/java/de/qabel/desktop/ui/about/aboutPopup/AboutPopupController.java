@@ -30,139 +30,112 @@ public class AboutPopupController extends AbstractController implements Initiali
         hidePopup();
     }
 
-    public void showQAPLPopup(){
-        setStyleTextArea();
-        setTextAreaContent(aboutFilesContent.QAPLContent);
-        showPopup();
+    public void showQAPLPopup() {
+        showPopup(aboutFilesContent.QAPLContent);
 
     }
 
     public void showThanksPopup() {
-        setStyleTextAreaCenter();
-        setTextAreaContent(aboutFilesContent.thanksFileContent);
-        showPopup();
+        showPopupTextAlignmentCenter(aboutFilesContent.thanksFileContent);
     }
 
     public void showImprintPopup() {
-        setStyleTextArea();
-        setTextAreaContent(aboutFilesContent.imprintContent);
-        showPopup();
+        showPopup(aboutFilesContent.imprintContent);
 
     }
 
     public void showTermsOfServicePopup() {
-        setStyleTextArea();
-        setTextAreaContent(aboutFilesContent.termsOfServiceContent);
-        showPopup();
-
+        showPopup(aboutFilesContent.termsOfServiceContent);
     }
 
     public void showPrivacyNotesPopup() {
-        setStyleTextArea();
-        setTextAreaContent(aboutFilesContent.privateNotesContent);
-        showPopup();
+        showPopup(aboutFilesContent.privateNotesContent);
     }
 
     public void showApacheLicensePopup() {
-        setStyleTextArea();
-        setTextAreaContent(aboutFilesContent.apacheLicenseContent);
-        showPopup();
+        showPopup(aboutFilesContent.apacheLicenseContent);
     }
 
-    public void showSilLicensePopup () {
-        setStyleTextArea();
-        setTextAreaContent(aboutFilesContent.silLicenseContent);
-        showPopup();
+    public void showSilLicensePopup() {
+        showPopup(aboutFilesContent.silLicenseContent);
     }
 
-    public void showLgplLicensePopup () {
-        setStyleTextArea();
-        setTextAreaContent(aboutFilesContent.lgplLicenseContent);
-        showPopup();
+    public void showLgplLicensePopup() {
+        showPopup(aboutFilesContent.lgplLicenseContent);
     }
 
     public void showCreativeLicensePopup() {
-        setStyleTextArea();
-        setTextAreaContent(aboutFilesContent.creativeLicenseContent);
-        showPopup();
+        showPopup(aboutFilesContent.creativeLicenseContent);
     }
 
     public void showAttributionLicensePopup() {
-        setStyleTextArea();
-        setTextAreaContent(aboutFilesContent.attributionLicenseContent);
-        showPopup();
+        showPopup(aboutFilesContent.attributionLicenseContent);
+
     }
 
     public void showEuropeanLicensePopup() {
-        setStyleTextArea();
-        setTextAreaContent(aboutFilesContent.europeanLicenseContent);
-        showPopup();
+        showPopup(aboutFilesContent.europeanLicenseContent);
     }
 
     public void showBouncyLicensePopup() {
-        setStyleTextArea();
-        setTextAreaContent(aboutFilesContent.bouncyLicenseContent);
-        showPopup();
+        showPopup(aboutFilesContent.bouncyLicenseContent);
     }
 
     public void showEclipseLicensePopup() {
-        setStyleTextArea();
-        setTextAreaContent(aboutFilesContent.eclipseLicenseContent);
-        showPopup();
+        showPopup(aboutFilesContent.eclipseLicenseContent);
     }
 
     public void showJsonLicensePopup() {
-        setStyleTextArea();
-        setTextAreaContent(aboutFilesContent.jsonLicenseContent);
-        showPopup();
+        showPopup(aboutFilesContent.jsonLicenseContent);
     }
 
     public void showBSDLicensePopup() {
-        setStyleTextArea();
-        setTextAreaContent(aboutFilesContent.bsdLicenseContent);
-        showPopup();
+        showPopup(aboutFilesContent.bsdLicenseContent);
+
     }
 
     public void showMITLicensePopup() {
-        setStyleTextArea();
-        setTextAreaContent(aboutFilesContent.mitLicenseContent);
-        showPopup();
+        showPopup(aboutFilesContent.mitLicenseContent);
     }
 
     public void showInnoLicensePopup() {
-        setStyleTextArea();
-        setTextAreaContent(aboutFilesContent.innoLicenseContent);
-        showPopup();
+        showPopup(aboutFilesContent.innoLicenseContent);
     }
 
     public void showLaunch4JLicensePopup() {
-        setStyleTextArea();
-        setTextAreaContent(aboutFilesContent.launch4jLicenseContent);
-        showPopup();
+        showPopup(aboutFilesContent.launch4jLicenseContent);
     }
 
-    public void setTextAreaContent (String content) {
+    public void setTextAreaContent(String content) {
         textAreaPopup.setText(content);
     }
 
-    public String getTextAreaContent (){
+    public String getTextAreaContent() {
         return textAreaPopup.getText();
     }
 
-    public void hidePopup() {
+    private void hidePopup() {
         aboutPopup.setVisible(false);
     }
 
-    public void showPopup() {
+    public void showPopup(String content) {
+        setStyleTextArea();
+        setTextAreaContent(content);
         aboutPopup.setVisible(true);
     }
 
-    private void setStyleTextArea(){
+    private void showPopupTextAlignmentCenter(String content) {
+        setStyleTextAreaCenter();
+        setTextAreaContent(content);
+        aboutPopup.setVisible(true);
+    }
+
+    private void setStyleTextArea() {
         textAreaPopup.getStyleClass().clear();
         textAreaPopup.getStyleClass().add("text-area-popup");
     }
 
-    private void setStyleTextAreaCenter(){
+    private void setStyleTextAreaCenter() {
         textAreaPopup.getStyleClass().clear();
         textAreaPopup.getStyleClass().add("align-text-center");
     }

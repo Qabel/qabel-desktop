@@ -129,8 +129,7 @@ public class AboutController extends AbstractController implements Initializable
                 dependencies.add(dependencyName);
             }
 
-            String title = getString(resourceBundle, "licensedComponents", licenseName);
-            linkContainer.getChildren().add(createLabeledLink(title, licenseLink, dependencies));
+            linkContainer.getChildren().add(createLabeledLink(licenseName, licenseLink, dependencies));
         }
     }
 
@@ -180,16 +179,16 @@ public class AboutController extends AbstractController implements Initializable
         if (aboutFilesContent.lgplLicenseContent.isEmpty()) {
             lgplLicenseBox.setDisable(true);
         }
-        if(aboutFilesContent.privateNotesContent.isEmpty()) {
+        if (aboutFilesContent.privateNotesContent.isEmpty()) {
             privacyNotesBox.setDisable(true);
         }
-        if(aboutFilesContent.termsOfServiceContent.isEmpty()) {
+        if (aboutFilesContent.termsOfServiceContent.isEmpty()) {
             termsOfServiceBox.setDisable(true);
         }
-        if (aboutFilesContent.innoLicenseContent.isEmpty()){
-           innoBox.setDisable(true);
+        if (aboutFilesContent.innoLicenseContent.isEmpty()) {
+            innoBox.setDisable(true);
         }
-        if(aboutFilesContent.launch4jLicenseContent.isEmpty()){
+        if (aboutFilesContent.launch4jLicenseContent.isEmpty()) {
             launch4jBox.setDisable(true);
         }
 
@@ -201,12 +200,12 @@ public class AboutController extends AbstractController implements Initializable
         popupController = (AboutPopupController) popupView.getPresenter();
     }
 
-    private VBox createLabeledLink(String labelText, String url, List<String> comments) {
+    private VBox createLabeledLink(String licenseName, String url, List<String> comments) {
         VBox vbox = new VBox();
         vbox.setAlignment(Pos.CENTER);
         vbox.setSpacing(0.5);
 
-        Label label = new Label(labelText);
+        Label label = new Label(getString(resourceBundle, "licensedComponents", licenseName));
         label.getStyleClass().add("label-title-box");
         vbox.getChildren().add(label);
 
@@ -218,10 +217,10 @@ public class AboutController extends AbstractController implements Initializable
         StackPane stackPane = new StackPane();
         Hyperlink hyperlink = new Hyperlink(url);
         stackPane.setAlignment(Pos.BOTTOM_LEFT);
-        stackPane.setMargin(hyperlink, new Insets(10,0,10,10));
+        stackPane.setMargin(hyperlink, new Insets(10, 0, 10, 10));
         hyperlink.getStyleClass().add("hyperlink-box-about");
 
-        StringTokenizer name = new StringTokenizer(labelText);
+        StringTokenizer name = new StringTokenizer(licenseName);
         String firstName = name.nextToken();
         Button buttonLicense = setActionButton(firstName);
 
@@ -234,42 +233,42 @@ public class AboutController extends AbstractController implements Initializable
         return vbox;
     }
 
-    private Boolean disableVBox(String file){
+    private Boolean disableVBox(String licenseName) {
         Boolean disableVbox = false;
 
-        switch (file){
+        switch (licenseName) {
             case "European":
-                if (aboutFilesContent.europeanLicenseContent.isEmpty()){
+                if (aboutFilesContent.europeanLicenseContent.isEmpty()) {
                     disableVbox = true;
                 }
                 break;
             case "Bouncy":
-                if (aboutFilesContent.bouncyLicenseContent.isEmpty()){
+                if (aboutFilesContent.bouncyLicenseContent.isEmpty()) {
                     disableVbox = true;
                 }
                 break;
             case "Eclipse":
-                if (aboutFilesContent.eclipseLicenseContent.isEmpty()){
+                if (aboutFilesContent.eclipseLicenseContent.isEmpty()) {
                     disableVbox = true;
                 }
                 break;
             case "Apache":
-                if (aboutFilesContent.apacheLicenseContent.isEmpty()){
+                if (aboutFilesContent.apacheLicenseContent.isEmpty()) {
                     disableVbox = true;
                 }
                 break;
             case "provided":
-                if (aboutFilesContent.jsonLicenseContent.isEmpty()){
+                if (aboutFilesContent.jsonLicenseContent.isEmpty()) {
                     disableVbox = true;
                 }
                 break;
             case "MIT":
-                if (aboutFilesContent.mitLicenseContent.isEmpty()){
+                if (aboutFilesContent.mitLicenseContent.isEmpty()) {
                     disableVbox = true;
                 }
                 break;
             case "BSD":
-                if (aboutFilesContent.bsdLicenseContent.isEmpty()){
+                if (aboutFilesContent.bsdLicenseContent.isEmpty()) {
                     disableVbox = true;
                 }
                 break;
@@ -281,50 +280,50 @@ public class AboutController extends AbstractController implements Initializable
         return disableVbox;
     }
 
-    private Button setActionButton(String file){
+    private Button setActionButton(String licenseName) {
         Button button = new Button();
 
         button.setText("Show License");
         button.getStyleClass().add("button-about");
 
-        switch (file){
+        switch (licenseName) {
             case "European":
-                button.onActionProperty().setValue(event ->{
+                button.onActionProperty().setValue(event -> {
                     openEuropeanLicensePopUp();
                 });
                 break;
             case "Apache":
-                button.onActionProperty().setValue(event ->{
+                button.onActionProperty().setValue(event -> {
                     openApacheLicensePopUp();
                 });
                 break;
             case "Bouncy":
-                button.onActionProperty().setValue(event ->{
+                button.onActionProperty().setValue(event -> {
                     openBouncyLicensePopUp();
                 });
                 break;
             case "Eclipse":
-                button.onActionProperty().setValue(event ->{
+                button.onActionProperty().setValue(event -> {
                     openEclipseLicensePopUp();
                 });
                 break;
             case "provided":
-                button.onActionProperty().setValue(event ->{
+                button.onActionProperty().setValue(event -> {
                     openJsonLicensePopUp();
                 });
                 break;
             case "MIT":
-                button.onActionProperty().setValue(event ->{
+                button.onActionProperty().setValue(event -> {
                     openMITLicensePopUp();
                 });
                 break;
             case "BSD":
-                button.onActionProperty().setValue(event ->{
-                   openBSDLicensePopUp();
+                button.onActionProperty().setValue(event -> {
+                    openBSDLicensePopUp();
                 });
                 break;
             default:
-                alert("The license was not found", new Exception("Legal Exception"));
+                alert("The license was not found" + licenseName, new Exception("Legal Exception"));
                 break;
         }
 

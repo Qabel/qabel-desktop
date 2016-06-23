@@ -1,11 +1,11 @@
 .button-about {
-    -fx-border-color:none;
-    -fx-pref-width:500px;
-    -fx-pref-height:60px;
+    -fx-border-color: none;
+    -fx-pref-width: 500px;
+    -fx-pref-height: 60px;
     -fx-border-width: 1px 1px 1px 1px;
     -fx-background-repeat: no-repeat;
     -fx-background-image: url('/img/chevron_right.png');
-    -fx-background-position:right;
+    -fx-background-position: right;
     -fx-alignment: TOP_LEFT;
     -fx-padding: 15px 100px 5px 10px;
 }
@@ -34,8 +34,8 @@
 }
 
 .img-logo-about {
-    -fx-fit-height:50px;
-    -fx-fit-width:200px;
+    -fx-fit-height: 50px;
+    -fx-fit-width: 200px;
 }
 
 .label-about .text {
@@ -52,7 +52,7 @@
     -fx-border-color: #222222;
     -fx-min-width: 200px;
     -fx-max-width: 500px;
-    -fx-pref-width:200px;
+    -fx-pref-width: 200px;
     -fx-pref-height: 60px;
 }
 
@@ -62,7 +62,7 @@
 
 .label-box-about {
     -fx-padding: 10px 0px 0px 0px;
-    -fx-pref-width:100px;
+    -fx-pref-width: 100px;
 }
 
 VBox.spaced {
@@ -70,8 +70,8 @@ VBox.spaced {
 }
 
 .label-with-logo {
-    -fx-pref-width:350px;
-    -fx-alignment:CENTER;
+    -fx-pref-width: 350px;
+    -fx-alignment: CENTER;
 }
 
 .letter-logo {

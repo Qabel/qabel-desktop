@@ -4,12 +4,12 @@
 }
 
 .button-close-stackpane {
-  -fx-alignment: top-right;
-  -fx-padding: 5px 10px 10px 10px;
-  -fx-background-color: transparent;
-  -fx-border-style: none;
-  -fx-background-insets: 0px;
-  -fx-border-color: none;
+    -fx-alignment: top-right;
+    -fx-padding: 5px 10px 10px 10px;
+    -fx-background-color: transparent;
+    -fx-border-style: none;
+    -fx-background-insets: 0px;
+    -fx-border-color: none;
 }
 
 .button-close-stackpane:hover {
@@ -72,7 +72,7 @@
     -fx-pref-height: 25px;
     -fx-pref-width: 400px;
     -fx-alignment: TOP_LEFT;
-    -fx-background-image:url('/img/fade-top.png');
+    -fx-background-image: url('/img/fade-top.png');
 }
 
 .fade-bottom {
@@ -80,12 +80,12 @@
     -fx-pref-height: 40px;
     -fx-pref-width: 395px;
     -fx-alignment: BOTTOM_LEFT;
-    -fx-background-image:url('/img/fade-bottom.png');
+    -fx-background-image: url('/img/fade-bottom.png');
 }
 
 .container {
-    -fx-max-width:550px;
-    -fx-min-height:500px;
-    -fx-position:absolute;
-    -fx-background-color:white;
+    -fx-max-width: 550px;
+    -fx-min-height: 500px;
+    -fx-position: absolute;
+    -fx-background-color: white;
 }
