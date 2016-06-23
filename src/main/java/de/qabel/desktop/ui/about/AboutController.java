@@ -191,7 +191,6 @@ public class AboutController extends AbstractController implements Initializable
         if (aboutFilesContent.launch4jLicenseContent.isEmpty()) {
             launch4jBox.setDisable(true);
         }
-
     }
 
     private void initializePopup() {

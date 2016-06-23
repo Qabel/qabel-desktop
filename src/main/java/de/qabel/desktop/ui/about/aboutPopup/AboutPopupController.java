@@ -32,7 +32,6 @@ public class AboutPopupController extends AbstractController implements Initiali
 
     public void showQAPLPopup() {
         showPopup(aboutFilesContent.QAPLContent);
-
     }
 
     public void showThanksPopup() {
@@ -41,7 +40,6 @@ public class AboutPopupController extends AbstractController implements Initiali
 
     public void showImprintPopup() {
         showPopup(aboutFilesContent.imprintContent);
-
     }
 
     public void showTermsOfServicePopup() {
@@ -70,7 +68,6 @@ public class AboutPopupController extends AbstractController implements Initiali
 
     public void showAttributionLicensePopup() {
         showPopup(aboutFilesContent.attributionLicenseContent);
-
     }
 
     public void showEuropeanLicensePopup() {
