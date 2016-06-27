@@ -1,21 +1,91 @@
 .button-about {
-    -fx-font-weight: bolder;
-    -fx-pref-width:220px;
+    -fx-border-color: none;
+    -fx-pref-width: 500px;
+    -fx-pref-height: 60px;
     -fx-border-width: 1px 1px 1px 1px;
-    -fx-text-alignment:left;
     -fx-background-repeat: no-repeat;
     -fx-background-image: url('/img/chevron_right.png');
-    -fx-background-position:right;
-    -fx-font-size: 14px;
+    -fx-background-position: right;
+    -fx-alignment: TOP_LEFT;
+    -fx-padding: 15px 100px 5px 10px;
 }
 
-.linkcontainer-about{
+.hyperlink-box-about {
+    -fx-alignment: BOTTOM_LEFT;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+    -fx-underline: false;
+}
+
+.hyperlink-box-about .text {
+    -fx-fill: #222222;
+    -fx-font-size: 11;
+}
+
+.hyperlink-box-about:hover .text, .hyperlink-box-about:pressed .text, hyperlink-box-about:visited .text {
+    -fx-fill: #222222;
+}
+
+.linkcontainer-about {
     -fx-alignment: center;
-    -fx-pref-width:586px;
-    -fx-pref-height:529px;
+    -fx-padding: 10px 10px 10px 10px;
+    -fx-min-width: 586px;
+    -fx-min-height: 529px;
 }
 
-.img-logo-about{
-    -fx-fit-height:50px;
-    -fx-fit-width:200px;
+.img-logo-about {
+    -fx-fit-height: 50px;
+    -fx-fit-width: 200px;
+}
+
+.label-about .text {
+    -fx-fill: #222222;
+    -fx-font-size: 11;
+}
+
+.label-title-box {
+    -fx-font-weight: bold;
+}
+
+.box-button-about {
+    -fx-border-width: 2px 2px 2px 2px;
+    -fx-border-color: #222222;
+    -fx-min-width: 200px;
+    -fx-max-width: 500px;
+    -fx-pref-width: 200px;
+    -fx-pref-height: 60px;
+}
+
+.box-button-about .label {
+    -fx-font-size: 6em;
+}
+
+.label-box-about {
+    -fx-padding: 10px 0px 0px 0px;
+    -fx-pref-width: 100px;
+}
+
+VBox.spaced {
+    -fx-spacing: 0.35em;
+}
+
+.label-with-logo {
+    -fx-pref-width: 350px;
+    -fx-alignment: CENTER;
+}
+
+.letter-logo {
+    -fx-background-repeat: no-repeat;
+    -fx-background-image: url('/img/label-logo.png');
+    -fx-background-position: left;
+    -fx-pref-height: 35px;
+    -fx-pref-width: 110px;
+}
+
+.label-logo {
+    -fx-pref-width: 250px;
+}
+
+.label-version {
+    -fx-padding: 0 0 20px 0;
 }

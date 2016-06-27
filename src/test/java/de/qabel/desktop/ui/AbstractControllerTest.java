@@ -8,6 +8,7 @@ import de.qabel.desktop.BlockSharingService;
 import de.qabel.desktop.ServiceFactory;
 import de.qabel.desktop.SharingService;
 import de.qabel.desktop.config.ClientConfig;
+import de.qabel.desktop.config.FilesAbout;
 import de.qabel.desktop.config.RepositoryBasedClientConfig;
 import de.qabel.desktop.config.factory.DefaultBoxSyncConfigFactory;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
@@ -126,7 +127,7 @@ public class AbstractControllerTest extends AbstractFxTest {
         SyncIndexFactory syncIndexFactory = new SqliteSyncIndexFactory();
         diContainer.put("boxSyncConfigFactory", new DefaultBoxSyncConfigFactory(syncIndexFactory));
         diContainer.put("boxSyncIndexFactory", syncIndexFactory);
-        diContainer.put("thanksFileContent", "thanks file content");
+        diContainer.put("aboutFilesContent", new FilesAbout());
 
         syncDaemon = new SyncDaemon(new SimpleListProperty<>(), new FakeSyncerFactory());
         diContainer.put("syncDaemon", syncDaemon);
