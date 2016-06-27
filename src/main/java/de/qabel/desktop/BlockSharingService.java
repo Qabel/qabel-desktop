@@ -58,7 +58,7 @@ public class BlockSharingService implements SharingService {
         try (StorageDownload download = downloader.download(message.getUrl(), null)) {
             new CryptoUtils().decryptFileAuthenticatedSymmetricAndValidateTag(download.getInputStream(), tmpFile.toFile(), new KeyParameter(message.getKey().getKey()));
         }
-        return FileMetadata.Companion.openExisting(tmpFile.toFile()).getFile();
+        return FileMetadata.openExisting(tmpFile.toFile()).getFile();
     }
 
     @Override

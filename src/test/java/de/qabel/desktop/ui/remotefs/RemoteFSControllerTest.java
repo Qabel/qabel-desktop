@@ -54,7 +54,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
     @Override
     @Before
     public void setUp() throws Exception {
-        AbstractNavigation.Companion.setDEFAULT_AUTOCOMMIT_DELAY(0L);
+        AbstractNavigation.DEFAULT_AUTOCOMMIT_DELAY = 0L;
         super.setUp();
         file = File.createTempFile("File2", ".txt", new File(System.getProperty("java.io.tmpdir")));
         CryptoUtils utils = new CryptoUtils();

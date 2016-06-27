@@ -160,7 +160,7 @@ public class DefaultSyncer implements Syncer {
         }
 
         SyncIndexEntry entry = index.get(BoxFileSystem.getRoot().relativize(download.getSource()));
-        long size = download.isDir() ? DirectoryMetadata.Companion.getDEFAULT_SIZE() : download.getSize();
+        long size = download.isDir() ? DirectoryMetadata.DEFAULT_SIZE : download.getSize();
         Long mtime = download.isDir() ? null : download.getMtime();
         SyncState targetState = new SyncState(download.getType() != DELETE, mtime, size);
 
@@ -218,7 +218,7 @@ public class DefaultSyncer implements Syncer {
         targetState = new SyncState(
             upload.getType() != DELETE,
             upload.isDir() ? null : upload.getMtime(),
-            upload.isDir() ? DirectoryMetadata.Companion.getDEFAULT_SIZE() : upload.getSize()
+            upload.isDir() ? DirectoryMetadata.DEFAULT_SIZE : upload.getSize()
         );
         BoxPath targetPath = config.getRemotePath().resolve(config.getLocalPath().relativize(upload.getSource()));
         targetPath = BoxFileSystem.getRoot().relativize(targetPath);

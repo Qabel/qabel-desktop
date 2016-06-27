@@ -34,7 +34,7 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
 
     @Override
     protected void setUpVolume() throws IOException {
-        AbstractNavigation.Companion.setDEFAULT_AUTOCOMMIT_DELAY(0);
+        AbstractNavigation.DEFAULT_AUTOCOMMIT_DELAY = 0;
         tempFolder = Files.createTempDirectory("");
 
         readBackend = new LocalReadBackend(tempFolder);
