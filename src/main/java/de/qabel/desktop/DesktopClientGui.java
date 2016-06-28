@@ -105,8 +105,6 @@ public class DesktopClientGui extends Application {
         });
         primaryStage.show();
 
-        runtimeConfiguration.loadAboutFiles();
-
         services.getDropMessageRepository().addObserver(new ShareNotificationHandler(getShareRepository()));
         services.getDropMessageRepository().addObserver(
             (o, arg) -> scheduler.schedule(

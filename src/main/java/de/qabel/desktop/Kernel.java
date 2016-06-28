@@ -36,6 +36,7 @@ import java.sql.Statement;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 import static javafx.scene.control.Alert.AlertType.INFORMATION;
 import static javafx.scene.control.Alert.AlertType.WARNING;
@@ -48,7 +49,7 @@ public class Kernel {
     private StaticRuntimeConfiguration runtimeConfiguration;
     private Connection connection;
     private DesktopServices services;
-    private DesktopClientGui app;
+    DesktopClientGui app;
 
     private final String currentVersion;
 
@@ -57,9 +58,16 @@ public class Kernel {
     private Runnable shutdown = this::shutdown;
     private UpdateChecker checker = new HttpUpdateChecker();
     private RuntimeDesktopServiceFactory staticDesktopServiceFactory;
+    Consumer<String> documentLauncher;
+    private LaunchConfig launchConfig;
 
     public Kernel(String currentVersion) {
         this.currentVersion = currentVersion;
+    }
+
+    public Kernel(String currentVersion, LaunchConfig launchConfig) {
+        this(currentVersion);
+        this.launchConfig = launchConfig;
     }
 
     public void initialize() throws Exception {
@@ -74,6 +82,7 @@ public class Kernel {
 
         initContainer();
         initGui();
+        documentLauncher = HostServicesDelegate.getInstance(app)::showDocument;
     }
 
     public void initGui() throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
@@ -82,10 +91,15 @@ public class Kernel {
         System.setProperty("prism.lcdtext", "false");
         UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         app = new DesktopClientGui(services, runtimeConfiguration);
+
+        cancelButton = new ButtonType(getResources().getString("updateCancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
+        updateButton = new ButtonType(getResources().getString("updateStart"), ButtonBar.ButtonData.APPLY);
     }
 
     public void initContainer() throws Exception {
-        LaunchConfig launchConfig = launchConfigLoader.call();
+        if (launchConfig == null) {
+            launchConfig = launchConfigLoader.call();
+        }
         runtimeConfiguration = new StaticRuntimeConfiguration(launchConfig, configDatabaseLoader.call());
         runtimeConfiguration.setCurrentVersion(currentVersion);
         staticDesktopServiceFactory = new NewConfigDesktopServiceFactory(
@@ -136,8 +150,6 @@ public class Kernel {
             if (!checker.isCurrent(currentVersion)) {
                 final boolean required = !checker.isAllowed(currentVersion);
 
-                cancelButton = new ButtonType(getResources().getString("updateCancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                updateButton = new ButtonType(getResources().getString("updateStart"), ButtonBar.ButtonData.APPLY);
                 String message = required ? getResources().getString("updateRequired") : getResources().getString("updatePossible");
                 PlatformImpl.runAndWait(() -> {
                     Alert alert = new Alert(required ? WARNING : INFORMATION, message, cancelButton, updateButton);
@@ -146,7 +158,7 @@ public class Kernel {
                     alert.showAndWait().ifPresent(buttonType -> {
                         if (buttonType == updateButton) {
                             try {
-                                HostServicesDelegate.getInstance(app).showDocument(checker.getDesktopVersion().getDownloadURL());
+                                documentLauncher.accept(checker.getDesktopVersion().getDownloadURL());
                                 shutdown.run();
                             } catch (Exception e) {
                                 logger.error("failed to open download: " + e.getMessage(), e);
@@ -175,7 +187,7 @@ public class Kernel {
                 if (!Files.isDirectory(configDir)) {
                     Files.createDirectory(configDir);
                 }
-                connection = DriverManager.getConnection("jdbc:sqlite://" + databaseFile.toAbsolutePath());
+                connection = DriverManager.getConnection(getSqliteConnectionString());
 
                 try {
                     try (Statement statement = connection.createStatement()) {
@@ -196,6 +208,10 @@ public class Kernel {
         } catch (Exception e) {
             throw e;
         }
+    }
+
+    protected String getSqliteConnectionString() {
+        return "jdbc:sqlite://" + databaseFile.toAbsolutePath();
     }
 
     public void setConfigDatabaseLoader(Callable<ClientDatabase> configDatabaseLoader) {
