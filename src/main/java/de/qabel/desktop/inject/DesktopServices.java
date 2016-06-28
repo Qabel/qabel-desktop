@@ -3,6 +3,7 @@ package de.qabel.desktop.inject;
 import de.qabel.core.accounting.AccountingHTTP;
 import de.qabel.desktop.SharingService;
 import de.qabel.desktop.config.ClientConfig;
+import de.qabel.desktop.config.FilesAbout;
 import de.qabel.desktop.config.factory.BoxSyncConfigFactory;
 import de.qabel.desktop.config.factory.BoxVolumeFactory;
 import de.qabel.desktop.config.factory.DropUrlGenerator;
@@ -108,7 +109,10 @@ public interface DesktopServices {
     @Create(name="layoutWindow")
     Pane getLayoutWindow();
 
-    @Create(name="thanksFileContent")
-    String getThanksFileContent();
+    @Create(name="aboutFilesContent")
+    FilesAbout getAboutFilesContent();
+
+    @Create(name="currentVersion")
+    String getCurrentVersion();
 
 }

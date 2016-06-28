@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -10,9 +9,9 @@
            <children>
                <StackPane alignment="TOP_RIGHT" styleClass="container">
                    <children>
-                       <TextArea fx:id="textAreaPopup" editable="false" styleClass="text-area-popup" wrapText="false" StackPane.alignment="TOP_CENTER" />
-                       <Label styleClass="fade_bottom" StackPane.alignment="BOTTOM_LEFT" />
-                       <Label styleClass="fade_top" StackPane.alignment="TOP_LEFT" />
+                       <TextArea fx:id="textAreaPopup" editable="false" wrapText="true" StackPane.alignment="TOP_CENTER" />
+                       <Label fx:id="fadeBottomLabel" styleClass="fade-bottom" StackPane.alignment="BOTTOM_LEFT" />
+                       <Label styleClass="fade-top" StackPane.alignment="TOP_LEFT" />
                        <Button fx:id="buttonClosePopup" alignment="TOP_RIGHT" onAction="#buttonClosePopup" styleClass="button-close-stackpane" text="X" />
                    </children>
                </StackPane>

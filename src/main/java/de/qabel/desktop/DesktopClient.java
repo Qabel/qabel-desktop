@@ -166,6 +166,7 @@ public class DesktopClient extends Application {
         try {
             HttpUpdateChecker checker = new HttpUpdateChecker();
             String currentVersion = appVersion();
+            runtimeConfiguration.setCurrentVersion(currentVersion);
 
             if (currentVersion.equals("dev")) {
                 return;
@@ -253,8 +254,6 @@ public class DesktopClient extends Application {
             }
         });
         primaryStage.show();
-
-        runtimeConfiguration.loadAboutFiles();
 
         services.getDropMessageRepository().addObserver(new ShareNotificationHandler(getShareRepository()));
         services.getDropMessageRepository().addObserver(
