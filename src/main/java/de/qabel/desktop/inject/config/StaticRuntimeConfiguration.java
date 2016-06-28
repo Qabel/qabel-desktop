@@ -1,15 +1,13 @@
 package de.qabel.desktop.inject.config;
 
+import de.qabel.desktop.config.FilesAbout;
 import de.qabel.desktop.config.LaunchConfig;
 import de.qabel.desktop.repository.sqlite.ClientDatabase;
 import de.qabel.desktop.ui.AbstractController;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.util.Strings;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -20,7 +18,8 @@ public class StaticRuntimeConfiguration extends AbstractController implements Ru
     private Stage primaryStage;
     private ClientDatabase configDatabase;
     private Pane window;
-    private String thanksFileContent;
+    private FilesAbout filesAbout;
+    private String currentVersion;
 
     public StaticRuntimeConfiguration(
         LaunchConfig launchConfig,
@@ -30,6 +29,7 @@ public class StaticRuntimeConfiguration extends AbstractController implements Ru
         accountingUri = launchConfig.getAccountingUrl().toURI();
         blockUri = launchConfig.getBlockUrl().toURI();
         this.configDatabase = configDatabase;
+        filesAbout = new FilesAbout();
     }
 
     @Override
@@ -69,28 +69,15 @@ public class StaticRuntimeConfiguration extends AbstractController implements Ru
         return window;
     }
 
-    public void loadAboutFiles() {
-        loadThanksFile("/files/thanks_file");
+    public FilesAbout getAboutFilesContent() {
+        return filesAbout;
     }
 
-    private void loadThanksFile(String thanksFilePath) {
-        try {
-            thanksFileContent = readFile(thanksFilePath);
-        } catch (IOException e) {
-            alert("failed to load thanks file", e);
-        } catch (NullPointerException ignored) {
-        }
+    public void setCurrentVersion (String currentVersion) {
+        this.currentVersion = currentVersion;
     }
 
-    private String readFile(String filePath) throws IOException {
-        try (InputStream thanksFile = System.class.getResourceAsStream(filePath)) {
-            return IOUtils.toString(thanksFile, "UTF-8");
-        } catch (NullPointerException ignored) {
-        }
-        return Strings.EMPTY;
-    }
-
-    public String getThanksFileContent() {
-        return thanksFileContent;
+    public String getCurrentVersion(){
+        return currentVersion;
     }
 }

@@ -1,5 +1,6 @@
 package de.qabel.desktop.inject.config;
 
+import de.qabel.desktop.config.FilesAbout;
 import de.qabel.desktop.repository.sqlite.ClientDatabase;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -12,6 +13,7 @@ public interface RuntimeConfiguration {
     URI getBlockUri();
     Stage getPrimaryStage();
     Pane getWindow();
-    String getThanksFileContent();
+    FilesAbout getAboutFilesContent();
     ClientDatabase getConfigDatabase();
+    String getCurrentVersion();
 }

@@ -87,6 +87,7 @@ public class Kernel {
     public void initContainer() throws Exception {
         LaunchConfig launchConfig = launchConfigLoader.call();
         runtimeConfiguration = new StaticRuntimeConfiguration(launchConfig, configDatabaseLoader.call());
+        runtimeConfiguration.setCurrentVersion(currentVersion);
         staticDesktopServiceFactory = new NewConfigDesktopServiceFactory(
             runtimeConfiguration,
             new SqliteTransactionManager(connection)
