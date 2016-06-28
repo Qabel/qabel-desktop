@@ -1,415 +1,23 @@
 {
     "compile": {
-        ":qabel-core-0.1": {
+        ":jfxrt": {
             "project": true
         },
         "com.airhacks:afterburner.fx": {
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.zafarkhaja:java-semver": {
-            "locked": "0.9.0",
-            "requested": "0.9.+"
-        },
-        "com.google.code.gson:gson": {
-            "locked": "2.6.2",
-            "requested": "2.+"
-        },
-        "com.madgag.spongycastle:prov": {
-            "locked": "1.53.0.0",
-            "requested": "1.53.0.0"
-        },
-        "commons-cli:commons-cli": {
-            "locked": "1.2",
-            "requested": "1.2"
-        },
-        "commons-codec:commons-codec": {
-            "locked": "1.10",
-            "requested": "1.10"
-        },
-        "javax.inject:javax.inject": {
-            "locked": "1",
-            "requested": "1"
-        },
-        "log4j:log4j": {
-            "locked": "1.2.16",
-            "requested": "1.2.+"
-        },
-        "null:qabel-core-0.1": {
-            "project": true
-        },
-        "org.apache.commons:commons-lang3": {
-            "locked": "3.4",
-            "requested": "3.+"
-        },
-        "org.apache.httpcomponents:httpclient": {
-            "locked": "4.5.2",
-            "requested": "4.5.+"
-        },
-        "org.apache.httpcomponents:httpmime": {
-            "locked": "4.5.2",
-            "requested": "4.5.+"
-        },
-        "org.apache.james:apache-mime4j": {
-            "locked": "0.7.2",
-            "requested": "0.7.+"
-        },
-        "org.apache.logging.log4j:log4j-api": {
-            "locked": "2.4",
-            "requested": "2.4.+"
-        },
-        "org.apache.logging.log4j:log4j-core": {
-            "locked": "2.4",
-            "requested": "2.4.+"
-        },
-        "org.apache.logging.log4j:log4j-slf4j-impl": {
-            "locked": "2.4",
-            "requested": "2.4.+"
-        },
-        "org.json:json": {
-            "locked": "20090211",
-            "requested": "20090211"
-        },
-        "org.ocpsoft.prettytime:prettytime": {
-            "locked": "3.2.7.Final",
-            "requested": "3.2.+"
-        },
-        "org.slf4j:slf4j-api": {
-            "locked": "1.7.12",
-            "requested": "1.7.+"
-        },
-        "org.xerial:sqlite-jdbc": {
-            "locked": "3.8.7",
-            "requested": "3.8.+"
-        }
-    },
-    "default": {
-        ":qabel-core-0.1": {
-            "project": true
-        },
-        "com.airhacks:afterburner.fx": {
-            "locked": "1.7.0",
-            "requested": "1.7.+"
+        "com.github.qabel:qabel-core": {
+            "locked": "0.7.0",
+            "requested": "0.+"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
             "requested": "0.9.+"
         },
         "com.google.code.gson:gson": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "2.+"
-        },
-        "com.madgag.spongycastle:prov": {
-            "locked": "1.53.0.0",
-            "requested": "1.53.0.0"
-        },
-        "commons-cli:commons-cli": {
-            "locked": "1.2",
-            "requested": "1.2"
-        },
-        "commons-codec:commons-codec": {
-            "locked": "1.10",
-            "requested": "1.10"
-        },
-        "javax.inject:javax.inject": {
-            "locked": "1",
-            "requested": "1"
-        },
-        "log4j:log4j": {
-            "locked": "1.2.16",
-            "requested": "1.2.+"
-        },
-        "null:qabel-core-0.1": {
-            "project": true
-        },
-        "org.apache.commons:commons-lang3": {
-            "locked": "3.4",
-            "requested": "3.+"
-        },
-        "org.apache.httpcomponents:httpclient": {
-            "locked": "4.5.2",
-            "requested": "4.5.+"
-        },
-        "org.apache.httpcomponents:httpmime": {
-            "locked": "4.5.2",
-            "requested": "4.5.+"
-        },
-        "org.apache.james:apache-mime4j": {
-            "locked": "0.7.2",
-            "requested": "0.7.+"
-        },
-        "org.apache.logging.log4j:log4j-api": {
-            "locked": "2.4",
-            "requested": "2.4.+"
-        },
-        "org.apache.logging.log4j:log4j-core": {
-            "locked": "2.4",
-            "requested": "2.4.+"
-        },
-        "org.apache.logging.log4j:log4j-slf4j-impl": {
-            "locked": "2.4",
-            "requested": "2.4.+"
-        },
-        "org.json:json": {
-            "locked": "20090211",
-            "requested": "20090211"
-        },
-        "org.ocpsoft.prettytime:prettytime": {
-            "locked": "3.2.7.Final",
-            "requested": "3.2.+"
-        },
-        "org.slf4j:slf4j-api": {
-            "locked": "1.7.12",
-            "requested": "1.7.+"
-        },
-        "org.xerial:sqlite-jdbc": {
-            "locked": "3.8.7",
-            "requested": "3.8.+"
-        }
-    },
-    "guiTestCompile": {
-        ":qabel-core-0.1": {
-            "project": true
-        },
-        "com.airhacks:afterburner.fx": {
-            "locked": "1.7.0",
-            "requested": "1.7.+"
-        },
-        "com.github.zafarkhaja:java-semver": {
-            "locked": "0.9.0",
-            "requested": "0.9.+"
-        },
-        "com.google.code.gson:gson": {
-            "locked": "2.6.2",
-            "requested": "2.+"
-        },
-        "com.madgag.spongycastle:prov": {
-            "locked": "1.53.0.0",
-            "requested": "1.53.0.0"
-        },
-        "com.tngtech.java:junit-dataprovider": {
-            "locked": "1.10.4",
-            "requested": "1.10.+"
-        },
-        "commons-cli:commons-cli": {
-            "locked": "1.2",
-            "requested": "1.2"
-        },
-        "commons-codec:commons-codec": {
-            "locked": "1.10",
-            "requested": "1.10"
-        },
-        "info.cukes:cucumber-java": {
-            "locked": "1.2.4",
-            "requested": "1.2.+"
-        },
-        "info.cukes:cucumber-junit": {
-            "locked": "1.2.4",
-            "requested": "1.2.+"
-        },
-        "javax.inject:javax.inject": {
-            "locked": "1",
-            "requested": "1"
-        },
-        "junit:junit": {
-            "locked": "4.12",
-            "requested": "4.+"
-        },
-        "log4j:log4j": {
-            "locked": "1.2.16",
-            "requested": "1.2.+"
-        },
-        "null:qabel-core-0.1": {
-            "project": true
-        },
-        "org.apache.commons:commons-lang3": {
-            "locked": "3.4",
-            "requested": "3.+"
-        },
-        "org.apache.httpcomponents:httpclient": {
-            "locked": "4.5.2",
-            "requested": "4.5.+"
-        },
-        "org.apache.httpcomponents:httpmime": {
-            "locked": "4.5.2",
-            "requested": "4.5.+"
-        },
-        "org.apache.james:apache-mime4j": {
-            "locked": "0.7.2",
-            "requested": "0.7.+"
-        },
-        "org.apache.logging.log4j:log4j-api": {
-            "locked": "2.4",
-            "requested": "2.4.+"
-        },
-        "org.apache.logging.log4j:log4j-core": {
-            "locked": "2.4",
-            "requested": "2.4.+"
-        },
-        "org.apache.logging.log4j:log4j-slf4j-impl": {
-            "locked": "2.4",
-            "requested": "2.4.+"
-        },
-        "org.json:json": {
-            "locked": "20090211",
-            "requested": "20090211"
-        },
-        "org.meanbean:meanbean": {
-            "locked": "2.0.3",
-            "requested": "2.+"
-        },
-        "org.ocpsoft.prettytime:prettytime": {
-            "locked": "3.2.7.Final",
-            "requested": "3.2.+"
-        },
-        "org.slf4j:slf4j-api": {
-            "locked": "1.7.12",
-            "requested": "1.7.+"
-        },
-        "org.testfx:testfx-core": {
-            "locked": "4.0.2-alpha",
-            "requested": "4.+"
-        },
-        "org.testfx:testfx-junit": {
-            "locked": "4.0.2-alpha",
-            "requested": "4.+"
-        },
-        "org.xerial:sqlite-jdbc": {
-            "locked": "3.8.7",
-            "requested": "3.8.+"
-        }
-    },
-    "guiTestRuntime": {
-        ":qabel-core-0.1": {
-            "project": true
-        },
-        "com.airhacks:afterburner.fx": {
-            "locked": "1.7.0",
-            "requested": "1.7.+"
-        },
-        "com.github.zafarkhaja:java-semver": {
-            "locked": "0.9.0",
-            "requested": "0.9.+"
-        },
-        "com.google.code.gson:gson": {
-            "locked": "2.6.2",
-            "requested": "2.+"
-        },
-        "com.madgag.spongycastle:prov": {
-            "locked": "1.53.0.0",
-            "requested": "1.53.0.0"
-        },
-        "com.tngtech.java:junit-dataprovider": {
-            "locked": "1.10.4",
-            "requested": "1.10.+"
-        },
-        "commons-cli:commons-cli": {
-            "locked": "1.2",
-            "requested": "1.2"
-        },
-        "commons-codec:commons-codec": {
-            "locked": "1.10",
-            "requested": "1.10"
-        },
-        "info.cukes:cucumber-java": {
-            "locked": "1.2.4",
-            "requested": "1.2.+"
-        },
-        "info.cukes:cucumber-junit": {
-            "locked": "1.2.4",
-            "requested": "1.2.+"
-        },
-        "javax.inject:javax.inject": {
-            "locked": "1",
-            "requested": "1"
-        },
-        "junit:junit": {
-            "locked": "4.12",
-            "requested": "4.+"
-        },
-        "log4j:log4j": {
-            "locked": "1.2.16",
-            "requested": "1.2.+"
-        },
-        "null:qabel-core-0.1": {
-            "project": true
-        },
-        "org.apache.commons:commons-lang3": {
-            "locked": "3.4",
-            "requested": "3.+"
-        },
-        "org.apache.httpcomponents:httpclient": {
-            "locked": "4.5.2",
-            "requested": "4.5.+"
-        },
-        "org.apache.httpcomponents:httpmime": {
-            "locked": "4.5.2",
-            "requested": "4.5.+"
-        },
-        "org.apache.james:apache-mime4j": {
-            "locked": "0.7.2",
-            "requested": "0.7.+"
-        },
-        "org.apache.logging.log4j:log4j-api": {
-            "locked": "2.4",
-            "requested": "2.4.+"
-        },
-        "org.apache.logging.log4j:log4j-core": {
-            "locked": "2.4",
-            "requested": "2.4.+"
-        },
-        "org.apache.logging.log4j:log4j-slf4j-impl": {
-            "locked": "2.4",
-            "requested": "2.4.+"
-        },
-        "org.json:json": {
-            "locked": "20090211",
-            "requested": "20090211"
-        },
-        "org.meanbean:meanbean": {
-            "locked": "2.0.3",
-            "requested": "2.+"
-        },
-        "org.ocpsoft.prettytime:prettytime": {
-            "locked": "3.2.7.Final",
-            "requested": "3.2.+"
-        },
-        "org.slf4j:slf4j-api": {
-            "locked": "1.7.12",
-            "requested": "1.7.+"
-        },
-        "org.testfx:testfx-core": {
-            "locked": "4.0.2-alpha",
-            "requested": "4.+"
-        },
-        "org.testfx:testfx-junit": {
-            "locked": "4.0.2-alpha",
-            "requested": "4.+"
-        },
-        "org.xerial:sqlite-jdbc": {
-            "locked": "3.8.7",
-            "requested": "3.8.+"
-        }
-    },
-    "runtime": {
-        ":qabel-core-0.1": {
-            "project": true
-        },
-        "com.airhacks:afterburner.fx": {
-            "locked": "1.7.0",
-            "requested": "1.7.+"
-        },
-        "com.github.zafarkhaja:java-semver": {
-            "locked": "0.9.0",
-            "requested": "0.9.+"
-        },
-        "com.google.code.gson:gson": {
-            "locked": "2.6.2",
-            "requested": "2.+"
-        },
-        "com.madgag.spongycastle:prov": {
-            "locked": "1.53.0.0",
-            "requested": "1.53.0.0"
         },
         "commons-cli:commons-cli": {
             "locked": "1.2",
@@ -427,7 +35,7 @@
             "locked": "1.2.17",
             "requested": "1.2.+"
         },
-        "null:qabel-core-0.1": {
+        "null:jfxrt": {
             "project": true
         },
         "org.apache.commons:commons-lang3": {
@@ -459,7 +67,411 @@
             "requested": "2.4.+"
         },
         "org.json:json": {
-            "locked": "20090211",
+            "locked": "20160212",
+            "requested": "20090211"
+        },
+        "org.ocpsoft.prettytime:prettytime": {
+            "locked": "3.2.7.Final",
+            "requested": "3.2.+"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.21",
+            "requested": "1.7.+"
+        },
+        "org.xerial:sqlite-jdbc": {
+            "locked": "3.8.11.2",
+            "requested": "3.8.+"
+        }
+    },
+    "default": {
+        ":jfxrt": {
+            "project": true
+        },
+        "com.airhacks:afterburner.fx": {
+            "locked": "1.7.0",
+            "requested": "1.7.+"
+        },
+        "com.github.qabel:qabel-core": {
+            "locked": "0.7.0",
+            "requested": "0.+"
+        },
+        "com.github.zafarkhaja:java-semver": {
+            "locked": "0.9.0",
+            "requested": "0.9.+"
+        },
+        "com.google.code.gson:gson": {
+            "locked": "2.7",
+            "requested": "2.+"
+        },
+        "commons-cli:commons-cli": {
+            "locked": "1.2",
+            "requested": "1.2"
+        },
+        "commons-codec:commons-codec": {
+            "locked": "1.10",
+            "requested": "1.10"
+        },
+        "javax.inject:javax.inject": {
+            "locked": "1",
+            "requested": "1"
+        },
+        "log4j:log4j": {
+            "locked": "1.2.17",
+            "requested": "1.2.+"
+        },
+        "null:jfxrt": {
+            "project": true
+        },
+        "org.apache.commons:commons-lang3": {
+            "locked": "3.4",
+            "requested": "3.+"
+        },
+        "org.apache.httpcomponents:httpclient": {
+            "locked": "4.5.2",
+            "requested": "4.5.+"
+        },
+        "org.apache.httpcomponents:httpmime": {
+            "locked": "4.5.2",
+            "requested": "4.5.+"
+        },
+        "org.apache.james:apache-mime4j": {
+            "locked": "0.7.2",
+            "requested": "0.7.+"
+        },
+        "org.apache.logging.log4j:log4j-api": {
+            "locked": "2.4.1",
+            "requested": "2.4.+"
+        },
+        "org.apache.logging.log4j:log4j-core": {
+            "locked": "2.4.1",
+            "requested": "2.4.+"
+        },
+        "org.apache.logging.log4j:log4j-slf4j-impl": {
+            "locked": "2.4.1",
+            "requested": "2.4.+"
+        },
+        "org.json:json": {
+            "locked": "20160212",
+            "requested": "20090211"
+        },
+        "org.ocpsoft.prettytime:prettytime": {
+            "locked": "3.2.7.Final",
+            "requested": "3.2.+"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.21",
+            "requested": "1.7.+"
+        },
+        "org.xerial:sqlite-jdbc": {
+            "locked": "3.8.11.2",
+            "requested": "3.8.+"
+        }
+    },
+    "guiTestCompile": {
+        ":box-test-0.7.0": {
+            "project": true
+        },
+        ":jfxrt": {
+            "project": true
+        },
+        "com.airhacks:afterburner.fx": {
+            "locked": "1.7.0",
+            "requested": "1.7.+"
+        },
+        "com.github.qabel:qabel-core": {
+            "locked": "0.7.0",
+            "requested": "0.+"
+        },
+        "com.github.zafarkhaja:java-semver": {
+            "locked": "0.9.0",
+            "requested": "0.9.+"
+        },
+        "com.google.code.gson:gson": {
+            "locked": "2.7",
+            "requested": "2.+"
+        },
+        "com.tngtech.java:junit-dataprovider": {
+            "locked": "1.10.4",
+            "requested": "1.10.+"
+        },
+        "commons-cli:commons-cli": {
+            "locked": "1.2",
+            "requested": "1.2"
+        },
+        "commons-codec:commons-codec": {
+            "locked": "1.10",
+            "requested": "1.10"
+        },
+        "info.cukes:cucumber-java": {
+            "locked": "1.2.4",
+            "requested": "1.2.+"
+        },
+        "info.cukes:cucumber-junit": {
+            "locked": "1.2.4",
+            "requested": "1.2.+"
+        },
+        "javax.inject:javax.inject": {
+            "locked": "1",
+            "requested": "1"
+        },
+        "junit:junit": {
+            "locked": "4.12",
+            "requested": "4.+"
+        },
+        "log4j:log4j": {
+            "locked": "1.2.17",
+            "requested": "1.2.+"
+        },
+        "null:box-test-0.7.0": {
+            "project": true
+        },
+        "null:jfxrt": {
+            "project": true
+        },
+        "org.apache.commons:commons-lang3": {
+            "locked": "3.4",
+            "requested": "3.+"
+        },
+        "org.apache.httpcomponents:httpclient": {
+            "locked": "4.5.2",
+            "requested": "4.5.+"
+        },
+        "org.apache.httpcomponents:httpmime": {
+            "locked": "4.5.2",
+            "requested": "4.5.+"
+        },
+        "org.apache.james:apache-mime4j": {
+            "locked": "0.7.2",
+            "requested": "0.7.+"
+        },
+        "org.apache.logging.log4j:log4j-api": {
+            "locked": "2.4.1",
+            "requested": "2.4.+"
+        },
+        "org.apache.logging.log4j:log4j-core": {
+            "locked": "2.4.1",
+            "requested": "2.4.+"
+        },
+        "org.apache.logging.log4j:log4j-slf4j-impl": {
+            "locked": "2.4.1",
+            "requested": "2.4.+"
+        },
+        "org.json:json": {
+            "locked": "20160212",
+            "requested": "20090211"
+        },
+        "org.meanbean:meanbean": {
+            "locked": "2.0.3",
+            "requested": "2.+"
+        },
+        "org.ocpsoft.prettytime:prettytime": {
+            "locked": "3.2.7.Final",
+            "requested": "3.2.+"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.21",
+            "requested": "1.7.+"
+        },
+        "org.testfx:testfx-core": {
+            "locked": "4.0.4-alpha",
+            "requested": "4.+"
+        },
+        "org.testfx:testfx-junit": {
+            "locked": "4.0.4-alpha",
+            "requested": "4.+"
+        },
+        "org.xerial:sqlite-jdbc": {
+            "locked": "3.8.11.2",
+            "requested": "3.8.+"
+        }
+    },
+    "guiTestRuntime": {
+        ":box-test-0.7.0": {
+            "project": true
+        },
+        ":jfxrt": {
+            "project": true
+        },
+        "com.airhacks:afterburner.fx": {
+            "locked": "1.7.0",
+            "requested": "1.7.+"
+        },
+        "com.github.qabel:qabel-core": {
+            "locked": "0.7.0",
+            "requested": "0.+"
+        },
+        "com.github.zafarkhaja:java-semver": {
+            "locked": "0.9.0",
+            "requested": "0.9.+"
+        },
+        "com.google.code.gson:gson": {
+            "locked": "2.7",
+            "requested": "2.+"
+        },
+        "com.tngtech.java:junit-dataprovider": {
+            "locked": "1.10.4",
+            "requested": "1.10.+"
+        },
+        "commons-cli:commons-cli": {
+            "locked": "1.2",
+            "requested": "1.2"
+        },
+        "commons-codec:commons-codec": {
+            "locked": "1.10",
+            "requested": "1.10"
+        },
+        "info.cukes:cucumber-java": {
+            "locked": "1.2.4",
+            "requested": "1.2.+"
+        },
+        "info.cukes:cucumber-junit": {
+            "locked": "1.2.4",
+            "requested": "1.2.+"
+        },
+        "javax.inject:javax.inject": {
+            "locked": "1",
+            "requested": "1"
+        },
+        "junit:junit": {
+            "locked": "4.12",
+            "requested": "4.+"
+        },
+        "log4j:log4j": {
+            "locked": "1.2.17",
+            "requested": "1.2.+"
+        },
+        "null:box-test-0.7.0": {
+            "project": true
+        },
+        "null:jfxrt": {
+            "project": true
+        },
+        "org.apache.commons:commons-lang3": {
+            "locked": "3.4",
+            "requested": "3.+"
+        },
+        "org.apache.httpcomponents:httpclient": {
+            "locked": "4.5.2",
+            "requested": "4.5.+"
+        },
+        "org.apache.httpcomponents:httpmime": {
+            "locked": "4.5.2",
+            "requested": "4.5.+"
+        },
+        "org.apache.james:apache-mime4j": {
+            "locked": "0.7.2",
+            "requested": "0.7.+"
+        },
+        "org.apache.logging.log4j:log4j-api": {
+            "locked": "2.4.1",
+            "requested": "2.4.+"
+        },
+        "org.apache.logging.log4j:log4j-core": {
+            "locked": "2.4.1",
+            "requested": "2.4.+"
+        },
+        "org.apache.logging.log4j:log4j-slf4j-impl": {
+            "locked": "2.4.1",
+            "requested": "2.4.+"
+        },
+        "org.json:json": {
+            "locked": "20160212",
+            "requested": "20090211"
+        },
+        "org.meanbean:meanbean": {
+            "locked": "2.0.3",
+            "requested": "2.+"
+        },
+        "org.ocpsoft.prettytime:prettytime": {
+            "locked": "3.2.7.Final",
+            "requested": "3.2.+"
+        },
+        "org.slf4j:slf4j-api": {
+            "locked": "1.7.21",
+            "requested": "1.7.+"
+        },
+        "org.testfx:testfx-core": {
+            "locked": "4.0.4-alpha",
+            "requested": "4.+"
+        },
+        "org.testfx:testfx-junit": {
+            "locked": "4.0.4-alpha",
+            "requested": "4.+"
+        },
+        "org.xerial:sqlite-jdbc": {
+            "locked": "3.8.11.2",
+            "requested": "3.8.+"
+        }
+    },
+    "runtime": {
+        ":jfxrt": {
+            "project": true
+        },
+        "com.airhacks:afterburner.fx": {
+            "locked": "1.7.0",
+            "requested": "1.7.+"
+        },
+        "com.github.qabel:qabel-core": {
+            "locked": "0.7.0",
+            "requested": "0.+"
+        },
+        "com.github.zafarkhaja:java-semver": {
+            "locked": "0.9.0",
+            "requested": "0.9.+"
+        },
+        "com.google.code.gson:gson": {
+            "locked": "2.7",
+            "requested": "2.+"
+        },
+        "commons-cli:commons-cli": {
+            "locked": "1.2",
+            "requested": "1.2"
+        },
+        "commons-codec:commons-codec": {
+            "locked": "1.10",
+            "requested": "1.10"
+        },
+        "javax.inject:javax.inject": {
+            "locked": "1",
+            "requested": "1"
+        },
+        "log4j:log4j": {
+            "locked": "1.2.17",
+            "requested": "1.2.+"
+        },
+        "null:jfxrt": {
+            "project": true
+        },
+        "org.apache.commons:commons-lang3": {
+            "locked": "3.4",
+            "requested": "3.+"
+        },
+        "org.apache.httpcomponents:httpclient": {
+            "locked": "4.5.2",
+            "requested": "4.5.+"
+        },
+        "org.apache.httpcomponents:httpmime": {
+            "locked": "4.5.2",
+            "requested": "4.5.+"
+        },
+        "org.apache.james:apache-mime4j": {
+            "locked": "0.7.2",
+            "requested": "0.7.+"
+        },
+        "org.apache.logging.log4j:log4j-api": {
+            "locked": "2.4.1",
+            "requested": "2.4.+"
+        },
+        "org.apache.logging.log4j:log4j-core": {
+            "locked": "2.4.1",
+            "requested": "2.4.+"
+        },
+        "org.apache.logging.log4j:log4j-slf4j-impl": {
+            "locked": "2.4.1",
+            "requested": "2.4.+"
+        },
+        "org.json:json": {
+            "locked": "20160212",
             "requested": "20090211"
         },
         "org.ocpsoft.prettytime:prettytime": {
@@ -476,24 +488,27 @@
         }
     },
     "testCompile": {
-        ":qabel-core-0.1": {
+        ":box-test-0.7.0": {
+            "project": true
+        },
+        ":jfxrt": {
             "project": true
         },
         "com.airhacks:afterburner.fx": {
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
+        "com.github.qabel:qabel-core": {
+            "locked": "0.7.0",
+            "requested": "0.+"
+        },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
             "requested": "0.9.+"
         },
         "com.google.code.gson:gson": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "2.+"
-        },
-        "com.madgag.spongycastle:prov": {
-            "locked": "1.53.0.0",
-            "requested": "1.53.0.0"
         },
         "com.tngtech.java:junit-dataprovider": {
             "locked": "1.10.4",
@@ -524,10 +539,13 @@
             "requested": "4.+"
         },
         "log4j:log4j": {
-            "locked": "1.2.16",
+            "locked": "1.2.17",
             "requested": "1.2.+"
         },
-        "null:qabel-core-0.1": {
+        "null:box-test-0.7.0": {
+            "project": true
+        },
+        "null:jfxrt": {
             "project": true
         },
         "org.apache.commons:commons-lang3": {
@@ -547,19 +565,19 @@
             "requested": "0.7.+"
         },
         "org.apache.logging.log4j:log4j-api": {
-            "locked": "2.4",
+            "locked": "2.4.1",
             "requested": "2.4.+"
         },
         "org.apache.logging.log4j:log4j-core": {
-            "locked": "2.4",
+            "locked": "2.4.1",
             "requested": "2.4.+"
         },
         "org.apache.logging.log4j:log4j-slf4j-impl": {
-            "locked": "2.4",
+            "locked": "2.4.1",
             "requested": "2.4.+"
         },
         "org.json:json": {
-            "locked": "20090211",
+            "locked": "20160212",
             "requested": "20090211"
         },
         "org.meanbean:meanbean": {
@@ -571,41 +589,44 @@
             "requested": "3.2.+"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "1.7.12",
+            "locked": "1.7.21",
             "requested": "1.7.+"
         },
         "org.testfx:testfx-core": {
-            "locked": "4.0.2-alpha",
+            "locked": "4.0.4-alpha",
             "requested": "4.+"
         },
         "org.testfx:testfx-junit": {
-            "locked": "4.0.2-alpha",
+            "locked": "4.0.4-alpha",
             "requested": "4.+"
         },
         "org.xerial:sqlite-jdbc": {
-            "locked": "3.8.7",
+            "locked": "3.8.11.2",
             "requested": "3.8.+"
         }
     },
     "testRuntime": {
-        ":qabel-core-0.1": {
+        ":box-test-0.7.0": {
+            "project": true
+        },
+        ":jfxrt": {
             "project": true
         },
         "com.airhacks:afterburner.fx": {
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
+        "com.github.qabel:qabel-core": {
+            "locked": "0.7.0",
+            "requested": "0.+"
+        },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
             "requested": "0.9.+"
         },
         "com.google.code.gson:gson": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "2.+"
-        },
-        "com.madgag.spongycastle:prov": {
-            "locked": "1.53.0.0",
-            "requested": "1.53.0.0"
         },
         "com.tngtech.java:junit-dataprovider": {
             "locked": "1.10.4",
@@ -636,10 +657,13 @@
             "requested": "4.+"
         },
         "log4j:log4j": {
-            "locked": "1.2.16",
+            "locked": "1.2.17",
             "requested": "1.2.+"
         },
-        "null:qabel-core-0.1": {
+        "null:box-test-0.7.0": {
+            "project": true
+        },
+        "null:jfxrt": {
             "project": true
         },
         "org.apache.commons:commons-lang3": {
@@ -659,19 +683,19 @@
             "requested": "0.7.+"
         },
         "org.apache.logging.log4j:log4j-api": {
-            "locked": "2.4",
+            "locked": "2.4.1",
             "requested": "2.4.+"
         },
         "org.apache.logging.log4j:log4j-core": {
-            "locked": "2.4",
+            "locked": "2.4.1",
             "requested": "2.4.+"
         },
         "org.apache.logging.log4j:log4j-slf4j-impl": {
-            "locked": "2.4",
+            "locked": "2.4.1",
             "requested": "2.4.+"
         },
         "org.json:json": {
-            "locked": "20090211",
+            "locked": "20160212",
             "requested": "20090211"
         },
         "org.meanbean:meanbean": {
@@ -683,19 +707,19 @@
             "requested": "3.2.+"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "1.7.12",
+            "locked": "1.7.21",
             "requested": "1.7.+"
         },
         "org.testfx:testfx-core": {
-            "locked": "4.0.2-alpha",
+            "locked": "4.0.4-alpha",
             "requested": "4.+"
         },
         "org.testfx:testfx-junit": {
-            "locked": "4.0.2-alpha",
+            "locked": "4.0.4-alpha",
             "requested": "4.+"
         },
         "org.xerial:sqlite-jdbc": {
-            "locked": "3.8.7",
+            "locked": "3.8.11.2",
             "requested": "3.8.+"
         }
     }
