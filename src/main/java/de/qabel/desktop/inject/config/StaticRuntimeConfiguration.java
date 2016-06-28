@@ -12,14 +12,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class StaticRuntimeConfiguration extends AbstractController implements RuntimeConfiguration {
     private URI dropUri;
     private URI accountingUri;
     private URI blockUri;
-    private Path persistenceDatabaseFile;
     private Stage primaryStage;
     private ClientDatabase configDatabase;
     private Pane window;
@@ -27,19 +24,12 @@ public class StaticRuntimeConfiguration extends AbstractController implements Ru
 
     public StaticRuntimeConfiguration(
         LaunchConfig launchConfig,
-        Path persistenceDatabaseFile,
         ClientDatabase configDatabase
     ) throws URISyntaxException, IOException {
         dropUri = launchConfig.getDropUrl().toURI();
         accountingUri = launchConfig.getAccountingUrl().toURI();
         blockUri = launchConfig.getBlockUrl().toURI();
-        persistenceDatabaseFile = persistenceDatabaseFile.normalize();
-        this.persistenceDatabaseFile = persistenceDatabaseFile;
         this.configDatabase = configDatabase;
-
-        if (!Files.exists(persistenceDatabaseFile) && !Files.exists(persistenceDatabaseFile.getParent())) {
-            Files.createDirectories(persistenceDatabaseFile.getParent());
-        }
     }
 
     @Override
@@ -55,11 +45,6 @@ public class StaticRuntimeConfiguration extends AbstractController implements Ru
     @Override
     public URI getBlockUri() {
         return blockUri;
-    }
-
-    @Override
-    public Path getPersistenceDatabaseFile() {
-        return persistenceDatabaseFile;
     }
 
     public void setPrimaryStage(Stage primaryStage) {

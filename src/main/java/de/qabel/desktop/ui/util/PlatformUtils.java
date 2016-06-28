@@ -1,6 +1,7 @@
 package de.qabel.desktop.ui.util;
 
 import com.sun.javafx.application.PlatformImpl;
+import javafx.application.Application;
 import javafx.application.Platform;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class PlatformUtils {
         final CountDownLatch startupLatch = new CountDownLatch(1);
         PlatformImpl.startup(() -> startupLatch.countDown());
         startupLatch.await();
+        PlatformImpl.setPlatformUserAgentStylesheet(Application.STYLESHEET_MODENA);
     }
 
     private static void registerExitListener() {
