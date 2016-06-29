@@ -38,8 +38,7 @@ public class AccountingItemGuiTest extends AbstractGuiTest<AccountingItemControl
 
     @Test
     public void testEdit() throws Exception {
-        page.edit().inputAndConfirm("new alias");
-        waitUntil(() -> identity.getAlias().equals("new alias"));
+        page.openMenu();
     }
 
     @Test

@@ -7,13 +7,13 @@ import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
+import de.qabel.desktop.ui.accounting.menuqr.MenuQRController;
+import de.qabel.desktop.ui.accounting.menuqr.MenuQRView;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
 import javax.inject.Inject;
@@ -37,7 +37,7 @@ public class AccountingItemController extends AbstractController implements Init
     RadioButton selectedRadio;
 
     @FXML
-    public Node root;
+    private Button edit;
 
     @Inject
     private Identity identity;
@@ -48,7 +48,13 @@ public class AccountingItemController extends AbstractController implements Init
     @Inject
     private IdentityRepository identityRepository;
 
+    @Inject
+    private Pane layoutWindow;
+
     TextInputDialog dialog;
+
+    private MenuQRView menuqrView;
+    private MenuQRController menuqrController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -63,6 +69,7 @@ public class AccountingItemController extends AbstractController implements Init
         }
 
         updateSelection();
+        initializeMenu();
         clientConfiguration.onSelectIdentity(i -> updateSelection());
     }
 
@@ -85,6 +92,16 @@ public class AccountingItemController extends AbstractController implements Init
         dialog.setContentText(resourceBundle.getString("accountingItemNewAlias"));
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(this::setAlias);
+    }
+
+    private void initializeMenu() {
+        menuqrView = new MenuQRView();
+        menuqrView.getView(layoutWindow.getChildren()::add);
+        menuqrController = (MenuQRController) menuqrView.getPresenter();
+    }
+
+    public void openMenuQR(MouseEvent event) {
+        menuqrController.showMenu(getIdentity(), event.getSceneX() + layoutWindow.getScene().getWindow().getX(), event.getSceneY() + layoutWindow.getScene().getWindow().getY() + edit.getHeight());
     }
 
     protected void setAlias(String alias) {

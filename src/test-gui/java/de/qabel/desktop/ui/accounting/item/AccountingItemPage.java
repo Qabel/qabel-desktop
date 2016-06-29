@@ -28,4 +28,8 @@ public class AccountingItemPage extends AbstractPage {
         clickOn("#selectedRadio");
         waitUntil(controller.selectedRadio::isSelected);
     }
+
+    public void openMenu(){
+        clickOn("#edit");
+    }
 }

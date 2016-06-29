@@ -3,7 +3,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
+
 <HBox fx:id="root"
       fx:controller="de.qabel.desktop.ui.accounting.item.AccountingItemController"
       GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" xmlns="http://javafx.com/javafx/8"
@@ -36,7 +36,8 @@
                         </VBox>
                     </center>
                     <right>
-                        <Button fx:id="edit" alignment="CENTER" mnemonicParsing="false" onAction="#edit" text="%accountItemEdit"
+                        <Button fx:id="edit" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#openMenuQR"
+                                styleClass="button-qrcode" prefHeight="25"
                                 BorderPane.alignment="CENTER"/>
                     </right>
                 </BorderPane>
