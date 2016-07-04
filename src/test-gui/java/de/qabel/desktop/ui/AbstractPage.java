@@ -165,7 +165,7 @@ public class AbstractPage {
     protected Node waitForNode(String query) {
         Node[] nodes = new Node[1];
         waitUntil(() -> {
-            Optional<Node> node = robot.lookup(query).tryQueryFirst();
+            Optional<Node> node = robot.lookup(query).tryQuery();
             boolean present = node.isPresent() && node.get() != null;
             if (present) {
                 nodes[0] = node.get();
@@ -184,7 +184,7 @@ public class AbstractPage {
     }
 
     protected Node getFirstNode(String query) {
-        return robot.lookup(query).tryQueryFirst().get();
+        return robot.lookup(query).tryQuery().get();
     }
 
     protected List<Node> getNodes(String query) {

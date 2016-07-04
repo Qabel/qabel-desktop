@@ -2,6 +2,7 @@ package de.qabel.desktop.ui.accounting.login;
 
 import com.sun.javafx.robot.FXRobot;
 import de.qabel.desktop.ui.AbstractPage;
+import javafx.scene.input.KeyCode;
 import org.testfx.api.FxRobot;
 
 public class LoginPage extends AbstractPage {
@@ -163,6 +164,11 @@ public class LoginPage extends AbstractPage {
      */
     public LoginPage requestNewPassword() {
         clickOn("#newPassword");
+        return this;
+    }
+
+    public LoginPage pressEnterKey() {
+        this.clickOn(USER_INPUT).press(KeyCode.ENTER).release(KeyCode.ENTER);
         return this;
     }
 }
