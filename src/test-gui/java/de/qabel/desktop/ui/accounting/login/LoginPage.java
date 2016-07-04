@@ -1,12 +1,9 @@
 package de.qabel.desktop.ui.accounting.login;
 
-import com.sun.glass.events.KeyEvent;
 import com.sun.javafx.robot.FXRobot;
 import de.qabel.desktop.ui.AbstractPage;
 import javafx.scene.input.KeyCode;
 import org.testfx.api.FxRobot;
-
-import javax.jws.soap.SOAPBinding;
 
 public class LoginPage extends AbstractPage {
     public static final String CREATE_BUTTON = "#createButton";

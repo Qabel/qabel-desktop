@@ -29,7 +29,7 @@
                            styleClass="user"/>
 
                 <PasswordField fx:id="password" alignment="CENTER" prefWidth="220.0"
-                               promptText="%loginBoxAccountUserPassword" text="" onKeyPressed="#handleEnterPressed"/>
+                               promptText="%loginBoxAccountUserPassword" text=""/>
 
                 <PasswordField fx:id="confirm" alignment="CENTER" managed="false" visible="false" promptText="%loginConfirmPassword"/>
 
