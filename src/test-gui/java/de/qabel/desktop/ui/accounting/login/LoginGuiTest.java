@@ -117,5 +117,3 @@ public class LoginGuiTest extends AbstractGuiTest<LoginController> {
         page.pressEnterKey();
     }
 }
-
-//ende
