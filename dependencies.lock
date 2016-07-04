@@ -7,9 +7,9 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.qabel:qabel-core": {
-            "locked": "0.7.0",
-            "requested": "0.+"
+        "com.github.audax:qabel-core": {
+            "locked": "repositories-SNAPSHOT",
+            "requested": "repositories-SNAPSHOT"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -91,9 +91,9 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.qabel:qabel-core": {
-            "locked": "0.7.0",
-            "requested": "0.+"
+        "com.github.audax:qabel-core": {
+            "locked": "repositories-SNAPSHOT",
+            "requested": "repositories-SNAPSHOT"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -171,6 +171,9 @@
         ":box-test-0.7.0": {
             "project": true
         },
+        ":core-test-0.7.0": {
+            "project": true
+        },
         ":jfxrt": {
             "project": true
         },
@@ -178,9 +181,9 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.qabel:qabel-core": {
-            "locked": "0.7.0",
-            "requested": "0.+"
+        "com.github.audax:qabel-core": {
+            "locked": "repositories-SNAPSHOT",
+            "requested": "repositories-SNAPSHOT"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -223,6 +226,9 @@
             "requested": "1.2.+"
         },
         "null:box-test-0.7.0": {
+            "project": true
+        },
+        "null:core-test-0.7.0": {
             "project": true
         },
         "null:jfxrt": {
@@ -289,6 +295,9 @@
         ":box-test-0.7.0": {
             "project": true
         },
+        ":core-test-0.7.0": {
+            "project": true
+        },
         ":jfxrt": {
             "project": true
         },
@@ -296,9 +305,9 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.qabel:qabel-core": {
-            "locked": "0.7.0",
-            "requested": "0.+"
+        "com.github.audax:qabel-core": {
+            "locked": "repositories-SNAPSHOT",
+            "requested": "repositories-SNAPSHOT"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -341,6 +350,9 @@
             "requested": "1.2.+"
         },
         "null:box-test-0.7.0": {
+            "project": true
+        },
+        "null:core-test-0.7.0": {
             "project": true
         },
         "null:jfxrt": {
@@ -411,9 +423,9 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.qabel:qabel-core": {
-            "locked": "0.7.0",
-            "requested": "0.+"
+        "com.github.audax:qabel-core": {
+            "locked": "repositories-SNAPSHOT",
+            "requested": "repositories-SNAPSHOT"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -491,6 +503,9 @@
         ":box-test-0.7.0": {
             "project": true
         },
+        ":core-test-0.7.0": {
+            "project": true
+        },
         ":jfxrt": {
             "project": true
         },
@@ -498,9 +513,9 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.qabel:qabel-core": {
-            "locked": "0.7.0",
-            "requested": "0.+"
+        "com.github.audax:qabel-core": {
+            "locked": "repositories-SNAPSHOT",
+            "requested": "repositories-SNAPSHOT"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -543,6 +558,9 @@
             "requested": "1.2.+"
         },
         "null:box-test-0.7.0": {
+            "project": true
+        },
+        "null:core-test-0.7.0": {
             "project": true
         },
         "null:jfxrt": {
@@ -609,6 +627,9 @@
         ":box-test-0.7.0": {
             "project": true
         },
+        ":core-test-0.7.0": {
+            "project": true
+        },
         ":jfxrt": {
             "project": true
         },
@@ -616,9 +637,9 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.qabel:qabel-core": {
-            "locked": "0.7.0",
-            "requested": "0.+"
+        "com.github.audax:qabel-core": {
+            "locked": "repositories-SNAPSHOT",
+            "requested": "repositories-SNAPSHOT"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -661,6 +682,9 @@
             "requested": "1.2.+"
         },
         "null:box-test-0.7.0": {
+            "project": true
+        },
+        "null:core-test-0.7.0": {
             "project": true
         },
         "null:jfxrt": {

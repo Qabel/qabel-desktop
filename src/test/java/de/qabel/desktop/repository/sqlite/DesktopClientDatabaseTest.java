@@ -1,5 +1,7 @@
 package de.qabel.desktop.repository.sqlite;
 
+import de.qabel.core.repository.sqlite.DesktopClientDatabase;
+import de.qabel.core.repository.sqlite.MigrationException;
 import de.qabel.desktop.repository.sqlite.migration.AbstractSqliteTest;
 import de.qabel.desktop.repository.sqlite.migration.FailingMigration;
 import de.qabel.desktop.repository.sqlite.migration.Migration1460367000CreateIdentitiy;

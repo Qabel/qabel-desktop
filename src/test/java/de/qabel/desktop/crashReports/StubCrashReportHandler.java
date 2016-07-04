@@ -1,7 +1,6 @@
 package de.qabel.desktop.crashReports;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 public class StubCrashReportHandler implements CrashReportHandler {
     public String text;

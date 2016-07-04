@@ -2,14 +2,17 @@ package de.qabel.desktop.repository.sqlite;
 
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
+import de.qabel.core.config.factory.DropUrlGenerator;
+import de.qabel.core.config.factory.IdentityBuilder;
+import de.qabel.core.repository.EntityManager;
+import de.qabel.core.repository.sqlite.ClientDatabase;
+import de.qabel.core.repository.sqlite.SqliteAccountRepository;
+import de.qabel.core.repository.sqlite.SqliteIdentityRepository;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.DefaultBoxSyncConfig;
-import de.qabel.desktop.config.factory.DropUrlGenerator;
-import de.qabel.desktop.config.factory.IdentityBuilder;
 import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.nio.boxfs.BoxPath;
-import de.qabel.desktop.repository.EntityManager;
 import org.junit.Test;
 
 import java.nio.file.Path;
@@ -17,7 +20,8 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 public class SqliteBoxSyncRepositoryTest extends AbstractSqliteRepositoryTest<SqliteBoxSyncRepository> {
     private List<BoxSyncConfig> adds = new LinkedList<>();

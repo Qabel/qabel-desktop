@@ -1,11 +1,13 @@
 package de.qabel.desktop.repository.sqlite.migration;
 
+import de.qabel.core.repository.sqlite.migration.AbstractMigration;
 import org.junit.Test;
 import org.spongycastle.util.encoders.Hex;
 
 import java.sql.*;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class Migration1460367030ShareNotificationTest extends AbstractMigrationTest {
 

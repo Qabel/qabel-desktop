@@ -1,8 +1,8 @@
 package de.qabel.desktop.repository;
 
 import de.qabel.core.config.Identity;
+import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
-import de.qabel.desktop.repository.exception.PersistenceException;
 
 import java.util.List;
 import java.util.function.Consumer;

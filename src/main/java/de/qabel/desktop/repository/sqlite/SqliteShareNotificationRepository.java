@@ -1,17 +1,22 @@
 package de.qabel.desktop.repository.sqlite;
 
 import de.qabel.core.config.Identity;
+import de.qabel.core.repository.EntityManager;
+import de.qabel.core.repository.exception.PersistenceException;
+import de.qabel.core.repository.sqlite.AbstractSqliteRepository;
+import de.qabel.core.repository.sqlite.ClientDatabase;
+import de.qabel.core.repository.sqlite.Hydrator;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
-import de.qabel.desktop.repository.EntityManager;
 import de.qabel.desktop.repository.ShareNotificationRepository;
-import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.repository.sqlite.hydrator.ShareNotificationMessageHydrator;
 import org.spongycastle.util.encoders.Hex;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;

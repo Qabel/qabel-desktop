@@ -3,7 +3,6 @@ package de.qabel.desktop.daemon.sync.worker.index;
 import de.qabel.desktop.nio.boxfs.BoxPath;
 
 import java.io.Serializable;
-import java.nio.file.Path;
 
 public class SyncIndexEntry implements Serializable {
     private BoxPath relativePath;

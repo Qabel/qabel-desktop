@@ -12,10 +12,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static de.qabel.desktop.AsyncUtils.assertAsync;
-import static de.qabel.desktop.AsyncUtils.waitUntil;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class ContactActionLogTest extends AbstractControllerTest {
     private InMemoryDropMessageRepository repo = new InMemoryDropMessageRepository();

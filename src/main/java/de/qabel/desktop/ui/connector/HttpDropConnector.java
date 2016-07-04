@@ -7,7 +7,9 @@ import de.qabel.core.crypto.AbstractBinaryDropMessage;
 import de.qabel.core.crypto.BinaryDropMessageV0;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.drop.DropURL;
-import de.qabel.core.exceptions.*;
+import de.qabel.core.exceptions.QblDropPayloadSizeException;
+import de.qabel.core.exceptions.QblException;
+import de.qabel.core.exceptions.QblNetworkInvalidResponseException;
 import de.qabel.core.http.DropHTTP;
 import de.qabel.core.http.HTTPResult;
 import de.qabel.desktop.daemon.NetworkStatus;
@@ -15,7 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.Set;
 
 public class HttpDropConnector implements DropConnector {
 

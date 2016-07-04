@@ -2,14 +2,18 @@ package de.qabel.desktop.repository.sqlite;
 
 import de.qabel.core.config.Identities;
 import de.qabel.core.config.Identity;
+import de.qabel.core.config.factory.DefaultIdentityFactory;
+import de.qabel.core.config.factory.DropUrlGenerator;
+import de.qabel.core.config.factory.IdentityBuilder;
 import de.qabel.core.drop.DropURL;
-import de.qabel.desktop.config.factory.DefaultIdentityFactory;
-import de.qabel.desktop.config.factory.DropUrlGenerator;
-import de.qabel.desktop.config.factory.IdentityBuilder;
-import de.qabel.desktop.repository.EntityManager;
-import de.qabel.desktop.repository.exception.EntityNotFoundException;
-import de.qabel.desktop.repository.sqlite.hydrator.DropURLHydrator;
-import de.qabel.desktop.repository.sqlite.hydrator.IdentityHydrator;
+import de.qabel.core.repository.EntityManager;
+import de.qabel.core.repository.exception.EntityNotFoundException;
+import de.qabel.core.repository.sqlite.ClientDatabase;
+import de.qabel.core.repository.sqlite.SqliteDropUrlRepository;
+import de.qabel.core.repository.sqlite.SqliteIdentityRepository;
+import de.qabel.core.repository.sqlite.SqlitePrefixRepository;
+import de.qabel.core.repository.sqlite.hydrator.DropURLHydrator;
+import de.qabel.core.repository.sqlite.hydrator.IdentityHydrator;
 import org.junit.Test;
 
 import java.util.Arrays;

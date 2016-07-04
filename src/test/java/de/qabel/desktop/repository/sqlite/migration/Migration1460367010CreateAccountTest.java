@@ -1,5 +1,6 @@
 package de.qabel.desktop.repository.sqlite.migration;
 
+import de.qabel.core.repository.sqlite.migration.AbstractMigration;
 import org.junit.Test;
 
 import java.sql.*;

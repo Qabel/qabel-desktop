@@ -5,7 +5,8 @@ import org.junit.Test;
 import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class PatternBlacklistTest {
     private PatternBlacklist blacklist = new PatternBlacklist();

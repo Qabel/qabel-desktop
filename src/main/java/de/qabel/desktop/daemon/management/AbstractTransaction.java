@@ -1,7 +1,6 @@
 package de.qabel.desktop.daemon.management;
 
 import java.nio.file.Path;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 import java.util.concurrent.CopyOnWriteArrayList;

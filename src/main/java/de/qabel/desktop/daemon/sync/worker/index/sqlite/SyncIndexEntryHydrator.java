@@ -1,11 +1,11 @@
 package de.qabel.desktop.daemon.sync.worker.index.sqlite;
 
+import de.qabel.core.repository.GenericEntityManager;
+import de.qabel.core.repository.sqlite.hydrator.AbstractHydrator;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndexEntry;
 import de.qabel.desktop.daemon.sync.worker.index.SyncState;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.nio.boxfs.BoxPath;
-import de.qabel.desktop.repository.GenericEntityManager;
-import de.qabel.desktop.repository.sqlite.hydrator.AbstractHydrator;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

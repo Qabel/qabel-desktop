@@ -11,7 +11,6 @@ import javafx.scene.control.TextField;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 

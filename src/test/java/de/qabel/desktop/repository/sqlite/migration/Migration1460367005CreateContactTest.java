@@ -1,14 +1,13 @@
 package de.qabel.desktop.repository.sqlite.migration;
 
+import de.qabel.core.repository.sqlite.migration.AbstractMigration;
 import org.junit.Test;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class Migration1460367005CreateContactTest extends AbstractMigrationTest {
     @Override

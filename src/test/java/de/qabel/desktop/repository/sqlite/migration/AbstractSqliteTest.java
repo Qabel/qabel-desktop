@@ -1,6 +1,6 @@
 package de.qabel.desktop.repository.sqlite.migration;
 
-import de.qabel.desktop.repository.sqlite.DesktopClientDatabase;
+import de.qabel.core.repository.sqlite.DesktopClientDatabase;
 import org.junit.After;
 import org.junit.Before;
 

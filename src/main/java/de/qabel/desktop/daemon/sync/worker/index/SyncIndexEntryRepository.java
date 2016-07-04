@@ -1,8 +1,8 @@
 package de.qabel.desktop.daemon.sync.worker.index;
 
+import de.qabel.core.repository.exception.EntityNotFoundException;
+import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.nio.boxfs.BoxPath;
-import de.qabel.desktop.repository.exception.EntityNotFoundException;
-import de.qabel.desktop.repository.exception.PersistenceException;
 
 public interface SyncIndexEntryRepository {
     SyncIndexEntry find(BoxPath relativeRemotePath) throws EntityNotFoundException, PersistenceException;

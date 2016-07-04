@@ -1,10 +1,12 @@
 package de.qabel.desktop.repository.sqlite;
 
-import de.qabel.desktop.repository.EntityManager;
-import de.qabel.desktop.repository.exception.EntityNotFoundException;
+import de.qabel.core.repository.EntityManager;
+import de.qabel.core.repository.exception.EntityNotFoundException;
+import de.qabel.core.repository.sqlite.ClientDatabase;
+import de.qabel.core.repository.sqlite.SqliteDropStateRepository;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class SqliteDropStateRepositoryTest extends AbstractSqliteRepositoryTest<SqliteDropStateRepository> {
 

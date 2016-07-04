@@ -1,14 +1,15 @@
 package de.qabel.desktop.repository.sqlite;
 
 import de.qabel.core.config.Identity;
-import de.qabel.desktop.config.factory.DropUrlGenerator;
-import de.qabel.desktop.config.factory.IdentityBuilder;
-import de.qabel.desktop.repository.EntityManager;
+import de.qabel.core.config.factory.DropUrlGenerator;
+import de.qabel.core.config.factory.IdentityBuilder;
+import de.qabel.core.repository.EntityManager;
 import org.junit.Test;
 
 import java.net.URISyntaxException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class EntityManagerTest {
     private EntityManager em = new EntityManager();

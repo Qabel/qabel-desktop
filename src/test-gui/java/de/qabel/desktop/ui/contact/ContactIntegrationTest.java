@@ -5,7 +5,7 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.daemon.drop.TextMessage;
-import de.qabel.desktop.repository.EntityManager;
+import de.qabel.core.repository.EntityManager;
 import de.qabel.desktop.repository.sqlite.*;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import de.qabel.desktop.ui.actionlog.ActionlogController;

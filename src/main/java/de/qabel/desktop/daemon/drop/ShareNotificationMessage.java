@@ -2,7 +2,7 @@ package de.qabel.desktop.daemon.drop;
 
 import com.google.gson.Gson;
 import de.qabel.core.crypto.QblECPublicKey;
-import de.qabel.desktop.repository.HasId;
+import de.qabel.core.repository.HasId;
 import org.spongycastle.util.encoders.Hex;
 
 import java.io.Serializable;

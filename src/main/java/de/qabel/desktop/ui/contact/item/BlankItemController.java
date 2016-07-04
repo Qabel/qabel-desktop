@@ -1,8 +1,8 @@
 package de.qabel.desktop.ui.contact.item;
 
 import de.qabel.core.config.Contact;
+import de.qabel.core.repository.IdentityRepository;
 import de.qabel.desktop.config.ClientConfig;
-import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.ui.AbstractController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

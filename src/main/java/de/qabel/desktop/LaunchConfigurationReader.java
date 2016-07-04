@@ -1,7 +1,6 @@
 package de.qabel.desktop;
 
 import de.qabel.desktop.config.LaunchConfig;
-import org.spongycastle.crypto.engines.ISAACEngine;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -2,6 +2,7 @@ package de.qabel.desktop.ui.accounting.item;
 
 import de.qabel.desktop.ui.AbstractController;
 import javafx.fxml.Initializable;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 

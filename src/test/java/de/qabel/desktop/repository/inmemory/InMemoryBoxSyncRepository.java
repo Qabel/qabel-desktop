@@ -1,8 +1,8 @@
 package de.qabel.desktop.repository.inmemory;
 
+import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.repository.BoxSyncRepository;
-import de.qabel.desktop.repository.exception.PersistenceException;
 
 import java.util.LinkedList;
 import java.util.List;
