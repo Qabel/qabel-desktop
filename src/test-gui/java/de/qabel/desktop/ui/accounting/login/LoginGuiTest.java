@@ -106,4 +106,16 @@ public class LoginGuiTest extends AbstractGuiTest<LoginController> {
         page.withCreateAccount().create()
             .waitForCreateError();
     }
+
+    @Test
+    public void pressEnterToLogin() {
+        setup();
+
+        page.setUsername("someusername");
+        page.setPassword("password");
+        page.setPasswordConfirmation("password");
+        page.pressEnterKey();
+    }
 }
+
+//ende
