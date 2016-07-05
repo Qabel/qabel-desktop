@@ -37,6 +37,7 @@ import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.UPDATE;
 
 public class DefaultSyncer implements Syncer {
     private static final Pattern DEFAULT_BLACKLIST_PATTERN = Pattern.compile("\\..*~");
+    public static final long ASSUMED_DIRECTORY_METADATA_SIZE = 56320L;
     private ExecutorService executor;
     private static final ExecutorService fileExecutor = Executors.newSingleThreadExecutor();
     private BoxSyncBasedUploadFactory uploadFactory = new BoxSyncBasedUploadFactory();
@@ -159,7 +160,7 @@ public class DefaultSyncer implements Syncer {
         }
 
         SyncIndexEntry entry = index.get(BoxFileSystem.getRoot().relativize(download.getSource()));
-        long size = download.isDir() ? 56320L : download.getSize();
+        long size = download.isDir() ? ASSUMED_DIRECTORY_METADATA_SIZE : download.getSize();
         Long mtime = download.isDir() ? null : download.getMtime();
         SyncState targetState = new SyncState(download.getType() != DELETE, mtime, size);
 
@@ -217,7 +218,7 @@ public class DefaultSyncer implements Syncer {
         targetState = new SyncState(
             upload.getType() != DELETE,
             upload.isDir() ? null : upload.getMtime(),
-            upload.isDir() ? 56320L : upload.getSize()
+            upload.isDir() ? ASSUMED_DIRECTORY_METADATA_SIZE : upload.getSize()
         );
         BoxPath targetPath = config.getRemotePath().resolve(config.getLocalPath().relativize(upload.getSource()));
         targetPath = BoxFileSystem.getRoot().relativize(targetPath);

@@ -1,6 +1,8 @@
 package de.qabel.desktop.repository.sqlite.migration;
 
 import de.qabel.core.repository.sqlite.migration.AbstractMigration;
+import de.qabel.core.repository.sqlite.migration.Migration1460367000CreateIdentitiyTest;
+import de.qabel.core.repository.sqlite.migration.Migration1460367030ShareNotification;
 import org.junit.Test;
 import org.spongycastle.util.encoders.Hex;
 
