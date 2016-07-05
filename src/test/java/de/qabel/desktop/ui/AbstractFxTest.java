@@ -1,41 +1,15 @@
 package de.qabel.desktop.ui;
 
-import com.sun.javafx.application.PlatformImpl;
 import de.qabel.desktop.AsyncUtils;
-import javafx.application.Application;
-import javafx.application.Platform;
+import de.qabel.desktop.ui.util.PlatformUtils;
 import org.junit.BeforeClass;
 
-import java.lang.reflect.Field;
 import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AbstractFxTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
-        Platform.setImplicitExit(false);
-        try {
-            Platform.runLater(() -> {
-            });
-        } catch (IllegalStateException e) {
-            startPlatform();
-        } catch (Exception e) {
-            AbstractControllerTest.createLogger().error("something strange happened, trying to start platform anyways");
-            startPlatform();
-        }
-    }
-
-    private static void startPlatform() throws NoSuchFieldException, IllegalAccessException, InterruptedException {
-        new Thread() {
-            @Override
-            public void run() {
-                Application.launch(TestApplication.class);
-            }
-        }.start();
-        Field field = PlatformImpl.class.getDeclaredField("initialized");
-        field.setAccessible(true);
-        while (!((AtomicBoolean) field.get(null)).get())
-            Thread.sleep(10);
+        PlatformUtils.start();
     }
 
     protected void runLaterAndWait(Runnable runnable) {
