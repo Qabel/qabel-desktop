@@ -1,15 +1,15 @@
 package de.qabel.desktop.ui.remotefs;
 
 import com.airhacks.afterburner.views.FXMLView;
+import de.qabel.box.storage.BoxExternalFile;
+import de.qabel.box.storage.BoxFile;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Contacts;
 import de.qabel.core.crypto.QblECKeyPair;
+import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.daemon.sync.worker.BoxNavigationStub;
 import de.qabel.desktop.daemon.sync.worker.BoxVolumeStub;
-import de.qabel.desktop.repository.exception.PersistenceException;
-import de.qabel.box.storage.BoxExternalFile;
-import de.qabel.box.storage.BoxFile;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Before;
 import org.junit.Ignore;
