@@ -3,6 +3,7 @@ package de.qabel.desktop.config;
 import java.net.URL;
 
 public class LaunchConfig {
+
     private URL dropUrl;
     private URL accountingUrl;
     private URL blockUrl;

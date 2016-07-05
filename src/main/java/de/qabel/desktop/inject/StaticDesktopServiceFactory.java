@@ -23,10 +23,6 @@ public abstract class StaticDesktopServiceFactory extends RuntimeDesktopServiceF
 
     AccountRepository accountRepository;
 
-    protected ContactRepository contactRepository;
-
-    protected DropMessageRepository dropMessageRepository;
-
     protected ClientConfig clientConfiguration;
 
     private ClientConfigurationRepository clientConfigurationRepository;
