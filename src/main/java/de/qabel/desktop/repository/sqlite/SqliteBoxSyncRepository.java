@@ -1,11 +1,12 @@
 package de.qabel.desktop.repository.sqlite;
 
+import de.qabel.core.repository.EntityManager;
+import de.qabel.core.repository.exception.PersistenceException;
+import de.qabel.core.repository.sqlite.*;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.factory.DefaultBoxSyncConfigFactory;
 import de.qabel.desktop.daemon.sync.worker.index.sqlite.SqliteSyncIndexFactory;
 import de.qabel.desktop.repository.BoxSyncRepository;
-import de.qabel.desktop.repository.EntityManager;
-import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.repository.sqlite.hydrator.BoxSyncConfigHydrator;
 
 import java.sql.PreparedStatement;

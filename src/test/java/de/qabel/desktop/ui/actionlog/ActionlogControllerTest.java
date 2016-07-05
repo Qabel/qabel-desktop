@@ -13,12 +13,11 @@ import de.qabel.desktop.ui.actionlog.item.MyActionlogItemView;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 
 public class ActionlogControllerTest extends AbstractControllerTest {

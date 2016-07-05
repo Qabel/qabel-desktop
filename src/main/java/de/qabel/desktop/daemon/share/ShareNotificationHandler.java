@@ -2,10 +2,10 @@ package de.qabel.desktop.daemon.share;
 
 import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
+import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.ShareNotificationRepository;
-import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

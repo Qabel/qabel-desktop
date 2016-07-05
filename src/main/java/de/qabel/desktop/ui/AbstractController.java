@@ -5,10 +5,6 @@ import de.qabel.core.drop.DropURL;
 import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.desktop.crashReports.CrashReportHandler;
 import javafx.application.Platform;
-import javafx.geometry.Insets;
-import javafx.scene.control.*;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;

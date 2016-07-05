@@ -1,10 +1,11 @@
 package de.qabel.desktop.repository.sqlite;
 
-import de.qabel.desktop.repository.EntityManager;
+import de.qabel.core.repository.EntityManager;
+import de.qabel.core.repository.sqlite.ClientDatabase;
+import de.qabel.core.repository.sqlite.DesktopClientDatabase;
 import org.junit.After;
 import org.junit.Before;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;

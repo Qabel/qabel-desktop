@@ -1,8 +1,9 @@
 package de.qabel.desktop.repository.sqlite;
 
-import de.qabel.desktop.repository.ClientConfigRepository;
-import de.qabel.desktop.repository.EntityManager;
-import de.qabel.desktop.repository.exception.EntityNotFoundException;
+import de.qabel.core.repository.ClientConfigRepository;
+import de.qabel.core.repository.EntityManager;
+import de.qabel.core.repository.exception.EntityNotFoundException;
+import de.qabel.core.repository.sqlite.ClientDatabase;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

@@ -1,15 +1,15 @@
 package de.qabel.desktop.daemon.sync.worker.index.sqlite;
 
+import de.qabel.core.repository.GenericEntityManager;
+import de.qabel.core.repository.exception.EntityNotFoundException;
+import de.qabel.core.repository.exception.PersistenceException;
+import de.qabel.core.repository.sqlite.AbstractSqliteRepository;
+import de.qabel.core.repository.sqlite.ClientDatabase;
+import de.qabel.core.repository.sqlite.Hydrator;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndexEntry;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndexEntryRepository;
 import de.qabel.desktop.daemon.sync.worker.index.SyncState;
 import de.qabel.desktop.nio.boxfs.BoxPath;
-import de.qabel.desktop.repository.GenericEntityManager;
-import de.qabel.desktop.repository.exception.EntityNotFoundException;
-import de.qabel.desktop.repository.exception.PersistenceException;
-import de.qabel.desktop.repository.sqlite.AbstractSqliteRepository;
-import de.qabel.desktop.repository.sqlite.ClientDatabase;
-import de.qabel.desktop.repository.sqlite.Hydrator;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

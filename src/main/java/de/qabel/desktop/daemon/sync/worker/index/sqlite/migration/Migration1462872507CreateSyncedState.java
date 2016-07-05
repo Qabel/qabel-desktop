@@ -1,6 +1,6 @@
 package de.qabel.desktop.daemon.sync.worker.index.sqlite.migration;
 
-import de.qabel.desktop.repository.sqlite.migration.AbstractMigration;
+import de.qabel.core.repository.sqlite.migration.AbstractMigration;
 
 import java.sql.Connection;
 import java.sql.SQLException;

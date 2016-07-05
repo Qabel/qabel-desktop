@@ -6,7 +6,7 @@ import de.qabel.box.storage.BoxVolume;
 import de.qabel.core.accounting.AccountingHTTP;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
-import de.qabel.desktop.repository.IdentityRepository;
+import de.qabel.core.repository.IdentityRepository;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
 
 import java.io.File;

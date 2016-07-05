@@ -2,6 +2,7 @@ package de.qabel.desktop.ui.sync.setup;
 
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.core.config.Account;
+import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.factory.BoxSyncConfigFactory;
@@ -9,7 +10,6 @@ import de.qabel.desktop.config.factory.BoxVolumeFactory;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.repository.BoxSyncRepository;
-import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.remotefs.dialog.RemoteFSDirectoryChooser;
 import javafx.application.Platform;

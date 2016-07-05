@@ -1,12 +1,14 @@
 package de.qabel.desktop.daemon.sync.worker;
 
-import de.qabel.desktop.daemon.sync.event.*;
+import de.qabel.desktop.daemon.sync.event.ChangeEvent;
+import de.qabel.desktop.daemon.sync.event.LocalChangeEvent;
+import de.qabel.desktop.daemon.sync.event.LocalDeleteEvent;
+import de.qabel.desktop.daemon.sync.event.WatchRegisteredEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.*;
-import java.nio.file.WatchEvent;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;

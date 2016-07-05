@@ -3,7 +3,7 @@ package de.qabel.desktop.ui.actionlog;
 import de.qabel.core.config.Entity;
 import de.qabel.core.config.Persistable;
 import de.qabel.core.drop.DropMessage;
-import de.qabel.desktop.repository.HasId;
+import de.qabel.core.repository.HasId;
 
 import java.util.Collections;
 import java.util.LinkedList;

@@ -1,12 +1,12 @@
 package de.qabel.desktop.ui.sync.item;
 
+import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.daemon.management.Transaction;
 import de.qabel.desktop.daemon.management.Upload;
 import de.qabel.desktop.daemon.sync.BoxSync;
 import de.qabel.desktop.daemon.sync.worker.Syncer;
 import de.qabel.desktop.repository.BoxSyncRepository;
-import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.sync.edit.SyncEditController;
 import de.qabel.desktop.ui.sync.edit.SyncEditView;

@@ -1,7 +1,7 @@
 package de.qabel.desktop.inject.config;
 
+import de.qabel.core.repository.sqlite.ClientDatabase;
 import de.qabel.desktop.config.FilesAbout;
-import de.qabel.desktop.repository.sqlite.ClientDatabase;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 

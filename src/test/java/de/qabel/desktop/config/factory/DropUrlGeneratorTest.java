@@ -1,5 +1,6 @@
 package de.qabel.desktop.config.factory;
 
+import de.qabel.core.config.factory.DropUrlGenerator;
 import org.junit.Test;
 
 import java.net.URISyntaxException;

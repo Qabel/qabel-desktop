@@ -1,8 +1,15 @@
 package de.qabel.desktop.repository.sqlite.migration;
 
+import de.qabel.core.repository.sqlite.migration.AbstractMigration;
+import de.qabel.core.repository.sqlite.migration.Migration1460367000CreateIdentitiyTest;
+import de.qabel.core.repository.sqlite.migration.Migration1460367010CreateAccountTest;
+import de.qabel.core.repository.sqlite.migration.Migration1460367025BoxSync;
 import org.junit.Test;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import static org.junit.Assert.*;
 

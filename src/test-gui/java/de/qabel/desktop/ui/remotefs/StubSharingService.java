@@ -5,9 +5,9 @@ import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.exceptions.QblNetworkInvalidResponseException;
+import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.SharingService;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
-import de.qabel.desktop.repository.exception.PersistenceException;
 
 import java.io.IOException;
 import java.nio.file.Path;

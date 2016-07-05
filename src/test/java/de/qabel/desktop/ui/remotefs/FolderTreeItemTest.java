@@ -132,12 +132,12 @@ public class FolderTreeItemTest extends AbstractControllerTest {
         public List<BoxFolder> folders = new LinkedList<>();
 
         @Override
-        public DirectoryMetadata reloadMetadata() throws QblStorageException {
+        public JdbcDirectoryMetadata reloadMetadata() throws QblStorageException {
             return null;
         }
 
         @Override
-        public void setMetadata(DirectoryMetadata dm) {
+        public void setMetadata(JdbcDirectoryMetadata dm) {
 
         }
 
@@ -276,7 +276,7 @@ public class FolderTreeItemTest extends AbstractControllerTest {
         }
 
         @Override
-        public DirectoryMetadata getMetadata() {
+        public JdbcDirectoryMetadata getMetadata() {
             return null;
         }
 
@@ -301,7 +301,7 @@ public class FolderTreeItemTest extends AbstractControllerTest {
         }
 
         @Override
-        public boolean hasVersionChanged(DirectoryMetadata dm) throws QblStorageException {
+        public boolean hasVersionChanged(JdbcDirectoryMetadata dm) throws QblStorageException {
             return false;
         }
 

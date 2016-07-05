@@ -2,15 +2,16 @@ package de.qabel.desktop.repository.sqlite.hydrator;
 
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
+import de.qabel.core.repository.AccountRepository;
+import de.qabel.core.repository.EntityManager;
+import de.qabel.core.repository.IdentityRepository;
+import de.qabel.core.repository.exception.EntityNotFoundException;
+import de.qabel.core.repository.exception.PersistenceException;
+import de.qabel.core.repository.sqlite.hydrator.AbstractHydrator;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.factory.BoxSyncConfigFactory;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.nio.boxfs.BoxPath;
-import de.qabel.desktop.repository.AccountRepository;
-import de.qabel.desktop.repository.EntityManager;
-import de.qabel.desktop.repository.IdentityRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundException;
-import de.qabel.desktop.repository.exception.PersistenceException;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

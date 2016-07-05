@@ -4,11 +4,13 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.config.Entity;
 import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
+import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.repository.DropMessageRepository;
-import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Observable;
 
 public class InMemoryDropMessageRepository extends Observable implements DropMessageRepository {
     public PersistenceDropMessage lastMessage;

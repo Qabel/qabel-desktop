@@ -11,8 +11,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.Timer;
+import java.util.TimerTask;
 
 public class QabelTray {
     private static final Logger logger = LoggerFactory.getLogger(QabelTray.class);

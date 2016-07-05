@@ -3,8 +3,8 @@ package de.qabel.desktop.config.factory;
 import de.qabel.core.accounting.AccountingHTTP;
 import de.qabel.core.config.Identity;
 import de.qabel.core.exceptions.QblInvalidCredentials;
-import de.qabel.desktop.repository.IdentityRepository;
-import de.qabel.desktop.repository.exception.PersistenceException;
+import de.qabel.core.repository.IdentityRepository;
+import de.qabel.core.repository.exception.PersistenceException;
 
 import java.io.IOException;
 import java.util.ArrayList;

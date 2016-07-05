@@ -5,7 +5,7 @@ import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 

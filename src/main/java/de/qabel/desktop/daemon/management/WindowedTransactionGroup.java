@@ -3,9 +3,7 @@ package de.qabel.desktop.daemon.management;
 import java.util.HashSet;
 import java.util.Set;
 
-import static de.qabel.desktop.daemon.management.Transaction.STATE.FAILED;
-import static de.qabel.desktop.daemon.management.Transaction.STATE.FINISHED;
-import static de.qabel.desktop.daemon.management.Transaction.STATE.SKIPPED;
+import static de.qabel.desktop.daemon.management.Transaction.STATE.*;
 
 public class WindowedTransactionGroup extends TransactionGroup {
     private Set<Transaction> runningTransactions = new HashSet<>();

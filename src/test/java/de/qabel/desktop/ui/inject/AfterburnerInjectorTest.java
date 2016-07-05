@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class AfterburnerInjectorTest {
     @Test

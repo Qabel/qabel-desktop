@@ -2,11 +2,19 @@ package de.qabel.desktop.config;
 
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
-import de.qabel.desktop.config.factory.DropUrlGenerator;
-import de.qabel.desktop.config.factory.IdentityBuilder;
+import de.qabel.core.config.factory.DropUrlGenerator;
+import de.qabel.core.config.factory.IdentityBuilder;
+import de.qabel.core.repository.AccountRepository;
+import de.qabel.core.repository.ClientConfigRepository;
+import de.qabel.core.repository.DropStateRepository;
+import de.qabel.core.repository.IdentityRepository;
+import de.qabel.core.repository.inmemory.InMemoryAccountRepository;
+import de.qabel.core.repository.inmemory.InMemoryDropStateRepository;
+import de.qabel.core.repository.inmemory.InMemoryIdentityRepository;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
-import de.qabel.desktop.repository.*;
-import de.qabel.desktop.repository.inmemory.*;
+import de.qabel.desktop.repository.ShareNotificationRepository;
+import de.qabel.desktop.repository.inmemory.InMemoryClientConfigRepository;
+import de.qabel.desktop.repository.inmemory.InMemoryShareNotificationRepository;
 import org.junit.Test;
 
 import java.util.Date;

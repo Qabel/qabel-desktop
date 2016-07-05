@@ -2,26 +2,21 @@ package de.qabel.desktop.ui.connector;
 
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
+import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.drop.DropURL;
-import de.qabel.core.exceptions.*;
+import de.qabel.core.exceptions.QblNetworkInvalidResponseException;
 import de.qabel.core.http.DropHTTP;
-import de.qabel.desktop.config.factory.DropUrlGenerator;
 import de.qabel.desktop.daemon.NetworkStatus;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.net.ConnectException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 public class HttpDropConnectorTest extends AbstractControllerTest {

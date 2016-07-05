@@ -6,9 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static de.qabel.desktop.daemon.management.Transaction.STATE.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class AbstractTransactionTest {
     public static final double PRECISION = 0.001;

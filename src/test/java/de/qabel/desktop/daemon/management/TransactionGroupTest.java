@@ -6,9 +6,7 @@ import org.junit.Test;
 import java.util.LinkedList;
 import java.util.List;
 
-import static de.qabel.desktop.daemon.management.Transaction.STATE.FAILED;
-import static de.qabel.desktop.daemon.management.Transaction.STATE.FINISHED;
-import static de.qabel.desktop.daemon.management.Transaction.STATE.SKIPPED;
+import static de.qabel.desktop.daemon.management.Transaction.STATE.*;
 import static org.junit.Assert.*;
 
 public class TransactionGroupTest {
