@@ -1,5 +1,6 @@
 package de.qabel.desktop.daemon.sync;
 
+import de.qabel.box.storage.AbstractNavigation;
 import de.qabel.box.storage.LocalReadBackend;
 import de.qabel.box.storage.LocalWriteBackend;
 import de.qabel.core.config.Account;
@@ -55,6 +56,7 @@ public class SyncIntegrationTest {
 
     @Before
     public void setUp() {
+        AbstractNavigation.DEFAULT_AUTOCOMMIT_DELAY = 0L;
         try {
             remoteDir = Files.createTempDirectory(getClass().getSimpleName());
             tmpDir1 = Files.createTempDirectory(getClass().getSimpleName());
