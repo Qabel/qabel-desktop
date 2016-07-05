@@ -182,31 +182,27 @@ public class Kernel {
 
     private ClientDatabase getConfigDatabase() {
         try {
-            try {
-                Path configDir = databaseFile.toAbsolutePath().getParent();
-                if (!Files.isDirectory(configDir)) {
-                    Files.createDirectory(configDir);
-                }
-                connection = DriverManager.getConnection(getSqliteConnectionString());
-
-                try {
-                    try (Statement statement = connection.createStatement()) {
-                        statement.execute("PRAGMA FOREIGN_KEYS = ON");
-                    }
-                    ClientDatabase clientDatabase = new DesktopClientDatabase(connection);
-                    clientDatabase.migrate();
-
-                    return clientDatabase;
-                } catch (Exception e) {
-                    try { connection.close(); } catch (Exception ignored) {}
-                    throw e;
-                }
-
-            } catch (Exception e) {
-                throw new IllegalStateException("failed to initialize or migrate config database:" + e.getMessage(), e);
+            Path configDir = databaseFile.toAbsolutePath().getParent();
+            if (!Files.isDirectory(configDir)) {
+                Files.createDirectory(configDir);
             }
+            connection = DriverManager.getConnection(getSqliteConnectionString());
+
+            try {
+                try (Statement statement = connection.createStatement()) {
+                    statement.execute("PRAGMA FOREIGN_KEYS = ON");
+                }
+                ClientDatabase clientDatabase = new DesktopClientDatabase(connection);
+                clientDatabase.migrate();
+
+                return clientDatabase;
+            } catch (Exception e) {
+                try { connection.close(); } catch (Exception ignored) {}
+                throw e;
+            }
+
         } catch (Exception e) {
-            throw e;
+            throw new IllegalStateException("failed to initialize or migrate config database:" + e.getMessage(), e);
         }
     }
 
