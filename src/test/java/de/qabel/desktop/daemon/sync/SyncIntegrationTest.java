@@ -92,6 +92,7 @@ public class SyncIntegrationTest {
             volume2 = new CachedBoxVolume(readBackend, writeBackend, identity.getPrimaryKeyPair(), new byte[0], new File(System.getProperty("java.io.tmpdir")), "prefix");
             volume1.createIndex("qabel", "prefix");
             volume1.navigate().createFolder("sync");
+            volume2.navigate().createFolder("sync");
             manager1 = new MonitoredTransferManager(new DefaultTransferManager());
             manager2 = new MonitoredTransferManager(new DefaultTransferManager());
 
