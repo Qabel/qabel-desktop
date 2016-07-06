@@ -10,7 +10,7 @@
 
 <?import javafx.scene.layout.AnchorPane?>
 <AnchorPane fx:id="menuQR" xmlns="http://javafx.com/javafx/8" visible="false" styleClass="popup-menu"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.accounting.menuqr.MenuQRController">
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.accounting.identityContextMenu.IdentityContextMenu">
     <children>
         <VBox fx:id="vboxMenu" styleClass="vbox-menu">
             <HBox>
@@ -20,7 +20,7 @@
                             <Insets left="5" bottom="3" top="3"/>
                         </HBox.margin>
                     </Label>
-                    <Button fx:id="labelEdit" text="%editDetails" styleClass="button-menu"/>
+                    <Button fx:id="buttonEdit" text="%editDetails" styleClass="button-menu" />
                 </children>
             </HBox>
             <HBox>
