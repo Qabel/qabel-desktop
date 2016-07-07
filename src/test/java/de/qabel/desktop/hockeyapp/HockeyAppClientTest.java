@@ -29,7 +29,6 @@ public class HockeyAppClientTest {
 
     }
 
-
     @Test
     public void versionExists() throws IOException, VersionNotFoundException {
 
@@ -37,10 +36,12 @@ public class HockeyAppClientTest {
         client.versions.add(new HockeyAppVersion(1,"1.1"));
         client.versions.add(new HockeyAppVersion(2, "2.0"));
 
-        HockeyAppVersion version = client.getVersion(fakeCurrentClientVersion);
+        HockeyAppVersion version = client.findVersion(fakeCurrentClientVersion);
 
         assertEquals(fakeCurrentClientVersion, version.getShortVersion());
     }
+
+
 
     @Test
     public void versionNotExists() throws IOException {
@@ -49,20 +50,27 @@ public class HockeyAppClientTest {
         client.versions.add(new HockeyAppVersion(1,"1.2"));
         client.versions.add(new HockeyAppVersion(2, "2.0"));
 
-        try {
-            HockeyAppVersion version = client.getVersion(fakeCurrentClientVersion);
-        } catch (VersionNotFoundException ignored) {
-            HockeyAppVersion newVersion = createVersion(fakeCurrentClientVersion);
-            assertEquals(fakeCurrentClientVersion, newVersion.getShortVersion());
-        }
-
+        findOrCreateVersion();
+        assertEquals(fakeCurrentClientVersion, client.getCurrentHockeyVersion().getShortVersion());
     }
 
+    /**
+     * just try to find Version given by clientversion (shortversion)
+     * if not found on will be created
+     * @throws IOException
+     */
+    public void findOrCreateVersion() throws IOException {
+        try {
+            client.findVersion(fakeCurrentClientVersion);
+        } catch (VersionNotFoundException ignored) {
+            createNewVersion(fakeCurrentClientVersion);
+        }
+    }
 
-    public HockeyAppVersion createVersion(String fakeCurrentClientVersion) throws IOException {
+    public HockeyAppVersion createNewVersion(String fakeCurrentClientVersion) throws IOException {
 
         String responseContent  = "{\n" +
-            "    \"title\": \"createVersion\",\n" +
+            "    \"title\": \"createNewVersion\",\n" +
             "    \"timestamp\": 1467877960,\n" +
             "    \"id\": \"1337\",\n" +
             "    \"version\": \"23\",\n" +
@@ -74,6 +82,7 @@ public class HockeyAppClientTest {
         httpClientStub.addResponse("POST", newVersionUri, response);
 
         HockeyAppVersion newVersion = client.createNewVersion(fakeCurrentClientVersion);
+        client.setCurrentHockeyVersion(newVersion);
         return newVersion;
     }
 

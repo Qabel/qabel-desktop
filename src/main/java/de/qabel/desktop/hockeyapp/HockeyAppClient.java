@@ -16,6 +16,7 @@ import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,8 +39,18 @@ public class HockeyAppClient implements CrashReportHandler {
         this.currentClientVersion = currentClientVersion;
     }
 
+    public void initVersion() {
+        try {
+            findOrCreateVersion();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void sendFeedback(String feedback, String name, String email) throws IOException {
+
+        initVersion();
 
         HttpPost httpPost = new HttpPost(buildApiUri("/feedback"));
         httpPost.addHeader("X-HockeyAppToken", TOKEN);
@@ -49,18 +60,20 @@ public class HockeyAppClient implements CrashReportHandler {
         parameters.add(new BasicNameValuePair("name", name));
         parameters.add(new BasicNameValuePair("email", email));
 
-        try {
-            findVersion(currentClientVersion);
-        } catch (VersionNotFoundException e) {
-            createNewVersion(currentClientVersion);
-        }
-
         String appVersionID = Integer.toString(getCurrentHockeyVersion().getVersionId());
         parameters.add(new BasicNameValuePair("app_version_id", appVersionID));
 
         httpPost.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
 
         httpClient.execute(httpPost);
+    }
+
+    public void findOrCreateVersion() throws IOException {
+        try {
+            findVersion(currentClientVersion);
+        } catch (VersionNotFoundException ignored) {
+            createNewVersion(currentClientVersion);
+        }
     }
 
     @Override
@@ -153,9 +166,8 @@ public class HockeyAppClient implements CrashReportHandler {
         String responseContent = EntityUtils.toString(response.getEntity());
         JSONObject parsedJson = new JSONObject(responseContent);
 
-        if(getCurrentHockeyVersion() == null){
-            currentHockeyVersion = new HockeyAppVersion(parsedJson.getInt("id"),parsedJson.getString("shortversion"));
-        }
+        setCurrentHockeyVersion(new HockeyAppVersion(parsedJson.getInt("id"),parsedJson.getString("shortversion")));
+
         return currentHockeyVersion;
     }
 
