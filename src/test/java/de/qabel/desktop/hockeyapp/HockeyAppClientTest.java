@@ -24,11 +24,6 @@ public class HockeyAppClientTest {
     String fakeCurrentClientVersion = "1.1";
     private HockeyAppClient client = new HockeyAppClient(fakeCurrentClientVersion, httpClientStub);
 
-    @Before
-    public void setUp(){
-
-    }
-
     @Test
     public void versionExists() throws IOException, VersionNotFoundException {
 
