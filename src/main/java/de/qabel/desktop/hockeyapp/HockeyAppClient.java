@@ -39,12 +39,8 @@ public class HockeyAppClient implements CrashReportHandler {
         this.currentClientVersion = currentClientVersion;
     }
 
-    public void initVersion() {
-        try {
-            findOrCreateVersion();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void initVersion() throws IOException {
+        findOrCreateVersion();
     }
 
     @Override
