@@ -3,7 +3,6 @@ package de.qabel.desktop.hockeyapp;
 import de.qabel.core.accounting.CloseableHttpClientStub;
 import de.qabel.core.accounting.CloseableHttpResponseStub;
 import org.apache.http.entity.BasicHttpEntity;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -45,25 +44,22 @@ public class HockeyAppClientTest {
         client.versions.add(new HockeyAppVersion(1,"1.2"));
         client.versions.add(new HockeyAppVersion(2, "2.0"));
 
-        findOrCreateVersion();
-        assertEquals(fakeCurrentClientVersion, client.getCurrentHockeyVersion().getShortVersion());
-    }
+        fakeNewVersionResponse();
 
-    /**
-     * just try to find Version given by clientversion (shortversion)
-     * if not found on will be created
-     * @throws IOException
-     */
-    public void findOrCreateVersion() throws IOException {
-        try {
-            client.findVersion(fakeCurrentClientVersion);
-        } catch (VersionNotFoundException ignored) {
-            createNewVersion(fakeCurrentClientVersion);
-        }
+        client.findOrCreateVersion();
+        assertEquals(fakeCurrentClientVersion, client.getCurrentHockeyVersion().getShortVersion());
     }
 
     public HockeyAppVersion createNewVersion(String fakeCurrentClientVersion) throws IOException {
 
+        fakeNewVersionResponse();
+
+        HockeyAppVersion newVersion = client.createNewVersion(fakeCurrentClientVersion);
+        client.setCurrentHockeyVersion(newVersion);
+        return newVersion;
+    }
+
+    private void fakeNewVersionResponse() {
         String responseContent  = "{\n" +
             "    \"title\": \"createNewVersion\",\n" +
             "    \"timestamp\": 1467877960,\n" +
@@ -75,10 +71,6 @@ public class HockeyAppClientTest {
         CloseableHttpResponseStub response = this.createResponseFromString(201, responseContent);
         String newVersionUri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/app_versions/new";
         httpClientStub.addResponse("POST", newVersionUri, response);
-
-        HockeyAppVersion newVersion = client.createNewVersion(fakeCurrentClientVersion);
-        client.setCurrentHockeyVersion(newVersion);
-        return newVersion;
     }
 
 

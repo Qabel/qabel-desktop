@@ -15,6 +15,7 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -159,12 +160,19 @@ public class HockeyAppClient implements CrashReportHandler {
         request.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
 
         HttpResponse response = httpClient.execute(request);
+
         String responseContent = EntityUtils.toString(response.getEntity());
-        JSONObject parsedJson = new JSONObject(responseContent);
 
-        setCurrentHockeyVersion(new HockeyAppVersion(parsedJson.getInt("id"),parsedJson.getString("shortversion")));
+        try {
+            JSONObject parsedJson = new JSONObject(responseContent);
+            int versionId = parsedJson.getInt("id");
+            String shortVersion = parsedJson.getString("shortversion");
+            setCurrentHockeyVersion(new HockeyAppVersion(versionId, shortVersion));
 
-        return currentHockeyVersion;
+            return currentHockeyVersion;
+        } catch (JSONException e){
+            throw new IOException("Unexpected JSON format return from HokkeyApp", e);
+        }
     }
 
 
