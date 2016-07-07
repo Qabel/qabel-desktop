@@ -1,39 +1,104 @@
 package de.qabel.desktop.hockeyapp;
 
+import de.qabel.desktop.crashReports.CrashReportHandler;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-
 import java.io.IOException;
-
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-public class HockeyAppClient {
+public class HockeyAppClient implements CrashReportHandler {
 
     private static final String BASE_URI = "https://rink.hockeyapp.net/api/2/apps/";
     private static final String APP_ID = "3b119dc227334d2d924e4e134c72aadc";
     private static final String TOKEN = "350b097ef0964b17a0f3907050de309d";
+    private HttpClient httpClient;
+
+    public List<HockeyAppVersion> versions;
     public String currentClientVersion;
-    public HockeyAppVersion currentHockeyVersion;
-    HttpClient httpClient;
-    List<HockeyAppVersion> versions;
+    private HockeyAppVersion currentHockeyVersion;
 
     public HockeyAppClient(String currentClientVersion, HttpClient httpClient) {
         this.httpClient = httpClient;
         this.currentClientVersion = currentClientVersion;
     }
+
+    @Override
+    public void sendFeedback(String feedback, String name, String email) throws IOException {
+
+        HttpPost httpPost = new HttpPost(buildApiUri("/feedback"));
+        httpPost.addHeader("X-HockeyAppToken", TOKEN);
+
+        List<NameValuePair> parameters = new ArrayList<>();
+        parameters.add(new BasicNameValuePair("text", feedback));
+        parameters.add(new BasicNameValuePair("name", name));
+        parameters.add(new BasicNameValuePair("email", email));
+
+        try {
+            findVersion(currentClientVersion);
+        } catch (VersionNotFoundException e) {
+            createNewVersion(currentClientVersion);
+        }
+
+        String appVersionID = Integer.toString(getCurrentHockeyVersion().getVersionId());
+        parameters.add(new BasicNameValuePair("app_version_id", appVersionID));
+
+        httpPost.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
+
+        httpClient.execute(httpPost);
+    }
+
+    @Override
+    public void sendStacktrace(String feedback, String stacktrace) throws IOException {
+
+        String log = createLog(stacktrace);
+
+        HttpPost httpPost = new HttpPost(buildApiUri("/crashes/upload"));
+
+        HttpEntity entity = MultipartEntityBuilder.create()
+            .addPart("log", new ByteArrayBody(log.getBytes(), "log"))
+            .addPart("description", new ByteArrayBody(feedback.getBytes(), "description"))
+            .build();
+        httpPost.setEntity(entity);
+
+        httpClient.execute(httpPost);
+    }
+
+    private String createLog(String stacktrace) {
+        Date date = new Date();
+        StringBuilder log = new StringBuilder();
+
+        log.append("Package: de.qabel.desktop\n");
+        log.append("Version: 1\n");
+        log.append("OS: " + System.getProperty("os.name") + " / ");
+        log.append(System.getProperty("os.arch") + " / ");
+        log.append(System.getProperty("os.version") + "\n");
+        log.append("Manufacturer: " + System.getProperty("java.vendor") + "\n");
+        log.append("Model: " + System.getProperty("java.version") + "\n");
+        log.append("Date: " + date + "\n");
+        log.append("\n");
+        log.append(stacktrace);
+
+        return log.toString();
+    }
+
+
+
 
     String buildApiUri(String apiCallPath){
         return BASE_URI + APP_ID + apiCallPath;
@@ -45,6 +110,12 @@ public class HockeyAppClient {
         }
         return versions;
     }
+
+
+    public HockeyAppVersion getCurrentHockeyVersion() {
+        return currentHockeyVersion;
+    }
+
 
     @NotNull
     private List<HockeyAppVersion> fetchVersions() throws IOException {
@@ -82,18 +153,24 @@ public class HockeyAppClient {
         String responseContent = EntityUtils.toString(response.getEntity());
         JSONObject parsedJson = new JSONObject(responseContent);
 
-        if(currentHockeyVersion == null){
+        if(getCurrentHockeyVersion() == null){
             currentHockeyVersion = new HockeyAppVersion(parsedJson.getInt("id"),parsedJson.getString("shortversion"));
         }
         return currentHockeyVersion;
     }
 
-    public HockeyAppVersion getVersion(String shortVersion) throws VersionNotFoundException {
+
+    public HockeyAppVersion findVersion(String shortVersion) throws VersionNotFoundException {
         for (HockeyAppVersion current : versions) {
             if (shortVersion.equals(current.getShortVersion())) {
+                this.setCurrentHockeyVersion(current);
                 return current;
             }
         }
-        throw new VersionNotFoundException("No Version with the shortversion: '"+shortVersion+"' found in HockeyApp");
+        throw new VersionNotFoundException("No Version with the shortversion: '" + shortVersion + "' found in HockeyApp");
+    }
+
+    public void setCurrentHockeyVersion(HockeyAppVersion currentHockeyVersion) {
+        this.currentHockeyVersion = currentHockeyVersion;
     }
 }
