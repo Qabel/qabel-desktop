@@ -22,11 +22,6 @@ import java.util.List;
 public class VersionClient {
 
     private final HockeyAppConfiguration config;
-    //    private final String appId;
-//    private final String securityTokenHeaderName;
-//    private final String baseUri;
-//    private final String securityToken;
-    public String appVersion;
     public HttpClient httpClient;
 
     private List<HockeyAppVersion> versions = new LinkedList<>();
@@ -35,11 +30,7 @@ public class VersionClient {
     public VersionClient(HockeyAppConfiguration config) {
         this.httpClient = config.getHttpClient();
         this.config = config;
-//        this.appVersion = config.getAppVersion();
-//        this.baseUri = config.getBaseUri();
-//        this.securityToken = config.getSecurityToken();
-//        this.securityTokenHeaderName = config.getTokenHeaderName();
-//        this.appId = config.getApiAppKey();
+
     }
 
     String buildApiUri(String apiCallPath) {
