@@ -1,47 +1,34 @@
 package de.qabel.desktop.hockeyapp;
 
-import de.qabel.desktop.crashReports.CrashReportHandler;
 import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClients;
 
-import java.io.IOException;
-import java.util.List;
-
-public class HockeyAppClient implements CrashReportHandler {
+public class HockeyAppClient {
 
     private static final String BASE_URI = "https://rink.hockeyapp.net/api/2/apps/";
     private static final String APP_ID = "3b119dc227334d2d924e4e134c72aadc";
     private static final String TOKEN = "350b097ef0964b17a0f3907050de309d";
-    private HttpClient httpClient;
 
-    public List<HockeyAppVersion> versions;
+    private static final String TOKEN_HEADERNAME = "350b097ef0964b17a0f3907050de309d";
     public String appVersion;
+    private HttpClient httpClient = HttpClients.createMinimal();
 
     public HockeyAppClient(String appVersion, HttpClient httpClient) {
         this.httpClient = httpClient;
         this.appVersion = appVersion;
     }
 
-    @Override
-    public void sendFeedback(String feedback, String name, String email) throws IOException {
-
+    public static String getAppId() {
+        return APP_ID;
     }
 
-
-    @Override
-    public void sendStacktrace(String feedback, String stacktrace) throws IOException {
-
+    public static String getTokenHeaderName() {
+        return TOKEN_HEADERNAME;
     }
-
-    private String createLog(String stacktrace) {
-        return "";
-    }
-
 
     String buildApiUri(String apiCallPath){
-        return BASE_URI + APP_ID + apiCallPath;
+        return getBaseUri() + apiCallPath;
     }
-
-
 
     public String getBaseUri() {
         return BASE_URI + APP_ID;
@@ -55,15 +42,9 @@ public class HockeyAppClient implements CrashReportHandler {
         return httpClient;
     }
 
-    public static String getAppId() {
-        return APP_ID;
-    }
-
-    public static String getTOKEN() {
-        return TOKEN;
-    }
-
     public String getAppVersion() {
         return appVersion;
     }
+
+
 }
