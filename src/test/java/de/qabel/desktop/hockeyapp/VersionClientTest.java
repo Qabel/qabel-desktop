@@ -13,20 +13,15 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 public class VersionClientTest {
 
-    CloseableHttpClientStub httpClientStub = new CloseableHttpClientStub();
-
-    private HockeyAppClient hockeyAppClient = new HockeyAppClient("1.1", httpClientStub);
-    private VersionClient client = new VersionClient(hockeyAppClient);
-
-
     private static final int VERSION_ID_1_1 = 208;
     private static final int VERSION_ID_1_0 = 195;
-
+    CloseableHttpClientStub httpClientStub = new CloseableHttpClientStub();
+    private HockeyAppClient hockeyAppClient = new HockeyAppClient("1.1", httpClientStub);
+    private VersionClient client = new VersionClient(hockeyAppClient);
 
     @Test
     public void checkAppVersion() {
