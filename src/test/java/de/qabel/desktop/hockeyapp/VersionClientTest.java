@@ -20,12 +20,12 @@ public class VersionClientTest {
     private static final int VERSION_ID_1_1 = 208;
     private static final int VERSION_ID_1_0 = 195;
     CloseableHttpClientStub httpClientStub = new CloseableHttpClientStub();
-    private HockeyAppClient hockeyAppClient = new HockeyAppClient("1.1", httpClientStub);
-    private VersionClient client = new VersionClient(hockeyAppClient);
+    private HockeyAppConfiguration config = new HockeyAppConfiguration("1.1", httpClientStub);
+    private VersionClient client = new VersionClient(config);
 
     @Test
     public void checkAppVersion() {
-        assertEquals("1.1", client.appVersion);
+        assertEquals("1.1", config.getAppVersion());
     }
 
     @Test
@@ -37,7 +37,6 @@ public class VersionClientTest {
 
         client.findAndLoadVersion(shortVersion);
         assertEquals(shortVersion, client.getVersion().getShortVersion());
-
 
     }
 
@@ -101,9 +100,7 @@ public class VersionClientTest {
     @Test
     public void loadVersions() throws IOException, JSONException {
         loadFakeVersions();
-
         List<HockeyAppVersion> versions = client.getVersions();
-
 
         assertEquals(2, versions.size());
 

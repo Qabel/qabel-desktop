@@ -21,28 +21,29 @@ import java.util.List;
 
 public class VersionClient {
 
-
-    private final String appId;
-    private final String securityTokenHeaderName;
-    private final String baseUri;
-    private final String securityToken;
+    private final HockeyAppConfiguration config;
+    //    private final String appId;
+//    private final String securityTokenHeaderName;
+//    private final String baseUri;
+//    private final String securityToken;
     public String appVersion;
     public HttpClient httpClient;
 
     private List<HockeyAppVersion> versions = new LinkedList<>();
     private HockeyAppVersion version;
 
-    public VersionClient(HockeyAppClient hockeyAppClient) {
-        this.httpClient = hockeyAppClient.getHttpClient();
-        this.appVersion = hockeyAppClient.getAppVersion();
-        this.baseUri = hockeyAppClient.getBaseUri();
-        this.securityToken = hockeyAppClient.getSecurityToken();
-        this.securityTokenHeaderName = hockeyAppClient.getTokenHeaderName();
-        this.appId = hockeyAppClient.getAppId();
+    public VersionClient(HockeyAppConfiguration config) {
+        this.httpClient = config.getHttpClient();
+        this.config = config;
+//        this.appVersion = config.getAppVersion();
+//        this.baseUri = config.getBaseUri();
+//        this.securityToken = config.getSecurityToken();
+//        this.securityTokenHeaderName = config.getTokenHeaderName();
+//        this.appId = config.getApiAppKey();
     }
 
     String buildApiUri(String apiCallPath) {
-        return baseUri + apiCallPath;
+        return config.getApiBaseUri() + apiCallPath;
     }
 
     List<HockeyAppVersion> getVersions() {
@@ -56,7 +57,7 @@ public class VersionClient {
     void loadVersions() throws IOException, JSONException {
 
         HttpGet httpGet = new HttpGet(buildApiUri("/app_versions"));
-        httpGet.addHeader(securityTokenHeaderName, securityToken);
+        httpGet.addHeader(config.getSecurityTokenName(), config.getSecurityTokenKey());
         HttpResponse response = httpClient.execute(httpGet);
         String responseContent = EntityUtils.toString(response.getEntity());
 
@@ -85,7 +86,7 @@ public class VersionClient {
 
     void createVersion(String version) throws IOException, JSONException {
         HttpPost request = new HttpPost(buildApiUri("/app_versions/new"));
-        request.addHeader(securityTokenHeaderName, appId);
+        request.addHeader(config.getSecurityTokenName(), config.getApiAppKey());
 
         List<NameValuePair> parameters = buildCreateParameters(version);
         request.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
