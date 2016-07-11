@@ -2,39 +2,34 @@ package de.qabel.desktop.hockeyapp;
 
 import de.qabel.core.accounting.CloseableHttpClientStub;
 import de.qabel.core.accounting.CloseableHttpResponseStub;
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.BasicHttpEntity;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class VersionClientTest {
-
-
-    public static final String BASE_URI = "https://rink.hockeyapp.net/api/2/apps/";
-    public static final String APP_ID = "3b119dc227334d2d924e4e134c72aadc";
-    public static final String TOKEN = "350b097ef0964b17a0f3907050de309d";
 
     CloseableHttpClientStub httpClientStub = new CloseableHttpClientStub();
 
     private HockeyAppClient hockeyAppClient = new HockeyAppClient("1.1", httpClientStub);
     private VersionClient client = new VersionClient(hockeyAppClient);
 
+
+    private static final int VERSION_ID_1_1 = 208;
+    private static final int VERSION_ID_1_0 = 195;
+
+
     @Test
-    public void checkAppVersion(){
+    public void checkAppVersion() {
         assertEquals("1.1", client.appVersion);
     }
 
@@ -42,21 +37,51 @@ public class VersionClientTest {
     public void findVersion() throws VersionNotFoundException {
 
         String shortVersion = "1.1";
+
         buildTestVersions();
 
         client.findAndLoadVersion(shortVersion);
         assertEquals(shortVersion, client.getVersion().getShortVersion());
+
+
+    }
+
+    @Test(expected = VersionNotFoundException.class)
+    public void noVersion() throws VersionNotFoundException {
+        String shortVersion = "noversion";
+        client.setVersion(null);
+
+        assertNull(client.getVersion());
+        if (client.getVersion() == null) {
+            throw new VersionNotFoundException("No Version with the shortversion: '" + shortVersion + "' found in HockeyApp");
+        }
     }
 
     @Test(expected = IOException.class)
-    public void createNewVersionWithInvalidJSONResponse() throws IOException {
-        String responseContent  = "";
-
-        CloseableHttpResponseStub response = this.createResponseFromString(201, responseContent);
-        String newVersionUri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/app_versions/new";
-        httpClientStub.addResponse("POST", newVersionUri, response);
-
+    public void parseInvalidVersionCreateResponse() throws IOException {
+        String responseContent = "nbzuhbggzubzug";
+        client.parseVersionCreateResponse(responseContent);
         client.createVersion("invalid");
+    }
+    @Test(expected = IOException.class)
+    public void parseInvalidVersionsResponse() throws IOException {
+        String responseContent = "nbzuhbggzubzug";
+        client.parseVersionsResponse(responseContent);
+    }
+
+    @Test
+    public void parseVersionCreateResponse() throws IOException {
+        String versionsResponseContent = getVersionCreateResponseString();
+        client.parseVersionCreateResponse(versionsResponseContent);
+
+        assertEquals(VERSION_ID_1_1, client.getVersion().getVersionId());
+    }
+
+    @Test
+    public void parseVersionsResponse() throws IOException {
+        String versionsResponseContent = getVersionsJsonString();
+        List<HockeyAppVersion> versions = client.parseVersionsResponse(versionsResponseContent);
+        assertEquals(2, versions.size());
     }
 
     @Test
@@ -69,7 +94,7 @@ public class VersionClientTest {
             createVersion(shortVersion);
         }
         assertEquals(shortVersion, client.getVersion().getShortVersion());
-        assertEquals(1337, client.getVersion().getVersionId());
+        assertEquals(VERSION_ID_1_1, client.getVersion().getVersionId());
     }
 
     public void createVersion(String version) throws IOException {
@@ -77,84 +102,105 @@ public class VersionClientTest {
         client.createVersion(version);
     }
 
+
     @Test
-    public void loadVersions() throws IOException {
+    public void loadVersions() throws IOException, JSONException {
         loadFakeVersions();
 
         List<HockeyAppVersion> versions = client.getVersions();
 
+
         assertEquals(2, versions.size());
 
-        assertEquals(208, versions.get(0).getVersionId());
-        assertEquals(195, versions.get(1).getVersionId());
+        assertEquals(VERSION_ID_1_1, versions.get(0).getVersionId());
+        assertEquals(VERSION_ID_1_0, versions.get(1).getVersionId());
 
         assertEquals("1.1", versions.get(0).getShortVersion());
         assertEquals("1.0", versions.get(1).getShortVersion());
     }
 
     @Test
-    public void buildApiUri(){
+    public void buildApiUri() {
         String testUri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/somewhere";
         assertEquals(testUri, client.buildApiUri("/somewhere"));
     }
 
 
-    /**
-     * builds a list of test HockeyAppVersion and save it through the client
-     * 2 items with shortversions of "1.1", "2.0"
-     */
     private void buildTestVersions() {
         List<HockeyAppVersion> versions = client.getVersions();
-        versions.add(new HockeyAppVersion(1, "1.1"));
-        versions.add(new HockeyAppVersion(2, "2.0"));
+        versions.add(new HockeyAppVersion(VERSION_ID_1_1, "1.1"));
+        versions.add(new HockeyAppVersion(VERSION_ID_1_0, "1.0"));
         client.setVersions(versions);
     }
 
-    /**
-     * expected shortversion is "1.1"
-     * @throws IOException
-     */
     private void loadFakeCreatedVersionResponse() throws IOException {
-        String responseContent  = "{\n" +
-            "    \"title\": \"createNewVersion\",\n" +
-            "    \"timestamp\": 1467877960,\n" +
-            "    \"id\": \"1337\",\n" +
-            "    \"version\": \"23\",\n" +
-            "    \"shortversion\": \"1.1\",\n" +
-            "}";
+        String responseContent = getVersionCreateResponseString();
 
         CloseableHttpResponseStub response = this.createResponseFromString(201, responseContent);
         String newVersionUri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/app_versions/new";
         httpClientStub.addResponse("POST", newVersionUri, response);
     }
 
+    @NotNull
+    private String getVersionCreateResponseString() {
+        return "{\n" +
+            "    \"id\": \"" + VERSION_ID_1_1 + "\",\n" +
+            "    \"shortversion\": \"1.1\",\n" +
+            "    \"title\": \"createNewVersion\",\n" +
+            "    \"timestamp\": 1467877960,\n" +
+            "    \"version\": \"23\",\n" +
+            "}";
+    }
+
+    @Test
+    public void buildParameters() {
+
+        List<NameValuePair> params = client.buildCreateParameters("1.1");
+        String keyName = params.get(0).getName();
+        String value = params.get(0).getValue();
+
+        assertEquals("bundle_short_version", keyName);
+        assertEquals("1.1", value);
+
+    }
+
     private void loadFakeVersions() throws IOException {
-        String versionsResponseContent = "{\n" +
+        String versionsResponseContent = getVersionsJsonString();
+
+        String versionsUri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/app_versions";
+        CloseableHttpResponseStub response = this.createResponseFromString(200, versionsResponseContent);
+        httpClientStub.addResponse("GET", versionsUri, response);
+        client.loadVersions();
+    }
+
+    @NotNull
+    private String getVersionsJsonString() {
+        return "{\n" +
             "    \"app_versions\": [\n" +
             "        {\n" +
-            "            \"version\": \"208\",\n" +
+            "            \"version\": \"" + VERSION_ID_1_1 + "\",\n" +
+            "            \"shortversion\": \"1.1\",\n" +
             "            \"mandatory\": false,\n" +
-            "            \"config_url\": \"https://rink.hockeyapp.net/manage/apps/1266/app_versions/208\",\n" +
-            "            \"download_url\":\"https://rink.hockeyapp.net/apps/0873e2b98ad046a92c170a243a8515f6/app_versions/208\",\n" +
+            "            \"config_url\": \"https://rink.hockeyapp.net/manage/apps/1266/app_versions/" + VERSION_ID_1_1 + "\",\n" +
+            "            \"download_url\":\"https://rink.hockeyapp.net/apps/0873e2b98ad046a92c170a243a8515f6/app_versions/" + VERSION_ID_1_1 + "\",\n" +
             "            \"timestamp\": 1326195742,\n" +
             "            \"appsize\": 157547,\n" +
             "            \"device_family\": null,\n" +
             "            \"notes\": \"<p>Fixed bug when users could not sign in.</p>\\n\",\n" +
             "            \"status\": 2,\n" +
-            "            \"shortversion\": \"1.1\",\n" +
             "            \"minimum_os_version\": null,\n" +
             "            \"title\": \"HockeyApp\"\n" +
             "        },\n" +
             "        {\n" +
-            "            \"version\": \"195\",\n" +
+            "            \"version\": \"" + VERSION_ID_1_0 + "\",\n" +
+            "            \"shortversion\": \"1.0\",\n" +
             "            \"mandatory\": false,\n" +
-            "            \"config_url\": \"https://rink.hockeyapp.net/manage/apps/1266/app_versions/195\",\n" +
+            "            \"config_url\": \"https://rink.hockeyapp.net/manage/apps/1266/app_versions/" + VERSION_ID_1_0 + "\",\n" +
             "            \"timestamp\": 1325597848,\n" +
             "            \"appsize\": 157591,\n" +
             "            \"device_family\": null,\n" +
             "            \"notes\": \"<ul>\\n<li>Added action bar with native support for Android 3.x and 4.0.</li>\\n<li>Added grid view on Android tablets.</li>\\n<li>Added &quot;Check for Updates&quot; to menu.</li>\\n<li>Changed layout of detail view.</li>\\n<li>Updated HockeySDK + various bug fixes.</li>\\n</ul>\\n\",\n" +
             "            \"status\": 1,\n" +
-            "            \"shortversion\": \"1.0\",\n" +
             "            \"minimum_os_version\": null,\n" +
             "            \"title\": \"HockeyApp\"\n" +
             "        },\n" +
@@ -162,11 +208,6 @@ public class VersionClientTest {
             "    ],\n" +
             "    \"status\": \"success\"\n" +
             "}";
-
-        String versionsUri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/app_versions";
-        CloseableHttpResponseStub response = this.createResponseFromString(200, versionsResponseContent);
-        httpClientStub.addResponse("GET", versionsUri, response);
-        client.loadVersions();
     }
 
     private CloseableHttpResponseStub createResponseFromString(int statusCode, String responseContent) {
