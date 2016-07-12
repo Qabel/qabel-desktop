@@ -55,6 +55,9 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     private SharingService sharingService;
     private BoxVolumeFactory boxVolumeFactory;
     private AccountingHTTP accountingHTTP;
+    private ResourceBundle resourceBundle;
+    private SyncDaemon syncDaemon;
+    private DropDaemon dropDaemon;
 
     public RuntimeDesktopServiceFactory(RuntimeConfiguration runtimeConfiguration) {
         this.runtimeConfiguration = runtimeConfiguration;
@@ -104,7 +107,7 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
 
     @Override
     public synchronized CrashReportHandler getCrashReportHandler() {
-        return new HockeyApp();
+        return new HockeyApp(getCurrentVersion());
     }
 
     @Override
@@ -164,7 +167,6 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
         return runtimeConfiguration.getPrimaryStage();
     }
 
-    private ResourceBundle resourceBundle;
     @Override
     public synchronized ResourceBundle getResourceBundle() {
         if (resourceBundle == null) {
@@ -177,8 +179,6 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     public Translator getTranslator() {
         return new Translator(getResourceBundle());
     }
-
-    private SyncDaemon syncDaemon;
 
     public SyncerFactory getSyncerFactory() throws IOException {
         return new DefaultSyncerFactory(getBoxVolumeFactory(), getTransferManager());
@@ -198,8 +198,6 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
         }
         return syncDaemon;
     }
-
-    private DropDaemon dropDaemon;
 
     @Override
     public synchronized DropDaemon getDropDaemon() {

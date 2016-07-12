@@ -21,34 +21,31 @@ import java.util.List;
 
 public class VersionClient {
 
+    public static final String API_VERSIONS_NEW = "/app_versions/new";
+    public static final String API_VERSIONS_ALL = "/app_versions";
     private final HockeyAppConfiguration config;
     public HttpClient httpClient;
-
     private List<HockeyAppVersion> versions = new LinkedList<>();
     private HockeyAppVersion version;
 
     public VersionClient(HockeyAppConfiguration config) {
         this.httpClient = config.getHttpClient();
         this.config = config;
-
     }
 
-    String buildApiUri(String apiCallPath) {
-        return config.getApiBaseUri() + apiCallPath;
-    }
-
-    List<HockeyAppVersion> getVersions() {
-        return versions;
-    }
-
-    void setVersions(List<HockeyAppVersion> versions) {
-        this.versions = versions;
+    public void setUp(String version) throws IOException {
+        loadVersions();
+        try {
+            findAndLoadVersion(version);
+        } catch (VersionNotFoundException e) {
+            createVersion(version);
+        }
     }
 
     void loadVersions() throws IOException, JSONException {
 
-        HttpGet httpGet = new HttpGet(buildApiUri("/app_versions"));
-        httpGet.addHeader(config.getSecurityTokenName(), config.getSecurityTokenKey());
+        HttpGet httpGet = config.getHttpGet(API_VERSIONS_ALL);
+
         HttpResponse response = httpClient.execute(httpGet);
         String responseContent = EntityUtils.toString(response.getEntity());
 
@@ -66,18 +63,8 @@ public class VersionClient {
         }
     }
 
-    @Nullable
-    HockeyAppVersion getVersion() {
-        return version;
-    }
-
-    void setVersion(HockeyAppVersion version) {
-        this.version = version;
-    }
-
     void createVersion(String version) throws IOException, JSONException {
-        HttpPost request = new HttpPost(buildApiUri("/app_versions/new"));
-        request.addHeader(config.getSecurityTokenName(), config.getApiAppKey());
+        HttpPost request = config.getHttpPost(API_VERSIONS_NEW);
 
         List<NameValuePair> parameters = buildCreateParameters(version);
         request.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
@@ -120,5 +107,22 @@ public class VersionClient {
         List<NameValuePair> parameters = new ArrayList<>();
         parameters.add(new BasicNameValuePair("bundle_short_version", version));
         return parameters;
+    }
+
+    @Nullable
+    public HockeyAppVersion getVersion() {
+        return version;
+    }
+
+    public void setVersion(HockeyAppVersion version) {
+        this.version = version;
+    }
+
+    List<HockeyAppVersion> getVersions() {
+        return versions;
+    }
+
+    public void setVersions(List<HockeyAppVersion> versions) {
+        this.versions = versions;
     }
 }

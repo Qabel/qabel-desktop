@@ -10,18 +10,29 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+
 public class VersionClientTest {
 
     private static final int VERSION_ID_1_1 = 208;
     private static final int VERSION_ID_1_0 = 195;
-    CloseableHttpClientStub httpClientStub = new CloseableHttpClientStub();
-    private HockeyAppConfiguration config = new HockeyAppConfiguration("1.1", httpClientStub);
+    CloseableHttpClientStub httpClient = new CloseableHttpClientStub();
+    private HockeyAppConfiguration config = new HockeyAppConfiguration("1.1", httpClient);
     private VersionClient client = new VersionClient(config);
+
+    public VersionClientTest() throws IOException {
+        testConstructor(config);
+    }
+
+    public void testConstructor(HockeyAppConfiguration config) throws IOException {
+        this.config = config;
+        this.httpClient = (CloseableHttpClientStub) config.getHttpClient();
+    }
 
     @Test
     public void checkAppVersion() {
@@ -66,6 +77,7 @@ public class VersionClientTest {
     @Test
     public void parseVersionCreateResponse() throws IOException {
         String versionsResponseContent = getVersionCreateResponseString();
+
         client.parseVersionCreateResponse(versionsResponseContent);
 
         assertEquals(VERSION_ID_1_1, client.getVersion().getVersionId());
@@ -112,9 +124,9 @@ public class VersionClientTest {
     }
 
     @Test
-    public void buildApiUri() {
+    public void buildApiUri() throws URISyntaxException {
         String testUri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/somewhere";
-        assertEquals(testUri, client.buildApiUri("/somewhere"));
+        assertEquals(testUri, config.buildApiUri("/somewhere").toString());
     }
 
 
@@ -130,7 +142,7 @@ public class VersionClientTest {
 
         CloseableHttpResponseStub response = this.createResponseFromString(201, responseContent);
         String newVersionUri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/app_versions/new";
-        httpClientStub.addResponse("POST", newVersionUri, response);
+        httpClient.addResponse("POST", newVersionUri, response);
     }
 
     @NotNull
@@ -161,7 +173,7 @@ public class VersionClientTest {
 
         String versionsUri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/app_versions";
         CloseableHttpResponseStub response = this.createResponseFromString(200, versionsResponseContent);
-        httpClientStub.addResponse("GET", versionsUri, response);
+        httpClient.addResponse("GET", versionsUri, response);
         client.loadVersions();
     }
 
