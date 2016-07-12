@@ -121,7 +121,7 @@ public class VersionClientTest {
     @NotNull
     private String getVersionCreateResponseString(String shortVersion) {
         return "{\n" +
-            "    \"id\": \"" + 5 + "\",\n" +
+            "    \"id\": \"" + VERSION_ID_1_1 + "\",\n" +
             "    \"shortversion\": \"" + shortVersion + "\",\n" +
             "    \"title\": \"createNewVersion\",\n" +
             "    \"timestamp\": 1467877960,\n" +
