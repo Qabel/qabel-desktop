@@ -21,9 +21,6 @@ public class HockeyAppConfiguration {
         this.appVersion = appVersion;
     }
 
-    public HockeyAppConfiguration(String appVersion) {
-        this.appVersion = appVersion;
-    }
 
     public static String getApiBaseUri() {
         return API_BASE_URI + API_APP_KEY;

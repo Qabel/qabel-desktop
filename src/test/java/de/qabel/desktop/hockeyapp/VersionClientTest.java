@@ -10,29 +10,19 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 
 public class VersionClientTest {
 
     private static final int VERSION_ID_1_1 = 208;
     private static final int VERSION_ID_1_0 = 195;
+
     CloseableHttpClientStub httpClient = new CloseableHttpClientStub();
     private HockeyAppConfiguration config = new HockeyAppConfiguration("1.1", httpClient);
-    private VersionClient client = new VersionClient(config);
-
-    public VersionClientTest() throws IOException {
-        testConstructor(config);
-    }
-
-    public void testConstructor(HockeyAppConfiguration config) throws IOException {
-        this.config = config;
-        this.httpClient = (CloseableHttpClientStub) config.getHttpClient();
-    }
+    private VersionClient client = new VersionClient(config, httpClient);
 
     @Test
     public void checkAppVersion() {
@@ -40,26 +30,13 @@ public class VersionClientTest {
     }
 
     @Test
-    public void findVersion() throws VersionNotFoundException {
+    public void findVersion() throws VersionNotFoundException, IOException {
 
         String shortVersion = "1.1";
-
         buildTestVersions();
+        HockeyAppVersion version = client.getVersion();
 
-        client.findAndLoadVersion(shortVersion);
-        assertEquals(shortVersion, client.getVersion().getShortVersion());
-
-    }
-
-    @Test(expected = VersionNotFoundException.class)
-    public void noVersion() throws VersionNotFoundException {
-        String shortVersion = "noversion";
-        client.setVersion(null);
-
-        assertNull(client.getVersion());
-        if (client.getVersion() == null) {
-            throw new VersionNotFoundException("No Version with the shortversion: '" + shortVersion + "' found in HockeyApp");
-        }
+        assertEquals(shortVersion, version.getShortVersion());
     }
 
     @Test(expected = IOException.class)
@@ -68,6 +45,7 @@ public class VersionClientTest {
         client.parseVersionCreateResponse(responseContent);
         client.createVersion("invalid");
     }
+
     @Test(expected = IOException.class)
     public void parseInvalidVersionsResponse() throws IOException {
         String responseContent = "nbzuhbggzubzug";
@@ -76,7 +54,8 @@ public class VersionClientTest {
 
     @Test
     public void parseVersionCreateResponse() throws IOException {
-        String versionsResponseContent = getVersionCreateResponseString();
+
+        String versionsResponseContent = getVersionCreateResponseString(config.getAppVersion());
 
         client.parseVersionCreateResponse(versionsResponseContent);
 
@@ -93,21 +72,15 @@ public class VersionClientTest {
     @Test
     public void createNewVersion() throws IOException {
 
-        String shortVersion = "1.1";
-        try {
-            client.findAndLoadVersion(shortVersion);
-        } catch (VersionNotFoundException ignored) {
-            createVersion(shortVersion);
-        }
+        String shortVersion = "1.5";
+        buildTestVersions();
+
+        loadFakeCreatedVersionResponse(shortVersion);
+        client.findAndLoadVersion(shortVersion);
+
         assertEquals(shortVersion, client.getVersion().getShortVersion());
-        assertEquals(VERSION_ID_1_1, client.getVersion().getVersionId());
-    }
 
-    public void createVersion(String version) throws IOException {
-        loadFakeCreatedVersionResponse();
-        client.createVersion(version);
     }
-
 
     @Test
     public void loadVersions() throws IOException, JSONException {
@@ -124,9 +97,9 @@ public class VersionClientTest {
     }
 
     @Test
-    public void buildApiUri() throws URISyntaxException {
+    public void buildApiUri() {
         String testUri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/somewhere";
-        assertEquals(testUri, config.buildApiUri("/somewhere").toString());
+        assertEquals(testUri, config.buildApiUri("/somewhere"));
     }
 
 
@@ -137,8 +110,8 @@ public class VersionClientTest {
         client.setVersions(versions);
     }
 
-    private void loadFakeCreatedVersionResponse() throws IOException {
-        String responseContent = getVersionCreateResponseString();
+    private void loadFakeCreatedVersionResponse(String shortVersion) throws IOException {
+        String responseContent = getVersionCreateResponseString(shortVersion);
 
         CloseableHttpResponseStub response = this.createResponseFromString(201, responseContent);
         String newVersionUri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/app_versions/new";
@@ -146,10 +119,10 @@ public class VersionClientTest {
     }
 
     @NotNull
-    private String getVersionCreateResponseString() {
+    private String getVersionCreateResponseString(String shortVersion) {
         return "{\n" +
-            "    \"id\": \"" + VERSION_ID_1_1 + "\",\n" +
-            "    \"shortversion\": \"1.1\",\n" +
+            "    \"id\": \"" + 5 + "\",\n" +
+            "    \"shortversion\": \"" + shortVersion + "\",\n" +
             "    \"title\": \"createNewVersion\",\n" +
             "    \"timestamp\": 1467877960,\n" +
             "    \"version\": \"23\",\n" +

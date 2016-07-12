@@ -36,6 +36,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import org.apache.http.impl.client.HttpClients;
 
 import java.io.IOException;
 import java.net.URI;
@@ -107,7 +108,7 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
 
     @Override
     public synchronized CrashReportHandler getCrashReportHandler() {
-        return new HockeyApp(getCurrentVersion());
+        return new HockeyApp(getCurrentVersion(), HttpClients.createMinimal());
     }
 
     @Override

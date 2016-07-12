@@ -4,9 +4,13 @@ package de.qabel.desktop.crashReports;
 import de.qabel.desktop.hockeyapp.HockeyAppConfiguration;
 import de.qabel.desktop.hockeyapp.HockeyAppVersion;
 import de.qabel.desktop.hockeyapp.VersionClient;
+import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.jetbrains.annotations.NotNull;
@@ -20,31 +24,40 @@ public class HockeyApp implements CrashReportHandler {
 
     HockeyAppConfiguration config;
     VersionClient versionClient;
+    HttpClient httpClient;
 
-    public HockeyApp(String currentVersion) {
-        this.config = new HockeyAppConfiguration(currentVersion);
-        this.versionClient = new VersionClient(config);
-
+    public HockeyApp(String currentVersion, HttpClient httpClient) {
+        this.config = new HockeyAppConfiguration(currentVersion, httpClient);
+        this.httpClient = httpClient;
+        this.versionClient = new VersionClient(config, httpClient);
     }
 
 
     @Override
-    public void sendFeedback(String feedbackFieldText, String name, String email) throws IOException {
+    public void sendFeedback(String feedback, String name, String email) throws IOException {
         HttpPost request = config.getHttpPost("/feedback");
-        List<NameValuePair> parameters = buildFeedbackParams(feedbackFieldText, name, email);
+        List<NameValuePair> parameters = buildFeedbackParams(feedback, name, email);
         request.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
         config.getHttpClient().execute(request);
     }
 
     @Override
     public void sendStacktrace(String feedback, String stacktrace) throws IOException {
+        HttpPost request = config.getHttpPost("/crashes/upload");
 
+        String log = createLog(stacktrace).toString();
+
+        HttpEntity entity = MultipartEntityBuilder.create()
+            .addPart("log", new ByteArrayBody(log.getBytes(), "log"))
+            .addPart("description", new ByteArrayBody(feedback.getBytes(), "description"))
+            .build();
+        request.setEntity(entity);
+
+        httpClient.execute(request);
     }
 
     @NotNull
     List<NameValuePair> buildFeedbackParams(String feedback, String name, String email) throws IOException {
-        versionClient.setUp(config.getAppVersion());
-
         HockeyAppVersion version = versionClient.getVersion();
         String versionId = "" + version.getVersionId();
 
@@ -59,12 +72,12 @@ public class HockeyApp implements CrashReportHandler {
     }
 
 
-    private String createLog(String stacktrace) {
+    String createLog(String stacktrace) throws IOException {
         Date date = new Date();
         StringBuilder log = new StringBuilder();
 
         log.append("Package: de.qabel.desktop\n");
-        log.append("Version: 1\n");
+        log.append("Version: " + versionClient.getVersion().getShortVersion() + "\n");
         log.append("OS: " + System.getProperty("os.name") + " / ");
         log.append(System.getProperty("os.arch") + " / ");
         log.append(System.getProperty("os.version") + "\n");
@@ -73,6 +86,7 @@ public class HockeyApp implements CrashReportHandler {
         log.append("Date: " + date + "\n");
         log.append("\n");
         log.append(stacktrace);
+
 
         return log.toString();
     }

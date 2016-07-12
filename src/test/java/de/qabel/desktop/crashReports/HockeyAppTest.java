@@ -6,10 +6,7 @@ import de.qabel.desktop.hockeyapp.HockeyAppConfiguration;
 import de.qabel.desktop.hockeyapp.HockeyAppVersion;
 import de.qabel.desktop.hockeyapp.VersionClient;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.BasicHttpEntity;
-import org.apache.http.protocol.HTTP;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,23 +15,25 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class HockeyAppTest {
 
     private final String shortVersion = "1.1";
 
     CloseableHttpClientStub httpClient = new CloseableHttpClientStub();
-    HockeyAppConfiguration config = new HockeyAppConfiguration(shortVersion, httpClient);
-    VersionClient versionClient = new VersionClient(config);
 
-    HockeyApp hockeyApp = new HockeyApp(shortVersion);
+    HockeyAppConfiguration config = new HockeyAppConfiguration(shortVersion, httpClient);
+    VersionClient versionClient = new VersionClient(config, httpClient);
+    HockeyApp hockeyApp = new HockeyApp(shortVersion, httpClient);
+
     private String feedback;
     private String name;
     private String email;
+    private String stacktrace;
 
     public HockeyAppTest() {
         versionClient.setVersion(new HockeyAppVersion(1, config.getAppVersion()));
@@ -42,25 +41,62 @@ public class HockeyAppTest {
 
     @Before
     public void setUp() throws Exception {
-        stubFeedbackParams();
+        feedback = "HockeyAppTest feedback text";
+        name = "HockeyAppTest";
+        email = "HockeyAppTest@desktop.de";
+        stacktrace = "XCEPTION REASON STRING\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "ANOTHER EXCEPTION REASON STRING\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "  at CLASS.METHOD(FILE:LINE)";
+
         stubFeedbackResponse();
         stubVersionToApp();
     }
 
 
     @Test
-    public void sendFeedback() throws URISyntaxException, IOException {
-        HttpPost request = config.getHttpPost("/feedback");
-        List<NameValuePair> parameters = hockeyApp.buildFeedbackParams(feedback, name, email);
-        request.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
-        httpClient.execute(request);
+    public void testSendFeedback() throws IOException {
 
+        hockeyApp.sendFeedback(feedback, name, email);
         String responseContent = getStubFeedbackResponseContent();
-
         JSONObject json = parseFeedbackJson(responseContent);
 
         assertEquals(123, json.get("id"));
+        assertEquals(shortVersion, versionClient.getVersion().getShortVersion());
+    }
 
+
+    @Test
+    public void testSendCrashReport() throws IOException {
+        stubSendCrashReport();
+        hockeyApp.sendStacktrace(feedback, stacktrace);
+    }
+
+    @Test
+    public void createLog() throws IOException {
+        String containingString = "Version: 1.1";
+        stacktrace = hockeyApp.createLog(stacktrace);
+
+        assertTrue(stacktrace.contains(containingString));
+    }
+
+    private void stubSendCrashReport() {
+        String responseContent = "some foobar testing argh piares";
+
+        String uri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/crashes/upload";
+        CloseableHttpResponseStub response = this.createResponseFromString(200, responseContent);
+        httpClient.addResponse("POST", uri, response);
     }
 
     JSONObject parseFeedbackJson(String responseContent) throws IOException {
@@ -73,7 +109,7 @@ public class HockeyAppTest {
     }
 
     @Test
-    public void testBuildParams() throws IOException, URISyntaxException {
+    public void testBuildParams() throws IOException {
 
         List<NameValuePair> parameters = hockeyApp.buildFeedbackParams(feedback, name, email);
 
@@ -83,12 +119,6 @@ public class HockeyAppTest {
         String expectedVersionID = "1";
         assertEquals("app_version_id", paramVersionKey);
         assertEquals(expectedVersionID, paramVersion);
-    }
-
-    private void stubFeedbackParams() {
-        feedback = "somefoobar feedbacktext";
-        name = "nermin the dev";
-        email = "this@desktop.de";
     }
 
     private void stubVersionToApp() {
@@ -139,4 +169,6 @@ public class HockeyAppTest {
 
         return response;
     }
+
+
 }

@@ -10,7 +10,7 @@ public class HockeyAppConfigurationTest {
     CloseableHttpClientStub httpClientStub = new CloseableHttpClientStub();
     HockeyAppConfiguration config = new HockeyAppConfiguration("1.1", httpClientStub);
 
-    VersionClient versionClient = new VersionClient(config);
+    VersionClient versionClient = new VersionClient(config, httpClientStub);
 
     @Test
     public void validUri() throws IllegalStateException {

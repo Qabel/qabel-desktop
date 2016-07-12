@@ -9,7 +9,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
-import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,19 +27,11 @@ public class VersionClient {
     private List<HockeyAppVersion> versions = new LinkedList<>();
     private HockeyAppVersion version;
 
-    public VersionClient(HockeyAppConfiguration config) {
-        this.httpClient = config.getHttpClient();
+    public VersionClient(HockeyAppConfiguration config, HttpClient httpClient) {
+        this.httpClient = httpClient;
         this.config = config;
     }
 
-    public void setUp(String version) throws IOException {
-        loadVersions();
-        try {
-            findAndLoadVersion(version);
-        } catch (VersionNotFoundException e) {
-            createVersion(version);
-        }
-    }
 
     void loadVersions() throws IOException, JSONException {
 
@@ -52,14 +43,14 @@ public class VersionClient {
         parseVersionsResponse(responseContent);
     }
 
-    void findAndLoadVersion(String shortVersion) throws VersionNotFoundException {
+    void findAndLoadVersion(String shortVersion) throws IOException {
         getVersions().forEach(version -> {
             if (shortVersion.equals(version.getShortVersion())) {
                 setVersion(version);
             }
         });
-        if (getVersion() == null) {
-            throw new VersionNotFoundException("No Version with the shortversion: '" + shortVersion + "' found in HockeyApp");
+        if (version == null) {
+            createVersion(shortVersion);
         }
     }
 
@@ -109,8 +100,11 @@ public class VersionClient {
         return parameters;
     }
 
-    @Nullable
-    public HockeyAppVersion getVersion() {
+
+    public HockeyAppVersion getVersion() throws IOException {
+        if (version == null) {
+            findAndLoadVersion(config.getAppVersion());
+        }
         return version;
     }
 
