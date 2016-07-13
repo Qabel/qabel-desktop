@@ -27,14 +27,36 @@ public class VersionClientTest {
     private HockeyAppConfiguration config = new HockeyAppConfiguration(VERSION_SHORT_1_0, httpClient);
     private VersionClient client = new VersionClient(config, httpClient);
 
+//    @Test
+//    public void findVersion() throws VersionNotFoundException, IOException {
+//
+//        buildTestVersions();
+//        HockeyAppVersion version = client.getVersion();
+//
+//        assertEquals(VERSION_SHORT_1_0, version.getShortVersion());
+//    }
+
+
     @Test
-    public void findVersion() throws VersionNotFoundException, IOException {
-
-        buildTestVersions();
-        HockeyAppVersion version = client.getVersion();
-
+    public void testFindVersion() throws IOException, VersionNotFoundException {
+        loadFakeVersions();
+        HockeyAppVersion version = client.findVersion(VERSION_SHORT_1_0);
         assertEquals(VERSION_SHORT_1_0, version.getShortVersion());
     }
+
+    @Test
+    public void createNewVersion() throws IOException {
+
+        String shortVersion = "1.5";
+        buildTestVersions();
+        loadFakeCreatedVersionResponse(shortVersion);
+
+        HockeyAppVersion version = client.createVersion(shortVersion);
+        client.setVersion(version);
+
+        assertEquals(shortVersion, client.getVersion().getShortVersion());
+    }
+
 
     @Test(expected = IOException.class)
     public void parseInvalidVersionCreateResponse() throws IOException {
@@ -50,33 +72,9 @@ public class VersionClientTest {
     }
 
     @Test
-    public void parseVersionCreateResponse() throws IOException {
-
-        String versionsResponseContent = getVersionCreateResponseString(VERSION_SHORT_1_0);
-
-        client.parseVersionCreateResponse(versionsResponseContent);
-
-        assertEquals(VERSION_SHORT_1_0, client.getVersion().getShortVersion());
-    }
-
-    @Test
-    public void createNewVersion() throws IOException {
-
-        String shortVersion = "1.5";
-        buildTestVersions();
-
-        loadFakeCreatedVersionResponse(shortVersion);
-        client.findAndLoadVersion(shortVersion);
-
-        assertEquals(shortVersion, client.getVersion().getShortVersion());
-
-    }
-
-    @Test
     public void loadVersions() throws IOException, JSONException {
         loadFakeVersions();
         List<HockeyAppVersion> versions = client.getVersions();
-
         HockeyAppVersion version = versions.get(0);
 
         assertEquals(2, versions.size());

@@ -36,37 +36,27 @@ public class VersionClient {
     void loadVersions() throws IOException, JSONException {
 
         HttpGet httpGet = config.getHttpGet(API_VERSIONS_ALL);
-
         HttpResponse response = httpClient.execute(httpGet);
         String responseContent = EntityUtils.toString(response.getEntity());
 
         parseVersionsResponse(responseContent);
     }
 
-    void findAndLoadVersion(String shortVersion) throws IOException {
-        getVersions().forEach(version -> {
-            if (shortVersion.equals(version.getShortVersion())) {
-                setVersion(version);
-            }
-        });
-        if(version == null){
-            createVersion(shortVersion);
-        }
-    }
 
-    void createVersion(String version) throws IOException, JSONException {
+    HockeyAppVersion createVersion(String version) throws IOException, JSONException {
         HttpPost request = config.getHttpPost(API_VERSIONS_NEW);
 
         List<NameValuePair> parameters = buildCreateParameters(version);
         request.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
 
         HttpResponse response = httpClient.execute(request);
-        if(response.getStatusLine().getStatusCode() != 201){
+        if (response.getStatusLine().getStatusCode() != 201) {
             throw new IOException("Create version failed! Wrong status code");
         }
         String responseContent = EntityUtils.toString(response.getEntity());
 
-        parseVersionCreateResponse(responseContent);
+        return parseVersionCreateResponse(responseContent);
+
     }
 
     List<HockeyAppVersion> parseVersionsResponse(String responseContent) throws IOException {
@@ -86,12 +76,13 @@ public class VersionClient {
         }
     }
 
-    void parseVersionCreateResponse(String responseContent) throws IOException {
+    HockeyAppVersion parseVersionCreateResponse(String responseContent) throws IOException {
         try {
             JSONObject parsedJson = new JSONObject(responseContent);
             int versionId = parsedJson.getInt("id");
             String shortVersion = parsedJson.getString("shortversion");
-            setVersion(new HockeyAppVersion(versionId, shortVersion));
+
+            return new HockeyAppVersion(versionId, shortVersion);
         } catch (JSONException e) {
             throw new IOException("returned JSON was invalid", e);
         }
@@ -104,10 +95,17 @@ public class VersionClient {
     }
 
 
-    HockeyAppVersion getVersion() throws IOException {
-        if(version == null){
-            findAndLoadVersion(config.getAppVersion());
+    HockeyAppVersion findVersion(String shortVersion) throws VersionNotFoundException {
+        for (HockeyAppVersion version : getVersions()) {
+            if (version.getShortVersion().equals(shortVersion)) {
+                return version;
+            }
         }
+        throw new VersionNotFoundException("Version: " + shortVersion + " not found!");
+    }
+
+    HockeyAppVersion getVersion() {
+
         return version;
     }
 
