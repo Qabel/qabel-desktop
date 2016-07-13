@@ -36,12 +36,12 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
     }
 
     @Override
-    public DirectoryMetadata reloadMetadata() throws QblStorageException {
+    public JdbcDirectoryMetadata reloadMetadata() throws QblStorageException {
         return nav.reloadMetadata();
     }
 
     @Override
-    public void setMetadata(DirectoryMetadata dm) {
+    public void setMetadata(JdbcDirectoryMetadata dm) {
         nav.setMetadata(dm);
     }
 
@@ -203,7 +203,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
     }
 
     @Override
-    public DirectoryMetadata getMetadata() {
+    public JdbcDirectoryMetadata getMetadata() {
         return nav.getMetadata();
     }
 
@@ -230,7 +230,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
     }
 
     @Override
-    public boolean hasVersionChanged(DirectoryMetadata dm) throws QblStorageException {
+    public boolean hasVersionChanged(JdbcDirectoryMetadata dm) throws QblStorageException {
         return nav.hasVersionChanged(dm);
     }
 
@@ -238,7 +238,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
         synchronized (this) {
             synchronized (nav) {
                 if (nav.isUnmodified()) {
-                    DirectoryMetadata dm = nav.reloadMetadata();
+                    JdbcDirectoryMetadata dm = nav.reloadMetadata();
                     if (hasVersionChanged(dm)) {
                         Set<BoxFolder> oldFolders = new HashSet<>(nav.listFolders());
                         Set<BoxFile> oldFiles = new HashSet<>(nav.listFiles());

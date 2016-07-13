@@ -2,12 +2,15 @@ package de.qabel.desktop.config.factory;
 
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
+import de.qabel.core.config.factory.DropUrlGenerator;
+import de.qabel.core.config.factory.IdentityBuilderFactory;
 import de.qabel.desktop.daemon.management.BoxVolumeFactoryStub;
 import de.qabel.desktop.daemon.sync.worker.BoxVolumeStub;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 
 public class CachedBoxVolumeFactoryTest {
 

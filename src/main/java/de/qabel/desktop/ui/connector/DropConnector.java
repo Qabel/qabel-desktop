@@ -6,7 +6,6 @@ import de.qabel.core.drop.DropMessage;
 import de.qabel.core.exceptions.QblNetworkInvalidResponseException;
 
 import java.util.Date;
-import java.util.List;
 
 public interface DropConnector {
     void send(Contact c, DropMessage d) throws QblNetworkInvalidResponseException;

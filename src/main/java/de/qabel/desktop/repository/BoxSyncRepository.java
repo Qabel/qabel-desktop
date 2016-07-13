@@ -1,7 +1,7 @@
 package de.qabel.desktop.repository;
 
+import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.config.BoxSyncConfig;
-import de.qabel.desktop.repository.exception.PersistenceException;
 
 import java.util.List;
 import java.util.function.Consumer;

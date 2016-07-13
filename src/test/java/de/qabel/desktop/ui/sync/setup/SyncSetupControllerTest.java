@@ -11,7 +11,6 @@ import de.qabel.desktop.daemon.sync.worker.index.SyncIndexFactory;
 import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.nio.boxfs.BoxPath;
-import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import javafx.scene.Node;
 import javafx.stage.Stage;
@@ -21,7 +20,6 @@ import org.junit.runner.RunWith;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.junit.Assert.*;
 
 @RunWith(DataProviderRunner.class)

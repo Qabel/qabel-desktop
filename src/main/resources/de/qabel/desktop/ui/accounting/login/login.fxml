@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
@@ -15,7 +16,7 @@
                 <Insets top="30.0"/>
             </VBox.margin>
         </ImageView>
-        <VBox alignment="TOP_CENTER" prefHeight="397.0" prefWidth="220.0" styleClass="login-form">
+        <VBox alignment="TOP_CENTER" prefHeight="397.0" prefWidth="220.0" styleClass="login-form" onKeyPressed="#handleEnterPressed" >
             <children>
                 <Label styleClass="login-title" text="%loginText"/>
 

@@ -3,13 +3,13 @@ package de.qabel.desktop.ui.contact;
 import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
-import de.qabel.desktop.repository.exception.PersistenceException;
+import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Test;
 
 import static de.qabel.desktop.AsyncUtils.assertAsync;
-import static org.hamcrest.Matchers.*;
 import static junit.framework.TestCase.assertEquals;
+import static org.hamcrest.Matchers.is;
 
 public class ContactGuiTest extends AbstractGuiTest<ContactController> {
 

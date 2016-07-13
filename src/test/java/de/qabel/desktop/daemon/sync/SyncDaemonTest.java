@@ -1,6 +1,6 @@
 package de.qabel.desktop.daemon.sync;
 
-import de.qabel.desktop.config.*;
+import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.daemon.sync.worker.FakeSyncer;
 import de.qabel.desktop.daemon.sync.worker.FakeSyncerFactory;
 import de.qabel.desktop.repository.BoxSyncRepository;

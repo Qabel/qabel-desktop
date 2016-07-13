@@ -8,8 +8,8 @@
             "requested": "1.7.+"
         },
         "com.github.qabel:qabel-core": {
-            "locked": "0.7.0",
-            "requested": "0.+"
+            "locked": "0.9.0",
+            "requested": "0.9.0"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -108,8 +108,8 @@
             "requested": "1.7.+"
         },
         "com.github.qabel:qabel-core": {
-            "locked": "0.7.0",
-            "requested": "0.+"
+            "locked": "0.9.0",
+            "requested": "0.9.0"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -203,6 +203,9 @@
         ":box-test-0.7.0": {
             "project": true
         },
+        ":core-test-0.7.0": {
+            "project": true
+        },
         ":jfxrt": {
             "project": true
         },
@@ -211,8 +214,8 @@
             "requested": "1.7.+"
         },
         "com.github.qabel:qabel-core": {
-            "locked": "0.7.0",
-            "requested": "0.+"
+            "locked": "0.9.0",
+            "requested": "0.9.0"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -267,6 +270,9 @@
             "requested": "2.0"
         },
         "null:box-test-0.7.0": {
+            "project": true
+        },
+        "null:core-test-0.7.0": {
             "project": true
         },
         "null:jfxrt": {
@@ -337,6 +343,9 @@
         ":box-test-0.7.0": {
             "project": true
         },
+        ":core-test-0.7.0": {
+            "project": true
+        },
         ":jfxrt": {
             "project": true
         },
@@ -345,8 +354,8 @@
             "requested": "1.7.+"
         },
         "com.github.qabel:qabel-core": {
-            "locked": "0.7.0",
-            "requested": "0.+"
+            "locked": "0.9.0",
+            "requested": "0.9.0"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -401,6 +410,9 @@
             "requested": "2.0"
         },
         "null:box-test-0.7.0": {
+            "project": true
+        },
+        "null:core-test-0.7.0": {
             "project": true
         },
         "null:jfxrt": {
@@ -476,8 +488,8 @@
             "requested": "1.7.+"
         },
         "com.github.qabel:qabel-core": {
-            "locked": "0.7.0",
-            "requested": "0.+"
+            "locked": "0.9.0",
+            "requested": "0.9.0"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -571,6 +583,9 @@
         ":box-test-0.7.0": {
             "project": true
         },
+        ":core-test-0.7.0": {
+            "project": true
+        },
         ":jfxrt": {
             "project": true
         },
@@ -579,8 +594,8 @@
             "requested": "1.7.+"
         },
         "com.github.qabel:qabel-core": {
-            "locked": "0.7.0",
-            "requested": "0.+"
+            "locked": "0.9.0",
+            "requested": "0.9.0"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -635,6 +650,9 @@
             "requested": "2.0"
         },
         "null:box-test-0.7.0": {
+            "project": true
+        },
+        "null:core-test-0.7.0": {
             "project": true
         },
         "null:jfxrt": {
@@ -705,6 +723,9 @@
         ":box-test-0.7.0": {
             "project": true
         },
+        ":core-test-0.7.0": {
+            "project": true
+        },
         ":jfxrt": {
             "project": true
         },
@@ -713,8 +734,8 @@
             "requested": "1.7.+"
         },
         "com.github.qabel:qabel-core": {
-            "locked": "0.7.0",
-            "requested": "0.+"
+            "locked": "0.9.0",
+            "requested": "0.9.0"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -769,6 +790,9 @@
             "requested": "2.0"
         },
         "null:box-test-0.7.0": {
+            "project": true
+        },
+        "null:core-test-0.7.0": {
             "project": true
         },
         "null:jfxrt": {

@@ -2,8 +2,8 @@ package de.qabel.desktop.daemon.sync.worker.index;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 public class SyncStateTest {
     @Test

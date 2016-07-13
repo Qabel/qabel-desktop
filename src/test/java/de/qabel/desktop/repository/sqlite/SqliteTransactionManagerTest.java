@@ -1,7 +1,8 @@
 package de.qabel.desktop.repository.sqlite;
 
-import de.qabel.desktop.repository.Transaction;
-import de.qabel.desktop.repository.TransactionManager;
+import de.qabel.core.repository.Transaction;
+import de.qabel.core.repository.TransactionManager;
+import de.qabel.core.repository.sqlite.SqliteTransactionManager;
 import de.qabel.desktop.repository.sqlite.migration.AbstractSqliteTest;
 import org.junit.Before;
 import org.junit.Test;

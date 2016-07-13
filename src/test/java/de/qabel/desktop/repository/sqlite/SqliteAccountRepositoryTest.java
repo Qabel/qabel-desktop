@@ -1,12 +1,15 @@
 package de.qabel.desktop.repository.sqlite;
 
 import de.qabel.core.config.Account;
-import de.qabel.desktop.repository.EntityManager;
+import de.qabel.core.repository.EntityManager;
+import de.qabel.core.repository.sqlite.ClientDatabase;
+import de.qabel.core.repository.sqlite.SqliteAccountRepository;
 import org.junit.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 public class SqliteAccountRepositoryTest extends AbstractSqliteRepositoryTest<SqliteAccountRepository> {
 

@@ -1,9 +1,9 @@
 package de.qabel.desktop.ui.sync;
 
+import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.repository.BoxSyncRepository;
-import de.qabel.desktop.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.sync.item.DummySyncItemView;
 import de.qabel.desktop.ui.sync.item.SyncItemController;
@@ -12,7 +12,6 @@ import de.qabel.desktop.ui.sync.setup.SyncSetupController;
 import de.qabel.desktop.ui.sync.setup.SyncSetupView;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;

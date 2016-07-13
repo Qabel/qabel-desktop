@@ -1,9 +1,8 @@
 package de.qabel.desktop.repository.sqlite.hydrator;
 
-import de.qabel.core.crypto.QblECPublicKey;
+import de.qabel.core.repository.EntityManager;
+import de.qabel.core.repository.sqlite.hydrator.AbstractHydrator;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
-import de.qabel.desktop.repository.EntityManager;
-import org.spongycastle.util.encoders.Hex;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -1,8 +1,8 @@
 package de.qabel.desktop.repository.inmemory;
 
-import de.qabel.desktop.repository.ClientConfigRepository;
-import de.qabel.desktop.repository.exception.EntityNotFoundException;
-import de.qabel.desktop.repository.exception.PersistenceException;
+import de.qabel.core.repository.ClientConfigRepository;
+import de.qabel.core.repository.exception.EntityNotFoundException;
+import de.qabel.core.repository.exception.PersistenceException;
 
 import java.util.HashMap;
 import java.util.Map;

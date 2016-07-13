@@ -1,13 +1,14 @@
 package de.qabel.desktop.daemon.sync;
 
+import de.qabel.box.storage.AbstractNavigation;
 import de.qabel.box.storage.LocalReadBackend;
 import de.qabel.box.storage.LocalWriteBackend;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
+import de.qabel.core.config.factory.DropUrlGenerator;
+import de.qabel.core.config.factory.IdentityBuilder;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.DefaultBoxSyncConfig;
-import de.qabel.desktop.config.factory.DropUrlGenerator;
-import de.qabel.desktop.config.factory.IdentityBuilder;
 import de.qabel.desktop.daemon.management.*;
 import de.qabel.desktop.daemon.sync.blacklist.PatternBlacklist;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncer;
@@ -55,6 +56,7 @@ public class SyncIntegrationTest {
 
     @Before
     public void setUp() {
+        AbstractNavigation.DEFAULT_AUTOCOMMIT_DELAY = 0L;
         try {
             remoteDir = Files.createTempDirectory(getClass().getSimpleName());
             tmpDir1 = Files.createTempDirectory(getClass().getSimpleName());
@@ -92,6 +94,7 @@ public class SyncIntegrationTest {
             volume2 = new CachedBoxVolume(readBackend, writeBackend, identity.getPrimaryKeyPair(), new byte[0], new File(System.getProperty("java.io.tmpdir")), "prefix");
             volume1.createIndex("qabel", "prefix");
             volume1.navigate().createFolder("sync");
+            volume2.navigate().createFolder("sync");
             manager1 = new MonitoredTransferManager(new DefaultTransferManager());
             manager2 = new MonitoredTransferManager(new DefaultTransferManager());
 

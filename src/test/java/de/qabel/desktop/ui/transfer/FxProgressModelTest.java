@@ -5,8 +5,8 @@ import de.qabel.desktop.ui.AbstractControllerTest;
 import javafx.application.Platform;
 import org.junit.Test;
 
-import static de.qabel.desktop.AsyncUtils.waitUntil;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class FxProgressModelTest extends AbstractControllerTest {
     private ProgressStub progress = new ProgressStub();

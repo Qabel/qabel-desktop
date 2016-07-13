@@ -1,13 +1,15 @@
 package de.qabel.desktop.repository.sqlite;
 
 import de.qabel.core.config.Identity;
-import de.qabel.desktop.config.factory.DropUrlGenerator;
-import de.qabel.desktop.config.factory.IdentityBuilder;
+import de.qabel.core.config.factory.DropUrlGenerator;
+import de.qabel.core.config.factory.IdentityBuilder;
+import de.qabel.core.repository.EntityManager;
+import de.qabel.core.repository.IdentityRepository;
+import de.qabel.core.repository.exception.PersistenceException;
+import de.qabel.core.repository.sqlite.ClientDatabase;
+import de.qabel.core.repository.sqlite.SqliteIdentityRepository;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
-import de.qabel.desktop.repository.EntityManager;
-import de.qabel.desktop.repository.IdentityRepository;
 import de.qabel.desktop.repository.ShareNotificationRepository;
-import de.qabel.desktop.repository.exception.PersistenceException;
 import org.junit.Test;
 import org.spongycastle.util.encoders.Hex;
 

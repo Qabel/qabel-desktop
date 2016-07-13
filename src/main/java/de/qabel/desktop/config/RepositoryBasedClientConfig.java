@@ -3,9 +3,13 @@ package de.qabel.desktop.config;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropURL;
-import de.qabel.desktop.repository.*;
-import de.qabel.desktop.repository.exception.EntityNotFoundException;
-import de.qabel.desktop.repository.exception.PersistenceException;
+import de.qabel.core.repository.AccountRepository;
+import de.qabel.core.repository.ClientConfigRepository;
+import de.qabel.core.repository.DropStateRepository;
+import de.qabel.core.repository.IdentityRepository;
+import de.qabel.core.repository.exception.EntityNotFoundException;
+import de.qabel.core.repository.exception.PersistenceException;
+import de.qabel.desktop.repository.ShareNotificationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

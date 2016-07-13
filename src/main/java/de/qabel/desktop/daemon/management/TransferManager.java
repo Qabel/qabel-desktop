@@ -1,7 +1,6 @@
 package de.qabel.desktop.daemon.management;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public interface TransferManager extends Runnable {
     List<Transaction> getTransactions();

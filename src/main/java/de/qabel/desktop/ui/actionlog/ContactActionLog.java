@@ -2,8 +2,8 @@ package de.qabel.desktop.ui.actionlog;
 
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
+import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.repository.DropMessageRepository;
-import de.qabel.desktop.repository.exception.PersistenceException;
 
 import javax.inject.Inject;
 import java.util.function.Function;

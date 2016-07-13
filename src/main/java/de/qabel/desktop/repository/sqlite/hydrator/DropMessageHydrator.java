@@ -4,9 +4,10 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.config.Entity;
 import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
-import de.qabel.desktop.repository.EntityManager;
+import de.qabel.core.repository.EntityManager;
+import de.qabel.core.repository.sqlite.hydrator.AbstractHydrator;
+import de.qabel.core.util.CheckedFunction;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
-import de.qabel.desktop.util.CheckedFunction;
 
 import java.lang.reflect.Field;
 import java.sql.ResultSet;

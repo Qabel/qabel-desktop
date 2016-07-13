@@ -7,15 +7,17 @@ import de.qabel.core.config.Account;
 import de.qabel.core.config.AccountingServer;
 import de.qabel.core.exceptions.QblCreateAccountFailException;
 import de.qabel.core.exceptions.QblInvalidCredentials;
+import de.qabel.core.repository.Transaction;
+import de.qabel.core.repository.TransactionManager;
 import de.qabel.desktop.config.ClientConfig;
-import de.qabel.desktop.repository.Transaction;
-import de.qabel.desktop.repository.TransactionManager;
 import de.qabel.desktop.ui.AbstractController;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -111,6 +113,14 @@ public class LoginController extends AbstractController implements Initializable
                 providerChoices.getSelectionModel().select(account.getProvider());
                 Platform.runLater(this::login);
             }
+        }
+    }
+
+
+    @FXML
+    public void handleEnterPressed(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            login();
         }
     }
 
