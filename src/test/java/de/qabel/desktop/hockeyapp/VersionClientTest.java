@@ -27,16 +27,6 @@ public class VersionClientTest {
     private HockeyAppConfiguration config = new HockeyAppConfiguration(VERSION_SHORT_1_0, httpClient);
     private VersionClient client = new VersionClient(config, httpClient);
 
-//    @Test
-//    public void findVersion() throws VersionNotFoundException, IOException {
-//
-//        buildTestVersions();
-//        HockeyAppVersion version = client.getVersion();
-//
-//        assertEquals(VERSION_SHORT_1_0, version.getShortVersion());
-//    }
-
-
     @Test
     public void testFindVersion() throws IOException, VersionNotFoundException {
         loadFakeVersions();
@@ -87,7 +77,6 @@ public class VersionClientTest {
         String testUri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/somewhere";
         assertEquals(testUri, config.buildApiUri("/somewhere"));
     }
-
 
     private void buildTestVersions() {
         List<HockeyAppVersion> versions = client.getVersions();
@@ -176,5 +165,4 @@ public class VersionClientTest {
 
         return response;
     }
-
 }
