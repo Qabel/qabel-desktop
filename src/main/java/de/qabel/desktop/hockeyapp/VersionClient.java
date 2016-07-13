@@ -22,8 +22,9 @@ public class VersionClient {
 
     public static final String API_VERSIONS_NEW = "/app_versions/new";
     public static final String API_VERSIONS_ALL = "/app_versions";
+
     private final HockeyAppConfiguration config;
-    public HttpClient httpClient;
+    private HttpClient httpClient;
     private List<HockeyAppVersion> versions = new LinkedList<>();
     private HockeyAppVersion version;
 
@@ -31,7 +32,6 @@ public class VersionClient {
         this.httpClient = httpClient;
         this.config = config;
     }
-
 
     void loadVersions() throws IOException, JSONException {
 
@@ -49,7 +49,7 @@ public class VersionClient {
                 setVersion(version);
             }
         });
-        if (version == null) {
+        if(version == null){
             createVersion(shortVersion);
         }
     }
@@ -61,6 +61,9 @@ public class VersionClient {
         request.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
 
         HttpResponse response = httpClient.execute(request);
+        if(response.getStatusLine().getStatusCode() != 201){
+            throw new IOException("Create version failed! Wrong status code");
+        }
         String responseContent = EntityUtils.toString(response.getEntity());
 
         parseVersionCreateResponse(responseContent);
@@ -101,14 +104,14 @@ public class VersionClient {
     }
 
 
-    public HockeyAppVersion getVersion() throws IOException {
-        if (version == null) {
+    HockeyAppVersion getVersion() throws IOException {
+        if(version == null){
             findAndLoadVersion(config.getAppVersion());
         }
         return version;
     }
 
-    public void setVersion(HockeyAppVersion version) {
+    void setVersion(HockeyAppVersion version) {
         this.version = version;
     }
 
@@ -116,7 +119,7 @@ public class VersionClient {
         return versions;
     }
 
-    public void setVersions(List<HockeyAppVersion> versions) {
+    void setVersions(List<HockeyAppVersion> versions) {
         this.versions = versions;
     }
 }

@@ -10,12 +10,11 @@ public class HockeyAppVersion {
         this.shortVersion = shortVersion;
     }
 
-
     public int getVersionId() {
         return versionId;
     }
 
     public String getShortVersion() {
-        return this.shortVersion;
+        return shortVersion;
     }
 }

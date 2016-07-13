@@ -15,7 +15,6 @@ import de.qabel.desktop.config.FilesAbout;
 import de.qabel.desktop.config.factory.BlockBoxVolumeFactory;
 import de.qabel.desktop.config.factory.BoxVolumeFactory;
 import de.qabel.desktop.crashReports.CrashReportHandler;
-import de.qabel.desktop.crashReports.HockeyApp;
 import de.qabel.desktop.daemon.NetworkStatus;
 import de.qabel.desktop.daemon.drop.DropDaemon;
 import de.qabel.desktop.daemon.management.DefaultTransferManager;
@@ -24,6 +23,7 @@ import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
 import de.qabel.desktop.daemon.sync.worker.SyncerFactory;
+import de.qabel.desktop.hockeyapp.HockeyApp;
 import de.qabel.desktop.inject.config.RuntimeConfiguration;
 import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRendererFactory;
@@ -56,7 +56,7 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     private SharingService sharingService;
     private BoxVolumeFactory boxVolumeFactory;
     private AccountingHTTP accountingHTTP;
-    private ResourceBundle resourceBundle;
+
     private SyncDaemon syncDaemon;
     private DropDaemon dropDaemon;
 
@@ -167,6 +167,8 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     public Stage getPrimaryStage() {
         return runtimeConfiguration.getPrimaryStage();
     }
+
+    private ResourceBundle resourceBundle;
 
     @Override
     public synchronized ResourceBundle getResourceBundle() {

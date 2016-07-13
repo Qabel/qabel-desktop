@@ -1,9 +1,7 @@
-package de.qabel.desktop.crashReports;
+package de.qabel.desktop.hockeyapp;
 
 
-import de.qabel.desktop.hockeyapp.HockeyAppConfiguration;
-import de.qabel.desktop.hockeyapp.HockeyAppVersion;
-import de.qabel.desktop.hockeyapp.VersionClient;
+import de.qabel.desktop.crashReports.CrashReportHandler;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -13,7 +11,6 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,7 +53,6 @@ public class HockeyApp implements CrashReportHandler {
         httpClient.execute(request);
     }
 
-    @NotNull
     List<NameValuePair> buildFeedbackParams(String feedback, String name, String email) throws IOException {
         HockeyAppVersion version = versionClient.getVersion();
         String versionId = "" + version.getVersionId();
@@ -64,7 +60,6 @@ public class HockeyApp implements CrashReportHandler {
         List<NameValuePair> parameters = new ArrayList<>();
         parameters.add(new BasicNameValuePair("text", feedback));
         parameters.add(new BasicNameValuePair("name", name));
-        parameters.add(new BasicNameValuePair("email", email));
         parameters.add(new BasicNameValuePair("email", email));
         parameters.add(new BasicNameValuePair("app_version_id", versionId));
 
@@ -77,7 +72,7 @@ public class HockeyApp implements CrashReportHandler {
         StringBuilder log = new StringBuilder();
 
         log.append("Package: de.qabel.desktop\n");
-        log.append("Version: " + versionClient.getVersion().getShortVersion() + "\n");
+        log.append("Version: ").append(versionClient.getVersion().getShortVersion()).append("\n");
         log.append("OS: " + System.getProperty("os.name") + " / ");
         log.append(System.getProperty("os.arch") + " / ");
         log.append(System.getProperty("os.version") + "\n");
@@ -86,7 +81,6 @@ public class HockeyApp implements CrashReportHandler {
         log.append("Date: " + date + "\n");
         log.append("\n");
         log.append(stacktrace);
-
 
         return log.toString();
     }

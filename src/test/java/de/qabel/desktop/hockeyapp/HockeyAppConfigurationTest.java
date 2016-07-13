@@ -14,12 +14,11 @@ public class HockeyAppConfigurationTest {
 
     @Test
     public void validUri() throws IllegalStateException {
-        String uriStr = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/app_versions";
+        String expectedUri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/app_versions";
         String path = "/app_versions";
-
         String uri = config.buildApiUri(path);
 
-        assertEquals(uriStr, uri);
+        assertEquals(expectedUri, uri);
     }
 
 }

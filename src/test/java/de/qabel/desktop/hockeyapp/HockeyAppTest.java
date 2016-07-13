@@ -1,10 +1,7 @@
-package de.qabel.desktop.crashReports;
+package de.qabel.desktop.hockeyapp;
 
 import de.qabel.core.accounting.CloseableHttpClientStub;
 import de.qabel.core.accounting.CloseableHttpResponseStub;
-import de.qabel.desktop.hockeyapp.HockeyAppConfiguration;
-import de.qabel.desktop.hockeyapp.HockeyAppVersion;
-import de.qabel.desktop.hockeyapp.VersionClient;
 import org.apache.http.NameValuePair;
 import org.apache.http.entity.BasicHttpEntity;
 import org.jetbrains.annotations.NotNull;
@@ -24,16 +21,16 @@ public class HockeyAppTest {
 
     private final String shortVersion = "1.1";
 
-    CloseableHttpClientStub httpClient = new CloseableHttpClientStub();
+    private CloseableHttpClientStub httpClient = new CloseableHttpClientStub();
 
-    HockeyAppConfiguration config = new HockeyAppConfiguration(shortVersion, httpClient);
-    VersionClient versionClient = new VersionClient(config, httpClient);
-    HockeyApp hockeyApp = new HockeyApp(shortVersion, httpClient);
+    private HockeyAppConfiguration config = new HockeyAppConfiguration(shortVersion, httpClient);
+    private VersionClient versionClient = new VersionClient(config, httpClient);
+    private HockeyApp hockeyApp = new HockeyApp(shortVersion, httpClient);
 
     private String feedback;
     private String name;
     private String email;
-    private String stacktrace;
+    private String formattedStacktrace;
 
     public HockeyAppTest() {
         versionClient.setVersion(new HockeyAppVersion(1, config.getAppVersion()));
@@ -44,7 +41,7 @@ public class HockeyAppTest {
         feedback = "HockeyAppTest feedback text";
         name = "HockeyAppTest";
         email = "HockeyAppTest@desktop.de";
-        stacktrace = "XCEPTION REASON STRING\n" +
+        formattedStacktrace = "XCEPTION REASON STRING\n" +
             "  at CLASS.METHOD(FILE:LINE)\n" +
             "  at CLASS.METHOD(FILE:LINE)\n" +
             "  at CLASS.METHOD(FILE:LINE)\n" +
@@ -80,15 +77,15 @@ public class HockeyAppTest {
     @Test
     public void testSendCrashReport() throws IOException {
         stubSendCrashReport();
-        hockeyApp.sendStacktrace(feedback, stacktrace);
+        hockeyApp.sendStacktrace(feedback, formattedStacktrace);
     }
 
     @Test
     public void createLog() throws IOException {
         String containingString = "Version: 1.1";
-        stacktrace = hockeyApp.createLog(stacktrace);
+        formattedStacktrace = hockeyApp.createLog(formattedStacktrace);
 
-        assertTrue(stacktrace.contains(containingString));
+        assertTrue(formattedStacktrace.contains(containingString));
     }
 
     private void stubSendCrashReport() {
@@ -111,15 +108,11 @@ public class HockeyAppTest {
     @Test
     public void testBuildParams() throws IOException {
 
-        List<NameValuePair> parameters = hockeyApp.buildFeedbackParams(feedback, name, email);
-
-        String paramVersionKey = parameters.get(4).getName();
-        String paramVersion = parameters.get(4).getValue();
-
+        List<NameValuePair> params = hockeyApp.buildFeedbackParams(feedback, name, email);
         String expectedVersionID = "1";
-        assertEquals("app_version_id", paramVersionKey);
-        assertEquals(expectedVersionID, paramVersion);
+        assertEquals(expectedVersionID, TestUtils.getValueByKey(params, "app_version_id"));
     }
+
 
     private void stubVersionToApp() {
         HockeyAppVersion testVersion = new HockeyAppVersion(1, config.getAppVersion());
