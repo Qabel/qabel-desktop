@@ -7,10 +7,10 @@ import static org.junit.Assert.assertEquals;
 
 public class HockeyAppConfigurationTest {
 
-    CloseableHttpClientStub httpClientStub = new CloseableHttpClientStub();
-    HockeyAppConfiguration config = new HockeyAppConfiguration("1.1", httpClientStub);
+    private CloseableHttpClientStub httpClientStub = new CloseableHttpClientStub();
+    private HockeyAppConfiguration config = new HockeyAppConfiguration("1.1", httpClientStub);
 
-    VersionClient versionClient = new VersionClient(config, httpClientStub);
+    private VersionClient versionClient = new VersionClient(config, httpClientStub);
 
     @Test
     public void validUri() throws IllegalStateException {
