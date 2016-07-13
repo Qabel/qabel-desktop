@@ -3,17 +3,15 @@ package de.qabel.desktop.hockeyapp;
 import de.qabel.core.accounting.CloseableHttpClientStub;
 import de.qabel.core.accounting.CloseableHttpResponseStub;
 import org.apache.http.NameValuePair;
-import org.apache.http.entity.BasicHttpEntity;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-
 
 public class VersionClientTest {
 
@@ -24,22 +22,36 @@ public class VersionClientTest {
     private static final String VERSION_SHORT_1_1 = "1.1";
 
     private CloseableHttpClientStub httpClient = new CloseableHttpClientStub();
-    private HockeyAppConfiguration config = new HockeyAppConfiguration(VERSION_SHORT_1_0, httpClient);
-    private VersionClient client = new VersionClient(config, httpClient);
+    private HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder(VERSION_SHORT_1_0, httpClient);
+    private VersionClient client = new VersionClient(requestBuilder);
 
     @Test
-    public void testFindVersion() throws IOException, VersionNotFoundException {
-        loadFakeVersions();
+    public void validFindVersion() throws IOException, VersionNotFoundException {
+        loadFakeVersions(200);
         HockeyAppVersion version = client.findVersion(VERSION_SHORT_1_0);
         assertEquals(VERSION_SHORT_1_0, version.getShortVersion());
     }
 
+    @Test(expected = VersionNotFoundException.class)
+    public void invalidFindVersion() throws IOException, VersionNotFoundException {
+        loadFakeVersions(200);
+        HockeyAppVersion version = client.findVersion("");
+    }
+
+    @Test
+    public void getVersionNull() throws IOException {
+        loadFakeVersions(200);
+        client.setVersion(null);
+        requestBuilder.setAppVersion(VERSION_SHORT_1_0);
+        stubCreatedVersionResponse(201, getVersionCreateResponseString(VERSION_SHORT_1_0));
+        assertEquals(client.getVersion().getShortVersion(), VERSION_SHORT_1_0);
+    }
+
     @Test
     public void createNewVersion() throws IOException {
-
         String shortVersion = "1.5";
         buildTestVersions();
-        loadFakeCreatedVersionResponse(shortVersion);
+        stubCreatedVersionResponse(201, shortVersion);
 
         HockeyAppVersion version = client.createVersion(shortVersion);
         client.setVersion(version);
@@ -47,23 +59,29 @@ public class VersionClientTest {
         assertEquals(shortVersion, client.getVersion().getShortVersion());
     }
 
-
     @Test(expected = IOException.class)
-    public void parseInvalidVersionCreateResponse() throws IOException {
-        String responseContent = "nbzuhbggzubzug";
-        client.parseVersionCreateResponse(responseContent);
-        client.createVersion("invalid");
+    public void invalidCreateResponse() throws IOException {
+        stubCreatedVersionResponse(500, VERSION_SHORT_1_0);
+        client.createVersion(VERSION_SHORT_1_0);
     }
 
     @Test(expected = IOException.class)
     public void parseInvalidVersionsResponse() throws IOException {
-        String responseContent = "nbzuhbggzubzug";
-        client.parseVersionsResponse(responseContent);
+        String invalidJsonResponse = "---";
+        client.parseVersionsResponse(invalidJsonResponse);
     }
 
     @Test
+    public void invalidVersions() throws IOException {
+        client.setVersions(new LinkedList<>());
+        loadFakeVersions(200);
+        client.getVersions();
+    }
+
+
+    @Test
     public void loadVersions() throws IOException, JSONException {
-        loadFakeVersions();
+        loadFakeVersions(200);
         List<HockeyAppVersion> versions = client.getVersions();
         HockeyAppVersion version = versions.get(0);
 
@@ -72,23 +90,17 @@ public class VersionClientTest {
         assertEquals(VERSION_SHORT_1_0, version.getShortVersion());
     }
 
-    @Test
-    public void buildApiUri() {
-        String testUri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/somewhere";
-        assertEquals(testUri, config.buildApiUri("/somewhere"));
-    }
-
-    private void buildTestVersions() {
+    private void buildTestVersions() throws IOException {
         List<HockeyAppVersion> versions = client.getVersions();
         versions.add(new HockeyAppVersion(VERSION_ID_1_0, VERSION_SHORT_1_0));
         versions.add(new HockeyAppVersion(VERSION_ID_1_1, VERSION_SHORT_1_1));
         client.setVersions(versions);
     }
 
-    private void loadFakeCreatedVersionResponse(String shortVersion) throws IOException {
+    private void stubCreatedVersionResponse(int statusCode, String shortVersion) throws IOException {
         String responseContent = getVersionCreateResponseString(shortVersion);
 
-        CloseableHttpResponseStub response = createResponseFromString(201, responseContent);
+        CloseableHttpResponseStub response = TestUtils.createResponseFromString(statusCode, responseContent);
         String newVersionUri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/app_versions/new";
         httpClient.addResponse("POST", newVersionUri, response);
     }
@@ -110,11 +122,11 @@ public class VersionClientTest {
         assertEquals(VERSION_SHORT_1_1, TestUtils.getValueByKey(params, "bundle_short_version"));
     }
 
-    private void loadFakeVersions() throws IOException {
+    private void loadFakeVersions(int statusCode) throws IOException {
         String versionsResponseContent = getVersionsJsonString();
 
         String versionsUri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/app_versions";
-        CloseableHttpResponseStub response = createResponseFromString(200, versionsResponseContent);
+        CloseableHttpResponseStub response = TestUtils.createResponseFromString(statusCode, versionsResponseContent);
         httpClient.addResponse("GET", versionsUri, response);
         client.loadVersions();
     }
@@ -154,15 +166,5 @@ public class VersionClientTest {
             "    ],\n" +
             "    \"status\": \"success\"\n" +
             "}";
-    }
-
-    private CloseableHttpResponseStub createResponseFromString(int statusCode, String responseContent) {
-        CloseableHttpResponseStub response = new CloseableHttpResponseStub();
-        response.setStatusCode(statusCode);
-        BasicHttpEntity entity = new BasicHttpEntity();
-        entity.setContent(new ByteArrayInputStream(responseContent.getBytes()));
-        response.setEntity(entity);
-
-        return response;
     }
 }

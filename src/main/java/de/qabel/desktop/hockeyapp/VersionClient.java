@@ -2,7 +2,6 @@ package de.qabel.desktop.hockeyapp;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -18,56 +17,51 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class VersionClient {
+class VersionClient {
 
-    public static final String API_VERSIONS_NEW = "/app_versions/new";
-    public static final String API_VERSIONS_ALL = "/app_versions";
+    private static final String API_VERSIONS_NEW = "/app_versions/new";
+    private static final String API_VERSIONS_ALL = "/app_versions";
+    private final HockeyAppRequestBuilder requestBuilder;
 
-    private final HockeyAppConfiguration config;
-    private HttpClient httpClient;
     private List<HockeyAppVersion> versions = new LinkedList<>();
     private HockeyAppVersion version;
 
-    public VersionClient(HockeyAppConfiguration config, HttpClient httpClient) {
-        this.httpClient = httpClient;
-        this.config = config;
+    public VersionClient(HockeyAppRequestBuilder requestBuilder) {
+        this.requestBuilder = requestBuilder;
     }
 
-    void loadVersions() throws IOException, JSONException {
-
-        HttpGet httpGet = config.getHttpGet(API_VERSIONS_ALL);
-        HttpResponse response = httpClient.execute(httpGet);
+    List<HockeyAppVersion> loadVersions() throws IOException, JSONException {
+        HttpGet httpGet = requestBuilder.getHttpGet(API_VERSIONS_ALL);
+        HttpResponse response = requestBuilder.getHttpClient().execute(httpGet);
         String responseContent = EntityUtils.toString(response.getEntity());
-
-        parseVersionsResponse(responseContent);
+        return parseVersionsResponse(responseContent);
     }
-
 
     HockeyAppVersion createVersion(String version) throws IOException, JSONException {
-        HttpPost request = config.getHttpPost(API_VERSIONS_NEW);
+        HttpPost request = requestBuilder.getHttpPost(API_VERSIONS_NEW);
 
         List<NameValuePair> parameters = buildCreateParameters(version);
         request.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
 
-        HttpResponse response = httpClient.execute(request);
+        HttpResponse response = requestBuilder.getHttpClient().execute(request);
         if (response.getStatusLine().getStatusCode() != 201) {
             throw new IOException("Create version failed! Wrong status code");
         }
         String responseContent = EntityUtils.toString(response.getEntity());
 
         return parseVersionCreateResponse(responseContent);
-
     }
 
     List<HockeyAppVersion> parseVersionsResponse(String responseContent) throws IOException {
-        versions.clear();
         try {
             JSONObject parsedJson = new JSONObject(responseContent);
             JSONArray versionArray = parsedJson.getJSONArray("app_versions");
             for (int i = 0; i < versionArray.length(); i++) {
                 JSONObject jsonObj = versionArray.getJSONObject(i);
+
                 int versionId = jsonObj.getInt("version");
                 String shortVersion = jsonObj.getString("shortversion");
+
                 versions.add(new HockeyAppVersion(versionId, shortVersion));
             }
             return versions;
@@ -76,7 +70,7 @@ public class VersionClient {
         }
     }
 
-    HockeyAppVersion parseVersionCreateResponse(String responseContent) throws IOException {
+    HockeyAppVersion parseVersionCreateResponse(String responseContent) {
         try {
             JSONObject parsedJson = new JSONObject(responseContent);
             int versionId = parsedJson.getInt("id");
@@ -84,7 +78,7 @@ public class VersionClient {
 
             return new HockeyAppVersion(versionId, shortVersion);
         } catch (JSONException e) {
-            throw new IOException("returned JSON was invalid", e);
+            throw new JSONException("returned JSON was invalid", e);
         }
     }
 
@@ -94,8 +88,10 @@ public class VersionClient {
         return parameters;
     }
 
-
-    HockeyAppVersion findVersion(String shortVersion) throws VersionNotFoundException {
+    HockeyAppVersion findVersion(String shortVersion) throws VersionNotFoundException, IOException {
+        if (shortVersion == null) {
+            throw new VersionNotFoundException("Version: " + shortVersion + " not found!");
+        }
         for (HockeyAppVersion version : getVersions()) {
             if (version.getShortVersion().equals(shortVersion)) {
                 return version;
@@ -104,18 +100,28 @@ public class VersionClient {
         throw new VersionNotFoundException("Version: " + shortVersion + " not found!");
     }
 
-    HockeyAppVersion getVersion() {
-
+    public HockeyAppVersion getVersion() throws IOException {
+        if (version == null) {
+            try {
+                version = findVersion(requestBuilder.getAppVersion());
+            } catch (VersionNotFoundException e) {
+                version = createVersion(requestBuilder.getAppVersion());
+            }
+        }
         return version;
+    }
+
+    List<HockeyAppVersion> getVersions() throws IOException {
+        if (versions == null) {
+            return loadVersions();
+        }
+        return versions;
     }
 
     void setVersion(HockeyAppVersion version) {
         this.version = version;
     }
 
-    List<HockeyAppVersion> getVersions() {
-        return versions;
-    }
 
     void setVersions(List<HockeyAppVersion> versions) {
         this.versions = versions;
