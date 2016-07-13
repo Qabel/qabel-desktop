@@ -59,6 +59,7 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
 
     private SyncDaemon syncDaemon;
     private DropDaemon dropDaemon;
+    private HockeyApp hockeyApp;
 
     public RuntimeDesktopServiceFactory(RuntimeConfiguration runtimeConfiguration) {
         this.runtimeConfiguration = runtimeConfiguration;
@@ -108,7 +109,10 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
 
     @Override
     public synchronized CrashReportHandler getCrashReportHandler() {
-        return new HockeyApp(getCurrentVersion(), HttpClients.createMinimal());
+        if (hockeyApp == null) {
+            hockeyApp = new HockeyApp(getCurrentVersion(), HttpClients.createMinimal());
+        }
+        return hockeyApp;
     }
 
     @Override
