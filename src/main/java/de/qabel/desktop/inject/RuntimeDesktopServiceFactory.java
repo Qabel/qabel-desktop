@@ -57,10 +57,6 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     private BoxVolumeFactory boxVolumeFactory;
     private AccountingHTTP accountingHTTP;
 
-    private SyncDaemon syncDaemon;
-    private DropDaemon dropDaemon;
-    private HockeyApp hockeyApp;
-
     public RuntimeDesktopServiceFactory(RuntimeConfiguration runtimeConfiguration) {
         this.runtimeConfiguration = runtimeConfiguration;
     }
@@ -107,6 +103,7 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
         return dropConnector;
     }
 
+    private HockeyApp hockeyApp;
     @Override
     public synchronized CrashReportHandler getCrashReportHandler() {
         if (hockeyApp == null) {
@@ -173,7 +170,6 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     }
 
     private ResourceBundle resourceBundle;
-
     @Override
     public synchronized ResourceBundle getResourceBundle() {
         if (resourceBundle == null) {
@@ -186,6 +182,8 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     public Translator getTranslator() {
         return new Translator(getResourceBundle());
     }
+
+    private SyncDaemon syncDaemon;
 
     public SyncerFactory getSyncerFactory() throws IOException {
         return new DefaultSyncerFactory(getBoxVolumeFactory(), getTransferManager());
@@ -205,6 +203,8 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
         }
         return syncDaemon;
     }
+
+    private DropDaemon dropDaemon;
 
     @Override
     public synchronized DropDaemon getDropDaemon() {
