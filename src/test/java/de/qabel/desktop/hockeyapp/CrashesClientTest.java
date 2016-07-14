@@ -36,27 +36,6 @@ public class CrashesClientTest {
 
     private Date now = new Date();
 
-    private String expectedFormattedStacktrace = "Package: de.qabel.desktop\n" +
-        "Version: 1.1\n" +
-        "OS: Linux / amd64 / 4.4.0-21-generic\n" +
-        "Manufacturer: Oracle Corporation\n" +
-        "Model: 1.8.0_91\n" +
-        "Date: " + now + "\n" +
-        "Stacktrace: XCEPTION REASON STRING\n" +
-        "  at CLASS.METHOD(FILE:LINE)\n" +
-        "  at CLASS.METHOD(FILE:LINE)\n" +
-        "  at CLASS.METHOD(FILE:LINE)\n" +
-        "  at CLASS.METHOD(FILE:LINE)\n" +
-        "  at CLASS.METHOD(FILE:LINE)\n" +
-        "  at CLASS.METHOD(FILE:LINE)\n" +
-        "  at CLASS.METHOD(FILE:LINE)\n" +
-        "  at CLASS.METHOD(FILE:LINE)\n" +
-        "  at CLASS.METHOD(FILE:LINE)\n" +
-        "ANOTHER EXCEPTION REASON STRING\n" +
-        "  at CLASS.METHOD(FILE:LINE)\n" +
-        "  at CLASS.METHOD(FILE:LINE)\n" +
-        "  at CLASS.METHOD(FILE:LINE)\n" +
-        "  at CLASS.METHOD(FILE:LINE)";
 
     private String feedback = "this is just a String for the stacktrace";
 
@@ -68,7 +47,33 @@ public class CrashesClientTest {
 
     @Test
     public void createLog() throws IOException {
-        String formattedStacktrace = client.createLog(stacktrace, now);
+
+        String operatingSystemInformation = System.getProperty("os.name") + " / " + System.getProperty("os.arch") + " / " + System.getProperty("os.version");
+        String manufacturer = System.getProperty("java.vendor");
+        String model = System.getProperty("java.version");
+        String expectedFormattedStacktrace = "Package: de.qabel.desktop\n" +
+            "Version: 1.1\n" +
+            "OS: " + operatingSystemInformation + "\n" +
+            "Manufacturer: " + manufacturer + "\n" +
+            "Model: " + model + "\n" +
+            "Date: " + now + "\n" +
+            "Stacktrace: XCEPTION REASON STRING\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "ANOTHER EXCEPTION REASON STRING\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "  at CLASS.METHOD(FILE:LINE)\n" +
+            "  at CLASS.METHOD(FILE:LINE)";
+
+        String formattedStacktrace = client.createLog(stacktrace, now, operatingSystemInformation, manufacturer, model);
         assertEquals(expectedFormattedStacktrace, formattedStacktrace);
     }
 

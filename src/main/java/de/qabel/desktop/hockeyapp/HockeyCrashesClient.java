@@ -21,7 +21,12 @@ public class HockeyCrashesClient implements CrashesClient {
     @Override
     public void sendStacktrace(String feedback, String stacktrace) throws IOException {
         HttpPost request = requestBuilder.getHttpPost("/crashes/upload");
-        String log = createLog(stacktrace, new Date());
+
+        String operatingSystemInformation = System.getProperty("os.name") + " / " + System.getProperty("os.arch") + " / " + System.getProperty("os.version");
+        String manufacturer = System.getProperty("java.vendor");
+        String model = System.getProperty("java.version");
+
+        String log = createLog(stacktrace, new Date(), operatingSystemInformation, manufacturer, model);
         HttpEntity entity = MultipartEntityBuilder.create()
             .addPart("log", new ByteArrayBody(log.getBytes(), "log"))
             .addPart("description", new ByteArrayBody(feedback.getBytes(), "description"))
@@ -31,19 +36,14 @@ public class HockeyCrashesClient implements CrashesClient {
         requestBuilder.getHttpClient().execute(request);
     }
 
-    String createLog(String stacktrace, Date now) throws IOException {
+    String createLog(String stacktrace, Date now, String os, String manufacturer, String model) throws IOException {
 
         StringBuilder log = new StringBuilder();
-
         log.append("Package: de.qabel.desktop").append("\n");
         log.append("Version: ").append(versionClient.getVersion().getShortVersion()).append("\n");
-        log.append("OS: ")
-            .append(System.getProperty("os.name")).append(" / ")
-            .append(System.getProperty("os.arch")).append(" / ")
-            .append(System.getProperty("os.version"))
-            .append("\n");
-        log.append("Manufacturer: ").append(System.getProperty("java.vendor")).append("\n");
-        log.append("Model: ").append(System.getProperty("java.version")).append("\n");
+        log.append("OS: ").append(os).append("\n");
+        log.append("Manufacturer: ").append(manufacturer).append("\n");
+        log.append("Model: ").append(model).append("\n");
         log.append("Date: ").append(now).append("\n");
         log.append("Stacktrace: ").append(stacktrace);
 
