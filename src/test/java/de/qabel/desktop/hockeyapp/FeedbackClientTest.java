@@ -12,10 +12,10 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 
 public class FeedbackClientTest {
-
 
     private CloseableHttpClientStub httpClientStub = new CloseableHttpClientStub();
 
@@ -23,7 +23,7 @@ public class FeedbackClientTest {
 
     private VersionClient versionClient = new VersionClient(requestBuilder);
 
-    private FeedbackClient client = new FeedbackClient(requestBuilder, versionClient);
+    private HockeyFeedbackClient client = new HockeyFeedbackClient(requestBuilder, versionClient);
 
     private String feedback = "This is a fancy feedback from my Tests";
     private String name = "FeedbackClientTest";
@@ -46,12 +46,9 @@ public class FeedbackClientTest {
 
     @Test
     public void sendFeedback() throws IOException {
-        int expectedStatusCode = 200;
         stubFeedbackResponse();
-        HttpResponse response = client.sendFeedback(feedback, name, email);
-
-        int statusCode = response.getStatusLine().getStatusCode();
-        assertEquals(expectedStatusCode, statusCode);
+        client.sendFeedback(feedback, name, email);
+        assertNotNull(httpClientStub.getBody());
     }
 
 

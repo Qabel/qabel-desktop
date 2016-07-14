@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class CrashesClientTest {
 
@@ -17,7 +18,7 @@ public class CrashesClientTest {
     private HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder("1.1", httpClientStub);
     private VersionClient versionClient = new VersionClient(requestBuilder);
     ;
-    private CrashesClient client = new CrashesClient(requestBuilder, versionClient);
+    private HockeyCrashesClient client = new HockeyCrashesClient(requestBuilder, versionClient);
     private String stacktrace = "XCEPTION REASON STRING\n" +
         "  at CLASS.METHOD(FILE:LINE)\n" +
         "  at CLASS.METHOD(FILE:LINE)\n" +
@@ -71,10 +72,8 @@ public class CrashesClientTest {
     @Test
     public void sendCrash() throws IOException {
         stubCrashReport();
-        HttpResponse response = client.sendStacktrace(feedback, stacktrace);
-        int statusCode = response.getStatusLine().getStatusCode();
-
-        assertEquals(200, statusCode);
+        client.sendStacktrace(feedback, stacktrace);
+        assertNotNull(httpClientStub.getBody());
     }
 
     private void stubCrashReport() {

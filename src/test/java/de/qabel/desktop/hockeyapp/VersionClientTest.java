@@ -1,10 +1,12 @@
 package de.qabel.desktop.hockeyapp;
 
+import com.google.gson.JsonObject;
 import de.qabel.core.accounting.CloseableHttpClientStub;
 import de.qabel.core.accounting.CloseableHttpResponseStub;
 import org.apache.http.NameValuePair;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -27,24 +29,34 @@ public class VersionClientTest {
 
     @Test
     public void validFindVersion() throws IOException, VersionNotFoundException {
-        loadFakeVersions(200);
+        loadFakeVersions(200, true);
         HockeyAppVersion version = client.findVersion(VERSION_SHORT_1_0);
         assertEquals(VERSION_SHORT_1_0, version.getShortVersion());
     }
 
     @Test(expected = VersionNotFoundException.class)
     public void invalidFindVersion() throws IOException, VersionNotFoundException {
-        loadFakeVersions(200);
-        HockeyAppVersion version = client.findVersion("");
+        loadFakeVersions(200, true);
+        client.findVersion(null);
     }
 
     @Test
-    public void getVersionNull() throws IOException {
-        loadFakeVersions(200);
+    public void getVersionCreate() throws IOException {
+        String shortVersion = "1.6";
+        buildTestVersions();
+        stubCreatedVersionResponse(201, shortVersion);
+
+        requestBuilder.setAppVersion(shortVersion);
         client.setVersion(null);
-        requestBuilder.setAppVersion(VERSION_SHORT_1_0);
-        stubCreatedVersionResponse(201, getVersionCreateResponseString(VERSION_SHORT_1_0));
-        assertEquals(client.getVersion().getShortVersion(), VERSION_SHORT_1_0);
+
+        assertEquals(client.getVersion().getShortVersion(), shortVersion);
+    }
+
+    @Test
+    public void getVersionsWithNull() throws IOException {
+        client.setVersions(null);
+        loadFakeVersions(200);
+        client.getVersions();
     }
 
     @Test
@@ -72,16 +84,8 @@ public class VersionClientTest {
     }
 
     @Test
-    public void invalidVersions() throws IOException {
-        client.setVersions(new LinkedList<>());
-        loadFakeVersions(200);
-        client.getVersions();
-    }
-
-
-    @Test
     public void loadVersions() throws IOException, JSONException {
-        loadFakeVersions(200);
+        loadFakeVersions(200, true);
         List<HockeyAppVersion> versions = client.getVersions();
         HockeyAppVersion version = versions.get(0);
 
@@ -101,7 +105,7 @@ public class VersionClientTest {
         String responseContent = getVersionCreateResponseString(shortVersion);
 
         CloseableHttpResponseStub response = TestUtils.createResponseFromString(statusCode, responseContent);
-        String newVersionUri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/app_versions/new";
+        String newVersionUri = requestBuilder.buildApiUri("/app_versions/new");
         httpClient.addResponse("POST", newVersionUri, response);
     }
 
@@ -123,12 +127,21 @@ public class VersionClientTest {
     }
 
     private void loadFakeVersions(int statusCode) throws IOException {
-        String versionsResponseContent = getVersionsJsonString();
+        stubVersionsResponse(statusCode);
+    }
 
+    private void stubVersionsResponse(int statusCode) {
+        String versionsResponseContent = getVersionsJsonString();
         String versionsUri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/app_versions";
         CloseableHttpResponseStub response = TestUtils.createResponseFromString(statusCode, versionsResponseContent);
         httpClient.addResponse("GET", versionsUri, response);
-        client.loadVersions();
+    }
+
+    private void loadFakeVersions(int statusCode, boolean loadClientVersion) throws IOException {
+        stubVersionsResponse(statusCode);
+        if (loadClientVersion) {
+            client.loadVersions();
+        }
     }
 
     @NotNull

@@ -2,23 +2,17 @@ package de.qabel.desktop.hockeyapp;
 
 
 import de.qabel.desktop.crashReports.CrashReportHandler;
-import org.apache.http.client.HttpClient;
 
 import java.io.IOException;
 
-public class HockeyApp implements CrashReportHandler {
+public class HockeyApp implements FeedbackClient, CrashesClient {
 
-    private final FeedbackClient feedbackClient;
-    private final HockeyAppRequestBuilder requestBuilder;
-    private final VersionClient versionClient;
-    private final CrashesClient crashClient;
+    private FeedbackClient feedbackClient;
+    private CrashesClient crashClient;
 
-    public HockeyApp(String currentVersion, HttpClient httpClient) {
-        this.requestBuilder = new HockeyAppRequestBuilder(currentVersion, httpClient);
-
-        this.versionClient = new VersionClient(requestBuilder);
-        this.feedbackClient = new FeedbackClient(requestBuilder, versionClient);
-        this.crashClient = new CrashesClient(requestBuilder, versionClient);
+    public HockeyApp(FeedbackClient feedbackClient, CrashesClient crashClient) {
+        this.feedbackClient = feedbackClient;
+        this.crashClient = crashClient;
     }
 
     @Override

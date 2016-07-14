@@ -3,7 +3,6 @@ package de.qabel.desktop.hockeyapp;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.HttpClients;
 
 public class HockeyAppRequestBuilder {
 
@@ -39,10 +38,6 @@ public class HockeyAppRequestBuilder {
 
     String getApiBaseUri() {
         return API_BASE_URI + API_APP_KEY;
-    }
-
-    String getApiAppKey() {
-        return API_APP_KEY;
     }
 
     String getSecurityTokenKey() {

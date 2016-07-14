@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-class VersionClient {
+public class VersionClient {
 
     private static final String API_VERSIONS_NEW = "/app_versions/new";
     private static final String API_VERSIONS_ALL = "/app_versions";
@@ -34,6 +34,7 @@ class VersionClient {
         HttpGet httpGet = requestBuilder.getHttpGet(API_VERSIONS_ALL);
         HttpResponse response = requestBuilder.getHttpClient().execute(httpGet);
         String responseContent = EntityUtils.toString(response.getEntity());
+
         return parseVersionsResponse(responseContent);
     }
 
@@ -54,6 +55,7 @@ class VersionClient {
 
     List<HockeyAppVersion> parseVersionsResponse(String responseContent) throws IOException {
         try {
+            versions = new LinkedList<>();
             JSONObject parsedJson = new JSONObject(responseContent);
             JSONArray versionArray = parsedJson.getJSONArray("app_versions");
             for (int i = 0; i < versionArray.length(); i++) {
@@ -70,7 +72,7 @@ class VersionClient {
         }
     }
 
-    HockeyAppVersion parseVersionCreateResponse(String responseContent) {
+    HockeyAppVersion parseVersionCreateResponse(String responseContent) throws IOException {
         try {
             JSONObject parsedJson = new JSONObject(responseContent);
             int versionId = parsedJson.getInt("id");
@@ -78,7 +80,7 @@ class VersionClient {
 
             return new HockeyAppVersion(versionId, shortVersion);
         } catch (JSONException e) {
-            throw new JSONException("returned JSON was invalid", e);
+            throw new IOException("returned JSON was invalid", e);
         }
     }
 
@@ -89,7 +91,7 @@ class VersionClient {
     }
 
     HockeyAppVersion findVersion(String shortVersion) throws VersionNotFoundException, IOException {
-        if (shortVersion == null) {
+        if (shortVersion == null || shortVersion.isEmpty()) {
             throw new VersionNotFoundException("Version: " + shortVersion + " not found!");
         }
         for (HockeyAppVersion version : getVersions()) {
