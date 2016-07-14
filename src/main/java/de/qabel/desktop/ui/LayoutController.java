@@ -173,7 +173,6 @@ public class LayoutController extends AbstractController implements Initializabl
     private void createButtonGraphics() {
         Image heartGraphic = new Image(getClass().getResourceAsStream("/img/heart.png"));
 
-
         inviteButton.setImage(heartGraphic);
         inviteButton.getStyleClass().add("inline-button");
         inviteButton.setOnMouseClicked(e -> {
@@ -221,22 +220,11 @@ public class LayoutController extends AbstractController implements Initializabl
         */
     }
 
-
     private String lastAlias;
     private Identity lastIdentity;
 
     private void updateIdentity() {
         Identity identity = clientConfiguration.getSelectedIdentity();
-
-        identity.attach(new IdentityObserver() {
-            @Override
-            public void update() {
-                Platform.runLater(() -> {
-                    alias.setText(identity.getAlias());
-                    updateAvatar(identity);
-                });
-            }
-        });
 
         browseNav.setManaged(identity != null);
         contactsNav.setManaged(identity != null);
@@ -252,6 +240,16 @@ public class LayoutController extends AbstractController implements Initializabl
         if (currentAlias.equals(lastAlias)) {
             return;
         }
+
+        identity.attach(new IdentityObserver() {
+            @Override
+            public void update() {
+                Platform.runLater(() -> {
+                    alias.setText(identity.getAlias());
+                    updateAvatar(identity);
+                });
+            }
+        });
 
         new AvatarView(e -> currentAlias).getViewAsync(avatarContainer.getChildren()::setAll);
         alias.setText(currentAlias);
