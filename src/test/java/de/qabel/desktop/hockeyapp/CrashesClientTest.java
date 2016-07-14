@@ -16,7 +16,6 @@ public class CrashesClientTest {
     private CloseableHttpClientStub httpClientStub = new CloseableHttpClientStub();
     private HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder("1.1", httpClientStub);
     private VersionClient versionClient = new VersionClient(requestBuilder);
-    ;
     private HockeyCrashesClient client = new HockeyCrashesClient(requestBuilder, versionClient);
     private String stacktrace = "XCEPTION REASON STRING\n" +
         "  at CLASS.METHOD(FILE:LINE)\n" +
@@ -51,6 +50,7 @@ public class CrashesClientTest {
         String operatingSystemInformation = System.getProperty("os.name") + " / " + System.getProperty("os.arch") + " / " + System.getProperty("os.version");
         String manufacturer = System.getProperty("java.vendor");
         String model = System.getProperty("java.version");
+
         String expectedFormattedStacktrace = "Package: de.qabel.desktop\n" +
             "Version: 1.1\n" +
             "OS: " + operatingSystemInformation + "\n" +
