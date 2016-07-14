@@ -2,6 +2,7 @@ package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.core.config.Identity;
+import de.qabel.core.config.IdentityObserver;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.daemon.management.MonitoredTransferManager;
 import de.qabel.desktop.daemon.management.TransferManager;
@@ -227,6 +228,16 @@ public class LayoutController extends AbstractController implements Initializabl
     private void updateIdentity() {
         Identity identity = clientConfiguration.getSelectedIdentity();
 
+        identity.attach(new IdentityObserver() {
+            @Override
+            public void update() {
+                Platform.runLater(() -> {
+                    alias.setText(identity.getAlias());
+                    updateAvatar(identity);
+                });
+            }
+        });
+
         browseNav.setManaged(identity != null);
         contactsNav.setManaged(identity != null);
         syncNav.setManaged(identity != null);
@@ -250,6 +261,12 @@ public class LayoutController extends AbstractController implements Initializabl
             return;
         }
         mail.setText(clientConfiguration.getAccount().getUser());
+    }
+
+    private void updateAvatar(Identity identity) {
+        if (identity != null) {
+            new AvatarView(e -> identity.getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
+        }
     }
 
     private NaviItem createNavItem(String label, FXMLView view) {

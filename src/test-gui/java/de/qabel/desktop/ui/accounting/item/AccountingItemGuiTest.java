@@ -35,8 +35,13 @@ public class AccountingItemGuiTest extends AbstractGuiTest<AccountingItemControl
     }
 
     @Test
-    public void testEdit() throws Exception {
+    public void testMenu() throws Exception {
         page.openMenu();
+    }
+
+    @Test
+    public void testEdit() throws Exception {
+        page.edit();
     }
 
     @Test

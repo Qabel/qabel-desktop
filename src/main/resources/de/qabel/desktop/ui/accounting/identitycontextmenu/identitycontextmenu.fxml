@@ -10,7 +10,8 @@
 
 <?import javafx.scene.layout.AnchorPane?>
 <AnchorPane fx:id="menuQR" xmlns="http://javafx.com/javafx/8" visible="false" styleClass="popup-menu"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.accounting.identityContextMenu.IdentityContextMenu">
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuController">
     <children>
         <VBox fx:id="vboxMenu" styleClass="vbox-menu">
             <HBox>
@@ -20,29 +21,30 @@
                             <Insets left="5" bottom="3" top="3"/>
                         </HBox.margin>
                     </Label>
-                    <Button fx:id="buttonEdit" text="%editDetails" styleClass="button-menu" />
+                    <Button fx:id="editButton" text="%editDetails" styleClass="button-menu"
+                            onMouseClicked="#editIdentity"/>
                 </children>
             </HBox>
-            <HBox>
+            <HBox disable="true">
                 <children>
                     <Label styleClass="icon-delete">
                         <HBox.margin>
                             <Insets left="5" bottom="3" top="3"/>
                         </HBox.margin>
                     </Label>
-                    <Button fx:id="labelDelete" wrapText="true" text="%removeIdentity" styleClass="button-menu"/>
+                    <Button fx:id="removeButton" wrapText="true" text="%removeIdentity" styleClass="button-menu"/>
 
                 </children>
             </HBox>
             <Line endX="00.0" startX="-220.0"/>
-            <HBox>
+            <HBox disable="true">
                 <children>
                     <Label styleClass="icon-export">
                         <HBox.margin>
                             <Insets left="5" bottom="3" top="3"/>
                         </HBox.margin>
                     </Label>
-                    <Button fx:id="labelExport" wrapText="true" text="%exportIdentityQID" styleClass="button-menu"/>
+                    <Button fx:id="exportButton" wrapText="true" text="%exportIdentityQID" styleClass="button-menu"/>
                 </children>
             </HBox>
             <HBox>
@@ -52,29 +54,30 @@
                             <Insets left="5" bottom="3" top="3"/>
                         </HBox.margin>
                     </Label>
-                    <Button fx:id="labelPrivateKey" onAction="#openQRCode" text="%exportPrivateKeyQR"
+                    <Button fx:id="privateKeyButton" onAction="#openQRCode" text="%exportPrivateKeyQR"
                             styleClass="button-menu"/>
                 </children>
             </HBox>
             <Line endX="00.0" startX="-220.0"/>
-            <HBox>
+            <HBox disable="true">
                 <children>
                     <Label styleClass="icon-qrcode">
                         <HBox.margin>
                             <Insets left="5" bottom="3" top="3"/>
                         </HBox.margin>
                     </Label>
-                    <Button fx:id="labelPublicKeyQR" wrapText="true" text="%sharePublicKeyQR" styleClass="button-menu"/>
+                    <Button fx:id="publicKeyQRButton" wrapText="true" text="%sharePublicKeyQR"
+                            styleClass="button-menu"/>
                 </children>
             </HBox>
-            <HBox>
+            <HBox disable="true">
                 <children>
                     <Label styleClass="icon-email">
                         <HBox.margin>
                             <Insets left="5" bottom="3" top="3"/>
                         </HBox.margin>
                     </Label>
-                    <Button fx:id="labelPublicKeyEmail" wrapText="true" text="%sharePublicKeyEmail"
+                    <Button fx:id="publicKeyEmailButton" wrapText="true" text="%sharePublicKeyEmail"
                             styleClass="button-menu"/>
                 </children>
             </HBox>

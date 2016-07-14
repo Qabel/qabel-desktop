@@ -2,8 +2,8 @@ package de.qabel.desktop.ui.accounting.qrcode;
 
 import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.core.config.Identity;
-import de.qabel.desktop.config.factory.DropUrlGenerator;
-import de.qabel.desktop.config.factory.IdentityBuilder;
+import de.qabel.core.config.factory.DropUrlGenerator;
+import de.qabel.core.config.factory.IdentityBuilder;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +37,6 @@ public class QRCodeGuiTest extends AbstractGuiTest<QRCodeController> {
     @Test
     public void showPopup() throws Exception {
         page.showPopup();
-
         String textQRCode = "QABELCONTACT\n"
             + "alias" + "\n"
             + controller.getDropUrl() + "\n"
@@ -45,7 +44,7 @@ public class QRCodeGuiTest extends AbstractGuiTest<QRCodeController> {
 
         assertEquals("alias", controller.getAlias());
         assertTrue(controller.getDropUrl().startsWith("http://localhost:5000" + "/"));
-        assertEquals(textQRCode, controller.textQRCode);
+        assertEquals(textQRCode, controller.getTextQRCode());
     }
 
 }

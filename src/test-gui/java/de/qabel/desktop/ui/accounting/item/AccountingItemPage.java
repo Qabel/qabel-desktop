@@ -1,9 +1,11 @@
 package de.qabel.desktop.ui.accounting.item;
 
 import com.sun.javafx.robot.FXRobot;
+import de.qabel.core.config.Identity;
 import de.qabel.desktop.ui.AbstractPage;
-import de.qabel.desktop.ui.InputDialogPage;
 import org.testfx.api.FxRobot;
+
+import static org.junit.Assert.assertEquals;
 
 public class AccountingItemPage extends AbstractPage {
     private AccountingItemController controller;
@@ -11,13 +13,6 @@ public class AccountingItemPage extends AbstractPage {
     public AccountingItemPage(FXRobot baseFXRobot, FxRobot robot, AccountingItemController controller) {
         super(baseFXRobot, robot);
         this.controller = controller;
-    }
-
-    public InputDialogPage edit() {
-        controller.dialog = null;
-        clickOn("#edit");
-        waitUntil(() -> controller.dialog != null);
-        return new InputDialogPage(baseFXRobot, robot, controller.dialog);
     }
 
     public void select() {
@@ -29,7 +24,14 @@ public class AccountingItemPage extends AbstractPage {
         waitUntil(controller.selectedRadio::isSelected);
     }
 
-    public void openMenu(){
-        clickOn("#edit");
+    public void openMenu() {
+        clickOn("#menu");
+    }
+
+    public void edit() {
+        clickOn("#menu");
+        controller.identityMenuController.setAlias("new alias identity");
+        Identity i = controller.getIdentity();
+        assertEquals("new alias identity", i.getAlias());
     }
 }
