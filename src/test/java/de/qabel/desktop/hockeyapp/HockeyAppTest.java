@@ -1,17 +1,22 @@
 package de.qabel.desktop.hockeyapp;
 
+import de.qabel.desktop.DesktopClient;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.impl.client.HttpClients;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 
 public class HockeyAppTest {
 
-    private String feedbackText = "feedbackText";
-    private String name = "name";
-    private String email = "name@who.is";
-    private String stacktrace = "stacktrace";
+    private String feedbackText = "feedbackText - " + new Date();
+    private String name = "Hockey App Test";
+    private String email = "HockeyAppTest@who.is";
+    private String stacktrace = "HockeyAppTest stacktrace";
 
     @Test
     public void sendFeedback() throws IOException {

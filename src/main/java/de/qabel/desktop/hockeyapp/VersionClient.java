@@ -8,6 +8,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,9 +22,10 @@ public class VersionClient {
 
     private static final String API_VERSIONS_NEW = "/app_versions/new";
     private static final String API_VERSIONS_ALL = "/app_versions";
+
     private final HockeyAppRequestBuilder requestBuilder;
 
-    private List<HockeyAppVersion> versions = new LinkedList<>();
+    private List<HockeyAppVersion> versions;
     private HockeyAppVersion version;
 
     public VersionClient(HockeyAppRequestBuilder requestBuilder) {
@@ -46,7 +48,7 @@ public class VersionClient {
 
         HttpResponse response = requestBuilder.getHttpClient().execute(request);
         if (response.getStatusLine().getStatusCode() != 201) {
-            throw new IOException("Create version failed! Wrong status code");
+            throw new IOException("Create version(" + API_VERSIONS_NEW + ") failed! Wrong status code");
         }
         String responseContent = EntityUtils.toString(response.getEntity());
 
@@ -61,10 +63,10 @@ public class VersionClient {
             for (int i = 0; i < versionArray.length(); i++) {
                 JSONObject jsonObj = versionArray.getJSONObject(i);
 
-                int versionId = jsonObj.getInt("version");
-                String shortVersion = jsonObj.getString("shortversion");
+//                String versionId = jsonObj.getString("id");
+                String shortVersion = jsonObj.getString("version");
 
-                versions.add(new HockeyAppVersion(versionId, shortVersion));
+                versions.add(new HockeyAppVersion(shortVersion));
             }
             return versions;
         } catch (JSONException e) {
@@ -75,8 +77,8 @@ public class VersionClient {
     HockeyAppVersion parseVersionCreateResponse(String responseContent) throws IOException {
         try {
             JSONObject parsedJson = new JSONObject(responseContent);
-            int versionId = parsedJson.getInt("id");
-            String shortVersion = parsedJson.getString("shortversion");
+            String versionId = parsedJson.getString("id");
+            String shortVersion = parsedJson.getString("version");
 
             return new HockeyAppVersion(versionId, shortVersion);
         } catch (JSONException e) {
@@ -86,6 +88,7 @@ public class VersionClient {
 
     List<NameValuePair> buildCreateParameters(String version) {
         List<NameValuePair> parameters = new ArrayList<>();
+        parameters.add(new BasicNameValuePair("bundle_version", version));
         parameters.add(new BasicNameValuePair("bundle_short_version", version));
         return parameters;
     }
@@ -94,12 +97,15 @@ public class VersionClient {
         if (shortVersion == null || shortVersion.isEmpty()) {
             throw new VersionNotFoundException("Version: " + shortVersion + " not found!");
         }
-        for (HockeyAppVersion version : getVersions()) {
-            if (version.getShortVersion().equals(shortVersion)) {
+        if (versions == null) {
+            versions = getVersions();
+        }
+        for (HockeyAppVersion version : versions) {
+            if (shortVersion.equals(version.getShortVersion())) {
                 return version;
             }
         }
-        throw new VersionNotFoundException("Version: " + shortVersion + " not found!");
+        return version;
     }
 
     public HockeyAppVersion getVersion() throws IOException {
@@ -111,11 +117,12 @@ public class VersionClient {
             }
         }
         return version;
+//        throw new IOException("something went wrong, findVersion or createVersion returned wrong");
     }
 
     List<HockeyAppVersion> getVersions() throws IOException {
         if (versions == null) {
-            return loadVersions();
+            return versions = loadVersions();
         }
         return versions;
     }

@@ -25,11 +25,15 @@ public class HockeyCrashesClient implements CrashesClient {
         String operatingSystemInformation = System.getProperty("os.name") + " / " + System.getProperty("os.arch") + " / " + System.getProperty("os.version");
         String manufacturer = System.getProperty("java.vendor");
         String model = System.getProperty("java.version");
-
         String log = createLog(stacktrace, new Date(), operatingSystemInformation, manufacturer, model);
+
+        String version = versionClient.getVersion().getShortVersion();
+
         HttpEntity entity = MultipartEntityBuilder.create()
             .addPart("log", new ByteArrayBody(log.getBytes(), "log"))
             .addPart("description", new ByteArrayBody(feedback.getBytes(), "description"))
+            .addPart("bundle_version", new ByteArrayBody(version.getBytes(), "bundle_version"))
+            .addPart("bundle_short_version", new ByteArrayBody(version.getBytes(), "bundle_short_version"))
             .build();
         request.setEntity(entity);
 

@@ -31,17 +31,16 @@ public class FeedbackClientTest {
 
     @Before
     public void setUp() throws Exception {
-        versionClient.setVersion(new HockeyAppVersion(1, requestBuilder.getAppVersion()));
+        versionClient.setVersion(new HockeyAppVersion(requestBuilder.getAppVersion()));
     }
 
     @Test
     public void testBuildParams() throws IOException {
 
-        String versionID = String.valueOf(versionClient.getVersion().getVersionId());
+        String version = versionClient.getVersion().getShortVersion();
         List<NameValuePair> params = client.buildParams(feedback, name, email);
-
         assertEquals(TestUtils.getValueByKey(params, "email"), email);
-        assertEquals(TestUtils.getValueByKey(params, "app_version_id"), versionID);
+        assertEquals(TestUtils.getValueByKey(params, "bundle_version"), version);
     }
 
     @Test

@@ -31,13 +31,12 @@ public class HockeyFeedbackClient implements FeedbackClient {
     List<NameValuePair> buildParams(String feedback, String name, String email) throws IOException {
         HockeyAppVersion version = versionClient.getVersion();
 
-        String versionId = "" + version.getVersionId();
-
         List<NameValuePair> parameters = new ArrayList<>();
         parameters.add(new BasicNameValuePair("text", feedback));
         parameters.add(new BasicNameValuePair("name", name));
         parameters.add(new BasicNameValuePair("email", email));
-        parameters.add(new BasicNameValuePair("app_version_id", versionId));
+        parameters.add(new BasicNameValuePair("bundle_version", version.getShortVersion()));
+        parameters.add(new BasicNameValuePair("bundle_short_version", version.getShortVersion()));
 
         return parameters;
     }

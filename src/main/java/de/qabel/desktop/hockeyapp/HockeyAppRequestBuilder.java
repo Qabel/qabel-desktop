@@ -32,7 +32,7 @@ public class HockeyAppRequestBuilder {
         return request;
     }
 
-    void setAppVersion(String appVersion) {
+    private void setAppVersion(String appVersion) {
         this.appVersion = appVersion;
     }
 

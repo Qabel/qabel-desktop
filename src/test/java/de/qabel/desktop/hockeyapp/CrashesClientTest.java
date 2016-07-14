@@ -41,7 +41,7 @@ public class CrashesClientTest {
 
     @Before
     public void setUp() throws Exception {
-        versionClient.setVersion(new HockeyAppVersion(1, requestBuilder.getAppVersion()));
+        versionClient.setVersion(new HockeyAppVersion(requestBuilder.getAppVersion()));
     }
 
     @Test
