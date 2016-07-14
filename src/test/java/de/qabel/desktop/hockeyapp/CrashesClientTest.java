@@ -2,7 +2,6 @@ package de.qabel.desktop.hockeyapp;
 
 import de.qabel.core.accounting.CloseableHttpClientStub;
 import de.qabel.core.accounting.CloseableHttpResponseStub;
-import org.apache.http.HttpResponse;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,12 +34,14 @@ public class CrashesClientTest {
         "  at CLASS.METHOD(FILE:LINE)\n" +
         "  at CLASS.METHOD(FILE:LINE)";
 
+    private Date now = new Date();
+
     private String expectedFormattedStacktrace = "Package: de.qabel.desktop\n" +
         "Version: 1.1\n" +
         "OS: Linux / amd64 / 4.4.0-21-generic\n" +
         "Manufacturer: Oracle Corporation\n" +
         "Model: 1.8.0_91\n" +
-        "Date: " + new Date() + "\n" +
+        "Date: " + now + "\n" +
         "Stacktrace: XCEPTION REASON STRING\n" +
         "  at CLASS.METHOD(FILE:LINE)\n" +
         "  at CLASS.METHOD(FILE:LINE)\n" +
@@ -56,7 +57,9 @@ public class CrashesClientTest {
         "  at CLASS.METHOD(FILE:LINE)\n" +
         "  at CLASS.METHOD(FILE:LINE)\n" +
         "  at CLASS.METHOD(FILE:LINE)";
+
     private String feedback = "this is just a String for the stacktrace";
+
 
     @Before
     public void setUp() throws Exception {
@@ -65,7 +68,7 @@ public class CrashesClientTest {
 
     @Test
     public void createLog() throws IOException {
-        String formattedStacktrace = client.createLog(stacktrace);
+        String formattedStacktrace = client.createLog(stacktrace, now);
         assertEquals(expectedFormattedStacktrace, formattedStacktrace);
     }
 

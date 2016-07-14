@@ -1,7 +1,6 @@
 package de.qabel.desktop.hockeyapp;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ByteArrayBody;
@@ -22,7 +21,7 @@ public class HockeyCrashesClient implements CrashesClient {
     @Override
     public void sendStacktrace(String feedback, String stacktrace) throws IOException {
         HttpPost request = requestBuilder.getHttpPost("/crashes/upload");
-        String log = createLog(stacktrace);
+        String log = createLog(stacktrace, new Date());
         HttpEntity entity = MultipartEntityBuilder.create()
             .addPart("log", new ByteArrayBody(log.getBytes(), "log"))
             .addPart("description", new ByteArrayBody(feedback.getBytes(), "description"))
@@ -32,8 +31,8 @@ public class HockeyCrashesClient implements CrashesClient {
         requestBuilder.getHttpClient().execute(request);
     }
 
-    String createLog(String stacktrace) throws IOException {
-        Date date = new Date();
+    String createLog(String stacktrace, Date now) throws IOException {
+
         StringBuilder log = new StringBuilder();
 
         log.append("Package: de.qabel.desktop").append("\n");
@@ -45,7 +44,7 @@ public class HockeyCrashesClient implements CrashesClient {
             .append("\n");
         log.append("Manufacturer: ").append(System.getProperty("java.vendor")).append("\n");
         log.append("Model: ").append(System.getProperty("java.version")).append("\n");
-        log.append("Date: ").append(date).append("\n");
+        log.append("Date: ").append(now).append("\n");
         log.append("Stacktrace: ").append(stacktrace);
 
         return log.toString();
