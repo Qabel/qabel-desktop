@@ -5,7 +5,7 @@ import de.qabel.desktop.crashReports.CrashReportHandler;
 
 import java.io.IOException;
 
-public class HockeyApp implements FeedbackClient, CrashesClient {
+public class HockeyApp implements CrashReportHandler {
 
     private FeedbackClient feedbackClient;
     private CrashesClient crashClient;

@@ -1,6 +1,5 @@
 package de.qabel.desktop.hockeyapp;
 
-import org.apache.http.HttpResponse;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -8,7 +7,6 @@ import java.io.IOException;
 import static org.junit.Assert.assertEquals;
 
 public class HockeyAppTest {
-
 
     private String feedbackText = "feedbackText";
     private String name = "name";

@@ -23,7 +23,7 @@ import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
 import de.qabel.desktop.daemon.sync.worker.SyncerFactory;
-import de.qabel.desktop.hockeyapp.HockeyApp;
+import de.qabel.desktop.hockeyapp.*;
 import de.qabel.desktop.inject.config.RuntimeConfiguration;
 import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRendererFactory;
@@ -104,10 +104,16 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     }
 
     private HockeyApp hockeyApp;
+
     @Override
     public synchronized CrashReportHandler getCrashReportHandler() {
         if (hockeyApp == null) {
-            hockeyApp = new HockeyApp(getCurrentVersion(), HttpClients.createMinimal());
+            HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder(getCurrentVersion(), HttpClients.createMinimal());
+            VersionClient versionClient = new VersionClient(requestBuilder);
+            HockeyFeedbackClient feedbackClient = new HockeyFeedbackClient(requestBuilder, versionClient);
+            HockeyCrashesClient crashClient = new HockeyCrashesClient(requestBuilder, versionClient);
+
+            hockeyApp = new HockeyApp(feedbackClient, crashClient);
         }
         return hockeyApp;
     }
@@ -170,6 +176,7 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     }
 
     private ResourceBundle resourceBundle;
+
     @Override
     public synchronized ResourceBundle getResourceBundle() {
         if (resourceBundle == null) {
