@@ -24,7 +24,6 @@ public class TestUtils {
         BasicHttpEntity entity = new BasicHttpEntity();
         entity.setContent(new ByteArrayInputStream(responseContent.getBytes()));
         response.setEntity(entity);
-
         return response;
     }
 }

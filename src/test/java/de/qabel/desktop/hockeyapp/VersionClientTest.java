@@ -57,7 +57,6 @@ public class VersionClientTest {
         String shortVersion = "1.5";
         buildTestVersions();
         stubCreatedVersionResponse(201, shortVersion);
-
         HockeyAppVersion version = client.createVersion(shortVersion);
         client.setVersion(version);
 
