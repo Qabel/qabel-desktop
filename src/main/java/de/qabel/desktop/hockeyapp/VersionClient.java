@@ -8,7 +8,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,7 +32,7 @@ public class VersionClient {
     }
 
     List<HockeyAppVersion> loadVersions() throws IOException, JSONException {
-        HttpGet httpGet = requestBuilder.getHttpGet(API_VERSIONS_ALL);
+        HttpGet httpGet = requestBuilder.prepareGetRequest(API_VERSIONS_ALL);
         HttpResponse response = requestBuilder.getHttpClient().execute(httpGet);
         String responseContent = EntityUtils.toString(response.getEntity());
 
@@ -41,7 +40,7 @@ public class VersionClient {
     }
 
     HockeyAppVersion createVersion(String version) throws IOException, JSONException {
-        HttpPost request = requestBuilder.getHttpPost(API_VERSIONS_NEW);
+        HttpPost request = requestBuilder.preparePostRequest(API_VERSIONS_NEW);
 
         List<NameValuePair> parameters = buildCreateParameters(version);
         request.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
@@ -62,8 +61,6 @@ public class VersionClient {
             JSONArray versionArray = parsedJson.getJSONArray("app_versions");
             for (int i = 0; i < versionArray.length(); i++) {
                 JSONObject jsonObj = versionArray.getJSONObject(i);
-
-//                String versionId = jsonObj.getString("id");
                 String shortVersion = jsonObj.getString("version");
 
                 versions.add(new HockeyAppVersion(shortVersion));
@@ -101,11 +98,11 @@ public class VersionClient {
             versions = getVersions();
         }
         for (HockeyAppVersion version : versions) {
-            if (shortVersion.equals(version.getShortVersion())) {
+            if (shortVersion.equals(version.shortVersion)) {
                 return version;
             }
         }
-        return version;
+        throw new VersionNotFoundException("Version: " + shortVersion + " not found!");
     }
 
     public HockeyAppVersion getVersion() throws IOException {
@@ -117,7 +114,6 @@ public class VersionClient {
             }
         }
         return version;
-//        throw new IOException("something went wrong, findVersion or createVersion returned wrong");
     }
 
     List<HockeyAppVersion> getVersions() throws IOException {

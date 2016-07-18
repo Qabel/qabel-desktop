@@ -2,6 +2,6 @@ package de.qabel.desktop.hockeyapp;
 
 import java.io.IOException;
 
-public interface CrashesClient {
+public interface CrashReporterClient {
    void sendStacktrace(String feedback, String stacktrace) throws IOException;
 }

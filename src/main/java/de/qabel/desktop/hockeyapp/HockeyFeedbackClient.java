@@ -22,7 +22,7 @@ public class HockeyFeedbackClient implements FeedbackClient {
 
     @Override
     public void sendFeedback(String feedback, String name, String email) throws IOException {
-        HttpPost request = requestBuilder.getHttpPost("/feedback");
+        HttpPost request = requestBuilder.preparePostRequest("/feedback");
         List<NameValuePair> parameters = buildParams(feedback, name, email);
         request.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
         requestBuilder.getHttpClient().execute(request);
@@ -35,8 +35,8 @@ public class HockeyFeedbackClient implements FeedbackClient {
         parameters.add(new BasicNameValuePair("text", feedback));
         parameters.add(new BasicNameValuePair("name", name));
         parameters.add(new BasicNameValuePair("email", email));
-        parameters.add(new BasicNameValuePair("bundle_version", version.getShortVersion()));
-        parameters.add(new BasicNameValuePair("bundle_short_version", version.getShortVersion()));
+        parameters.add(new BasicNameValuePair("bundle_version", version.shortVersion));
+        parameters.add(new BasicNameValuePair("bundle_short_version", version.shortVersion));
 
         return parameters;
     }

@@ -8,9 +8,9 @@ import java.io.IOException;
 public class HockeyApp implements CrashReportHandler {
 
     private FeedbackClient feedbackClient;
-    private CrashesClient crashClient;
+    private CrashReporterClient crashClient;
 
-    public HockeyApp(FeedbackClient feedbackClient, CrashesClient crashClient) {
+    public HockeyApp(FeedbackClient feedbackClient, CrashReporterClient crashClient) {
         this.feedbackClient = feedbackClient;
         this.crashClient = crashClient;
     }

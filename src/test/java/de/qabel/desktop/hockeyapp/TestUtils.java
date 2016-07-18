@@ -9,21 +9,16 @@ import java.util.List;
 
 public class TestUtils {
 
-    /**
-     * @param List<NameValuePair> list
-     * @param String              key
-     * @return
-     */
-    protected static String getValueByKey(List<NameValuePair> list, String key) {
+    static String getValueByKey(List<NameValuePair> list, String key) {
         for (NameValuePair entry : list) {
             if (entry.getName().equals(key)) {
                 return entry.getValue();
             }
         }
-        return null;
+        throw new IllegalArgumentException("key: " + key + " not found in List!");
     }
 
-    protected static CloseableHttpResponseStub createResponseFromString(int statusCode, String responseContent) {
+    static CloseableHttpResponseStub createResponseFromString(int statusCode, String responseContent) {
         CloseableHttpResponseStub response = new CloseableHttpResponseStub();
         response.setStatusCode(statusCode);
         BasicHttpEntity entity = new BasicHttpEntity();

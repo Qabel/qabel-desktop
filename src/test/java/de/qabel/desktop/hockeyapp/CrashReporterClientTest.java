@@ -11,12 +11,12 @@ import java.util.Date;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class CrashesClientTest {
+public class CrashReporterClientTest {
 
     private CloseableHttpClientStub httpClientStub = new CloseableHttpClientStub();
     private HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder("1.1", httpClientStub);
     private VersionClient versionClient = new VersionClient(requestBuilder);
-    private HockeyCrashesClient client = new HockeyCrashesClient(requestBuilder, versionClient);
+    private HockeyCrashReporterClient client = new HockeyCrashReporterClient(requestBuilder, versionClient);
     private String stacktrace = "XCEPTION REASON STRING\n" +
         "  at CLASS.METHOD(FILE:LINE)\n" +
         "  at CLASS.METHOD(FILE:LINE)\n" +
@@ -40,16 +40,16 @@ public class CrashesClientTest {
 
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         versionClient.setVersion(new HockeyAppVersion(requestBuilder.getAppVersion()));
     }
 
     @Test
     public void createLog() throws IOException {
 
-        String operatingSystemInformation = System.getProperty("os.name") + " / " + System.getProperty("os.arch") + " / " + System.getProperty("os.version");
-        String manufacturer = System.getProperty("java.vendor");
-        String model = System.getProperty("java.version");
+        String operatingSystemInformation = "operatingSystemInformation";
+        String manufacturer = "manufacturer";
+        String model = "model";
 
         String expectedFormattedStacktrace = "Package: de.qabel.desktop\n" +
             "Version: 1.1\n" +

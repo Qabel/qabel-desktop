@@ -111,7 +111,7 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
             HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder(getCurrentVersion(), HttpClients.createMinimal());
             VersionClient versionClient = new VersionClient(requestBuilder);
             HockeyFeedbackClient feedbackClient = new HockeyFeedbackClient(requestBuilder, versionClient);
-            HockeyCrashesClient crashClient = new HockeyCrashesClient(requestBuilder, versionClient);
+            HockeyCrashReporterClient crashClient = new HockeyCrashReporterClient(requestBuilder, versionClient);
 
             hockeyApp = new HockeyApp(feedbackClient, crashClient);
         }

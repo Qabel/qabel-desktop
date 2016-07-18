@@ -15,7 +15,6 @@ import static org.junit.Assert.assertEquals;
 
 public class VersionClientTest {
 
-
     private static final String VERSION_1_0 = "1.0";
     private static final String VERSION_1_1 = "1.1";
 
@@ -27,7 +26,7 @@ public class VersionClientTest {
     public void validFindVersion() throws IOException, VersionNotFoundException {
         loadFakeVersions(200, true);
         HockeyAppVersion version = client.findVersion(VERSION_1_0);
-        assertEquals(VERSION_1_0, version.getShortVersion());
+        assertEquals(VERSION_1_0, version.shortVersion);
     }
 
     @Test(expected = VersionNotFoundException.class)
@@ -38,19 +37,18 @@ public class VersionClientTest {
 
     @Test
     public void getVersions() throws VersionNotFoundException, IOException {
-        LinkedList<HockeyAppVersion> versions = new LinkedList<HockeyAppVersion>();
-        versions.add(new HockeyAppVersion("foo"));
-        versions.add(new HockeyAppVersion("bar"));
+        LinkedList<HockeyAppVersion> versions = new LinkedList<>();
+        versions.add(new HockeyAppVersion(requestBuilder.getAppVersion()));
+        versions.add(new HockeyAppVersion("1.2"));
         client.setVersions(versions);
-
         stubCreatedVersionResponse(201, requestBuilder.getAppVersion());
-        HockeyAppVersion foo = client.getVersion();
+        client.getVersion();
     }
 
     @Test
     public void getVersionsWithNull() throws IOException {
         client.setVersions(null);
-        loadFakeVersions(200);
+        stubVersionsResponse(200);
         client.getVersions();
     }
 
@@ -63,7 +61,7 @@ public class VersionClientTest {
         HockeyAppVersion version = client.createVersion(shortVersion);
         client.setVersion(version);
 
-        assertEquals(shortVersion, client.getVersion().getShortVersion());
+        assertEquals(shortVersion, version.shortVersion);
     }
 
     @Test(expected = IOException.class)
@@ -85,8 +83,8 @@ public class VersionClientTest {
         HockeyAppVersion version = versions.get(0);
 
         assertEquals(2, versions.size());
-        assertEquals(VERSION_1_0, version.getVersionId());
-        assertEquals(VERSION_1_0, version.getShortVersion());
+        assertEquals(VERSION_1_0, version.shortVersion);
+        assertEquals(VERSION_1_0, version.shortVersion);
     }
 
     private void buildTestVersions() throws IOException {
@@ -117,13 +115,9 @@ public class VersionClientTest {
     }
 
     @Test
-    public void buildParameters() {
+    public void buildParameters() throws Exception {
         List<NameValuePair> params = client.buildCreateParameters(VERSION_1_1);
         assertEquals(VERSION_1_1, TestUtils.getValueByKey(params, "bundle_version"));
-    }
-
-    private void loadFakeVersions(int statusCode) throws IOException {
-        stubVersionsResponse(statusCode);
     }
 
     private void stubVersionsResponse(int statusCode) {

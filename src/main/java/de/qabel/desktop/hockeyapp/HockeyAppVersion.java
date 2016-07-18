@@ -2,8 +2,8 @@ package de.qabel.desktop.hockeyapp;
 
 public class HockeyAppVersion {
 
-    private String versionId;
-    private String shortVersion;
+    public String versionId;
+    public String shortVersion;
 
     public HockeyAppVersion(String versionId, String shortVersion) {
         this.versionId = versionId;
@@ -15,11 +15,4 @@ public class HockeyAppVersion {
         this.shortVersion = versionId;
     }
 
-    public String getVersionId() {
-        return versionId;
-    }
-
-    public String getShortVersion() {
-        return shortVersion;
-    }
 }

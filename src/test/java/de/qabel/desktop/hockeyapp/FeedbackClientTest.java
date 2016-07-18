@@ -2,7 +2,6 @@ package de.qabel.desktop.hockeyapp;
 
 import de.qabel.core.accounting.CloseableHttpClientStub;
 import de.qabel.core.accounting.CloseableHttpResponseStub;
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
@@ -35,9 +34,9 @@ public class FeedbackClientTest {
     }
 
     @Test
-    public void testBuildParams() throws IOException {
+    public void testBuildParams() throws Exception {
 
-        String version = versionClient.getVersion().getShortVersion();
+        String version = versionClient.getVersion().shortVersion;
         List<NameValuePair> params = client.buildParams(feedback, name, email);
         assertEquals(TestUtils.getValueByKey(params, "email"), email);
         assertEquals(TestUtils.getValueByKey(params, "bundle_version"), version);
@@ -66,7 +65,7 @@ public class FeedbackClientTest {
             "    \"id\" : 123,\n" +
             "    \"name\": \"Nermin Nicevic\",\n" +
             "    \"email\": \"nicevic@qabel.de\",\n" +
-            "    \"token\" : \"" + requestBuilder.getSecurityTokenKey() + "\",\n" +
+            "    \"token\" : \"" + requestBuilder.SECURITY_TOKEN_KEY + "\",\n" +
             "    \"messages\" : [\n" +
             "      {\n" +
             "        \"clean_text\" : \"This starts a new thread.\",\n" +
@@ -78,7 +77,7 @@ public class FeedbackClientTest {
             "    ]\n" +
             "  },\n" +
             "  \"status\" : \"success\",\n" +
-            "  \"token\" : \"" + requestBuilder.getSecurityTokenKey() + "\"\n" +
+            "  \"token\" : \"" + requestBuilder.SECURITY_TOKEN_KEY + "\"\n" +
             "}";
     }
 

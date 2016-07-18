@@ -1,9 +1,5 @@
 package de.qabel.desktop.hockeyapp;
 
-import de.qabel.desktop.DesktopClient;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.impl.client.HttpClients;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -31,7 +27,7 @@ public class HockeyAppTest {
 
     @Test
     public void sendCrashReport() throws IOException {
-        CrashesClient crash = (feedback, stacktrace1) -> {
+        CrashReporterClient crash = (feedback, stacktrace1) -> {
             assertEquals(feedbackText, feedback);
             assertEquals(stacktrace1, stacktrace1);
         };
