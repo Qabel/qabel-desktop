@@ -3,33 +3,37 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane fx:id="invite" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.feedback.FeedbackController">
+<BorderPane fx:id="invite" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+            minWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.feedback.FeedbackController">
 
     <center>
         <VBox>
             <children>
                 <Label text="%feedbackEMailLabel">
-               <VBox.margin>
-                  <Insets top="20.0" />
-               </VBox.margin></Label>
+                    <VBox.margin>
+                        <Insets top="20.0"/>
+                    </VBox.margin>
+                </Label>
                 <TextField fx:id="nameField" BorderPane.alignment="CENTER">
                     <VBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" />
+                        <Insets bottom="10.0" left="10.0" right="10.0"/>
                     </VBox.margin>
                 </TextField>
-                <Label text="%feedbackNameLabel" />
+                <Label text="%feedbackNameLabel"/>
                 <TextField fx:id="emailField" BorderPane.alignment="CENTER">
                     <VBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" />
+                        <Insets bottom="10.0" left="10.0" right="10.0"/>
                     </VBox.margin>
                 </TextField>
                 <Label text="%feedbackFeedbackLabel">
-               <BorderPane.margin>
-                  <Insets />
-               </BorderPane.margin></Label>
+                    <BorderPane.margin>
+                        <Insets/>
+                    </BorderPane.margin>
+                </Label>
                 <TextArea fx:id="feedbackField" BorderPane.alignment="CENTER">
                     <VBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" />
+                        <Insets bottom="10.0" left="10.0" right="10.0"/>
                     </VBox.margin>
                 </TextArea>
             </children>
@@ -37,9 +41,10 @@
     </center>
 
     <bottom>
-        <Button mnemonicParsing="false" onAction="#handleSendButtonAction" text="%feedbackSend" BorderPane.alignment="CENTER_RIGHT">
+        <Button mnemonicParsing="false" onAction="#handleSendButtonAction" text="%feedbackSend"
+                BorderPane.alignment="CENTER_RIGHT">
             <BorderPane.margin>
-                <Insets bottom="20.0" right="10.0" top="20.0" />
+                <Insets bottom="20.0" right="10.0" top="20.0"/>
             </BorderPane.margin>
         </Button>
     </bottom>
