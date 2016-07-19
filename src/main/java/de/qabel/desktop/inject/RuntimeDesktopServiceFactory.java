@@ -15,7 +15,6 @@ import de.qabel.desktop.config.FilesAbout;
 import de.qabel.desktop.config.factory.BlockBoxVolumeFactory;
 import de.qabel.desktop.config.factory.BoxVolumeFactory;
 import de.qabel.desktop.crashReports.CrashReportHandler;
-import de.qabel.desktop.crashReports.HockeyApp;
 import de.qabel.desktop.daemon.NetworkStatus;
 import de.qabel.desktop.daemon.drop.DropDaemon;
 import de.qabel.desktop.daemon.management.DefaultTransferManager;
@@ -24,6 +23,7 @@ import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.DefaultSyncerFactory;
 import de.qabel.desktop.daemon.sync.worker.SyncerFactory;
+import de.qabel.desktop.hockeyapp.*;
 import de.qabel.desktop.inject.config.RuntimeConfiguration;
 import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRendererFactory;
@@ -36,6 +36,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import org.apache.http.impl.client.HttpClients;
 
 import java.io.IOException;
 import java.net.URI;
@@ -102,9 +103,19 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
         return dropConnector;
     }
 
+    private HockeyApp hockeyApp;
+
     @Override
     public synchronized CrashReportHandler getCrashReportHandler() {
-        return new HockeyApp();
+        if (hockeyApp == null) {
+            HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder(getCurrentVersion(), HttpClients.createMinimal());
+            VersionClient versionClient = new VersionClient(requestBuilder);
+            HockeyFeedbackClient feedbackClient = new HockeyFeedbackClient(requestBuilder, versionClient);
+            HockeyCrashReporterClient crashClient = new HockeyCrashReporterClient(requestBuilder, versionClient);
+
+            hockeyApp = new HockeyApp(feedbackClient, crashClient);
+        }
+        return hockeyApp;
     }
 
     @Override
@@ -165,6 +176,7 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     }
 
     private ResourceBundle resourceBundle;
+
     @Override
     public synchronized ResourceBundle getResourceBundle() {
         if (resourceBundle == null) {
