@@ -22,9 +22,11 @@ public class FeedbackControllerTest extends AbstractControllerTest {
         controller.feedbackField.setText("feedback");
 
         controller.handleSendButtonAction();
-        waitUntil(() -> controller.nameField.getText().equals(""));
-        waitUntil(() -> controller.emailField.getText().equals(""));
-        waitUntil(() -> controller.feedbackField.getText().equals(""));
+        runLaterAndWait(() -> {
+            controller.nameField.getText().equals("");
+            controller.emailField.getText().equals("");
+            controller.feedbackField.getText().equals("");
+        });
     }
 
     @Test
@@ -39,6 +41,7 @@ public class FeedbackControllerTest extends AbstractControllerTest {
         Locale.setDefault(new Locale("te", "ST"));
         FeedbackView view = new FeedbackView();
         controller = (FeedbackController) view.getPresenter();
+
         controller.titleBar = titleBar;
         controller.infoMessage = infoMessage;
     }
