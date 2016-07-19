@@ -5,9 +5,14 @@ import org.junit.Test;
 
 import java.util.Locale;
 
+import static org.junit.Assert.assertEquals;
+
 
 public class FeedbackControllerTest extends AbstractControllerTest {
     FeedbackController controller;
+
+    String infoMessage = "infoMessage";
+    String titleBar = "titleBar";
 
     @Test
     public void createEMailBodyTest() {
@@ -22,11 +27,21 @@ public class FeedbackControllerTest extends AbstractControllerTest {
         waitUntil(() -> controller.feedbackField.getText().equals(""));
     }
 
+    @Test
+    public void createAltertInformations() {
+        createController();
+
+        assertEquals(titleBar, controller.titleBar);
+        assertEquals(infoMessage, controller.infoMessage);
+    }
 
     private void createController() {
         Locale.setDefault(new Locale("te", "ST"));
         FeedbackView view = new FeedbackView();
         controller = (FeedbackController) view.getPresenter();
+        controller.titleBar = titleBar;
+        controller.infoMessage = infoMessage;
     }
+
 
 }

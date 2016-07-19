@@ -3,12 +3,11 @@ package de.qabel.desktop.ui.feedback;
 
 import de.qabel.desktop.crashReports.CrashReportHandler;
 import de.qabel.desktop.ui.AbstractController;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -31,16 +30,25 @@ public class FeedbackController extends AbstractController implements Initializa
     @Inject
     private CrashReportHandler reportHandler;
     private ResourceBundle resourceBundle;
+    String infoMessage;
+    String titleBar;
+
+    @FXML
+    Button submitButton;
+
+    Alert alert;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
+
+        infoMessage = resourceBundle.getString("feedBackInfoMessage");
+        titleBar = resourceBundle.getString("feedBackInfoHeader");
     }
 
     @FXML
     protected void handleSendButtonAction(ActionEvent event) {
         handleSendButtonAction();
-        showPopup();
     }
 
     protected void handleSendButtonAction() {
@@ -51,32 +59,27 @@ public class FeedbackController extends AbstractController implements Initializa
                 try {
                     reportHandler.sendFeedback(feedbackField.getText(), nameField.getText(), emailField.getText());
 
-                    feedbackField.setText("");
-                    nameField.setText("");
-                    emailField.setText("");
+                    Platform.runLater(() -> {
+                        createInfoBox(infoMessage, titleBar);
+                        feedbackField.setText("");
+                        nameField.setText("");
+                        emailField.setText("");
+                    });
+
+
                 } catch (IOException e) {
                     alert(e);
                 }
             }
 
         }.start();
-
-
     }
 
-    private void showPopup() {
-        String infoMessage = resourceBundle.getString("feedBackInfoMessage");
-        String titleBar = resourceBundle.getString("feedBackInfoHeader");
-        infoBox(infoMessage, titleBar);
-    }
-
-    private void infoBox(String infoMessage, String titleBar) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    void createInfoBox(String infoMessage, String titleBar) {
+        alert = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.OK);
         alert.setTitle(titleBar);
         alert.setContentText(infoMessage);
-        alert.show();
+        alert.showAndWait();
     }
 
 }
-
-

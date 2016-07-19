@@ -41,7 +41,7 @@
     </center>
 
     <bottom>
-        <Button mnemonicParsing="false" onAction="#handleSendButtonAction" text="%feedbackSend"
+        <Button fx:id="submitButton" mnemonicParsing="false" onAction="#handleSendButtonAction" text="%feedbackSend"
                 BorderPane.alignment="CENTER_RIGHT">
             <BorderPane.margin>
                 <Insets bottom="20.0" right="10.0" top="20.0"/>
