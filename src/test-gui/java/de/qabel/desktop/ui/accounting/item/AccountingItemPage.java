@@ -31,7 +31,6 @@ public class AccountingItemPage extends AbstractPage {
     public void edit() {
         clickOn("#menu");
         controller.identityMenuController.setAlias("new alias identity");
-        Identity i = controller.getIdentity();
-        assertEquals("new alias identity", i.getAlias());
+        assertEquals("new alias identity", controller.getIdentity().getAlias());
     }
 }
