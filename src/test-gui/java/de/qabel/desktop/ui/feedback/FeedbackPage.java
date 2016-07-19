@@ -2,9 +2,6 @@ package de.qabel.desktop.ui.feedback;
 
 import com.sun.javafx.robot.FXRobot;
 import de.qabel.desktop.ui.AbstractPage;
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import org.testfx.api.FxRobot;
