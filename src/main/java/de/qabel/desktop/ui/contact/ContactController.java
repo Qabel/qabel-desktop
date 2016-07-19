@@ -24,6 +24,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -108,9 +109,11 @@ public class ContactController extends AbstractController implements Initializab
     private void createButtonGraphics() {
         Image importGraphic = new Image(getClass().getResourceAsStream("/img/import.png"));
         importButton.setGraphic(new ImageView(importGraphic));
+        Tooltip.install(importButton, new Tooltip(resourceBundle.getString("contactImport")));
 
         Image exportGraphic = new Image(getClass().getResourceAsStream("/img/export.png"));
         exportButton.setGraphic(new ImageView(exportGraphic));
+        Tooltip.install(exportButton, new Tooltip(resourceBundle.getString("contactExport")));
     }
 
 
@@ -135,7 +138,7 @@ public class ContactController extends AbstractController implements Initializab
         try {
             importContacts(file);
             loadContacts();
-        } catch ( IOException | PersistenceException | JSONException e) {
+        } catch (IOException | PersistenceException | JSONException e) {
             alert(resourceBundle.getString("alertImportContactFail"), e);
         } catch (NullPointerException ignored) {
         }
