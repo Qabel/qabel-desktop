@@ -25,9 +25,9 @@ public class FeedbackGuiTest extends AbstractGuiTest<FeedbackController> {
     @Test
     public void sendFeedbackShowsThanksDialog() {
         page.sendFeedback();
-        Assert.assertTrue(page.getDialogPane().isVisible());
+        Assert.assertTrue(controller.alert.isShowing());
 
         page.confirmAlertBox();
-        Assert.assertFalse(page.getDialogPane().isVisible());
+        Assert.assertFalse(controller.alert.isShowing());
     }
 }
