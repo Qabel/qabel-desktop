@@ -3,6 +3,7 @@ package de.qabel.desktop.ui.feedback;
 import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.desktop.ui.AbstractGuiTest;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,7 +23,11 @@ public class FeedbackGuiTest extends AbstractGuiTest<FeedbackController> {
     }
 
     @Test
-    public void sendFeedback() {
+    public void sendFeedbackShowsThanksDialog() {
         page.sendFeedback();
+        Assert.assertTrue(page.getDialogPane().isVisible());
+
+        page.confirmAlertBox();
+        Assert.assertFalse(page.getDialogPane().isVisible());
     }
 }

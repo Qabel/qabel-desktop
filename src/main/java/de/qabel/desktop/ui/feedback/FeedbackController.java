@@ -47,26 +47,19 @@ public class FeedbackController extends AbstractController implements Initializa
     }
 
     @FXML
-    protected void handleSendButtonAction(ActionEvent event) {
-        handleSendButtonAction();
-    }
-
-    protected void handleSendButtonAction() {
+    void handleSendButtonAction() {
 
         new Thread() {
             @Override
             public void run() {
                 try {
                     reportHandler.sendFeedback(feedbackField.getText(), nameField.getText(), emailField.getText());
-
                     Platform.runLater(() -> {
-                        createInfoBox(infoMessage, titleBar);
+                        showThanksDialog();
                         feedbackField.setText("");
                         nameField.setText("");
                         emailField.setText("");
                     });
-
-
                 } catch (IOException e) {
                     alert(e);
                 }
@@ -75,11 +68,11 @@ public class FeedbackController extends AbstractController implements Initializa
         }.start();
     }
 
-    void createInfoBox(String infoMessage, String titleBar) {
+    void showThanksDialog() {
         alert = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.OK);
         alert.setTitle(titleBar);
         alert.setContentText(infoMessage);
-        alert.showAndWait();
+        alert.show();
     }
 
 }

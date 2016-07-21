@@ -6,24 +6,25 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import org.testfx.api.FxRobot;
 
-public class FeedbackPage extends AbstractPage {
+class FeedbackPage extends AbstractPage {
     private FeedbackController controller;
 
-    public FeedbackPage(FXRobot baseFXRobot, FxRobot robot, FeedbackController controller) {
+    FeedbackPage(FXRobot baseFXRobot, FxRobot robot, FeedbackController controller) {
         super(baseFXRobot, robot);
         this.controller = controller;
     }
 
-
-    public void sendFeedback() {
+    void sendFeedback() {
         typeFeedbackInformations();
         clickOn(controller.submitButton);
-        confirmAlertBox();
     }
 
-    private void confirmAlertBox() {
-        DialogPane alertDialog = controller.alert.getDialogPane();
-        clickOn(alertDialog.lookupButton(ButtonType.OK));
+    void confirmAlertBox() {
+        clickOn(getDialogPane().lookupButton(ButtonType.OK));
+    }
+
+    DialogPane getDialogPane() {
+        return controller.alert.getDialogPane();
     }
 
 
