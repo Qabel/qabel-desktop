@@ -5,10 +5,8 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
-import javafx.fxml.FXML;
 import org.junit.Test;
 
-import java.awt.*;
 import java.util.HashSet;
 
 import static org.junit.Assert.assertTrue;
