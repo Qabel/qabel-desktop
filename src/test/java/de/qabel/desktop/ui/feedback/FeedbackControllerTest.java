@@ -1,8 +1,6 @@
 package de.qabel.desktop.ui.feedback;
 
 import de.qabel.desktop.ui.AbstractControllerTest;
-import org.hamcrest.CoreMatchers;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Locale;
@@ -11,7 +9,6 @@ import static de.qabel.desktop.AsyncUtils.assertAsync;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 
 public class FeedbackControllerTest extends AbstractControllerTest {

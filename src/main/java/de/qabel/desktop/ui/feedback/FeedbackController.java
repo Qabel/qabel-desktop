@@ -4,7 +4,6 @@ package de.qabel.desktop.ui.feedback;
 import de.qabel.desktop.crashReports.CrashReportHandler;
 import de.qabel.desktop.ui.AbstractController;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
