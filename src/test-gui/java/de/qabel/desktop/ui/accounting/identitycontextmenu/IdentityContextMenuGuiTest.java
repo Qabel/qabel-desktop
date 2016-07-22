@@ -1,6 +1,7 @@
 package de.qabel.desktop.ui.accounting.identitycontextmenu;
 
 import com.airhacks.afterburner.views.FXMLView;
+import de.qabel.core.config.Identities;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.core.config.factory.IdentityBuilder;
@@ -37,7 +38,15 @@ public class IdentityContextMenuGuiTest extends AbstractGuiTest<IdentityContextM
 
     @Test
     public void testEdit() throws Exception {
-        page.edit();
+        page.setAlias();
+        assertEquals("new alias", identity.getAlias());
+    }
+
+    @Test
+    public void savesAlias() throws Exception {
+        page.setAlias();
         assertEquals("new alias", controller.getAlias());
+        Identities results = identityRepository.findAll();
+        assertEquals("new alias", results.getByKeyIdentifier(identity.getKeyIdentifier()).getAlias());
     }
 }

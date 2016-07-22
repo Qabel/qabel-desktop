@@ -2,8 +2,6 @@ package de.qabel.desktop.ui.accounting.item;
 
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
-import de.qabel.core.config.IdentityObserver;
-import de.qabel.core.repository.IdentityRepository;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
@@ -27,6 +25,9 @@ public class AccountingItemController extends AbstractController implements Init
     ResourceBundle resourceBundle;
 
     @FXML
+    Pane root;
+
+    @FXML
     Label alias;
 
     @FXML
@@ -48,14 +49,9 @@ public class AccountingItemController extends AbstractController implements Init
     private ClientConfig clientConfiguration;
 
     @Inject
-    private IdentityRepository identityRepository;
-
-    @Inject
     private Pane layoutWindow;
 
-    TextInputDialog dialog;
-
-    private IdentityContextMenuView identityMenuView;
+    public IdentityContextMenuView identityMenuView;
     public IdentityContextMenuController identityMenuController;
 
     @Override
@@ -70,17 +66,11 @@ public class AccountingItemController extends AbstractController implements Init
             mail.setText(account.getUser());
         }
 
-        identity.attach(new IdentityObserver() {
-            @Override
-            public void update() {
-                Platform.runLater(() -> {
-                    alias.setText(identity.getAlias());
-                });
-            }
-        });
+        identity.attach(() -> Platform.runLater(() -> {
+            alias.setText(identity.getAlias());
+        }));
 
         updateSelection();
-        initializeMenu();
         clientConfiguration.onSelectIdentity(i -> updateSelection());
     }
 
@@ -102,12 +92,14 @@ public class AccountingItemController extends AbstractController implements Init
         identityMenuView = new IdentityContextMenuView(injectionContext::get);
         identityMenuView.getView(layoutWindow.getChildren()::add);
         identityMenuController = (IdentityContextMenuController) identityMenuView.getPresenter();
+
     }
 
     public void openMenuQR(MouseEvent event) {
-        identityMenuController.showMenu(event.getSceneX()
+        initializeMenu();
+        Platform.runLater(() -> identityMenuController.showMenu(event.getSceneX()
             + layoutWindow.getScene().getWindow().getX(), event.getSceneY()
-            + layoutWindow.getScene().getWindow().getY() + menu.getHeight());
+            + layoutWindow.getScene().getWindow().getY() + menu.getHeight()));
     }
 
     public void selectIdentity() {

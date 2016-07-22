@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import java.net.URISyntaxException;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class AccountingItemGuiTest extends AbstractGuiTest<AccountingItemController> {
@@ -35,13 +36,9 @@ public class AccountingItemGuiTest extends AbstractGuiTest<AccountingItemControl
     }
 
     @Test
-    public void testMenu() throws Exception {
-        page.openMenu();
-    }
-
-    @Test
     public void testEdit() throws Exception {
-        page.edit();
+        page.editAlias();
+        assertEquals("new alias identity", controller.getIdentity().getAlias());
     }
 
     @Test

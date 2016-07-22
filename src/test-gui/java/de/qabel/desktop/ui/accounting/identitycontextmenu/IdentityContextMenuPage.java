@@ -12,7 +12,7 @@ public class IdentityContextMenuPage extends AbstractPage {
         this.controller = controller;
     }
 
-    public void edit() {
+    public void setAlias() {
         controller.setAlias("new alias");
     }
 }

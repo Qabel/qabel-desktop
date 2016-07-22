@@ -3,10 +3,8 @@ package de.qabel.desktop.ui.accounting.qrcode;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.factory.DropUrlGenerator;
-import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.ui.AbstractController;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -17,11 +15,7 @@ import net.glxn.qrgen.javase.QRCode;
 import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
 
-import java.net.URI;
-import java.net.URL;
-import java.util.ResourceBundle;
-
-public class QRCodeController extends AbstractController implements Initializable {
+public class QRCodeController extends AbstractController {
     @FXML
     public Pane qrcode;
 
@@ -41,13 +35,7 @@ public class QRCodeController extends AbstractController implements Initializabl
     private Pane layoutWindow;
 
     @Inject
-    private ClientConfig clientConfiguration;
-
-    @Inject
     private DropUrlGenerator dropUrlGenerator;
-
-    @Inject
-    private URI accountingUri;
 
     @Inject
     private Identity identity;
@@ -56,25 +44,25 @@ public class QRCodeController extends AbstractController implements Initializabl
 
     private String textQRCode;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-    }
-
     public void buttonClosePopup() {
         hidePopup();
     }
 
     public void showPopup() {
+        if (!layoutWindow.getChildren().contains(qrcode)) {
+            layoutWindow.getChildren().add(qrcode);
+        }
+
         setIdentity();
         qrcode.setVisible(true);
     }
 
     private void hidePopup() {
         qrcode.setVisible(false);
-        layoutWindow.getChildren().remove(this);
+        layoutWindow.getChildren().remove(qrcode);
     }
 
-    public void setIdentity() {
+    private void setIdentity() {
         dropUrl = dropUrlGenerator.generateUrl().getUri().toString();
         textQRCode = "QABELCONTACT\n"
             + identity.getAlias() + "\n"
@@ -87,7 +75,7 @@ public class QRCodeController extends AbstractController implements Initializabl
         generateQRCode(textQRCode);
     }
 
-    private void generateQRCode(String qrcode) {
+    protected void generateQRCode(String qrcode) {
         final byte[] imageBytes;
         QRCode.from(qrcode).withErrorCorrection(ErrorCorrectionLevel.L);
         imageBytes = QRCode.from(qrcode).withSize(300, 250).to(ImageType.PNG).stream().toByteArray();
@@ -95,19 +83,19 @@ public class QRCodeController extends AbstractController implements Initializabl
         imageQrCode.setImage(qrCodeGraphics);
     }
 
-    public String getDropUrl() {
+    protected String getDropUrl() {
         return dropUrl;
     }
 
-    public String getPublicKey() {
+    protected String getPublicKey() {
         return identity.getEcPublicKey().getReadableKeyIdentifier();
     }
 
-    public String getTextQRCode() {
+    protected String getTextQRCode() {
         return textQRCode;
     }
 
-    public String getAlias() {
+    protected String getAlias() {
         return identity.getAlias();
     }
 

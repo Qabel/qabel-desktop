@@ -2,10 +2,8 @@ package de.qabel.desktop.ui.accounting.identitycontextmenu;
 
 import de.qabel.core.config.Identity;
 
-import de.qabel.core.config.IdentityObserver;
 import de.qabel.core.repository.IdentityRepository;
 import de.qabel.core.repository.exception.PersistenceException;
-import de.qabel.desktop.config.ClientConfig;
 
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.qrcode.QRCodeController;
@@ -13,7 +11,6 @@ import de.qabel.desktop.ui.accounting.qrcode.QRCodeView;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -33,9 +30,6 @@ public class IdentityContextMenuController extends AbstractController implements
     private Identity identity;
 
     @Inject
-    private ClientConfig clientConfiguration;
-
-    @Inject
     private Pane layoutWindow;
 
     @FXML
@@ -44,33 +38,18 @@ public class IdentityContextMenuController extends AbstractController implements
     @FXML
     private VBox vboxMenu;
 
-    @FXML
-    private Pane avatarContainer;
-
     @Inject
     private IdentityRepository identityRepository;
 
-    public TextInputDialog dialog;
+    private TextInputDialog dialog;
 
     private QRCodeView qrcodeView;
     private QRCodeController qrcodeController;
     private PopOver popOver;
-    private Label alias;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
-
-        identity.attach(new IdentityObserver() {
-            @Override
-            public void update() {
-                if (alias != null) {
-                    Platform.runLater(() -> {
-                        alias.setText(identity.getAlias());
-                    });
-                }
-            }
-        });
     }
 
     private void initializeQRPopup() {
@@ -84,8 +63,13 @@ public class IdentityContextMenuController extends AbstractController implements
     }
 
     public void showMenu(double coordPopOverX, double coordPopOverY) {
+        if (!layoutWindow.getChildren().contains(menuQR)) {
+            layoutWindow.getChildren().add(menuQR);
+        }
+
         initializePopOver();
         popOver.show(menuQR, coordPopOverX, coordPopOverY);
+        Platform.runLater(() -> layoutWindow.getChildren().remove(menuQR));
     }
 
     private void initializePopOver() {
@@ -98,15 +82,15 @@ public class IdentityContextMenuController extends AbstractController implements
         popOver.setDetachable(false);
     }
 
-    private void closeMenu() {
+    public void closeMenu() {
         popOver.hide();
-        layoutWindow.getChildren().remove(this);
+        layoutWindow.getChildren().remove(menuQR);
     }
 
     public void openQRCode() {
         closeMenu();
         initializeQRPopup();
-        qrcodeController.showPopup();
+        Platform.runLater(() -> qrcodeController.showPopup());
     }
 
     public void editIdentity(MouseEvent event) {
