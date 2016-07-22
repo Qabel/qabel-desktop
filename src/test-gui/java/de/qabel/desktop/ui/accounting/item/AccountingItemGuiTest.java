@@ -5,6 +5,8 @@ import de.qabel.core.config.Identity;
 import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.core.config.factory.IdentityBuilder;
 import de.qabel.desktop.ui.AbstractGuiTest;
+import de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuController;
+import de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuView;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,6 +39,8 @@ public class AccountingItemGuiTest extends AbstractGuiTest<AccountingItemControl
 
     @Test
     public void testEdit() throws Exception {
+        controller.identityMenuView = new IdentityContextMenuView(generateInjection("identity", identity));
+        controller.identityMenuController = (IdentityContextMenuController) controller.identityMenuView.getPresenter();
         page.editAlias();
         assertEquals("new alias identity", controller.getIdentity().getAlias());
     }
