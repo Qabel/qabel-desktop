@@ -228,6 +228,11 @@ public class LayoutController extends AbstractController implements Initializabl
         browseNav.setManaged(identity != null);
         contactsNav.setManaged(identity != null);
         syncNav.setManaged(identity != null);
+
+        browseNav.setVisible(identity != null);
+        contactsNav.setVisible(identity != null);
+        syncNav.setVisible(identity != null);
+
         selectedIdentity.setVisible(identity != null);
 
         avatarContainer.setVisible(identity != null);
