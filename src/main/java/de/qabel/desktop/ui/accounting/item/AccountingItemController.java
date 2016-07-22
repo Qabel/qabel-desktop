@@ -25,9 +25,6 @@ public class AccountingItemController extends AbstractController implements Init
     ResourceBundle resourceBundle;
 
     @FXML
-    Pane root;
-
-    @FXML
     Label alias;
 
     @FXML

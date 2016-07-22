@@ -82,7 +82,7 @@ public class IdentityContextMenuController extends AbstractController implements
         popOver.setDetachable(false);
     }
 
-    public void closeMenu() {
+    private void closeMenu() {
         popOver.hide();
         layoutWindow.getChildren().remove(menuQR);
     }
