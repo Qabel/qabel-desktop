@@ -7,6 +7,7 @@ import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuController;
 import de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuView;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.HashSet;
@@ -15,9 +16,27 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
+
     @Override
     protected FXMLView getView() {
         return new LayoutView();
+    }
+
+    private LayoutController createController() {
+        LayoutView view = new LayoutView();
+        return (LayoutController) view.getPresenter();
+    }
+
+    @Ignore
+    @Test
+    public void showQuotaBarWithDummyText() throws InterruptedException {
+        LayoutController conroller = createController();
+
+        //// TODO: 21.07.16 set the values from real BoxClient and then implement it in layout
+        controller.quota.setText("24");
+        controller.provider.setText("24");
+        controller.quotaDescription.setText("1,7 GB free / 2 GB");
+
     }
 
     @Test

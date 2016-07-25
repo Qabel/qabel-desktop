@@ -3,6 +3,7 @@ package de.qabel.desktop;
 import de.qabel.box.storage.*;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.box.storage.exceptions.QblStorageNotFound;
+import de.qabel.box.storage.jdbc.JdbcFileMetadataFactory;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.crypto.CryptoUtils;
@@ -58,7 +59,7 @@ public class BlockSharingService implements SharingService {
         try (StorageDownload download = downloader.download(message.getUrl(), null)) {
             new CryptoUtils().decryptFileAuthenticatedSymmetricAndValidateTag(download.getInputStream(), tmpFile.toFile(), new KeyParameter(message.getKey().getKey()));
         }
-        return FileMetadata.openExisting(tmpFile.toFile()).getFile();
+        return new JdbcFileMetadataFactory(tmpFile.toFile().getParentFile()).open(tmpFile.toFile()).getFile();
     }
 
     @Override

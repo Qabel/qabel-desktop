@@ -79,7 +79,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
     @Test
     public void loadsShares() throws Exception {
         ShareNotificationMessage notification = new ShareNotificationMessage("http://some.url.com", "key", "message");
-        sharingService.loadFileMetadata = new BoxExternalFile(identity.getEcPublicKey(), "prefix", "block", "share name", 123L, 123L, new byte[0]);
+        sharingService.loadFileMetadata = new BoxExternalFile(identity.getEcPublicKey(), "prefix", "block", "share name", 123L, 123L, new byte[0], null);
         shareNotificationRepository.save(identity, notification);
 
         int sharedIndex = 1;
@@ -99,8 +99,8 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
         Contact otto = addContact("Otto");
 
         page.getRow(2).share()
-                .shareBySearch("tto", "this is a sharing message")
-                .close();
+            .shareBySearch("tto", "this is a sharing message")
+            .close();
 
         StubSharingService.ShareRequest shared = sharingService.shared;
         assertNotNull(shared);
@@ -120,9 +120,9 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
         addContact("Bob");
 
         page.getRow(2).share()
-                .shareFirst("this is a sharing message")
-                .shareFirst("this is another sharing message")
-                .assertReceivers(2);
+            .shareFirst("this is a sharing message")
+            .shareFirst("this is another sharing message")
+            .assertReceivers(2);
     }
 
     private Contact addContact(String name) throws PersistenceException {

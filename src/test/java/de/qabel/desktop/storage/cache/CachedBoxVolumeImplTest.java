@@ -4,11 +4,16 @@ import de.qabel.box.storage.*;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
+import kotlin.jvm.functions.Function0;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,7 +26,7 @@ import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.*;
 
-public class CachedBoxVolumeTest extends BoxVolumeTest {
+public class CachedBoxVolumeImplTest extends BoxVolumeTest {
     private Path tempFolder;
     private List<ChangeEvent> updates = new LinkedList<>();
     private CachedBoxNavigation nav;
@@ -38,12 +43,28 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
         tempFolder = Files.createTempDirectory("");
 
         readBackend = new LocalReadBackend(tempFolder);
-        volume = new CachedBoxVolume(readBackend,
-                new LocalWriteBackend(tempFolder),
-                keyPair, deviceID, volumeTmpDir, "");
-        volume2 = new CachedBoxVolume(new LocalReadBackend(tempFolder),
-                new LocalWriteBackend(tempFolder),
-                keyPair, deviceID2, volumeTmpDir, "");
+        volume = new CachedBoxVolumeImpl(readBackend,
+            new LocalWriteBackend(tempFolder),
+            keyPair, deviceID, volumeTmpDir, "");
+        volume2 = new CachedBoxVolumeImpl(new LocalReadBackend(tempFolder),
+            new LocalWriteBackend(tempFolder),
+            keyPair, deviceID2, volumeTmpDir, "");
+    }
+
+    @Override
+    @Test
+    public void uploadsStreams() throws Exception {
+        ByteArrayInputStream in = new ByteArrayInputStream("testContent".getBytes());
+        Long size = 11L;
+
+        CachedBoxNavigation<DefaultIndexNavigation> nav = (CachedBoxNavigation<DefaultIndexNavigation>) volume.navigate();
+        nav.getNav().setTime(() -> 1234567890L);
+
+        BoxFile file = nav.upload("streamedFile", in, size);
+        InputStream out = volume2.navigate().download("streamedFile");
+        Assert.assertEquals(Long.valueOf(11L), file.getSize());
+        Assert.assertEquals(Long.valueOf(1234567890L), file.getMtime());
+        Assert.assertEquals("testContent", new String(IOUtils.toByteArray(out)));
     }
 
     @Override
@@ -198,7 +219,7 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
     public void notifiesOnShare() throws Exception {
         File file = createTmpFile();
         BoxFile boxFile = volume2.navigate().upload("testfile", file);
-        ((CachedBoxVolume)volume).navigate().refresh();
+        ((CachedBoxVolumeImpl) volume).navigate().refresh();
 
         observe();
         nav.share(new QblECKeyPair().getPub(), boxFile, "receiver");
@@ -218,7 +239,7 @@ public class CachedBoxVolumeTest extends BoxVolumeTest {
         File file = createTmpFile();
         BoxFile boxFile = volume2.navigate().upload("testfile", file);
         volume2.navigate().share(new QblECKeyPair().getPub(), boxFile, "receiver");
-        ((CachedBoxVolume)volume).navigate().refresh();
+        ((CachedBoxVolumeImpl) volume).navigate().refresh();
         observe();
 
         nav.unshare(nav.getFile("testfile"));

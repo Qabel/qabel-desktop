@@ -6,6 +6,7 @@ import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,12 +37,12 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
     }
 
     @Override
-    public JdbcDirectoryMetadata reloadMetadata() throws QblStorageException {
+    public DirectoryMetadata reloadMetadata() throws QblStorageException {
         return nav.reloadMetadata();
     }
 
     @Override
-    public void setMetadata(JdbcDirectoryMetadata dm) {
+    public void setMetadata(DirectoryMetadata dm) {
         nav.setMetadata(dm);
     }
 
@@ -55,16 +56,23 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
         nav.commitIfChanged();
     }
 
+    public T getNav() {
+        return nav;
+    }
+
     @Override
     public synchronized CachedBoxNavigation navigate(BoxFolder target) throws QblStorageException {
         if (!cache.has(target)) {
 
             CachedBoxNavigation subnav = new CachedBoxNavigation(
                 nav.navigate(target),
-                    BoxFileSystem.get(path).resolve(target.getName())
+                BoxFileSystem.get(path).resolve(target.getName())
             );
             cache.cache(target, subnav);
-            subnav.addObserver((o, arg) -> {setChanged(); notifyObservers(arg);});
+            subnav.addObserver((o, arg) -> {
+                setChanged();
+                notifyObservers(arg);
+            });
         }
         return cache.get(target);
     }
@@ -203,7 +211,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
     }
 
     @Override
-    public JdbcDirectoryMetadata getMetadata() {
+    public DirectoryMetadata getMetadata() {
         return nav.getMetadata();
     }
 
@@ -229,16 +237,11 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
         return nav.getSharesOf(object);
     }
 
-    @Override
-    public boolean hasVersionChanged(JdbcDirectoryMetadata dm) throws QblStorageException {
-        return nav.hasVersionChanged(dm);
-    }
-
     public void refresh() throws QblStorageException {
         synchronized (this) {
             synchronized (nav) {
                 if (nav.isUnmodified()) {
-                    JdbcDirectoryMetadata dm = nav.reloadMetadata();
+                    DirectoryMetadata dm = nav.reloadMetadata();
                     if (hasVersionChanged(dm)) {
                         Set<BoxFolder> oldFolders = new HashSet<>(nav.listFolders());
                         Set<BoxFile> oldFiles = new HashSet<>(nav.listFiles());
@@ -294,14 +297,14 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
             mtime = System.currentTimeMillis();
         }
         notifyObservers(
-                new RemoteChangeEvent(
-                        getPath(file),
-                        file instanceof BoxFolder,
-                        mtime,
-                        type,
-                        file,
-                        this
-                )
+            new RemoteChangeEvent(
+                getPath(file),
+                file instanceof BoxFolder,
+                mtime,
+                type,
+                file,
+                this
+            )
         );
     }
 
@@ -361,5 +364,29 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
     @Override
     public Path getPath(BoxObject folder) {
         return BoxFileSystem.get(path).resolve(folder.getName());
+    }
+
+    @NotNull
+    @Override
+    public BoxFile upload(String s, InputStream inputStream, long l, ProgressListener progressListener) throws QblStorageException {
+        return nav.upload(s, inputStream, l, progressListener);
+
+    }
+
+    @NotNull
+    @Override
+    public BoxFile upload(String s, InputStream inputStream, long l) throws QblStorageException {
+        return nav.upload(s, inputStream, l);
+    }
+
+    @NotNull
+    @Override
+    public InputStream download(String s) throws QblStorageException {
+        return nav.download(s);
+    }
+
+    @Override
+    public boolean hasVersionChanged(DirectoryMetadata directoryMetadata) throws QblStorageException {
+        return nav.hasVersionChanged(directoryMetadata);
     }
 }

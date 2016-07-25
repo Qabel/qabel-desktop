@@ -3,11 +3,11 @@ package de.qabel.desktop.config.factory;
 import de.qabel.box.http.BlockReadBackend;
 import de.qabel.box.http.BlockWriteBackend;
 import de.qabel.box.storage.BoxVolume;
-import de.qabel.core.accounting.AccountingHTTP;
+import de.qabel.core.accounting.BoxClient;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.core.repository.IdentityRepository;
-import de.qabel.desktop.storage.cache.CachedBoxVolume;
+import de.qabel.desktop.storage.cache.CachedBoxVolumeImpl;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,11 +22,11 @@ public class BlockBoxVolumeFactory extends AbstractBoxVolumeFactory {
 
     public BlockBoxVolumeFactory(
         byte[] deviceId,
-        AccountingHTTP accountingHTTP,
+        BoxClient boxClient,
         IdentityRepository identityRepository,
         URI blockUri
     ) throws IOException {
-        super(accountingHTTP, identityRepository);
+        super(boxClient, identityRepository);
         this.deviceId = deviceId;
         tmpDir = Files.createTempDirectory("qbl_tmp").toFile();
         this.blockUri = blockUri;
@@ -39,10 +39,10 @@ public class BlockBoxVolumeFactory extends AbstractBoxVolumeFactory {
         String root = blockUri + "/api/v0/files/" + prefix + "/";
 
         try {
-            BlockReadBackend readBackend = new BlockReadBackend(root, accountingHTTP);
-            BlockWriteBackend writeBackend = new BlockWriteBackend(root, accountingHTTP);
+            BlockReadBackend readBackend = new BlockReadBackend(root, boxClient);
+            BlockWriteBackend writeBackend = new BlockWriteBackend(root, boxClient);
 
-            return new CachedBoxVolume(
+            return new CachedBoxVolumeImpl(
                 readBackend,
                 writeBackend,
                 identity.getPrimaryKeyPair(),

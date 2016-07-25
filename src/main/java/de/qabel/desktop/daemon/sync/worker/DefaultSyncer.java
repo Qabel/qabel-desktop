@@ -17,6 +17,7 @@ import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
+import de.qabel.desktop.storage.cache.CachedBoxVolumeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
