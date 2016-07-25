@@ -10,7 +10,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class StringContainmentBindingTest {
-    private BoxObject value = new BoxFile("prefix", "block", "name", 0L, 0L, new byte[0]);
+    private BoxObject value = new BoxFile("prefix", "block", "name", 0L, 0L, new byte[0], null, null);
     private StringProperty filterProperty = new SimpleStringProperty("");
     private StringContainmentBinding sut = new StringContainmentBinding(filterProperty, () -> value);
 
@@ -34,7 +34,7 @@ public class StringContainmentBindingTest {
 
     @Test
     public void isTrueOnCaseInsensitiveMatchFromValue() {
-        value = new BoxFile("p", "b", "Name", 0L, 0L, new byte[0]);
+        value = new BoxFile("p", "b", "Name", 0L, 0L, new byte[0], null, null);
         filterProperty.setValue("name");
         assertTrue(sut.get());
     }

@@ -16,13 +16,13 @@ import java.nio.file.Path;
 import java.util.ResourceBundle;
 
 public abstract class RemoteFSChooser extends Dialog<Path> implements ChangeListener<TreeItem<BoxObject>> {
-    final TreeView<BoxObject> tree;
-    final TreeItem<BoxObject> root;
-    protected ObjectPropertyBase<Path> selectedProperty = new SimpleObjectProperty<>(null);
-    Button okButton;
-    Button cancelButton;
+    private final TreeView<BoxObject> tree;
+    private final TreeItem<BoxObject> root;
+    ObjectPropertyBase<Path> selectedProperty = new SimpleObjectProperty<>(null);
+    private Button okButton;
+    private Button cancelButton;
 
-    public RemoteFSChooser(ResourceBundle resources, BoxVolume volume) throws QblStorageException {
+    RemoteFSChooser(ResourceBundle resources, BoxVolume volume) throws QblStorageException {
 
         setTitle(resources.getString("syncSetupChooseRemoteFolder"));
         ButtonType okType = new ButtonType(resources.getString("open"), ButtonBar.ButtonData.OK_DONE);

@@ -1,6 +1,6 @@
 package de.qabel.desktop.inject;
 
-import de.qabel.core.accounting.AccountingHTTP;
+import de.qabel.core.accounting.BoxClient;
 import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.core.config.factory.IdentityBuilderFactory;
 import de.qabel.core.repository.AccountRepository;
@@ -82,7 +82,7 @@ public interface DesktopServices {
     BoxVolumeFactory getBoxVolumeFactory() throws IOException;
 
     @Create(name = "accountingClient")
-    AccountingHTTP getAccountingClient();
+    BoxClient getAccountingClient();
 
     @Create(name = "shareNotificationRepository")
     ShareNotificationRepository getShareNotificationRepository();

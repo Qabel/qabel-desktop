@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class CachedIndexNavigation extends CachedBoxNavigation<IndexNavigation> implements IndexNavigation {
+
     public CachedIndexNavigation(IndexNavigation nav, Path path) {
         super(nav, path);
     }

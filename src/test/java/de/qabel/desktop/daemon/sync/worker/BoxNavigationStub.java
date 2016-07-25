@@ -82,8 +82,7 @@ public class BoxNavigationStub extends CachedIndexNavigation {
 
     @Override
     public BoxExternalReference share(QblECPublicKey owner, BoxFile file, String receiver) throws QblStorageException {
-        file.setMeta(file.getBlock());
-        file.setMetakey(new byte[0]);
+        file.setShared(new Share(file.getBlock(), new byte[0]));
         shares.add(new BoxShare(file.getRef(), receiver));
         notifyAsync(file, SHARE);
         return new BoxExternalReference(false, file.getRef(), file.getName(), owner, new byte[0]);
@@ -98,11 +97,11 @@ public class BoxNavigationStub extends CachedIndexNavigation {
             return;
         }
 
-        BoxFile boxFile = (BoxFile)boxObject;
+        BoxFile boxFile = (BoxFile) boxObject;
         shares.stream().sorted()
-                .filter(boxShare -> boxFile.getRef().equals(boxShare.getRef()))
-                .forEach(shares::remove);
-        boxFile.setMeta(null);
+            .filter(boxShare -> boxFile.getRef().equals(boxShare.getRef()))
+            .forEach(shares::remove);
+        boxFile.setShared(null);
         notifyAsync(boxObject, UNSHARE);
     }
 

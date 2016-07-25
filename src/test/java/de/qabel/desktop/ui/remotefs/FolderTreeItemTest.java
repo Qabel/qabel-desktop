@@ -2,6 +2,7 @@ package de.qabel.desktop.ui.remotefs;
 
 import de.qabel.box.storage.*;
 import de.qabel.box.storage.exceptions.QblStorageException;
+import de.qabel.box.storage.jdbc.JdbcDirectoryMetadata;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
@@ -9,6 +10,7 @@ import de.qabel.desktop.ui.AbstractControllerTest;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 import java.io.File;
@@ -111,18 +113,18 @@ public class FolderTreeItemTest extends AbstractControllerTest {
         navigation.files.add(createSomeFile());
         navigation.setChanged();
         navigation.notifyObservers(new RemoteChangeEvent(
-                Paths.get("/name2"),
-                false,
-                navigation.files.get(0).getMtime(),
-                ChangeEvent.TYPE.CREATE,
-                navigation.files.get(0),
-                navigation
+            Paths.get("/name2"),
+            false,
+            navigation.files.get(0).getMtime(),
+            ChangeEvent.TYPE.CREATE,
+            navigation.files.get(0),
+            navigation
         ));
         waitUntil(() -> children.size() == 1);
     }
 
     private BoxFile createSomeFile() {
-        return new BoxFile("prefix", "ref2", "name2", 0L, 0L, new byte[0]);
+        return new BoxFile("prefix", "ref2", "name2", 0L, 0L, new byte[0], null, null);
     }
 
     private class FakeBoxNavigation extends Observable implements BoxNavigation {
@@ -132,13 +134,8 @@ public class FolderTreeItemTest extends AbstractControllerTest {
         public List<BoxFolder> folders = new LinkedList<>();
 
         @Override
-        public JdbcDirectoryMetadata reloadMetadata() throws QblStorageException {
+        public DirectoryMetadata reloadMetadata() throws QblStorageException {
             return null;
-        }
-
-        @Override
-        public void setMetadata(JdbcDirectoryMetadata dm) {
-
         }
 
         @Override
@@ -300,7 +297,6 @@ public class FolderTreeItemTest extends AbstractControllerTest {
             return null;
         }
 
-        @Override
         public boolean hasVersionChanged(JdbcDirectoryMetadata dm) throws QblStorageException {
             return false;
         }
@@ -318,6 +314,34 @@ public class FolderTreeItemTest extends AbstractControllerTest {
         @Override
         public void notifyObservers() {
             super.notifyObservers();
+        }
+
+        @NotNull
+        @Override
+        public BoxFile upload(String s, InputStream inputStream, long l, ProgressListener progressListener) throws QblStorageException {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public BoxFile upload(String s, InputStream inputStream, long l) throws QblStorageException {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public InputStream download(String s) throws QblStorageException {
+            return null;
+        }
+
+        @Override
+        public void setMetadata(DirectoryMetadata directoryMetadata) {
+
+        }
+
+        @Override
+        public boolean hasVersionChanged(DirectoryMetadata directoryMetadata) throws QblStorageException {
+            return false;
         }
     }
 }

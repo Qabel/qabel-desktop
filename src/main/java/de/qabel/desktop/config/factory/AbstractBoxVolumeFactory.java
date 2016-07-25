@@ -1,6 +1,6 @@
 package de.qabel.desktop.config.factory;
 
-import de.qabel.core.accounting.AccountingHTTP;
+import de.qabel.core.accounting.BoxClient;
 import de.qabel.core.config.Identity;
 import de.qabel.core.exceptions.QblInvalidCredentials;
 import de.qabel.core.repository.IdentityRepository;
@@ -10,17 +10,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public abstract class AbstractBoxVolumeFactory implements BoxVolumeFactory {
-    protected AccountingHTTP accountingHTTP;
+    protected BoxClient boxClient;
     protected IdentityRepository identityRepository;
 
-    public AbstractBoxVolumeFactory(AccountingHTTP accountingHTTP, IdentityRepository identityRepository) {
-        this.accountingHTTP = accountingHTTP;
+    public AbstractBoxVolumeFactory(BoxClient boxClient, IdentityRepository identityRepository) {
+        this.boxClient = boxClient;
         this.identityRepository = identityRepository;
     }
 
     public String choosePrefix(Identity identity) {
         try {
-            for (String prefix : accountingHTTP.getPrefixes()) {
+            for (String prefix : boxClient.getPrefixes()) {
                 if (identity.getPrefixes().contains(prefix)) {
                     return prefix;
                 }
@@ -33,8 +33,8 @@ public abstract class AbstractBoxVolumeFactory implements BoxVolumeFactory {
     }
 
     private String createNewPrefix(Identity identity) throws IOException, QblInvalidCredentials, PersistenceException {
-        accountingHTTP.createPrefix();
-        ArrayList<String> prefixes = accountingHTTP.getPrefixes();
+        boxClient.createPrefix();
+        ArrayList<String> prefixes = boxClient.getPrefixes();
         String prefix = prefixes.get(prefixes.size() - 1);
         identity.getPrefixes().add(prefix);
         identityRepository.save(identity);

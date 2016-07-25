@@ -49,13 +49,13 @@ public class BoxObjectCellValueFactoryTest extends AbstractControllerTest {
         bb.putLong(uuid.getMostSignificantBits());
         bb.putLong(uuid.getLeastSignificantBits());
 
-        BoxVolume volume = new BoxVolume(
-                new LocalReadBackend(tempFolder),
-                new LocalWriteBackend(tempFolder),
-                keyPair,
-                deviceID,
-                new File(System.getProperty("java.io.tmpdir")),
-                prefix
+        BoxVolume volume = new BoxVolumeImpl(
+            new LocalReadBackend(tempFolder),
+            new LocalWriteBackend(tempFolder),
+            keyPair,
+            deviceID,
+            new File(System.getProperty("java.io.tmpdir")),
+            prefix
         );
 
         String bucket = "qabel";
@@ -65,7 +65,7 @@ public class BoxObjectCellValueFactoryTest extends AbstractControllerTest {
         rootNodeFolder.getChildren().add(boxFolderTreeItem);
         treeTableFolder = new TreeTableView(rootNodeFolder);
 
-        TreeItem<BoxObject> boxFileTreeItem = new TreeItem<>(new BoxFile("prefix", "block", "File", 1L, 2L, new byte[16]));
+        TreeItem<BoxObject> boxFileTreeItem = new TreeItem<>(new BoxFile("prefix", "block", "File", 1L, 2L, new byte[16], null, null));
         rootNodeFile.getChildren().add(boxFileTreeItem);
         treeTableFile = new TreeTableView(rootNodeFile);
 
@@ -123,9 +123,9 @@ public class BoxObjectCellValueFactoryTest extends AbstractControllerTest {
 
     private ObservableValue<String> getColumnValue(String searchString, TreeItem<BoxObject> rootNode) {
         return new BoxObjectCellValueFactory(searchString).
-                call(new TreeTableColumn.CellDataFeatures<>(
-                        treeTableFile,
-                        new TreeTableColumn<>(),
-                        rootNode.getChildren().get(0)));
+            call(new TreeTableColumn.CellDataFeatures<>(
+                treeTableFile,
+                new TreeTableColumn<>(),
+                rootNode.getChildren().get(0)));
     }
 }
