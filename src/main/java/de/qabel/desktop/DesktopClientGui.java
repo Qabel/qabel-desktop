@@ -44,7 +44,7 @@ public class DesktopClientGui extends Application {
     private StaticRuntimeConfiguration runtimeConfiguration;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-    public DesktopClientGui(DesktopServices services, StaticRuntimeConfiguration runtimeConfiguration) {
+    DesktopClientGui(DesktopServices services, StaticRuntimeConfiguration runtimeConfiguration) {
         this.services = services;
         this.runtimeConfiguration = runtimeConfiguration;
     }
@@ -72,7 +72,7 @@ public class DesktopClientGui extends Application {
                     startDropDaemon();
                     view = new LayoutView();
                     Parent view = this.view.getView();
-                    runtimeConfiguration.setWindow(((LayoutController)this.view.getPresenter()).getWindow());
+                    runtimeConfiguration.setWindow(((LayoutController) this.view.getPresenter()).getWindow());
                     Scene layoutScene = new Scene(view, 900, 600, true, aa);
                     Platform.runLater(() -> primaryStage.setScene(layoutScene));
 

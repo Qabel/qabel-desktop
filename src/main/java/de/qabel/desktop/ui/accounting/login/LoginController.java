@@ -1,8 +1,9 @@
 package de.qabel.desktop.ui.accounting.login;
 
 import com.sun.javafx.collections.ObservableListWrapper;
-import de.qabel.core.accounting.AccountingHTTP;
+import de.qabel.core.accounting.BoxClient;
 import de.qabel.core.accounting.AccountingProfile;
+import de.qabel.core.accounting.BoxHttpClient;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.AccountingServer;
 import de.qabel.core.exceptions.QblCreateAccountFailException;
@@ -69,7 +70,7 @@ public class LoginController extends AbstractController implements Initializable
     @FXML
     Pane progressBar;
 
-    ResourceBundle resourceBundle;
+    private ResourceBundle resourceBundle;
     private ClientConfig config;
     private Account account;
 
@@ -128,7 +129,7 @@ public class LoginController extends AbstractController implements Initializable
     public void newPassword() {
         new Thread(() -> {
             try {
-                AccountingHTTP http = createAccount();
+                BoxClient http = createAccount();
                 http.resetPassword(email.getText());
                 toMailSend(resourceBundle.getString("loginSend"));
                 newPassword.disableProperty().set(true);
@@ -182,7 +183,7 @@ public class LoginController extends AbstractController implements Initializable
                     throw new IllegalArgumentException(text);
                 }
 
-                AccountingHTTP http = createAccount();
+                BoxClient http = createAccount();
                 http.createBoxAccount(email.getText());
                 http.login();
                 config.setAccount(account);
@@ -224,7 +225,7 @@ public class LoginController extends AbstractController implements Initializable
         // TODO extract login to daemon
         new Thread(() -> {
             try {
-                AccountingHTTP http = createAccount();
+                BoxClient http = createAccount();
                 http.login();
 
                 try (Transaction ignored = transactionManager.beginTransaction()) {
@@ -244,7 +245,7 @@ public class LoginController extends AbstractController implements Initializable
         }).start();
     }
 
-    private AccountingHTTP createAccount() throws MalformedURLException, URISyntaxException {
+    private BoxClient createAccount() throws MalformedURLException, URISyntaxException {
         account = new Account(null, null, null);
         if (config.hasAccount()) {
             account = config.getAccount();
@@ -253,7 +254,7 @@ public class LoginController extends AbstractController implements Initializable
         account.setUser(user.getText());
         account.setAuth(password.getText());
 
-        AccountingHTTP http = new AccountingHTTP(
+        return new BoxHttpClient(
                 new AccountingServer(
                         new URL(account.getProvider()).toURI(),
                         new URL(account.getProvider()).toURI(),
@@ -262,8 +263,6 @@ public class LoginController extends AbstractController implements Initializable
                 ),
                 new AccountingProfile()
         );
-
-        return http;
     }
 
     private void toLoginFailureState(String message) {

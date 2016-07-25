@@ -44,8 +44,9 @@ public class VirtualShareTreeItemTest extends AbstractFxTest {
             "block",
             "name",
             shareSize,
-            123L,
-            new byte[0]
+            0L,
+            "key".getBytes(),
+            null
         );
     }
 

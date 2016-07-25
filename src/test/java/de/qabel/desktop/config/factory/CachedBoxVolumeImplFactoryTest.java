@@ -12,7 +12,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
-public class CachedBoxVolumeFactoryTest {
+public class CachedBoxVolumeImplFactoryTest {
 
     private Account account;
     private Account account2;
