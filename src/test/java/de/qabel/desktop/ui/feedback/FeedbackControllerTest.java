@@ -35,7 +35,7 @@ public class FeedbackControllerTest extends AbstractControllerTest {
     public void createAlertInformation() {
         createController();
         assertEquals(ALERT_MESSAGE, controller.infoMessage);
-        assertEquals(ALERT_TITLE, controller.titleBar);
+        assertEquals(ALERT_TITLE, controller.infoTitle);
     }
 
     @Test

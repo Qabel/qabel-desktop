@@ -30,7 +30,7 @@ public class FeedbackController extends AbstractController implements Initializa
     private CrashReportHandler reportHandler;
     private ResourceBundle resourceBundle;
     String infoMessage;
-    String titleBar;
+    String infoTitle;
 
     @FXML
     Button submitButton;
@@ -42,7 +42,7 @@ public class FeedbackController extends AbstractController implements Initializa
         resourceBundle = resources;
 
         infoMessage = resourceBundle.getString("feedBackInfoMessage");
-        titleBar = resourceBundle.getString("feedBackInfoHeader");
+        infoTitle = resourceBundle.getString("feedBackInfoHeader");
     }
 
     @FXML
@@ -69,7 +69,7 @@ public class FeedbackController extends AbstractController implements Initializa
 
     void showThanksDialog() {
         alert = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.OK);
-        alert.setTitle(titleBar);
+        alert.setTitle(infoTitle);
         alert.setContentText(infoMessage);
         alert.show();
     }
