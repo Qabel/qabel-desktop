@@ -189,7 +189,8 @@ public class LayoutController extends AbstractController implements Initializabl
         try {
             quotaState = boxClient.getQuotaState();
         } catch (IOException | QblInvalidCredentials e) {
-            e.printStackTrace();
+            alert(e);
+            //TODO add an UnAvailableQuotaState
         }
         int ratio = ratioByDiff(quotaState.getSize(), quotaState.getQuota());
         String quotaDescriptionText = quotaDescription(quotaState.getSize(), quotaState.getQuota());

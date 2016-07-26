@@ -22,7 +22,6 @@ public class LayoutControllerTest extends AbstractControllerTest {
         LayoutController controller = createController();
         QuotaState quota = controller.boxClient.getQuotaState();
 
-
         String expectedDesc = controller.quotaDescription(expectedQuotaState.getSize(), expectedQuotaState.getQuota());
         int expectedRatio = controller.ratioByDiff(expectedQuotaState.getSize(), expectedQuotaState.getQuota());
 
