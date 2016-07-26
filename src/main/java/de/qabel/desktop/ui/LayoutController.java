@@ -205,7 +205,6 @@ public class LayoutController extends AbstractController implements Initializabl
      * @return
      */
     int ratioByDiff(long usedQuota, long availableQuota) {
-        long freeSpace = availableQuota - usedQuota;
         return (int) (usedQuota / (double) availableQuota * 100);
     }
 
