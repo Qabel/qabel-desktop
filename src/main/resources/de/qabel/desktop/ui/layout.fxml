@@ -29,7 +29,7 @@
                                                 <Label fx:id="alias" text="Guy Pearce Longerman" styleClass="alias"/>
                                                 <Label fx:id="mail" text="guy@pearce.com" styleClass="mail"
                                                        style="-fx-font-size: 0.8em"/>
-                                                <BorderPane styleClass="quotaBlock" visible="true">
+                                                <BorderPane fx:id="quotaBlock" styleClass="quotaBlock" visible="true">
                                                     <right>
                                                         <Label fx:id="quota" BorderPane.alignment="CENTER"
                                                                text="0" styleClass="quota"

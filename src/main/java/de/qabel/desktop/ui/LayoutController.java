@@ -32,6 +32,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
@@ -104,16 +105,6 @@ public class LayoutController extends AbstractController implements Initializabl
     @Inject
     private DropMessageRepository dropMessageRepository;
 
-    @FXML
-    Label quota;
-    @FXML
-    Label provider;
-    @FXML
-    Label quotaDescription;
-
-    @Inject
-    BoxClient boxClient;
-
     NaviItem browseNav;
     NaviItem contactsNav;
     NaviItem syncNav;
@@ -185,18 +176,33 @@ public class LayoutController extends AbstractController implements Initializabl
         newMessageIndicator.visibleProperty().bind(newMessageIndicator.textProperty().isNotEqualTo("0"));
     }
 
+    @FXML
+    BorderPane quotaBlock;
+    @FXML
+    Label quota;
+    @FXML
+    Label provider;
+    @FXML
+    Label quotaDescription;
+    @Inject
+    BoxClient boxClient;
+
     private void fillQuotaInformation() {
         try {
+            quotaBlock.setVisible(false);
+            quotaDescription.setVisible(false);
+
             quotaState = boxClient.getQuotaState();
+            int ratio = ratioByDiff(quotaState.getSize(), quotaState.getQuota());
+            String quotaDescriptionText = quotaDescription(quotaState.getSize(), quotaState.getQuota());
+            quota.setText(ratio + "%");
+            provider.setMinWidth(ratio);
+            quotaDescription.setText(quotaDescriptionText);
         } catch (IOException | QblInvalidCredentials e) {
             alert(e);
-            //TODO add an UnAvailableQuotaState
+            quotaBlock.setVisible(false);
+            quotaDescription.setVisible(false);
         }
-        int ratio = ratioByDiff(quotaState.getSize(), quotaState.getQuota());
-        String quotaDescriptionText = quotaDescription(quotaState.getSize(), quotaState.getQuota());
-        quota.setText(ratio + "%");
-        provider.setMinWidth(ratio);
-        quotaDescription.setText(quotaDescriptionText);
     }
 
     /**
