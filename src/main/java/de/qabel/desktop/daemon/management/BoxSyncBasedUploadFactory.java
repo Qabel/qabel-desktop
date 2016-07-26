@@ -3,6 +3,7 @@ package de.qabel.desktop.daemon.management;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.daemon.sync.event.WatchEvent;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
+import de.qabel.desktop.storage.cache.CachedBoxVolumeImpl;
 
 import java.util.concurrent.TimeUnit;
 

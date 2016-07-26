@@ -1,7 +1,8 @@
 package de.qabel.desktop.inject;
 
-import de.qabel.core.accounting.AccountingHTTP;
+import de.qabel.core.accounting.BoxClient;
 import de.qabel.core.accounting.AccountingProfile;
+import de.qabel.core.accounting.BoxHttpClient;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.AccountingServer;
 import de.qabel.core.config.factory.DropUrlGenerator;
@@ -55,7 +56,7 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     private FXMessageRendererFactory FXMessageRendererFactory;
     private SharingService sharingService;
     private BoxVolumeFactory boxVolumeFactory;
-    private AccountingHTTP accountingHTTP;
+    private BoxClient boxClient;
 
     public RuntimeDesktopServiceFactory(RuntimeConfiguration runtimeConfiguration) {
         this.runtimeConfiguration = runtimeConfiguration;
@@ -149,8 +150,8 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     }
 
     @Override
-    public synchronized AccountingHTTP getAccountingClient() {
-        if (accountingHTTP == null) {
+    public synchronized BoxClient getAccountingClient() {
+        if (boxClient == null) {
             Account acc = getClientConfiguration().getAccount();
             if (acc == null) {
                 throw new IllegalStateException("cannot get accounting client without valid account");
@@ -162,12 +163,12 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
                     acc.getUser(),
                     acc.getAuth()
                 );
-                accountingHTTP = new AccountingHTTP(server, new AccountingProfile());
+                boxClient = new BoxHttpClient(server, new AccountingProfile());
             } catch (URISyntaxException e) {
                 throw new IllegalStateException("cannot get accounting client without valid account: " + e.getMessage(), e);
             }
         }
-        return accountingHTTP;
+        return boxClient;
     }
 
     @Override

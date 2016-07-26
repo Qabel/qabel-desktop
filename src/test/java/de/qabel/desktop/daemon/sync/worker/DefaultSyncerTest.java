@@ -161,7 +161,7 @@ public class DefaultSyncerTest extends AbstractSyncTest {
         syncer.stop();
         manager.getHistory().clear();
 
-        nav.pushNotification(new BoxFile("a", "b", "c", 1L, 2L, new byte[0]), CREATE);
+        nav.pushNotification(new BoxFile("a", "b", "c", 1L, 2L, new byte[0], null, null), CREATE);
         // wait for something to not happen?
         Thread.sleep(100);
         assertThat(manager.getHistory(), is(empty()));

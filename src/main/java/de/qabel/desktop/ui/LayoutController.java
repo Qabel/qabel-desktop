@@ -99,6 +99,13 @@ public class LayoutController extends AbstractController implements Initializabl
     @Inject
     private DropMessageRepository dropMessageRepository;
 
+    @FXML
+    Label quota;
+    @FXML
+    Label quotaDescription;
+    @FXML
+    Label provider;
+
     NaviItem browseNav;
     NaviItem contactsNav;
     NaviItem syncNav;

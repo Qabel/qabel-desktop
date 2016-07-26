@@ -13,7 +13,9 @@ import java.nio.file.Path;
 import java.security.InvalidKeyException;
 
 public class StubSharingService implements SharingService {
-    public BoxFile share = new BoxFile("sharePrefix", "shareBlock", "sharedFile", 0L, 0L, "key".getBytes());
+
+    public BoxFile share = new BoxFile("sharePrefix", "shareBlock", "sharedFile", 0L, 0L, "key".getBytes(), null, null);
+
     public ShareNotificationMessage usedShareMessage;
     public QblStorageException storageException;
     public IOException ioException;
