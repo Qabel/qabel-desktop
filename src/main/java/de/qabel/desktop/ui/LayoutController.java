@@ -1,7 +1,10 @@
 package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
+import de.qabel.core.accounting.BoxClient;
+import de.qabel.core.accounting.QuotaState;
 import de.qabel.core.config.Identity;
+import de.qabel.core.exceptions.QblInvalidCredentials;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.daemon.management.MonitoredTransferManager;
 import de.qabel.desktop.daemon.management.TransferManager;
@@ -34,8 +37,10 @@ import javafx.scene.layout.VBox;
 
 import javax.inject.Inject;
 import java.awt.*;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -102,15 +107,19 @@ public class LayoutController extends AbstractController implements Initializabl
     @FXML
     Label quota;
     @FXML
-    Label quotaDescription;
-    @FXML
     Label provider;
+    @FXML
+    Label quotaDescription;
+
+    @Inject
+    BoxClient boxClient;
 
     NaviItem browseNav;
     NaviItem contactsNav;
     NaviItem syncNav;
     NaviItem accountingNav;
     NaviItem aboutNav;
+    QuotaState quotaState;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -133,7 +142,6 @@ public class LayoutController extends AbstractController implements Initializabl
         navi.getChildren().add(syncNav);
         navi.getChildren().add(aboutNav);
 
-
         scrollContent.setFillWidth(true);
 
         if (clientConfiguration.getSelectedIdentity() == null) {
@@ -144,6 +152,7 @@ public class LayoutController extends AbstractController implements Initializabl
         updateIdentity();
         clientConfiguration.onSelectIdentity(i -> Platform.runLater(this::updateIdentity));
 
+        fillQuotaInformation();
 
         bottomContainer.getChildren().remove(uploadProgress);
         ComposedProgressBar progressBar = new ComposedProgressBar();
@@ -176,9 +185,63 @@ public class LayoutController extends AbstractController implements Initializabl
         newMessageIndicator.visibleProperty().bind(newMessageIndicator.textProperty().isNotEqualTo("0"));
     }
 
+    private void fillQuotaInformation() {
+        try {
+            quotaState = boxClient.getQuotaState();
+        } catch (IOException | QblInvalidCredentials e) {
+            e.printStackTrace();
+        }
+        int ratio = ratioByDiff(quotaState.getSize(), quotaState.getQuota());
+        String quotaDescriptionText = quotaDescription(quotaState.getSize(), quotaState.getQuota());
+        quota.setText(ratio + "%");
+        provider.setMinWidth(ratio);
+        quotaDescription.setText(quotaDescriptionText);
+    }
+
+    /**
+     * @param usedQuota
+     * @param availableQuota
+     * @return
+     */
+    int ratioByDiff(long usedQuota, long availableQuota) {
+        long freeSpace = availableQuota - usedQuota;
+        return (int) (usedQuota / (double) availableQuota * 100);
+    }
+
+    /**
+     * builds the description for human readable quota
+     *
+     * @param usedQuota
+     * @param availableQuota
+     * @return
+     */
+    String quotaDescription(long usedQuota, long availableQuota) {
+        long diff = availableQuota - usedQuota;
+        String quota = getStringSizeLengthFile(availableQuota);
+        return getStringSizeLengthFile(diff) + " free / " + quota;
+    }
+
+
+    String getStringSizeLengthFile(long size) {
+        DecimalFormat df = new DecimalFormat("0.00");
+
+        float sizeKb = 1024.0f;
+        float sizeMo = sizeKb * sizeKb;
+        float sizeGB = sizeMo * sizeKb;
+        float sizeTerra = sizeGB * sizeKb;
+
+        if (size < sizeMo)
+            return df.format(size / sizeKb) + " Kb";
+        else if (size < sizeGB)
+            return df.format(size / sizeMo) + " MB";
+        else if (size < sizeTerra)
+            return df.format(size / sizeGB) + " GB";
+
+        return "";
+    }
+
     private void createButtonGraphics() {
         Image heartGraphic = new Image(getClass().getResourceAsStream("/img/heart.png"));
-
 
         inviteButton.setImage(heartGraphic);
         inviteButton.getStyleClass().add("inline-button");

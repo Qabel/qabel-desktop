@@ -5,7 +5,6 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.HashSet;
@@ -22,18 +21,6 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
     private LayoutController createController() {
         LayoutView view = new LayoutView();
         return (LayoutController) view.getPresenter();
-    }
-
-    @Ignore
-    @Test
-    public void showQuotaBarWithDummyText() throws InterruptedException {
-        LayoutController conroller = createController();
-
-        //// TODO: 21.07.16 set the values from real BoxClient and then implement it in layout
-        controller.quota.setText("24");
-        controller.provider.setText("24");
-        controller.quotaDescription.setText("1,7 GB free / 2 GB");
-
     }
 
     @Test

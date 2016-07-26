@@ -81,6 +81,7 @@ public interface DesktopServices {
     @Create(name = "boxVolumeFactory")
     BoxVolumeFactory getBoxVolumeFactory() throws IOException;
 
+    @Create(name = "boxClient")
     @Create(name = "accountingClient")
     BoxClient getAccountingClient();
 
