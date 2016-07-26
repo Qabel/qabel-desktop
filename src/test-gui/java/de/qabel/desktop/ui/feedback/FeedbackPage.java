@@ -31,9 +31,6 @@ class FeedbackPage extends AbstractPage {
 
 
     private void typeFeedbackInformations() {
-        controller.infoMessage = "guitest infoMessage";
-        controller.titleBar = "guitest titleBar";
-
         clickOn(controller.nameField).write("guitest nameField");
         clickOn(controller.emailField).write("guitest emailField");
         clickOn(controller.feedbackField).write("guitest feedbackField");

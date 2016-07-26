@@ -12,7 +12,7 @@ import static org.junit.Assert.assertNotNull;
 
 
 public class FeedbackControllerTest extends AbstractControllerTest {
-    FeedbackController controller;
+    private FeedbackController controller;
 
     private static final String ALERT_MESSAGE = "Thank you for your feedback";
     private static final String ALERT_TITLE = "Send feedback was successful";
