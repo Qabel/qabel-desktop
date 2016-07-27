@@ -205,28 +205,14 @@ public class LayoutController extends AbstractController implements Initializabl
         }
     }
 
-    /**
-     * @param usedQuota
-     * @param availableQuota
-     * @return
-     */
     int ratioByDiff(long usedQuota, long availableQuota) {
         return (int) (usedQuota / (double) availableQuota * 100);
     }
 
-    /**
-     * builds the description for human readable quota
-     *
-     * @param usedQuota
-     * @param availableQuota
-     * @return
-     */
     String quotaDescription(long usedQuota, long availableQuota) {
         long diff = availableQuota - usedQuota;
-        String quota = getStringSizeLengthFile(availableQuota);
-        return getStringSizeLengthFile(diff) + " free / " + quota;
+        return getStringSizeLengthFile(diff) + " free / " + getStringSizeLengthFile(availableQuota);
     }
-
 
     String getStringSizeLengthFile(long size) {
         DecimalFormat df = new DecimalFormat("0.00");
