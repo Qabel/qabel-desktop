@@ -1,9 +1,13 @@
 package de.qabel.desktop.ui.feedback;
 
 import de.qabel.desktop.ui.AbstractControllerTest;
+import de.qabel.desktop.util.UTF8Converter;
+import org.junit.Before;
 import org.junit.Test;
 
+import javax.inject.Inject;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 import static de.qabel.desktop.AsyncUtils.assertAsync;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -13,9 +17,14 @@ import static org.junit.Assert.assertNotNull;
 
 public class FeedbackControllerTest extends AbstractControllerTest {
     private FeedbackController controller;
+    private ResourceBundle resourceBundle;
 
-    private static final String ALERT_MESSAGE = "Thank you for your feedback";
-    private static final String ALERT_TITLE = "Send feedback was successful";
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        resourceBundle = ResourceBundle.getBundle("ui", new Locale("te", "ST"), new UTF8Converter());
+    }
 
     @Test
     public void createEMailBodyTest() {
@@ -32,22 +41,17 @@ public class FeedbackControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void createAlertInformation() {
-        createController();
-        assertEquals(ALERT_MESSAGE, controller.infoMessage);
-        assertEquals(ALERT_TITLE, controller.infoTitle);
-    }
-
-    @Test
     public void showAlertDialog() {
         createController();
         runLaterAndWait(() -> {
             controller.showThanksDialog();
         });
+        String alertInfoTitle = resourceBundle.getString("feedBackInfoHeader");
+        String alertInfoMessage = resourceBundle.getString("feedBackInfoMessage");
 
         assertNotNull(controller.alert);
-        assertEquals(ALERT_TITLE, controller.alert.getTitle());
-        assertEquals(ALERT_MESSAGE, controller.alert.getContentText());
+        assertEquals(alertInfoTitle, controller.alert.getTitle());
+        assertEquals(alertInfoMessage, controller.alert.getContentText());
         assertAsync(controller.alert::isShowing);
     }
 
