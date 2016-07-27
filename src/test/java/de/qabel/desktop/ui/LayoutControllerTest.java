@@ -1,6 +1,5 @@
 package de.qabel.desktop.ui;
 
-import com.sun.org.apache.xpath.internal.operations.Quo;
 import de.qabel.core.accounting.QuotaState;
 import de.qabel.core.exceptions.QblInvalidCredentials;
 import javafx.scene.Node;
