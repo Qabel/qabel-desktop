@@ -5,7 +5,6 @@ import de.qabel.desktop.util.UTF8Converter;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.inject.Inject;
 import java.util.Locale;
 import java.util.ResourceBundle;
 

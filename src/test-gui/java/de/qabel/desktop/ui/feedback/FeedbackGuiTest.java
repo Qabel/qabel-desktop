@@ -2,8 +2,10 @@ package de.qabel.desktop.ui.feedback;
 
 import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.desktop.ui.AbstractGuiTest;
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class FeedbackGuiTest extends AbstractGuiTest<FeedbackController> {
     private FeedbackPage page;
@@ -22,9 +24,9 @@ public class FeedbackGuiTest extends AbstractGuiTest<FeedbackController> {
     @Test
     public void sendFeedbackShowsThanksDialog() {
         page.sendFeedback();
-        Assert.assertTrue(controller.alert.isShowing());
+        assertTrue(controller.alert.isShowing());
 
         page.confirmAlertBox();
-        Assert.assertFalse(controller.alert.isShowing());
+        assertFalse(controller.alert.isShowing());
     }
 }
