@@ -14,8 +14,29 @@ import static org.junit.Assert.assertTrue;
 public class LayoutControllerTest extends AbstractControllerTest {
 
     public static final int MIN_ITEM_COUNT = 2;
+
     //same values as the BoxClientStub
     private QuotaState expectedQuotaState = new QuotaState(24, 100);
+
+    @Test
+    public void testQuotaDescription() {
+        String expected = "667,57 MB free / 953,67 MB";
+        long availableQuota = 1000000000L;
+        long usedQuota = 300000000L;
+        String quotaDescription = createController().quotaDescription(usedQuota, availableQuota);
+
+        assertEquals(expected, quotaDescription);
+    }
+
+    @Test
+    public void testRatioByDiff() {
+        int expectedRatio = 30;
+        long availableQuota = 1000000000L;
+        long usedQuota = 300000000L;
+        int ratio = createController().ratioByDiff(usedQuota, availableQuota);
+
+        assertEquals(expectedRatio, ratio);
+    }
 
     @Test
     public void testFillQuotaInformation() throws IOException, QblInvalidCredentials {
@@ -27,7 +48,6 @@ public class LayoutControllerTest extends AbstractControllerTest {
 
         assertEquals(expectedQuotaState.getQuota(), quota.getQuota());
         assertEquals(expectedQuotaState.getSize(), quota.getSize());
-
         assertEquals(expectedRatio + "%", controller.quota.getText());
         assertEquals(expectedRatio, (int) controller.provider.getMinWidth());
         assertEquals(expectedDesc, controller.quotaDescription.getText());
