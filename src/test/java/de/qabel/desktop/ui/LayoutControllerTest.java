@@ -19,7 +19,7 @@ public class LayoutControllerTest extends AbstractControllerTest {
 
     @Test
     public void testQuotaDescription() {
-        String expected = "667,57 MB free / 953,67 MB";
+        String expected = "668 MB free / 954 MB";
         long availableQuota = 1000000000L;
         long usedQuota = 300000000L;
         String quotaDescription = createController().quotaDescription(usedQuota, availableQuota);

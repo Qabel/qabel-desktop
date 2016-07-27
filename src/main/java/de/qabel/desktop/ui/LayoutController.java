@@ -214,7 +214,7 @@ public class LayoutController extends AbstractController implements Initializabl
         return getStringSizeLengthFile(diff) + " free / " + getStringSizeLengthFile(availableQuota);
     }
 
-    String getStringSizeLengthFile(long size) {
+    private String getStringSizeLengthFile(long size) {
         DecimalFormat df = new DecimalFormat("0.00");
 
         float sizeKb = 1024.0f;
