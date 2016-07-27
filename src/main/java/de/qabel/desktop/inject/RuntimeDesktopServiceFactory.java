@@ -141,7 +141,7 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
         if (boxVolumeFactory == null) {
             boxVolumeFactory = new BlockBoxVolumeFactory(
                 getClientConfiguration().getDeviceId().getBytes(),
-                getAccountingClient(),
+                getBoxClient(),
                 getIdentityRepository(),
                 getBlockUri()
             );
@@ -150,11 +150,11 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     }
 
     @Override
-    public synchronized BoxClient getAccountingClient() {
+    public synchronized BoxClient getBoxClient() {
         if (boxClient == null) {
             Account acc = getClientConfiguration().getAccount();
             if (acc == null) {
-                throw new IllegalStateException("cannot get accounting client without valid account");
+                throw new IllegalStateException("cannot get box client without valid account");
             }
             try {
                 AccountingServer server = new AccountingServer(
@@ -165,7 +165,7 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
                 );
                 boxClient = new BoxHttpClient(server, new AccountingProfile());
             } catch (URISyntaxException e) {
-                throw new IllegalStateException("cannot get accounting client without valid account: " + e.getMessage(), e);
+                throw new IllegalStateException("cannot get box client without valid account: " + e.getMessage(), e);
             }
         }
         return boxClient;

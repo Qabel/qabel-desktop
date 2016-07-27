@@ -82,8 +82,7 @@ public interface DesktopServices {
     BoxVolumeFactory getBoxVolumeFactory() throws IOException;
 
     @Create(name = "boxClient")
-    @Create(name = "accountingClient")
-    BoxClient getAccountingClient();
+    BoxClient getBoxClient();
 
     @Create(name = "shareNotificationRepository")
     ShareNotificationRepository getShareNotificationRepository();
