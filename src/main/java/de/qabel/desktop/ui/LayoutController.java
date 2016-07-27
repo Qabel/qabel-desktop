@@ -189,20 +189,21 @@ public class LayoutController extends AbstractController implements Initializabl
 
     private void fillQuotaInformation() {
         try {
-            quotaBlock.setVisible(false);
-            quotaDescription.setVisible(false);
-
             quotaState = boxClient.getQuotaState();
-            int ratio = ratioByDiff(quotaState.getSize(), quotaState.getQuota());
-            String quotaDescriptionText = quotaDescription(quotaState.getSize(), quotaState.getQuota());
-            quota.setText(ratio + "%");
-            provider.setMinWidth(ratio);
-            quotaDescription.setText(quotaDescriptionText);
         } catch (IOException | QblInvalidCredentials e) {
             alert(e);
+        }
+        if (quotaState == null) {
             quotaBlock.setVisible(false);
             quotaDescription.setVisible(false);
+            return;
         }
+
+        int ratio = ratioByDiff(quotaState.getSize(), quotaState.getQuota());
+        String quotaDescriptionText = quotaDescription(quotaState.getSize(), quotaState.getQuota());
+        quota.setText(ratio + "%");
+        provider.setMinWidth(ratio);
+        quotaDescription.setText(quotaDescriptionText);
     }
 
     int ratioByDiff(long usedQuota, long availableQuota) {
