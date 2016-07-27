@@ -74,7 +74,14 @@ public class DesktopClientGui extends Application {
                     Parent view = this.view.getView();
                     runtimeConfiguration.setWindow(((LayoutController) this.view.getPresenter()).getWindow());
                     Scene layoutScene = new Scene(view, 900, 600, true, aa);
-                    Platform.runLater(() -> primaryStage.setScene(layoutScene));
+
+                    Platform.runLater(() -> {
+                        primaryStage.setScene(layoutScene);
+
+                        if (config.hasAccount() && config.getSelectedIdentity() != null) {
+                            primaryStage.setIconified(true);
+                        }
+                    });
 
                     if (config.getSelectedIdentity() != null) {
                         addShareMessageRenderer(config.getSelectedIdentity());
