@@ -215,7 +215,7 @@ public class LayoutController extends AbstractController implements Initializabl
     }
 
     private String getStringSizeLengthFile(long size) {
-        DecimalFormat df = new DecimalFormat("0.00");
+        DecimalFormat df = new DecimalFormat("0");
 
         float sizeKb = 1024.0f;
         float sizeMo = sizeKb * sizeKb;
