@@ -1,8 +1,8 @@
 package de.qabel.desktop.ui;
 
-import de.qabel.core.accounting.QuotaState;
 import de.qabel.core.exceptions.QblInvalidCredentials;
 import javafx.scene.Node;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -14,8 +14,11 @@ public class LayoutControllerTest extends AbstractControllerTest {
 
     public static final int MIN_ITEM_COUNT = 2;
 
-    //same values as the BoxClientStub
-    private QuotaState expectedQuotaState = new QuotaState(24, 100);
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+    }
 
     @Test
     public void testQuotaDescription() {
@@ -40,22 +43,15 @@ public class LayoutControllerTest extends AbstractControllerTest {
     @Test
     public void testFillQuotaInformation() throws IOException, QblInvalidCredentials {
         LayoutController controller = createController();
-        QuotaState quota = controller.boxClient.getQuotaState();
 
-        String expectedDesc = controller.quotaDescription(expectedQuotaState.getSize(), expectedQuotaState.getQuota());
-        int expectedRatio = controller.ratioByDiff(expectedQuotaState.getSize(), expectedQuotaState.getQuota());
-
-        assertEquals(expectedQuotaState.getQuota(), quota.getQuota());
-        assertEquals(expectedQuotaState.getSize(), quota.getSize());
-        assertEquals(expectedRatio + "%", controller.quota.getText());
-        assertEquals(expectedRatio, (int) controller.quotaBar.getMinWidth());
-        assertEquals(expectedDesc, controller.quotaDescription.getText());
+        assertEquals("30%", controller.quota.getText());
+        assertEquals(30, (int) controller.quotaBar.getMinWidth());
+        assertEquals("667,57 MB free / 953,67 MB", controller.quotaDescription.getText());
     }
 
     @Test
     public void testHidesNaviItemsByDefault() throws Exception {
         clientConfiguration.selectIdentity(null);
-
         LayoutController controller = createController();
 
         assertEquals("navi items were not hidden without identity", MIN_ITEM_COUNT, countManagedNaviItems(controller));
