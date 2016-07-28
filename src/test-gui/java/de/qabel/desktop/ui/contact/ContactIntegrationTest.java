@@ -60,21 +60,6 @@ public class ContactIntegrationTest extends AbstractGuiTest<ContactController> {
         connection.close();
     }
 
-    @Test
-    public void testMessageFromUnknownContact() throws Exception {
-        launchNode();
-        dropMessageRepository.save(getMessageFromUnknown());
-        ContactItemPage item = page.getFirstItem();
-
-        runLaterAndWait(() -> {
-            try {
-                wait(5000);
-            } catch (InterruptedException ignored) {
-
-            }
-        });
-    }
-
     @Override
     protected FXMLView getView() {
         return new ContactView();
@@ -125,13 +110,6 @@ public class ContactIntegrationTest extends AbstractGuiTest<ContactController> {
 
     private PersistenceDropMessage getUnseenMessage() {
         DropMessage dropMessage = new DropMessage(contact, new TextMessage("message").toJson(), "type");
-        return new PersistenceDropMessage(dropMessage, contact, identity, false, false);
-    }
-
-    private PersistenceDropMessage getMessageFromUnknown() {
-        Contact unknownContact = new Contact("unknownContact", new HashSet<>(), new QblECPublicKey("unknownContactKey".getBytes()));
-        DropMessage dropMessage = new DropMessage(unknownContact, new TextMessage("message").toJson(), "type");
-
         return new PersistenceDropMessage(dropMessage, contact, identity, false, false);
     }
 }
