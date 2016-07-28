@@ -71,6 +71,7 @@ public class FeedbackController extends AbstractController implements Initializa
         alert = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.OK);
         alert.setTitle(infoTitle);
         alert.setContentText(infoMessage);
+        alert.setHeaderText("");
         alert.show();
     }
 
