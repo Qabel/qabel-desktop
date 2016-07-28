@@ -19,7 +19,7 @@ public class LayoutControllerTest extends AbstractControllerTest {
 
     @Test
     public void testQuotaDescription() {
-        String expected = "668 MB free / 954 MB";
+        String expected = "667,57 MB free / 953,67 MB";
         long availableQuota = 1000000000L;
         long usedQuota = 300000000L;
         String quotaDescription = createController().quotaDescription(usedQuota, availableQuota);
@@ -48,7 +48,7 @@ public class LayoutControllerTest extends AbstractControllerTest {
         assertEquals(expectedQuotaState.getQuota(), quota.getQuota());
         assertEquals(expectedQuotaState.getSize(), quota.getSize());
         assertEquals(expectedRatio + "%", controller.quota.getText());
-        assertEquals(expectedRatio, (int) controller.provider.getMinWidth());
+        assertEquals(expectedRatio, (int) controller.quotaBar.getMinWidth());
         assertEquals(expectedDesc, controller.quotaDescription.getText());
     }
 

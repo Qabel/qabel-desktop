@@ -42,6 +42,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -112,6 +114,17 @@ public class LayoutController extends AbstractController implements Initializabl
     NaviItem aboutNav;
     QuotaState quotaState;
 
+    @FXML
+    BorderPane quotaBlock;
+    @FXML
+    Label quota;
+    @FXML
+    Label quotaBar;
+    @FXML
+    Label quotaDescription;
+    @Inject
+    BoxClient boxClient;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
@@ -176,33 +189,19 @@ public class LayoutController extends AbstractController implements Initializabl
         newMessageIndicator.visibleProperty().bind(newMessageIndicator.textProperty().isNotEqualTo("0"));
     }
 
-    @FXML
-    BorderPane quotaBlock;
-    @FXML
-    Label quota;
-    @FXML
-    Label provider;
-    @FXML
-    Label quotaDescription;
-    @Inject
-    BoxClient boxClient;
-
     private void fillQuotaInformation() {
         try {
             quotaState = boxClient.getQuotaState();
         } catch (IOException | QblInvalidCredentials e) {
-            alert(e);
-        }
-        if (quotaState == null) {
             quotaBlock.setVisible(false);
             quotaDescription.setVisible(false);
-            return;
+            alert(e);
         }
 
         int ratio = ratioByDiff(quotaState.getSize(), quotaState.getQuota());
         String quotaDescriptionText = quotaDescription(quotaState.getSize(), quotaState.getQuota());
         quota.setText(ratio + "%");
-        provider.setMinWidth(ratio);
+        quotaBar.setMinWidth(ratio);
         quotaDescription.setText(quotaDescriptionText);
     }
 
@@ -216,7 +215,8 @@ public class LayoutController extends AbstractController implements Initializabl
     }
 
     private String getStringSizeLengthFile(long size) {
-        DecimalFormat df = new DecimalFormat("0");
+        DecimalFormat df = new DecimalFormat("0.00");
+        df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.GERMAN));
 
         float sizeKb = 1024.0f;
         float sizeMo = sizeKb * sizeKb;
