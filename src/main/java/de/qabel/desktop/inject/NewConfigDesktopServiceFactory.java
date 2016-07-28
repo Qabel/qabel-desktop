@@ -57,7 +57,8 @@ public class NewConfigDesktopServiceFactory extends RuntimeDesktopServiceFactory
         if (contactRepository == null) {
             contactRepository = new SqliteContactRepository(
                 runtimeConfiguration.getConfigDatabase(),
-                getContactHydrator(),
+                getEntityManager(),
+                getIdentityRepository(),
                 getDropUrlRepository()
             );
         }
@@ -115,7 +116,7 @@ public class NewConfigDesktopServiceFactory extends RuntimeDesktopServiceFactory
 
     public synchronized DropStateRepository getDropStateRepository() {
         if (dropStateRepository == null) {
-            dropStateRepository = new SqliteDropStateRepository(runtimeConfiguration.getConfigDatabase());
+            dropStateRepository = new SqliteDropStateRepository(runtimeConfiguration.getConfigDatabase(), getEntityManager());
         }
         return dropStateRepository;
     }

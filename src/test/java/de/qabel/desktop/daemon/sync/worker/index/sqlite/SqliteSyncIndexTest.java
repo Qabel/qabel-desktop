@@ -1,11 +1,12 @@
 package de.qabel.desktop.daemon.sync.worker.index.sqlite;
 
-import de.qabel.core.repository.LambdaEntityManager;
+
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndex;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndexEntry;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndexEntryRepository;
 import de.qabel.desktop.daemon.sync.worker.index.SyncState;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import de.qabel.desktop.repository.LambdaEntityManager;
 import de.qabel.desktop.repository.sqlite.migration.AbstractSqliteTest;
 import org.junit.Before;
 import org.junit.Test;

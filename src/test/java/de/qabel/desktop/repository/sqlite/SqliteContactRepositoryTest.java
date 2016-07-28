@@ -3,7 +3,6 @@ package de.qabel.desktop.repository.sqlite;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Contacts;
 import de.qabel.core.config.Identity;
-import de.qabel.core.config.factory.DefaultContactFactory;
 import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.core.config.factory.IdentityBuilder;
 import de.qabel.core.crypto.QblECPublicKey;
@@ -14,7 +13,6 @@ import de.qabel.core.repository.sqlite.ClientDatabase;
 import de.qabel.core.repository.sqlite.SqliteContactRepository;
 import de.qabel.core.repository.sqlite.SqliteDropUrlRepository;
 import de.qabel.core.repository.sqlite.SqliteIdentityRepository;
-import de.qabel.core.repository.sqlite.hydrator.ContactHydrator;
 import de.qabel.core.repository.sqlite.hydrator.DropURLHydrator;
 import org.junit.Test;
 
@@ -54,7 +52,8 @@ public class SqliteContactRepositoryTest extends AbstractSqliteRepositoryTest<Sq
         SqliteDropUrlRepository dropUrlRepository = new SqliteDropUrlRepository(clientDatabase, new DropURLHydrator());
         return new SqliteContactRepository(
             clientDatabase,
-            new ContactHydrator(em, new DefaultContactFactory(), dropUrlRepository),
+            em,
+            new SqliteIdentityRepository(clientDatabase, em),
             dropUrlRepository
         );
     }
