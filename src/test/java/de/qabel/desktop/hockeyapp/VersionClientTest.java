@@ -19,7 +19,7 @@ public class VersionClientTest {
     private static final String VERSION_1_1 = "1.1";
 
     private CloseableHttpClientStub httpClient = new CloseableHttpClientStub();
-    private HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder("https://rink.hockeyapp.net/api/2/apps/", VERSION_1_0, httpClient);
+    private HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder("url/", VERSION_1_0, httpClient);
     private VersionClient client = new VersionClient(requestBuilder);
 
     @Test
@@ -121,9 +121,8 @@ public class VersionClientTest {
 
     private void stubVersionsResponse(int statusCode) {
         String versionsResponseContent = getVersionsJsonString();
-        String versionsUri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/app_versions";
         CloseableHttpResponseStub response = TestUtils.createResponseFromString(statusCode, versionsResponseContent);
-        httpClient.addResponse("GET", versionsUri, response);
+        httpClient.addResponse("GET", "url/3b119dc227334d2d924e4e134c72aadc/app_versions", response);
     }
 
     private void loadFakeVersions(int statusCode, boolean loadClientVersion) throws IOException {

@@ -11,13 +11,13 @@ public class HockeyAppRequestBuilderTest {
 
     private CloseableHttpClientStub httpClientStub = new CloseableHttpClientStub();
 
-    private HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder("https://rink.hockeyapp.net/api/2/apps/", "1.1", httpClientStub);
+    private HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder("uri/", "1.1", httpClientStub);
 
     private VersionClient versionClient = new VersionClient(requestBuilder);
 
     @Test
     public void validUri() throws IllegalStateException {
-        String expectedUri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/app_versions";
+        String expectedUri = "uri/3b119dc227334d2d924e4e134c72aadc/app_versions";
         String path = "/app_versions";
         String uri = requestBuilder.buildApiUri(path);
 

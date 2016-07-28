@@ -15,7 +15,7 @@ public class CrashReporterClientTest {
 
     private CloseableHttpClientStub httpClientStub = new CloseableHttpClientStub();
 
-    private HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder("https://rink.hockeyapp.net/api/2/apps/", "1.1", httpClientStub);
+    private HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder("uri/", "1.1", httpClientStub);
     private VersionClient versionClient = new VersionClient(requestBuilder);
     private HockeyCrashReporterClient client = new HockeyCrashReporterClient(requestBuilder, versionClient);
     private String stacktrace = "XCEPTION REASON STRING\n" +
@@ -87,7 +87,7 @@ public class CrashReporterClientTest {
 
     private void stubCrashReport() {
         String responseContent = "";
-        String uri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/crashes/upload";
+        String uri = "uri/3b119dc227334d2d924e4e134c72aadc/crashes/upload";
         CloseableHttpResponseStub response = TestUtils.createResponseFromString(200, responseContent);
         httpClientStub.addResponse("POST", uri, response);
     }
