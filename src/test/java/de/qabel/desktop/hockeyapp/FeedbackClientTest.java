@@ -18,7 +18,7 @@ public class FeedbackClientTest {
 
     private CloseableHttpClientStub httpClientStub = new CloseableHttpClientStub();
 
-    private HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder("1.1", httpClientStub);
+    private HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder("https://rink.hockeyapp.net/api/2/apps/", "1.1", httpClientStub);
 
     private VersionClient versionClient = new VersionClient(requestBuilder);
 

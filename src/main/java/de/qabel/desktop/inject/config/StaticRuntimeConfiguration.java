@@ -15,6 +15,7 @@ public class StaticRuntimeConfiguration extends AbstractController implements Ru
     private URI dropUri;
     private URI accountingUri;
     private URI blockUri;
+    private URI crashReportUri;
     private Stage primaryStage;
     private ClientDatabase configDatabase;
     private Pane window;
@@ -28,9 +29,11 @@ public class StaticRuntimeConfiguration extends AbstractController implements Ru
         dropUri = launchConfig.getDropUrl().toURI();
         accountingUri = launchConfig.getAccountingUrl().toURI();
         blockUri = launchConfig.getBlockUrl().toURI();
+        this.crashReportUri = launchConfig.getCrashReportUrl().toURI();
         this.configDatabase = configDatabase;
         filesAbout = new FilesAbout();
     }
+
 
     @Override
     public URI getDropUri() {
@@ -47,6 +50,11 @@ public class StaticRuntimeConfiguration extends AbstractController implements Ru
         return blockUri;
     }
 
+    @Override
+    public URI getCrashReportUri() {
+        return crashReportUri;
+    }
+
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
@@ -61,7 +69,7 @@ public class StaticRuntimeConfiguration extends AbstractController implements Ru
         return configDatabase;
     }
 
-    public void setWindow (Pane window) {
+    public void setWindow(Pane window) {
         this.window = window;
     }
 
@@ -73,11 +81,11 @@ public class StaticRuntimeConfiguration extends AbstractController implements Ru
         return filesAbout;
     }
 
-    public void setCurrentVersion (String currentVersion) {
+    public void setCurrentVersion(String currentVersion) {
         this.currentVersion = currentVersion;
     }
 
-    public String getCurrentVersion(){
+    public String getCurrentVersion() {
         return currentVersion;
     }
 }

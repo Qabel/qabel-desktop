@@ -1,6 +1,8 @@
 package de.qabel.desktop.hockeyapp;
 
 import de.qabel.core.accounting.CloseableHttpClientStub;
+import de.qabel.desktop.LaunchConfigurationReader;
+import de.qabel.desktop.config.LaunchConfig;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -8,7 +10,8 @@ import static org.junit.Assert.assertEquals;
 public class HockeyAppRequestBuilderTest {
 
     private CloseableHttpClientStub httpClientStub = new CloseableHttpClientStub();
-    private HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder("1.1", httpClientStub);
+
+    private HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder("https://rink.hockeyapp.net/api/2/apps/", "1.1", httpClientStub);
 
     private VersionClient versionClient = new VersionClient(requestBuilder);
 

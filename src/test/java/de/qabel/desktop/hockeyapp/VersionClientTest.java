@@ -19,7 +19,7 @@ public class VersionClientTest {
     private static final String VERSION_1_1 = "1.1";
 
     private CloseableHttpClientStub httpClient = new CloseableHttpClientStub();
-    private HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder(VERSION_1_0, httpClient);
+    private HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder("https://rink.hockeyapp.net/api/2/apps/", VERSION_1_0, httpClient);
     private VersionClient client = new VersionClient(requestBuilder);
 
     @Test
