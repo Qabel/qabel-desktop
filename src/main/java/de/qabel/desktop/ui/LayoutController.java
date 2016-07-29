@@ -105,6 +105,12 @@ public class LayoutController extends AbstractController implements Initializabl
     Label quotaDescription;
     @FXML
     Label provider;
+    @FXML
+    Label faqBackground;
+    @FXML
+    Label inviteBackground;
+    @FXML
+    Label feedbackBackground;
 
     NaviItem browseNav;
     NaviItem contactsNav;
@@ -127,12 +133,10 @@ public class LayoutController extends AbstractController implements Initializabl
         syncNav = createNavItem(resourceBundle.getString("layoutSync"), new SyncView());
         aboutNav = createNavItem(resourceBundle.getString("layoutAbout"), new AboutView());
 
-
         navi.getChildren().add(browseNav);
         navi.getChildren().add(contactsNav);
         navi.getChildren().add(syncNav);
         navi.getChildren().add(aboutNav);
-
 
         scrollContent.setFillWidth(true);
 
@@ -143,7 +147,6 @@ public class LayoutController extends AbstractController implements Initializabl
 
         updateIdentity();
         clientConfiguration.onSelectIdentity(i -> Platform.runLater(this::updateIdentity));
-
 
         bottomContainer.getChildren().remove(uploadProgress);
         ComposedProgressBar progressBar = new ComposedProgressBar();
@@ -177,24 +180,22 @@ public class LayoutController extends AbstractController implements Initializabl
     }
 
     private void createButtonGraphics() {
-        Image heartGraphic = new Image(getClass().getResourceAsStream("/img/heart.png"));
-
-
+        Image heartGraphic = new Image(getClass().getResourceAsStream("/img/heart_white.png"));
         inviteButton.setImage(heartGraphic);
         inviteButton.getStyleClass().add("inline-button");
         inviteButton.setOnMouseClicked(e -> {
             scrollContent.getChildren().setAll(new InviteView().getView());
-            activeNavItem.getStyleClass().remove("active");
+            setActivityMenu(inviteBackground, inviteButton);
         });
         Tooltip inviteTooltip = new Tooltip(resourceBundle.getString("layoutIconInviteTooltip"));
         Tooltip.install(inviteButton, inviteTooltip);
 
-        Image exclamationGraphic = new Image(getClass().getResourceAsStream("/img/exclamation.png"));
+        Image exclamationGraphic = new Image(getClass().getResourceAsStream("/img/exclamation_white.png"));
         feedbackButton.setImage(exclamationGraphic);
         feedbackButton.getStyleClass().add("inline-button");
         feedbackButton.setOnMouseClicked(e -> {
             scrollContent.getChildren().setAll(new FeedbackView().getView());
-            activeNavItem.getStyleClass().remove("active");
+            setActivityMenu(feedbackBackground, feedbackButton);
         });
         Tooltip feebackTooltip = new Tooltip(resourceBundle.getString("layoutIconFeebackTooltip"));
         Tooltip.install(feedbackButton, feebackTooltip);
@@ -205,10 +206,11 @@ public class LayoutController extends AbstractController implements Initializabl
         configButton.getStyleClass().add("inline-button");
         */
 
-        Image faqGraphics = new Image(getClass().getResourceAsStream("/img/faq.png"));
+        Image faqGraphics = new Image(getClass().getResourceAsStream("/img/faq_white.png"));
         faqButton.setImage(faqGraphics);
         faqButton.getStyleClass().add("inline-button");
         faqButton.setOnMouseClicked(e -> {
+            setActivityMenu(faqBackground, faqButton);
             executor.submit(() -> {
                 try {
                     Desktop.getDesktop().browse(new URI(resourceBundle.getString("faqUrl")));
@@ -227,6 +229,46 @@ public class LayoutController extends AbstractController implements Initializabl
         */
     }
 
+
+    private void setActivityMenu(Label label, ImageView imgView) {
+        label.setVisible(true);
+        imgView.setStyle("-fx-effect: innershadow( gaussian , #222222 , 7 , 1 , 1 , 1 );");
+        if (activeNavItem != null) {
+            activeNavItem.getStyleClass().remove("active");
+        }
+        setBackgroundMenu(label.getId());
+    }
+
+    private void setBackgroundMenu(String menu) {
+        switch (menu) {
+            case "feedbackBackground":
+                inviteBackground.setVisible(false);
+                faqBackground.setVisible(false);
+                inviteButton.setStyle(null);
+                faqButton.setStyle(null);
+                return;
+            case "inviteBackground":
+                feedbackBackground.setVisible(false);
+                faqBackground.setVisible(false);
+                feedbackButton.setStyle(null);
+                faqButton.setStyle(null);
+                return;
+            case "faqBackground":
+                inviteBackground.setVisible(false);
+                feedbackBackground.setVisible(false);
+                inviteButton.setStyle(null);
+                feedbackButton.setStyle(null);
+                return;
+            default:
+                inviteBackground.setVisible(false);
+                feedbackBackground.setVisible(false);
+                faqBackground.setVisible(false);
+                inviteButton.setStyle(null);
+                feedbackButton.setStyle(null);
+                faqBackground.setStyle(null);
+                return;
+        }
+    }
 
     private String lastAlias;
     private Identity lastIdentity;
@@ -270,6 +312,7 @@ public class LayoutController extends AbstractController implements Initializabl
             try {
                 scrollContent.getChildren().setAll(view.getView());
                 setActiveNavItem(naviItem);
+                setBackgroundMenu("default");
             } catch (Exception exception) {
                 exception.printStackTrace();
                 alert(exception.getMessage(), exception);

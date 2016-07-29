@@ -60,7 +60,7 @@
 
 .navi .button:hover {
     -fx-background-color: none;
-    -fx-text-fill: white;
+    -fx-text-fill: #222222;
 }
 
 .navi .navi-item.active {
@@ -69,7 +69,7 @@
 
 .navi .navi-item.active .button {
     -fx-font-weight: bold;
-    -fx-text-fill: #ff690f;
+    -fx-text-fill: #222222;
 }
 
 .navi-item .indicator {

@@ -142,6 +142,10 @@
     -fx-cursor: hand;
 }
 
+.btn:hover {
+    -fx-background-color: #e0e0e0;
+}
+
 .button {
     -fx-border-color: black;
     -fx-border-width: 0.2em;
@@ -191,11 +195,11 @@
 }
 
 .inline-button:hover {
-    -fx-opacity: 0.5;
+    -fx-effect: innershadow( gaussian , #222222 , 7 , 1 , 1 , 1 );
 }
 
 .inline-button:pressed {
-    -fx-opacity: 0.7;
+    -fx-effect: innershadow( gaussian , #222222 , 7 , 1 , 1 , 1 );
 }
 
 .inline-button.faded-button {
@@ -488,4 +492,10 @@ VBox.spaced, HBox.spaced {
 
 .labeled-link > .label {
     -fx-font-weight: bold;
+}
+
+.menu-icons {
+    -fx-background-color: white;
+    -fx-pref-width: 30px;
+    -fx-pref-height: 50px;
 }
