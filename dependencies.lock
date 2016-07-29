@@ -7,9 +7,13 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.qabel:qabel-core": {
-            "locked": "0.9.0",
-            "requested": "0.9.0"
+        "com.github.Qabel:qabel-core": {
+            "locked": "0.14",
+            "requested": "0.14"
+        },
+        "com.github.mfornos:humanize-slim": {
+            "locked": "1.2.2",
+            "requested": "1.2.2"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -91,9 +95,13 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.qabel:qabel-core": {
-            "locked": "0.9.0",
-            "requested": "0.9.0"
+        "com.github.Qabel:qabel-core": {
+            "locked": "0.14",
+            "requested": "0.14"
+        },
+        "com.github.mfornos:humanize-slim": {
+            "locked": "1.2.2",
+            "requested": "1.2.2"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -168,10 +176,10 @@
         }
     },
     "guiTestCompile": {
-        ":box-test-0.7.0": {
+        ":box-test-0.14": {
             "project": true
         },
-        ":core-test-0.7.0": {
+        ":core-test-0.14": {
             "project": true
         },
         ":jfxrt": {
@@ -181,9 +189,13 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.qabel:qabel-core": {
-            "locked": "0.9.0",
-            "requested": "0.9.0"
+        "com.github.Qabel:qabel-core": {
+            "locked": "0.14",
+            "requested": "0.14"
+        },
+        "com.github.mfornos:humanize-slim": {
+            "locked": "1.2.2",
+            "requested": "1.2.2"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -225,10 +237,10 @@
             "locked": "1.2.17",
             "requested": "1.2.+"
         },
-        "null:box-test-0.7.0": {
+        "null:box-test-0.14": {
             "project": true
         },
-        "null:core-test-0.7.0": {
+        "null:core-test-0.14": {
             "project": true
         },
         "null:jfxrt": {
@@ -292,10 +304,10 @@
         }
     },
     "guiTestRuntime": {
-        ":box-test-0.7.0": {
+        ":box-test-0.14": {
             "project": true
         },
-        ":core-test-0.7.0": {
+        ":core-test-0.14": {
             "project": true
         },
         ":jfxrt": {
@@ -305,9 +317,13 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.qabel:qabel-core": {
-            "locked": "0.9.0",
-            "requested": "0.9.0"
+        "com.github.Qabel:qabel-core": {
+            "locked": "0.14",
+            "requested": "0.14"
+        },
+        "com.github.mfornos:humanize-slim": {
+            "locked": "1.2.2",
+            "requested": "1.2.2"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -349,10 +365,10 @@
             "locked": "1.2.17",
             "requested": "1.2.+"
         },
-        "null:box-test-0.7.0": {
+        "null:box-test-0.14": {
             "project": true
         },
-        "null:core-test-0.7.0": {
+        "null:core-test-0.14": {
             "project": true
         },
         "null:jfxrt": {
@@ -423,9 +439,13 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.qabel:qabel-core": {
-            "locked": "0.9.0",
-            "requested": "0.9.0"
+        "com.github.Qabel:qabel-core": {
+            "locked": "0.14",
+            "requested": "0.14"
+        },
+        "com.github.mfornos:humanize-slim": {
+            "locked": "1.2.2",
+            "requested": "1.2.2"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -500,10 +520,10 @@
         }
     },
     "testCompile": {
-        ":box-test-0.7.0": {
+        ":box-test-0.14": {
             "project": true
         },
-        ":core-test-0.7.0": {
+        ":core-test-0.14": {
             "project": true
         },
         ":jfxrt": {
@@ -513,9 +533,13 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.qabel:qabel-core": {
-            "locked": "0.9.0",
-            "requested": "0.9.0"
+        "com.github.Qabel:qabel-core": {
+            "locked": "0.14",
+            "requested": "0.14"
+        },
+        "com.github.mfornos:humanize-slim": {
+            "locked": "1.2.2",
+            "requested": "1.2.2"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -557,10 +581,10 @@
             "locked": "1.2.17",
             "requested": "1.2.+"
         },
-        "null:box-test-0.7.0": {
+        "null:box-test-0.14": {
             "project": true
         },
-        "null:core-test-0.7.0": {
+        "null:core-test-0.14": {
             "project": true
         },
         "null:jfxrt": {
@@ -624,10 +648,10 @@
         }
     },
     "testRuntime": {
-        ":box-test-0.7.0": {
+        ":box-test-0.14": {
             "project": true
         },
-        ":core-test-0.7.0": {
+        ":core-test-0.14": {
             "project": true
         },
         ":jfxrt": {
@@ -637,9 +661,13 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.qabel:qabel-core": {
-            "locked": "0.9.0",
-            "requested": "0.9.0"
+        "com.github.Qabel:qabel-core": {
+            "locked": "0.14",
+            "requested": "0.14"
+        },
+        "com.github.mfornos:humanize-slim": {
+            "locked": "1.2.2",
+            "requested": "1.2.2"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -681,10 +709,10 @@
             "locked": "1.2.17",
             "requested": "1.2.+"
         },
-        "null:box-test-0.7.0": {
+        "null:box-test-0.14": {
             "project": true
         },
-        "null:core-test-0.7.0": {
+        "null:core-test-0.14": {
             "project": true
         },
         "null:jfxrt": {

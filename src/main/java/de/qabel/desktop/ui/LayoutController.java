@@ -41,12 +41,12 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static de.qabel.desktop.util.QuotaUtil.getQuotaDescription;
+import static de.qabel.desktop.util.QuotaUtil.getUsedRatio;
 
 public class LayoutController extends AbstractController implements Initializable {
     private ExecutorService executor = Executors.newCachedThreadPool();
@@ -197,42 +197,12 @@ public class LayoutController extends AbstractController implements Initializabl
             quotaDescription.setVisible(false);
             alert(e);
         }
-
-        int ratio = ratioByDiff(quotaState.getSize(), quotaState.getQuota());
-        String quotaDescriptionText = quotaDescription(quotaState.getSize(), quotaState.getQuota());
+        int ratio = getUsedRatio(quotaState);
+        String quotaDescriptionText = getQuotaDescription(quotaState, resourceBundle.getString("quotaFreeLabel"));
         quota.setText(ratio + "%");
         quotaBar.setMinWidth(ratio);
         quotaDescription.setText(quotaDescriptionText);
     }
-
-    int ratioByDiff(long usedQuota, long availableQuota) {
-        return (int) (usedQuota / (double) availableQuota * 100);
-    }
-
-    String quotaDescription(long usedQuota, long availableQuota) {
-        long freeQuota = availableQuota - usedQuota;
-        return getStringSizeLengthFile(freeQuota) + " free / " + getStringSizeLengthFile(availableQuota);
-    }
-
-    private String getStringSizeLengthFile(long size) {
-        DecimalFormat df = new DecimalFormat("0.00");
-        df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.GERMAN));
-
-        float sizeKb = 1024.0f;
-        float sizeMo = sizeKb * sizeKb;
-        float sizeGB = sizeMo * sizeKb;
-        float sizeTerra = sizeGB * sizeKb;
-
-        if (size < sizeMo)
-            return df.format(size / sizeKb) + " Kb";
-        else if (size < sizeGB)
-            return df.format(size / sizeMo) + " MB";
-        else if (size < sizeTerra)
-            return df.format(size / sizeGB) + " GB";
-
-        return "";
-    }
-
     private void createButtonGraphics() {
         Image heartGraphic = new Image(getClass().getResourceAsStream("/img/heart.png"));
 

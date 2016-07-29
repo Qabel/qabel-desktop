@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -21,32 +22,11 @@ public class LayoutControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void testQuotaDescription() {
-        String expected = "667,57 MB free / 953,67 MB";
-        long availableQuota = 1000000000L;
-        long usedQuota = 300000000L;
-        String quotaDescription = createController().quotaDescription(usedQuota, availableQuota);
-
-        assertEquals(expected, quotaDescription);
-    }
-
-    @Test
-    public void testRatioByDiff() {
-        int expectedRatio = 30;
-        long availableQuota = 1000000000L;
-        long usedQuota = 300000000L;
-        int ratio = createController().ratioByDiff(usedQuota, availableQuota);
-
-        assertEquals(expectedRatio, ratio);
-    }
-
-    @Test
     public void testFillQuotaInformation() throws IOException, QblInvalidCredentials {
         LayoutController controller = createController();
-
         assertEquals("30%", controller.quota.getText());
         assertEquals(30, (int) controller.quotaBar.getMinWidth());
-        assertEquals("667,57 MB free / 953,67 MB", controller.quotaDescription.getText());
+        assertEquals("667.57 MB free / 953.67 MB", controller.quotaDescription.getText());
     }
 
     @Test
@@ -58,6 +38,7 @@ public class LayoutControllerTest extends AbstractControllerTest {
     }
 
     private LayoutController createController() {
+        Locale.setDefault(new Locale("te", "ST"));
         LayoutView view = new LayoutView();
         return (LayoutController) view.getPresenter();
     }
