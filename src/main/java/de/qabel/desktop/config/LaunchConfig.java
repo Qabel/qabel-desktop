@@ -7,11 +7,13 @@ public class LaunchConfig {
     private URL dropUrl;
     private URL accountingUrl;
     private URL blockUrl;
+    private URL crashReportUrl;
 
-    public LaunchConfig(URL dropUrl, URL accountingUrl, URL blockUrl) {
+    public LaunchConfig(URL dropUrl, URL accountingUrl, URL blockUrl, URL crashReportUrl) {
         this.dropUrl = dropUrl;
         this.accountingUrl = accountingUrl;
         this.blockUrl = blockUrl;
+        this.crashReportUrl = crashReportUrl;
     }
 
     public URL getDropUrl() {
@@ -24,5 +26,9 @@ public class LaunchConfig {
 
     public URL getBlockUrl() {
         return blockUrl;
+    }
+
+    public URL getCrashReportUrl() {
+        return crashReportUrl;
     }
 }
