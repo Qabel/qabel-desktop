@@ -18,7 +18,7 @@ public class FeedbackClientTest {
 
     private CloseableHttpClientStub httpClientStub = new CloseableHttpClientStub();
 
-    private HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder("1.1", httpClientStub);
+    private HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder("uri/", "1.1", httpClientStub);
 
     private VersionClient versionClient = new VersionClient(requestBuilder);
 
@@ -52,7 +52,7 @@ public class FeedbackClientTest {
 
     private void stubFeedbackResponse() {
         String responseContent = getStubFeedbackResponseContent();
-        String uri = "https://rink.hockeyapp.net/api/2/apps/3b119dc227334d2d924e4e134c72aadc/feedback";
+        String uri = "uri/3b119dc227334d2d924e4e134c72aadc/feedback";
         CloseableHttpResponseStub response = TestUtils.createResponseFromString(200, responseContent);
         httpClientStub.addResponse("POST", uri, response);
     }

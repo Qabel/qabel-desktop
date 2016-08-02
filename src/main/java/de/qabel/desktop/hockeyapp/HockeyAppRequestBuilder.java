@@ -6,7 +6,7 @@ import org.apache.http.client.methods.HttpPost;
 
 public class HockeyAppRequestBuilder {
 
-    private final String API_BASE_URI = "https://rink.hockeyapp.net/api/2/apps/";
+    private String apiBaseUri;
     private final String API_APP_KEY = "3b119dc227334d2d924e4e134c72aadc";
 
     final String SECURITY_TOKEN_KEY = "350b097ef0964b17a0f3907050de309d";
@@ -15,7 +15,8 @@ public class HockeyAppRequestBuilder {
     private String appVersion;
     private HttpClient httpClient;
 
-    public HockeyAppRequestBuilder(String appVersion, HttpClient httpClient) {
+    public HockeyAppRequestBuilder(String apiBaseUri, String appVersion, HttpClient httpClient) {
+        this.apiBaseUri = apiBaseUri;
         this.httpClient = httpClient;
         this.appVersion = appVersion;
     }
@@ -41,7 +42,7 @@ public class HockeyAppRequestBuilder {
     }
 
     String buildApiUri(String apiCallPath) {
-        return API_BASE_URI + API_APP_KEY + apiCallPath;
+        return apiBaseUri + API_APP_KEY + apiCallPath;
     }
 
 }
