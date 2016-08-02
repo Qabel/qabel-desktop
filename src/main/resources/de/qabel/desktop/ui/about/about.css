@@ -60,6 +60,10 @@
     -fx-font-size: 6em;
 }
 
+.box-button-about:hover {
+    -fx-border-color: grey;
+}
+
 .label-box-about {
     -fx-padding: 10px 0px 0px 0px;
     -fx-pref-width: 100px;

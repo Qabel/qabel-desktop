@@ -6,7 +6,7 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.layout.*?>
 <HBox fx:id="root"
-      fx:controller="de.qabel.desktop.ui.accounting.item.AccountingItemController"
+      fx:controller="de.qabel.desktop.ui.accounting.item.AccountingItemController" styleClass="btn"
       GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" xmlns="http://javafx.com/javafx/8"
       xmlns:fx="http://javafx.com/fxml/1">
     <children>

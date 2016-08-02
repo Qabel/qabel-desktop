@@ -182,7 +182,7 @@
 }
 
 .selected {
-    -fx-background-color: grey;
+    -fx-background-color: #c7c7c7;
 }
 
 .inline-button {
@@ -390,6 +390,7 @@
 }
 
 .tree-table-row-cell:selected * {
+    -fx-background-color: #c7c7c7;
     -fx-text-fill: #222222;
 }
 
