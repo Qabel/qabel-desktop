@@ -2,6 +2,8 @@ package de.qabel.desktop.util;
 
 import de.qabel.core.accounting.QuotaState;
 
+import java.text.MessageFormat;
+
 import static humanize.Humanize.binaryPrefix;
 
 public class QuotaUtil {
@@ -10,9 +12,10 @@ public class QuotaUtil {
         return (int) (usedQuota / (double) availableQuota * 100);
     }
 
-    public static String getQuotaDescription(QuotaState q, String freeLabel) {
-        String seperator = " " + freeLabel + " / ";
-        return binaryPrefix(q.getQuota() - q.getSize()) + seperator + binaryPrefix(q.getQuota());
+    public static String getQuotaDescription(QuotaState q, String quotaDescriptionPattern) {
+        String usedQuota = binaryPrefix(q.getQuota() - q.getSize());
+        String totalQuota = binaryPrefix(q.getQuota());
+        return MessageFormat.format(quotaDescriptionPattern, usedQuota, totalQuota);
     }
 
     public static int getUsedRatio(QuotaState q) {

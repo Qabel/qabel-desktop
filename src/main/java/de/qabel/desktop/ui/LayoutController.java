@@ -198,7 +198,7 @@ public class LayoutController extends AbstractController implements Initializabl
             alert(e);
         }
         int ratio = getUsedRatio(quotaState);
-        String quotaDescriptionText = getQuotaDescription(quotaState, resourceBundle.getString("quotaFreeLabel"));
+        String quotaDescriptionText = getQuotaDescription(quotaState, resourceBundle.getString("quotaDescription"));
         quota.setText(ratio + "%");
         quotaBar.setMinWidth(ratio);
         quotaDescription.setText(quotaDescriptionText);

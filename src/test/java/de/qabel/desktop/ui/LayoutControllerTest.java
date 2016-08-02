@@ -2,7 +2,6 @@ package de.qabel.desktop.ui;
 
 import de.qabel.core.exceptions.QblInvalidCredentials;
 import javafx.scene.Node;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -15,20 +14,25 @@ public class LayoutControllerTest extends AbstractControllerTest {
 
     public static final int MIN_ITEM_COUNT = 2;
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
     @Test
     public void testFillQuotaInformation() throws IOException, QblInvalidCredentials {
+        Locale.setDefault(new Locale("te", "ST"));
         LayoutController controller = createController();
+
         assertEquals("30%", controller.quota.getText());
         assertEquals(30, (int) controller.quotaBar.getMinWidth());
         assertEquals("667.57 MB free / 953.67 MB", controller.quotaDescription.getText());
     }
 
+    @Test
+    public void testFillQuotaInformationLocalizedToGerman() throws IOException, QblInvalidCredentials {
+        Locale.setDefault(new Locale("de", "DE"));
+        LayoutController controller = createController();
+
+        assertEquals("30%", controller.quota.getText());
+        assertEquals(30, (int) controller.quotaBar.getMinWidth());
+        assertEquals("667,57 MB frei / 953,67 MB", controller.quotaDescription.getText());
+    }
     @Test
     public void testHidesNaviItemsByDefault() throws Exception {
         clientConfiguration.selectIdentity(null);
@@ -38,7 +42,6 @@ public class LayoutControllerTest extends AbstractControllerTest {
     }
 
     private LayoutController createController() {
-        Locale.setDefault(new Locale("te", "ST"));
         LayoutView view = new LayoutView();
         return (LayoutController) view.getPresenter();
     }
