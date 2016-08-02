@@ -27,7 +27,6 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.concurrent.*;
@@ -53,21 +52,36 @@ public class DesktopClientGui extends Application {
         primaryStage = stage;
         runtimeConfiguration.setPrimaryStage(primaryStage);
         config = services.getClientConfiguration();
+        setUpWindow();
 
-        doLoginStage();
-        config.onSetAccount(account ->
-            initBackgroundServices()
+        showLoginStage();
+        config.onSetAccount(account -> {
+                initBackgroundServices();
+                showMainStage();
+            }
         );
         config.onSelectIdentity(this::addShareMessageRenderer);
-        primaryStage.show();
 
-        QabelTray tray = getQabelTray();
+        QabelTray tray = new QabelTray(primaryStage, new AwtToast());
+        tray.install();
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                Platform.exit();
+            }
+        });
+
         trayNotifications(tray);
 
         if (config.hasAccount()) {
             primaryStage.close();
-            System.out.println(" primaryStage closed ");
         }
+    }
+
+    private void setUpWindow() {
+        primaryStage.getIcons().setAll(new Image(getClass().getResourceAsStream("/logo-invert_small.png")));
+        Platform.setImplicitExit(false);
+        primaryStage.setTitle(getResources().getString("title"));
     }
 
     @NotNull
@@ -77,8 +91,6 @@ public class DesktopClientGui extends Application {
                 startTransferManager();
                 startSyncDaemon();
                 startDropDaemon();
-
-                loggedInStage();
                 if (config.getSelectedIdentity() != null) {
                     addShareMessageRenderer(config.getSelectedIdentity());
                 }
@@ -97,21 +109,19 @@ public class DesktopClientGui extends Application {
         });
     }
 
-    private void loggedInStage() {
+    private void showMainStage() {
         view = new LayoutView();
         Parent view = this.view.getView();
         runtimeConfiguration.setWindow(((LayoutController) this.view.getPresenter()).getWindow());
         Scene layoutScene = new Scene(view, 900, 600, true, SceneAntialiasing.BALANCED);
         Platform.runLater(() -> primaryStage.setScene(layoutScene));
+        primaryStage.show();
     }
 
-    private void doLoginStage() {
-        Scene scene;
-        primaryStage.getIcons().setAll(new Image(getClass().getResourceAsStream("/logo-invert_small.png")));
-        Platform.setImplicitExit(false);
-        primaryStage.setTitle(getResources().getString("title"));
-        scene = new Scene(new LoginView().getView(), 370, 570, true, SceneAntialiasing.BALANCED);
-        primaryStage.setScene(scene);
+    private void showLoginStage() {
+        Scene loginScene = new Scene(new LoginView().getView(), 370, 570, true, SceneAntialiasing.BALANCED);
+        primaryStage.setScene(loginScene);
+        primaryStage.show();
     }
 
     private void trayNotifications(QabelTray tray) {
@@ -139,19 +149,6 @@ public class DesktopClientGui extends Application {
                 TimeUnit.SECONDS
             )
         );
-    }
-
-    @NotNull
-    private QabelTray getQabelTray() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
-        QabelTray tray = new QabelTray(primaryStage, new AwtToast());
-        tray.install();
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                Platform.exit();
-            }
-        });
-        return tray;
     }
 
     public ResourceBundle getResources() {
