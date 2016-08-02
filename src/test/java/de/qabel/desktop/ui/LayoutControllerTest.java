@@ -19,7 +19,6 @@ public class LayoutControllerTest extends AbstractControllerTest {
     public void testFillQuotaInformation() throws IOException, QblInvalidCredentials {
         Locale.setDefault(new Locale("te", "ST"));
         LayoutController controller = createController();
-
         assertEquals("30%", controller.quota.getText());
         assertEquals(30, (int) controller.quotaBar.getMinWidth());
         assertEquals("667.57 MB free / 953.67 MB", controller.quotaDescription.getText());
@@ -30,13 +29,12 @@ public class LayoutControllerTest extends AbstractControllerTest {
         Locale.setDefault(new Locale("de", "DE"));
         LayoutController controller = createController();
         assertThat(controller.quotaDescription.getText(), containsString("667,57"));
-
     }
+
     @Test
     public void testHidesNaviItemsByDefault() throws Exception {
         clientConfiguration.selectIdentity(null);
         LayoutController controller = createController();
-
         assertEquals("navi items were not hidden without identity", MIN_ITEM_COUNT, countManagedNaviItems(controller));
     }
 

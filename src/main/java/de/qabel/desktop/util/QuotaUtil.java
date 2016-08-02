@@ -3,6 +3,7 @@ package de.qabel.desktop.util;
 import de.qabel.core.accounting.QuotaState;
 
 import java.text.MessageFormat;
+import java.util.Locale;
 
 import static humanize.Humanize.binaryPrefix;
 
@@ -13,8 +14,9 @@ public class QuotaUtil {
     }
 
     public static String getQuotaDescription(QuotaState q, String quotaDescriptionPattern) {
-        String usedQuota = binaryPrefix(q.getQuota() - q.getSize());
-        String totalQuota = binaryPrefix(q.getQuota());
+        String usedQuota = binaryPrefix(q.getQuota() - q.getSize(), Locale.getDefault());
+        String totalQuota = binaryPrefix(q.getQuota(), Locale.getDefault());
+
         return MessageFormat.format(quotaDescriptionPattern, usedQuota, totalQuota);
     }
 
