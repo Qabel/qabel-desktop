@@ -2,25 +2,18 @@ package de.qabel.desktop;
 
 import com.sun.javafx.application.PlatformImpl;
 import de.qabel.desktop.inject.DesktopServices;
-import javafx.application.Platform;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
-import javafx.stage.Stage;
-import org.junit.After;
 import org.junit.Test;
 
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
-public class KernelTest {
-    public static final long WAIT_TIMEOUT = 5000L;
-    private final AtomicBoolean exited = new AtomicBoolean(false);
-    private Kernel kernel;
+public class KernelTest extends AbstractKernelTest {
 
     @Test
     public void initializesTheDIContainer() throws Exception {
@@ -80,22 +73,4 @@ public class KernelTest {
         PlatformImpl.runAndWait(() -> ((ButtonBase) dialog.lookupButton(button)).fire());
     }
 
-    public void startKernel(Kernel kernel) {
-        kernel.setShutdown(() -> exited.set(true));
-        new Thread(() -> {
-            try {
-                kernel.start();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        Stage primaryStage = kernel.getContainer().getPrimaryStage();
-        if (primaryStage != null) {
-            Platform.runLater(primaryStage::close);
-        }
-    }
 }
