@@ -2,12 +2,11 @@ package de.qabel.desktop;
 
 import de.qabel.core.config.Account;
 import de.qabel.desktop.config.ClientConfig;
-import de.qabel.desktop.util.KernelTestUtils;
 import javafx.stage.Stage;
 import org.junit.Before;
 import org.junit.Test;
 
-public class DesktopClientGuiTest extends KernelTestUtils {
+public class DesktopClientGuiTest extends AbstractKernelTest {
 
     private ClientConfig config;
     private Stage primaryStage;

@@ -2,7 +2,6 @@ package de.qabel.desktop;
 
 import com.sun.javafx.application.PlatformImpl;
 import de.qabel.desktop.inject.DesktopServices;
-import de.qabel.desktop.util.KernelTestUtils;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
@@ -14,7 +13,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
-public class KernelTest extends KernelTestUtils {
+public class KernelTest extends AbstractKernelTest {
 
     @Test
     public void initializesTheDIContainer() throws Exception {

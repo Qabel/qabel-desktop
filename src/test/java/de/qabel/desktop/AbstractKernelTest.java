@@ -1,18 +1,17 @@
-package de.qabel.desktop.util;
+package de.qabel.desktop;
 
-import de.qabel.desktop.Kernel;
-import de.qabel.desktop.TestKernel;
+import cucumber.api.java.After;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class KernelTestUtils {
-    public static final long WAIT_TIMEOUT = 5000L;
-    public final AtomicBoolean exited = new AtomicBoolean(false);
-    public TestKernel kernel;
+class AbstractKernelTest {
+    static final long WAIT_TIMEOUT = 5000L;
+    final AtomicBoolean exited = new AtomicBoolean(false);
+    TestKernel kernel;
 
-    public void startKernel(Kernel kernel) {
+    void startKernel(Kernel kernel) {
         kernel.setShutdown(() -> exited.set(true));
         new Thread(() -> {
             try {
@@ -23,6 +22,7 @@ public class KernelTestUtils {
         }).start();
     }
 
+    @After
     public void tearDown() throws Exception {
         Stage primaryStage = kernel.getContainer().getPrimaryStage();
         if (primaryStage != null) {
