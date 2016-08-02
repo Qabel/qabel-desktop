@@ -265,7 +265,7 @@ public class LayoutController extends AbstractController implements Initializabl
                 faqBackground.setVisible(false);
                 inviteButton.setStyle(null);
                 feedbackButton.setStyle(null);
-                faqBackground.setStyle(null);
+                faqButton.setStyle(null);
                 return;
         }
     }
@@ -312,7 +312,7 @@ public class LayoutController extends AbstractController implements Initializabl
             try {
                 scrollContent.getChildren().setAll(view.getView());
                 setActiveNavItem(naviItem);
-                setBackgroundMenu("default");
+                setBackgroundMenu("");
             } catch (Exception exception) {
                 exception.printStackTrace();
                 alert(exception.getMessage(), exception);
