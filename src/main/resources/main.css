@@ -195,11 +195,11 @@
 }
 
 .inline-button:hover {
-    -fx-effect: innershadow( gaussian , #222222 , 7 , 1 , 1 , 1 );
+    -fx-effect: innershadow( gaussian , #222222 , 10 , 10 , 10 , 10 );
 }
 
 .inline-button:pressed {
-    -fx-effect: innershadow( gaussian , #222222 , 7 , 1 , 1 , 1 );
+    -fx-effect: innershadow( gaussian , #222222 , 10 , 10 , 10 , 10 );
 }
 
 .inline-button.faded-button {

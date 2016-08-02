@@ -232,7 +232,7 @@ public class LayoutController extends AbstractController implements Initializabl
 
     private void setActivityMenu(Label label, ImageView imgView) {
         label.setVisible(true);
-        imgView.setStyle("-fx-effect: innershadow( gaussian , #222222 , 7 , 1 , 1 , 1 );");
+        imgView.setStyle("-fx-effect: innershadow( gaussian , #222222 , 10 , 10 , 10 , 10 );");
         if (activeNavItem != null) {
             activeNavItem.getStyleClass().remove("active");
         }
