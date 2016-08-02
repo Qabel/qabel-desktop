@@ -3,6 +3,7 @@ package de.qabel.desktop;
 import de.qabel.desktop.config.LaunchConfig;
 
 public class TestKernel extends Kernel {
+
     public TestKernel(String currentVersion) {
         super(currentVersion);
     }
