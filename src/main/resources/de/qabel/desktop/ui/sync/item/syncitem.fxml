@@ -5,17 +5,18 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<BorderPane fx:id="syncItemRoot" styleClass="syncItem" prefHeight="130.0" prefWidth="600.0" style="-fx-border-color: darkgrey; -fx-border-width: 1 0 0 0;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.sync.item.SyncItemController">
-            <left>
-                <VBox fx:id="avatarContainer" BorderPane.alignment="CENTER" />
-            </left>
-            <padding>
+<BorderPane fx:id="syncItemRoot" prefHeight="130.0" prefWidth="600.0"
+            style="-fx-border-color: darkgrey; -fx-border-width: 1 0 0 0;" styleClass="syncItem"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="de.qabel.desktop.ui.sync.item.SyncItemController">
+
+    <padding>
                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
             </padding>
             <center>
                 <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                     <center>
-                        <VBox BorderPane.alignment="CENTER" fx:id="statusContentPane">
+                        <VBox fx:id="statusContentPane" BorderPane.alignment="CENTER">
                             <children>
                                 <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-spacing: 3;">
                                     <padding>
@@ -26,9 +27,22 @@
                                             <VBox.margin>
                                                 <Insets left="8.0"/>
                                             </VBox.margin>
+                                            <left>
+                                                <Pane fx:id="avatarContainer" BorderPane.alignment="CENTER">
+                                                    <children>
+                                                        <Label fx:id="avatar" text="A" styleClass="avatar"
+                                                               maxHeight="-Infinity" maxWidth="-Infinity"
+                                                               minHeight="20.0" minWidth="20.0"
+                                                               prefHeight="20.0" prefWidth="20.0"/>
+                                                    </children>
+                                                    <BorderPane.margin>
+                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                                    </BorderPane.margin>
+                                                </Pane>
+                                            </left>
                                             <center>
-                                                <Label fx:id="name" maxWidth="1.7976931348623157E308" text="My Documents"
-                                                      BorderPane.alignment="CENTER">
+                                                <Label fx:id="name" maxWidth="1.7976931348623157E308"
+                                                       text="My Documents" BorderPane.alignment="CENTER">
                                                     <font>
                                                         <Font name="System Bold" size="22.0"/>
                                                     </font>
@@ -37,22 +51,35 @@
                                             <right>
                                                 <HBox style="-fx-spacing: 1em;">
                                                     <children>
-                                                        <Label fx:id="pollState" prefWidth="20" prefHeight="20"></Label>
-                                                        <ImageView fx:id="syncHistory" onMouseClicked="#showHistory" styleClass="inline-button" preserveRatio="true" fitHeight="16" style="-fx-alignment: CENTER-RIGHT">
+                                                        <Label fx:id="pollState" prefHeight="20" prefWidth="20"/>
+                                                        <ImageView fx:id="syncHistory" fitHeight="16"
+                                                                   onMouseClicked="#showHistory" preserveRatio="true"
+                                                                   style="-fx-alignment: CENTER-RIGHT"
+                                                                   styleClass="inline-button">
                                                             <image>
                                                                 <Image url="@/img/faq.png"/>
                                                             </image>
-                                                        </ImageView><ImageView fx:id="openSync" onMouseClicked="#open" styleClass="inline-button" preserveRatio="true" fitHeight="16" style="-fx-alignment: CENTER-RIGHT">
+                                                        </ImageView>
+                                                        <ImageView fx:id="openSync" fitHeight="16"
+                                                                   onMouseClicked="#open" preserveRatio="true"
+                                                                   style="-fx-alignment: CENTER-RIGHT"
+                                                                   styleClass="inline-button">
                                                         <image>
                                                             <Image url="@/icon/folder.png"/>
                                                         </image>
                                                     </ImageView>
-                                                        <ImageView fx:id="editSync" onMouseClicked="#edit" styleClass="inline-button" preserveRatio="true" fitHeight="16" style="-fx-alignment: CENTER-RIGHT">
+                                                        <ImageView fx:id="editSync" fitHeight="16"
+                                                                   onMouseClicked="#edit" preserveRatio="true"
+                                                                   style="-fx-alignment: CENTER-RIGHT"
+                                                                   styleClass="inline-button">
                                                             <image>
                                                                 <Image url="@/icon/edit.png"/>
                                                             </image>
                                                         </ImageView>
-                                                        <ImageView fx:id="deleteSync" onMouseClicked="#delete" styleClass="inline-button" preserveRatio="true" fitHeight="16" style="-fx-alignment: CENTER-RIGHT">
+                                                        <ImageView fx:id="deleteSync" fitHeight="16"
+                                                                   onMouseClicked="#delete" preserveRatio="true"
+                                                                   style="-fx-alignment: CENTER-RIGHT"
+                                                                   styleClass="inline-button">
                                                             <image>
                                                                 <Image url="@/icon/delete.png"/>
                                                             </image>
@@ -112,13 +139,14 @@
                         </HBox>
                                     </children>
                                 </VBox>
-                                <StackPane fx:id="composedProgress" styleClass="composedProgress" style="-fx-width: 100%">
+                                <StackPane fx:id="composedProgress" style="-fx-width: 100%"
+                                           styleClass="composedProgress">
                                     <VBox.margin>
                                         <Insets left="10.0"/>
                                     </VBox.margin>
                                     <children>
-                                        <ProgressBar fx:id="progress" maxHeight="20.0" prefHeight="20.0" prefWidth="1000.0"
-                                                     progress="0.35">
+                                        <ProgressBar fx:id="progress" maxHeight="20.0" prefHeight="20.0"
+                                                     prefWidth="1000.0" progress="0.35">
                                         </ProgressBar>
                                         <GridPane pickOnBounds="false" style="-fx-background-color: null">
                                             <columnConstraints>
@@ -137,7 +165,8 @@
 
                                         <BorderPane>
                                             <center>
-                                                <Label BorderPane.alignment="TOP_LEFT" fx:id="syncStatusLabel" text="initializing..."/>
+                                                <Label fx:id="syncStatusLabel" text="initializing..."
+                                                       BorderPane.alignment="TOP_LEFT"/>
                                             </center>
                                             <right>
                                                 <Label fx:id="itemStatusLabel" text="0%"/>
@@ -150,7 +179,8 @@
                                         <Insets left="10.0"/>
                                     </VBox.margin>
                                     <children>
-                                        <ImageView fx:id="currentItemIcon" styleClass="inline-button" preserveRatio="true" fitHeight="16">
+                                        <ImageView fx:id="currentItemIcon" fitHeight="16" preserveRatio="true"
+                                                   styleClass="inline-button">
                                             <image>
                                                 <Image url="@/icon/delete.png"/>
                                             </image>

@@ -32,7 +32,7 @@ public class SyncItemControllerGuiTest extends AbstractGuiTest<SyncItemControlle
     @Before
     public void setUp() throws Exception {
         identityBuilderFactory = new IdentityBuilderFactory(new DropUrlGenerator("http://localhost:5000"));
-        identity = identityBuilderFactory.factory().build();
+        identity = identityBuilderFactory.factory().withAlias("Bobby").build();
         account = new Account("a", "b", "c");
         local = Files.createTempDirectory(Paths.get("/tmp"), "testsync").toAbsolutePath();
         syncConfig = new DefaultBoxSyncConfig("testsync", local, BoxFileSystem.get("/tmp"), identity, account, new InMemorySyncIndexFactory());
@@ -53,6 +53,7 @@ public class SyncItemControllerGuiTest extends AbstractGuiTest<SyncItemControlle
         assertEquals("testsync", page.name());
         assertEquals(local.toString(), page.localPath());
         assertEquals("/tmp", page.remotePath());
+        assertEquals("B", page.avatar());
     }
 
     @Test

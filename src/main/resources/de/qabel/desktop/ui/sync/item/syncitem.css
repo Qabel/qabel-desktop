@@ -19,3 +19,18 @@
     -fx-alignment: center-left;
     -fx-text-alignment: left;
 }
+
+
+.avatar {
+    -fx-font-size: 3em;
+    -fx-alignment: CENTER;
+
+    -fx-text-fill: #343434;
+    -fx-background-size: 15px;
+    -fx-background-color: magenta;
+    -fx-background-radius: 25;
+    -fx-border-radius: 25;
+    -fx-padding: 0 0 0 0;
+    -fx-margin: 3px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0, 0, 5);
+}

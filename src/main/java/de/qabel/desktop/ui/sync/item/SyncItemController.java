@@ -8,6 +8,7 @@ import de.qabel.desktop.daemon.sync.BoxSync;
 import de.qabel.desktop.daemon.sync.worker.Syncer;
 import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.accounting.avatar.AvatarView;
 import de.qabel.desktop.ui.sync.edit.SyncEditController;
 import de.qabel.desktop.ui.sync.edit.SyncEditView;
 import de.qabel.desktop.ui.transfer.TransferViewModel;
@@ -21,10 +22,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 
@@ -34,6 +32,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class SyncItemController extends AbstractController implements Initializable {
+
     @FXML
     Parent syncItemRoot;
 
@@ -79,6 +78,9 @@ public class SyncItemController extends AbstractController implements Initializa
     @FXML
     private VBox statusContentPane;
 
+    @FXML
+    Pane avatarContainer;
+
     private BoxSync boxSync;
 
     Alert confirmationDialog;
@@ -95,6 +97,7 @@ public class SyncItemController extends AbstractController implements Initializa
         localPath.textProperty().bind(fxConfig.localPathProperty());
         remotePath.textProperty().bind(fxConfig.remotePathProperty());
 
+        new AvatarView(e -> syncConfig.getIdentity().getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
 
         syncConfig.withSyncer(this::initModel);
     }
