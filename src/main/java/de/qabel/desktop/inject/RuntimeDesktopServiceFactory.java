@@ -109,7 +109,9 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     @Override
     public synchronized CrashReportHandler getCrashReportHandler() {
         if (hockeyApp == null) {
-            HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder(getCurrentVersion(), HttpClients.createMinimal());
+            String apiBaseUri = runtimeConfiguration.getCrashReportUri().toString();
+
+            HockeyAppRequestBuilder requestBuilder = new HockeyAppRequestBuilder(apiBaseUri, getCurrentVersion(), HttpClients.createMinimal());
             VersionClient versionClient = new VersionClient(requestBuilder);
             HockeyFeedbackClient feedbackClient = new HockeyFeedbackClient(requestBuilder, versionClient);
             HockeyCrashReporterClient crashClient = new HockeyCrashReporterClient(requestBuilder, versionClient);
