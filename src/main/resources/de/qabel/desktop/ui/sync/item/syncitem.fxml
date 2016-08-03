@@ -1,204 +1,186 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<BorderPane fx:id="syncItemRoot" prefHeight="130.0" prefWidth="600.0"
-            style="-fx-border-color: darkgrey; -fx-border-width: 1 0 0 0;" styleClass="syncItem"
-            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="de.qabel.desktop.ui.sync.item.SyncItemController">
 
+<BorderPane fx:id="syncItemRoot" prefHeight="130.0" prefWidth="600.0" style="-fx-border-color: darkgrey; -fx-border-width: 1 0 0 0;" styleClass="syncItem" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.sync.item.SyncItemController">
     <padding>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-            </padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+    </padding>
+    <center>
+        <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <center>
-                <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                    <center>
-                        <VBox fx:id="statusContentPane" BorderPane.alignment="CENTER">
+                <VBox fx:id="statusContentPane" BorderPane.alignment="CENTER">
+                    <children>
+                        <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-spacing: 3;">
+                            <padding>
+                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                            </padding>
                             <children>
-                                <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-spacing: 3;">
-                                    <padding>
-                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                    </padding>
-                                    <children>
-                                        <BorderPane nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="200.0">
-                                            <VBox.margin>
-                                                <Insets left="8.0"/>
-                                            </VBox.margin>
-                                            <left>
-                                                <Pane fx:id="avatarContainer" BorderPane.alignment="CENTER">
-                                                    <children>
-                                                        <Label fx:id="avatar" text="A" styleClass="avatar"
-                                                               maxHeight="-Infinity" maxWidth="-Infinity"
-                                                               minHeight="20.0" minWidth="20.0"
-                                                               prefHeight="20.0" prefWidth="20.0"/>
-                                                    </children>
-                                                    <BorderPane.margin>
-                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                                                    </BorderPane.margin>
-                                                </Pane>
-                                            </left>
-                                            <center>
-                                                <Label fx:id="name" maxWidth="1.7976931348623157E308"
-                                                       text="My Documents" BorderPane.alignment="CENTER">
+                                <BorderPane maxHeight="35.0" nodeOrientation="LEFT_TO_RIGHT">
+                                    <VBox.margin>
+                                        <Insets left="8.0" />
+                                    </VBox.margin>
+                                    <left>
+                                        <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
+                                            <children>
+                                                <Pane fx:id="avatarContainer" minHeight="30" minWidth="30" />
+                                            </children>
+                                            <BorderPane.margin>
+                                                <Insets bottom="5.0" right="10.0" top="5.0" />
+                                            </BorderPane.margin>
+                                        </HBox>
+                                    </left>
+                                    <center>
+                                        <HBox alignment="CENTER_LEFT">
+                                            <children>
+                                                <Label fx:id="name" maxWidth="1.7976931348623157E308" text="My Documents" BorderPane.alignment="CENTER">
                                                     <font>
-                                                        <Font name="System Bold" size="22.0"/>
+                                                        <Font name="System Bold" size="22.0" />
                                                     </font>
                                                 </Label>
-                                            </center>
-                                            <right>
-                                                <HBox style="-fx-spacing: 1em;">
-                                                    <children>
-                                                        <Label fx:id="pollState" prefHeight="20" prefWidth="20"/>
-                                                        <ImageView fx:id="syncHistory" fitHeight="16"
-                                                                   onMouseClicked="#showHistory" preserveRatio="true"
-                                                                   style="-fx-alignment: CENTER-RIGHT"
-                                                                   styleClass="inline-button">
-                                                            <image>
-                                                                <Image url="@/img/faq.png"/>
-                                                            </image>
-                                                        </ImageView>
-                                                        <ImageView fx:id="openSync" fitHeight="16"
-                                                                   onMouseClicked="#open" preserveRatio="true"
-                                                                   style="-fx-alignment: CENTER-RIGHT"
-                                                                   styleClass="inline-button">
-                                                        <image>
-                                                            <Image url="@/icon/folder.png"/>
-                                                        </image>
-                                                    </ImageView>
-                                                        <ImageView fx:id="editSync" fitHeight="16"
-                                                                   onMouseClicked="#edit" preserveRatio="true"
-                                                                   style="-fx-alignment: CENTER-RIGHT"
-                                                                   styleClass="inline-button">
-                                                            <image>
-                                                                <Image url="@/icon/edit.png"/>
-                                                            </image>
-                                                        </ImageView>
-                                                        <ImageView fx:id="deleteSync" fitHeight="16"
-                                                                   onMouseClicked="#delete" preserveRatio="true"
-                                                                   style="-fx-alignment: CENTER-RIGHT"
-                                                                   styleClass="inline-button">
-                                                            <image>
-                                                                <Image url="@/icon/delete.png"/>
-                                                            </image>
-                                                        </ImageView>
-                                                    </children>
-                                                </HBox>
-                                            </right>
-                                        </BorderPane>
-                                        <HBox style="-fx-spacing: 20;">
-                           <children>
-                              <ImageView fx:id="syncImage" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../../../../../ic_folder_black_syncing.png" />
-                                 </image>
-                              </ImageView>
-                              <VBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-spacing: 5; -fx-min-width: 7em;">
-                                 <children>
-                                    <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="online:">
-                                       <font>
-                                          <Font size="18.0" />
-                                       </font>
-                                       <opaqueInsets>
-                                          <Insets />
-                                       </opaqueInsets>
-                                    </Label>
-                                    <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="local:">
-                                       <font>
-                                          <Font size="18.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                                 <opaqueInsets>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="15.0" />
-                                 </opaqueInsets>
-                              </VBox>
-                              <VBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-spacing: 5;">
-                                 <children>
-                                    <Label fx:id="remotePath" text="/private/documents">
-                                       <font>
-                                          <Font size="18.0" />
-                                       </font>
-                                       <opaqueInsets>
-                                          <Insets />
-                                       </opaqueInsets>
-                                    </Label>
-                                    <Label fx:id="localPath" text="/home/yourname/Documents">
-                                       <font>
-                                          <Font size="18.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                                 <opaqueInsets>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="15.0" />
-                                 </opaqueInsets>
-                              </VBox>
-                           </children>
-                        </HBox>
-                                    </children>
-                                </VBox>
-                                <StackPane fx:id="composedProgress" style="-fx-width: 100%"
-                                           styleClass="composedProgress">
-                                    <VBox.margin>
-                                        <Insets left="10.0"/>
-                                    </VBox.margin>
-                                    <children>
-                                        <ProgressBar fx:id="progress" maxHeight="20.0" prefHeight="20.0"
-                                                     prefWidth="1000.0" progress="0.35">
-                                        </ProgressBar>
-                                        <GridPane pickOnBounds="false" style="-fx-background-color: null">
-                                            <columnConstraints>
-                                                <ColumnConstraints fx:id="itemProgressColumn" hgrow="SOMETIMES" maxWidth="0.0" minWidth="0.0" percentWidth="0" prefWidth="0.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" percentWidth="0" />
-                                            </columnConstraints>
-                                            <rowConstraints>
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            </rowConstraints>
-                                            <children>
-                                                <Pane style="-fx-background-color: rgba(0,0,0,0.1)">
-
-                                                </Pane>
                                             </children>
-                                        </GridPane>
-
-                                        <BorderPane>
-                                            <center>
-                                                <Label fx:id="syncStatusLabel" text="initializing..."
-                                                       BorderPane.alignment="TOP_LEFT"/>
-                                            </center>
-                                            <right>
-                                                <Label fx:id="itemStatusLabel" text="0%"/>
-                                            </right>
-                                        </BorderPane>
-                                    </children>
-                                </StackPane>
-                                <HBox style="-fx-spacing: 1em">
-                                    <VBox.margin>
-                                        <Insets left="10.0"/>
-                                    </VBox.margin>
+                                        </HBox>
+                                    </center>
+                                    <right>
+                                        <HBox alignment="CENTER_LEFT" style="-fx-spacing: 1em;">
+                                            <children>
+                                                <Label fx:id="pollState" prefHeight="20" prefWidth="20" />
+                                                <ImageView fx:id="syncHistory" fitHeight="16" onMouseClicked="#showHistory" preserveRatio="true" style="-fx-alignment: CENTER-RIGHT" styleClass="inline-button">
+                                                    <image>
+                                                        <Image url="@/img/faq.png" />
+                                                    </image>
+                                                </ImageView>
+                                                <ImageView fx:id="openSync" fitHeight="16" onMouseClicked="#open" preserveRatio="true" style="-fx-alignment: CENTER-RIGHT" styleClass="inline-button">
+                                                    <image>
+                                                        <Image url="@/icon/folder.png" />
+                                                    </image>
+                                                </ImageView>
+                                                <ImageView fx:id="editSync" fitHeight="16" onMouseClicked="#edit" preserveRatio="true" style="-fx-alignment: CENTER-RIGHT" styleClass="inline-button">
+                                                    <image>
+                                                        <Image url="@/icon/edit.png" />
+                                                    </image>
+                                                </ImageView>
+                                                <ImageView fx:id="deleteSync" fitHeight="16" onMouseClicked="#delete" preserveRatio="true" style="-fx-alignment: CENTER-RIGHT" styleClass="inline-button">
+                                                    <image>
+                                                        <Image url="@/icon/delete.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </children>
+                                        </HBox>
+                                    </right>
+                                </BorderPane>
+                                <HBox style="-fx-spacing: 20;">
                                     <children>
-                                        <ImageView fx:id="currentItemIcon" fitHeight="16" preserveRatio="true"
-                                                   styleClass="inline-button">
+                                        <ImageView fx:id="syncImage" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@/icon/delete.png"/>
+                                                <Image url="@../../../../../../ic_folder_black_syncing.png" />
                                             </image>
                                         </ImageView>
-                                        <Label fx:id="currentItemLabel" text="...">
-                                        </Label>
+                                        <VBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-spacing: 5; -fx-min-width: 7em;">
+                                            <children>
+                                                <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="online:">
+                                                    <font>
+                                                        <Font size="18.0" />
+                                                    </font>
+                                                    <opaqueInsets>
+                                                        <Insets />
+                                                    </opaqueInsets>
+                                                </Label>
+                                                <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="local:">
+                                                    <font>
+                                                        <Font size="18.0" />
+                                                    </font>
+                                                </Label>
+                                            </children>
+                                            <opaqueInsets>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="15.0" />
+                                            </opaqueInsets>
+                                        </VBox>
+                                        <VBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-spacing: 5;">
+                                            <children>
+                                                <Label fx:id="remotePath" text="/private/documents">
+                                                    <font>
+                                                        <Font size="18.0" />
+                                                    </font>
+                                                    <opaqueInsets>
+                                                        <Insets />
+                                                    </opaqueInsets>
+                                                </Label>
+                                                <Label fx:id="localPath" text="/home/yourname/Documents">
+                                                    <font>
+                                                        <Font size="18.0" />
+                                                    </font>
+                                                </Label>
+                                            </children>
+                                            <opaqueInsets>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="15.0" />
+                                            </opaqueInsets>
+                                        </VBox>
                                     </children>
                                 </HBox>
                             </children>
                         </VBox>
-                    </center>
-                    <right>
-                        <VBox alignment="TOP_RIGHT" BorderPane.alignment="CENTER">
-                            <padding>
-                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                            </padding>
-                        </VBox>
-                    </right>
-                </BorderPane>
+                        <StackPane fx:id="composedProgress" style="-fx-width: 100%" styleClass="composedProgress">
+                            <VBox.margin>
+                                <Insets left="10.0" />
+                            </VBox.margin>
+                            <children>
+                                <ProgressBar fx:id="progress" maxHeight="20.0" prefHeight="20.0" prefWidth="1000.0" progress="0.35">
+                                </ProgressBar>
+                                <GridPane pickOnBounds="false" style="-fx-background-color: null">
+                                    <columnConstraints>
+                                        <ColumnConstraints fx:id="itemProgressColumn" hgrow="SOMETIMES" maxWidth="0.0" minWidth="0.0" percentWidth="0" prefWidth="0.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="0" />
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    </rowConstraints>
+                                    <children>
+                                        <Pane style="-fx-background-color: rgba(0,0,0,0.1)">
+
+                                        </Pane>
+                                    </children>
+                                </GridPane>
+
+                                <BorderPane>
+                                    <center>
+                                        <Label fx:id="syncStatusLabel" text="initializing..." BorderPane.alignment="TOP_LEFT" />
+                                    </center>
+                                    <right>
+                                        <Label fx:id="itemStatusLabel" text="0%" />
+                                    </right>
+                                </BorderPane>
+                            </children>
+                        </StackPane>
+                        <HBox style="-fx-spacing: 1em">
+                            <VBox.margin>
+                                <Insets left="10.0" />
+                            </VBox.margin>
+                            <children>
+                                <ImageView fx:id="currentItemIcon" fitHeight="16" preserveRatio="true" styleClass="inline-button">
+                                    <image>
+                                        <Image url="@/icon/delete.png" />
+                                    </image>
+                                </ImageView>
+                                <Label fx:id="currentItemLabel" text="...">
+                                </Label>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
             </center>
+            <right>
+                <VBox alignment="TOP_RIGHT" BorderPane.alignment="CENTER">
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </padding>
+                </VBox>
+            </right>
         </BorderPane>
+    </center>
+</BorderPane>
