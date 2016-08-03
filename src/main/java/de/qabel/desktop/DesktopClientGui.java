@@ -25,20 +25,18 @@ import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static de.qabel.desktop.daemon.management.BoxSyncBasedUpload.logger;
 
 public class DesktopClientGui extends Application {
     private Stage primaryStage;
     private LayoutView view;
-    private ClientConfig config;
+    ClientConfig config;
     private DesktopServices services;
     private ExecutorService executorService = Executors.newCachedThreadPool();
     private StaticRuntimeConfiguration runtimeConfiguration;
@@ -54,51 +52,13 @@ public class DesktopClientGui extends Application {
         primaryStage = stage;
         runtimeConfiguration.setPrimaryStage(primaryStage);
         config = services.getClientConfiguration();
+        setUpWindow();
 
-        SceneAntialiasing aa = SceneAntialiasing.BALANCED;
-        primaryStage.getIcons().setAll(new Image(getClass().getResourceAsStream("/logo-invert_small.png")));
-        Scene scene;
-
-        Platform.setImplicitExit(false);
-        primaryStage.setTitle(getResources().getString("title"));
-        scene = new Scene(new LoginView().getView(), 370, 570, true, aa);
-        primaryStage.setScene(scene);
-
-        config.onSetAccount(account ->
-            executorService.submit(() -> {
-                try {
-                    startTransferManager();
-                    startSyncDaemon();
-                    startDropDaemon();
-                    view = new LayoutView();
-                    Parent view = this.view.getView();
-                    runtimeConfiguration.setWindow(((LayoutController) this.view.getPresenter()).getWindow());
-                    Scene layoutScene = new Scene(view, 900, 600, true, aa);
-
-                    Platform.runLater(() -> {
-                        primaryStage.setScene(layoutScene);
-
-                        if (config.hasAccount() && config.getSelectedIdentity() != null) {
-                            primaryStage.setIconified(true);
-                        }
-                    });
-
-                    if (config.getSelectedIdentity() != null) {
-                        addShareMessageRenderer(config.getSelectedIdentity());
-                    }
-                } catch (Exception e) {
-                    logger.error("failed to init background services: " + e.getMessage(), e);
-                    Platform.runLater(() -> {
-                        final CrashReportAlert alert = new CrashReportAlert(
-                            services.getCrashReportHandler(),
-                            "failed to init brackground services",
-                            e
-                        );
-                        alert.showAndWait();
-                        System.exit(-1);
-                    });
-                }
-            })
+        showLoginStage();
+        config.onSetAccount(account -> {
+                initBackgroundServices();
+                showMainStage();
+            }
         );
         config.onSelectIdentity(this::addShareMessageRenderer);
 
@@ -110,8 +70,61 @@ public class DesktopClientGui extends Application {
                 Platform.exit();
             }
         });
-        primaryStage.show();
 
+        trayNotifications(tray);
+
+        if (config.hasAccount()) {
+            primaryStage.close();
+        }
+    }
+
+    private void setUpWindow() {
+        primaryStage.getIcons().setAll(new Image(getClass().getResourceAsStream("/logo-invert_small.png")));
+        Platform.setImplicitExit(false);
+        primaryStage.setTitle(getResources().getString("title"));
+    }
+
+    @NotNull
+    private Future<?> initBackgroundServices() {
+        return executorService.submit(() -> {
+            try {
+                startTransferManager();
+                startSyncDaemon();
+                startDropDaemon();
+                if (config.getSelectedIdentity() != null) {
+                    addShareMessageRenderer(config.getSelectedIdentity());
+                }
+            } catch (Exception e) {
+                logger.error("failed to init background services: " + e.getMessage(), e);
+                Platform.runLater(() -> {
+                    final CrashReportAlert alert = new CrashReportAlert(
+                        services.getCrashReportHandler(),
+                        "failed to init brackground services",
+                        e
+                    );
+                    alert.showAndWait();
+                    System.exit(-1);
+                });
+            }
+        });
+    }
+
+    private void showMainStage() {
+        view = new LayoutView();
+        Parent view = this.view.getView();
+        runtimeConfiguration.setWindow(((LayoutController) this.view.getPresenter()).getWindow());
+        Scene layoutScene = new Scene(view, 900, 600, true, SceneAntialiasing.BALANCED);
+        Platform.runLater(() -> primaryStage.setScene(layoutScene));
+        primaryStage.show();
+    }
+
+    private void showLoginStage() {
+        Scene loginScene = new Scene(new LoginView().getView(), 370, 570, true, SceneAntialiasing.BALANCED);
+        primaryStage.setScene(loginScene);
+        primaryStage.show();
+    }
+
+    private void trayNotifications(QabelTray tray) {
         services.getDropMessageRepository().addObserver(new ShareNotificationHandler(getShareRepository()));
         services.getDropMessageRepository().addObserver(
             (o, arg) -> scheduler.schedule(
