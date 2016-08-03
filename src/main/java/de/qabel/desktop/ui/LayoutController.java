@@ -230,44 +230,31 @@ public class LayoutController extends AbstractController implements Initializabl
     }
 
 
-    private void setActivityMenu(Label label, ImageView imgView) {
-        label.setVisible(true);
-        imgView.setStyle("-fx-effect: innershadow( gaussian , #222222 , 10 , 10 , 10 , 10 );");
+    private void setActivityMenu(Label label, ImageView icon) {
+        cleanIconMenuStyle();
+        setVisibleBackground(label, true);
+        setStyleIcon(icon, "-fx-effect: innershadow( gaussian , #222222 , 10 , 10 , 10 , 10 );");
+
         if (activeNavItem != null) {
             activeNavItem.getStyleClass().remove("active");
         }
-        setBackgroundMenu(label.getId());
     }
 
-    private void setBackgroundMenu(String menu) {
-        switch (menu) {
-            case "feedbackBackground":
-                inviteBackground.setVisible(false);
-                faqBackground.setVisible(false);
-                inviteButton.setStyle(null);
-                faqButton.setStyle(null);
-                return;
-            case "inviteBackground":
-                feedbackBackground.setVisible(false);
-                faqBackground.setVisible(false);
-                feedbackButton.setStyle(null);
-                faqButton.setStyle(null);
-                return;
-            case "faqBackground":
-                inviteBackground.setVisible(false);
-                feedbackBackground.setVisible(false);
-                inviteButton.setStyle(null);
-                feedbackButton.setStyle(null);
-                return;
-            default:
-                inviteBackground.setVisible(false);
-                feedbackBackground.setVisible(false);
-                faqBackground.setVisible(false);
-                inviteButton.setStyle(null);
-                feedbackButton.setStyle(null);
-                faqButton.setStyle(null);
-                return;
-        }
+    private void setVisibleBackground(Label background, Boolean status) {
+        background.setVisible(status);
+    }
+
+    private void setStyleIcon(ImageView icon, String styleIcon) {
+        icon.setStyle(styleIcon);
+    }
+
+    private void cleanIconMenuStyle() {
+        setVisibleBackground(inviteBackground, false);
+        setVisibleBackground(faqBackground, false);
+        setVisibleBackground(feedbackBackground, false);
+        setStyleIcon(inviteButton, null);
+        setStyleIcon(faqButton, null);
+        setStyleIcon(feedbackButton, null);
     }
 
     private String lastAlias;
@@ -312,7 +299,7 @@ public class LayoutController extends AbstractController implements Initializabl
             try {
                 scrollContent.getChildren().setAll(view.getView());
                 setActiveNavItem(naviItem);
-                setBackgroundMenu("");
+                cleanIconMenuStyle();
             } catch (Exception exception) {
                 exception.printStackTrace();
                 alert(exception.getMessage(), exception);
