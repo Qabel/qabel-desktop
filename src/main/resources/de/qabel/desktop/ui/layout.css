@@ -59,7 +59,6 @@
 }
 
 .navi .button:hover {
-    -fx-background-color: none;
     -fx-text-fill: #222222;
 }
 

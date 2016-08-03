@@ -70,19 +70,19 @@ public class LayoutController extends AbstractController implements Initializabl
     private ProgressBar uploadProgress;
 
     @FXML
-    private ImageView feedbackButton;
+    public ImageView feedbackButton;
 
     @FXML
-    private ImageView inviteButton;
+    public ImageView inviteButton;
 
     @FXML
     private ImageView configButton;
 
     @FXML
-    private ImageView faqButton;
+    public ImageView faqButton;
 
     @FXML
-    private ImageView infoButton;
+    public ImageView infoButton;
 
     @FXML
     private Pane window;
@@ -233,7 +233,7 @@ public class LayoutController extends AbstractController implements Initializabl
     private void setActivityMenu(Label label, ImageView icon) {
         cleanIconMenuStyle();
         setVisibleBackground(label, true);
-        setStyleIcon(icon, "-fx-effect: innershadow( gaussian , #222222 , 10 , 10 , 10 , 10 );");
+        setStyleIcon(icon, "-fx-effect: innershadow(gaussian, #222222, 10, 10, 10, 10);");
 
         if (activeNavItem != null) {
             activeNavItem.getStyleClass().remove("active");

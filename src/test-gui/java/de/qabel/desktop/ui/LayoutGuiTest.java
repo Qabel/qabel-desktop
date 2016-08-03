@@ -5,11 +5,16 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
+import javafx.application.Platform;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.HashSet;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
@@ -47,5 +52,36 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
         dropMessageRepository.save(message);
         waitUntil(() -> indicator.getText().equals("1"));
         assertTrue(indicator.isVisible());
+    }
+
+    @Test
+    public void testInviteMenuStyle() throws Exception {
+        testIconMenu(controller.inviteButton, controller.inviteBackground);
+    }
+
+    @Test
+    public void testFeedbackMenuStyle() throws Exception {
+        testIconMenu(controller.feedbackButton, controller.feedbackBackground);
+    }
+
+    @Test
+    public void testFaqStyle() throws Exception {
+        testIconMenu(controller.faqButton, controller.faqBackground);
+    }
+
+    @Test
+    public void testCleanMenuIcons() throws Exception {
+        clickOn(controller.browseNav);
+        assertTrue(!controller.inviteBackground.isVisible());
+        assertTrue(!controller.faqBackground.isVisible());
+        assertTrue(!controller.feedbackBackground.isVisible());
+    }
+
+    public void testIconMenu (ImageView icon, Label label) throws Exception {
+        clickOn(icon);
+        Platform.runLater(() -> {
+            assertTrue(label.isVisible());
+            assertEquals(label.getStyle(), "-fx-effect: innershadow(gaussian, #222222, 10, 10, 10, 10);");
+        });
     }
 }
