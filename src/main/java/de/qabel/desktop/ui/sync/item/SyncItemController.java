@@ -79,7 +79,7 @@ public class SyncItemController extends AbstractController implements Initializa
     private VBox statusContentPane;
 
     @FXML
-    Pane avatarContainer;
+    private Pane avatarContainer;
 
     private BoxSync boxSync;
 
@@ -97,9 +97,14 @@ public class SyncItemController extends AbstractController implements Initializa
         localPath.textProperty().bind(fxConfig.localPathProperty());
         remotePath.textProperty().bind(fxConfig.remotePathProperty());
 
-        new AvatarView(e -> syncConfig.getIdentity().getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
+        createAvatar(syncConfig.getIdentity().getAlias());
 
         syncConfig.withSyncer(this::initModel);
+    }
+
+    private void createAvatar(String alias) {
+        AvatarView avatarView = new AvatarView(e -> alias);
+        avatarView.getView(avatarContainer.getChildren()::setAll);
     }
 
     public void initModel(Syncer syncer) {
