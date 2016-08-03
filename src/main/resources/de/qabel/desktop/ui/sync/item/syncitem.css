@@ -19,18 +19,20 @@
     -fx-alignment: center-left;
     -fx-text-alignment: left;
 }
-
-
-.avatar {
-    -fx-font-size: 3em;
-    -fx-alignment: CENTER;
-
-    -fx-text-fill: #343434;
-    -fx-background-size: 15px;
+.avatarContainer {
+    -fx-alignment: top-left;
+}
+.syncItem .avatar {
+    -fx-pref-width: 35px;
+    -fx-pref-height: 35px;
+    -fx-min-width: 35px;
+    -fx-min-height: 35px;
+    -fx-background-size: 30px;
     -fx-background-color: magenta;
     -fx-background-radius: 25;
     -fx-border-radius: 25;
-    -fx-padding: 0 0 0 0;
-    -fx-margin: 3px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0, 0, 5);
+}
+
+.avatar * {
+    -fx-font-size: 20;
 }
