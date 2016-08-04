@@ -56,17 +56,10 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
 
     @Test
     public void testInviteMenuStyle() throws Exception {
-        testIconMenu(controller.inviteButton, controller.inviteBackground);
-    }
-
-    @Test
-    public void testFeedbackMenuStyle() throws Exception {
-        testIconMenu(controller.feedbackButton, controller.feedbackBackground);
-    }
-
-    @Test
-    public void testFaqStyle() throws Exception {
-        testIconMenu(controller.faqButton, controller.faqBackground);
+        clickOn(controller.inviteButton);
+        waitUntil(controller.inviteBackground::isVisible);
+        assertTrue(controller.inviteBackground.isVisible());
+        assertEquals(controller.inviteButton.getStyle(), "-fx-effect: innershadow(gaussian, #222222, 10, 10, 10, 10);");
     }
 
     @Test
@@ -75,13 +68,5 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
         assertTrue(!controller.inviteBackground.isVisible());
         assertTrue(!controller.faqBackground.isVisible());
         assertTrue(!controller.feedbackBackground.isVisible());
-    }
-
-    public void testIconMenu (ImageView icon, Label label) throws Exception {
-        clickOn(icon);
-        Platform.runLater(() -> {
-            assertTrue(label.isVisible());
-            assertEquals(label.getStyle(), "-fx-effect: innershadow(gaussian, #222222, 10, 10, 10, 10);");
-        });
     }
 }
