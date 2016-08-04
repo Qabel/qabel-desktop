@@ -53,6 +53,11 @@ public class SyncItemControllerGuiTest extends AbstractGuiTest<SyncItemControlle
         assertEquals("testsync", page.name());
         assertEquals(local.toString(), page.localPath());
         assertEquals("/tmp", page.remotePath());
+
+    }
+
+    @Test
+    public void avatarLabelCheck() throws Exception {
         assertEquals("B", page.avatar());
     }
 
