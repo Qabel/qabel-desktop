@@ -21,6 +21,9 @@ public class QuotaUtil {
     }
 
     public static int getUsedRatio(QuotaState q) {
+        if (q.getSize() == q.getQuota()) {
+            return 0;
+        }
         return (int) (q.getSize() / (double) q.getQuota() * 100);
     }
 }

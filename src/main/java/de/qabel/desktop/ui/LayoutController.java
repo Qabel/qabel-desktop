@@ -112,7 +112,7 @@ public class LayoutController extends AbstractController implements Initializabl
     NaviItem syncNav;
     NaviItem accountingNav;
     NaviItem aboutNav;
-    QuotaState quotaState;
+    public QuotaState quotaState;
 
     @FXML
     BorderPane quotaBlock;
@@ -120,8 +120,10 @@ public class LayoutController extends AbstractController implements Initializabl
     Label quota;
     @FXML
     Label quotaBar;
+
     @FXML
     Label quotaDescription;
+
     @Inject
     BoxClient boxClient;
 
@@ -189,13 +191,15 @@ public class LayoutController extends AbstractController implements Initializabl
         newMessageIndicator.visibleProperty().bind(newMessageIndicator.textProperty().isNotEqualTo("0"));
     }
 
-    private void fillQuotaInformation() {
-        try {
-            quotaState = boxClient.getQuotaState();
-        } catch (IOException | QblInvalidCredentials e) {
-            quotaBlock.setVisible(false);
-            quotaDescription.setVisible(false);
-            alert(e);
+    void fillQuotaInformation() {
+        if (quotaState == null) {
+            try {
+                quotaState = boxClient.getQuotaState();
+            } catch (IOException | QblInvalidCredentials e) {
+                quotaBlock.setVisible(false);
+                quotaDescription.setVisible(false);
+                alert(e);
+            }
         }
         int ratio = getUsedRatio(quotaState);
         String quotaDescriptionText = getQuotaDescription(quotaState, resourceBundle.getString("quotaDescription"));
@@ -203,6 +207,7 @@ public class LayoutController extends AbstractController implements Initializabl
         quotaBar.setMinWidth(ratio);
         quotaDescription.setText(quotaDescriptionText);
     }
+
     private void createButtonGraphics() {
         Image heartGraphic = new Image(getClass().getResourceAsStream("/img/heart.png"));
 
