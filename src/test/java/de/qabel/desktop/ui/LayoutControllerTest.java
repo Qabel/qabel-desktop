@@ -1,5 +1,6 @@
 package de.qabel.desktop.ui;
 
+import de.qabel.core.accounting.BoxClientStub;
 import de.qabel.core.exceptions.QblInvalidCredentials;
 import javafx.scene.Node;
 import org.junit.Test;
@@ -9,11 +10,23 @@ import java.util.Locale;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 public class LayoutControllerTest extends AbstractControllerTest {
 
     public static final int MIN_ITEM_COUNT = 2;
+
+    @Test
+    public void getQuotaStateFailuresThenHidesQuotaBars() {
+        LayoutController controller = createController();
+        ((BoxClientStub) controller.boxClient).ioException = new IOException("crashed IO");
+        try {
+            controller.boxClient.getQuotaState();
+        } catch (IOException | QblInvalidCredentials e) {
+            assertFalse(controller.quotaBlock.isVisible());
+            assertFalse(controller.quotaDescription.isVisible());
+        }
+
+    }
 
     @Test
     public void testFillQuotaInformation() throws IOException, QblInvalidCredentials {

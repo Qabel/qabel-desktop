@@ -4,7 +4,6 @@ import de.qabel.core.config.factory.*;
 import de.qabel.core.repository.*;
 import de.qabel.core.repository.sqlite.*;
 import de.qabel.core.repository.sqlite.hydrator.AccountHydrator;
-import de.qabel.core.repository.sqlite.hydrator.ContactHydrator;
 import de.qabel.core.repository.sqlite.hydrator.DropURLHydrator;
 import de.qabel.core.repository.sqlite.hydrator.IdentityHydrator;
 import de.qabel.desktop.config.BoxSyncConfig;
@@ -58,8 +57,8 @@ public class NewConfigDesktopServiceFactory extends RuntimeDesktopServiceFactory
             contactRepository = new SqliteContactRepository(
                 runtimeConfiguration.getConfigDatabase(),
                 getEntityManager(),
-                getIdentityRepository(),
-                getDropUrlRepository()
+                getDropUrlRepository(),
+                getIdentityRepository()
             );
         }
         return contactRepository;
@@ -196,14 +195,6 @@ public class NewConfigDesktopServiceFactory extends RuntimeDesktopServiceFactory
             getEntityManager(),
             getDropUrlRepository(),
             getPrefixRepository()
-        );
-    }
-
-    private ContactHydrator getContactHydrator() {
-        return new ContactHydrator(
-            getEntityManager(),
-            getContactFactory(),
-            getDropUrlRepository()
         );
     }
 

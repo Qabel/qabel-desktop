@@ -7,6 +7,7 @@ import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.core.config.factory.IdentityBuilder;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.drop.DropURL;
+import de.qabel.core.repository.ContactRepository;
 import de.qabel.core.repository.EntityManager;
 import de.qabel.core.repository.exception.EntityNotFoundException;
 import de.qabel.core.repository.sqlite.ClientDatabase;
@@ -21,7 +22,7 @@ import java.util.*;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
 
-public class SqliteContactRepositoryTest extends AbstractSqliteRepositoryTest<SqliteContactRepository> {
+public class SqliteContactRepositoryTest extends AbstractSqliteRepositoryTest<ContactRepository> {
     private Identity identity;
     private Identity otherIdentity;
     private Contact contact;
@@ -53,8 +54,8 @@ public class SqliteContactRepositoryTest extends AbstractSqliteRepositoryTest<Sq
         return new SqliteContactRepository(
             clientDatabase,
             em,
-            new SqliteIdentityRepository(clientDatabase, em),
-            dropUrlRepository
+            dropUrlRepository,
+            new SqliteIdentityRepository(clientDatabase, em)
         );
     }
 

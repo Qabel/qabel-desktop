@@ -40,8 +40,8 @@ public class SqliteDropMessageRepositoryTest extends AbstractSqliteRepositoryTes
         contactRepository = new SqliteContactRepository(
             clientDatabase,
             em,
-            identityRepository,
-            new SqliteDropUrlRepository(clientDatabase, new DropURLHydrator())
+            new SqliteDropUrlRepository(clientDatabase, new DropURLHydrator()),
+            identityRepository
         );
 
         return new SqliteDropMessageRepository(clientDatabase, em);
