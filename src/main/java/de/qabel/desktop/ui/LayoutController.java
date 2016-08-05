@@ -179,7 +179,6 @@ public class LayoutController extends AbstractController implements Initializabl
     private void createButtonGraphics() {
         Image heartGraphic = new Image(getClass().getResourceAsStream("/img/heart.png"));
 
-
         inviteButton.setImage(heartGraphic);
         inviteButton.getStyleClass().add("inline-button");
         inviteButton.setOnMouseClicked(e -> {
@@ -227,7 +226,6 @@ public class LayoutController extends AbstractController implements Initializabl
         */
     }
 
-
     private String lastAlias;
     private Identity lastIdentity;
 
@@ -254,6 +252,11 @@ public class LayoutController extends AbstractController implements Initializabl
             return;
         }
 
+        identity.attach(() -> Platform.runLater(() -> {
+            alias.setText(identity.getAlias());
+            updateAvatar(identity);
+        }));
+
         new AvatarView(e -> currentAlias).getViewAsync(avatarContainer.getChildren()::setAll);
         alias.setText(currentAlias);
         lastAlias = currentAlias;
@@ -262,6 +265,10 @@ public class LayoutController extends AbstractController implements Initializabl
             return;
         }
         mail.setText(clientConfiguration.getAccount().getUser());
+    }
+
+    private void updateAvatar(Identity identity) {
+        new AvatarView(e -> identity.getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
     }
 
     private NaviItem createNavItem(String label, FXMLView view) {
