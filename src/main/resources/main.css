@@ -98,11 +98,11 @@
     -fx-background-insets: 2px, 0, 0;
     -fx-background-radius: 2em;
 }
-
 .avatar {
     -fx-font-size: 3em;
     -fx-alignment: CENTER;
-
+    -fx-pref-height: 50px;
+    -fx-pref-width: 50px;
     -fx-text-fill: #343434;
     -fx-background-size: 50px;
     -fx-background-color: magenta;
@@ -113,6 +113,10 @@
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0, 0, 5);
 }
 
+.avatar Label {
+    -fx-font-size: 36;
+    -fx-font-weight: bold;
+}
 .avatarItem {
     -fx-padding: 0 0 0 10;
 }
@@ -487,5 +491,28 @@ VBox.spaced, HBox.spaced {
 }
 
 .labeled-link > .label {
+    -fx-font-weight: bold;
+}
+.syncItem {
+    -fx-border-color: darkgrey;
+    -fx-border-width: 1 0 0 0;
+}
+
+
+* {
+    -fx-syncAvatar: 25;
+}
+.syncAvatar,
+.syncAvatar .avatar {
+    -fx-min-height: -fx-syncAvatar;
+    -fx-min-width: -fx-syncAvatar;
+    -fx-pref-height: -fx-syncAvatar;
+    -fx-pref-width: -fx-syncAvatar;
+    -fx-font-size: 22;
+    -fx-effect: none;
+}
+
+.syncName {
+    -fx-font-size: 22;
     -fx-font-weight: bold;
 }
