@@ -1,6 +1,7 @@
 package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
+import de.qabel.core.accounting.BoxClientStub;
 import de.qabel.core.accounting.QuotaState;
 import de.qabel.core.config.Contact;
 import de.qabel.core.crypto.QblECPublicKey;
@@ -12,8 +13,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.HashSet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
 
@@ -25,6 +25,16 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
     private LayoutController createController() {
         LayoutView view = new LayoutView();
         return (LayoutController) view.getPresenter();
+    }
+
+    @Test
+    public void hideQuotaBarWhenGetQuotaFails() {
+        ((BoxClientStub) controller.boxClient).ioException = new IOException("LayoutGuiTest");
+        controller.quotaState = null;
+        runLaterAndWait(controller::fillQuotaInformation);
+        assertFalse(controller.quotaBlock.isVisible());
+        assertFalse(controller.quotaDescription.isVisible());
+
     }
 
     @Test

@@ -193,12 +193,11 @@ public class LayoutController extends AbstractController implements Initializabl
 
     void fillQuotaInformation() {
         if (quotaState == null) {
-            try {
-                quotaState = boxClient.getQuotaState();
-            } catch (IOException | QblInvalidCredentials e) {
+            quotaState = getQuotaState(boxClient);
+            if (quotaState == null) {
                 quotaBlock.setVisible(false);
                 quotaDescription.setVisible(false);
-                alert(e);
+                return;
             }
         }
         int ratio = getUsedRatio(quotaState);
@@ -207,6 +206,15 @@ public class LayoutController extends AbstractController implements Initializabl
         quotaBar.setMinWidth(ratio);
         quotaDescription.setText(quotaDescriptionText);
     }
+
+    QuotaState getQuotaState(BoxClient boxClient) {
+        try {
+            return quotaState = boxClient.getQuotaState();
+        } catch (IOException | QblInvalidCredentials e) {
+            return quotaState = null;
+        }
+    }
+
 
     private void createButtonGraphics() {
         Image heartGraphic = new Image(getClass().getResourceAsStream("/img/heart.png"));

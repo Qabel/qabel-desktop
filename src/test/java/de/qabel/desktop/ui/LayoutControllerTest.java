@@ -19,13 +19,14 @@ public class LayoutControllerTest extends AbstractControllerTest {
     public void getQuotaStateFailuresThenHidesQuotaBars() {
         LayoutController controller = createController();
         ((BoxClientStub) controller.boxClient).ioException = new IOException("crashed IO");
+
+        System.out.println("controller.quotaBlock.isVisible() = " + controller.quotaBlock.isVisible());
         try {
             controller.boxClient.getQuotaState();
         } catch (IOException | QblInvalidCredentials e) {
             assertFalse(controller.quotaBlock.isVisible());
             assertFalse(controller.quotaDescription.isVisible());
         }
-
     }
 
     @Test

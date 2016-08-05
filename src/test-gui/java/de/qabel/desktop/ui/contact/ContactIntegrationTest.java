@@ -51,8 +51,10 @@ public class ContactIntegrationTest extends AbstractGuiTest<ContactController> {
         transactionManager = new SqliteTransactionManager(connection);
         identityRepository = new SqliteIdentityRepository(clientDatabase, em);
         contactRepository = new SqliteContactRepository(
-            clientDatabase, em, identityRepository,
-            new SqliteDropUrlRepository(clientDatabase, new DropURLHydrator())
+            clientDatabase,
+            em,
+            new SqliteDropUrlRepository(clientDatabase, new DropURLHydrator()),
+            identityRepository
         );
         dropMessageRepository = new SqliteDropMessageRepository(clientDatabase, em);
     }
