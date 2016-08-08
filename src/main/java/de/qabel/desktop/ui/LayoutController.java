@@ -70,19 +70,19 @@ public class LayoutController extends AbstractController implements Initializabl
     private ProgressBar uploadProgress;
 
     @FXML
-    private ImageView feedbackButton;
+    ImageView feedbackButton;
 
     @FXML
-    private ImageView inviteButton;
+    ImageView inviteButton;
 
     @FXML
-    private ImageView configButton;
+    ImageView configButton;
 
     @FXML
-    private ImageView faqButton;
+    ImageView faqButton;
 
     @FXML
-    private ImageView infoButton;
+    ImageView infoButton;
 
     @FXML
     private Pane window;
@@ -232,29 +232,24 @@ public class LayoutController extends AbstractController implements Initializabl
 
     private void setActivityMenu(Label label, ImageView icon) {
         cleanIconMenuStyle();
-        setVisibleBackground(label, true);
-        setStyleIcon(icon, "-fx-effect: innershadow(gaussian, #222222, 10, 10, 10, 10);");
+        label.setVisible(true);
+        icon.getStyleClass().add("darkgrey");
 
         if (activeNavItem != null) {
             activeNavItem.getStyleClass().remove("active");
         }
     }
 
-    private void setVisibleBackground(Label background, Boolean status) {
-        background.setVisible(status);
-    }
-
-    private void setStyleIcon(ImageView icon, String styleIcon) {
-        icon.setStyle(styleIcon);
-    }
-
     private void cleanIconMenuStyle() {
-        setVisibleBackground(inviteBackground, false);
-        setVisibleBackground(faqBackground, false);
-        setVisibleBackground(feedbackBackground, false);
-        setStyleIcon(inviteButton, null);
-        setStyleIcon(faqButton, null);
-        setStyleIcon(feedbackButton, null);
+        inviteBackground.setVisible(false);
+        faqBackground.setVisible(false);
+        feedbackBackground.setVisible(false);
+        inviteButton.getStyleClass().clear();
+        faqButton.getStyleClass().clear();
+        feedbackButton.getStyleClass().clear();
+        inviteButton.getStyleClass().remove("darkgrey");
+        faqButton.getStyleClass().remove("darkgrey");
+        feedbackButton.getStyleClass().remove("darkgrey");
     }
 
     private String lastAlias;

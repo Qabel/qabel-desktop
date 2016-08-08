@@ -7,10 +7,7 @@ import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuController;
 import de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuView;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
-import javafx.application.Platform;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -64,13 +61,12 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
         assertEquals("new alias identity", identity.getAlias());
     }
 
-
     @Test
     public void testInviteMenuStyle() throws Exception {
         clickOn(controller.inviteButton);
         waitUntil(controller.inviteBackground::isVisible);
         assertTrue(controller.inviteBackground.isVisible());
-        assertEquals(controller.inviteButton.getStyle(), "-fx-effect: innershadow(gaussian, #222222, 10, 10, 10, 10);");
+        assertEquals(controller.inviteButton.getStyleClass().toString(), "darkgrey");
     }
 
     @Test

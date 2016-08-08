@@ -210,6 +210,10 @@
     -fx-opacity: 0.9;
 }
 
+.darkgrey {
+    -fx-effect: innershadow( gaussian , #222222 , 10 , 10 , 10 , 10 );
+}
+
 .combo-box {
     -fx-background-color: white;
     -fx-border-width: 1px;
