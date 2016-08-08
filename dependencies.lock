@@ -8,8 +8,8 @@
             "requested": "1.7.+"
         },
         "com.github.qabel:qabel-core": {
-            "locked": "0.9.0",
-            "requested": "0.9.0"
+            "locked": "0.10.0",
+            "requested": "0.10.0"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -17,6 +17,14 @@
         },
         "com.google.code.gson:gson": {
             "locked": "2.7",
+            "requested": "2.+"
+        },
+        "com.google.zxing:core": {
+            "locked": "3.1.0",
+            "requested": "2.+"
+        },
+        "com.google.zxing:javase": {
+            "locked": "3.1.0",
             "requested": "2.+"
         },
         "commons-cli:commons-cli": {
@@ -34,6 +42,10 @@
         "log4j:log4j": {
             "locked": "1.2.17",
             "requested": "1.2.+"
+        },
+        "net.glxn.qrgen:javase": {
+            "locked": "2.0",
+            "requested": "2.+"
         },
         "null:jfxrt": {
             "project": true
@@ -65,6 +77,10 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4.1",
             "requested": "2.4.+"
+        },
+        "org.controlsfx:controlsfx": {
+            "locked": "8.0.5",
+            "requested": "8.+"
         },
         "org.json:json": {
             "locked": "20160212",
@@ -92,8 +108,8 @@
             "requested": "1.7.+"
         },
         "com.github.qabel:qabel-core": {
-            "locked": "0.9.0",
-            "requested": "0.9.0"
+            "locked": "0.10.0",
+            "requested": "0.10.0"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -101,6 +117,14 @@
         },
         "com.google.code.gson:gson": {
             "locked": "2.7",
+            "requested": "2.+"
+        },
+        "com.google.zxing:core": {
+            "locked": "3.1.0",
+            "requested": "2.+"
+        },
+        "com.google.zxing:javase": {
+            "locked": "3.1.0",
             "requested": "2.+"
         },
         "commons-cli:commons-cli": {
@@ -118,6 +142,10 @@
         "log4j:log4j": {
             "locked": "1.2.17",
             "requested": "1.2.+"
+        },
+        "net.glxn.qrgen:javase": {
+            "locked": "2.0",
+            "requested": "2.+"
         },
         "null:jfxrt": {
             "project": true
@@ -149,6 +177,10 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4.1",
             "requested": "2.4.+"
+        },
+        "org.controlsfx:controlsfx": {
+            "locked": "8.0.5",
+            "requested": "8.+"
         },
         "org.json:json": {
             "locked": "20160212",
@@ -182,8 +214,8 @@
             "requested": "1.7.+"
         },
         "com.github.qabel:qabel-core": {
-            "locked": "0.9.0",
-            "requested": "0.9.0"
+            "locked": "0.10.0",
+            "requested": "0.10.0"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -191,6 +223,14 @@
         },
         "com.google.code.gson:gson": {
             "locked": "2.7",
+            "requested": "2.+"
+        },
+        "com.google.zxing:core": {
+            "locked": "3.1.0",
+            "requested": "2.+"
+        },
+        "com.google.zxing:javase": {
+            "locked": "3.1.0",
             "requested": "2.+"
         },
         "com.tngtech.java:junit-dataprovider": {
@@ -224,6 +264,10 @@
         "log4j:log4j": {
             "locked": "1.2.17",
             "requested": "1.2.+"
+        },
+        "net.glxn.qrgen:javase": {
+            "locked": "2.0",
+            "requested": "2.+"
         },
         "null:box-test-0.7.0": {
             "project": true
@@ -261,6 +305,10 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4.1",
             "requested": "2.4.+"
+        },
+        "org.controlsfx:controlsfx": {
+            "locked": "8.0.5",
+            "requested": "8.+"
         },
         "org.json:json": {
             "locked": "20160212",
@@ -306,8 +354,8 @@
             "requested": "1.7.+"
         },
         "com.github.qabel:qabel-core": {
-            "locked": "0.9.0",
-            "requested": "0.9.0"
+            "locked": "0.10.0",
+            "requested": "0.10.0"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -315,6 +363,14 @@
         },
         "com.google.code.gson:gson": {
             "locked": "2.7",
+            "requested": "2.+"
+        },
+        "com.google.zxing:core": {
+            "locked": "3.1.0",
+            "requested": "2.+"
+        },
+        "com.google.zxing:javase": {
+            "locked": "3.1.0",
             "requested": "2.+"
         },
         "com.tngtech.java:junit-dataprovider": {
@@ -348,6 +404,10 @@
         "log4j:log4j": {
             "locked": "1.2.17",
             "requested": "1.2.+"
+        },
+        "net.glxn.qrgen:javase": {
+            "locked": "2.0",
+            "requested": "2.+"
         },
         "null:box-test-0.7.0": {
             "project": true
@@ -385,6 +445,10 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4.1",
             "requested": "2.4.+"
+        },
+        "org.controlsfx:controlsfx": {
+            "locked": "8.0.5",
+            "requested": "8.+"
         },
         "org.json:json": {
             "locked": "20160212",
@@ -424,8 +488,8 @@
             "requested": "1.7.+"
         },
         "com.github.qabel:qabel-core": {
-            "locked": "0.9.0",
-            "requested": "0.9.0"
+            "locked": "0.10.0",
+            "requested": "0.10.0"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -433,6 +497,14 @@
         },
         "com.google.code.gson:gson": {
             "locked": "2.7",
+            "requested": "2.+"
+        },
+        "com.google.zxing:core": {
+            "locked": "3.1.0",
+            "requested": "2.+"
+        },
+        "com.google.zxing:javase": {
+            "locked": "3.1.0",
             "requested": "2.+"
         },
         "commons-cli:commons-cli": {
@@ -450,6 +522,10 @@
         "log4j:log4j": {
             "locked": "1.2.17",
             "requested": "1.2.+"
+        },
+        "net.glxn.qrgen:javase": {
+            "locked": "2.0",
+            "requested": "2.+"
         },
         "null:jfxrt": {
             "project": true
@@ -481,6 +557,10 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4.1",
             "requested": "2.4.+"
+        },
+        "org.controlsfx:controlsfx": {
+            "locked": "8.40.11",
+            "requested": "8.+"
         },
         "org.json:json": {
             "locked": "20160212",
@@ -514,8 +594,8 @@
             "requested": "1.7.+"
         },
         "com.github.qabel:qabel-core": {
-            "locked": "0.9.0",
-            "requested": "0.9.0"
+            "locked": "0.10.0",
+            "requested": "0.10.0"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -523,6 +603,14 @@
         },
         "com.google.code.gson:gson": {
             "locked": "2.7",
+            "requested": "2.+"
+        },
+        "com.google.zxing:core": {
+            "locked": "3.1.0",
+            "requested": "2.+"
+        },
+        "com.google.zxing:javase": {
+            "locked": "3.1.0",
             "requested": "2.+"
         },
         "com.tngtech.java:junit-dataprovider": {
@@ -556,6 +644,10 @@
         "log4j:log4j": {
             "locked": "1.2.17",
             "requested": "1.2.+"
+        },
+        "net.glxn.qrgen:javase": {
+            "locked": "2.0",
+            "requested": "2.+"
         },
         "null:box-test-0.7.0": {
             "project": true
@@ -593,6 +685,10 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4.1",
             "requested": "2.4.+"
+        },
+        "org.controlsfx:controlsfx": {
+            "locked": "8.0.5",
+            "requested": "8.+"
         },
         "org.json:json": {
             "locked": "20160212",
@@ -638,8 +734,8 @@
             "requested": "1.7.+"
         },
         "com.github.qabel:qabel-core": {
-            "locked": "0.9.0",
-            "requested": "0.9.0"
+            "locked": "0.10.0",
+            "requested": "0.10.0"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -647,6 +743,14 @@
         },
         "com.google.code.gson:gson": {
             "locked": "2.7",
+            "requested": "2.+"
+        },
+        "com.google.zxing:core": {
+            "locked": "3.1.0",
+            "requested": "2.+"
+        },
+        "com.google.zxing:javase": {
+            "locked": "3.1.0",
             "requested": "2.+"
         },
         "com.tngtech.java:junit-dataprovider": {
@@ -680,6 +784,10 @@
         "log4j:log4j": {
             "locked": "1.2.17",
             "requested": "1.2.+"
+        },
+        "net.glxn.qrgen:javase": {
+            "locked": "2.0",
+            "requested": "2.+"
         },
         "null:box-test-0.7.0": {
             "project": true
@@ -717,6 +825,10 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4.1",
             "requested": "2.4.+"
+        },
+        "org.controlsfx:controlsfx": {
+            "locked": "8.0.5",
+            "requested": "8.+"
         },
         "org.json:json": {
             "locked": "20160212",

@@ -113,6 +113,11 @@ dependencies {
 
     compile 'com.github.zafarkhaja:java-semver:0.9.+'        // MIT https://github.com/zafarkhaja/jsemver/blob/master/LICENSE
 
+    compile 'com.google.zxing:core:2.+'                     //Apache License https://github.com/zxing/zxing/wiki/License-Questions
+    compile 'com.google.zxing:javase:2.+'                   //Apache License https://github.com/zxing/zxing/wiki/License-Questions
+    compile 'net.glxn.qrgen:javase:2.+'                     //Apache License https://github.com/kenglxn/QRGen
+    compile 'org.controlsfx:controlsfx:8.+'
+
     testCompile name: 'box-test-0.12.0'
     testCompile name: 'core-test-0.12.0'
     testCompile 'info.cukes:cucumber-java:1.2.+'

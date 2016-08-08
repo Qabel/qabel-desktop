@@ -70,19 +70,19 @@ public class LayoutController extends AbstractController implements Initializabl
     private ProgressBar uploadProgress;
 
     @FXML
-    public ImageView feedbackButton;
+    private ImageView feedbackButton;
 
     @FXML
-    public ImageView inviteButton;
+    private ImageView inviteButton;
 
     @FXML
     private ImageView configButton;
 
     @FXML
-    public ImageView faqButton;
+    private ImageView faqButton;
 
     @FXML
-    public ImageView infoButton;
+    private ImageView infoButton;
 
     @FXML
     private Pane window;
@@ -283,6 +283,11 @@ public class LayoutController extends AbstractController implements Initializabl
             return;
         }
 
+        identity.attach(() -> Platform.runLater(() -> {
+            alias.setText(identity.getAlias());
+            updateAvatar(identity);
+        }));
+
         new AvatarView(e -> currentAlias).getViewAsync(avatarContainer.getChildren()::setAll);
         alias.setText(currentAlias);
         lastAlias = currentAlias;
@@ -291,6 +296,10 @@ public class LayoutController extends AbstractController implements Initializabl
             return;
         }
         mail.setText(clientConfiguration.getAccount().getUser());
+    }
+
+    private void updateAvatar(Identity identity) {
+        new AvatarView(e -> identity.getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
     }
 
     private NaviItem createNavItem(String label, FXMLView view) {
