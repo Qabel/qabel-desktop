@@ -158,7 +158,7 @@ public class LayoutController extends AbstractController implements Initializabl
         updateIdentity();
         clientConfiguration.onSelectIdentity(i -> Platform.runLater(this::updateIdentity));
 
-        fillQuotaInformation();
+        fillQuotaInformation(getQuotaState());
 
         bottomContainer.getChildren().remove(uploadProgress);
         ComposedProgressBar progressBar = new ComposedProgressBar();
@@ -191,14 +191,11 @@ public class LayoutController extends AbstractController implements Initializabl
         newMessageIndicator.visibleProperty().bind(newMessageIndicator.textProperty().isNotEqualTo("0"));
     }
 
-    void fillQuotaInformation() {
+    void fillQuotaInformation(QuotaState quotaState) {
         if (quotaState == null) {
-            quotaState = getQuotaState(boxClient);
-            if (quotaState == null) {
-                quotaBlock.setVisible(false);
-                quotaDescription.setVisible(false);
-                return;
-            }
+            quotaBlock.setVisible(false);
+            quotaDescription.setVisible(false);
+            return;
         }
         int ratio = getUsedRatio(quotaState);
         String quotaDescriptionText = getQuotaDescription(quotaState, resourceBundle.getString("quotaDescription"));
@@ -207,7 +204,7 @@ public class LayoutController extends AbstractController implements Initializabl
         quotaDescription.setText(quotaDescriptionText);
     }
 
-    QuotaState getQuotaState(BoxClient boxClient) {
+    QuotaState getQuotaState() {
         try {
             return quotaState = boxClient.getQuotaState();
         } catch (IOException | QblInvalidCredentials e) {

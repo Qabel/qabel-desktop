@@ -1,7 +1,6 @@
 package de.qabel.desktop.ui;
 
 import de.qabel.core.accounting.BoxClientStub;
-import de.qabel.core.exceptions.QblInvalidCredentials;
 import javafx.scene.Node;
 import org.junit.Test;
 
@@ -11,6 +10,7 @@ import java.util.Locale;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.*;
+
 public class LayoutControllerTest extends AbstractControllerTest {
 
     public static final int MIN_ITEM_COUNT = 2;
@@ -19,30 +19,26 @@ public class LayoutControllerTest extends AbstractControllerTest {
     public void getQuotaStateFailuresThenHidesQuotaBars() {
         LayoutController controller = createController();
         ((BoxClientStub) controller.boxClient).ioException = new IOException("crashed IO");
+        controller.fillQuotaInformation(controller.getQuotaState());
 
-        System.out.println("controller.quotaBlock.isVisible() = " + controller.quotaBlock.isVisible());
-        try {
-            controller.boxClient.getQuotaState();
-        } catch (IOException | QblInvalidCredentials e) {
-            assertFalse(controller.quotaBlock.isVisible());
-            assertFalse(controller.quotaDescription.isVisible());
-        }
+        assertFalse(controller.quotaBlock.isVisible());
+        assertFalse(controller.quotaDescription.isVisible());
     }
 
     @Test
-    public void testFillQuotaInformation() throws IOException, QblInvalidCredentials {
+    public void testFillQuotaInformation() {
         Locale.setDefault(new Locale("te", "ST"));
         LayoutController controller = createController();
         assertEquals("30%", controller.quota.getText());
         assertEquals(30, (int) controller.quotaBar.getMinWidth());
-        assertEquals("667.57 MB free / 953.67 MB", controller.quotaDescription.getText());
+        assertThat(controller.quotaDescription.getText(), containsString("667.57 MB"));
     }
 
     @Test
-    public void testFillQuotaInformationLocalizedToGerman() throws IOException, QblInvalidCredentials {
+    public void testFillQuotaInformationLocalizedToGerman() {
         Locale.setDefault(new Locale("de", "DE"));
         LayoutController controller = createController();
-        assertThat(controller.quotaDescription.getText(), containsString("667,57"));
+        assertThat(controller.quotaDescription.getText(), containsString("667,57 MB"));
     }
 
     @Test
