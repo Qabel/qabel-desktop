@@ -253,9 +253,6 @@ public class LayoutController extends AbstractController implements Initializabl
         inviteBackground.setVisible(false);
         faqBackground.setVisible(false);
         feedbackBackground.setVisible(false);
-//        inviteButton.getStyleClass().clear();
-//        faqButton.getStyleClass().clear();
-//        feedbackButton.getStyleClass().clear();
         inviteButton.getStyleClass().remove("darkgrey");
         faqButton.getStyleClass().remove("darkgrey");
         feedbackButton.getStyleClass().remove("darkgrey");
