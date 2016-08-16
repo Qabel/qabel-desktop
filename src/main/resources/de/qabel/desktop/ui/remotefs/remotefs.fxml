@@ -1,40 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
-<StackPane fx:id="stack" maxHeight="Infinity" maxWidth="Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.remotefs.RemoteFSController">
-   <children>
-      <BorderPane fx:id="remotefsContainer" maxHeight="Infinity" maxWidth="Infinity" prefHeight="4000">
-          <top>
-              <HBox fx:id="search" style="-fx-spacing: 1em;">
-                  <children>
-                      <ImageView fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                         <image>
-                            <Image url="@/icon/search.png" />
-                         </image>
-                      </ImageView>
-                      <TextField fx:id="searchQuery" promptText="%remoteFsSearchPrompt" styleClass="inline" />
-                  </children>
-               <BorderPane.margin>
-                  <Insets bottom="10.0" left="5.0" right="5.0" top="5.0" />
-               </BorderPane.margin>
-              </HBox>
-          </top>
-          <center>
-              <TreeTableView fx:id="treeTable" maxHeight="Infinity" maxWidth="Infinity" styleClass="browser">
-                  <columns>
-                      <TreeTableColumn fx:id="nameColumn" minWidth="50" prefWidth="200.0" text="%remoteFsName" />
-                      <TreeTableColumn fx:id="sizeColumn" prefWidth="70.0" text="%remoteFsSize" />
-                      <TreeTableColumn fx:id="dateColumn" prefWidth="120.0" text="%remoteFsDate" />
-                      <TreeTableColumn fx:id="optionsColumn" minWidth="100" prefWidth="130.0" />
-                  </columns>
-              </TreeTableView>
-          </center>
-      </BorderPane>
-   </children>
+
+<StackPane fx:id="stack" maxHeight="Infinity" maxWidth="Infinity" xmlns="http://javafx.com/javafx/8"
+           xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.remotefs.RemoteFSController">
+    <children>
+        <BorderPane fx:id="remotefsContainer" maxHeight="Infinity" maxWidth="Infinity" prefHeight="4000">
+            <top>
+                <HBox fx:id="search" style="-fx-spacing: 1em;">
+                    <children>
+                        <TextField fx:id="searchQuery" prefHeight="43.0" prefWidth="180.0"
+                                   promptText="%remoteFsSearchPrompt" styleClass="inline"/>
+                    </children>
+                    <BorderPane.margin>
+                        <Insets bottom="10.0" left="5.0" right="5.0" top="5.0"/>
+                    </BorderPane.margin>
+                </HBox>
+            </top>
+            <center>
+                <TreeTableView fx:id="treeTable" maxHeight="Infinity" maxWidth="Infinity" styleClass="browser">
+                    <columns>
+                        <TreeTableColumn fx:id="nameColumn" minWidth="50" prefWidth="200.0" text="%remoteFsName"/>
+                        <TreeTableColumn fx:id="sizeColumn" prefWidth="70.0" text="%remoteFsSize"/>
+                        <TreeTableColumn fx:id="dateColumn" prefWidth="120.0" text="%remoteFsDate"/>
+                        <TreeTableColumn fx:id="optionsColumn" minWidth="100" prefWidth="130.0"/>
+                    </columns>
+                </TreeTableView>
+            </center>
+        </BorderPane>
+    </children>
 </StackPane>

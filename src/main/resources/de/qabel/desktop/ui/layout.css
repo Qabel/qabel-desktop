@@ -31,10 +31,11 @@
 }
 
 .navi .button {
-    -fx-pref-width: 220px;
+    -fx-pref-width: 200px;
+    -fx-pref-height: 20px;
     -fx-cursor: hand;
     -fx-border-radius: 0, 0, 0, 0;
-    -fx-padding: 10px 10 10px 45px;
+    -fx-padding: 5px 5px 5px 25px;
     -fx-background-radius: 0;
     -fx-background-color: transparent;
     -fx-text-fill: white;
@@ -43,6 +44,10 @@
     -fx-background-insets: 0px;
     -fx-border-color: none;
     -fx-font-weight: normal;
+}
+
+.navi .image {
+    -fx-background-color: #ff690f;
 }
 
 .navi-container .progress-bar .bar {
@@ -59,7 +64,7 @@
 }
 
 .navi .button:hover {
-    -fx-text-fill: #222222;
+    -fx-effect: innershadow(gaussian , #333333, 10, 10, 10, 10);
 }
 
 .navi .navi-item.active {
@@ -68,7 +73,7 @@
 
 .navi .navi-item.active .button {
     -fx-font-weight: bold;
-    -fx-text-fill: #222222;
+    -fx-text-fill: #333333;
 }
 
 .navi-item .indicator {
@@ -113,4 +118,3 @@
     -fx-font-weight: bold;
     -fx-text-fill: white;
 }
-

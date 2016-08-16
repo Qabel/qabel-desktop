@@ -64,9 +64,8 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
     @Test
     public void testInviteMenuStyle() throws Exception {
         clickOn(controller.inviteButton);
-        waitUntil(controller.inviteBackground::isVisible);
         assertTrue(controller.inviteBackground.isVisible());
-        assertEquals(controller.inviteButton.getStyleClass().toString(), "darkgrey");
+        assertTrue(controller.inviteButton.getStyleClass().contains("darkgrey"));
     }
 
     @Test
@@ -75,5 +74,21 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
         assertTrue(!controller.inviteBackground.isVisible());
         assertTrue(!controller.faqBackground.isVisible());
         assertTrue(!controller.feedbackBackground.isVisible());
+    }
+
+    @Test
+    public void testUnactivatedNaviItem() throws Exception {
+        clickOn(controller.browseNav);
+        clickOn(controller.inviteButton);
+        assertTrue(!controller.browseNav.button.getGraphic().getStyleClass().contains("active"));
+    }
+
+    @Test
+    public void testIconsNaviItem() throws Exception {
+        assertTrue(controller.browseNav.button.getGraphic() != null);
+        assertTrue(controller.contactsNav.button.getGraphic() != null);
+        assertTrue(controller.syncNav.button.getGraphic() != null);
+        assertTrue(controller.accountingNav.button.getGraphic() != null);
+        assertTrue(controller.aboutNav.button.getGraphic() != null);
     }
 }

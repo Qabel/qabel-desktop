@@ -125,13 +125,22 @@ public class LayoutController extends AbstractController implements Initializabl
         navi.getChildren().clear();
         AccountingView accountingView = new AccountingView();
         actionlogView = new ActionlogView();
-        accountingNav = createNavItem(resourceBundle.getString("layoutIdentity"), accountingView);
+        accountingNav = createNavItem(resourceBundle.getString("layoutIdentity"),
+            new Image(getClass().getResourceAsStream("/img/account_white.png")),
+            accountingView);
         navi.getChildren().add(accountingNav);
-
-        browseNav = createNavItem(resourceBundle.getString("layoutBrowse"), new RemoteFSView());
-        contactsNav = createNavItem(resourceBundle.getString("layoutContacts"), new ContactView());
-        syncNav = createNavItem(resourceBundle.getString("layoutSync"), new SyncView());
-        aboutNav = createNavItem(resourceBundle.getString("layoutAbout"), new AboutView());
+        browseNav = createNavItem(resourceBundle.getString("layoutBrowse"),
+            new Image(getClass().getResourceAsStream("/img/folder_white.png")),
+            new RemoteFSView());
+        contactsNav = createNavItem(resourceBundle.getString("layoutContacts"),
+            new Image(getClass().getResourceAsStream("/img/account_multiple_white.png")),
+            new ContactView());
+        syncNav = createNavItem(resourceBundle.getString("layoutSync"),
+            new Image(getClass().getResourceAsStream("/img/sync_white.png")),
+            new SyncView());
+        aboutNav = createNavItem(resourceBundle.getString("layoutAbout"),
+            new Image(getClass().getResourceAsStream("/img/information_white.png")),
+            new AboutView());
 
         navi.getChildren().add(browseNav);
         navi.getChildren().add(contactsNav);
@@ -236,7 +245,7 @@ public class LayoutController extends AbstractController implements Initializabl
         icon.getStyleClass().add("darkgrey");
 
         if (activeNavItem != null) {
-            activeNavItem.getStyleClass().remove("active");
+            activeNavItem.setActive(false);
         }
     }
 
@@ -244,9 +253,9 @@ public class LayoutController extends AbstractController implements Initializabl
         inviteBackground.setVisible(false);
         faqBackground.setVisible(false);
         feedbackBackground.setVisible(false);
-        inviteButton.getStyleClass().clear();
-        faqButton.getStyleClass().clear();
-        feedbackButton.getStyleClass().clear();
+//        inviteButton.getStyleClass().clear();
+//        faqButton.getStyleClass().clear();
+//        feedbackButton.getStyleClass().clear();
         inviteButton.getStyleClass().remove("darkgrey");
         faqButton.getStyleClass().remove("darkgrey");
         feedbackButton.getStyleClass().remove("darkgrey");
@@ -297,8 +306,8 @@ public class LayoutController extends AbstractController implements Initializabl
         new AvatarView(e -> identity.getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
     }
 
-    private NaviItem createNavItem(String label, FXMLView view) {
-        NaviItem naviItem = new NaviItem(label, view);
+    private NaviItem createNavItem(String label, Image image, FXMLView view) {
+        NaviItem naviItem = new NaviItem(label, image, view);
         naviItem.setOnAction(e -> {
             try {
                 scrollContent.getChildren().setAll(view.getView());

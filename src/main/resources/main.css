@@ -102,7 +102,6 @@
 .avatar {
     -fx-font-size: 3em;
     -fx-alignment: CENTER;
-
     -fx-text-fill: #343434;
     -fx-background-size: 50px;
     -fx-background-color: magenta;
@@ -110,7 +109,6 @@
     -fx-border-radius: 25;
     -fx-padding: 0 0 0 0;
     -fx-margin: 3px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0, 0, 5);
 }
 
 .avatarItem {
@@ -143,24 +141,24 @@
 }
 
 .btn:hover {
-    -fx-background-color: #e0e0e0;
+    -fx-background-color: #e6e6e6;
 }
 
 .button {
-    -fx-border-color: black;
-    -fx-border-width: 0.2em;
+    -fx-border-color: #333333;
+    -fx-border-width: 0.15em;
     -fx-background-color: none;
     -fx-cursor: hand;
 }
 
 .button:hover {
-    -fx-border-color: grey;
-    -fx-text-fill: grey;
+    -fx-border-color: #808080;
+    -fx-effect: innershadow(gaussian, #808080, 10, 10, 10, 10);
 }
 
 .button:pressed {
-    -fx-border-color: #ff690f;
-    -fx-text-fill: #ff690f;
+    -fx-border-color: #ff5908;
+    -fx-effect: innershadow(gaussian, #ff5908, 10, 10, 10, 10);
 }
 
 .scroll-pane > .viewport {
@@ -182,7 +180,7 @@
 }
 
 .selected {
-    -fx-background-color: #c7c7c7;
+    -fx-background-color: #b3b3b3;
 }
 
 .inline-button {
@@ -194,12 +192,8 @@
     -fx-opacity: 0.9;
 }
 
-.inline-button:hover {
-    -fx-effect: innershadow( gaussian , #222222 , 10 , 10 , 10 , 10 );
-}
-
-.inline-button:pressed {
-    -fx-effect: innershadow( gaussian , #222222 , 10 , 10 , 10 , 10 );
+.inline-button:hover, .inline-button:pressed, .darkgrey, .darkgrey:hover {
+    -fx-effect: innershadow(gaussian , #333333, 10, 10, 10, 10);
 }
 
 .inline-button.faded-button {
@@ -208,10 +202,6 @@
 
 .inline-button.faded-button:hover {
     -fx-opacity: 0.9;
-}
-
-.darkgrey {
-    -fx-effect: innershadow( gaussian , #222222 , 10 , 10 , 10 , 10 );
 }
 
 .combo-box {
@@ -366,36 +356,49 @@
 }
 
 .text-field.inline {
-    -fx-border-width: 0;
+    -fx-border-width: 0.15em;
+    -fx-border-color: #333333;
     -fx-background-insets: 0;
-    -fx-effect: none;
     -fx-background-color: transparent;
     -fx-font-size: 1.1em;
+    -fx-background-image:url('/icon/search.png');
+    -fx-background-position: 10px 10px;
+    -fx-background-repeat: no-repeat;
+
+    -fx-padding: 10px 10px 10px 50px;
+}
+
+.text-field.inline:hover {
+    -fx-effect: innershadow(gaussian, #808080, 10, 10, 10, 10);
+}
+
+.text-field.inline:pressed {
+    -fx-effect: innershadow(gaussian, #ff5908, 10, 10, 10, 10);
 }
 
 .tree-table-row-cell.root {
     -fx-border-width: 1 0 0 0;
-    -fx-border-color: #cccccc;
+    -fx-border-color: #333333;
 }
 
 .tree-table-column {
     -fx-border-width: 0 1 0 0;
-    -fx-border-color: #cccccc;
+    -fx-border-color: #333333;
 }
 
 .tree-table-row-cell:hover {
-    -fx-background-color: #f0f0f0;
+    -fx-background-color: #e6e6e6;
 }
 
 .tree-table-row-cell:selected {
-    -fx-background-color: #f0f0f0;
-    -fx-text-fill: #222222;
+    -fx-background-color: #b3b3b3;
+    -fx-text-fill: #333333;
     -fx-border-width: 0;
 }
 
 .tree-table-row-cell:selected * {
-    -fx-background-color: #c7c7c7;
-    -fx-text-fill: #222222;
+    -fx-background-color: #b3b3b3;
+    -fx-text-fill: #333333;
 }
 
 .tree-table-row-cell:selected .tooltip {
@@ -445,10 +448,9 @@
 }
 
 .transparency-button:hover {
-    -fx-background-color: white;
     -fx-background-insets: 0px;
     -fx-border-color: none;
-    -fx-text-fill: ff690f;
+    -fx-text-fill: #808080;
 }
 
 .transparency-button:pressed {
@@ -631,30 +633,25 @@ VBox.spaced, HBox.spaced {
 }
 
 .button-menu:hover {
-    -fx-background-color: transparent;
-    -fx-background-insets: 0px;
+
     -fx-border-style: none;
     -fx-border-color: none;
-    -fx-text-fill: #ff690f;
+    -fx-effect: innershadow(gaussian, #808080, 1, 1, 1, 1);
 }
 
 .button-menu:pressed {
     -fx-border-color: none;
-    -fx-text-fill: none;
     -fx-border-style: none;
+    -fx-effect: innershadow(gaussian, #ff5908, 1, 1, 1, 1);
 }
 
 .vbox-menu {
     -fx-background-color: white;
     -fx-border-style: solid;
-    -fx-border-width: 1px 1px 1px 1px;
-    -fx-border-color: #CCCCCC;
+    -fx-border-width: 0.15em;
+    -fx-border-color: #333333;
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 8, 0.0, 0, 1);
     -fx-max-width: 200px;
-}
-
-.vbox-border {
-     -fx-background-color: transparent;
 }
 
 .popup-menu {
