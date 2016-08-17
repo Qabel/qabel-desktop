@@ -7,9 +7,13 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.Qabel:qabel-core": {
-            "locked": "0.14",
-            "requested": "0.14"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "3e8db37f9ad327629b10e2b01676abe291d896f7",
+            "requested": "3e8db37f9ad327629b10e2b01676abe291d896f7"
+        },
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "3e8db37f9ad327629b10e2b01676abe291d896f7",
+            "requested": "3e8db37f9ad327629b10e2b01676abe291d896f7"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -95,9 +99,13 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.Qabel:qabel-core": {
-            "locked": "0.14",
-            "requested": "0.14"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "3e8db37f9ad327629b10e2b01676abe291d896f7",
+            "requested": "3e8db37f9ad327629b10e2b01676abe291d896f7"
+        },
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "3e8db37f9ad327629b10e2b01676abe291d896f7",
+            "requested": "3e8db37f9ad327629b10e2b01676abe291d896f7"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -176,12 +184,6 @@
         }
     },
     "guiTestCompile": {
-        ":box-test-0.14": {
-            "project": true
-        },
-        ":core-test-0.14": {
-            "project": true
-        },
         ":jfxrt": {
             "project": true
         },
@@ -189,9 +191,13 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.Qabel:qabel-core": {
-            "locked": "0.14",
-            "requested": "0.14"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "3e8db37f9ad327629b10e2b01676abe291d896f7",
+            "requested": "3e8db37f9ad327629b10e2b01676abe291d896f7"
+        },
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "3e8db37f9ad327629b10e2b01676abe291d896f7",
+            "requested": "3e8db37f9ad327629b10e2b01676abe291d896f7"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -236,12 +242,6 @@
         "log4j:log4j": {
             "locked": "1.2.17",
             "requested": "1.2.+"
-        },
-        "null:box-test-0.14": {
-            "project": true
-        },
-        "null:core-test-0.14": {
-            "project": true
         },
         "null:jfxrt": {
             "project": true
@@ -304,12 +304,6 @@
         }
     },
     "guiTestRuntime": {
-        ":box-test-0.14": {
-            "project": true
-        },
-        ":core-test-0.14": {
-            "project": true
-        },
         ":jfxrt": {
             "project": true
         },
@@ -317,9 +311,13 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.Qabel:qabel-core": {
-            "locked": "0.14",
-            "requested": "0.14"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "3e8db37f9ad327629b10e2b01676abe291d896f7",
+            "requested": "3e8db37f9ad327629b10e2b01676abe291d896f7"
+        },
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "3e8db37f9ad327629b10e2b01676abe291d896f7",
+            "requested": "3e8db37f9ad327629b10e2b01676abe291d896f7"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -364,12 +362,6 @@
         "log4j:log4j": {
             "locked": "1.2.17",
             "requested": "1.2.+"
-        },
-        "null:box-test-0.14": {
-            "project": true
-        },
-        "null:core-test-0.14": {
-            "project": true
         },
         "null:jfxrt": {
             "project": true
@@ -439,9 +431,13 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.Qabel:qabel-core": {
-            "locked": "0.14",
-            "requested": "0.14"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "3e8db37f9ad327629b10e2b01676abe291d896f7",
+            "requested": "3e8db37f9ad327629b10e2b01676abe291d896f7"
+        },
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "3e8db37f9ad327629b10e2b01676abe291d896f7",
+            "requested": "3e8db37f9ad327629b10e2b01676abe291d896f7"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -520,12 +516,6 @@
         }
     },
     "testCompile": {
-        ":box-test-0.14": {
-            "project": true
-        },
-        ":core-test-0.14": {
-            "project": true
-        },
         ":jfxrt": {
             "project": true
         },
@@ -533,9 +523,13 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.Qabel:qabel-core": {
-            "locked": "0.14",
-            "requested": "0.14"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "3e8db37f9ad327629b10e2b01676abe291d896f7",
+            "requested": "3e8db37f9ad327629b10e2b01676abe291d896f7"
+        },
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "3e8db37f9ad327629b10e2b01676abe291d896f7",
+            "requested": "3e8db37f9ad327629b10e2b01676abe291d896f7"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -580,12 +574,6 @@
         "log4j:log4j": {
             "locked": "1.2.17",
             "requested": "1.2.+"
-        },
-        "null:box-test-0.14": {
-            "project": true
-        },
-        "null:core-test-0.14": {
-            "project": true
         },
         "null:jfxrt": {
             "project": true
@@ -648,12 +636,6 @@
         }
     },
     "testRuntime": {
-        ":box-test-0.14": {
-            "project": true
-        },
-        ":core-test-0.14": {
-            "project": true
-        },
         ":jfxrt": {
             "project": true
         },
@@ -661,9 +643,13 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.Qabel:qabel-core": {
-            "locked": "0.14",
-            "requested": "0.14"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "3e8db37f9ad327629b10e2b01676abe291d896f7",
+            "requested": "3e8db37f9ad327629b10e2b01676abe291d896f7"
+        },
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "3e8db37f9ad327629b10e2b01676abe291d896f7",
+            "requested": "3e8db37f9ad327629b10e2b01676abe291d896f7"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -708,12 +694,6 @@
         "log4j:log4j": {
             "locked": "1.2.17",
             "requested": "1.2.+"
-        },
-        "null:box-test-0.14": {
-            "project": true
-        },
-        "null:core-test-0.14": {
-            "project": true
         },
         "null:jfxrt": {
             "project": true

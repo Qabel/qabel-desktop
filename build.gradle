@@ -98,8 +98,6 @@ dependencies {
     compile 'javax.inject:javax.inject:1'                    //Apache License http://mvnrepository.com/artifact/javax.inject/javax.inject/1
     compile 'com.airhacks:afterburner.fx:1.7.+'              //Apache License https://github.com/AdamBien/afterburner.fx
 
-    compile 'com.github.Qabel.qabel-core:box:0.16'
-
     compile 'com.google.code.gson:gson:2.+'                  //Apache License https://github.com/google/gson/blob/master/LICENSE
     compile 'org.slf4j:slf4j-api:1.7.+'                      //MIT http://www.slf4j.org/license.html
     compile 'log4j:log4j:1.2.+'                              //Apache License https://logging.apache.org/log4j/1.2/license.html
@@ -114,8 +112,14 @@ dependencies {
     compile 'com.github.mfornos:humanize-slim:1.2.2'
     compile 'com.github.zafarkhaja:java-semver:0.9.+'        // MIT https://github.com/zafarkhaja/jsemver/blob/master/LICENSE
 
-    testCompile name: 'box-test-0.16'
-    testCompile name: 'core-test-0.16'
+    compile 'com.github.Qabel.qabel-core:core:3e8db37f9ad327629b10e2b01676abe291d896f7'
+    compile 'com.github.Qabel.qabel-core:box:3e8db37f9ad327629b10e2b01676abe291d896f7'
+
+    testCompile 'com.github.Qabel.qabel-core:box:3e8db37f9ad327629b10e2b01676abe291d896f7:tests'
+    testCompile 'com.github.Qabel.qabel-core:box:3e8db37f9ad327629b10e2b01676abe291d896f7:sources'
+    testCompile 'com.github.Qabel.qabel-core:core:3e8db37f9ad327629b10e2b01676abe291d896f7:tests'
+    testCompile 'com.github.Qabel.qabel-core:core:3e8db37f9ad327629b10e2b01676abe291d896f7:sources'
+
     testCompile 'info.cukes:cucumber-java:1.2.+'
     testCompile 'info.cukes:cucumber-junit:1.2.+'
     testCompile 'com.tngtech.java:junit-dataprovider:1.10.+'    // Apache v2
