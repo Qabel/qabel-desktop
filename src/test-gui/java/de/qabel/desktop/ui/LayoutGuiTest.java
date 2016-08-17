@@ -17,6 +17,8 @@ import static org.junit.Assert.*;
 
 public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
 
+    private QuotaState quotaState;
+
     @Override
     protected FXMLView getView() {
         return new LayoutView();
@@ -30,17 +32,19 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
     @Test
     public void hideQuotaBarWhenGetQuotaFails() {
         ((BoxClientStub) controller.boxClient).ioException = new IOException("LayoutGuiTest");
-        controller.quotaState = null;
-        runLaterAndWait(controller::fillQuotaInformation);
+        runLaterAndWait(() -> {
+            controller.fillQuotaInformation(controller.getQuotaState());
+        });
         assertFalse(controller.quotaBlock.isVisible());
         assertFalse(controller.quotaDescription.isVisible());
-
     }
 
     @Test
     public void showsQuotaBarWith0MinWidth() throws IOException, QblInvalidCredentials {
-        controller.quotaState = new QuotaState(100, 100);
-        runLaterAndWait(controller::fillQuotaInformation);
+        quotaState = new QuotaState(100, 100);
+        runLaterAndWait(() -> {
+            controller.fillQuotaInformation(quotaState);
+        });
         assertEquals(0, (int) controller.quotaBar.getMinWidth());
     }
 
