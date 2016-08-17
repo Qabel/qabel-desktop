@@ -168,7 +168,7 @@ public class ContactControllerTest extends AbstractControllerTest {
         try {
             controller.importContacts(c1.toFile());
             fail("expecting EntityExistsException on duplicate contact");
-        } catch (Exception ignored) {}
+        } catch (PersistenceException ignored) {}
 
         controller.importContacts(c2.toFile());
         assertEquals(2, contactRepository.find(identity).getContacts().size());
