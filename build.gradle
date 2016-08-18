@@ -81,8 +81,8 @@ jar.doFirst{
 	    attributes 'Class-Path': configurations.runtime.collect { it.getName() }.join(' ')
 	}
 }
-
 dependencies {
+
     compile ':jfxrt:'                                        // built-in javafx to please sonarqube
     testCompile 'junit:junit:4.+'                            // Eclipse Public License - v 1.0 https://github.com/junit-team/junit/blob/master/LICENSE-junit.txt
     testCompile 'org.meanbean:meanbean:2.+'                  // Apache License V2.0 http://meanbean.sourceforge.net
@@ -112,13 +112,16 @@ dependencies {
     compile 'com.github.mfornos:humanize-slim:1.2.2'
     compile 'com.github.zafarkhaja:java-semver:0.9.+'        // MIT https://github.com/zafarkhaja/jsemver/blob/master/LICENSE
 
-    compile 'com.github.Qabel.qabel-core:core:3e8db37f9ad327629b10e2b01676abe291d896f7'
-    compile 'com.github.Qabel.qabel-core:box:3e8db37f9ad327629b10e2b01676abe291d896f7'
+    def coreVersion = 'd03a2cf76908581524213cc7ea62edc85786b1e6'
+    def repo = 'nnice'
 
-    testCompile 'com.github.Qabel.qabel-core:box:3e8db37f9ad327629b10e2b01676abe291d896f7:tests'
-    testCompile 'com.github.Qabel.qabel-core:box:3e8db37f9ad327629b10e2b01676abe291d896f7:sources'
-    testCompile 'com.github.Qabel.qabel-core:core:3e8db37f9ad327629b10e2b01676abe291d896f7:tests'
-    testCompile 'com.github.Qabel.qabel-core:core:3e8db37f9ad327629b10e2b01676abe291d896f7:sources'
+    compile 'com.github.'+repo+'.qabel-core:core:'+coreVersion
+    compile 'com.github.'+repo+'.qabel-core:box:'+coreVersion
+
+    testCompile 'com.github.'+repo+'.qabel-core:box:'+coreVersion+':tests'
+    testCompile 'com.github.'+repo+'.qabel-core:box:'+coreVersion+':sources'
+    testCompile 'com.github.'+repo+'.qabel-core:core:'+coreVersion+':tests'
+    testCompile 'com.github.'+repo+'.qabel-core:core:'+coreVersion+':sources'
 
     testCompile 'info.cukes:cucumber-java:1.2.+'
     testCompile 'info.cukes:cucumber-junit:1.2.+'
