@@ -19,7 +19,7 @@ public class LayoutControllerTest extends AbstractControllerTest {
     public void getQuotaStateFailuresThenHidesQuotaBars() {
         LayoutController controller = createController();
         ((BoxClientStub) controller.boxClient).ioException = new IOException("crashed IO");
-        controller.fillQuotaInformation(controller.getQuotaState());
+        runLaterAndWait(() -> controller.fillQuotaInformation(controller.getQuotaState()));
 
         assertFalse(controller.quotaBlock.isVisible());
         assertFalse(controller.quotaDescription.isVisible());
