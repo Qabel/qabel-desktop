@@ -32,7 +32,7 @@
                                                 <BorderPane fx:id="quotaBlock" styleClass="quotaBlock" visible="true">
                                                     <right>
                                                         <Label fx:id="quota" BorderPane.alignment="CENTER"
-                                                               text="0" styleClass="quota"
+                                                               text="0%" styleClass="quota"
                                                                style="-fx-font-size: 0.8em"/>
                                                     </right>
                                                     <center>
