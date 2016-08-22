@@ -1,13 +1,13 @@
 package de.qabel.desktop.daemon.sync.worker.index.sqlite;
 
 import de.qabel.core.config.Account;
-import de.qabel.core.repository.LambdaEntityManager;
 import de.qabel.core.repository.sqlite.MigrationException;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndex;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndexEntry;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndexEntryRepository;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndexFactory;
+import de.qabel.desktop.repository.LambdaEntityManager;
 import de.qabel.desktop.repository.sqlite.factory.SqliteConnectionFactory;
 import org.apache.commons.codec.digest.DigestUtils;
 

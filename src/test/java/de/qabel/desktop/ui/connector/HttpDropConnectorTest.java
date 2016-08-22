@@ -10,6 +10,7 @@ import de.qabel.core.http.DropHTTP;
 import de.qabel.desktop.daemon.NetworkStatus;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
