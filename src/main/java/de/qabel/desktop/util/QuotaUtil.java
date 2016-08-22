@@ -9,10 +9,6 @@ import static humanize.Humanize.binaryPrefix;
 
 public class QuotaUtil {
 
-    public static int ratioByDiff(long usedQuota, long availableQuota) {
-        return (int) (usedQuota / (double) availableQuota * 100);
-    }
-
     public static String getQuotaDescription(QuotaState q, String quotaDescriptionPattern) {
         String usedQuota = binaryPrefix(q.getQuota() - q.getSize(), Locale.getDefault());
         String totalQuota = binaryPrefix(q.getQuota(), Locale.getDefault());
@@ -20,7 +16,7 @@ public class QuotaUtil {
         return MessageFormat.format(quotaDescriptionPattern, usedQuota, totalQuota);
     }
 
-    public static int getUsedRatio(QuotaState q) {
+    public static int getUsedRatioInPercent(QuotaState q) {
         if (q.getSize() == q.getQuota()) {
             return 0;
         }

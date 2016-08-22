@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static de.qabel.desktop.util.QuotaUtil.getQuotaDescription;
-import static de.qabel.desktop.util.QuotaUtil.getUsedRatio;
+import static de.qabel.desktop.util.QuotaUtil.getUsedRatioInPercent;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
@@ -24,13 +24,13 @@ public class QuotaUtilTest {
 
     @Test
     public void ratioWithNoFreeSpace() {
-        int usedRatio = getUsedRatio(noSpaceQuota);
+        int usedRatio = getUsedRatioInPercent(noSpaceQuota);
         assertEquals(0, usedRatio);
     }
 
     @Test
     public void ratioWithFreeSpace() {
-        int usedRatio = getUsedRatio(qs10Free);
+        int usedRatio = getUsedRatioInPercent(qs10Free);
         assertEquals(10, usedRatio);
     }
 
