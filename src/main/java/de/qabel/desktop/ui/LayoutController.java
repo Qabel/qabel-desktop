@@ -46,7 +46,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static de.qabel.desktop.util.QuotaUtil.getQuotaDescription;
-import static de.qabel.desktop.util.QuotaUtil.getUsedRatio;
+import static de.qabel.desktop.util.QuotaUtil.getUsedRatioInPercent;
 
 public class LayoutController extends AbstractController implements Initializable {
     private ExecutorService executor = Executors.newCachedThreadPool();
@@ -197,7 +197,7 @@ public class LayoutController extends AbstractController implements Initializabl
             quotaDescription.setVisible(false);
             return;
         }
-        int ratio = getUsedRatio(quotaState);
+        int ratio = getUsedRatioInPercent(quotaState);
         String quotaDescriptionText = getQuotaDescription(quotaState, resourceBundle.getString("quotaDescription"));
         quota.setText(ratio + "%");
         quotaBar.setMinWidth(ratio);
