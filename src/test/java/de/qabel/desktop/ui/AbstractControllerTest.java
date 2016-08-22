@@ -2,6 +2,8 @@ package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.injection.Injector;
 import com.airhacks.afterburner.views.QabelFXMLView;
+import de.qabel.core.accounting.BoxClient;
+import de.qabel.core.accounting.BoxClientStub;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.factory.DropUrlGenerator;
@@ -69,6 +71,7 @@ public class AbstractControllerTest extends AbstractFxTest {
     protected BoxSyncRepository boxSyncRepository = new InMemoryBoxSyncRepository();
     protected SyncDaemon syncDaemon;
     protected Account account;
+    protected BoxClient boxClient = new BoxClientStub();
 
     static {
         logger = createLogger();
@@ -131,11 +134,13 @@ public class AbstractControllerTest extends AbstractFxTest {
         diContainer.put("boxSyncIndexFactory", syncIndexFactory);
         diContainer.put("aboutFilesContent", new FilesAbout());
 
+        diContainer.put("boxClient", boxClient);
+
         syncDaemon = new SyncDaemon(new SimpleListProperty<>(), new FakeSyncerFactory());
         diContainer.put("syncDaemon", syncDaemon);
         diContainer.put("accountingUri", new URI("http://localhost:9696"));
 
-        AfterburnerInjector.setConfigurationSource(key -> diContainer.get((String)key));
+        AfterburnerInjector.setConfigurationSource(key -> diContainer.get((String) key));
         AfterburnerInjector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(diContainer));
 
         identity = identityBuilderFactory.factory().withAlias("TestAlias").build();

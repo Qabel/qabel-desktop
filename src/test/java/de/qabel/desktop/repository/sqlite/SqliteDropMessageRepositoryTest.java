@@ -12,7 +12,9 @@ import de.qabel.core.repository.IdentityRepository;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.core.repository.sqlite.ClientDatabase;
 import de.qabel.core.repository.sqlite.SqliteContactRepository;
+import de.qabel.core.repository.sqlite.SqliteDropUrlRepository;
 import de.qabel.core.repository.sqlite.SqliteIdentityRepository;
+import de.qabel.core.repository.sqlite.hydrator.DropURLHydrator;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 import org.junit.Before;
@@ -35,7 +37,12 @@ public class SqliteDropMessageRepositoryTest extends AbstractSqliteRepositoryTes
     @Override
     protected DropMessageRepository createRepo(ClientDatabase clientDatabase, EntityManager em) throws Exception {
         identityRepository = new SqliteIdentityRepository(clientDatabase, em);
-        contactRepository = new SqliteContactRepository(clientDatabase, em);
+        contactRepository = new SqliteContactRepository(
+            clientDatabase,
+            em,
+            new SqliteDropUrlRepository(clientDatabase, new DropURLHydrator()),
+            identityRepository
+        );
 
         return new SqliteDropMessageRepository(clientDatabase, em);
     }

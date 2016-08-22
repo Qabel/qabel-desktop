@@ -12,7 +12,7 @@ public class SqliteDropStateRepositoryTest extends AbstractSqliteRepositoryTest<
 
     @Override
     protected SqliteDropStateRepository createRepo(ClientDatabase clientDatabase, EntityManager em) throws Exception {
-        return new SqliteDropStateRepository(clientDatabase);
+        return new SqliteDropStateRepository(clientDatabase, em);
     }
 
     @Test(expected = EntityNotFoundException.class)
