@@ -27,6 +27,14 @@
             "locked": "2.7",
             "requested": "2.+"
         },
+        "com.google.zxing:core": {
+            "locked": "3.1.0",
+            "requested": "2.+"
+        },
+        "com.google.zxing:javase": {
+            "locked": "3.1.0",
+            "requested": "2.+"
+        },
         "commons-cli:commons-cli": {
             "locked": "1.2",
             "requested": "1.2"
@@ -42,6 +50,10 @@
         "log4j:log4j": {
             "locked": "1.2.17",
             "requested": "1.2.+"
+        },
+        "net.glxn.qrgen:javase": {
+            "locked": "2.0",
+            "requested": "2.+"
         },
         "null:jfxrt": {
             "project": true
@@ -73,6 +85,10 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4.1",
             "requested": "2.4.+"
+        },
+        "org.controlsfx:controlsfx": {
+            "locked": "8.40.11",
+            "requested": "8.+"
         },
         "org.json:json": {
             "locked": "20160212",
@@ -119,6 +135,14 @@
             "locked": "2.7",
             "requested": "2.+"
         },
+        "com.google.zxing:core": {
+            "locked": "3.1.0",
+            "requested": "2.+"
+        },
+        "com.google.zxing:javase": {
+            "locked": "3.1.0",
+            "requested": "2.+"
+        },
         "commons-cli:commons-cli": {
             "locked": "1.2",
             "requested": "1.2"
@@ -134,6 +158,10 @@
         "log4j:log4j": {
             "locked": "1.2.17",
             "requested": "1.2.+"
+        },
+        "net.glxn.qrgen:javase": {
+            "locked": "2.0",
+            "requested": "2.+"
         },
         "null:jfxrt": {
             "project": true
@@ -165,6 +193,10 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4.1",
             "requested": "2.4.+"
+        },
+        "org.controlsfx:controlsfx": {
+            "locked": "8.40.11",
+            "requested": "8.+"
         },
         "org.json:json": {
             "locked": "20160212",
@@ -211,6 +243,14 @@
             "locked": "2.7",
             "requested": "2.+"
         },
+        "com.google.zxing:core": {
+            "locked": "3.1.0",
+            "requested": "2.+"
+        },
+        "com.google.zxing:javase": {
+            "locked": "3.1.0",
+            "requested": "2.+"
+        },
         "com.tngtech.java:junit-dataprovider": {
             "locked": "1.10.4",
             "requested": "1.10.+"
@@ -243,6 +283,10 @@
             "locked": "1.2.17",
             "requested": "1.2.+"
         },
+        "net.glxn.qrgen:javase": {
+            "locked": "2.0",
+            "requested": "2.+"
+        },
         "null:jfxrt": {
             "project": true
         },
@@ -273,6 +317,10 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4.1",
             "requested": "2.4.+"
+        },
+        "org.controlsfx:controlsfx": {
+            "locked": "8.40.11",
+            "requested": "8.+"
         },
         "org.json:json": {
             "locked": "20160212",
@@ -331,6 +379,14 @@
             "locked": "2.7",
             "requested": "2.+"
         },
+        "com.google.zxing:core": {
+            "locked": "3.1.0",
+            "requested": "2.+"
+        },
+        "com.google.zxing:javase": {
+            "locked": "3.1.0",
+            "requested": "2.+"
+        },
         "com.tngtech.java:junit-dataprovider": {
             "locked": "1.10.4",
             "requested": "1.10.+"
@@ -363,6 +419,10 @@
             "locked": "1.2.17",
             "requested": "1.2.+"
         },
+        "net.glxn.qrgen:javase": {
+            "locked": "2.0",
+            "requested": "2.+"
+        },
         "null:jfxrt": {
             "project": true
         },
@@ -393,6 +453,10 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4.1",
             "requested": "2.4.+"
+        },
+        "org.controlsfx:controlsfx": {
+            "locked": "8.40.11",
+            "requested": "8.+"
         },
         "org.json:json": {
             "locked": "20160212",
@@ -451,6 +515,14 @@
             "locked": "2.7",
             "requested": "2.+"
         },
+        "com.google.zxing:core": {
+            "locked": "3.1.0",
+            "requested": "2.+"
+        },
+        "com.google.zxing:javase": {
+            "locked": "3.1.0",
+            "requested": "2.+"
+        },
         "commons-cli:commons-cli": {
             "locked": "1.2",
             "requested": "1.2"
@@ -466,6 +538,10 @@
         "log4j:log4j": {
             "locked": "1.2.17",
             "requested": "1.2.+"
+        },
+        "net.glxn.qrgen:javase": {
+            "locked": "2.0",
+            "requested": "2.+"
         },
         "null:jfxrt": {
             "project": true
@@ -497,6 +573,10 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4.1",
             "requested": "2.4.+"
+        },
+        "org.controlsfx:controlsfx": {
+            "locked": "8.40.11",
+            "requested": "8.+"
         },
         "org.json:json": {
             "locked": "20160212",
@@ -543,6 +623,14 @@
             "locked": "2.7",
             "requested": "2.+"
         },
+        "com.google.zxing:core": {
+            "locked": "3.1.0",
+            "requested": "2.+"
+        },
+        "com.google.zxing:javase": {
+            "locked": "3.1.0",
+            "requested": "2.+"
+        },
         "com.tngtech.java:junit-dataprovider": {
             "locked": "1.10.4",
             "requested": "1.10.+"
@@ -575,6 +663,10 @@
             "locked": "1.2.17",
             "requested": "1.2.+"
         },
+        "net.glxn.qrgen:javase": {
+            "locked": "2.0",
+            "requested": "2.+"
+        },
         "null:jfxrt": {
             "project": true
         },
@@ -605,6 +697,10 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4.1",
             "requested": "2.4.+"
+        },
+        "org.controlsfx:controlsfx": {
+            "locked": "8.40.11",
+            "requested": "8.+"
         },
         "org.json:json": {
             "locked": "20160212",
@@ -663,6 +759,14 @@
             "locked": "2.7",
             "requested": "2.+"
         },
+        "com.google.zxing:core": {
+            "locked": "3.1.0",
+            "requested": "2.+"
+        },
+        "com.google.zxing:javase": {
+            "locked": "3.1.0",
+            "requested": "2.+"
+        },
         "com.tngtech.java:junit-dataprovider": {
             "locked": "1.10.4",
             "requested": "1.10.+"
@@ -695,6 +799,10 @@
             "locked": "1.2.17",
             "requested": "1.2.+"
         },
+        "net.glxn.qrgen:javase": {
+            "locked": "2.0",
+            "requested": "2.+"
+        },
         "null:jfxrt": {
             "project": true
         },
@@ -725,6 +833,10 @@
         "org.apache.logging.log4j:log4j-slf4j-impl": {
             "locked": "2.4.1",
             "requested": "2.4.+"
+        },
+        "org.controlsfx:controlsfx": {
+            "locked": "8.40.11",
+            "requested": "8.+"
         },
         "org.json:json": {
             "locked": "20160212",
