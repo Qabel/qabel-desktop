@@ -83,8 +83,8 @@ jar.doFirst{
 }
 
 dependencies {
-    def coreVersion = 'e80d033c394c61c41922b115a2c00d5290ac18a1'
-    def repo = 'audax'
+    def coreVersion = 'master-SNAPSHOT'
+    def repo = 'Qabel'
 
     compile 'com.github.'+repo+'.qabel-core:core:'+coreVersion
     compile 'com.github.'+repo+'.qabel-core:box:'+coreVersion
