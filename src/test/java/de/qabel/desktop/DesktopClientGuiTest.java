@@ -24,7 +24,8 @@ public class DesktopClientGuiTest extends AbstractKernelTest {
     public void primaryStageShowsWhenNoAccount() throws Exception {
         startKernel(kernel);
         waitForPrimaryStage();
-        waitUntil(() -> !primaryStage.isShowing());
+        waitUntil(() -> !config.hasAccount());
+        waitUntil(() -> primaryStage.isShowing());
     }
 
     @Test
@@ -32,7 +33,7 @@ public class DesktopClientGuiTest extends AbstractKernelTest {
         config.setAccount(new Account("provider", "user", "auth"));
         startKernel(kernel);
         waitForPrimaryStage();
-
+        waitUntil(() -> config.hasAccount());
         waitUntil(() -> !primaryStage.isShowing());
     }
 

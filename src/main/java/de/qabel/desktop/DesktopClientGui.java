@@ -72,10 +72,6 @@ public class DesktopClientGui extends Application {
         });
 
         trayNotifications(tray);
-
-        if (config.hasAccount()) {
-            primaryStage.close();
-        }
     }
 
     private void setUpWindow() {
