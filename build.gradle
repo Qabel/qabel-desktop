@@ -83,6 +83,17 @@ jar.doFirst{
 }
 
 dependencies {
+    def coreVersion = '0.16.2'
+    def repo = 'Qabel'
+
+    compile 'com.github.'+repo+'.qabel-core:core:'+coreVersion
+    compile 'com.github.'+repo+'.qabel-core:box:'+coreVersion
+
+    testCompile 'com.github.'+repo+'.qabel-core:box:'+coreVersion+':tests'
+    testCompile 'com.github.'+repo+'.qabel-core:box:'+coreVersion+':sources'
+    testCompile 'com.github.'+repo+'.qabel-core:core:'+coreVersion+':tests'
+    testCompile 'com.github.'+repo+'.qabel-core:core:'+coreVersion+':sources'
+
     compile ':jfxrt:'                                        // built-in javafx to please sonarqube
     testCompile 'junit:junit:4.+'                            // Eclipse Public License - v 1.0 https://github.com/junit-team/junit/blob/master/LICENSE-junit.txt
     testCompile 'org.meanbean:meanbean:2.+'                  // Apache License V2.0 http://meanbean.sourceforge.net
@@ -116,17 +127,6 @@ dependencies {
     compile 'com.google.zxing:javase:2.+'                   //Apache License https://github.com/zxing/zxing/wiki/License-Questions
     compile 'net.glxn.qrgen:javase:2.+'                     //Apache License https://github.com/kenglxn/QRGen
     compile 'org.controlsfx:controlsfx:8.+'
-
-    def coreVersion = 'd03a2cf76908581524213cc7ea62edc85786b1e6'
-    def repo = 'nnice'
-
-    compile 'com.github.'+repo+'.qabel-core:core:'+coreVersion
-    compile 'com.github.'+repo+'.qabel-core:box:'+coreVersion
-
-    testCompile 'com.github.'+repo+'.qabel-core:box:'+coreVersion+':tests'
-    testCompile 'com.github.'+repo+'.qabel-core:box:'+coreVersion+':sources'
-    testCompile 'com.github.'+repo+'.qabel-core:core:'+coreVersion+':tests'
-    testCompile 'com.github.'+repo+'.qabel-core:core:'+coreVersion+':sources'
 
     testCompile 'info.cukes:cucumber-java:1.2.+'
     testCompile 'info.cukes:cucumber-junit:1.2.+'
