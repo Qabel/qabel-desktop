@@ -99,32 +99,6 @@
     -fx-background-radius: 2em;
 }
 
-.avatar {
-    -fx-font-size: 3em;
-    -fx-alignment: CENTER;
-    -fx-pref-height: 50px;
-    -fx-pref-width: 50px;
-    -fx-text-fill: #343434;
-    -fx-background-size: 50px;
-    -fx-background-color: magenta;
-    -fx-background-radius: 25;
-    -fx-border-radius: 25;
-    -fx-padding: 0 0 0 0;
-    -fx-margin: 3px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0, 0, 5);
-}
-
-.avatar Label {
-    -fx-font-size: 36;
-    -fx-font-weight: bold;
-}
-.avatarItem {
-    -fx-padding: 0 0 0 10;
-}
-
-.avatarContainer {
-    -fx-alignment: top-right;
-}
 
 .indicator {
     -fx-background-color: #ff690f;
@@ -500,16 +474,34 @@ VBox.spaced, HBox.spaced {
     -fx-border-width: 1 0 0 0;
 }
 
+
+.avatar {
+    -fx-alignment: CENTER;
+    -fx-pref-height: 50px;
+    -fx-pref-width: 50px;
+    -fx-background-size: 50px;
+    -fx-background-color: magenta;
+    -fx-background-radius: 25;
+    -fx-border-radius: 25;
+    -fx-padding: 0 0 0 0;
+    -fx-margin: 3px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0, 0, 5);
+}
+.avatar .text {
+    -fx-font-size: 3em;
+    -fx-font-weight: bold;
+    -fx-text-fill: #343434;
+}
+
+.avatarItem {
+    -fx-padding: 0 0 0 10;
+}
+
 * {
     -fx-sync-avatar-width: 25;
 }
 
-.avatar Label {
-    -fx-font-size: 36;
-    -fx-font-weight: bold;
-}
-
-.syncAvatar > .avatar {
+.sync-avatar .avatar {
     -fx-min-height: -fx-sync-avatar-width;
     -fx-min-width: -fx-sync-avatar-width;
     -fx-pref-height: -fx-sync-avatar-width;
@@ -517,8 +509,9 @@ VBox.spaced, HBox.spaced {
     -fx-effect: none;
 }
 
-.syncName {
-    -fx-font-size: 22;
+.sync-avatar .avatar .text,
+.sync-name {
+    -fx-font-size: 20;
     -fx-font-weight: bold;
 }
 

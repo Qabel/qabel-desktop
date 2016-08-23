@@ -43,8 +43,6 @@ public class SyncItemControllerTest extends AbstractControllerTest {
         AvatarController avatarController = (AvatarController) avatarView.getPresenter();
 
         Assert.assertEquals("B", avatarController.getAvatar().getText());
-
-        wait(8000L);
     }
 
     private Pane getContainer() {

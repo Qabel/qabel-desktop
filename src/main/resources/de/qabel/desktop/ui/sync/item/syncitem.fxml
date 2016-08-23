@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<BorderPane fx:id="syncItemRoot" styleClass="syncItem" prefHeight="130.0" prefWidth="600.0"
-            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="de.qabel.desktop.ui.sync.item.SyncItemController">
+
+<BorderPane fx:id="syncItemRoot" prefHeight="130.0" prefWidth="600.0" styleClass="syncItem" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.sync.item.SyncItemController">
     <padding>
         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
     </padding>
@@ -26,28 +27,20 @@
                                         <Insets left="8.0" />
                                     </VBox.margin>
                                     <left>
-                                        <HBox>
+                                        <HBox alignment="CENTER" BorderPane.alignment="CENTER">
                                             <children>
-                                                <Pane fx:id="avatarContainer" styleClass="syncAvatar">
-                                                    <children>
-                                                        <Label styleClass="avatar" text="B">
-                                                            <HBox.margin>
-                                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                                                            </HBox.margin>
-                                                        </Label>
-                                                    </children>
+                                                <Pane fx:id="avatarContainer" styleClass="sync-avatar">
                                                 </Pane>
                                             </children>
-                                            <BorderPane.margin>
-                                                <Insets bottom="5.0" right="10.0" top="5.0" />
-                                            </BorderPane.margin>
+                                             <BorderPane.margin>
+                                                <Insets right="5.0" />
+                                             </BorderPane.margin>
                                         </HBox>
                                     </left>
                                     <center>
                                         <HBox alignment="CENTER_LEFT">
                                             <children>
-                                                <Label fx:id="name" styleClass="syncName" text="My Documents"
-                                                       BorderPane.alignment="CENTER">
+                                                <Label fx:id="name" styleClass="sync-name" text="My Documents" BorderPane.alignment="CENTER">
                                                 </Label>
                                             </children>
                                         </HBox>
