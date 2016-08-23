@@ -16,6 +16,7 @@ import de.qabel.desktop.ui.accounting.item.SelectionEvent;
 import de.qabel.desktop.ui.actionlog.ContactActionLog;
 import de.qabel.desktop.ui.actionlog.FxActionlog;
 import de.qabel.desktop.ui.contact.ContactController;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -117,5 +118,7 @@ public class ContactItemController extends AbstractController implements Initial
         } catch (PersistenceException | EntityNotFoundException e) {
             alert("Failed to delete Contact: " + contact.getAlias(), e);
         }
+        //FIXME this a workaround to force the contactController to reload their contacts list
+        Platform.runLater(() -> clientConfiguration.selectIdentity(i));
     }
 }

@@ -2,23 +2,22 @@ package de.qabel.desktop.ui.accounting.item;
 
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
-import de.qabel.core.repository.IdentityRepository;
-import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
-import javafx.event.ActionEvent;
+import de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuView;
+import de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuController;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
 import javax.inject.Inject;
 import java.net.URL;
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class AccountingItemController extends AbstractController implements Initializable {
@@ -27,6 +26,7 @@ public class AccountingItemController extends AbstractController implements Init
 
     @FXML
     Label alias;
+
     @FXML
     Label mail;
 
@@ -37,7 +37,7 @@ public class AccountingItemController extends AbstractController implements Init
     RadioButton selectedRadio;
 
     @FXML
-    public Node root;
+    private Button menu;
 
     @Inject
     private Identity identity;
@@ -46,9 +46,10 @@ public class AccountingItemController extends AbstractController implements Init
     private ClientConfig clientConfiguration;
 
     @Inject
-    private IdentityRepository identityRepository;
+    private Pane layoutWindow;
 
-    TextInputDialog dialog;
+    public IdentityContextMenuView identityMenuView;
+    public IdentityContextMenuController identityMenuController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -61,6 +62,10 @@ public class AccountingItemController extends AbstractController implements Init
             Account account = clientConfiguration.getAccount();
             mail.setText(account.getUser());
         }
+
+        identity.attach(() -> Platform.runLater(() -> {
+            alias.setText(identity.getAlias());
+        }));
 
         updateSelection();
         clientConfiguration.onSelectIdentity(i -> updateSelection());
@@ -78,26 +83,23 @@ public class AccountingItemController extends AbstractController implements Init
         return identity;
     }
 
-    public void edit(ActionEvent actionEvent) {
-        dialog = new TextInputDialog(identity.getAlias());
-        dialog.setHeaderText(null);
-        dialog.setTitle(resourceBundle.getString("accountingItemChangeAlias"));
-        dialog.setContentText(resourceBundle.getString("accountingItemNewAlias"));
-        Optional<String> result = dialog.showAndWait();
-        result.ifPresent(this::setAlias);
+    private void initializeMenu() {
+        final Map<String, Object> injectionContext = new HashMap<>();
+        injectionContext.put("identity", identity);
+        identityMenuView = new IdentityContextMenuView(injectionContext::get);
+        identityMenuView.getView(layoutWindow.getChildren()::add);
+        identityMenuController = (IdentityContextMenuController) identityMenuView.getPresenter();
+
     }
 
-    protected void setAlias(String alias) {
-        identity.setAlias(alias);
-        try {
-            identityRepository.save(identity);
-            this.alias.setText(alias);
-        } catch (PersistenceException e) {
-            alert("Failed to save identity", e);
-        }
+    public void openMenuQR(MouseEvent event) {
+        initializeMenu();
+        Platform.runLater(() -> identityMenuController.showMenu(event.getSceneX()
+            + layoutWindow.getScene().getWindow().getX(), event.getSceneY()
+            + layoutWindow.getScene().getWindow().getY() + menu.getHeight()));
     }
 
-    public void selectIdentity(ActionEvent actionEvent) {
+    public void selectIdentity() {
         if (selectedRadio.isSelected()) {
             clientConfiguration.selectIdentity(identity);
         }

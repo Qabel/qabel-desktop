@@ -1,18 +1,25 @@
 package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
+import de.qabel.core.accounting.BoxClientStub;
+import de.qabel.core.accounting.QuotaState;
 import de.qabel.core.config.Contact;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.drop.DropMessage;
+import de.qabel.core.exceptions.QblInvalidCredentials;
+import de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuController;
+import de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuView;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
-import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.HashSet;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
+
+    private QuotaState quotaState;
 
     @Override
     protected FXMLView getView() {
@@ -24,16 +31,23 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
         return (LayoutController) view.getPresenter();
     }
 
-    @Ignore
     @Test
-    public void showQuotaBarWithDummyText() throws InterruptedException {
-        LayoutController conroller = createController();
+    public void hideQuotaBarWhenGetQuotaFails() {
+        ((BoxClientStub) controller.boxClient).ioException = new IOException("LayoutGuiTest");
+        runLaterAndWait(() -> {
+            controller.fillQuotaInformation(controller.getQuotaState());
+        });
+        assertFalse(controller.quotaBlock.isVisible());
+        assertFalse(controller.quotaDescription.isVisible());
+    }
 
-        //// TODO: 21.07.16 set the values from real BoxClient and then implement it in layout
-        controller.quota.setText("24");
-        controller.provider.setText("24");
-        controller.quotaDescription.setText("1,7 GB free / 2 GB");
-
+    @Test
+    public void showsQuotaBarWith0MinWidth() throws IOException, QblInvalidCredentials {
+        quotaState = new QuotaState(100, 100);
+        runLaterAndWait(() -> {
+            controller.fillQuotaInformation(quotaState);
+        });
+        assertEquals(0, (int) controller.quotaBar.getMinWidth());
     }
 
     @Test
@@ -47,5 +61,13 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
         dropMessageRepository.save(message);
         waitUntil(() -> indicator.getText().equals("1"));
         assertTrue(indicator.isVisible());
+    }
+
+    @Test
+    public void testObservableIdentitty() throws Exception {
+        IdentityContextMenuView menuView = new IdentityContextMenuView(generateInjection("identity", identity));
+        IdentityContextMenuController menuController = (IdentityContextMenuController) menuView.getPresenter();
+        menuController.setAlias("new alias identity");
+        assertEquals("new alias identity", identity.getAlias());
     }
 }

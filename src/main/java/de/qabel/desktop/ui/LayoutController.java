@@ -1,7 +1,10 @@
 package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
+import de.qabel.core.accounting.BoxClient;
+import de.qabel.core.accounting.QuotaState;
 import de.qabel.core.config.Identity;
+import de.qabel.core.exceptions.QblInvalidCredentials;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.daemon.management.MonitoredTransferManager;
 import de.qabel.desktop.daemon.management.TransferManager;
@@ -29,16 +32,21 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import javax.inject.Inject;
 import java.awt.*;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static de.qabel.desktop.util.QuotaUtil.getQuotaDescription;
+import static de.qabel.desktop.util.QuotaUtil.getUsedRatioInPercent;
 
 public class LayoutController extends AbstractController implements Initializable {
     private ExecutorService executor = Executors.newCachedThreadPool();
@@ -99,18 +107,25 @@ public class LayoutController extends AbstractController implements Initializabl
     @Inject
     private DropMessageRepository dropMessageRepository;
 
-    @FXML
-    Label quota;
-    @FXML
-    Label quotaDescription;
-    @FXML
-    Label provider;
-
     NaviItem browseNav;
     NaviItem contactsNav;
     NaviItem syncNav;
     NaviItem accountingNav;
     NaviItem aboutNav;
+    public QuotaState quotaState;
+
+    @FXML
+    BorderPane quotaBlock;
+    @FXML
+    Label quota;
+    @FXML
+    Label quotaBar;
+
+    @FXML
+    Label quotaDescription;
+
+    @Inject
+    BoxClient boxClient;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -133,7 +148,6 @@ public class LayoutController extends AbstractController implements Initializabl
         navi.getChildren().add(syncNav);
         navi.getChildren().add(aboutNav);
 
-
         scrollContent.setFillWidth(true);
 
         if (clientConfiguration.getSelectedIdentity() == null) {
@@ -144,6 +158,7 @@ public class LayoutController extends AbstractController implements Initializabl
         updateIdentity();
         clientConfiguration.onSelectIdentity(i -> Platform.runLater(this::updateIdentity));
 
+        fillQuotaInformation(getQuotaState());
 
         bottomContainer.getChildren().remove(uploadProgress);
         ComposedProgressBar progressBar = new ComposedProgressBar();
@@ -176,9 +191,30 @@ public class LayoutController extends AbstractController implements Initializabl
         newMessageIndicator.visibleProperty().bind(newMessageIndicator.textProperty().isNotEqualTo("0"));
     }
 
+    void fillQuotaInformation(QuotaState quotaState) {
+        if (quotaState == null) {
+            quotaBlock.setVisible(false);
+            quotaDescription.setVisible(false);
+            return;
+        }
+        int ratio = getUsedRatioInPercent(quotaState);
+        String quotaDescriptionText = getQuotaDescription(quotaState, resourceBundle.getString("quotaDescription"));
+        quota.setText(ratio + "%");
+        quotaBar.setMinWidth(ratio);
+        quotaDescription.setText(quotaDescriptionText);
+    }
+
+    QuotaState getQuotaState() {
+        try {
+            return quotaState = boxClient.getQuotaState();
+        } catch (IOException | QblInvalidCredentials e) {
+            return quotaState = null;
+        }
+    }
+
+
     private void createButtonGraphics() {
         Image heartGraphic = new Image(getClass().getResourceAsStream("/img/heart.png"));
-
 
         inviteButton.setImage(heartGraphic);
         inviteButton.getStyleClass().add("inline-button");
@@ -227,7 +263,6 @@ public class LayoutController extends AbstractController implements Initializabl
         */
     }
 
-
     private String lastAlias;
     private Identity lastIdentity;
 
@@ -254,6 +289,11 @@ public class LayoutController extends AbstractController implements Initializabl
             return;
         }
 
+        identity.attach(() -> Platform.runLater(() -> {
+            alias.setText(identity.getAlias());
+            updateAvatar(identity);
+        }));
+
         new AvatarView(e -> currentAlias).getViewAsync(avatarContainer.getChildren()::setAll);
         alias.setText(currentAlias);
         lastAlias = currentAlias;
@@ -262,6 +302,10 @@ public class LayoutController extends AbstractController implements Initializabl
             return;
         }
         mail.setText(clientConfiguration.getAccount().getUser());
+    }
+
+    private void updateAvatar(Identity identity) {
+        new AvatarView(e -> identity.getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
     }
 
     private NaviItem createNavItem(String label, FXMLView view) {

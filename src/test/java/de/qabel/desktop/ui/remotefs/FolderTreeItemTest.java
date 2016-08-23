@@ -343,5 +343,10 @@ public class FolderTreeItemTest extends AbstractControllerTest {
         public boolean hasVersionChanged(DirectoryMetadata directoryMetadata) throws QblStorageException {
             return false;
         }
+
+        @Override
+        public void refresh() throws QblStorageException {
+
+        }
     }
 }

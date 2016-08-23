@@ -98,6 +98,7 @@
     -fx-background-insets: 2px, 0, 0;
     -fx-background-radius: 2em;
 }
+
 .avatar {
     -fx-font-size: 3em;
     -fx-alignment: CENTER;
@@ -515,4 +516,182 @@ VBox.spaced, HBox.spaced {
 .syncName {
     -fx-font-size: 22;
     -fx-font-weight: bold;
+}
+
+.button-qrcode {
+    -fx-background-repeat: no-repeat;
+    -fx-background-image: url('/img/settings.png');
+    -fx-background-position: left;
+    -fx-pref-height: 35px;
+    -fx-pref-width: 40px;
+    -fx-border-style: none;
+    -fx-border-color: none;
+}
+
+.button-qrcode:hover {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0px;
+    -fx-border-style: none;
+    -fx-border-color: none;
+    -fx-text-fill: #ff690f;
+}
+
+.button-qrcode:pressed {
+    -fx-border-color: none;
+    -fx-text-fill: none;
+    -fx-border-style: none;
+}
+
+.pane-popup {
+    -fx-background-color: rgba(0,0,0,0.8);
+    -fx-padding: 50px 0px 50px 0px;
+}
+
+.icon-client {
+    -fx-background-repeat: no-repeat;
+    -fx-background-image: url('/img/account.png');
+}
+
+.icon-earth{
+    -fx-background-repeat: no-repeat;
+    -fx-background-image: url('/img/earth.png');
+}
+
+.icon-key {
+    -fx-background-repeat: no-repeat;
+    -fx-background-image: url('/img/key_variant.png');
+    -fx-margin: 20px;
+}
+
+.icon-client, .icon-earth, .icon-key {
+    -fx-background-position: left;
+    -fx-pref-height: 35px;
+    -fx-pref-width: 40px;
+}
+
+.label-icon {
+    -fx-pref-width: 250px;
+    -fx-pref-height: 50px;
+    -fx-padding: 5px 20px 5px 10px;
+}
+
+.label-icon .text {
+    -fx-font-size: 12;
+}
+
+.label-name {
+    -fx-pref-width: 200px;
+    -fx-padding: 5px 0px 5px 10px;
+}
+
+.label-name .text {
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+}
+
+.container {
+    -fx-max-width: 300px;
+    -fx-max-height: 400px;
+    -fx-position: absolute;
+    -fx-background-color: white;
+}
+
+.image-qrcode {
+   -fx-alignment: center;
+}
+
+.button-close-pane {
+    -fx-background-repeat: no-repeat;
+    -fx-background-image: url('/img/close.png');
+    -fx-background-position: left;
+    -fx-pref-height: 35px;
+    -fx-pref-width: 35px;
+    -fx-border-style: none;
+    -fx-border-color: none;
+}
+
+.icon-edit {
+    -fx-background-repeat: no-repeat;
+    -fx-background-image: url('/img/pencil.png');
+    -fx-background-position: left;
+    -fx-pref-height: 25px;
+    -fx-pref-width: 30px;
+}
+
+.icon-delete {
+    -fx-background-repeat: no-repeat;
+    -fx-background-image: url('/img/delete.png');
+}
+
+.icon-export {
+    -fx-background-repeat: no-repeat;
+    -fx-background-image: url('/img/upload.png');
+}
+
+.icon-qrcode {
+    -fx-background-repeat: no-repeat;
+    -fx-background-image: url('/img/qrcode.png');
+}
+
+.icon-email {
+    -fx-background-repeat: no-repeat;
+    -fx-background-image: url('/img/email.png');
+}
+
+.icon-delete, .icon-export, .icon-qrcode, .icon-email {
+    -fx-background-position: left;
+    -fx-pref-height: 30px;
+    -fx-pref-width: 30px;
+}
+
+.button-menu {
+    -fx-border-style: none;
+    -fx-border-color: none;
+}
+
+.button-menu:hover {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0px;
+    -fx-border-style: none;
+    -fx-border-color: none;
+    -fx-text-fill: #ff690f;
+}
+
+.button-menu:pressed {
+    -fx-border-color: none;
+    -fx-text-fill: none;
+    -fx-border-style: none;
+}
+
+.vbox-menu {
+    -fx-background-color: white;
+    -fx-border-style: solid;
+    -fx-border-width: 1px 1px 1px 1px;
+    -fx-border-color: #CCCCCC;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 8, 0.0, 0, 1);
+    -fx-max-width: 200px;
+}
+
+.vbox-border {
+     -fx-background-color: transparent;
+}
+
+.popup-menu {
+    -fx-background-color: transparent;
+    -fx-max-width: 200px;
+}
+
+
+.button-close-pane:hover {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0px;
+    -fx-border-style: none;
+    -fx-border-color: none;
+    -fx-text-fill: #ff690f;
+}
+
+.button-close-pane:pressed {
+    -fx-border-color: none;
+    -fx-text-fill: none;
+    -fx-border-style: none;
 }

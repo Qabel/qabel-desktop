@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane fx:id="qrcode" pickOnBounds="false" styleClass="pane-popup" visible="false"
+           xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="de.qabel.desktop.ui.accounting.qrcode.QRCodeController">
+    <children>
+        <HBox alignment="CENTER">
+            <children>
+                <VBox alignment="TOP_RIGHT" styleClass="container">
+                    <children>
+                        <StackPane>
+                            <ImageView fx:id="imageQrCode" pickOnBounds="true" preserveRatio="true"
+                                       styleClass="image-qrcode" StackPane.alignment="CENTER"/>
+                            <Button fx:id="buttonClosePopup" alignment="TOP_RIGHT" onAction="#buttonClosePopup"
+                                    styleClass="button-close-pane" StackPane.alignment="TOP_RIGHT"/>
+                        </StackPane>
+                        <HBox>
+                            <children>
+                                <Label styleClass="icon-client">
+                                    <HBox.margin>
+                                        <Insets left="20.0"/>
+                                    </HBox.margin>
+                                </Label>
+                                <Label fx:id="labelClient" styleClass="label-name" wrapText="true"/>
+                            </children>
+                        </HBox>
+                        <HBox>
+                            <children>
+                                <Label styleClass="icon-earth">
+                                    <HBox.margin>
+                                        <Insets left="20.0"/>
+                                    </HBox.margin>
+                                </Label>
+                                <Label fx:id="labelUrl" styleClass="label-icon" wrapText="true"/>
+                            </children>
+                        </HBox>
+                        <HBox>
+                            <children>
+                                <Label styleClass="icon-key">
+                                    <HBox.margin>
+                                        <Insets left="20.0"/>
+                                    </HBox.margin>
+                                </Label>
+                                <Label fx:id="labelKey" styleClass="label-icon" wrapText="true"/>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+    </children>
+</StackPane>
