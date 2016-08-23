@@ -44,7 +44,6 @@ public class SyncItemControllerTest extends AbstractControllerTest {
 
         Assert.assertEquals("B", avatarController.getAvatar().getText());
     }
-
     private Pane getContainer() {
         Pane container = new Pane();
         container.setId("someFooContainer");
