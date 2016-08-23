@@ -27,6 +27,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
     private StubSharingService sharingService = new StubSharingService();
     private BoxNavigationStub rootNavigation;
     private RemoteBrowserPage page;
+    private Contacts contacts;
 
     @Override
     protected FXMLView getView() {
@@ -45,6 +46,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
     public void setUp() throws Exception {
         super.setUp();
         page = new RemoteBrowserPage(baseFXRobot, robot, controller);
+        contacts = contactRepository.find(identity);
     }
 
     @Test
@@ -126,9 +128,9 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
     }
 
     private Contact addContact(String name) throws PersistenceException {
-        Contacts contacts = contactRepository.find(identity);
         Contact contact = new Contact(name, new LinkedList<>(), new QblECKeyPair().getPub());
         contacts.put(contact);
+        contactRepository.save(contact, identity);
         return contact;
     }
 

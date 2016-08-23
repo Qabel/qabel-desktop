@@ -16,6 +16,7 @@ import de.qabel.desktop.ui.accounting.item.SelectionEvent;
 import de.qabel.desktop.ui.actionlog.ContactActionLog;
 import de.qabel.desktop.ui.actionlog.FxActionlog;
 import de.qabel.desktop.ui.contact.ContactController;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -30,7 +31,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
-public class ContactItemController extends AbstractController implements Initializable{
+public class ContactItemController extends AbstractController implements Initializable {
 
     ResourceBundle resourceBundle;
 
@@ -114,8 +115,10 @@ public class ContactItemController extends AbstractController implements Initial
         Identity i = clientConfiguration.getSelectedIdentity();
         try {
             contactRepository.delete(contact, i);
-        } catch (PersistenceException | EntityNotFoundException e) {
+        } catch (PersistenceException e) {
             alert("Failed to delete Contact: " + contact.getAlias(), e);
         }
+        //FIXME this a workaround to force the contactController to reload their contacts list
+        Platform.runLater(() -> clientConfiguration.selectIdentity(i));
     }
 }

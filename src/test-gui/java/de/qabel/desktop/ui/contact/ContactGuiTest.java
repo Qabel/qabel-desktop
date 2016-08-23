@@ -30,10 +30,9 @@ public class ContactGuiTest extends AbstractGuiTest<ContactController> {
         createNewContactAndSaveInRepo("3", identity);
 
         runLaterAndWait(() -> clientConfiguration.selectIdentity(identity));
-
         int elements = contactRepository.find(identity).getContacts().size();
 
-        runLaterAndWait(() -> controller.loadContacts());
+        runLaterAndWait(controller::update);
         page.getFirstItem().delete();
 
         assertAsync(controller.contactList.getChildren()::size, is(elements + namingElements - 1));

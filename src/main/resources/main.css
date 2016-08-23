@@ -193,7 +193,7 @@
 }
 
 .inline-button:hover, .inline-button:pressed, .darkgrey, .darkgrey:hover {
-    -fx-effect: innershadow(gaussian , #333333, 10, 10, 10, 10);
+    -fx-effect: innershadow(gaussian , #333333, 10, 1, 1, 1);
 }
 
 .inline-button.faded-button {
@@ -201,7 +201,7 @@
 }
 
 .inline-button.faded-button:hover {
-    -fx-opacity: 0.9;
+   -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 8, 0.0, 0, 1);
 }
 
 .combo-box {
@@ -403,6 +403,7 @@
 
 .tree-table-row-cell:selected .tooltip {
     -fx-text-fill: #ffffff;
+    -fx-background-color: #333333;
 }
 
 .tree-table-view {

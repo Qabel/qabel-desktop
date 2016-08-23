@@ -1,7 +1,10 @@
 package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
+import de.qabel.core.accounting.BoxClient;
+import de.qabel.core.accounting.QuotaState;
 import de.qabel.core.config.Identity;
+import de.qabel.core.exceptions.QblInvalidCredentials;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.daemon.management.MonitoredTransferManager;
 import de.qabel.desktop.daemon.management.TransferManager;
@@ -29,16 +32,21 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import javax.inject.Inject;
 import java.awt.*;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static de.qabel.desktop.util.QuotaUtil.getQuotaDescription;
+import static de.qabel.desktop.util.QuotaUtil.getUsedRatioInPercent;
 
 public class LayoutController extends AbstractController implements Initializable {
     private ExecutorService executor = Executors.newCachedThreadPool();
@@ -100,10 +108,6 @@ public class LayoutController extends AbstractController implements Initializabl
     private DropMessageRepository dropMessageRepository;
 
     @FXML
-    Label quota;
-    @FXML
-    Label quotaDescription;
-    @FXML
     Label provider;
     @FXML
     Label faqBackground;
@@ -117,6 +121,20 @@ public class LayoutController extends AbstractController implements Initializabl
     NaviItem syncNav;
     NaviItem accountingNav;
     NaviItem aboutNav;
+    public QuotaState quotaState;
+
+    @FXML
+    BorderPane quotaBlock;
+    @FXML
+    Label quota;
+    @FXML
+    Label quotaBar;
+
+    @FXML
+    Label quotaDescription;
+
+    @Inject
+    BoxClient boxClient;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -157,6 +175,8 @@ public class LayoutController extends AbstractController implements Initializabl
         updateIdentity();
         clientConfiguration.onSelectIdentity(i -> Platform.runLater(this::updateIdentity));
 
+        fillQuotaInformation(getQuotaState());
+
         bottomContainer.getChildren().remove(uploadProgress);
         ComposedProgressBar progressBar = new ComposedProgressBar();
         progressBar.getStylesheets().addAll(window.getStylesheets());
@@ -187,6 +207,28 @@ public class LayoutController extends AbstractController implements Initializabl
         newMessageIndicator.textProperty().bind(log.unseenMessageCountProperty().asString());
         newMessageIndicator.visibleProperty().bind(newMessageIndicator.textProperty().isNotEqualTo("0"));
     }
+
+    void fillQuotaInformation(QuotaState quotaState) {
+        if (quotaState == null) {
+            quotaBlock.setVisible(false);
+            quotaDescription.setVisible(false);
+            return;
+        }
+        int ratio = getUsedRatioInPercent(quotaState);
+        String quotaDescriptionText = getQuotaDescription(quotaState, resourceBundle.getString("quotaDescription"));
+        quota.setText(ratio + "%");
+        quotaBar.setMinWidth(ratio);
+        quotaDescription.setText(quotaDescriptionText);
+    }
+
+    QuotaState getQuotaState() {
+        try {
+            return quotaState = boxClient.getQuotaState();
+        } catch (IOException | QblInvalidCredentials e) {
+            return quotaState = null;
+        }
+    }
+
 
     private void createButtonGraphics() {
         Image heartGraphic = new Image(getClass().getResourceAsStream("/img/heart_white.png"));

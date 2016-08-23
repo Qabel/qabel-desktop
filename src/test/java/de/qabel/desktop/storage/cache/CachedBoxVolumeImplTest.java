@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.hamcrest.Matchers.hasItem;
@@ -71,24 +72,6 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
     protected void cleanVolume() throws IOException {
         FileUtils.deleteDirectory(tempFolder.toFile());
     }
-
-    @Override
-    @Test
-    public void testAutocommitDelay() throws Exception {
-        BoxNavigation nav = volume.navigate();
-        nav.setAutocommit(true);
-        nav.setAutocommitDelay(1000);
-        nav.createFolder("a");
-
-        BoxNavigation nav2 = volume2.navigate();
-        assertFalse(nav2.hasFolder("a"));
-        waitUntil(() -> {
-            BoxNavigation nav3 = volume2.navigate();
-            ((CachedBoxNavigation) nav3).refresh();
-            return nav3.hasFolder("a");
-        }, 2000L);
-    }
-
 
     @Test
     public void providesCachedNavigations() throws Exception {
