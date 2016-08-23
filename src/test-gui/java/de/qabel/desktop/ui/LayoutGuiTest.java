@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import java.util.HashSet;
 
+import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -54,7 +55,7 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
     }
 
     @Test
-    public void testObservableIdentitty() throws Exception {
+    public void testObservableIdentity() throws Exception {
         IdentityContextMenuView menuView = new IdentityContextMenuView(generateInjection("identity", identity));
         IdentityContextMenuController menuController = (IdentityContextMenuController) menuView.getPresenter();
         menuController.setAlias("new alias identity");
@@ -64,6 +65,7 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
     @Test
     public void testInviteMenuStyle() throws Exception {
         clickOn(controller.inviteButton);
+        waitUntil(controller.inviteBackground::isVisible);
         assertTrue(controller.inviteBackground.isVisible());
         assertTrue(controller.inviteButton.getStyleClass().contains("darkgrey"));
     }
@@ -71,16 +73,16 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
     @Test
     public void testCleanMenuIcons() throws Exception {
         clickOn(controller.browseNav);
-        assertTrue(!controller.inviteBackground.isVisible());
-        assertTrue(!controller.faqBackground.isVisible());
-        assertTrue(!controller.feedbackBackground.isVisible());
+        assertFalse(controller.inviteBackground.isVisible());
+        assertFalse(controller.faqBackground.isVisible());
+        assertFalse(controller.feedbackBackground.isVisible());
     }
 
     @Test
     public void testUnactivatedNaviItem() throws Exception {
         clickOn(controller.browseNav);
         clickOn(controller.inviteButton);
-        assertTrue(!controller.browseNav.button.getGraphic().getStyleClass().contains("active"));
+        assertFalse(controller.browseNav.button.getGraphic().getStyleClass().contains("active"));
     }
 
     @Test

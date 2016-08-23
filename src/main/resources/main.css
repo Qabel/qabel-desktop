@@ -516,13 +516,14 @@ VBox.spaced, HBox.spaced {
     -fx-background-insets: 0px;
     -fx-border-style: none;
     -fx-border-color: none;
-    -fx-text-fill: #ff690f;
+
 }
 
 .button-qrcode:pressed {
     -fx-border-color: none;
     -fx-text-fill: none;
     -fx-border-style: none;
+    -fx-text-fill: #ff690f;
 }
 
 .pane-popup {
@@ -633,7 +634,6 @@ VBox.spaced, HBox.spaced {
 }
 
 .button-menu:hover {
-
     -fx-border-style: none;
     -fx-border-color: none;
     -fx-effect: innershadow(gaussian, #808080, 1, 1, 1, 1);
@@ -665,7 +665,7 @@ VBox.spaced, HBox.spaced {
     -fx-background-insets: 0px;
     -fx-border-style: none;
     -fx-border-color: none;
-    -fx-text-fill: #ff690f;
+    -fx-text-fill: #808080;
 }
 
 .button-close-pane:pressed {
