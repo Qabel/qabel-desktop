@@ -115,7 +115,7 @@ public class ContactItemController extends AbstractController implements Initial
         Identity i = clientConfiguration.getSelectedIdentity();
         try {
             contactRepository.delete(contact, i);
-        } catch (PersistenceException | EntityNotFoundException e) {
+        } catch (PersistenceException e) {
             alert("Failed to delete Contact: " + contact.getAlias(), e);
         }
         //FIXME this a workaround to force the contactController to reload their contacts list
