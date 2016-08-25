@@ -1,0 +1,25 @@
+.edit-row {
+    -fx-margin: 10px;
+}
+.identity-edit-label {
+    -fx-margin: 10px;
+    -fx-padding: 0 0 0 10px;
+    -fx-pref-width: 80px;
+}
+
+.button {
+    -fx-border-color: black;
+    -fx-border-width: 0.2em;
+    -fx-background-color: none;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-border-color: grey;
+    -fx-text-fill: grey;
+}
+
+.button:pressed {
+    -fx-border-color: #ff690f;
+    -fx-text-fill: #ff690f;
+}

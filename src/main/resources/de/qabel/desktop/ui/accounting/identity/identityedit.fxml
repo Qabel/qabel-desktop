@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane fx:id="identityEdit"
+            fx:controller="de.qabel.desktop.ui.accounting.identity.IdentityEditController"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+    <center>
+        <VBox alignment="CENTER">
+            <children>
+                <HBox styleClass="edit-row">
+                    <children>
+                        <Label styleClass="identity-edit-label" text="Alias"/>
+                        <TextField fx:id="alias" BorderPane.alignment="CENTER">
+                            <VBox.margin>
+                                <Insets/>
+                            </VBox.margin>
+                        </TextField>
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="10.0" top="10.0"/>
+                    </VBox.margin>
+                </HBox>
+                <HBox styleClass="edit-row">
+                    <children>
+                        <Label styleClass="identity-edit-label" text="Email"/>
+                        <TextField fx:id="email"/>
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="10.0" top="10.0"/>
+                    </VBox.margin>
+                </HBox>
+                <HBox styleClass="edit-row">
+                    <children>
+                        <Label styleClass="identity-edit-label" text="Phone"/>
+                        <TextField fx:id="phone"/>
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="10.0" top="10.0"/>
+                    </VBox.margin>
+                </HBox>
+                <HBox styleClass="edit-row">
+                    <children>
+                        <Button onAction="#updateIdentity" alignment="TOP_LEFT" mnemonicParsing="false" text="Submit"/>
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="10.0" left="80.0" top="10.0"/>
+                    </VBox.margin>
+                </HBox>
+            </children>
+        </VBox>
+    </center>
+</BorderPane>
