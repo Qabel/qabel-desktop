@@ -330,8 +330,8 @@ public class LayoutController extends AbstractController implements Initializabl
             return;
         }
 
-        AvatarView avatarView = getAvatarView(identity);
-        avatarController = getAvatarController(avatarView);
+        AvatarView avatarView = createAvatarView(identity);
+        avatarController = (AvatarController) avatarView.getPresenter();
 
         identity.attach(() -> Platform.runLater(() -> {
             alias.setText(identity.getAlias());
@@ -347,12 +347,8 @@ public class LayoutController extends AbstractController implements Initializabl
         mail.setText(clientConfiguration.getAccount().getUser());
     }
 
-    private AvatarController getAvatarController(AvatarView avatarView) {
-        return (AvatarController) avatarView.getPresenter();
-    }
-
     @NotNull
-    private AvatarView getAvatarView(Identity identity) {
+    private AvatarView createAvatarView(Identity identity) {
         AvatarView avatarView = new AvatarView(e -> identity.getAlias());
         avatarView.getView(avatarContainer.getChildren()::setAll);
         return avatarView;
