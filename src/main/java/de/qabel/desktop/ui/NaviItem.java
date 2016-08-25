@@ -15,13 +15,11 @@ public class NaviItem extends HBox {
     public static final String ACTIVE_CLASS = "active";
     public Button button;
     private StringProperty labelProperty;
-    private FXMLView view;
     private ImageView imageView;
     private Indicator indicator = new Indicator();
 
-    public NaviItem(String label, Image image, FXMLView view) {
+    public NaviItem(String label, Image image) {
         labelProperty = new SimpleStringProperty(label);
-        this.view = view;
         imageView = new ImageView();
         imageView.setImage(image);
         button = new Button();

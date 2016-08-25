@@ -12,6 +12,7 @@ import de.qabel.desktop.daemon.management.WindowedTransactionGroup;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.ui.about.AboutView;
 import de.qabel.desktop.ui.accounting.AccountingView;
+import de.qabel.desktop.ui.accounting.avatar.AvatarController;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
 import de.qabel.desktop.ui.actionlog.Actionlog;
 import de.qabel.desktop.ui.actionlog.ActionlogView;
@@ -35,6 +36,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import java.awt.*;
@@ -135,6 +137,8 @@ public class LayoutController extends AbstractController implements Initializabl
 
     @Inject
     BoxClient boxClient;
+
+    private AvatarController avatarController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -326,12 +330,14 @@ public class LayoutController extends AbstractController implements Initializabl
             return;
         }
 
+        AvatarView avatarView = getAvatarView(identity);
+        avatarController = getAvatarController(avatarView);
+
         identity.attach(() -> Platform.runLater(() -> {
             alias.setText(identity.getAlias());
-            updateAvatar(identity);
+            updateAvatar(identity.getAlias());
         }));
 
-        new AvatarView(e -> currentAlias).getViewAsync(avatarContainer.getChildren()::setAll);
         alias.setText(currentAlias);
         lastAlias = currentAlias;
 
@@ -341,12 +347,23 @@ public class LayoutController extends AbstractController implements Initializabl
         mail.setText(clientConfiguration.getAccount().getUser());
     }
 
-    private void updateAvatar(Identity identity) {
-        new AvatarView(e -> identity.getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
+    private AvatarController getAvatarController(AvatarView avatarView) {
+        return (AvatarController) avatarView.getPresenter();
+    }
+
+    @NotNull
+    private AvatarView getAvatarView(Identity identity) {
+        AvatarView avatarView = new AvatarView(e -> identity.getAlias());
+        avatarView.getView(avatarContainer.getChildren()::setAll);
+        return avatarView;
+    }
+
+    private void updateAvatar(String alias) {
+        avatarController.generateAvatar(alias);
     }
 
     private NaviItem createNavItem(String label, Image image, FXMLView view) {
-        NaviItem naviItem = new NaviItem(label, image, view);
+        NaviItem naviItem = new NaviItem(label, image);
         naviItem.setOnAction(e -> {
             try {
                 scrollContent.getChildren().setAll(view.getView());

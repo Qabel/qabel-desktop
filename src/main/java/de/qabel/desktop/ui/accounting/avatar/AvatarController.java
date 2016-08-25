@@ -18,13 +18,17 @@ public class AvatarController extends AbstractController implements Initializabl
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        avatar.setText(alias.substring(0, 1).toUpperCase());
+        generateAvatar(alias);
+    }
 
+    public void generateAvatar(String alias) {
+        this.alias = alias;
+
+        avatar.setText(alias.substring(0, 1).toUpperCase());
         int hue = calculateHueFromAlias();
         String textColor = calculateForegroundColor(hue);
         String backgroundStyle = "-fx-background-color: hsb(" + hue + ",100%,100%);";
         String foregroundStyle = " -fx-text-fill: " + textColor + ";";
-
         avatar.setStyle(avatar.getStyle() + ";" + backgroundStyle + foregroundStyle);
     }
 
