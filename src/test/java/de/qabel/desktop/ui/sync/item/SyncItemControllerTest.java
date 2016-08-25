@@ -1,6 +1,5 @@
 package de.qabel.desktop.ui.sync.item;
 
-import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.factory.DropUrlGenerator;
@@ -9,14 +8,14 @@ import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.ui.AbstractControllerTest;
-import de.qabel.desktop.ui.accounting.avatar.AvatarController;
 import javafx.scene.layout.Pane;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import static org.junit.Assert.assertNotNull;
 
 public class SyncItemControllerTest extends AbstractControllerTest {
 
@@ -36,14 +35,13 @@ public class SyncItemControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void createAndShowsAvatar() throws Exception {
+    public void canCreateAvatar() throws Exception {
         SyncItemController controller = createController();
+        controller.createAvatar(identity.getAlias(), getContainer());
 
-        FXMLView avatarView = controller.createAvatar(identity.getAlias(), getContainer());
-        AvatarController avatarController = (AvatarController) avatarView.getPresenter();
-
-        Assert.assertEquals("B", avatarController.getAvatar().getText());
+        assertNotNull(controller.avatarController);
     }
+
     private Pane getContainer() {
         Pane container = new Pane();
         container.setId("someFooContainer");

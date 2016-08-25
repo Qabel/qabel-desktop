@@ -51,7 +51,4 @@ public class AvatarController extends AbstractController implements Initializabl
         return Math.abs(alias.hashCode()) * (int) (Math.PI * 1000);
     }
 
-    public Label getAvatar() {
-        return avatar;
-    }
 }

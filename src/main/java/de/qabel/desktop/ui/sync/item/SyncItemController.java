@@ -9,6 +9,7 @@ import de.qabel.desktop.daemon.sync.BoxSync;
 import de.qabel.desktop.daemon.sync.worker.Syncer;
 import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.accounting.avatar.AvatarController;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
 import de.qabel.desktop.ui.sync.edit.SyncEditController;
 import de.qabel.desktop.ui.sync.edit.SyncEditView;
@@ -80,13 +81,14 @@ public class SyncItemController extends AbstractController implements Initializa
     private VBox statusContentPane;
 
     @FXML
-    private Pane avatarContainer;
+    Pane avatarContainer;
 
     private BoxSync boxSync;
 
     Alert confirmationDialog;
     private ResourceBundle resources;
     private TransferViewModel progressModel;
+    AvatarController avatarController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -103,10 +105,10 @@ public class SyncItemController extends AbstractController implements Initializa
         syncConfig.withSyncer(this::initModel);
     }
 
-    FXMLView createAvatar(String alias, Pane container) {
+    void createAvatar(String alias, Pane container) {
         AvatarView avatarView = new AvatarView(e -> alias);
         avatarView.getView(container.getChildren()::setAll);
-        return avatarView;
+        avatarController = (AvatarController) avatarView.getPresenter();
     }
 
     public void initModel(Syncer syncer) {
