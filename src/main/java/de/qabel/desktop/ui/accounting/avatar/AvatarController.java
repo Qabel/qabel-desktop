@@ -50,4 +50,5 @@ public class AvatarController extends AbstractController implements Initializabl
     private int calculateAvatarIndex(String alias) {
         return Math.abs(alias.hashCode()) * (int) (Math.PI * 1000);
     }
+
 }

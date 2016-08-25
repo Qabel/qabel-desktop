@@ -502,6 +502,52 @@ VBox.spaced, HBox.spaced {
     -fx-font-weight: bold;
 }
 
+.syncItem {
+    -fx-border-color: darkgrey;
+    -fx-border-width: 1 0 0 0;
+}
+
+
+.avatar {
+    -fx-alignment: CENTER;
+    -fx-pref-height: 50px;
+    -fx-pref-width: 50px;
+    -fx-background-size: 50px;
+    -fx-background-color: magenta;
+    -fx-background-radius: 25;
+    -fx-border-radius: 25;
+    -fx-padding: 0 0 0 0;
+    -fx-margin: 3px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0, 0, 5);
+}
+.avatar .text {
+    -fx-font-size: 3em;
+    -fx-font-weight: bold;
+    -fx-text-fill: #343434;
+}
+
+.avatarItem {
+    -fx-padding: 0 0 0 10;
+}
+
+* {
+    -fx-sync-avatar-width: 25;
+}
+
+.sync-avatar .avatar {
+    -fx-min-height: -fx-sync-avatar-width;
+    -fx-min-width: -fx-sync-avatar-width;
+    -fx-pref-height: -fx-sync-avatar-width;
+    -fx-pref-width: -fx-sync-avatar-width;
+    -fx-effect: none;
+}
+
+.sync-avatar .avatar .text,
+.sync-name {
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+}
+
 .button-qrcode {
     -fx-background-repeat: no-repeat;
     -fx-background-image: url('/img/settings.png');
