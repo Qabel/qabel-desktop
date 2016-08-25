@@ -15,7 +15,7 @@ public class AccountingPage extends AbstractPage {
 
     public InputDialogPage add() {
         controller.dialog = null;
-        clickOn("#add");
+        clickOn("#addIdentity");
         waitUntil(() -> controller.dialog != null);
         return new InputDialogPage(baseFXRobot, robot, controller.dialog);
     }

@@ -12,6 +12,7 @@ import de.qabel.desktop.daemon.management.WindowedTransactionGroup;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.ui.about.AboutView;
 import de.qabel.desktop.ui.accounting.AccountingView;
+import de.qabel.desktop.ui.accounting.avatar.AvatarController;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
 import de.qabel.desktop.ui.actionlog.Actionlog;
 import de.qabel.desktop.ui.actionlog.ActionlogView;
@@ -35,6 +36,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import java.awt.*;
@@ -78,19 +80,19 @@ public class LayoutController extends AbstractController implements Initializabl
     private ProgressBar uploadProgress;
 
     @FXML
-    private ImageView feedbackButton;
+    ImageView feedbackButton;
 
     @FXML
-    private ImageView inviteButton;
+    ImageView inviteButton;
 
     @FXML
-    private ImageView configButton;
+    ImageView configButton;
 
     @FXML
-    private ImageView faqButton;
+    ImageView faqButton;
 
     @FXML
-    private ImageView infoButton;
+    ImageView infoButton;
 
     @FXML
     private Pane window;
@@ -106,6 +108,15 @@ public class LayoutController extends AbstractController implements Initializabl
 
     @Inject
     private DropMessageRepository dropMessageRepository;
+
+    @FXML
+    Label provider;
+    @FXML
+    Label faqBackground;
+    @FXML
+    Label inviteBackground;
+    @FXML
+    Label feedbackBackground;
 
     NaviItem browseNav;
     NaviItem contactsNav;
@@ -127,6 +138,8 @@ public class LayoutController extends AbstractController implements Initializabl
     @Inject
     BoxClient boxClient;
 
+    private AvatarController avatarController;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
@@ -134,14 +147,22 @@ public class LayoutController extends AbstractController implements Initializabl
         navi.getChildren().clear();
         AccountingView accountingView = new AccountingView();
         actionlogView = new ActionlogView();
-        accountingNav = createNavItem(resourceBundle.getString("layoutIdentity"), accountingView);
+        accountingNav = createNavItem(resourceBundle.getString("layoutIdentity"),
+            new Image(getClass().getResourceAsStream("/img/account_white.png")),
+            accountingView);
         navi.getChildren().add(accountingNav);
-
-        browseNav = createNavItem(resourceBundle.getString("layoutBrowse"), new RemoteFSView());
-        contactsNav = createNavItem(resourceBundle.getString("layoutContacts"), new ContactView());
-        syncNav = createNavItem(resourceBundle.getString("layoutSync"), new SyncView());
-        aboutNav = createNavItem(resourceBundle.getString("layoutAbout"), new AboutView());
-
+        browseNav = createNavItem(resourceBundle.getString("layoutBrowse"),
+            new Image(getClass().getResourceAsStream("/img/folder_white.png")),
+            new RemoteFSView());
+        contactsNav = createNavItem(resourceBundle.getString("layoutContacts"),
+            new Image(getClass().getResourceAsStream("/img/account_multiple_white.png")),
+            new ContactView());
+        syncNav = createNavItem(resourceBundle.getString("layoutSync"),
+            new Image(getClass().getResourceAsStream("/img/sync_white.png")),
+            new SyncView());
+        aboutNav = createNavItem(resourceBundle.getString("layoutAbout"),
+            new Image(getClass().getResourceAsStream("/img/information_white.png")),
+            new AboutView());
 
         navi.getChildren().add(browseNav);
         navi.getChildren().add(contactsNav);
@@ -214,23 +235,22 @@ public class LayoutController extends AbstractController implements Initializabl
 
 
     private void createButtonGraphics() {
-        Image heartGraphic = new Image(getClass().getResourceAsStream("/img/heart.png"));
-
+        Image heartGraphic = new Image(getClass().getResourceAsStream("/img/heart_white.png"));
         inviteButton.setImage(heartGraphic);
         inviteButton.getStyleClass().add("inline-button");
         inviteButton.setOnMouseClicked(e -> {
             scrollContent.getChildren().setAll(new InviteView().getView());
-            activeNavItem.getStyleClass().remove("active");
+            setActivityMenu(inviteBackground, inviteButton);
         });
         Tooltip inviteTooltip = new Tooltip(resourceBundle.getString("layoutIconInviteTooltip"));
         Tooltip.install(inviteButton, inviteTooltip);
 
-        Image exclamationGraphic = new Image(getClass().getResourceAsStream("/img/exclamation.png"));
+        Image exclamationGraphic = new Image(getClass().getResourceAsStream("/img/exclamation_white.png"));
         feedbackButton.setImage(exclamationGraphic);
         feedbackButton.getStyleClass().add("inline-button");
         feedbackButton.setOnMouseClicked(e -> {
             scrollContent.getChildren().setAll(new FeedbackView().getView());
-            activeNavItem.getStyleClass().remove("active");
+            setActivityMenu(feedbackBackground, feedbackButton);
         });
         Tooltip feebackTooltip = new Tooltip(resourceBundle.getString("layoutIconFeebackTooltip"));
         Tooltip.install(feedbackButton, feebackTooltip);
@@ -241,10 +261,11 @@ public class LayoutController extends AbstractController implements Initializabl
         configButton.getStyleClass().add("inline-button");
         */
 
-        Image faqGraphics = new Image(getClass().getResourceAsStream("/img/faq.png"));
+        Image faqGraphics = new Image(getClass().getResourceAsStream("/img/faq_white.png"));
         faqButton.setImage(faqGraphics);
         faqButton.getStyleClass().add("inline-button");
         faqButton.setOnMouseClicked(e -> {
+            setActivityMenu(faqBackground, faqButton);
             executor.submit(() -> {
                 try {
                     Desktop.getDesktop().browse(new URI(resourceBundle.getString("faqUrl")));
@@ -261,6 +282,26 @@ public class LayoutController extends AbstractController implements Initializabl
         infoButton.setImage(infoGraphic);
         infoButton.getStyleClass().add("inline-button");
         */
+    }
+
+
+    private void setActivityMenu(Label label, ImageView icon) {
+        cleanIconMenuStyle();
+        label.setVisible(true);
+        icon.getStyleClass().add("darkgrey");
+
+        if (activeNavItem != null) {
+            activeNavItem.setActive(false);
+        }
+    }
+
+    private void cleanIconMenuStyle() {
+        inviteBackground.setVisible(false);
+        faqBackground.setVisible(false);
+        feedbackBackground.setVisible(false);
+        inviteButton.getStyleClass().remove("darkgrey");
+        faqButton.getStyleClass().remove("darkgrey");
+        feedbackButton.getStyleClass().remove("darkgrey");
     }
 
     private String lastAlias;
@@ -289,12 +330,14 @@ public class LayoutController extends AbstractController implements Initializabl
             return;
         }
 
+        AvatarView avatarView = createAvatarView(identity);
+        avatarController = (AvatarController) avatarView.getPresenter();
+
         identity.attach(() -> Platform.runLater(() -> {
             alias.setText(identity.getAlias());
-            updateAvatar(identity);
+            updateAvatar(identity.getAlias());
         }));
 
-        new AvatarView(e -> currentAlias).getViewAsync(avatarContainer.getChildren()::setAll);
         alias.setText(currentAlias);
         lastAlias = currentAlias;
 
@@ -304,16 +347,24 @@ public class LayoutController extends AbstractController implements Initializabl
         mail.setText(clientConfiguration.getAccount().getUser());
     }
 
-    private void updateAvatar(Identity identity) {
-        new AvatarView(e -> identity.getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
+    @NotNull
+    private AvatarView createAvatarView(Identity identity) {
+        AvatarView avatarView = new AvatarView(e -> identity.getAlias());
+        avatarView.getView(avatarContainer.getChildren()::setAll);
+        return avatarView;
     }
 
-    private NaviItem createNavItem(String label, FXMLView view) {
-        NaviItem naviItem = new NaviItem(label, view);
+    private void updateAvatar(String alias) {
+        avatarController.generateAvatar(alias);
+    }
+
+    private NaviItem createNavItem(String label, Image image, FXMLView view) {
+        NaviItem naviItem = new NaviItem(label, image);
         naviItem.setOnAction(e -> {
             try {
                 scrollContent.getChildren().setAll(view.getView());
                 setActiveNavItem(naviItem);
+                cleanIconMenuStyle();
             } catch (Exception exception) {
                 exception.printStackTrace();
                 alert(exception.getMessage(), exception);

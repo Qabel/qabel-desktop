@@ -107,15 +107,13 @@ public class ContactController extends AbstractController implements Initializab
     }
 
     private void createButtonGraphics() {
-        Image importGraphic = new Image(getClass().getResourceAsStream("/img/import.png"));
+        Image importGraphic = new Image(getClass().getResourceAsStream("/img/import_black.png"));
         importButton.setGraphic(new ImageView(importGraphic));
         Tooltip.install(importButton, new Tooltip(resourceBundle.getString("contactImport")));
-
         Image exportGraphic = new Image(getClass().getResourceAsStream("/img/export.png"));
         exportButton.setGraphic(new ImageView(exportGraphic));
         Tooltip.install(exportButton, new Tooltip(resourceBundle.getString("contactExport")));
     }
-
 
     private void showActionlog(Contact contact) {
         if (actionlogController == null) {

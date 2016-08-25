@@ -6,6 +6,8 @@ import javafx.stage.Stage;
 import org.junit.Before;
 import org.junit.Test;
 
+import static de.qabel.desktop.AsyncUtils.waitUntil;
+
 public class DesktopClientGuiTest extends AbstractKernelTest {
 
     private ClientConfig config;
@@ -22,7 +24,8 @@ public class DesktopClientGuiTest extends AbstractKernelTest {
     public void primaryStageShowsWhenNoAccount() throws Exception {
         startKernel(kernel);
         waitForPrimaryStage();
-        AsyncUtils.assertAsync(primaryStage::isShowing);
+        waitUntil(() -> !config.hasAccount());
+        waitUntil(() -> primaryStage.isShowing());
     }
 
     @Test
@@ -30,12 +33,12 @@ public class DesktopClientGuiTest extends AbstractKernelTest {
         config.setAccount(new Account("provider", "user", "auth"));
         startKernel(kernel);
         waitForPrimaryStage();
-
-        AsyncUtils.waitUntil(() -> !primaryStage.isShowing());
+        waitUntil(() -> config.hasAccount());
+        waitUntil(() -> !primaryStage.isShowing());
     }
 
     private void waitForPrimaryStage() {
-        AsyncUtils.waitUntil(() -> kernel.getContainer().getPrimaryStage() != null, WAIT_TIMEOUT);
+        waitUntil(() -> kernel.getContainer().getPrimaryStage() != null, WAIT_TIMEOUT);
         primaryStage = kernel.getContainer().getPrimaryStage();
     }
 

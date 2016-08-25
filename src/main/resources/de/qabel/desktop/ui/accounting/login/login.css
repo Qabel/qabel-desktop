@@ -44,6 +44,7 @@
     -fx-border-color: none;
     -fx-text-fill: ff690f
 }
+
 .button.error {
     -fx-background-insets: 0px, 4px;
     -fx-border-color: white;
@@ -64,9 +65,10 @@
 .button:hover {
     -fx-background-color: white;
     -fx-background-insets: 0px;
-    -fx-border-color: none;
-    -fx-text-fill: ff690f;
-    }
+    -fx-border-color: #808080;
+    -fx-text-fill: #808080;
+    -fx-effect: innershadow(gaussian, transparent, 10, 10, 10, 10);
+ }
 
 .separator {
     -fx-background-color: white;

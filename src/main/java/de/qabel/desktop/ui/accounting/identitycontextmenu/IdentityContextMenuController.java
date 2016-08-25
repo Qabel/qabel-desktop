@@ -33,10 +33,10 @@ public class IdentityContextMenuController extends AbstractController implements
     private Pane layoutWindow;
 
     @FXML
-    private AnchorPane menuQR;
+    AnchorPane menuQR;
 
     @FXML
-    private VBox vboxMenu;
+    VBox vboxMenu;
 
     @Inject
     private IdentityRepository identityRepository;

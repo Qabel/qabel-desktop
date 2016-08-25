@@ -64,10 +64,42 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
     }
 
     @Test
-    public void testObservableIdentitty() throws Exception {
+    public void testObservableIdentity() throws Exception {
         IdentityContextMenuView menuView = new IdentityContextMenuView(generateInjection("identity", identity));
         IdentityContextMenuController menuController = (IdentityContextMenuController) menuView.getPresenter();
         menuController.setAlias("new alias identity");
         assertEquals("new alias identity", identity.getAlias());
+    }
+
+    @Test
+    public void testInviteMenuStyle() throws Exception {
+        clickOn(controller.inviteButton);
+        waitUntil(controller.inviteBackground::isVisible);
+        assertTrue(controller.inviteBackground.isVisible());
+        assertTrue(controller.inviteButton.getStyleClass().contains("darkgrey"));
+    }
+
+    @Test
+    public void testCleanMenuIcons() throws Exception {
+        clickOn(controller.browseNav);
+        assertFalse(controller.inviteBackground.isVisible());
+        assertFalse(controller.faqBackground.isVisible());
+        assertFalse(controller.feedbackBackground.isVisible());
+    }
+
+    @Test
+    public void testUnactivatedNaviItem() throws Exception {
+        clickOn(controller.browseNav);
+        clickOn(controller.inviteButton);
+        assertFalse(controller.browseNav.button.getGraphic().getStyleClass().contains("active"));
+    }
+
+    @Test
+    public void testIconsNaviItem() throws Exception {
+        assertTrue(controller.browseNav.button.getGraphic() != null);
+        assertTrue(controller.contactsNav.button.getGraphic() != null);
+        assertTrue(controller.syncNav.button.getGraphic() != null);
+        assertTrue(controller.accountingNav.button.getGraphic() != null);
+        assertTrue(controller.aboutNav.button.getGraphic() != null);
     }
 }
