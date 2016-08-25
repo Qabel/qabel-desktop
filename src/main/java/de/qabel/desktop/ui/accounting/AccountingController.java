@@ -18,6 +18,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.json.JSONException;
@@ -36,6 +38,9 @@ public class AccountingController extends AbstractController implements Initiali
     VBox identityList;
 
     @FXML
+    Button addIdentity;
+
+    @FXML
     Button importIdentity;
 
     @FXML
@@ -47,6 +52,8 @@ public class AccountingController extends AbstractController implements Initiali
     List<AccountingItemView> itemViews = new LinkedList<>();
     TextInputDialog dialog;
     ResourceBundle resourceBundle;
+
+    ImageView imageView;
 
     @Inject
     private IdentityRepository identityRepository;
@@ -68,14 +75,27 @@ public class AccountingController extends AbstractController implements Initiali
         resourceBundle = resources;
 
         updateIdentityState();
+        updateButtonIcons();
         clientConfiguration.onSelectIdentity(identity -> updateIdentityState());
     }
 
     private void updateIdentityState() {
         Identity identity = clientConfiguration.getSelectedIdentity();
-
         exportIdentity.setDisable(identity == null);
         exportContact.setDisable(identity == null);
+    }
+
+    private void updateButtonIcons() {
+        addIdentity.setGraphic(getImage(new Image(getClass().getResourceAsStream("/img/account.png"))));
+        importIdentity.setGraphic(getImage(new Image(getClass().getResourceAsStream("/img/import_black.png"))));
+        exportIdentity.setGraphic(getImage(new Image(getClass().getResourceAsStream("/img/export.png"))));
+        exportContact.setGraphic(getImage(new Image(getClass().getResourceAsStream("/img/account_multiple.png"))));
+    }
+
+    private ImageView getImage(Image image) {
+        imageView = new ImageView();
+        imageView.setImage(image);
+        return imageView;
     }
 
     public void addIdentity(ActionEvent actionEvent) {

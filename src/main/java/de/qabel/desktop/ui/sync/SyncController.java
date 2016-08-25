@@ -16,6 +16,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -29,6 +32,9 @@ import java.util.ResourceBundle;
 public class SyncController extends AbstractController implements Initializable {
     @FXML
     private VBox syncItemContainer;
+
+    @FXML
+    Button addSync;
 
     ObservableList<Node> syncItemNodes;
 
@@ -50,7 +56,14 @@ public class SyncController extends AbstractController implements Initializable 
 
         boxSyncRepository.onAdd(c -> reload());
         boxSyncRepository.onDelete(c -> reload());
+        updateButtonIcons();
         reload();
+    }
+
+    private void updateButtonIcons() {
+        ImageView imageView = new ImageView();
+        imageView.setImage(new Image(getClass().getResourceAsStream("/img/syncadd.png")));
+        addSync.setGraphic(imageView);
     }
 
     private synchronized void reload() {
@@ -63,7 +76,7 @@ public class SyncController extends AbstractController implements Initializable 
             return;
         }
 
-        if(configs.size() == 0){
+        if (configs.size() == 0) {
             Platform.runLater(() -> syncItemNodes.add(new DummySyncItemView().getView()));
             return;
         }
@@ -71,7 +84,7 @@ public class SyncController extends AbstractController implements Initializable 
             Platform.runLater(() -> {
                 SyncItemView view = new SyncItemView(s -> s.equals("syncConfig") ? syncConfig : null);
                 syncItemNodes.add(view.getView());
-                syncItemControllers.add((SyncItemController)view.getPresenter());
+                syncItemControllers.add((SyncItemController) view.getPresenter());
             });
         }
     }

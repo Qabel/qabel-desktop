@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
-public class ContactItemController extends AbstractController implements Initializable{
+public class ContactItemController extends AbstractController implements Initializable {
 
     ResourceBundle resourceBundle;
 
