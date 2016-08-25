@@ -72,10 +72,6 @@ public class DesktopClientGui extends Application {
         });
 
         trayNotifications(tray);
-
-        if (config.hasAccount()) {
-            primaryStage.close();
-        }
     }
 
     private void setUpWindow() {
@@ -116,6 +112,13 @@ public class DesktopClientGui extends Application {
         Scene layoutScene = new Scene(view, 900, 600, true, SceneAntialiasing.BALANCED);
         Platform.runLater(() -> primaryStage.setScene(layoutScene));
         primaryStage.show();
+        closeStage();
+    }
+
+    private void closeStage() {
+        if (config.hasAccount()) {
+            primaryStage.close();
+        }
     }
 
     private void showLoginStage() {
