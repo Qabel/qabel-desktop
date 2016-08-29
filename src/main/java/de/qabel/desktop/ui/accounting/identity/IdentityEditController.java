@@ -60,12 +60,17 @@ public class IdentityEditController extends AbstractController implements Initia
     }
 
     @FXML
-    void updateIdentity() throws PersistenceException {
-        prepareIdentityUpdate();
-        identityRepository.save(identity);
+    void updateIdentity() {
+        fetchViewValues();
+
+        try {
+            identityRepository.save(identity);
+        } catch (PersistenceException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void prepareIdentityUpdate() {
+    private void fetchViewValues() {
         if (identity != null) {
             identity.setAlias(getAlias());
             identity.setEmail(getEmail());
