@@ -2,7 +2,6 @@ package de.qabel.desktop.ui.accounting.identity;
 
 import de.qabel.core.config.Identity;
 import de.qabel.core.repository.IdentityRepository;
-import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -34,7 +33,6 @@ public class IdentityEditController extends AbstractController implements Initia
         resourceBundle = resources;
     }
 
-
     void setAlias(String alias) {
         this.alias.setText(alias);
     }
@@ -61,20 +59,15 @@ public class IdentityEditController extends AbstractController implements Initia
 
     @FXML
     void updateIdentity() {
-        fetchViewValues();
+        identity.setAlias(getAlias());
+        identity.setEmail(getEmail());
+        identity.setPhone(getPhone());
 
-        try {
-            identityRepository.save(identity);
-        } catch (PersistenceException e) {
-            e.printStackTrace();
-        }
+        saveIdentity(identity);
     }
 
-    private void fetchViewValues() {
-        if (identity != null) {
-            identity.setAlias(getAlias());
-            identity.setEmail(getEmail());
-            identity.setPhone(getPhone());
-        }
+    void saveIdentity(Identity identity) {
+        tryOrAlert(() -> identityRepository.save(identity));
     }
+
 }

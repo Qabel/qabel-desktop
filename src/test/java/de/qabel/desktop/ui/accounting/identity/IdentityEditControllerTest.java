@@ -1,6 +1,5 @@
 package de.qabel.desktop.ui.accounting.identity;
 
-import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,9 +22,15 @@ public class IdentityEditControllerTest extends AbstractControllerTest {
         createController();
     }
 
-    @Test
-    public void canCreateController() {
-        assertNotNull(controller);
+    private void setIdentityProperties() {
+        controller.setAlias(ALIAS);
+        controller.setEmail(EMAIL);
+        controller.setPhone(PHONE);
+    }
+
+    private void createController() {
+        IdentityEditView view = new IdentityEditView(generateInjection("identity", identity));
+        controller = (IdentityEditController) view.getPresenter();
     }
 
     @Test
@@ -47,21 +52,20 @@ public class IdentityEditControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void canUpdateIdentity() throws PersistenceException {
-        controller.setAlias(ALIAS);
-        controller.setEmail(EMAIL);
-        controller.setPhone(PHONE);
-
+    public void canUpdateIdentity() {
+        setIdentityProperties();
         controller.updateIdentity();
-
         assertEquals(ALIAS, identity.getAlias());
-        assertEquals(EMAIL, identity.getEmail());
-        assertEquals(PHONE, identity.getPhone());
     }
 
-    private void createController() {
-        IdentityEditView view = new IdentityEditView(generateInjection("identity", identity));
-        controller = (IdentityEditController) view.getPresenter();
+    @Test
+    public void canSaveIdentity() {
+        setIdentityProperties();
+        controller.identityRepository = new IdentityRepositoryFake();
+        controller.saveIdentity(identity);
+
+        runLaterAndWait(() -> controller.alert.getAlert().isShowing());
     }
+
 
 }

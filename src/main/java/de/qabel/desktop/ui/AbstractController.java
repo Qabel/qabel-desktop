@@ -43,7 +43,7 @@ public class AbstractController {
         void run() throws Exception;
     }
 
-    CrashReportAlert alert;
+    public CrashReportAlert alert;
 
     protected void alert(String message, Exception e) {
         if (!Platform.isFxApplicationThread()) {
