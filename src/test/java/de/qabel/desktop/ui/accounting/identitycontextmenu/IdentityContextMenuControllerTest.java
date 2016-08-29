@@ -1,6 +1,8 @@
 package de.qabel.desktop.ui.accounting.identitycontextmenu;
 
 import de.qabel.desktop.ui.AbstractControllerTest;
+import de.qabel.desktop.ui.accounting.identity.IdentityEditController;
+import de.qabel.desktop.ui.accounting.identity.IdentityEditView;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,11 +14,25 @@ public class IdentityContextMenuControllerTest extends AbstractControllerTest {
 
     private IdentityContextMenuController controller;
 
+    private IdentityEditView identityEditView;
+    private IdentityEditController identityEditController;
+
+
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        controller = getController();
+        controller = createController();
+    }
+
+    private Function<String, Object> getIdentityInjectionContext() {
+        return generateInjection("identity", identity);
+    }
+
+    private IdentityContextMenuController createController() {
+        IdentityContextMenuView view = new IdentityContextMenuView(getIdentityInjectionContext());
+        view.getView();
+        return (IdentityContextMenuController) view.getPresenter();
     }
 
     @Test
@@ -24,14 +40,15 @@ public class IdentityContextMenuControllerTest extends AbstractControllerTest {
         assertNotNull(controller);
     }
 
-    private Function<String, Object> getIdentityInjectionContext() {
-        return generateInjection("identity", identity);
+    @Test
+    public void canCreateIdentityEditView() {
+        identityEditView = controller.createIdentityEdit();
+        assertNotNull(identityEditView);
     }
 
-    private IdentityContextMenuController getController() {
-        IdentityContextMenuView view = new IdentityContextMenuView(getIdentityInjectionContext());
-        view.getView();
-        return (IdentityContextMenuController) view.getPresenter();
+    @Test
+    public void canShowIdentityEdit() {
+        controller.showIdentityEdit();
+        runLaterAndWait(() -> controller.identityEditController.isShowing());
     }
-
 }

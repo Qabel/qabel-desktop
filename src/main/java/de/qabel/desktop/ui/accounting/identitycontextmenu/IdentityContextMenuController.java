@@ -1,11 +1,11 @@
 package de.qabel.desktop.ui.accounting.identitycontextmenu;
 
 import de.qabel.core.config.Identity;
-
 import de.qabel.core.repository.IdentityRepository;
 import de.qabel.core.repository.exception.PersistenceException;
-
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.accounting.identity.IdentityEditController;
+import de.qabel.desktop.ui.accounting.identity.IdentityEditView;
 import de.qabel.desktop.ui.accounting.qrcode.QRCodeController;
 import de.qabel.desktop.ui.accounting.qrcode.QRCodeView;
 import javafx.application.Platform;
@@ -20,7 +20,10 @@ import org.controlsfx.control.PopOver;
 
 import javax.inject.Inject;
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 public class IdentityContextMenuController extends AbstractController implements Initializable {
 
@@ -46,6 +49,9 @@ public class IdentityContextMenuController extends AbstractController implements
     private QRCodeView qrcodeView;
     private QRCodeController qrcodeController;
     private PopOver popOver;
+
+    private IdentityEditView identityEditView;
+    IdentityEditController identityEditController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -93,6 +99,20 @@ public class IdentityContextMenuController extends AbstractController implements
         Platform.runLater(() -> qrcodeController.showPopup());
     }
 
+    public void showIdentityEdit() {
+        createIdentityEdit();
+        Platform.runLater(() -> identityEditController.show());
+    }
+
+    IdentityEditView createIdentityEdit() {
+        if (identityEditView == null) {
+            identityEditView = new IdentityEditView(generateInjection("identity", identity));
+            identityEditController = (IdentityEditController) identityEditView.getPresenter();
+        }
+        return identityEditView;
+    }
+
+    @Deprecated
     public void editIdentity(MouseEvent event) {
         dialog = new TextInputDialog(identity.getAlias());
         dialog.setX(layoutWindow.getScene().getWindow().getX() + (event.getSceneX() * 2));
@@ -104,6 +124,7 @@ public class IdentityContextMenuController extends AbstractController implements
         result.ifPresent(this::setAlias);
     }
 
+    @Deprecated
     public void setAlias(String alias) {
         identity.setAlias(alias);
         try {
@@ -113,6 +134,7 @@ public class IdentityContextMenuController extends AbstractController implements
         }
     }
 
+    @Deprecated
     public String getAlias() {
         return identity.getAlias();
     }

@@ -22,7 +22,7 @@
                         </HBox.margin>
                     </Label>
                     <Button fx:id="editButton" text="%editDetails" styleClass="button-menu"
-                            onMouseClicked="#editIdentity"/>
+                            onMouseClicked="#showIdentityEdit"/>
                 </children>
             </HBox>
             <HBox disable="true">

@@ -6,12 +6,15 @@ import de.qabel.desktop.ui.AbstractController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class IdentityEditController extends AbstractController implements Initializable {
+
 
     ResourceBundle resourceBundle;
 
@@ -20,6 +23,11 @@ public class IdentityEditController extends AbstractController implements Initia
 
     @Inject
     protected IdentityRepository identityRepository;
+
+    @Inject
+    Pane layoutWindow;
+
+    public BorderPane identityEdit;
 
     @FXML
     TextField alias;
@@ -31,6 +39,39 @@ public class IdentityEditController extends AbstractController implements Initia
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
+
+        setAlias(identity.getAlias());
+        setEmail(identity.getEmail());
+        setPhone(identity.getPhone());
+        hide();
+    }
+    @FXML
+    void updateIdentity() {
+        identity.setAlias(getAlias());
+        identity.setEmail(getEmail());
+        identity.setPhone(getPhone());
+
+        saveIdentity(identity);
+    }
+
+    void saveIdentity(Identity identity) {
+        tryOrAlert(() -> identityRepository.save(identity));
+    }
+
+    public void show() {
+        if (!layoutWindow.getChildren().contains(identityEdit)) {
+            layoutWindow.getChildren().add(identityEdit);
+        }
+        identityEdit.setVisible(true);
+    }
+
+    public void hide() {
+        identityEdit.setVisible(false);
+        layoutWindow.getChildren().remove(identityEdit);
+    }
+
+    public boolean isShowing() {
+        return identityEdit.isVisible();
     }
 
     void setAlias(String alias) {
@@ -55,19 +96,6 @@ public class IdentityEditController extends AbstractController implements Initia
 
     String getPhone() {
         return phone.getText();
-    }
-
-    @FXML
-    void updateIdentity() {
-        identity.setAlias(getAlias());
-        identity.setEmail(getEmail());
-        identity.setPhone(getPhone());
-
-        saveIdentity(identity);
-    }
-
-    void saveIdentity(Identity identity) {
-        tryOrAlert(() -> identityRepository.save(identity));
     }
 
 }
