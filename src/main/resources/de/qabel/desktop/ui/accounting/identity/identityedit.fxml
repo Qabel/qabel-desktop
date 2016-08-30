@@ -13,7 +13,7 @@
                 <HBox styleClass="edit-row">
                     <children>
                         <Label styleClass="identity-edit-label" text="Alias"/>
-                        <TextField fx:id="aliasField" BorderPane.alignment="CENTER">
+                        <TextField fx:id="alias" BorderPane.alignment="CENTER">
                             <VBox.margin>
                                 <Insets/>
                             </VBox.margin>
@@ -26,7 +26,7 @@
                 <HBox styleClass="edit-row">
                     <children>
                         <Label styleClass="identity-edit-label" text="Email"/>
-                        <TextField fx:id="emailField"/>
+                        <TextField fx:id="email"/>
                     </children>
                     <VBox.margin>
                         <Insets bottom="10.0" top="10.0"/>
@@ -35,7 +35,7 @@
                 <HBox styleClass="edit-row">
                     <children>
                         <Label styleClass="identity-edit-label" text="Phone"/>
-                        <TextField fx:id="phoneField"/>
+                        <TextField fx:id="phone"/>
                     </children>
                     <VBox.margin>
                         <Insets bottom="10.0" top="10.0"/>
@@ -43,7 +43,7 @@
                 </HBox>
                 <HBox styleClass="edit-row">
                     <children>
-                        <Button fx:id="updateIdentity" alignment="TOP_LEFT" text="Save"/>
+                        <Button fx:id="saveIdentity" onAction="#saveIdentity" alignment="TOP_LEFT" text="Save"/>
                     </children>
                     <VBox.margin>
                         <Insets bottom="10.0" left="80.0" top="10.0"/>

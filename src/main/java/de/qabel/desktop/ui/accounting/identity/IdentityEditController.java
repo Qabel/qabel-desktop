@@ -2,6 +2,7 @@ package de.qabel.desktop.ui.accounting.identity;
 
 import de.qabel.core.config.Identity;
 import de.qabel.core.repository.IdentityRepository;
+import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -19,18 +20,18 @@ public class IdentityEditController extends AbstractController implements Initia
     AnchorPane identityEdit;
 
     @FXML
-    TextField aliasField;
+    TextField alias;
 
     @FXML
-    TextField emailField;
+    TextField email;
 
     @FXML
-    TextField phoneField;
+    TextField phone;
 
     ResourceBundle resourceBundle;
 
     @Inject
-    protected Identity identity;
+    Identity identity;
 
     @Inject
     protected IdentityRepository identityRepository;
@@ -41,35 +42,39 @@ public class IdentityEditController extends AbstractController implements Initia
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
-        prefillDataFromIdentity();
+        update();
     }
 
     private void prefillDataFromIdentity() {
-        setAliasField(identity.getAlias());
-        setEmailField(identity.getEmail());
-        setPhoneField(identity.getPhone());
+        setAlias(identity.getAlias());
+        setEmail(identity.getEmail());
+        setPhone(identity.getPhone());
     }
+
 
     @FXML
-    void updateIdentity() {
-        identity.setAlias(getAliasField());
-        identity.setEmail(getEmailField());
-        identity.setPhone(getPhoneField());
-        saveIdentity(identity);
+    void saveIdentity() {
+        System.out.println("saveIdentity triggered");
+        identity.setAlias(getAlias());
+        identity.setEmail(getEmail());
+        identity.setPhone(getPhone());
+        try {
+            identityRepository.save(identity);
+        } catch (PersistenceException e) {
+            alert("Cannot save Identity!", e);
+        }
     }
 
-    void saveIdentity(Identity identity) {
-        tryOrAlert(() -> identityRepository.save(identity));
+    private void update() {
+        prefillDataFromIdentity();
     }
 
     public void show() {
-        addToLayout();
         identityEdit.setVisible(true);
     }
 
     public void hide() {
         identityEdit.setVisible(false);
-        removeFromLayout();
     }
 
     private void addToLayout() {
@@ -84,33 +89,32 @@ public class IdentityEditController extends AbstractController implements Initia
         }
     }
 
-
     public boolean isShowing() {
         return identityEdit.isVisible();
     }
 
-    void setAliasField(String aliasField) {
-        this.aliasField.setText(aliasField);
+    void setAlias(String alias) {
+        this.alias.setText(alias);
     }
 
-    void setEmailField(String emailField) {
-        this.emailField.setText(emailField);
+    void setEmail(String email) {
+        this.email.setText(email);
     }
 
-    void setPhoneField(String phoneField) {
-        this.phoneField.setText(phoneField);
+    void setPhone(String phone) {
+        this.phone.setText(phone);
     }
 
-    String getAliasField() {
-        return aliasField.getText();
+    String getAlias() {
+        return alias.getText();
     }
 
-    String getEmailField() {
-        return emailField.getText();
+    String getEmail() {
+        return email.getText();
     }
 
-    String getPhoneField() {
-        return phoneField.getText();
+    String getPhone() {
+        return phone.getText();
     }
 
 }

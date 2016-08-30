@@ -8,32 +8,29 @@ class IdentityEditViewPage extends AbstractPage {
 
     private IdentityEditController controller;
 
-    private static final String ALIAS_FIELD = "#aliasField";
-    private static final String EMAIL_FIELD = "#emailField";
-    private static final String PHONE_FIELD = "#phoneField";
-    private static final String UPDATE_BUTTON = "#updateIdentity";
+    private static final String ALIAS_FIELD = "#alias";
+    private static final String EMAIL_FIELD = "#email";
+    private static final String PHONE_FIELD = "#phone";
+    private static final String UPDATE_BUTTON = "#saveIdentity";
 
     IdentityEditViewPage(FXRobot baseFXRobot, FxRobot robot, IdentityEditController controller) {
         super(baseFXRobot, robot);
         this.controller = controller;
     }
 
-    void setAlias(String s) {
-        waitForNode(ALIAS_FIELD);
+    void enterAlias(String s) {
         clickOn(ALIAS_FIELD).write(s);
     }
 
-    void setEmail(String s) {
-        waitForNode(EMAIL_FIELD);
+    void enterEmail(String s) {
         clickOn(EMAIL_FIELD).write(s);
     }
 
-    void setPhone(String s) {
-        waitForNode(PHONE_FIELD);
+    void enterPhone(String s) {
         clickOn(PHONE_FIELD).write(s);
     }
 
-    void updateIdentity() {
+    void presSave() {
         clickOn(UPDATE_BUTTON);
     }
 

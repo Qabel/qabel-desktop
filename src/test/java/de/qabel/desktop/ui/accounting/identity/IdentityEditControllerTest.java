@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 
 public class IdentityEditControllerTest extends AbstractControllerTest {
 
@@ -23,9 +22,9 @@ public class IdentityEditControllerTest extends AbstractControllerTest {
     }
 
     private void setIdentityProperties() {
-        controller.setAliasField(ALIAS);
-        controller.setEmailField(EMAIL);
-        controller.setPhoneField(PHONE);
+        controller.setAlias(ALIAS);
+        controller.setEmail(EMAIL);
+        controller.setPhone(PHONE);
     }
 
     private void createController() {
@@ -35,26 +34,26 @@ public class IdentityEditControllerTest extends AbstractControllerTest {
 
     @Test
     public void canSetAlias() {
-        controller.setAliasField(ALIAS);
-        assertEquals(ALIAS, controller.getAliasField());
+        controller.setAlias(ALIAS);
+        assertEquals(ALIAS, controller.getAlias());
     }
 
     @Test
     public void canSetEmail() {
-        controller.setEmailField(EMAIL);
-        assertEquals(EMAIL, controller.getEmailField());
+        controller.setEmail(EMAIL);
+        assertEquals(EMAIL, controller.getEmail());
     }
 
     @Test
     public void canSetPhone() {
-        controller.setPhoneField(PHONE);
-        assertEquals(PHONE, controller.getPhoneField());
+        controller.setPhone(PHONE);
+        assertEquals(PHONE, controller.getPhone());
     }
 
     @Test
     public void canUpdateIdentity() {
         setIdentityProperties();
-        controller.updateIdentity();
+        controller.saveIdentity();
         assertEquals(ALIAS, identity.getAlias());
     }
 
@@ -62,7 +61,7 @@ public class IdentityEditControllerTest extends AbstractControllerTest {
     public void canSaveIdentity() {
         setIdentityProperties();
         controller.identityRepository = new IdentityRepositoryFake();
-        controller.saveIdentity(identity);
+        controller.saveIdentity();
 
         runLaterAndWait(() -> controller.alert.getAlert().isShowing());
     }

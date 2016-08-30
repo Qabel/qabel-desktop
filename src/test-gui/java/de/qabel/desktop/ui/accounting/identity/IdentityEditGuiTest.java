@@ -3,11 +3,9 @@ package de.qabel.desktop.ui.accounting.identity;
 import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class IdentityEditGuiTest extends AbstractGuiTest<IdentityEditController> {
 
@@ -20,6 +18,11 @@ public class IdentityEditGuiTest extends AbstractGuiTest<IdentityEditController>
     @Override
     protected FXMLView getView() {
         return new IdentityEditView(generateInjection("identity", identity));
+    }
+
+    @Override
+    public IdentityEditController getController() {
+        return (IdentityEditController) getView().getPresenter();
     }
 
     @Override
@@ -41,15 +44,21 @@ public class IdentityEditGuiTest extends AbstractGuiTest<IdentityEditController>
         assertTrue(controller.isShowing());
     }
 
-
-    @Ignore
     @Test
-    public void canFillInformation() {
+    public void canFillInformationAndSave() {
         controller.show();
 
-        page.setAlias(ALIAS);
+        page.enterAlias(ALIAS);
+        page.enterEmail(EMAIL);
+        page.enterPhone(PHONE);
 
-        robot.sleep(4000);
+        page.presSave();
+
+        waitUntil(() -> identity.getAlias().equals(ALIAS));
+
+        assertEquals(ALIAS, identity.getAlias());
+        assertEquals(EMAIL, identity.getEmail());
+        assertEquals(PHONE, identity.getPhone());
     }
 
  }
