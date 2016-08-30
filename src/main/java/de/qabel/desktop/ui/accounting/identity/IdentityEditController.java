@@ -54,7 +54,6 @@ public class IdentityEditController extends AbstractController implements Initia
 
     @FXML
     void saveIdentity() {
-        System.out.println("saveIdentity triggered");
         identity.setAlias(getAlias());
         identity.setEmail(getEmail());
         identity.setPhone(getPhone());
