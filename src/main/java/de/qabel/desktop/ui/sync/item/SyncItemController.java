@@ -1,5 +1,6 @@
 package de.qabel.desktop.ui.sync.item;
 
+import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.daemon.management.Transaction;
@@ -8,6 +9,8 @@ import de.qabel.desktop.daemon.sync.BoxSync;
 import de.qabel.desktop.daemon.sync.worker.Syncer;
 import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.accounting.avatar.AvatarController;
+import de.qabel.desktop.ui.accounting.avatar.AvatarView;
 import de.qabel.desktop.ui.sync.edit.SyncEditController;
 import de.qabel.desktop.ui.sync.edit.SyncEditView;
 import de.qabel.desktop.ui.transfer.TransferViewModel;
@@ -21,10 +24,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 
@@ -34,6 +34,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class SyncItemController extends AbstractController implements Initializable {
+
     @FXML
     Parent syncItemRoot;
 
@@ -79,11 +80,15 @@ public class SyncItemController extends AbstractController implements Initializa
     @FXML
     private VBox statusContentPane;
 
+    @FXML
+    Pane avatarContainer;
+
     private BoxSync boxSync;
 
     Alert confirmationDialog;
     private ResourceBundle resources;
     private TransferViewModel progressModel;
+    AvatarController avatarController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -95,8 +100,15 @@ public class SyncItemController extends AbstractController implements Initializa
         localPath.textProperty().bind(fxConfig.localPathProperty());
         remotePath.textProperty().bind(fxConfig.remotePathProperty());
 
+        createAvatar(syncConfig.getIdentity().getAlias(), avatarContainer);
 
         syncConfig.withSyncer(this::initModel);
+    }
+
+    void createAvatar(String alias, Pane container) {
+        AvatarView avatarView = new AvatarView(e -> alias);
+        avatarView.getView(container.getChildren()::setAll);
+        avatarController = (AvatarController) avatarView.getPresenter();
     }
 
     public void initModel(Syncer syncer) {

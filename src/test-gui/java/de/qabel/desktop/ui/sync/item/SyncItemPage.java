@@ -37,6 +37,10 @@ public class SyncItemPage extends AbstractPage {
         return ((Labeled) getFirstNode("#name")).getText();
     }
 
+    public String avatar() {
+        return ((Labeled) getFirstNode("#avatar")).getText();
+    }
+
     public SyncEditPage edit() {
         controller.syncEditController = null;
         fakeClick("#editSync");

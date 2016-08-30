@@ -3,10 +3,10 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
-<Label
-        fx:controller="de.qabel.desktop.ui.accounting.avatar.AvatarController"
-        xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-        fx:id="avatar" styleClass="avatar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="50.0" minWidth="50.0" prefHeight="50.0" prefWidth="50.0">
+<Label fx:controller="de.qabel.desktop.ui.accounting.avatar.AvatarController" xmlns="http://javafx.com/javafx/8"
+       xmlns:fx="http://javafx.com/fxml/1"
+    fx:id="avatar" styleClass="avatar" wrapText="true"
+    maxHeight="-Infinity" maxWidth="-Infinity">
     <HBox.margin>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </HBox.margin>
