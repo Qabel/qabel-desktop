@@ -3,16 +3,17 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane fx:id="identityEdit"
-            fx:controller="de.qabel.desktop.ui.accounting.identity.IdentityEditController"
-            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-    <center>
-        <VBox alignment="CENTER">
+<AnchorPane fx:id="identityEdit" prefHeight="150" prefWidth="250"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="de.qabel.desktop.ui.accounting.identity.IdentityEditController">
+    <children>
+        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="0.0">
             <children>
                 <HBox styleClass="edit-row">
                     <children>
                         <Label styleClass="identity-edit-label" text="Alias"/>
-                        <TextField fx:id="alias" BorderPane.alignment="CENTER">
+                        <TextField fx:id="aliasField" BorderPane.alignment="CENTER">
                             <VBox.margin>
                                 <Insets/>
                             </VBox.margin>
@@ -25,7 +26,7 @@
                 <HBox styleClass="edit-row">
                     <children>
                         <Label styleClass="identity-edit-label" text="Email"/>
-                        <TextField fx:id="email"/>
+                        <TextField fx:id="emailField"/>
                     </children>
                     <VBox.margin>
                         <Insets bottom="10.0" top="10.0"/>
@@ -34,7 +35,7 @@
                 <HBox styleClass="edit-row">
                     <children>
                         <Label styleClass="identity-edit-label" text="Phone"/>
-                        <TextField fx:id="phone"/>
+                        <TextField fx:id="phoneField"/>
                     </children>
                     <VBox.margin>
                         <Insets bottom="10.0" top="10.0"/>
@@ -42,7 +43,7 @@
                 </HBox>
                 <HBox styleClass="edit-row">
                     <children>
-                        <Button onAction="#updateIdentity" alignment="TOP_LEFT" mnemonicParsing="false" text="Submit"/>
+                        <Button fx:id="updateIdentity" alignment="TOP_LEFT" text="Save"/>
                     </children>
                     <VBox.margin>
                         <Insets bottom="10.0" left="80.0" top="10.0"/>
@@ -50,5 +51,5 @@
                 </HBox>
             </children>
         </VBox>
-    </center>
-</BorderPane>
+    </children>
+</AnchorPane>

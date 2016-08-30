@@ -6,7 +6,7 @@ import de.qabel.desktop.ui.AbstractController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
 import javax.inject.Inject;
@@ -15,6 +15,17 @@ import java.util.ResourceBundle;
 
 public class IdentityEditController extends AbstractController implements Initializable {
 
+    @FXML
+    AnchorPane identityEdit;
+
+    @FXML
+    TextField aliasField;
+
+    @FXML
+    TextField emailField;
+
+    @FXML
+    TextField phoneField;
 
     ResourceBundle resourceBundle;
 
@@ -25,32 +36,25 @@ public class IdentityEditController extends AbstractController implements Initia
     protected IdentityRepository identityRepository;
 
     @Inject
-    Pane layoutWindow;
-
-    public BorderPane identityEdit;
-
-    @FXML
-    TextField alias;
-    @FXML
-    TextField email;
-    @FXML
-    TextField phone;
+    private Pane layoutWindow;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
-
-        setAlias(identity.getAlias());
-        setEmail(identity.getEmail());
-        setPhone(identity.getPhone());
-        hide();
+        prefillDataFromIdentity();
     }
+
+    private void prefillDataFromIdentity() {
+        setAliasField(identity.getAlias());
+        setEmailField(identity.getEmail());
+        setPhoneField(identity.getPhone());
+    }
+
     @FXML
     void updateIdentity() {
-        identity.setAlias(getAlias());
-        identity.setEmail(getEmail());
-        identity.setPhone(getPhone());
-
+        identity.setAlias(getAliasField());
+        identity.setEmail(getEmailField());
+        identity.setPhone(getPhoneField());
         saveIdentity(identity);
     }
 
@@ -59,43 +63,54 @@ public class IdentityEditController extends AbstractController implements Initia
     }
 
     public void show() {
-        if (!layoutWindow.getChildren().contains(identityEdit)) {
-            layoutWindow.getChildren().add(identityEdit);
-        }
+        addToLayout();
         identityEdit.setVisible(true);
     }
 
     public void hide() {
         identityEdit.setVisible(false);
-        layoutWindow.getChildren().remove(identityEdit);
+        removeFromLayout();
     }
+
+    private void addToLayout() {
+        if (!layoutWindow.getChildren().contains(identityEdit)) {
+            layoutWindow.getChildren().add(identityEdit);
+        }
+    }
+
+    private void removeFromLayout() {
+        if (layoutWindow.getChildren().contains(identityEdit)) {
+            layoutWindow.getChildren().remove(identityEdit);
+        }
+    }
+
 
     public boolean isShowing() {
         return identityEdit.isVisible();
     }
 
-    void setAlias(String alias) {
-        this.alias.setText(alias);
+    void setAliasField(String aliasField) {
+        this.aliasField.setText(aliasField);
     }
 
-    void setEmail(String email) {
-        this.email.setText(email);
+    void setEmailField(String emailField) {
+        this.emailField.setText(emailField);
     }
 
-    void setPhone(String phone) {
-        this.phone.setText(phone);
+    void setPhoneField(String phoneField) {
+        this.phoneField.setText(phoneField);
     }
 
-    String getAlias() {
-        return alias.getText();
+    String getAliasField() {
+        return aliasField.getText();
     }
 
-    String getEmail() {
-        return email.getText();
+    String getEmailField() {
+        return emailField.getText();
     }
 
-    String getPhone() {
-        return phone.getText();
+    String getPhoneField() {
+        return phoneField.getText();
     }
 
 }

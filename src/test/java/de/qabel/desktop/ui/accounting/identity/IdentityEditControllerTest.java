@@ -23,9 +23,9 @@ public class IdentityEditControllerTest extends AbstractControllerTest {
     }
 
     private void setIdentityProperties() {
-        controller.setAlias(ALIAS);
-        controller.setEmail(EMAIL);
-        controller.setPhone(PHONE);
+        controller.setAliasField(ALIAS);
+        controller.setEmailField(EMAIL);
+        controller.setPhoneField(PHONE);
     }
 
     private void createController() {
@@ -35,20 +35,20 @@ public class IdentityEditControllerTest extends AbstractControllerTest {
 
     @Test
     public void canSetAlias() {
-        controller.setAlias(ALIAS);
-        assertEquals(ALIAS, controller.getAlias());
+        controller.setAliasField(ALIAS);
+        assertEquals(ALIAS, controller.getAliasField());
     }
 
     @Test
     public void canSetEmail() {
-        controller.setEmail(EMAIL);
-        assertEquals(EMAIL, controller.getEmail());
+        controller.setEmailField(EMAIL);
+        assertEquals(EMAIL, controller.getEmailField());
     }
 
     @Test
     public void canSetPhone() {
-        controller.setPhone(PHONE);
-        assertEquals(PHONE, controller.getPhone());
+        controller.setPhoneField(PHONE);
+        assertEquals(PHONE, controller.getPhoneField());
     }
 
     @Test
