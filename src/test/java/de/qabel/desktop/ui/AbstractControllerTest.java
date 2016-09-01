@@ -66,6 +66,7 @@ public class AbstractControllerTest extends AbstractFxTest {
     protected Identity identity;
     protected ClientConfigRepository clientConfigRepository = new InMemoryClientConfigRepository();
     protected AccountRepository accountRepository = new InMemoryAccountRepository();
+    protected ChatDropMessageRepository chatDropMessageRepository = new InMemoryChatDropMessageRepository();
     protected DropStateRepository dropStateRepository = new InMemoryDropStateRepository();
     protected ShareNotificationRepository shareNotificationRepository = new InMemoryShareNotificationRepository();
     protected BoxSyncRepository boxSyncRepository = new InMemoryBoxSyncRepository();

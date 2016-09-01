@@ -219,6 +219,7 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     @Override
     public synchronized DropDaemon getDropDaemon() {
         if (dropDaemon == null) {
+            /*
             dropDaemon = new DropDaemon(
                 getClientConfiguration(),
                 getDropConnector(),
@@ -226,6 +227,7 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
                 getDropMessageRepository(),
                 getIdentityRepository()
             );
+            */
         }
         return dropDaemon;
     }
