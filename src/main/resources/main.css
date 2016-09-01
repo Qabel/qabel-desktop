@@ -99,26 +99,6 @@
     -fx-background-radius: 2em;
 }
 
-.avatar {
-    -fx-font-size: 3em;
-    -fx-alignment: CENTER;
-    -fx-text-fill: #343434;
-    -fx-background-size: 50px;
-    -fx-background-color: magenta;
-    -fx-background-radius: 25;
-    -fx-border-radius: 25;
-    -fx-padding: 0 0 0 0;
-    -fx-margin: 3px;
-}
-
-.avatarItem {
-    -fx-padding: 0 0 0 10;
-}
-
-.avatarContainer {
-    -fx-alignment: top-right;
-}
-
 .indicator {
     -fx-background-color: #ff690f;
     -fx-text-fill: white;
@@ -507,11 +487,24 @@ VBox.spaced, HBox.spaced {
     -fx-border-width: 1 0 0 0;
 }
 
+.avatarItem {
+    -fx-padding: 0 0 0 10;
+}
+
+.avatarContainer {
+    -fx-alignment: top-right;
+}
+
 
 .avatar {
+    -fx-font-size: 3em;
+    -fx-text-fill: #343434;
+    -fx-border-radius: 25;
     -fx-alignment: CENTER;
     -fx-pref-height: 50px;
+    -fx-min-height: 50px;
     -fx-pref-width: 50px;
+    -fx-min-width: 50px;
     -fx-background-size: 50px;
     -fx-background-color: magenta;
     -fx-background-radius: 25;
