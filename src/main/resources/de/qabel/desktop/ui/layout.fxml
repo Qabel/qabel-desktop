@@ -149,5 +149,6 @@
                 <Image url="@/beta-badge.png"/>
             </image>
         </ImageView>
+        <Pane fx:id="generalPopup" visible="false"></Pane>
     </children>
 </StackPane>

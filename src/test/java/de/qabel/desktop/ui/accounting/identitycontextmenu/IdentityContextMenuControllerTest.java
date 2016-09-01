@@ -3,6 +3,7 @@ package de.qabel.desktop.ui.accounting.identitycontextmenu;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import de.qabel.desktop.ui.accounting.identity.IdentityEditController;
 import de.qabel.desktop.ui.accounting.identity.IdentityEditView;
+import javafx.scene.layout.Pane;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,6 +24,7 @@ public class IdentityContextMenuControllerTest extends AbstractControllerTest {
     public void setUp() throws Exception {
         super.setUp();
         controller = createController();
+        controller.layoutWindow = new Pane();
     }
 
     private Function<String, Object> getIdentityInjectionContext() {
@@ -42,13 +44,13 @@ public class IdentityContextMenuControllerTest extends AbstractControllerTest {
 
     @Test
     public void canCreateIdentityEditView() {
-        identityEditView = controller.createIdentityEdit();
+        identityEditView = controller.createIdentityEdit(new Pane());
         assertNotNull(identityEditView);
     }
 
     @Test
-    public void canShowIdentityEdit() {
-        controller.showIdentityEdit();
+    public void canOpenEdit() {
+        controller.openIdentityEdit();
         runLaterAndWait(() -> controller.identityEditController.isShowing());
     }
 }

@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -36,13 +35,11 @@ public class IdentityEditController extends AbstractController implements Initia
     @Inject
     protected IdentityRepository identityRepository;
 
-    @Inject
-    private Pane layoutWindow;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
-        update();
+        prefillDataFromIdentity();
     }
 
     private void prefillDataFromIdentity() {
@@ -54,9 +51,7 @@ public class IdentityEditController extends AbstractController implements Initia
 
     @FXML
     void saveIdentity() {
-        identity.setAlias(getAlias());
-        identity.setEmail(getEmail());
-        identity.setPhone(getPhone());
+        update();
         try {
             identityRepository.save(identity);
         } catch (PersistenceException e) {
@@ -64,9 +59,18 @@ public class IdentityEditController extends AbstractController implements Initia
         }
     }
 
-    private void update() {
-        prefillDataFromIdentity();
+    void update() {
+        if (identity.getAlias().equals(getAlias())) {
+            identity.setAlias(getAlias());
+        }
+        if (identity.getEmail().equals(getEmail())) {
+            identity.setEmail(getEmail());
+        }
+        if (identity.getPhone().equals(getPhone())) {
+            identity.setPhone(getPhone());
+        }
     }
+
 
     public void show() {
         identityEdit.setVisible(true);
@@ -76,44 +80,37 @@ public class IdentityEditController extends AbstractController implements Initia
         identityEdit.setVisible(false);
     }
 
-    private void addToLayout() {
-        if (!layoutWindow.getChildren().contains(identityEdit)) {
-            layoutWindow.getChildren().add(identityEdit);
-        }
-    }
-
-    private void removeFromLayout() {
-        if (layoutWindow.getChildren().contains(identityEdit)) {
-            layoutWindow.getChildren().remove(identityEdit);
-        }
-    }
-
     public boolean isShowing() {
         return identityEdit.isVisible();
     }
 
-    void setAlias(String alias) {
+    public void setAlias(String alias) {
         this.alias.setText(alias);
     }
 
-    void setEmail(String email) {
+    public void setEmail(String email) {
         this.email.setText(email);
     }
 
-    void setPhone(String phone) {
+    public void setPhone(String phone) {
         this.phone.setText(phone);
     }
 
-    String getAlias() {
+    public String getAlias() {
         return alias.getText();
     }
 
-    String getEmail() {
+    public String getEmail() {
         return email.getText();
     }
 
-    String getPhone() {
+    public String getPhone() {
         return phone.getText();
     }
 
+    public void clearFields() {
+        setAlias("");
+        setEmail("");
+        setPhone("");
+    }
 }

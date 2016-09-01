@@ -66,5 +66,12 @@ public class IdentityEditControllerTest extends AbstractControllerTest {
         runLaterAndWait(() -> controller.alert.getAlert().isShowing());
     }
 
+    @Test
+    public void canClearFields() {
+        controller.clearFields();
 
+        assertEquals("", controller.getAlias());
+        assertEquals("", controller.getEmail());
+        assertEquals("", controller.getPhone());
+    }
 }

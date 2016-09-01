@@ -1,8 +1,6 @@
 package de.qabel.desktop.ui.accounting.identitycontextmenu;
 
 import de.qabel.core.config.Identity;
-import de.qabel.core.repository.IdentityRepository;
-import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.identity.IdentityEditController;
 import de.qabel.desktop.ui.accounting.identity.IdentityEditView;
@@ -11,8 +9,6 @@ import de.qabel.desktop.ui.accounting.qrcode.QRCodeView;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TextInputDialog;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -22,7 +18,6 @@ import javax.inject.Inject;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class IdentityContextMenuController extends AbstractController implements Initializable {
@@ -33,22 +28,16 @@ public class IdentityContextMenuController extends AbstractController implements
     private Identity identity;
 
     @Inject
-    private Pane layoutWindow;
+    Pane layoutWindow;
 
     @FXML
-    AnchorPane menuQR;
+    AnchorPane identityContextMenu;
 
     @FXML
     VBox vboxMenu;
 
-    @Inject
-    private IdentityRepository identityRepository;
-
-    private TextInputDialog dialog;
-
     private QRCodeView qrcodeView;
     private QRCodeController qrcodeController;
-    private PopOver popOver;
 
     private IdentityEditView identityEditView;
     IdentityEditController identityEditController;
@@ -58,84 +47,66 @@ public class IdentityContextMenuController extends AbstractController implements
         resourceBundle = resources;
     }
 
-    private void initializeQRPopup() {
+    private void initializeQRPopup(Pane container) {
         if (qrcodeView == null) {
             final Map<String, Object> injectionContext = new HashMap<>();
             injectionContext.put("identity", identity);
             qrcodeView = new QRCodeView(injectionContext::get);
-            qrcodeView.getView(layoutWindow.getChildren()::add);
+            qrcodeView.getView(container.getChildren()::add);
             qrcodeController = (QRCodeController) qrcodeView.getPresenter();
         }
     }
 
     public void showMenu(double coordPopOverX, double coordPopOverY) {
-        if (!layoutWindow.getChildren().contains(menuQR)) {
-            layoutWindow.getChildren().add(menuQR);
-        }
-
-        initializePopOver();
-        popOver.show(menuQR, coordPopOverX, coordPopOverY);
-        Platform.runLater(() -> layoutWindow.getChildren().remove(menuQR));
+        PopOver popOver = createPopOver();
+        popOver.show(identityContextMenu, coordPopOverX, coordPopOverY);
     }
 
-    private void initializePopOver() {
-        popOver = new PopOver();
+    public void showMenu() {
+        PopOver popOver = createPopOver();
+        popOver.show(identityContextMenu);
+    }
+
+    private PopOver createPopOver() {
+        PopOver popOver = new PopOver();
         popOver.setArrowLocation(PopOver.ArrowLocation.TOP_RIGHT);
         popOver.setContentNode(new VBox(vboxMenu));
         popOver.setAutoFix(true);
         popOver.setAutoHide(true);
         popOver.setHideOnEscape(true);
         popOver.setDetachable(false);
+        return popOver;
     }
 
     private void closeMenu() {
-        popOver.hide();
-        layoutWindow.getChildren().remove(menuQR);
+        Platform.runLater(() -> {
+            layoutWindow.getChildren().remove(identityContextMenu);
+        });
     }
 
     public void openQRCode() {
         closeMenu();
-        initializeQRPopup();
+        initializeQRPopup(layoutWindow);
         Platform.runLater(() -> qrcodeController.showPopup());
     }
 
-    public void showIdentityEdit() {
-        createIdentityEdit();
+    @FXML
+    void openIdentityEdit() {
+        identityContextMenu.getChildren().clear();
+        createIdentityEdit(identityContextMenu);
         Platform.runLater(() -> identityEditController.show());
     }
 
-    IdentityEditView createIdentityEdit() {
+    IdentityEditView createIdentityEdit(Pane container) {
         if (identityEditView == null) {
             identityEditView = new IdentityEditView(generateInjection("identity", identity));
+            identityEditView.getView(container.getChildren()::add);
             identityEditController = (IdentityEditController) identityEditView.getPresenter();
         }
         return identityEditView;
     }
 
-    @Deprecated
-    public void editIdentity(MouseEvent event) {
-        dialog = new TextInputDialog(identity.getAlias());
-        dialog.setX(layoutWindow.getScene().getWindow().getX() + (event.getSceneX() * 2));
-        dialog.setY(layoutWindow.getScene().getWindow().getY() + (event.getSceneY() * 4));
-        dialog.setHeaderText(null);
-        dialog.setTitle(resourceBundle.getString("accountingItemChangeAlias"));
-        dialog.setContentText(resourceBundle.getString("accountingItemNewAlias"));
-        Optional<String> result = dialog.showAndWait();
-        result.ifPresent(this::setAlias);
-    }
-
-    @Deprecated
     public void setAlias(String alias) {
-        identity.setAlias(alias);
-        try {
-            identityRepository.save(identity);
-        } catch (PersistenceException e) {
-            alert("Failed to save identity", e);
-        }
-    }
-
-    @Deprecated
-    public String getAlias() {
-        return identity.getAlias();
+        identityEditController.setAlias(alias);
     }
 }

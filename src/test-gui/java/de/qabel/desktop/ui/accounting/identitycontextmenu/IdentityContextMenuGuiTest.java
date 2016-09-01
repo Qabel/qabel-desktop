@@ -1,18 +1,17 @@
 package de.qabel.desktop.ui.accounting.identitycontextmenu;
 
 import com.airhacks.afterburner.views.FXMLView;
-import de.qabel.core.config.Identities;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.core.config.factory.IdentityBuilder;
-
 import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.net.URISyntaxException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 public class IdentityContextMenuGuiTest extends AbstractGuiTest<IdentityContextMenuController> {
@@ -24,6 +23,8 @@ public class IdentityContextMenuGuiTest extends AbstractGuiTest<IdentityContextM
     public void setUp() throws Exception {
         super.setUp();
         page = new IdentityContextMenuPage(baseFXRobot, robot, controller);
+//        controller.identityContextMenu.setVisible(true);
+//        controller.layoutWindow = new Pane();
     }
 
     @Override
@@ -37,16 +38,20 @@ public class IdentityContextMenuGuiTest extends AbstractGuiTest<IdentityContextM
     }
 
     @Test
-    public void testEdit() throws Exception {
-        page.setAlias();
-        assertEquals("new alias", identity.getAlias());
+    public void canShowIdentityEdit() {
+        page.openIdentityEdit();
+        runLaterAndWait(this::assertEditIsShowing);
+        robot.sleep(4000);
     }
 
+    private void assertEditIsShowing() {
+        assertTrue(controller.identityEditController.isShowing());
+    }
+
+    @Ignore
     @Test
-    public void savesAlias() throws Exception {
-        page.setAlias();
-        assertEquals("new alias", controller.getAlias());
-        Identities results = identityRepository.findAll();
-        assertEquals("new alias", results.getByKeyIdentifier(identity.getKeyIdentifier()).getAlias());
+    public void canEditIdentity() {
+        page.openIdentityEdit();
+        page.changeIdentity("someNewAlias", "someNewMail@mail.com", "PHONE-010101");
     }
 }
