@@ -50,7 +50,7 @@ public class DropDaemon implements Runnable {
         }
     }
 
-    void receiveMessages() throws PersistenceException, EntityNotFoundException {
+    void receiveMessages() {
         try {
             Map<Identity, List<ChatDropMessage>> identityListMap = chatService.refreshMessages();
             for (Map.Entry<Identity, List<ChatDropMessage>> messages: identityListMap.entrySet()) {
