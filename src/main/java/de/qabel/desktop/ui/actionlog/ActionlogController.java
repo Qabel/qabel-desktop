@@ -3,6 +3,7 @@ package de.qabel.desktop.ui.actionlog;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
+import de.qabel.core.drop.DropMessageMetadata;
 import de.qabel.core.exceptions.*;
 import de.qabel.core.repository.ContactRepository;
 import de.qabel.core.repository.exception.EntityNotFoundException;
@@ -127,6 +128,7 @@ public class ActionlogController extends AbstractController implements Initializ
 
     void sendDropMessage(Contact c, String text) throws QblDropPayloadSizeException, QblNetworkInvalidResponseException, PersistenceException {
         DropMessage d = new DropMessage(identity, new TextMessage(text).toJson(), DropMessageRepository.PAYLOAD_TYPE_MESSAGE);
+        d.setDropMessageMetadata(new DropMessageMetadata(identity));
         dropConnector.send(c, d);
         dropMessageRepository.addMessage(d, identity, c, true);
     }

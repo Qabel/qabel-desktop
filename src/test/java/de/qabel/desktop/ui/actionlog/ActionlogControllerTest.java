@@ -4,6 +4,7 @@ import de.qabel.core.config.Account;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
+import de.qabel.core.drop.DropMessageMetadata;
 import de.qabel.desktop.daemon.drop.TextMessage;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.inmemory.InMemoryDropMessageRepository;
@@ -65,7 +66,19 @@ public class ActionlogControllerTest extends AbstractControllerTest {
         List<PersistenceDropMessage> lst = dropMessageRepository.loadConversation(c, i);
 
         assertEquals(1, lst.size());
-        assertEquals("msg2", TextMessage.fromJson(lst.get(0).dropMessage.getDropPayload()).getText());
+        DropMessage dropMessage = lst.get(0).dropMessage;
+        assertEquals("msg2", TextMessage.fromJson(dropMessage.getDropPayload()).getText());
+        DropMessageMetadata metadata = dropMessage.getDropMessageMetadata();
+        assertEquals(metadata, new DropMessageMetadata(identity));
+    }
+
+    @Test
+    public void addDropMessageMetadata() throws Exception {
+        controller.sendDropMessage(c, "msg2");
+
+        List<PersistenceDropMessage> lst = dropMessageRepository.loadConversation(c, i);
+        DropMessageMetadata metadata = lst.get(0).dropMessage.getDropMessageMetadata();
+        assertEquals(metadata, new DropMessageMetadata(i));
     }
 
     @Test
