@@ -4,37 +4,22 @@ package de.qabel.desktop.daemon.drop;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Entity;
 import de.qabel.core.config.Identity;
-import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.drop.DropURL;
-import de.qabel.core.exceptions.QblDropInvalidURL;
-import de.qabel.core.exceptions.QblNetworkInvalidResponseException;
 import de.qabel.core.http.DropServerHttp;
 import de.qabel.core.http.MainDropConnector;
 import de.qabel.core.http.MockDropServer;
 import de.qabel.core.repository.entities.ChatDropMessage;
 import de.qabel.core.repository.entities.DropState;
-import de.qabel.core.repository.exception.EntityNotFoundException;
-import de.qabel.core.repository.exception.PersistenceException;
-import de.qabel.core.repository.inmemory.InMemoryChatDropMessageRepository;
 import de.qabel.core.service.ChatService;
 import de.qabel.core.service.MainChatService;
-import de.qabel.desktop.repository.inmemory.InMemoryHttpDropConnector;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
-import de.qabel.desktop.ui.connector.DropConnector;
-import de.qabel.desktop.ui.connector.DropPollResponse;
-import kotlin.Triple;
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
 import static de.qabel.desktop.AsyncUtils.assertAsync;
@@ -49,9 +34,7 @@ public class DropDaemonTest extends AbstractControllerTest {
     private Contact sender;
     private Identity senderIdentity;
     private DropDaemon dd;
-    private ChatService chatService;
     private MainDropConnector dropConnector;
-    private DropURL dropURL;
     private MockCoreDropConnector mockCoreDropConnector;
 
     @Before
@@ -68,7 +51,7 @@ public class DropDaemonTest extends AbstractControllerTest {
         contactRepository.save(sender, identity);
         dropConnector= new MainDropConnector(new MockDropServer());
         mockCoreDropConnector = new MockCoreDropConnector();
-        chatService = new MainChatService(mockCoreDropConnector, identityRepository,
+        ChatService chatService = new MainChatService(mockCoreDropConnector, identityRepository,
             contactRepository, chatDropMessageRepository, dropStateRepository);
         dd = new DropDaemon(chatService, dropMessageRepository, contactRepository);
     }

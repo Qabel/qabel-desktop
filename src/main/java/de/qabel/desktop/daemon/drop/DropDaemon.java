@@ -7,8 +7,6 @@ import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.repository.ContactRepository;
 import de.qabel.core.repository.entities.ChatDropMessage;
-import de.qabel.core.repository.exception.EntityNotFoundException;
-import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.core.service.ChatService;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
