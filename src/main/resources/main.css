@@ -499,7 +499,6 @@ VBox.spaced, HBox.spaced {
 .avatar {
     -fx-font-size: 3em;
     -fx-text-fill: #343434;
-    -fx-border-radius: 25;
     -fx-alignment: CENTER;
     -fx-pref-height: 50px;
     -fx-min-height: 50px;
