@@ -2,9 +2,9 @@ package de.qabel.desktop.daemon.drop;
 
 
 import de.qabel.core.config.Contact;
-import de.qabel.core.config.Entity;
 import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
+import de.qabel.core.drop.DropMessageMetadata;
 import de.qabel.core.drop.DropURL;
 import de.qabel.core.http.DropServerHttp;
 import de.qabel.core.http.MainDropConnector;
@@ -36,6 +36,7 @@ public class DropDaemonTest extends AbstractControllerTest {
     private DropDaemon dd;
     private MainDropConnector dropConnector;
     private MockCoreDropConnector mockCoreDropConnector;
+    private ChatService chatService;
 
     @Before
     @Override
@@ -51,17 +52,19 @@ public class DropDaemonTest extends AbstractControllerTest {
         contactRepository.save(sender, identity);
         dropConnector= new MainDropConnector(new MockDropServer());
         mockCoreDropConnector = new MockCoreDropConnector();
-        ChatService chatService = new MainChatService(mockCoreDropConnector, identityRepository,
+        chatService = new MainChatService(mockCoreDropConnector, identityRepository,
             contactRepository, chatDropMessageRepository, dropStateRepository);
         dd = new DropDaemon(chatService, dropMessageRepository, contactRepository);
     }
 
-    private void send(Contact contact, Entity sender) {
+    private void send(Contact contact, Identity sender) {
         ChatDropMessage.MessagePayload.TextMessage textMessage =
             new ChatDropMessage.MessagePayload.TextMessage("test_message");
         DropMessage dropMessage = new DropMessage(sender, textMessage.toString(),
             ChatDropMessage.MessageType.BOX_MESSAGE.getType());
-        dropConnector.sendDropMessage(senderIdentity, contact, dropMessage, contact.getDropUrls().iterator().next());
+        DropMessageMetadata metadata = new DropMessageMetadata(sender);
+        dropMessage.setDropMessageMetadata(metadata);
+        dropConnector.sendDropMessage(sender, contact, dropMessage, contact.getDropUrls().iterator().next());
     }
 
     @Test
@@ -75,9 +78,22 @@ public class DropDaemonTest extends AbstractControllerTest {
     }
 
     @Test
+    public void helloProtocol() throws Exception {
+        Identity otherIdentity = identityBuilderFactory.factory().withAlias("tester2").build();
+        Contact otherIdentitiesContact = getContact(otherIdentity);
+        send(c, otherIdentity);
+
+        dd.receiveMessages();
+
+        Contact other = contactRepository.findByKeyId(identity, otherIdentitiesContact.getKeyIdentifier());
+        assertThat(otherIdentitiesContact.getAlias(), equalTo(other.getAlias()));
+        assertThat(other.getStatus(), equalTo(Contact.ContactStatus.UNKNOWN));
+    }
+
+    @Test
     public void handlesErrorsTest() throws Exception {
         dd.setSleepTime(1);
-        send(c, sender);
+        send(c, senderIdentity);
 
         mockCoreDropConnector.e = new IllegalStateException("network error");
 
@@ -96,7 +112,7 @@ public class DropDaemonTest extends AbstractControllerTest {
         identityRepository.save(otherIdentity);
         contactRepository.save(sender, otherIdentity);
 
-        send(otherIdentitiesContact, sender);
+        send(otherIdentitiesContact, senderIdentity);
 
         dd.receiveMessages();
 
