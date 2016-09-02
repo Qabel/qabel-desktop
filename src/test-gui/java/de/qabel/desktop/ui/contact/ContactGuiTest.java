@@ -10,6 +10,7 @@ import org.junit.Test;
 import static de.qabel.desktop.AsyncUtils.assertAsync;
 import static junit.framework.TestCase.assertEquals;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertTrue;
 
 public class ContactGuiTest extends AbstractGuiTest<ContactController> {
 
@@ -36,6 +37,39 @@ public class ContactGuiTest extends AbstractGuiTest<ContactController> {
         page.getFirstItem().delete();
 
         assertAsync(controller.contactList.getChildren()::size, is(elements + namingElements - 1));
+    }
+
+    @Test
+    public void testUnknownContact() throws Exception {
+        ContactPage page = new ContactPage(baseFXRobot, robot, controller);
+        Identity identity = identityBuilderFactory.factory().withAlias("MainIdentity").build();
+
+        createContact(identity, true);
+
+        runLaterAndWait(() -> clientConfiguration.selectIdentity(identity));
+        String style = page.getFirstItem().getAvatarStyle();
+        assertTrue(style, style.contains("50%,100%)"));
+    }
+
+    @Test
+    public void testNormalContact() throws Exception {
+        ContactPage page = new ContactPage(baseFXRobot, robot, controller);
+        Identity identity = identityBuilderFactory.factory().withAlias("MainIdentity").build();
+
+        createContact(identity, false);
+
+        runLaterAndWait(() -> clientConfiguration.selectIdentity(identity));
+        String style = page.getFirstItem().getAvatarStyle();
+        assertTrue(style, style.contains("100%,100%)"));
+    }
+
+    private void createContact(Identity identity, boolean unknown) throws PersistenceException {
+        Identity i = identityBuilderFactory.factory().withAlias("unknown").build();
+        Contact c = new Contact("unknown", i.getDropUrls(), i.getEcPublicKey());
+        if (unknown) {
+            c.setStatus(Contact.ContactStatus.UNKNOWN);
+        }
+        contactRepository.save(c, identity);
     }
 
     private void createNewContactAndSaveInRepo(String name, Identity identity) throws PersistenceException {

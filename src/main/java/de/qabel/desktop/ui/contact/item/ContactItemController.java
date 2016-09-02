@@ -12,6 +12,7 @@ import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.Indicator;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
+import de.qabel.desktop.ui.accounting.avatar.ContactAvatarView;
 import de.qabel.desktop.ui.accounting.item.SelectionEvent;
 import de.qabel.desktop.ui.actionlog.ContactActionLog;
 import de.qabel.desktop.ui.actionlog.FxActionlog;
@@ -26,9 +27,7 @@ import javafx.scene.layout.Pane;
 
 import javax.inject.Inject;
 import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class ContactItemController extends AbstractController implements Initializable {
@@ -100,7 +99,10 @@ public class ContactItemController extends AbstractController implements Initial
     }
 
     private void updateAvatar() {
-        new AvatarView(e -> contact.getAlias()).getViewAsync(view -> {
+        final Map<String, Object> injectionContext = new HashMap<>();
+        injectionContext.put("alias", contact.getAlias());
+        injectionContext.put("unknown", contact.getStatus() == Contact.ContactStatus.UNKNOWN);
+        new ContactAvatarView(injectionContext::get).getViewAsync(view -> {
             avatarContainer.getChildren().setAll(view);
             avatarContainer.getChildren().add(indicator);
         });
