@@ -68,8 +68,6 @@ public class ActionlogControllerTest extends AbstractControllerTest {
         assertEquals(1, lst.size());
         DropMessage dropMessage = lst.get(0).dropMessage;
         assertEquals("msg2", TextMessage.fromJson(dropMessage.getDropPayload()).getText());
-        DropMessageMetadata metadata = dropMessage.getDropMessageMetadata();
-        assertEquals(metadata, new DropMessageMetadata(identity));
     }
 
     @Test
