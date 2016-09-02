@@ -9,11 +9,13 @@ import de.qabel.core.config.Identity;
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.drop.DropMessage;
+import de.qabel.core.drop.DropMessageMetadata;
 import de.qabel.core.exceptions.QblNetworkInvalidResponseException;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.ui.connector.DropConnector;
+import org.jetbrains.annotations.NotNull;
 import org.spongycastle.crypto.params.KeyParameter;
 import org.spongycastle.util.encoders.Hex;
 
@@ -66,8 +68,7 @@ public class BlockSharingService implements SharingService {
     public void shareAndSendMessage(Identity sender, Contact receiver, BoxFile objectToShare, String message, BoxNavigation navigation) throws QblStorageException, PersistenceException, QblNetworkInvalidResponseException {
         QblECPublicKey owner = sender.getEcPublicKey();
         BoxExternalReference ref = navigation.share(owner, objectToShare, receiver.getKeyIdentifier());
-        ShareNotificationMessage share = new ShareNotificationMessage(ref.url, Hex.toHexString(ref.key), message);
-        DropMessage dropMessage = new DropMessage(sender, share.toJson(), DropMessageRepository.PAYLOAD_TYPE_SHARE_NOTIFICATION);
+        DropMessage dropMessage = makeDropMessage(sender, message, ref);
         dropConnector.send(receiver, dropMessage);
         dropMessageRepository.addMessage(
             dropMessage,
@@ -75,5 +76,13 @@ public class BlockSharingService implements SharingService {
             receiver,
             true
         );
+    }
+
+    @NotNull
+    DropMessage makeDropMessage(Identity sender, String message, BoxExternalReference ref) throws QblNetworkInvalidResponseException {
+        ShareNotificationMessage share = new ShareNotificationMessage(ref.url, Hex.toHexString(ref.key), message);
+        DropMessage dropMessage = new DropMessage(sender, share.toJson(), DropMessageRepository.PAYLOAD_TYPE_SHARE_NOTIFICATION);
+        dropMessage.setDropMessageMetadata(new DropMessageMetadata(sender));
+        return dropMessage;
     }
 }
