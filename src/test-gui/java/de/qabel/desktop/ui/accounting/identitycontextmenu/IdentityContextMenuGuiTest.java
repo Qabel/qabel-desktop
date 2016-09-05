@@ -43,13 +43,27 @@ public class IdentityContextMenuGuiTest extends AbstractGuiTest<IdentityContextM
 
     @Test
     public void canOpenAndCloseMenu() {
-        waitUntil(() -> controller.popOver != null);
-
-        controller.openMenu();
+        openMenu();
         assertAsync(() -> assertTrue(controller.popOver.isShowing()));
 
         controller.closeMenu();
         assertAsync(() -> assertFalse(controller.popOver.isShowing()));
+    }
+
+    private void openMenu() {
+        waitUntil(() -> controller.popOver != null);
+        controller.openMenu();
+    }
+
+    @Test
+    public void openQr() throws Exception {
+        openQrCode();
+        assertAsync(() -> assertTrue(controller.qrcodeController.isVisible()));
+    }
+
+    private void openQrCode() {
+        openMenu();
+        page.openQrCode();
     }
 
     @Test
@@ -72,8 +86,7 @@ public class IdentityContextMenuGuiTest extends AbstractGuiTest<IdentityContextM
     }
 
     private void openIdentityEdit() {
-        controller.openMenu();
+        openMenu();
         page.openIdentityEdit();
-        waitUntil(() -> controller.identityEditController != null);
     }
 }

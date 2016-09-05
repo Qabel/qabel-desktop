@@ -9,7 +9,7 @@ class IdentityContextMenuPage extends AbstractPage {
     private IdentityContextMenuController controller;
 
     private static String OPEN_ID_EDIT = "#editButton";
-    private static String OPEN_QR = "#openQrCode";
+    private static String OPEN_QR = "#openQRCode";
 
     IdentityContextMenuPage(FXRobot baseFXRobot, FxRobot robot, IdentityContextMenuController controller) {
         super(baseFXRobot, robot);
@@ -18,10 +18,12 @@ class IdentityContextMenuPage extends AbstractPage {
 
     void openIdentityEdit() {
         clickOn(OPEN_ID_EDIT);
+        waitUntil(() -> controller.identityEditController != null);
     }
 
     public void openQrCode() {
         clickOn(OPEN_QR);
+        waitUntil(() -> controller.qrcodeController != null);
     }
 
     void changeIdentity(String alias, String email, String phone) {
