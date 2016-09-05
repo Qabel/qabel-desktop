@@ -27,6 +27,7 @@ class IdentityContextMenuPage extends AbstractPage {
     }
 
     void changeIdentity(String alias, String email, String phone) {
+        waitUntil(() -> controller.identityEditController != null);
         IdentityEditViewPage identityEditPage = new IdentityEditViewPage(baseFXRobot, robot, controller.identityEditController);
 
         identityEditPage.clearFields();

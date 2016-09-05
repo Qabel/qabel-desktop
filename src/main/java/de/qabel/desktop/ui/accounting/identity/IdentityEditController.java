@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -29,6 +30,9 @@ public class IdentityEditController extends AbstractController implements Initia
 
     private ResourceBundle resourceBundle;
 
+    @Inject
+    private Pane layoutWindow;
+    
     @Inject
     Identity identity;
 
@@ -66,10 +70,17 @@ public class IdentityEditController extends AbstractController implements Initia
 
     public void show() {
         identityEdit.setVisible(true);
+        if (!layoutWindow.getChildren().contains(identityEdit)) {
+            layoutWindow.getChildren().add(identityEdit);
+        }
+
     }
 
     void hide() {
         identityEdit.setVisible(false);
+        if (layoutWindow.getChildren().contains(identityEdit)) {
+            layoutWindow.getChildren().remove(identityEdit);
+        }
     }
 
     public boolean isShowing() {
@@ -104,5 +115,10 @@ public class IdentityEditController extends AbstractController implements Initia
         setAlias("");
         setEmail("");
         setPhone("");
+    }
+
+    @FXML
+    public void close() {
+        hide();
     }
 }

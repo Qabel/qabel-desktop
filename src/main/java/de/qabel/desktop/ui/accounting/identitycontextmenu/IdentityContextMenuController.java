@@ -58,15 +58,14 @@ public class IdentityContextMenuController extends AbstractController implements
     @FXML
     public void openIdentityEdit() {
         closeMenu();
-
-        createIdentityEdit(identityContextMenu);
+        createIdentityEdit(layoutWindow);
         identityEditController.show();
     }
 
     @FXML
     public void openQRCode() {
         closeMenu();
-        createQrCodePopup(identityContextMenu);
+        createQrCodePopup(layoutWindow);
         Platform.runLater(() -> qrcodeController.showPopup());
     }
 
@@ -83,8 +82,6 @@ public class IdentityContextMenuController extends AbstractController implements
     }
 
     void closeMenu() {
-        identityContextMenu.getChildren().clear();
-        identityContextMenu.setVisible(true);
         Platform.runLater(() -> popOver.hide());
     }
 
@@ -95,7 +92,6 @@ public class IdentityContextMenuController extends AbstractController implements
             qrcodeController = (QRCodeController) qrcodeView.getPresenter();
         }
     }
-
 
     IdentityEditView createIdentityEdit(Pane container) {
         if (identityEditView == null) {

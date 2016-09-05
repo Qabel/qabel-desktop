@@ -5,7 +5,6 @@ import de.qabel.core.config.Identity;
 import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.core.config.factory.IdentityBuilder;
 import de.qabel.desktop.ui.AbstractGuiTest;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.net.URISyntaxException;
@@ -24,12 +23,15 @@ public class IdentityContextMenuGuiTest extends AbstractGuiTest<IdentityContextM
     private String email = "myNewMail@mail.com";
     private String phone = "1337/12312312";
 
-    @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
+        controller.layoutWindow = controller.identityContextMenu;
+        controller.layoutWindow.setVisible(true);
+
         page = new IdentityContextMenuPage(baseFXRobot, robot, controller);
     }
+
 
     @Override
     protected FXMLView getView() {

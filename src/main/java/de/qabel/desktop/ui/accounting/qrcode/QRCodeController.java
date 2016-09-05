@@ -49,10 +49,9 @@ public class QRCodeController extends AbstractController {
     }
 
     public void showPopup() {
-//        if (!layoutWindow.getChildren().contains(qrcode)) {
-//            layoutWindow.getChildren().add(qrcode);
-//        }
-
+        if (!layoutWindow.getChildren().contains(qrcode)) {
+            layoutWindow.getChildren().add(qrcode);
+        }
         setIdentity();
         qrcode.setVisible(true);
     }
@@ -62,8 +61,10 @@ public class QRCodeController extends AbstractController {
     }
 
     private void hidePopup() {
+        if (layoutWindow.getChildren().contains(qrcode)) {
+            layoutWindow.getChildren().remove(qrcode);
+        }
         qrcode.setVisible(false);
-//        layoutWindow.getChildren().remove(qrcode);
     }
 
     private void setIdentity() {
