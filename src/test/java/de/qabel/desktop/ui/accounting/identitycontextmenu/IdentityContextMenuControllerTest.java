@@ -18,13 +18,11 @@ public class IdentityContextMenuControllerTest extends AbstractControllerTest {
     private IdentityEditView identityEditView;
     private IdentityEditController identityEditController;
 
-
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
         controller = createController();
-        controller.layoutWindow = new Pane();
     }
 
     private Function<String, Object> getIdentityInjectionContext() {

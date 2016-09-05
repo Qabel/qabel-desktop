@@ -27,7 +27,7 @@ public class IdentityEditController extends AbstractController implements Initia
     @FXML
     TextField phone;
 
-    ResourceBundle resourceBundle;
+    private ResourceBundle resourceBundle;
 
     @Inject
     Identity identity;
@@ -35,23 +35,21 @@ public class IdentityEditController extends AbstractController implements Initia
     @Inject
     protected IdentityRepository identityRepository;
 
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
-        prefillDataFromIdentity();
+        initFromIdentity();
     }
 
-    private void prefillDataFromIdentity() {
+    private void initFromIdentity() {
         setAlias(identity.getAlias());
         setEmail(identity.getEmail());
         setPhone(identity.getPhone());
     }
 
-
     @FXML
     void saveIdentity() {
-        update();
+        updateIdentityFromView();
         try {
             identityRepository.save(identity);
         } catch (PersistenceException e) {
@@ -59,24 +57,17 @@ public class IdentityEditController extends AbstractController implements Initia
         }
     }
 
-    void update() {
-        if (identity.getAlias().equals(getAlias())) {
-            identity.setAlias(getAlias());
-        }
-        if (identity.getEmail().equals(getEmail())) {
-            identity.setEmail(getEmail());
-        }
-        if (identity.getPhone().equals(getPhone())) {
-            identity.setPhone(getPhone());
-        }
+    private void updateIdentityFromView() {
+        identity.setAlias(getAlias());
+        identity.setEmail(getEmail());
+        identity.setPhone(getPhone());
     }
-
 
     public void show() {
         identityEdit.setVisible(true);
     }
 
-    public void hide() {
+    void hide() {
         identityEdit.setVisible(false);
     }
 
@@ -92,7 +83,7 @@ public class IdentityEditController extends AbstractController implements Initia
         this.email.setText(email);
     }
 
-    public void setPhone(String phone) {
+    void setPhone(String phone) {
         this.phone.setText(phone);
     }
 
@@ -104,11 +95,11 @@ public class IdentityEditController extends AbstractController implements Initia
         return email.getText();
     }
 
-    public String getPhone() {
+    String getPhone() {
         return phone.getText();
     }
 
-    public void clearFields() {
+    void clearFields() {
         setAlias("");
         setEmail("");
         setPhone("");

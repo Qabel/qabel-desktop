@@ -11,9 +11,9 @@ public class IdentityEditGuiTest extends AbstractGuiTest<IdentityEditController>
 
     protected IdentityEditViewPage page;
 
-    static String ALIAS = "IEGUI ALIAS";
-    static String EMAIL = "IEGUI EMAIL";
-    static String PHONE = "IEGUI 01510518518";
+    private static String ALIAS = "IEGUI ALIAS";
+    private static String EMAIL = "IEGUI EMAIL";
+    private static String PHONE = "IEGUI 01510518518";
 
     @Override
     protected FXMLView getView() {

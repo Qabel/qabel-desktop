@@ -16,13 +16,11 @@ import org.controlsfx.control.PopOver;
 
 import javax.inject.Inject;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 public class IdentityContextMenuController extends AbstractController implements Initializable {
 
-    ResourceBundle resourceBundle;
+    private ResourceBundle resourceBundle;
 
     @Inject
     private Identity identity;
@@ -34,67 +32,67 @@ public class IdentityContextMenuController extends AbstractController implements
     AnchorPane identityContextMenu;
 
     @FXML
-    VBox vboxMenu;
+    VBox contextMenu;
 
     private QRCodeView qrcodeView;
     private QRCodeController qrcodeController;
 
     private IdentityEditView identityEditView;
     IdentityEditController identityEditController;
+    PopOver popOver;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
+        initializePopOver();
     }
 
-    private void initializeQRPopup(Pane container) {
+    public void openMenu(double coordPopOverX, double coordPopOverY) {
+        Platform.runLater(() -> popOver.show(identityContextMenu, coordPopOverX, coordPopOverY));
+    }
+
+    void openMenu() {
+        Platform.runLater(() -> popOver.show(identityContextMenu));
+    }
+
+    private void initializePopOver() {
+        if (popOver == null) {
+            popOver = new PopOver();
+            popOver.setArrowLocation(PopOver.ArrowLocation.TOP_RIGHT);
+            popOver.setContentNode(new Pane(contextMenu));
+            popOver.setAutoFix(true);
+            popOver.setAutoHide(true);
+            popOver.setHideOnEscape(true);
+            popOver.setDetachable(false);
+        }
+    }
+
+    void closeMenu() {
+        Platform.runLater(() -> popOver.hide());
+    }
+
+    public void openQRCode() {
+        closeMenu();
+        createQrCodePopup(identityContextMenu);
+        Platform.runLater(() -> qrcodeController.showPopup());
+    }
+
+    private void createQrCodePopup(Pane container) {
         if (qrcodeView == null) {
-            final Map<String, Object> injectionContext = new HashMap<>();
-            injectionContext.put("identity", identity);
-            qrcodeView = new QRCodeView(injectionContext::get);
+            qrcodeView = new QRCodeView(generateInjection("identity", identity));
             qrcodeView.getView(container.getChildren()::add);
             qrcodeController = (QRCodeController) qrcodeView.getPresenter();
         }
     }
 
-    public void showMenu(double coordPopOverX, double coordPopOverY) {
-        PopOver popOver = createPopOver();
-        popOver.show(identityContextMenu, coordPopOverX, coordPopOverY);
-    }
-
-    public void showMenu() {
-        PopOver popOver = createPopOver();
-        popOver.show(identityContextMenu);
-    }
-
-    private PopOver createPopOver() {
-        PopOver popOver = new PopOver();
-        popOver.setArrowLocation(PopOver.ArrowLocation.TOP_RIGHT);
-        popOver.setContentNode(new VBox(vboxMenu));
-        popOver.setAutoFix(true);
-        popOver.setAutoHide(true);
-        popOver.setHideOnEscape(true);
-        popOver.setDetachable(false);
-        return popOver;
-    }
-
-    private void closeMenu() {
-        Platform.runLater(() -> {
-            layoutWindow.getChildren().remove(identityContextMenu);
-        });
-    }
-
-    public void openQRCode() {
-        closeMenu();
-        initializeQRPopup(layoutWindow);
-        Platform.runLater(() -> qrcodeController.showPopup());
-    }
-
     @FXML
     void openIdentityEdit() {
         identityContextMenu.getChildren().clear();
+        identityContextMenu.setVisible(true);
+        closeMenu();
+
         createIdentityEdit(identityContextMenu);
-        Platform.runLater(() -> identityEditController.show());
+        identityEditController.show();
     }
 
     IdentityEditView createIdentityEdit(Pane container) {
@@ -104,9 +102,5 @@ public class IdentityContextMenuController extends AbstractController implements
             identityEditController = (IdentityEditController) identityEditView.getPresenter();
         }
         return identityEditView;
-    }
-
-    public void setAlias(String alias) {
-        identityEditController.setAlias(alias);
     }
 }

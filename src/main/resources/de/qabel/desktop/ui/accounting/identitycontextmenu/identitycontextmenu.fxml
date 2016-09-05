@@ -8,7 +8,7 @@
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuController">
     <children>
-        <VBox fx:id="vboxMenu" styleClass="vbox-menu">
+        <VBox fx:id="contextMenu" styleClass="vbox-menu">
             <HBox>
                 <children>
                     <Label styleClass="icon-edit">

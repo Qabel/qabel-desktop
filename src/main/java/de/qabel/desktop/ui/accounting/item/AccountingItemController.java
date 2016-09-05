@@ -48,8 +48,8 @@ public class AccountingItemController extends AbstractController implements Init
     @Inject
     private Pane layoutWindow;
 
-    public IdentityContextMenuView identityMenuView;
-    public IdentityContextMenuController identityMenuController;
+    private IdentityContextMenuView identityMenuView;
+    private IdentityContextMenuController identityMenuController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -94,7 +94,7 @@ public class AccountingItemController extends AbstractController implements Init
 
     public void openMenuQR(MouseEvent event) {
         initializeMenu();
-        Platform.runLater(() -> identityMenuController.showMenu(event.getSceneX()
+        Platform.runLater(() -> identityMenuController.openMenu(event.getSceneX()
             + layoutWindow.getScene().getWindow().getX(), event.getSceneY()
             + layoutWindow.getScene().getWindow().getY() + menu.getHeight()));
     }

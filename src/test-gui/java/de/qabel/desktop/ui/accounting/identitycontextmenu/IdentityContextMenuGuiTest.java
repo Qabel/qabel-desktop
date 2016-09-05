@@ -6,11 +6,13 @@ import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.core.config.factory.IdentityBuilder;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.net.URISyntaxException;
 
+import static de.qabel.desktop.AsyncUtils.assertAsync;
+import static junit.framework.TestCase.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 
@@ -18,13 +20,15 @@ public class IdentityContextMenuGuiTest extends AbstractGuiTest<IdentityContextM
     private Identity identity;
     private IdentityContextMenuPage page;
 
+    private String alias = "myNewAlias";
+    private String email = "myNewMail@mail.com";
+    private String phone = "1337/12312312";
+
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
         page = new IdentityContextMenuPage(baseFXRobot, robot, controller);
-//        controller.identityContextMenu.setVisible(true);
-//        controller.layoutWindow = new Pane();
     }
 
     @Override
@@ -38,20 +42,38 @@ public class IdentityContextMenuGuiTest extends AbstractGuiTest<IdentityContextM
     }
 
     @Test
+    public void canOpenAndCloseMenu() {
+        waitUntil(() -> controller.popOver != null);
+
+        controller.openMenu();
+        assertAsync(() -> assertTrue(controller.popOver.isShowing()));
+
+        controller.closeMenu();
+        assertAsync(() -> assertFalse(controller.popOver.isShowing()));
+    }
+
+    @Test
     public void canShowIdentityEdit() {
-        page.openIdentityEdit();
-        runLaterAndWait(this::assertEditIsShowing);
-        robot.sleep(4000);
+        openIdentityEdit();
+
+        assertAsync(() -> assertTrue(controller.identityEditController.isShowing()));
     }
 
-    private void assertEditIsShowing() {
-        assertTrue(controller.identityEditController.isShowing());
-    }
-
-    @Ignore
     @Test
     public void canEditIdentity() {
+        openIdentityEdit();
+
+        page.changeIdentity(alias, email, phone);
+        waitUntil(() -> identity.getAlias().equals(alias));
+
+        assertEquals(alias, identity.getAlias());
+        assertEquals(email, identity.getEmail());
+        assertEquals(phone, identity.getPhone());
+    }
+
+    private void openIdentityEdit() {
+        controller.openMenu();
         page.openIdentityEdit();
-        page.changeIdentity("someNewAlias", "someNewMail@mail.com", "PHONE-010101");
+        waitUntil(() -> controller.identityEditController != null);
     }
 }

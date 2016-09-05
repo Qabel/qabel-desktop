@@ -37,4 +37,8 @@ public class IdentityEditViewPage extends AbstractPage {
     public void clearFields() {
         controller.clearFields();
     }
+
+    public de.qabel.core.config.Identity getIdentity() {
+        return controller.identity;
+    }
 }
