@@ -1,6 +1,7 @@
 package de.qabel.desktop.ui.accounting.identity;
 
 import com.sun.javafx.robot.FXRobot;
+import de.qabel.core.config.Identity;
 import de.qabel.desktop.ui.AbstractPage;
 import org.testfx.api.FxRobot;
 
@@ -38,7 +39,7 @@ public class IdentityEditViewPage extends AbstractPage {
         controller.clearFields();
     }
 
-    public de.qabel.core.config.Identity getIdentity() {
+    public Identity getIdentity() {
         return controller.identity;
     }
 }

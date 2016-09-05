@@ -39,6 +39,7 @@ public class IdentityEditController extends AbstractController implements Initia
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
         initFromIdentity();
+        hide();
     }
 
     private void initFromIdentity() {

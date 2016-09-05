@@ -34,7 +34,6 @@ public class IdentityEditGuiTest extends AbstractGuiTest<IdentityEditController>
 
     @Test
     public void isHiddenOnStartup() {
-        controller.hide();
         assertFalse(controller.isShowing());
     }
 
@@ -47,6 +46,7 @@ public class IdentityEditGuiTest extends AbstractGuiTest<IdentityEditController>
     @Test
     public void canFillInformationAndSave() {
         controller.show();
+        page.clearFields();
 
         page.enterAlias(ALIAS);
         page.enterEmail(EMAIL);

@@ -20,7 +20,7 @@ class IdentityContextMenuPage extends AbstractPage {
         clickOn(OPEN_ID_EDIT);
     }
 
-    void openQrCode() {
+    public void openQrCode() {
         clickOn(OPEN_QR);
     }
 
