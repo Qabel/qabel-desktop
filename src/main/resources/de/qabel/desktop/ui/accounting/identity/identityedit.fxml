@@ -2,14 +2,19 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<AnchorPane fx:id="identityEdit" prefHeight="150" prefWidth="250"
+<AnchorPane fx:id="identityEdit" pickOnBounds="false" styleClass="pane-popup"
             xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="de.qabel.desktop.ui.accounting.identity.IdentityEditController">
     <children>
         <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
               AnchorPane.topAnchor="0.0">
             <children>
+                <StackPane>
+                    <Button fx:id="close" alignment="TOP_RIGHT" onAction="#close"
+                            styleClass="button-close-pane" StackPane.alignment="TOP_RIGHT"/>
+                </StackPane>
                 <HBox styleClass="edit-row">
                     <children>
                         <Label styleClass="identity-edit-label" text="Alias"/>
