@@ -19,18 +19,17 @@ import de.qabel.desktop.ui.contact.item.BlankItemView;
 import de.qabel.desktop.ui.contact.item.ContactItemController;
 import de.qabel.desktop.ui.contact.item.ContactItemView;
 import de.qabel.desktop.ui.contact.item.DummyItemView;
+import de.qabel.desktop.ui.contact.menu.ContactMenuController;
+import de.qabel.desktop.ui.contact.menu.ContactMenuView;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import org.json.JSONException;
 
 import javax.inject.Inject;
@@ -50,16 +49,16 @@ public class ContactController extends AbstractController implements Initializab
     Pane contactList;
 
     @FXML
-    VBox actionlogViewPane;
+    Button searchButton;
 
     @FXML
-    Button importButton;
+    Button contactsButton;
 
     @FXML
-    Button exportButton;
+    Button contactMenu;
 
-    @FXML
-    VBox contacts;
+    @Inject
+    Pane layoutWindow;
 
     @Inject
     private ClientConfig clientConfiguration;
@@ -82,6 +81,8 @@ public class ContactController extends AbstractController implements Initializab
 
     DetailsController details;
     Contacts contactsFromRepo;
+    public ContactMenuController contactMenuController;
+    ContactMenuView contactMenuView;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -95,6 +96,8 @@ public class ContactController extends AbstractController implements Initializab
         details = (DetailsController) detailsView.getPresenter();
         detailsView.getViewAsync(contactroot.getChildren()::add);
 
+        contactRepository.attach(() -> Platform.runLater(() -> update()));
+
         try {
             buildGson();
             loadContacts();
@@ -107,12 +110,9 @@ public class ContactController extends AbstractController implements Initializab
     }
 
     private void createButtonGraphics() {
-        Image importGraphic = new Image(getClass().getResourceAsStream("/img/import_black.png"));
-        importButton.setGraphic(new ImageView(importGraphic));
-        Tooltip.install(importButton, new Tooltip(resourceBundle.getString("contactImport")));
-        Image exportGraphic = new Image(getClass().getResourceAsStream("/img/export.png"));
-        exportButton.setGraphic(new ImageView(exportGraphic));
-        Tooltip.install(exportButton, new Tooltip(resourceBundle.getString("contactExport")));
+        searchButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/icon/search.png"))));
+        contactsButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/img/account_multiple.png"))));
+        contactMenu.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/img/dots_vertical.png"))));
     }
 
     private void showActionlog(Contact contact) {
@@ -124,37 +124,6 @@ public class ContactController extends AbstractController implements Initializab
             details.show();
         }
         actionlogController.setContact(contact);
-    }
-
-    @FXML
-    protected void handleImportContactsButtonAction(ActionEvent event) throws IOException, PersistenceException, URISyntaxException, QblDropInvalidURL, EntityNotFoundException, JSONException {
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle(resourceBundle.getString("contactDownloadFolder"));
-        FileChooser.ExtensionFilter qcoExtensionFilter = new FileChooser.ExtensionFilter(resourceBundle.getString("qcoExtensionFilterLabel"), "*.qco");
-        chooser.getExtensionFilters().add(qcoExtensionFilter);
-        File file = chooser.showOpenDialog(contactList.getScene().getWindow());
-        try {
-            importContacts(file);
-            loadContacts();
-        } catch (IOException | PersistenceException | JSONException e) {
-            alert(resourceBundle.getString("alertImportContactFail"), e);
-        } catch (NullPointerException ignored) {
-        }
-    }
-
-    @FXML
-    protected void handleExportContactsButtonAction() throws EntityNotFoundException, IOException, JSONException {
-        tryOrAlert(() -> {
-            try {
-                FileChooser chooser = new FileChooser();
-                chooser.setTitle(resourceBundle.getString("contactDownload"));
-                chooser.setInitialFileName("Contacts.qco");
-                File file = chooser.showSaveDialog(contactList.getScene().getWindow());
-
-                exportContacts(file);
-            } catch (NullPointerException ignored) {
-            }
-        });
     }
 
     public void loadContacts() {
@@ -274,8 +243,18 @@ public class ContactController extends AbstractController implements Initializab
     public void update() {
         Platform.runLater(this::loadContacts);
     }
+
+    public void openContactMenu(MouseEvent event) {
+        initializeMenu();
+        Platform.runLater(() -> contactMenuController.showMenu(event.getSceneX()
+            + layoutWindow.getScene().getWindow().getX(), event.getSceneY()
+            + layoutWindow.getScene().getWindow().getY() + contactMenu.getHeight()));
+    }
+
+    private void initializeMenu() {
+        contactMenuView = new ContactMenuView();
+        contactMenuView.getView(layoutWindow.getChildren()::add);
+        contactMenuController = (ContactMenuController) contactMenuView.getPresenter();
+    }
 }
-
-
-
 

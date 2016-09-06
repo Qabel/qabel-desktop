@@ -11,7 +11,10 @@ import de.qabel.desktop.ui.accounting.qrcode.QRCodeView;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -38,6 +41,19 @@ public class IdentityContextMenuController extends AbstractController implements
     @FXML
     VBox vboxMenu;
 
+    @FXML
+    Button editButton;
+    @FXML
+    Button removeButton;
+    @FXML
+    Button exportButton;
+    @FXML
+    Button privateKeyButton;
+    @FXML
+    Button publicKeyQRButton;
+    @FXML
+    Button publicKeyEmailButton;
+
     @Inject
     private IdentityRepository identityRepository;
 
@@ -50,6 +66,16 @@ public class IdentityContextMenuController extends AbstractController implements
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
+        createButtonsGraphics();
+    }
+
+    private void createButtonsGraphics() {
+        editButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/img/pencil.png"))));
+        removeButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/img/delete.png"))));
+        exportButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/img/upload.png"))));
+        privateKeyButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/img/qrcode.png"))));
+        publicKeyQRButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/img/qrcode.png"))));
+        publicKeyEmailButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/img/email.png"))));
     }
 
     private void initializeQRPopup() {
@@ -63,13 +89,8 @@ public class IdentityContextMenuController extends AbstractController implements
     }
 
     public void showMenu(double coordPopOverX, double coordPopOverY) {
-        if (!layoutWindow.getChildren().contains(menuQR)) {
-            layoutWindow.getChildren().add(menuQR);
-        }
-
         initializePopOver();
         popOver.show(menuQR, coordPopOverX, coordPopOverY);
-        Platform.runLater(() -> layoutWindow.getChildren().remove(menuQR));
     }
 
     private void initializePopOver() {
@@ -80,11 +101,11 @@ public class IdentityContextMenuController extends AbstractController implements
         popOver.setAutoHide(true);
         popOver.setHideOnEscape(true);
         popOver.setDetachable(false);
+        popOver.setOnHiding(event -> layoutWindow.getChildren().remove(menuQR));
     }
 
     private void closeMenu() {
         popOver.hide();
-        layoutWindow.getChildren().remove(menuQR);
     }
 
     public void openQRCode() {

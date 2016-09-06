@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.VBox?>
-
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.shape.Line?>
 
@@ -14,73 +10,19 @@
             fx:controller="de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuController">
     <children>
         <VBox fx:id="vboxMenu" styleClass="vbox-menu">
-            <HBox>
-                <children>
-                    <Label styleClass="icon-edit">
-                        <HBox.margin>
-                            <Insets left="5" bottom="3" top="3"/>
-                        </HBox.margin>
-                    </Label>
-                    <Button fx:id="editButton" text="%editDetails" styleClass="button-menu"
-                            onMouseClicked="#editIdentity"/>
-                </children>
-            </HBox>
-            <HBox disable="true">
-                <children>
-                    <Label styleClass="icon-delete">
-                        <HBox.margin>
-                            <Insets left="5" bottom="3" top="3"/>
-                        </HBox.margin>
-                    </Label>
-                    <Button fx:id="removeButton" wrapText="true" text="%removeIdentity" styleClass="button-menu"/>
-
-                </children>
-            </HBox>
+            <Button fx:id="editButton" text="%editDetails" styleClass="button-menu"
+                    onMouseClicked="#editIdentity"/>
+            <Button fx:id="removeButton" wrapText="true" text="%removeIdentity" styleClass="button-menu"
+                    disable="true"/>
             <Line endX="00.0" startX="-220.0"/>
-            <HBox disable="true">
-                <children>
-                    <Label styleClass="icon-export">
-                        <HBox.margin>
-                            <Insets left="5" bottom="3" top="3"/>
-                        </HBox.margin>
-                    </Label>
-                    <Button fx:id="exportButton" wrapText="true" text="%exportIdentityQID" styleClass="button-menu"/>
-                </children>
-            </HBox>
-            <HBox>
-                <children>
-                    <Label styleClass="icon-qrcode">
-                        <HBox.margin>
-                            <Insets left="5" bottom="3" top="3"/>
-                        </HBox.margin>
-                    </Label>
-                    <Button fx:id="privateKeyButton" onAction="#openQRCode" text="%exportPrivateKeyQR"
-                            styleClass="button-menu"/>
-                </children>
-            </HBox>
+            <Button fx:id="exportButton" wrapText="true" text="%exportIdentityQID" styleClass="button-menu" disable="true"/>
+            <Button fx:id="privateKeyButton" onAction="#openQRCode" text="%exportPrivateKeyQR"
+                    styleClass="button-menu"/>
             <Line endX="00.0" startX="-220.0"/>
-            <HBox disable="true">
-                <children>
-                    <Label styleClass="icon-qrcode">
-                        <HBox.margin>
-                            <Insets left="5" bottom="3" top="3"/>
-                        </HBox.margin>
-                    </Label>
-                    <Button fx:id="publicKeyQRButton" wrapText="true" text="%sharePublicKeyQR"
-                            styleClass="button-menu"/>
-                </children>
-            </HBox>
-            <HBox disable="true">
-                <children>
-                    <Label styleClass="icon-email">
-                        <HBox.margin>
-                            <Insets left="5" bottom="3" top="3"/>
-                        </HBox.margin>
-                    </Label>
-                    <Button fx:id="publicKeyEmailButton" wrapText="true" text="%sharePublicKeyEmail"
-                            styleClass="button-menu"/>
-                </children>
-            </HBox>
+            <Button fx:id="publicKeyQRButton" wrapText="true" text="%sharePublicKeyQR"
+                    styleClass="button-menu" disable="true"/>
+            <Button fx:id="publicKeyEmailButton" wrapText="true" text="%sharePublicKeyEmail"
+                    styleClass="button-menu" disable="true"/>
         </VBox>
     </children>
 </AnchorPane>

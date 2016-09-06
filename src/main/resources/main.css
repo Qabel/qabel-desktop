@@ -510,7 +510,6 @@ VBox.spaced, HBox.spaced {
     -fx-border-radius: 25;
     -fx-padding: 0 0 0 0;
     -fx-margin: 3px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0, 0, 5);
 }
 .avatar .text {
     -fx-font-size: 3em;
@@ -633,40 +632,6 @@ VBox.spaced, HBox.spaced {
     -fx-border-color: none;
 }
 
-.icon-edit {
-    -fx-background-repeat: no-repeat;
-    -fx-background-image: url('/img/pencil.png');
-    -fx-background-position: left;
-    -fx-pref-height: 25px;
-    -fx-pref-width: 30px;
-}
-
-.icon-delete {
-    -fx-background-repeat: no-repeat;
-    -fx-background-image: url('/img/delete.png');
-}
-
-.icon-export {
-    -fx-background-repeat: no-repeat;
-    -fx-background-image: url('/img/upload.png');
-}
-
-.icon-qrcode {
-    -fx-background-repeat: no-repeat;
-    -fx-background-image: url('/img/qrcode.png');
-}
-
-.icon-email {
-    -fx-background-repeat: no-repeat;
-    -fx-background-image: url('/img/email.png');
-}
-
-.icon-delete, .icon-export, .icon-qrcode, .icon-email {
-    -fx-background-position: left;
-    -fx-pref-height: 30px;
-    -fx-pref-width: 30px;
-}
-
 .button-menu {
     -fx-border-style: none;
     -fx-border-color: none;
@@ -675,13 +640,13 @@ VBox.spaced, HBox.spaced {
 .button-menu:hover {
     -fx-border-style: none;
     -fx-border-color: none;
-    -fx-effect: innershadow(gaussian, #808080, 1, 1, 1, 1);
+    -fx-effect: innershadow(gaussian, #808080, 8, 1, 1, 1);
 }
 
 .button-menu:pressed {
     -fx-border-color: none;
     -fx-border-style: none;
-    -fx-effect: innershadow(gaussian, #ff5908, 1, 1, 1, 1);
+    -fx-effect: innershadow(gaussian, #ff5908, 8, 1, 1, 1);
 }
 
 .vbox-menu {
@@ -697,7 +662,6 @@ VBox.spaced, HBox.spaced {
     -fx-background-color: transparent;
     -fx-max-width: 200px;
 }
-
 
 .button-close-pane:hover {
     -fx-background-color: transparent;

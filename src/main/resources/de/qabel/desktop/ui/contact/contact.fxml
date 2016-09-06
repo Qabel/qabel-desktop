@@ -4,25 +4,29 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<StackPane prefHeight="4000" maxHeight="Infinity" maxWidth="Infinity" fx:id="contactroot" xmlns="http://javafx.com/javafx/8"
+<StackPane prefHeight="4000" maxHeight="Infinity" maxWidth="Infinity" fx:id="contactroot"
+           xmlns="http://javafx.com/javafx/8"
            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.contact.ContactController">
     <children>
         <VBox>
             <children>
-                <HBox prefHeight="60.0">
+                <HBox prefHeight="300.0">
                     <children>
-                        <Button fx:id="importButton" mnemonicParsing="false"
-                                onAction="#handleImportContactsButtonAction" text="%importContact" >
+                        <Button fx:id="searchButton" mnemonicParsing="false" disable="true" text="%remoteFsSearchPrompt"
+                                prefWidth="150" prefHeight="50">
                             <HBox.margin>
                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                             </HBox.margin>
                         </Button>
-                        <Button fx:id="exportButton" mnemonicParsing="false"
-                                onAction="#handleExportContactsButtonAction" text="%exportContact">
+                        <Button fx:id="contactsButton" mnemonicParsing="false" disable="true" text="%layoutContacts"
+                                prefWidth="150" prefHeight="50">
                             <HBox.margin>
                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                             </HBox.margin>
                         </Button>
+                        <Button fx:id="contactMenu" mnemonicParsing="false" styleClass="button-menu"
+                                onMouseClicked="#openContactMenu"
+                                prefHeight="50"/>
                     </children>
                 </HBox>
                 <ScrollPane fitToWidth="true" prefHeight="4000" prefWidth="251.0">
