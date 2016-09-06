@@ -44,42 +44,15 @@ public class IdentityContextMenuController extends AbstractController implements
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
-        initializePopOver();
-
+        identityContextMenu.setVisible(false);
+//        initializePopOver();
     }
 
-    public void openMenu(double coordPopOverX, double coordPopOverY) {
-        Platform.runLater(() -> popOver.show(contextMenu, coordPopOverX, coordPopOverY));
-    }
 
-    void openMenu() {
-        Platform.runLater(() -> popOver.show(contextMenu));
-    }
-
-    public void closeMenu() {
-//        identityContextMenu.setVisible(false);
-        Platform.runLater(() -> popOver.hide());
-    }
-
-    @FXML
-    public void openIdentityEdit() {
-        closeMenu();
-        createIdentityEdit(identityContextMenu);
-        Platform.runLater(() -> identityEditController.show());
-    }
-
-    @FXML
-    public void openQRCode() {
-        closeMenu();
-        createQrCodePopup(identityContextMenu);
-        Platform.runLater(() -> qrcodeController.showPopup());
-    }
-
-    private void initializePopOver() {
-        if (popOver == null) {
+    private void createPopOver() {
+        if (popOver != null) {
             popOver = new PopOver();
             popOver.setArrowLocation(PopOver.ArrowLocation.TOP_RIGHT);
-            popOver.setContentNode(new Pane(layoutWindow));
             popOver.setAutoFix(true);
             popOver.setAutoHide(true);
             popOver.setHideOnEscape(true);
@@ -87,6 +60,39 @@ public class IdentityContextMenuController extends AbstractController implements
         }
     }
 
+    public void openMenu() {
+        identityContextMenu.setVisible(true);
+        appendToLayout();
+        popOver.show(identityContextMenu);
+        clearLayout();
+    }
+
+    public void openMenu(double posX, double posY) {
+        identityContextMenu.setVisible(true);
+        appendToLayout();
+        popOver.show(identityContextMenu, posX, posY);
+        clearLayout();
+    }
+
+
+    public void closeMenu() {
+        identityContextMenu.setVisible(false);
+        createPopOver();
+        Platform.runLater(() -> {
+            popOver.hide();
+            clearLayout();
+        });
+    }
+
+    private void appendToLayout() {
+        if (layoutWindow != null && !layoutWindow.getChildren().contains(identityContextMenu)) {
+            layoutWindow.getChildren().add(identityContextMenu);
+        }
+    }
+
+    private void clearLayout() {
+        Platform.runLater(() -> layoutWindow.getChildren().remove(identityContextMenu));
+    }
 
     private void createQrCodePopup(Pane container) {
         if (qrcodeView == null) {
@@ -96,6 +102,17 @@ public class IdentityContextMenuController extends AbstractController implements
         }
     }
 
+    public void openQRCode() {
+        closeMenu();
+        createQrCodePopup(layoutWindow);
+        qrcodeController.showPopup();
+    }
+
+    public void openIdentityEdit() {
+        closeMenu();
+        createIdentityEdit(layoutWindow);
+        identityEditController.show();
+    }
 
     IdentityEditView createIdentityEdit(Pane container) {
         if (identityEditView == null) {
@@ -104,5 +121,9 @@ public class IdentityContextMenuController extends AbstractController implements
             identityEditController = (IdentityEditController) identityEditView.getPresenter();
         }
         return identityEditView;
+    }
+
+    public boolean isVisible() {
+        return identityContextMenu.isVisible();
     }
 }
