@@ -9,13 +9,13 @@ import org.junit.Test;
 
 import java.net.URISyntaxException;
 
-import static de.qabel.desktop.AsyncUtils.assertAsync;
-import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 
 public class IdentityContextMenuGuiTest extends AbstractGuiTest<IdentityContextMenuController> {
+
     private Identity identity;
     private IdentityContextMenuPage page;
 
@@ -26,12 +26,9 @@ public class IdentityContextMenuGuiTest extends AbstractGuiTest<IdentityContextM
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        controller.layoutWindow = controller.identityContextMenu;
-        controller.layoutWindow.setVisible(true);
-
         page = new IdentityContextMenuPage(baseFXRobot, robot, controller);
-    }
 
+    }
 
     @Override
     protected FXMLView getView() {
@@ -44,35 +41,34 @@ public class IdentityContextMenuGuiTest extends AbstractGuiTest<IdentityContextM
     }
 
     @Test
-    public void canOpenAndCloseMenu() {
+    public void canOpenMenu() {
         openMenu();
-        assertAsync(() -> assertTrue(controller.popOver.isShowing()));
-
-        controller.closeMenu();
-        assertAsync(() -> assertFalse(controller.popOver.isShowing()));
+        assertTrue(controller.popOver.isShowing());
     }
 
-    private void openMenu() {
-        waitUntil(() -> controller.popOver != null);
-        controller.openMenu();
+    @Test
+    public void canCloseMenu() {
+        openMenu();
+
+        closeMenu();
+        assertFalse(controller.popOver.isShowing());
+    }
+
+    private void closeMenu() {
+        controller.closeMenu();
+        waitUntil(() -> controller.popOver.isShowing() == false);
     }
 
     @Test
     public void openQr() throws Exception {
         openQrCode();
-        assertAsync(() -> assertTrue(controller.qrcodeController.isVisible()));
-    }
-
-    private void openQrCode() {
-        openMenu();
-        page.openQrCode();
+        runLaterAndWait(() -> assertTrue(controller.qrcodeController.isVisible()));
     }
 
     @Test
     public void canShowIdentityEdit() {
         openIdentityEdit();
-
-        assertAsync(() -> assertTrue(controller.identityEditController.isShowing()));
+        runLaterAndWait(() -> assertTrue(controller.identityEditController.isShowing()));
     }
 
     @Test
@@ -87,8 +83,24 @@ public class IdentityContextMenuGuiTest extends AbstractGuiTest<IdentityContextM
         assertEquals(phone, identity.getPhone());
     }
 
+    private void openMenu() {
+        controller.openMenu();
+        waitUntil(() -> controller.popOver.isShowing());
+
+        waitUntil(() -> controller.popOver != null);
+    }
+
+
+    private void openQrCode() {
+        openMenu();
+        page.openQrCode();
+        waitUntil(() -> controller.qrcodeController != null);
+    }
+
+
     private void openIdentityEdit() {
         openMenu();
         page.openIdentityEdit();
+        waitUntil(() -> controller.identityEditController != null);
     }
 }

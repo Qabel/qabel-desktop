@@ -6,6 +6,7 @@ import de.qabel.desktop.ui.accounting.identity.IdentityEditViewPage;
 import org.testfx.api.FxRobot;
 
 class IdentityContextMenuPage extends AbstractPage {
+    private static final String CLOSE_MENU = "";
     private IdentityContextMenuController controller;
 
     private static String OPEN_ID_EDIT = "#editButton";
@@ -18,12 +19,10 @@ class IdentityContextMenuPage extends AbstractPage {
 
     void openIdentityEdit() {
         clickOn(OPEN_ID_EDIT);
-        waitUntil(() -> controller.identityEditController != null);
     }
 
     public void openQrCode() {
         clickOn(OPEN_QR);
-        waitUntil(() -> controller.qrcodeController != null);
     }
 
     void changeIdentity(String alias, String email, String phone) {
@@ -35,5 +34,9 @@ class IdentityContextMenuPage extends AbstractPage {
         identityEditPage.enterEmail(email);
         identityEditPage.enterPhone(phone);
         identityEditPage.presSave();
+    }
+
+    public void closeMenu() {
+        clickOn(CLOSE_MENU);
     }
 }

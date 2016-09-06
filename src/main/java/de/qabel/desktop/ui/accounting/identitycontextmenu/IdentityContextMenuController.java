@@ -45,27 +45,33 @@ public class IdentityContextMenuController extends AbstractController implements
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
         initializePopOver();
+
     }
 
     public void openMenu(double coordPopOverX, double coordPopOverY) {
-        Platform.runLater(() -> popOver.show(identityContextMenu, coordPopOverX, coordPopOverY));
+        Platform.runLater(() -> popOver.show(contextMenu, coordPopOverX, coordPopOverY));
     }
 
     void openMenu() {
-        Platform.runLater(() -> popOver.show(identityContextMenu));
+        Platform.runLater(() -> popOver.show(contextMenu));
+    }
+
+    public void closeMenu() {
+//        identityContextMenu.setVisible(false);
+        Platform.runLater(() -> popOver.hide());
     }
 
     @FXML
     public void openIdentityEdit() {
         closeMenu();
-        createIdentityEdit(layoutWindow);
-        identityEditController.show();
+        createIdentityEdit(identityContextMenu);
+        Platform.runLater(() -> identityEditController.show());
     }
 
     @FXML
     public void openQRCode() {
         closeMenu();
-        createQrCodePopup(layoutWindow);
+        createQrCodePopup(identityContextMenu);
         Platform.runLater(() -> qrcodeController.showPopup());
     }
 
@@ -73,7 +79,7 @@ public class IdentityContextMenuController extends AbstractController implements
         if (popOver == null) {
             popOver = new PopOver();
             popOver.setArrowLocation(PopOver.ArrowLocation.TOP_RIGHT);
-            popOver.setContentNode(new Pane(contextMenu));
+            popOver.setContentNode(new Pane(layoutWindow));
             popOver.setAutoFix(true);
             popOver.setAutoHide(true);
             popOver.setHideOnEscape(true);
@@ -81,9 +87,6 @@ public class IdentityContextMenuController extends AbstractController implements
         }
     }
 
-    void closeMenu() {
-        Platform.runLater(() -> popOver.hide());
-    }
 
     private void createQrCodePopup(Pane container) {
         if (qrcodeView == null) {
@@ -92,6 +95,7 @@ public class IdentityContextMenuController extends AbstractController implements
             qrcodeController = (QRCodeController) qrcodeView.getPresenter();
         }
     }
+
 
     IdentityEditView createIdentityEdit(Pane container) {
         if (identityEditView == null) {

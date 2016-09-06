@@ -32,7 +32,7 @@ public class IdentityEditController extends AbstractController implements Initia
 
     @Inject
     private Pane layoutWindow;
-    
+
     @Inject
     Identity identity;
 
@@ -70,17 +70,10 @@ public class IdentityEditController extends AbstractController implements Initia
 
     public void show() {
         identityEdit.setVisible(true);
-        if (!layoutWindow.getChildren().contains(identityEdit)) {
-            layoutWindow.getChildren().add(identityEdit);
-        }
-
     }
 
     void hide() {
         identityEdit.setVisible(false);
-        if (layoutWindow.getChildren().contains(identityEdit)) {
-            layoutWindow.getChildren().remove(identityEdit);
-        }
     }
 
     public boolean isShowing() {
