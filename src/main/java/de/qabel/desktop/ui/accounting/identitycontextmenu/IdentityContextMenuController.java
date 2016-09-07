@@ -44,42 +44,32 @@ public class IdentityContextMenuController extends AbstractController implements
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
-        identityContextMenu.setVisible(false);
-//        initializePopOver();
     }
 
 
     private void createPopOver() {
-        if (popOver != null) {
-            popOver = new PopOver();
-            popOver.setArrowLocation(PopOver.ArrowLocation.TOP_RIGHT);
-            popOver.setAutoFix(true);
-            popOver.setAutoHide(true);
-            popOver.setHideOnEscape(true);
-            popOver.setDetachable(false);
-        }
+        popOver = new PopOver();
+        popOver.setArrowLocation(PopOver.ArrowLocation.TOP_RIGHT);
+        popOver.setAutoFix(true);
+        popOver.setAutoHide(true);
+        popOver.setHideOnEscape(true);
+        popOver.setDetachable(false);
+        popOver.setContentNode(contextMenu);
     }
 
     public void openMenu() {
-        identityContextMenu.setVisible(true);
-        appendToLayout();
-        popOver.show(identityContextMenu);
-        clearLayout();
-    }
-
-    public void openMenu(double posX, double posY) {
-        identityContextMenu.setVisible(true);
-        appendToLayout();
-        popOver.show(identityContextMenu, posX, posY);
-        clearLayout();
-    }
-
-
-    public void closeMenu() {
-        identityContextMenu.setVisible(false);
         createPopOver();
         Platform.runLater(() -> {
-            popOver.hide();
+            popOver.show(identityContextMenu);
+            appendToLayout();
+            clearLayout();
+        });
+    }
+
+    public void openMenu(double coordPopOverX, double coordPopOverY) {
+        Platform.runLater(() -> {
+            popOver.show(identityContextMenu, coordPopOverX, coordPopOverY);
+            appendToLayout();
             clearLayout();
         });
     }
@@ -90,8 +80,17 @@ public class IdentityContextMenuController extends AbstractController implements
         }
     }
 
+    public void closeMenu() {
+        Platform.runLater(() -> {
+            popOver.hide();
+            clearLayout();
+        });
+    }
+
     private void clearLayout() {
-        Platform.runLater(() -> layoutWindow.getChildren().remove(identityContextMenu));
+        if (layoutWindow != null && layoutWindow.getChildren().contains(identityContextMenu)) {
+            layoutWindow.getChildren().remove(identityContextMenu);
+        }
     }
 
     private void createQrCodePopup(Pane container) {
@@ -121,9 +120,5 @@ public class IdentityContextMenuController extends AbstractController implements
             identityEditController = (IdentityEditController) identityEditView.getPresenter();
         }
         return identityEditView;
-    }
-
-    public boolean isVisible() {
-        return identityContextMenu.isVisible();
     }
 }
