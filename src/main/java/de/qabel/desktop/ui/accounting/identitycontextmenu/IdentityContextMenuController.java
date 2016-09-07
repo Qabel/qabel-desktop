@@ -58,6 +58,7 @@ public class IdentityContextMenuController extends AbstractController implements
     }
 
     public void openMenu() {
+        show();
         createPopOver();
         Platform.runLater(() -> {
             popOver.show(identityContextMenu);
@@ -67,6 +68,7 @@ public class IdentityContextMenuController extends AbstractController implements
     }
 
     public void openMenu(double coordPopOverX, double coordPopOverY) {
+        show();
         Platform.runLater(() -> {
             popOver.show(identityContextMenu, coordPopOverX, coordPopOverY);
             appendToLayout();
@@ -85,6 +87,7 @@ public class IdentityContextMenuController extends AbstractController implements
             popOver.hide();
             clearLayout();
         });
+        hide();
     }
 
     private void clearLayout() {
@@ -103,12 +106,14 @@ public class IdentityContextMenuController extends AbstractController implements
 
     public void openQRCode() {
         closeMenu();
+        show();
         createQrCodePopup(layoutWindow);
-        qrcodeController.showPopup();
+        qrcodeController.show();
     }
 
     public void openIdentityEdit() {
         closeMenu();
+        show();
         createIdentityEdit(layoutWindow);
         identityEditController.show();
     }
@@ -120,5 +125,17 @@ public class IdentityContextMenuController extends AbstractController implements
             identityEditController = (IdentityEditController) identityEditView.getPresenter();
         }
         return identityEditView;
+    }
+
+    public void show() {
+        identityContextMenu.setVisible(true);
+    }
+
+    public void hide() {
+        identityContextMenu.setVisible(true);
+    }
+
+    public boolean isVisible() {
+        return identityContextMenu.isVisible();
     }
 }

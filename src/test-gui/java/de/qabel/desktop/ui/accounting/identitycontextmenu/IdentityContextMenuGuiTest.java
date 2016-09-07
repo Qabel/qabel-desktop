@@ -5,10 +5,12 @@ import de.qabel.core.config.Identity;
 import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.core.config.factory.IdentityBuilder;
 import de.qabel.desktop.ui.AbstractGuiTest;
+import org.junit.After;
 import org.junit.Test;
 
 import java.net.URISyntaxException;
 
+import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -26,6 +28,15 @@ public class IdentityContextMenuGuiTest extends AbstractGuiTest<IdentityContextM
     public void setUp() throws Exception {
         super.setUp();
         page = new IdentityContextMenuPage(baseFXRobot, robot, controller);
+        controller = getController();
+    }
+
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+        closeMenu();
+        controller = null;
     }
 
     @Override
@@ -37,6 +48,7 @@ public class IdentityContextMenuGuiTest extends AbstractGuiTest<IdentityContextM
         }
         return new IdentityContextMenuView(generateInjection("identity", identity));
     }
+
 
     private void openMenu() {
         controller.openMenu();
@@ -63,11 +75,10 @@ public class IdentityContextMenuGuiTest extends AbstractGuiTest<IdentityContextM
     }
 
     @Test
-    public void openQr() throws Exception {
+    public void openQr() {
         openQrCode();
-        waitUntil(() -> controller.popOver.isShowing() == false);
-        robot.sleep(2000);
         runLaterAndWait(() -> assertTrue(controller.qrcodeController.isVisible()));
+        closeMenu();
     }
 
     private void openQrCode() {
@@ -79,9 +90,7 @@ public class IdentityContextMenuGuiTest extends AbstractGuiTest<IdentityContextM
 
     private void fakeLayoutWindow() {
         controller.layoutWindow = controller.identityContextMenu;
-        controller.layoutWindow.setVisible(true);
     }
-
 
     @Test
     public void canShowIdentityEdit() {
@@ -95,26 +104,18 @@ public class IdentityContextMenuGuiTest extends AbstractGuiTest<IdentityContextM
         page.openIdentityEdit();
         waitUntil(() -> controller.identityEditController != null);
     }
-//
-//    @Test
-//    public void canEditIdentity() {
-//        openIdentityEdit();
-//
-//        page.changeIdentity(alias, email, phone);
-//        waitUntil(() -> identity.getAlias().equals(alias));
-//
-//        assertEquals(alias, identity.getAlias());
-//        assertEquals(email, identity.getEmail());
-//        assertEquals(phone, identity.getPhone());
-//    }
-//
-//
-//    private void openQrCode() {
-//        openMenu();
-//        page.openQrCode();
-//        waitUntil(() -> controller.qrcodeController != null);
-//    }
-//
-//
+
+    @Test
+    public void canEditIdentity() {
+        openIdentityEdit();
+
+        page.changeIdentity(alias, email, phone);
+        waitUntil(() -> identity.getAlias().equals(alias));
+
+        assertEquals(alias, identity.getAlias());
+        assertEquals(email, identity.getEmail());
+        assertEquals(phone, identity.getPhone());
+    }
+
 
 }

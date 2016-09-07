@@ -48,7 +48,7 @@ public class QRCodeController extends AbstractController {
         hidePopup();
     }
 
-    public void showPopup() {
+    public void show() {
         setIdentity();
         qrcode.setVisible(true);
     }
