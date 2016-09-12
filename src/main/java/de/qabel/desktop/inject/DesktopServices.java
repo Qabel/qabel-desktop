@@ -3,10 +3,8 @@ package de.qabel.desktop.inject;
 import de.qabel.core.accounting.BoxClient;
 import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.core.config.factory.IdentityBuilderFactory;
-import de.qabel.core.repository.AccountRepository;
-import de.qabel.core.repository.ContactRepository;
-import de.qabel.core.repository.IdentityRepository;
-import de.qabel.core.repository.TransactionManager;
+import de.qabel.core.repository.*;
+import de.qabel.core.service.ChatService;
 import de.qabel.desktop.SharingService;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.FilesAbout;
@@ -58,6 +56,12 @@ public interface DesktopServices {
 
     @Create(name = "dropMessageRepository")
     DropMessageRepository getDropMessageRepository();
+
+    @Create(name="chatDropMessageRepository")
+    ChatDropMessageRepository getChatDropMessageRepository();
+
+    @Create(name="chatService")
+    ChatService getChatService();
 
     @Create(name = "clientConfiguration")
     @Create(name = "config")
@@ -120,5 +124,4 @@ public interface DesktopServices {
 
     @Create(name="currentVersion")
     String getCurrentVersion();
-
 }
