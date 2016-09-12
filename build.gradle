@@ -128,9 +128,6 @@ dependencies {
     compile 'net.glxn.qrgen:javase:2.+'                     //Apache License https://github.com/kenglxn/QRGen
     compile 'org.controlsfx:controlsfx:8.+'
 
-    // https://mvnrepository.com/artifact/com.google.inject/guice-parent
-    // compile group: 'com.google.inject', name: 'guice-parent', version: '3.0', ext: 'pom'
-    compile 'com.google.inject:guice:4.+'
     testCompile 'info.cukes:cucumber-java:1.2.+'
     testCompile 'info.cukes:cucumber-junit:1.2.+'
     testCompile 'com.tngtech.java:junit-dataprovider:1.10.+'    // Apache v2
