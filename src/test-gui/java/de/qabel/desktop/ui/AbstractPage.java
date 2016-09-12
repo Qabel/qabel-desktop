@@ -69,10 +69,6 @@ public class AbstractPage {
             new PickResult(node, pos.getX(), pos.getY())
         );
 
-        if (fireSufficesClick(node)) {
-            Platform.runLater(((ButtonBase) node)::fire);
-            return;
-        }
 
         EventHandler<? super MouseEvent> pressedHandler = node.getOnMousePressed();
         EventHandler<? super MouseEvent> clickedHandler = node.getOnMouseClicked();
@@ -92,6 +88,11 @@ public class AbstractPage {
                 node.buildEventDispatchChain(new EventDispatchChainImpl()).dispatchEvent(event);
             }
         });
+
+        if (fireSufficesClick(node)) {
+            Platform.runLater(((ButtonBase) node)::fire);
+            return;
+        }
     }
 
     private boolean fireSufficesClick(Node node) {
