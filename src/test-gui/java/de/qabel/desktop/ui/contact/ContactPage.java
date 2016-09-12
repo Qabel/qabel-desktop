@@ -22,4 +22,8 @@ public class ContactPage extends AbstractPage {
     public void selectFirstItem() {
         clickOn(".contactItem #alias");
     }
+
+    public void openMenu() {
+        clickOn("#contactMenu");
+    }
 }

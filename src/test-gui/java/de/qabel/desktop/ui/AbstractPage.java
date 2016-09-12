@@ -47,10 +47,6 @@ public class AbstractPage {
         if (focusSufficesClick(node)) {
             return;
         }
-        if (fireSufficesClick(node)) {
-            Platform.runLater(((ButtonBase) node)::fire);
-            return;
-        }
 
         MouseEvent event = new MouseEvent(
             MouseEvent.MOUSE_CLICKED,
@@ -72,6 +68,12 @@ public class AbstractPage {
             false,
             new PickResult(node, pos.getX(), pos.getY())
         );
+
+        if (fireSufficesClick(node)) {
+            Platform.runLater(((ButtonBase) node)::fire);
+            return;
+        }
+
         EventHandler<? super MouseEvent> pressedHandler = node.getOnMousePressed();
         EventHandler<? super MouseEvent> clickedHandler = node.getOnMouseClicked();
         EventHandler<? super MouseEvent> releasedHandler = node.getOnMouseReleased();

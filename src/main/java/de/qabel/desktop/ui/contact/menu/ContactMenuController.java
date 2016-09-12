@@ -43,7 +43,7 @@ public class ContactMenuController extends AbstractController implements Initial
     private ClientConfig clientConfiguration;
 
     @Inject
-    private Pane layoutWindow;
+    Pane layoutWindow;
 
     @Inject
     private TransactionManager transactionManager;
@@ -82,13 +82,13 @@ public class ContactMenuController extends AbstractController implements Initial
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
+        identity = clientConfiguration.getSelectedIdentity();
     }
 
     public void showMenu(double coordX, double coordY) {
-        identity = clientConfiguration.getSelectedIdentity();
         initializePopOver();
-        popOver.show(menuContact, coordX, coordY);
         createButtonGraphics();
+        popOver.show(menuContact, coordX, coordY);
     }
 
     private void createButtonGraphics() {
@@ -132,7 +132,7 @@ public class ContactMenuController extends AbstractController implements Initial
         });
     }
 
-    void exportContacts(File file) throws EntityNotFoundException, IOException, JSONException, PersistenceException {
+    public void exportContacts(File file) throws EntityNotFoundException, IOException, JSONException, PersistenceException {
         Contacts contacts = contactRepository.find(identity);
         String jsonContacts = ContactExportImport.exportContacts(contacts);
         writeStringInFile(jsonContacts, file);
@@ -156,7 +156,7 @@ public class ContactMenuController extends AbstractController implements Initial
         }
     }
 
-    void importContacts(File file) throws IOException, URISyntaxException, QblDropInvalidURL, PersistenceException, JSONException {
+    public void importContacts(File file) throws IOException, URISyntaxException, QblDropInvalidURL, PersistenceException, JSONException {
         String content = readFile(file);
         identity = clientConfiguration.getSelectedIdentity();
         transactionManager.transactional(() -> {

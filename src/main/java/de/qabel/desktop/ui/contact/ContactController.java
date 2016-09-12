@@ -2,10 +2,8 @@ package de.qabel.desktop.ui.contact;
 
 import com.google.gson.GsonBuilder;
 import de.qabel.core.config.*;
-import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.core.repository.ContactRepository;
 import de.qabel.core.repository.IdentityRepository;
-import de.qabel.core.repository.TransactionManager;
 import de.qabel.core.repository.exception.EntityNotFoundException;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.config.ClientConfig;
@@ -30,12 +28,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import org.json.JSONException;
 
 import javax.inject.Inject;
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
+
 import java.net.URL;
 import java.util.*;
 
@@ -68,9 +63,6 @@ public class ContactController extends AbstractController implements Initializab
 
     @Inject
     private IdentityRepository identityRepository;
-
-    @Inject
-    private TransactionManager transactionManager;
 
     List<ContactItemController> contactItems = new LinkedList<>();
 
@@ -205,28 +197,6 @@ public class ContactController extends AbstractController implements Initializab
             contactsFromRepo.removeObserver(this);
             loadContacts();
             contactsFromRepo.addObserver(this);
-        });
-    }
-
-    void exportContacts(File file) throws EntityNotFoundException, IOException, JSONException, PersistenceException {
-        Contacts contacts = contactRepository.find(i);
-        String jsonContacts = ContactExportImport.exportContacts(contacts);
-        writeStringInFile(jsonContacts, file);
-    }
-
-    void importContacts(File file) throws IOException, URISyntaxException, QblDropInvalidURL, PersistenceException, JSONException {
-        String content = readFile(file);
-        i = clientConfiguration.getSelectedIdentity();
-        transactionManager.transactional(() -> {
-            try {
-                Contacts contacts = ContactExportImport.parseContactsForIdentity(i, content);
-                for (Contact c : contacts.getContacts()) {
-                    contactRepository.save(c, i);
-                }
-            } catch (Exception ignore) {
-                Contact c = ContactExportImport.parseContactForIdentity(content);
-                contactRepository.save(c, i);
-            }
         });
     }
 
