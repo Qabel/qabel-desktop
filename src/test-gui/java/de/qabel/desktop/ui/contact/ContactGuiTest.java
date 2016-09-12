@@ -1,23 +1,15 @@
 package de.qabel.desktop.ui.contact;
 
 import com.airhacks.afterburner.views.FXMLView;
-import com.sun.deploy.uitoolkit.Window;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractGuiTest;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 import org.junit.Test;
 
 import static de.qabel.desktop.AsyncUtils.assertAsync;
-import static de.qabel.desktop.AsyncUtils.runLaterAndWait;
-import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static junit.framework.TestCase.assertEquals;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertTrue;
 
 public class ContactGuiTest extends AbstractGuiTest<ContactController> {
 
