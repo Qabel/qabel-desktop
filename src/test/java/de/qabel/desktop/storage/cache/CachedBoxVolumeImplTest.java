@@ -4,7 +4,6 @@ import de.qabel.box.storage.*;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
-import kotlin.jvm.functions.Function0;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -21,7 +20,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.hamcrest.Matchers.hasItem;
@@ -32,6 +30,8 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
     private List<ChangeEvent> updates = new LinkedList<>();
     private CachedBoxNavigation nav;
     private LocalReadBackend readBackend;
+    private CachedBoxVolumeImpl volume;
+    private CachedBoxVolumeImpl volume2;
 
     @Override
     protected StorageReadBackend getReadBackend() {
@@ -46,10 +46,12 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
         readBackend = new LocalReadBackend(tempFolder);
         volume = new CachedBoxVolumeImpl(readBackend,
             new LocalWriteBackend(tempFolder),
-            keyPair, deviceID, volumeTmpDir, "");
+            keyPair, deviceID, volumeTmpDir, getPrefix());
         volume2 = new CachedBoxVolumeImpl(new LocalReadBackend(tempFolder),
             new LocalWriteBackend(tempFolder),
-            keyPair, deviceID2, volumeTmpDir, "");
+            keyPair, deviceID2, volumeTmpDir, getPrefix());
+        setVolume(volume);
+        setVolume2(volume2);
     }
 
     @Override
@@ -58,8 +60,8 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
         ByteArrayInputStream in = new ByteArrayInputStream("testContent".getBytes());
         Long size = 11L;
 
-        CachedBoxNavigation<DefaultIndexNavigation> nav = (CachedBoxNavigation<DefaultIndexNavigation>) volume.navigate();
-        nav.getNav().setTime(() -> 1234567890L);
+        CachedBoxNavigation<IndexNavigation> nav = volume.navigate();
+        ((DefaultIndexNavigation)nav.getNav()).setTime(() -> 1234567890L);
 
         BoxFile file = nav.upload("streamedFile", in, size);
         InputStream out = volume2.navigate().download("streamedFile");

@@ -1,6 +1,7 @@
 package de.qabel.desktop.storage.cache;
 
 import de.qabel.box.storage.*;
+import de.qabel.box.storage.command.DirectoryMetadataChange;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE;
@@ -238,39 +239,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
     }
 
     public void refresh() throws QblStorageException {
-        synchronized (this) {
-            synchronized (nav) {
-                if (nav.isUnmodified()) {
-                    DirectoryMetadata dm = nav.reloadMetadata();
-                    if (hasVersionChanged(dm)) {
-                        Set<BoxFolder> oldFolders = new HashSet<>(nav.listFolders());
-                        Set<BoxFile> oldFiles = new HashSet<>(nav.listFiles());
-
-                        nav.setMetadata(dm);
-
-                        Set<BoxFolder> newFolders = new HashSet<>(nav.listFolders());
-                        Set<BoxFile> newFiles = new HashSet<>(nav.listFiles());
-                        Set<BoxFile> changedFiles = new HashSet<>();
-
-                        findNewFolders(oldFolders, newFolders);
-                        findNewFiles(oldFiles, newFiles, changedFiles);
-                        findDeletedFolders(oldFolders, newFolders);
-                        findDeletedFiles(oldFiles, newFiles, changedFiles);
-                    }
-                }
-            }
-        }
-
-        for (BoxFolder folder : listFolders()) {
-            if (Thread.currentThread().isInterrupted()) {
-                return;
-            }
-            try {
-                navigate(folder).refresh();
-            } catch (QblStorageException e) {
-                logger.error("failed to refresh directory: " + path + "/" + folder.getName() + " " + e.getMessage(), e);
-            }
-        }
+        refresh(true);
     }
 
     @Override
@@ -388,5 +357,54 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
     @Override
     public boolean hasVersionChanged(DirectoryMetadata directoryMetadata) throws QblStorageException {
         return nav.hasVersionChanged(directoryMetadata);
+    }
+
+    @Override
+    public void refresh(boolean recursive) throws QblStorageException {
+        synchronized (this) {
+            synchronized (nav) {
+                if (nav.isUnmodified()) {
+                    DirectoryMetadata dm = nav.reloadMetadata();
+                    if (hasVersionChanged(dm)) {
+                        Set<BoxFolder> oldFolders = new HashSet<>(nav.listFolders());
+                        Set<BoxFile> oldFiles = new HashSet<>(nav.listFiles());
+
+                        nav.setMetadata(dm);
+
+                        Set<BoxFolder> newFolders = new HashSet<>(nav.listFolders());
+                        Set<BoxFile> newFiles = new HashSet<>(nav.listFiles());
+                        Set<BoxFile> changedFiles = new HashSet<>();
+
+                        findNewFolders(oldFolders, newFolders);
+                        findNewFiles(oldFiles, newFiles, changedFiles);
+                        findDeletedFolders(oldFolders, newFolders);
+                        findDeletedFiles(oldFiles, newFiles, changedFiles);
+                    }
+                }
+            }
+        }
+
+        for (BoxFolder folder : listFolders()) {
+            if (Thread.currentThread().isInterrupted()) {
+                return;
+            }
+            try {
+                navigate(folder).refresh();
+            } catch (QblStorageException e) {
+                logger.error("failed to refresh directory: " + path + "/" + folder.getName() + " " + e.getMessage(), e);
+            }
+        }
+    }
+
+    @NotNull
+    @Override
+    public rx.Observable<DirectoryMetadataChange<Object>> getChanges() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public FileMetadata getMetadataFile(Share share) throws IOException, InvalidKeyException, QblStorageException {
+        return null;
     }
 }
