@@ -1,18 +1,23 @@
 package de.qabel.desktop.daemon.drop;
 
 
+import com.google.common.io.Files;
+import de.qabel.chat.repository.inmemory.InMemoryChatShareRepository;
+import de.qabel.chat.service.MainSharingService;
+import de.qabel.chat.service.SharingService;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
+import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.drop.DropMessageMetadata;
 import de.qabel.core.drop.DropURL;
 import de.qabel.core.http.DropServerHttp;
 import de.qabel.core.http.MainDropConnector;
 import de.qabel.core.http.MockDropServer;
-import de.qabel.core.repository.entities.ChatDropMessage;
+import de.qabel.chat.repository.entities.ChatDropMessage;
 import de.qabel.core.repository.entities.DropState;
-import de.qabel.core.service.ChatService;
-import de.qabel.core.service.MainChatService;
+import de.qabel.chat.service.ChatService;
+import de.qabel.chat.service.MainChatService;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +25,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.List;
 
 import static de.qabel.desktop.AsyncUtils.assertAsync;
@@ -36,6 +42,7 @@ public class DropDaemonTest extends AbstractControllerTest {
     private DropDaemon dd;
     private MainDropConnector dropConnector;
     private MockCoreDropConnector mockCoreDropConnector;
+    private SharingService sharingService;
     private ChatService chatService;
 
     @Before
@@ -52,9 +59,11 @@ public class DropDaemonTest extends AbstractControllerTest {
         contactRepository.save(sender, identity);
         dropConnector= new MainDropConnector(new MockDropServer());
         mockCoreDropConnector = new MockCoreDropConnector();
+        sharingService = new MainSharingService(new InMemoryChatShareRepository(), contactRepository,
+            Files.createTempDir(), new CryptoUtils());
         chatService = new MainChatService(mockCoreDropConnector, identityRepository,
-            contactRepository, chatDropMessageRepository, dropStateRepository);
-        dd = new DropDaemon(chatService, dropMessageRepository, contactRepository);
+            contactRepository, chatDropMessageRepository, dropStateRepository, sharingService);
+        dd = new DropDaemon(chatService, dropMessageRepository, contactRepository, identityRepository);
     }
 
     private void send(Contact contact, Identity sender) {

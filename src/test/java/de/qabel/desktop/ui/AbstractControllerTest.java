@@ -2,6 +2,8 @@ package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.injection.Injector;
 import com.airhacks.afterburner.views.QabelFXMLView;
+import de.qabel.chat.repository.ChatDropMessageRepository;
+import de.qabel.chat.repository.inmemory.InMemoryChatDropMessageRepository;
 import de.qabel.core.accounting.BoxClient;
 import de.qabel.core.accounting.BoxClientStub;
 import de.qabel.core.config.Account;

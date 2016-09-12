@@ -6,8 +6,9 @@ import de.qabel.core.config.Entity;
 import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.repository.ContactRepository;
-import de.qabel.core.repository.entities.ChatDropMessage;
-import de.qabel.core.service.ChatService;
+import de.qabel.chat.repository.entities.ChatDropMessage;
+import de.qabel.chat.service.ChatService;
+import de.qabel.core.repository.IdentityRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 import org.slf4j.Logger;
@@ -21,14 +22,17 @@ public class DropDaemon implements Runnable {
     private final ChatService chatService;
     private final DropMessageRepository dropMessageRepository;
     private final ContactRepository contactRepository;
+    private final IdentityRepository identityRepository;
     private long sleepTime = 10000L;
     private static final Logger logger = LoggerFactory.getLogger(DropDaemon.class);
 
     public DropDaemon(ChatService chatService,
-                      DropMessageRepository dropMessageRepository, ContactRepository contactRepository) {
+                      DropMessageRepository dropMessageRepository,
+                      ContactRepository contactRepository, IdentityRepository identityRepository) {
         this.chatService = chatService;
         this.dropMessageRepository = dropMessageRepository;
         this.contactRepository = contactRepository;
+        this.identityRepository = identityRepository;
     }
 
     @Override
@@ -50,9 +54,10 @@ public class DropDaemon implements Runnable {
 
     void receiveMessages() {
         try {
-            Map<Identity, List<ChatDropMessage>> identityListMap = chatService.refreshMessages();
-            for (Map.Entry<Identity, List<ChatDropMessage>> messages: identityListMap.entrySet()) {
-                Identity identity = messages.getKey();
+            Map<String, List<ChatDropMessage>> identityListMap = chatService.refreshMessages();
+            for (Map.Entry<String, List<ChatDropMessage>> messages: identityListMap.entrySet()) {
+                String identityKeyId = messages.getKey();
+                Identity identity= identityRepository.find(identityKeyId);
                 for (ChatDropMessage msg: messages.getValue()) {
                     Contact contact = contactRepository.find(msg.getContactId());
                     DropMessage dropMessage = new DropMessage(contact, msg.getPayload().toString(), msg.getMessageType().getType());

@@ -220,8 +220,10 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     public synchronized DropDaemon getDropDaemon() {
         if (dropDaemon == null) {
             dropDaemon = new DropDaemon(
-                getChatService(), getDropMessageRepository(), getContactRepository()
-            );
+                getChatService(),
+                getDropMessageRepository(),
+                getContactRepository(),
+                getIdentityRepository());
         }
         return dropDaemon;
     }
