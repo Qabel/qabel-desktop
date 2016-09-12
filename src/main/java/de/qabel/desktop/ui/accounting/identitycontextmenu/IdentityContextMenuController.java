@@ -35,17 +35,17 @@ public class IdentityContextMenuController extends AbstractController implements
     VBox contextMenu;
 
     private QRCodeView qrcodeView;
-    QRCodeController qrcodeController;
+    public QRCodeController qrcodeController;
 
     private IdentityEditView identityEditView;
-    IdentityEditController identityEditController;
+    public IdentityEditController identityEditController;
+
     PopOver popOver;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
     }
-
 
     private void createPopOver() {
         popOver = new PopOver();
@@ -58,42 +58,17 @@ public class IdentityContextMenuController extends AbstractController implements
     }
 
     public void openMenu() {
-        show();
         createPopOver();
-        Platform.runLater(() -> {
-            popOver.show(identityContextMenu);
-            appendToLayout();
-            clearLayout();
-        });
+        popOver.show(identityContextMenu);
     }
 
     public void openMenu(double coordPopOverX, double coordPopOverY) {
-        show();
-        Platform.runLater(() -> {
-            popOver.show(identityContextMenu, coordPopOverX, coordPopOverY);
-            appendToLayout();
-            clearLayout();
-        });
-    }
-
-    private void appendToLayout() {
-        if (layoutWindow != null && !layoutWindow.getChildren().contains(identityContextMenu)) {
-            layoutWindow.getChildren().add(identityContextMenu);
-        }
+        createPopOver();
+        popOver.show(identityContextMenu, coordPopOverX, coordPopOverY);
     }
 
     public void closeMenu() {
-        Platform.runLater(() -> {
-            popOver.hide();
-            clearLayout();
-        });
-        hide();
-    }
-
-    private void clearLayout() {
-        if (layoutWindow != null && layoutWindow.getChildren().contains(identityContextMenu)) {
-            layoutWindow.getChildren().remove(identityContextMenu);
-        }
+        Platform.runLater(popOver::hide);
     }
 
     private void createQrCodePopup(Pane container) {
@@ -106,14 +81,12 @@ public class IdentityContextMenuController extends AbstractController implements
 
     public void openQRCode() {
         closeMenu();
-        show();
         createQrCodePopup(layoutWindow);
         qrcodeController.show();
     }
 
     public void openIdentityEdit() {
         closeMenu();
-        show();
         createIdentityEdit(layoutWindow);
         identityEditController.show();
     }
@@ -124,7 +97,7 @@ public class IdentityContextMenuController extends AbstractController implements
             identityEditView.getView(container.getChildren()::add);
             identityEditController = (IdentityEditController) identityEditView.getPresenter();
         }
-        return identityEditView;
+        return null;
     }
 
     public void show() {

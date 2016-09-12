@@ -14,6 +14,6 @@ public class QRCodePage extends AbstractPage {
 
     public void showPopup() {
         controller.show();
-        waitUntil(controller.qrcode::isVisible);
+        waitUntil(controller::isVisible);
     }
 }

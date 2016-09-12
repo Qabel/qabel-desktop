@@ -22,4 +22,8 @@ public class AccountingItemPage extends AbstractPage {
         waitUntil(controller.selectedRadio::isSelected);
     }
 
+    public void clickOnContextMenuIcon() {
+        moveTo("#contextMenu").clickOn();
+    }
+
 }

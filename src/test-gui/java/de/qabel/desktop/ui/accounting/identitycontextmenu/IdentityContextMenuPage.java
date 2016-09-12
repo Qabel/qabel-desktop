@@ -5,14 +5,13 @@ import de.qabel.desktop.ui.AbstractPage;
 import de.qabel.desktop.ui.accounting.identity.IdentityEditViewPage;
 import org.testfx.api.FxRobot;
 
-class IdentityContextMenuPage extends AbstractPage {
-    private static final String CLOSE_MENU = "";
+public class IdentityContextMenuPage extends AbstractPage {
     private IdentityContextMenuController controller;
 
     private static String OPEN_ID_EDIT = "#editButton";
     private static String OPEN_QR = "#openQRCode";
 
-    IdentityContextMenuPage(FXRobot baseFXRobot, FxRobot robot, IdentityContextMenuController controller) {
+    public IdentityContextMenuPage(FXRobot baseFXRobot, FxRobot robot, IdentityContextMenuController controller) {
         super(baseFXRobot, robot);
         this.controller = controller;
     }
@@ -23,6 +22,8 @@ class IdentityContextMenuPage extends AbstractPage {
 
     public void openQrCode() {
         clickOn(OPEN_QR);
+        waitUntil(() -> controller.qrcodeController != null);
+        waitUntil(this::qrcodeIsVisible);
     }
 
     void changeIdentity(String alias, String email, String phone) {
@@ -36,7 +37,7 @@ class IdentityContextMenuPage extends AbstractPage {
         identityEditPage.presSave();
     }
 
-    public void closeMenu() {
-        clickOn(CLOSE_MENU);
+    boolean qrcodeIsVisible() {
+        return controller.qrcodeController.isVisible();
     }
 }
