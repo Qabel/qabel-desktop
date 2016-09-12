@@ -393,6 +393,6 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
     @NotNull
     @Override
     public FileMetadata getMetadataFile(Share share) throws IOException, InvalidKeyException, QblStorageException {
-        return null;
+        return nav.getMetadataFile(share);
     }
 }

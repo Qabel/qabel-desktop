@@ -27,6 +27,8 @@ public class CachedBoxVolumeImplFactoryTest {
         account2 = new Account("a2", "b2", "c2");
         identity = new IdentityBuilderFactory(new DropUrlGenerator("http://localhost")).factory().build();
         identity2 = new IdentityBuilderFactory(new DropUrlGenerator("http://localhost")).factory().build();
+        identity.setAlias("identity");
+        identity2.setAlias("identity2");
         factory = new BoxVolumeFactoryStub();
         boxVolume1 = new BoxVolumeStub();
         factory.boxVolume = boxVolume1;
