@@ -5,11 +5,16 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractGuiTest;
+import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import static de.qabel.desktop.AsyncUtils.assertAsync;
+import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static junit.framework.TestCase.assertEquals;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class ContactGuiTest extends AbstractGuiTest<ContactController> {
@@ -41,33 +46,39 @@ public class ContactGuiTest extends AbstractGuiTest<ContactController> {
 
     @Test
     public void testUnknownContact() throws Exception {
-        ContactPage page = new ContactPage(baseFXRobot, robot, controller);
-        Identity identity = identityBuilderFactory.factory().withAlias("MainIdentity").build();
-
-        createContact(identity, true);
-
-        runLaterAndWait(() -> clientConfiguration.selectIdentity(identity));
-        String style = page.getFirstItem().getAvatarStyle();
-        assertTrue(style, style.contains("50%,100%)"));
+        styleOfContact(true,  containsString("50%,100%)"));
     }
 
     @Test
     public void testNormalContact() throws Exception {
-        ContactPage page = new ContactPage(baseFXRobot, robot, controller);
-        Identity identity = identityBuilderFactory.factory().withAlias("MainIdentity").build();
-
-        createContact(identity, false);
-
-        runLaterAndWait(() -> clientConfiguration.selectIdentity(identity));
-        String style = page.getFirstItem().getAvatarStyle();
-        assertTrue(style, style.contains("100%,100%)"));
+        styleOfContact(false, containsString("100%,100%)"));
     }
 
-    private void createContact(Identity identity, boolean unknown) throws PersistenceException {
+    private void styleOfContact(boolean unknownContact, Matcher<String> stringMatcher) throws Exception {
+        ContactPage page = new ContactPage(baseFXRobot, robot, controller);
+
+        createContact(unknownContact);
+
+        runLaterAndWait(controller::update);
+        waitUntil(() -> controller.contactList.getChildren().size() == 1);
+
+        assertAsync(() -> {
+            try {
+                return page.getFirstItem().getAvatarStyle();
+            } catch (Exception e) {
+                return "";
+            }
+        }, stringMatcher);
+    }
+
+
+    private void createContact(boolean unknown) throws Exception {
         Identity i = identityBuilderFactory.factory().withAlias("unknown").build();
-        Contact c = new Contact("unknown", i.getDropUrls(), i.getEcPublicKey());
+        Contact c = new Contact("contact", i.getDropUrls(), i.getEcPublicKey());
         if (unknown) {
             c.setStatus(Contact.ContactStatus.UNKNOWN);
+        } else {
+            c.setStatus(Contact.ContactStatus.NORMAL);
         }
         contactRepository.save(c, identity);
     }
