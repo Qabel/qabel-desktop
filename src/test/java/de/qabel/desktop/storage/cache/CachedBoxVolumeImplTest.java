@@ -46,10 +46,10 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
         readBackend = new LocalReadBackend(tempFolder);
         volume = new CachedBoxVolumeImpl(readBackend,
             new LocalWriteBackend(tempFolder),
-            keyPair, deviceID, volumeTmpDir, "");
+            keyPair, deviceID, volumeTmpDir, prefix);
         volume2 = new CachedBoxVolumeImpl(new LocalReadBackend(tempFolder),
             new LocalWriteBackend(tempFolder),
-            keyPair, deviceID2, volumeTmpDir, "");
+            keyPair, deviceID2, volumeTmpDir, prefix);
     }
 
     @Override
