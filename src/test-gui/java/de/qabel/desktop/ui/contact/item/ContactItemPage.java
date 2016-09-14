@@ -1,8 +1,8 @@
-package de.qabel.desktop.ui.contact;
+package de.qabel.desktop.ui.contact.item;
 
 import com.sun.javafx.robot.FXRobot;
 import de.qabel.desktop.ui.AbstractPage;
-import de.qabel.desktop.ui.contact.item.ContactItemController;
+import de.qabel.desktop.ui.contact.context.AssignContactPage;
 import javafx.scene.Node;
 import org.testfx.api.FxRobot;
 
@@ -29,5 +29,10 @@ public class ContactItemPage extends AbstractPage {
 
     public void delete() {
         clickOn("#delete");
+    }
+
+    public AssignContactPage assign() {
+        rightClickOn(".contact-" + controller.contact.getId());
+        return new AssignContactPage(baseFXRobot, robot);
     }
 }

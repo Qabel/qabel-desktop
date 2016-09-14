@@ -1,3 +1,5 @@
+import com.sun.org.apache.xalan.internal.xsltc.compiler.Copy
+
 plugins {
     id "com.github.hierynomus.license" version "0.12.1"     // Apache V2 https://github.com/hierynomus/license-gradle-plugin/blob/master/LICENSE
     id 'nebula.dependency-lock' version '4.2.0'             // Apache V2 https://github.com/nebula-plugins/gradle-dependency-lock-plugin/blob/master/LICENSE
@@ -83,7 +85,7 @@ jar.doFirst{
 }
 
 dependencies {
-    def coreVersion = '0.21.1'
+    def coreVersion = '0.22.0'
     def repo = 'Qabel'
 
     compile 'com.github.'+repo+'.qabel-core:core:'+coreVersion

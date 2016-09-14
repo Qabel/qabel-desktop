@@ -5,31 +5,35 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractGuiTest;
+import de.qabel.desktop.ui.contact.context.AssignContactPage;
 import org.hamcrest.Matcher;
+import org.junit.Before;
 import org.junit.Test;
 
 import static de.qabel.desktop.AsyncUtils.assertAsync;
-import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static junit.framework.TestCase.assertEquals;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 public class ContactGuiTest extends AbstractGuiTest<ContactController> {
 
     int namingElements = 1;
+    private ContactPage page;
 
     @Override
     protected FXMLView getView() {
         return new ContactView();
     }
 
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        page = new ContactPage(baseFXRobot, robot, controller);
+    }
+
     @Test
     public void testDeleteContact() throws Exception {
-        ContactPage page = new ContactPage(baseFXRobot, robot, controller);
-
         Identity identity = identityBuilderFactory.factory().withAlias("MainIdentity").build();
         createNewContactAndSaveInRepo("1", identity);
         createNewContactAndSaveInRepo("2", identity);
@@ -45,6 +49,16 @@ public class ContactGuiTest extends AbstractGuiTest<ContactController> {
     }
 
     @Test
+    public void testAssignContactPopupOpens() throws Exception {
+        expandStageForPopover();
+        createNewContactAndSaveInRepo("1", identity);
+        runLaterAndWait(controller::update);
+
+        AssignContactPage assignPage = page.getFirstItem().assign();
+        assignPage.waitForIdentity(identity);
+    }
+
+    @Test
     public void testUnknownContact() throws Exception {
         styleOfContact(true,  containsString("50%,100%)"));
     }
@@ -55,8 +69,6 @@ public class ContactGuiTest extends AbstractGuiTest<ContactController> {
     }
 
     private void styleOfContact(boolean unknownContact, Matcher<String> stringMatcher) throws Exception {
-        ContactPage page = new ContactPage(baseFXRobot, robot, controller);
-
         createContact(unknownContact);
 
         runLaterAndWait(controller::update);

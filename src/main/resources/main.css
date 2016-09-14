@@ -718,3 +718,24 @@ VBox.spaced, HBox.spaced {
     -fx-pref-width: 30px;
     -fx-pref-height: 50px;
 }
+
+.popover.assignContactPopover .border {
+    -fx-stroke-width: 0;
+    -fx-fill: rgba(34, 34, 34, 0.8);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,.2), 10.0, 0.5, 2.0, 2.0);
+}
+.popover.assignContactPopover .content Label {
+    -fx-text-fill: white;
+}
+.toggle-button.switch {
+    -fx-cursor: pointer;
+    -fx-background-color: transparent;
+    -fx-background-image: url('/img/switch-off.png');
+    -fx-text-fill: white;
+    -fx-pref-width: 31px;
+    -fx-pref-height: 18px;
+    -fx-background-repeat: no-repeat;
+}
+.toggle-button.switch:selected {
+    -fx-background-image: url('/img/switch-on.png');
+}
