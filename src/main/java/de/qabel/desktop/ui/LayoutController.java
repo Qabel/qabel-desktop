@@ -62,7 +62,7 @@ public class LayoutController extends AbstractController implements Initializabl
     @FXML
     VBox navi;
     @FXML
-    private VBox scrollContent;
+    VBox scrollContent;
 
     @FXML
     private NaviItem activeNavItem;
@@ -139,31 +139,18 @@ public class LayoutController extends AbstractController implements Initializabl
     BoxClient boxClient;
 
     private AvatarController avatarController;
+    private AboutView aboutView;
+    private AccountingView accountingView;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
 
         navi.getChildren().clear();
-        AccountingView accountingView = new AccountingView();
-        actionlogView = new ActionlogView();
-        accountingNav = createNavItem(resourceBundle.getString("layoutIdentity"),
-            new Image(getClass().getResourceAsStream("/img/account_white.png")),
-            accountingView);
-        navi.getChildren().add(accountingNav);
-        browseNav = createNavItem(resourceBundle.getString("layoutBrowse"),
-            new Image(getClass().getResourceAsStream("/img/folder_white.png")),
-            new RemoteFSView());
-        contactsNav = createNavItem(resourceBundle.getString("layoutContacts"),
-            new Image(getClass().getResourceAsStream("/img/account_multiple_white.png")),
-            new ContactView());
-        syncNav = createNavItem(resourceBundle.getString("layoutSync"),
-            new Image(getClass().getResourceAsStream("/img/sync_white.png")),
-            new SyncView());
-        aboutNav = createNavItem(resourceBundle.getString("layoutAbout"),
-            new Image(getClass().getResourceAsStream("/img/information_white.png")),
-            new AboutView());
 
+        createNavItems();
+
+        navi.getChildren().add(accountingNav);
         navi.getChildren().add(browseNav);
         navi.getChildren().add(contactsNav);
         navi.getChildren().add(syncNav);
@@ -172,8 +159,9 @@ public class LayoutController extends AbstractController implements Initializabl
         scrollContent.setFillWidth(true);
 
         if (clientConfiguration.getSelectedIdentity() == null) {
-            accountingView.getView(scrollContent.getChildren()::setAll);
-            setActiveNavItem(accountingNav);
+            showAccounting();
+        } else {
+            showAbout();
         }
 
         updateIdentity();
@@ -210,6 +198,38 @@ public class LayoutController extends AbstractController implements Initializabl
         Indicator newMessageIndicator = contactsNav.getIndicator();
         newMessageIndicator.textProperty().bind(log.unseenMessageCountProperty().asString());
         newMessageIndicator.visibleProperty().bind(newMessageIndicator.textProperty().isNotEqualTo("0"));
+    }
+
+    private void showAbout() {
+        aboutView.getView(scrollContent.getChildren()::setAll);
+        setActiveNavItem(aboutNav);
+    }
+
+    private void showAccounting() {
+        accountingView.getView(scrollContent.getChildren()::setAll);
+        setActiveNavItem(accountingNav);
+    }
+
+    private void createNavItems() {
+        accountingView = new AccountingView();
+        actionlogView = new ActionlogView();
+        aboutView = new AboutView();
+
+        accountingNav = createNavItem(resourceBundle.getString("layoutIdentity"),
+            new Image(getClass().getResourceAsStream("/img/account_white.png")),
+            accountingView);
+        browseNav = createNavItem(resourceBundle.getString("layoutBrowse"),
+            new Image(getClass().getResourceAsStream("/img/folder_white.png")),
+            new RemoteFSView());
+        contactsNav = createNavItem(resourceBundle.getString("layoutContacts"),
+            new Image(getClass().getResourceAsStream("/img/account_multiple_white.png")),
+            new ContactView());
+        syncNav = createNavItem(resourceBundle.getString("layoutSync"),
+            new Image(getClass().getResourceAsStream("/img/sync_white.png")),
+            new SyncView());
+        aboutNav = createNavItem(resourceBundle.getString("layoutAbout"),
+            new Image(getClass().getResourceAsStream("/img/information_white.png")),
+            aboutView);
     }
 
     void fillQuotaInformation(QuotaState quotaState) {
@@ -373,7 +393,7 @@ public class LayoutController extends AbstractController implements Initializabl
         return naviItem;
     }
 
-    private void setActiveNavItem(NaviItem naviItem) {
+    void setActiveNavItem(NaviItem naviItem) {
         if (activeNavItem != null) {
             activeNavItem.setActive(false);
         }

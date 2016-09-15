@@ -4,6 +4,7 @@ import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.core.accounting.BoxClientStub;
 import de.qabel.core.accounting.QuotaState;
 import de.qabel.core.config.Contact;
+import de.qabel.core.config.Identity;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.exceptions.QblInvalidCredentials;
@@ -20,6 +21,8 @@ import static org.junit.Assert.*;
 public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
 
     private QuotaState quotaState;
+    private static final String ABOUT_VIEW = "#aboutViewRoot";
+
 
     @Override
     protected FXMLView getView() {
@@ -29,6 +32,15 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
     private LayoutController createController() {
         LayoutView view = new LayoutView();
         return (LayoutController) view.getPresenter();
+    }
+
+    @Test
+    public void showAboutViewOnStart() {
+        clientConfiguration.onSelectIdentity(this::aboutViewIsShown);
+    }
+
+    private boolean aboutViewIsShown(Identity identity) {
+        return waitForNode(ABOUT_VIEW) != null;
     }
 
     @Test
