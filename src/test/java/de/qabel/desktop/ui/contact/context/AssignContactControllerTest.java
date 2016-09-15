@@ -89,7 +89,7 @@ public class AssignContactControllerTest extends AbstractControllerTest {
         ToggleButton button = controller.getButtonForIdentity(unassignedIdentity);
         button.fire();
 
-        assertThat(getAssignedIdentities(), hasItem(unassignedIdentity));
+        assertThat(getAssignedIdentities(), contains(assignedIdentity, unassignedIdentity));
         assertThat(button.isSelected(), is(true));
     }
 
@@ -108,7 +108,7 @@ public class AssignContactControllerTest extends AbstractControllerTest {
         initController();
         controller.getButtonForIdentity(unassignedIdentity).fire();
 
-        assertThat(getAssignedIdentities(), allOf(hasItem(unassignedIdentity), hasItem(assignedIdentity)));
+        assertThat(getAssignedIdentities(), contains(unassignedIdentity, assignedIdentity));
     }
 
     @Test
