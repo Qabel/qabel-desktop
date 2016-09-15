@@ -31,14 +31,14 @@ public class LayoutControllerTest extends AbstractControllerTest {
         LayoutController controller = createController();
         assertEquals("30%", controller.quota.getText());
         assertEquals(30, (int) controller.quotaBar.getMinWidth());
-        assertThat(controller.quotaDescription.getText(), containsString("667.57 MB"));
+        assertThat(controller.quotaDescription.getText(), containsString("286.1 MB"));
     }
 
     @Test
     public void testFillQuotaInformationLocalizedToGerman() {
         Locale.setDefault(new Locale("de", "DE"));
         LayoutController controller = createController();
-        assertThat(controller.quotaDescription.getText(), containsString("667,57 MB"));
+        assertThat(controller.quotaDescription.getText(), containsString("286,1 MB"));
     }
 
     @Test
