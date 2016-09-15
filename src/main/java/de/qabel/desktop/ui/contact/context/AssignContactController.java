@@ -67,16 +67,12 @@ public class AssignContactController extends AbstractController implements Initi
 
         ToggleButton toggleButton = new ToggleButton();
         toggleButton.setId("assign-" + identity.getId());
-        toggleButton.setSelected(isNotUnknown() && assignedIdentities.contains(identity));
+        toggleButton.setSelected(assignedIdentities.contains(identity));
         toggleButton.setOnAction(this::toggle);
         toggleButton.getStyleClass().add("switch");
         buttonByIdentity.put(identity, toggleButton);
         identityByButton.put(toggleButton, identity);
         container.add(toggleButton, 1, row);
-    }
-
-    private boolean isNotUnknown() {
-        return contact.getStatus() != Contact.ContactStatus.UNKNOWN;
     }
 
     ToggleButton getButtonForIdentity(Identity identity) {
@@ -107,11 +103,4 @@ public class AssignContactController extends AbstractController implements Initi
         contactRepository.save(contact, identity);
     }
 
-    private void unassignAll() throws PersistenceException {
-        try {
-            for (Identity identity : contactRepository.findContactWithIdentities(contact.getKeyIdentifier()).getIdentities()) {
-                unassign(identity);
-            }
-        } catch (EntityNotFoundException ignored) {}
-    }
 }

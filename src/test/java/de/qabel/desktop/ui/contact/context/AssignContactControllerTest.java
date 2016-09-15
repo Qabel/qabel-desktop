@@ -94,11 +94,12 @@ public class AssignContactControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void unacceptedContactsShowUnselected() throws Exception {
+    public void unacceptedContactsShowSelected() throws Exception {
         contact.setStatus(Contact.ContactStatus.UNKNOWN);
         initController();
         ToggleButton assignedButton = controller.getButtonForIdentity(assignedIdentity);
-        assertThat(assignedButton.isSelected(), is(false));
+        assertThat(assignedButton.isSelected(), is(true));
+        assertThat(getAssignedIdentities(), hasItem(assignedIdentity));
     }
 
     @Test
@@ -107,8 +108,7 @@ public class AssignContactControllerTest extends AbstractControllerTest {
         initController();
         controller.getButtonForIdentity(unassignedIdentity).fire();
 
-        assertThat(getAssignedIdentities(), contains(unassignedIdentity));
-        assertThat(getAssignedIdentities(), contains(assignedIdentity));
+        assertThat(getAssignedIdentities(), allOf(hasItem(unassignedIdentity), hasItem(assignedIdentity)));
     }
 
     @Test
