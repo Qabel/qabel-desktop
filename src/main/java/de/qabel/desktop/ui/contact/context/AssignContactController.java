@@ -102,7 +102,6 @@ public class AssignContactController extends AbstractController implements Initi
 
     private void assign(Identity identity) throws PersistenceException {
         if (contact.getStatus() == Contact.ContactStatus.UNKNOWN) {
-            unassignAll();
             contact.setStatus(Contact.ContactStatus.NORMAL);
         }
         contactRepository.save(contact, identity);

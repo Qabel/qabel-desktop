@@ -102,12 +102,13 @@ public class AssignContactControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void unknownContactGetsOnlyAssignedToSelectedIdentity() throws Exception {
+    public void unknownContactGetsAssignedToBothIdentities() throws Exception {
         contact.setStatus(Contact.ContactStatus.UNKNOWN);
         initController();
         controller.getButtonForIdentity(unassignedIdentity).fire();
 
         assertThat(getAssignedIdentities(), contains(unassignedIdentity));
+        assertThat(getAssignedIdentities(), contains(assignedIdentity));
     }
 
     @Test
