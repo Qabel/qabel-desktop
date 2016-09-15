@@ -3,6 +3,7 @@ package de.qabel.desktop.ui.contact;
 import com.sun.javafx.robot.FXRobot;
 import de.qabel.desktop.ui.AbstractPage;
 import de.qabel.desktop.ui.contact.item.ContactItemController;
+import de.qabel.desktop.ui.contact.item.ContactItemPage;
 import org.testfx.api.FxRobot;
 
 public class ContactPage extends AbstractPage {

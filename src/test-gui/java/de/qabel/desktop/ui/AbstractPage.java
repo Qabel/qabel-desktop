@@ -100,6 +100,13 @@ public class AbstractPage {
         return node instanceof TextInputControl;
     }
 
+    protected FxRobot rightClickOn(String query) {
+        baseFXRobot.waitForIdle();
+        Node node = waitForNode(query);
+        moveTo(node);
+        return robot.rightClickOn(node);
+    }
+
     protected FxRobot clickOn(String query) {
         try {
             fakeClick(query);

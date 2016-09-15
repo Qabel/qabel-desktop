@@ -1,5 +1,6 @@
 package de.qabel.desktop.ui.contact;
 
+import com.airhacks.afterburner.views.QabelFXMLView;
 import com.google.gson.GsonBuilder;
 import de.qabel.core.config.*;
 import de.qabel.core.exceptions.QblDropInvalidURL;
@@ -15,6 +16,7 @@ import de.qabel.desktop.ui.DetailsView;
 import de.qabel.desktop.ui.accounting.item.SelectionEvent;
 import de.qabel.desktop.ui.actionlog.ActionlogController;
 import de.qabel.desktop.ui.actionlog.ActionlogView;
+import de.qabel.desktop.ui.contact.context.AssignContactView;
 import de.qabel.desktop.ui.contact.item.BlankItemView;
 import de.qabel.desktop.ui.contact.item.ContactItemController;
 import de.qabel.desktop.ui.contact.item.ContactItemView;
@@ -31,6 +33,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import org.controlsfx.control.PopOver;
 import org.json.JSONException;
 
 import javax.inject.Inject;
@@ -200,6 +203,7 @@ public class ContactController extends AbstractController implements Initializab
             unselectAll();
             select(selectionEvent);
         });
+        controller.addContextListener(this::showAssignContactPopover);
         contactList.getChildren().add(itemView.getView());
         contactItems.add(controller);
         itemViews.add(itemView);
@@ -211,11 +215,29 @@ public class ContactController extends AbstractController implements Initializab
         showActionlog(selectionEvent.getContact());
     }
 
+    private PopOver assignContactPopover;
+
+    private void showAssignContactPopover(SelectionEvent selectionEvent) {
+        Contact contact = selectionEvent.getContact();
+        ContactItemController controller = selectionEvent.getController();
+        new AssignContactView(contact).getViewAsync(view -> {
+            if (assignContactPopover != null) {
+                assignContactPopover.hide();
+            }
+            assignContactPopover = new PopOver(view);
+            assignContactPopover.getStyleClass().add("assignContactPopover");
+
+            assignContactPopover.setTitle(contact.getAlias());
+            assignContactPopover.setHeaderAlwaysVisible(true);
+            assignContactPopover.getRoot().getStyleClass().add("assignContactPopover");
+            assignContactPopover.getRoot().getStylesheets().add(QabelFXMLView.getGlobalStyleCheat());
+
+            assignContactPopover.show(controller.getContactRootItem(), selectionEvent.getScreenX(), selectionEvent.getScreenY());
+        });
+    }
 
     private void unselectAll() {
-        for (ContactItemController c : contactItems) {
-            c.unselect();
-        }
+        contactItems.forEach(ContactItemController::unselect);
         details.hide();
     }
 
@@ -230,7 +252,6 @@ public class ContactController extends AbstractController implements Initializab
     }
 
     private void createObserver() {
-
         contactsFromRepo.addObserver(this);
         clientConfiguration.onSelectIdentity(i -> {
             contactsFromRepo.removeObserver(this);

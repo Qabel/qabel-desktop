@@ -5,13 +5,11 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.repository.ContactRepository;
 import de.qabel.core.repository.IdentityRepository;
-import de.qabel.core.repository.exception.EntityNotFoundException;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.Indicator;
-import de.qabel.desktop.ui.accounting.avatar.AvatarView;
 import de.qabel.desktop.ui.accounting.avatar.ContactAvatarView;
 import de.qabel.desktop.ui.accounting.item.SelectionEvent;
 import de.qabel.desktop.ui.actionlog.ContactActionLog;
@@ -21,6 +19,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -48,9 +47,10 @@ public class ContactItemController extends AbstractController implements Initial
     ContactController parent;
 
     List<Consumer> selectionListeners = new LinkedList<>();
+    List<Consumer> contextListeners = new LinkedList<>();
 
     @Inject
-    private Contact contact;
+    Contact contact;
     @Inject
     private ClientConfig clientConfiguration;
     @Inject
@@ -62,13 +62,18 @@ public class ContactItemController extends AbstractController implements Initial
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        contactRootItem.getStyleClass().add("contact-" + contact.getId());
         contactRootItem.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            for (Consumer listener : selectionListeners) {
-                SelectionEvent selectionEvent = new SelectionEvent();
+            List<Consumer> listeners = selectionListeners;
+            if (event.getButton() == MouseButton.SECONDARY) {
+                listeners = contextListeners;
+            }
+            listeners.forEach( listener -> {
+                SelectionEvent selectionEvent = new SelectionEvent(event.getScreenX(), event.getScreenY());
                 selectionEvent.setContact(contact);
                 selectionEvent.setController(this);
                 listener.accept(selectionEvent);
-            }
+            });
         });
         resourceBundle = resources;
         alias.setText(contact.getAlias());
@@ -86,12 +91,20 @@ public class ContactItemController extends AbstractController implements Initial
         indicator.textProperty().bind(actionlog.unseenMessageCountAsStringProperty());
     }
 
+    public HBox getContactRootItem() {
+        return contactRootItem;
+    }
+
     public Indicator getIndicator() {
         return indicator;
     }
 
     public void addSelectionListener(Consumer<SelectionEvent> consumer) {
         selectionListeners.add(consumer);
+    }
+
+    public void addContextListener(Consumer<SelectionEvent> consumer) {
+        contextListeners.add(consumer);
     }
 
     public void select() {

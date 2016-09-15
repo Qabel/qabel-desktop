@@ -181,4 +181,8 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
         });
         return nodes[0];
     }
+
+    protected void expandStageForPopover() {
+        stage.setWidth(1000);
+    }
 }
