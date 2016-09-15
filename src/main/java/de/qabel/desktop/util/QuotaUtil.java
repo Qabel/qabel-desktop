@@ -10,7 +10,7 @@ import static humanize.Humanize.binaryPrefix;
 public class QuotaUtil {
 
     public static String getQuotaDescription(QuotaState q, String quotaDescriptionPattern) {
-        String usedQuota = binaryPrefix(q.getQuota() - q.getSize(), Locale.getDefault());
+        String usedQuota = binaryPrefix(q.getSize(), Locale.getDefault());
         String totalQuota = binaryPrefix(q.getQuota(), Locale.getDefault());
 
         return MessageFormat.format(quotaDescriptionPattern, usedQuota, totalQuota);
