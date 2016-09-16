@@ -131,6 +131,7 @@ dependencies {
     compile 'com.google.zxing:javase:2.+'                   //Apache License https://github.com/zxing/zxing/wiki/License-Questions
     compile 'net.glxn.qrgen:javase:2.+'                     //Apache License https://github.com/kenglxn/QRGen
     compile 'org.controlsfx:controlsfx:8.+'
+    compile 'com.jfoenix:jfoenix:1.+'
 
     testCompile 'info.cukes:cucumber-java:1.2.+'
     testCompile 'info.cukes:cucumber-junit:1.2.+'
