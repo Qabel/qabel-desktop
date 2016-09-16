@@ -18,13 +18,17 @@ import de.qabel.desktop.ui.actionlog.item.MyActionlogItemView;
 import de.qabel.desktop.ui.actionlog.item.OtherActionlogItemView;
 import de.qabel.desktop.ui.connector.DropConnector;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import org.controlsfx.control.NotificationPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,12 +44,24 @@ import static java.lang.Thread.sleep;
 public class ActionlogController extends AbstractController implements Initializable, Observer {
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
     private static final Logger logger = LoggerFactory.getLogger(ActionlogController.class);
+    @FXML
+    Button accept;
+
+    @FXML
+    Button ignore;
 
     int sleepTime = 60000;
     List<ActionlogItemView> messageView = new LinkedList<>();
 
     @FXML
+    NotificationPane notification;
+
+    @FXML
+    Label notifcationMessage;
+
+    @FXML
     VBox messages;
+
 
     @FXML
     TextArea textarea;
@@ -76,6 +92,11 @@ public class ActionlogController extends AbstractController implements Initializ
         dropMessageRepository.addObserver(this);
         clientConfiguration.onSelectIdentity(identity -> this.identity = identity);
         addListener();
+        contactRepository.attach(this::toggleNotification);
+    }
+
+    private void toggleNotification() {
+        notification.setManaged(contact.getStatus() == Contact.ContactStatus.UNKNOWN);
     }
 
     public List<PersistenceDropMessage> getReceivedDropMessages() {
@@ -239,5 +260,19 @@ public class ActionlogController extends AbstractController implements Initializ
             }
         });
 
+    }
+
+    public void handleAccept(ActionEvent actionEvent) {
+        saveContact();
+    }
+
+    private void saveContact() {
+        contact.setStatus(Contact.ContactStatus.NORMAL);
+        tryOrAlert(() -> contactRepository.save(contact, identity));
+    }
+
+    public void handleIgnore(ActionEvent actionEvent) {
+        contact.setIgnored(true);
+        saveContact();
     }
 }

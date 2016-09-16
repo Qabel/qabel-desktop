@@ -5,6 +5,8 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.drop.DropMessageMetadata;
+import de.qabel.core.repository.exception.PersistenceException;
+import de.qabel.desktop.AsyncUtils;
 import de.qabel.desktop.daemon.drop.TextMessage;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.inmemory.InMemoryDropMessageRepository;
@@ -18,7 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.*;
 
 
 public class ActionlogControllerTest extends AbstractControllerTest {
@@ -106,6 +109,48 @@ public class ActionlogControllerTest extends AbstractControllerTest {
             () -> "dateString was not refreshed as expected. expected: '" + old + "'" +
                 ", actual: '" + messagesController.getDateLabel().getText()
         );
+    }
+
+    @Test
+    public void notificationShownForUnknownContacts() throws Exception {
+        AsyncUtils.assertAsync(() -> controller.notification.isManaged(), is(false));
+        toggleContactStatus();
+        AsyncUtils.assertAsync(() -> controller.notification.isManaged(), is(true));
+        toggleContactStatus();
+        AsyncUtils.assertAsync(() -> controller.notification.isManaged(), is(false));
+    }
+
+    private void toggleContactStatus() throws PersistenceException {
+        if (controller.contact.getStatus() == Contact.ContactStatus.UNKNOWN) {
+            controller.contact.setStatus(Contact.ContactStatus.NORMAL);
+        } else {
+            controller.contact.setStatus(Contact.ContactStatus.UNKNOWN);
+        }
+        contactRepository.save(controller.contact, identity);
+    }
+
+    @Test
+    public void acceptContact() throws Exception {
+        toggleContactStatus();
+        controller.accept.fire();
+        AsyncUtils.assertAsync(() -> {
+            assertThat(controller.notification.isManaged(), is(false));
+            Contact contact = contactRepository.find(controller.contact.getId());
+            assertThat(contact.getStatus(), is(Contact.ContactStatus.NORMAL));
+            assertThat(contact.isIgnored(), is(false));
+        });
+    }
+
+    @Test
+    public void ignoreContact() throws Exception {
+        toggleContactStatus();
+        controller.ignore.fire();
+        AsyncUtils.assertAsync(() -> {
+            assertThat(controller.notification.isManaged(), is(false));
+            Contact contact = contactRepository.find(controller.contact.getId());
+            assertThat(contact.getStatus(), is(Contact.ContactStatus.NORMAL));
+            assertThat(contact.isIgnored(), is(true));
+        });
     }
 
     @Override
