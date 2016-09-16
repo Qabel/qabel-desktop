@@ -8,11 +8,11 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.17.0",
+            "locked": "0.23.1",
             "requested": "0.23.1"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.17.0",
+            "locked": "0.23.1",
             "requested": "0.23.1"
         },
         "com.github.mfornos:humanize-slim": {
@@ -116,11 +116,11 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.17.0",
+            "locked": "0.23.1",
             "requested": "0.23.1"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.17.0",
+            "locked": "0.23.1",
             "requested": "0.23.1"
         },
         "com.github.mfornos:humanize-slim": {
@@ -224,11 +224,11 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.17.0",
+            "locked": "0.23.1",
             "requested": "0.23.1"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.17.0",
+            "locked": "0.23.1",
             "requested": "0.23.1"
         },
         "com.github.mfornos:humanize-slim": {
@@ -360,11 +360,11 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.17.0",
+            "locked": "0.23.1",
             "requested": "0.23.1"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.17.0",
+            "locked": "0.23.1",
             "requested": "0.23.1"
         },
         "com.github.mfornos:humanize-slim": {
@@ -604,11 +604,11 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.17.0",
+            "locked": "0.23.1",
             "requested": "0.23.1"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.17.0",
+            "locked": "0.23.1",
             "requested": "0.23.1"
         },
         "com.github.mfornos:humanize-slim": {
@@ -740,11 +740,11 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.17.0",
+            "locked": "0.23.1",
             "requested": "0.23.1"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.17.0",
+            "locked": "0.23.1",
             "requested": "0.23.1"
         },
         "com.github.mfornos:humanize-slim": {
