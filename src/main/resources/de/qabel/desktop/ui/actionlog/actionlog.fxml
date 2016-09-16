@@ -9,7 +9,7 @@
 <BorderPane fx:id="chat" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="de.qabel.desktop.ui.actionlog.ActionlogController" maxHeight="Infinity" prefHeight="4000">
     <top>
-                <NotificationPane fx:id="notification" managed="false">
+                <NotificationPane fx:id="notification" managed="false" showFromTop="true">
                     <content>
                         <BorderPane >
                             <center>
