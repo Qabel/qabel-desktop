@@ -389,4 +389,10 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
     public boolean hasVersionChanged(DirectoryMetadata directoryMetadata) throws QblStorageException {
         return nav.hasVersionChanged(directoryMetadata);
     }
+
+    @NotNull
+    @Override
+    public FileMetadata getMetadataFile(Share share) throws IOException, InvalidKeyException, QblStorageException {
+        return nav.getMetadataFile(share);
+    }
 }
