@@ -9,21 +9,24 @@
     <children>
         <VBox>
             <children>
-                <HBox prefHeight="60.0">
-                    <children>
-                        <Button fx:id="importButton" mnemonicParsing="false"
-                                onAction="#handleImportContactsButtonAction" text="%importContact" >
-                            <HBox.margin>
-                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
-                            </HBox.margin>
-                        </Button>
-                        <Button fx:id="exportButton" mnemonicParsing="false"
-                                onAction="#handleExportContactsButtonAction" text="%exportContact">
-                            <HBox.margin>
-                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
-                            </HBox.margin>
-                        </Button>
-                    </children>
+                <HBox>
+                    <Pane fx:id="filterComboPane">
+                        <HBox.margin>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </HBox.margin>
+                    </Pane>
+                    <Button fx:id="importButton" mnemonicParsing="false"
+                            onAction="#handleImportContactsButtonAction" text="%importContact" >
+                        <HBox.margin>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </HBox.margin>
+                    </Button>
+                    <Button fx:id="exportButton" mnemonicParsing="false"
+                            onAction="#handleExportContactsButtonAction" text="%exportContact">
+                        <HBox.margin>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </HBox.margin>
+                    </Button>
                 </HBox>
                 <ScrollPane fitToWidth="true" prefHeight="4000" prefWidth="251.0">
                     <content>

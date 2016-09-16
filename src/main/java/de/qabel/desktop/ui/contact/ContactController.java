@@ -2,6 +2,10 @@ package de.qabel.desktop.ui.contact;
 
 import com.airhacks.afterburner.views.QabelFXMLView;
 import com.google.gson.GsonBuilder;
+import com.jfoenix.controls.JFXCheckBox;
+import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXRadioButton;
+import com.jfoenix.controls.JFXToggleButton;
 import de.qabel.core.config.*;
 import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.core.repository.ContactRepository;
@@ -22,13 +26,17 @@ import de.qabel.desktop.ui.contact.item.ContactItemController;
 import de.qabel.desktop.ui.contact.item.ContactItemView;
 import de.qabel.desktop.ui.contact.item.DummyItemView;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -64,6 +72,9 @@ public class ContactController extends AbstractController implements Initializab
     @FXML
     VBox contacts;
 
+    @FXML
+    Pane filterComboPane;
+
     @Inject
     private ClientConfig clientConfiguration;
 
@@ -97,6 +108,18 @@ public class ContactController extends AbstractController implements Initializab
         DetailsView detailsView = new DetailsView();
         details = (DetailsController) detailsView.getPresenter();
         detailsView.getViewAsync(contactroot.getChildren()::add);
+
+        JFXComboBox<Label> filterCombo = new JFXComboBox<>();
+        ObservableList<Label> items = filterCombo.getItems();
+        Label showNormalContacts = new Label(resources.getString("showNormalContacts"));
+        showNormalContacts.setId("showNormalContacts");
+        Label showIgnoredContacts = new Label(resources.getString("showIgnoredContacts"));
+        showIgnoredContacts.setId("showIgnoredContacts");
+        Label showNewContacts = new Label(resources.getString("showNewContacts"));
+        showNewContacts.setId("showNewContacts");
+        items.addAll(showNormalContacts, showNewContacts, showIgnoredContacts);
+        filterComboPane.getChildren().add(filterCombo);
+        filterCombo.getSelectionModel().select(showNormalContacts);
 
         try {
             buildGson();
