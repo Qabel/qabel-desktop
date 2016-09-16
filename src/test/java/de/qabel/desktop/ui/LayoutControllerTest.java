@@ -3,6 +3,7 @@ package de.qabel.desktop.ui;
 import de.qabel.core.accounting.BoxClientStub;
 import de.qabel.core.accounting.QuotaState;
 import javafx.scene.Node;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -14,11 +15,17 @@ import static org.junit.Assert.*;
 
 public class LayoutControllerTest extends AbstractControllerTest {
 
-    public static final int MIN_ITEM_COUNT = 2;
-    private int used_300_mb;
-    private int quota_1000_mb;
-    private QuotaState quotaState;
+    private static final int MIN_ITEM_COUNT = 2;
 
+    private int used300Mb = toMb(300);
+    private int quota1000Mb = toMb(1000);
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        boxClient.quotaState = new QuotaState(quota1000Mb, used300Mb);
+    }
 
     @Test
     public void getQuotaStateFailuresThenHidesQuotaBars() {
@@ -33,7 +40,6 @@ public class LayoutControllerTest extends AbstractControllerTest {
     @Test
     public void testFillQuotaInformation() {
         Locale.setDefault(new Locale("te", "ST"));
-        ((BoxClientStub) boxClient).quotaState = setQuota();
         LayoutController controller = createController();
 
         assertEquals("30%", controller.quota.getText());
@@ -41,20 +47,13 @@ public class LayoutControllerTest extends AbstractControllerTest {
         assertThat(controller.quotaDescription.getText(), containsString("300 MB"));
     }
 
-    private QuotaState setQuota() {
-        used_300_mb = byteToMb(300);
-        quota_1000_mb = byteToMb(1000);
-        return new QuotaState(quota_1000_mb, used_300_mb);
-    }
-
-    private int byteToMb(int size) {
+    private int toMb(int size) {
         return size * 1024 * 1024;
     }
 
     @Test
     public void testFillQuotaInformationLocalizedToGerman() {
         Locale.setDefault(new Locale("de", "DE"));
-        ((BoxClientStub) boxClient).quotaState = setQuota();
         LayoutController controller = createController();
         assertThat(controller.quotaDescription.getText(), containsString("300 MB"));
     }
@@ -80,7 +79,6 @@ public class LayoutControllerTest extends AbstractControllerTest {
     @Test
     public void testShowsItemsWhenIdentityIsSelected() {
         clientConfiguration.selectIdentity(null);
-
         LayoutController controller = createController();
         clientConfiguration.selectIdentity(identityBuilderFactory.factory().withAlias("bob").build());
         waitUntil(() -> countManagedNaviItems(controller) > MIN_ITEM_COUNT, () -> "nav items are not shown when identity is selected");
