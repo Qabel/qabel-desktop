@@ -1,6 +1,7 @@
 package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
+import com.airhacks.afterburner.views.QabelFXMLView;
 import de.qabel.core.accounting.BoxClient;
 import de.qabel.core.accounting.QuotaState;
 import de.qabel.core.config.Identity;
@@ -139,33 +140,25 @@ public class LayoutController extends AbstractController implements Initializabl
     BoxClient boxClient;
 
     private AvatarController avatarController;
-    private AboutView aboutView;
+    AboutView aboutView;
     private AccountingView accountingView;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
 
-        navi.getChildren().clear();
-
-        createNavItems();
-
-        navi.getChildren().add(accountingNav);
-        navi.getChildren().add(browseNav);
-        navi.getChildren().add(contactsNav);
-        navi.getChildren().add(syncNav);
-        navi.getChildren().add(aboutNav);
+        createAndAddNavItems();
 
         scrollContent.setFillWidth(true);
 
-        if (clientConfiguration.getSelectedIdentity() == null) {
-            showAccounting();
-        } else {
-            showAbout();
-        }
-
         updateIdentity();
         clientConfiguration.onSelectIdentity(i -> Platform.runLater(this::updateIdentity));
+
+        if (clientConfiguration.hasSelectedIdentity()) {
+            showContent(aboutView, aboutNav);
+        } else {
+            showContent(accountingView, accountingNav);
+        }
 
         fillQuotaInformation(getQuotaState());
 
@@ -200,17 +193,12 @@ public class LayoutController extends AbstractController implements Initializabl
         newMessageIndicator.visibleProperty().bind(newMessageIndicator.textProperty().isNotEqualTo("0"));
     }
 
-    private void showAbout() {
-        aboutView.getView(scrollContent.getChildren()::setAll);
-        setActiveNavItem(aboutNav);
+    private void showContent(QabelFXMLView view, NaviItem navItem) {
+        view.getView(scrollContent.getChildren()::setAll);
+        setActiveNavItem(navItem);
     }
 
-    private void showAccounting() {
-        accountingView.getView(scrollContent.getChildren()::setAll);
-        setActiveNavItem(accountingNav);
-    }
-
-    private void createNavItems() {
+    private void createAndAddNavItems() {
         accountingView = new AccountingView();
         actionlogView = new ActionlogView();
         aboutView = new AboutView();
@@ -230,6 +218,14 @@ public class LayoutController extends AbstractController implements Initializabl
         aboutNav = createNavItem(resourceBundle.getString("layoutAbout"),
             new Image(getClass().getResourceAsStream("/img/information_white.png")),
             aboutView);
+
+        navi.getChildren().clear();
+
+        navi.getChildren().add(accountingNav);
+        navi.getChildren().add(browseNav);
+        navi.getChildren().add(contactsNav);
+        navi.getChildren().add(syncNav);
+        navi.getChildren().add(aboutNav);
     }
 
     void fillQuotaInformation(QuotaState quotaState) {
@@ -275,12 +271,6 @@ public class LayoutController extends AbstractController implements Initializabl
         Tooltip feebackTooltip = new Tooltip(resourceBundle.getString("layoutIconFeebackTooltip"));
         Tooltip.install(feedbackButton, feebackTooltip);
 
-        /*
-        Image gearGraphic = new Image(getClass().getResourceAsStream("/img/gear.png"));
-        configButton.setImage(gearGraphic);
-        configButton.getStyleClass().add("inline-button");
-        */
-
         Image faqGraphics = new Image(getClass().getResourceAsStream("/img/faq_white.png"));
         faqButton.setImage(faqGraphics);
         faqButton.getStyleClass().add("inline-button");
@@ -297,11 +287,6 @@ public class LayoutController extends AbstractController implements Initializabl
         Tooltip faq = new Tooltip(resourceBundle.getString("layoutIconFaqTooltip"));
         Tooltip.install(faqButton, faq);
 
-        /*
-        Image infoGraphic = new Image(getClass().getResourceAsStream("/img/info.png"));
-        infoButton.setImage(infoGraphic);
-        infoButton.getStyleClass().add("inline-button");
-        */
     }
 
 
