@@ -30,10 +30,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -73,7 +70,7 @@ public class ContactController extends AbstractController implements Initializab
     VBox contacts;
 
     @FXML
-    Pane filterComboPane;
+    ComboBox<Label> filterCombo;
 
     @Inject
     private ClientConfig clientConfiguration;
@@ -109,7 +106,6 @@ public class ContactController extends AbstractController implements Initializab
         details = (DetailsController) detailsView.getPresenter();
         detailsView.getViewAsync(contactroot.getChildren()::add);
 
-        JFXComboBox<Label> filterCombo = new JFXComboBox<>();
         ObservableList<Label> items = filterCombo.getItems();
         Label showNormalContacts = new Label(resources.getString("showNormalContacts"));
         showNormalContacts.setId("showNormalContacts");
@@ -118,7 +114,6 @@ public class ContactController extends AbstractController implements Initializab
         Label showNewContacts = new Label(resources.getString("showNewContacts"));
         showNewContacts.setId("showNewContacts");
         items.addAll(showNormalContacts, showNewContacts, showIgnoredContacts);
-        filterComboPane.getChildren().add(filterCombo);
         filterCombo.getSelectionModel().select(showNormalContacts);
 
         try {

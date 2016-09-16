@@ -4,17 +4,18 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
+<?import com.jfoenix.controls.JFXComboBox?>
 <StackPane prefHeight="4000" maxHeight="Infinity" maxWidth="Infinity" fx:id="contactroot" xmlns="http://javafx.com/javafx/8"
            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.contact.ContactController">
     <children>
         <VBox>
             <children>
                 <HBox>
-                    <Pane fx:id="filterComboPane">
+                    <JFXComboBox fx:id="filterCombo" prefWidth="200" prefHeight="45">
                         <HBox.margin>
                             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                         </HBox.margin>
-                    </Pane>
+                    </JFXComboBox>
                     <Button fx:id="importButton" mnemonicParsing="false"
                             onAction="#handleImportContactsButtonAction" text="%importContact" >
                         <HBox.margin>
