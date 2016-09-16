@@ -189,14 +189,4 @@ public class ContactControllerTest extends AbstractControllerTest {
         return (ContactController) view.getPresenter();
     }
 
-    @Test
-    public void showIgnoredContacts() {
-
-    }
-
-    @Test
-    public void showOnlyNewContacts() {
-
-    }
-
 }

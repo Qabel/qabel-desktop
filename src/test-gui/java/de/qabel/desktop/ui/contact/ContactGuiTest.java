@@ -11,8 +11,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static de.qabel.desktop.AsyncUtils.assertAsync;
+import static de.qabel.desktop.AsyncUtils.runLaterAndWait;
 import static junit.framework.TestCase.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
 public class ContactGuiTest extends AbstractGuiTest<ContactController> {
@@ -105,4 +108,21 @@ public class ContactGuiTest extends AbstractGuiTest<ContactController> {
     public void testDummyContact() throws Exception {
         assertEquals(1, controller.contactList.getChildren().size());
     }
+
+    @Test
+    public void newContactsFilter() throws Exception {
+        createContact(true);
+        createContact(true);
+        createContact(false);
+
+        runLaterAndWait(() -> clientConfiguration.selectIdentity(identity));
+        runLaterAndWait(() -> controller.filterCombo.getSelectionModel().select(controller.showNewContacts));
+        runLaterAndWait(controller::update);
+        assertThat(controller.contactItems, hasSize(2));
+
+        runLaterAndWait(() -> controller.filterCombo.getSelectionModel().select(controller.showNormalContacts));
+        runLaterAndWait(controller::update);
+        assertThat(controller.contactItems, hasSize(3));
+    }
+
 }
