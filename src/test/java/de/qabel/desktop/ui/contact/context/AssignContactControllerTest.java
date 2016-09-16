@@ -14,11 +14,8 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 public class AssignContactControllerTest extends AbstractControllerTest {
@@ -89,7 +86,7 @@ public class AssignContactControllerTest extends AbstractControllerTest {
         ToggleButton button = controller.getButtonForIdentity(unassignedIdentity);
         button.fire();
 
-        assertThat(getAssignedIdentities(), contains(assignedIdentity, unassignedIdentity));
+        assertThat(getAssignedIdentities(), containsInAnyOrder(assignedIdentity, unassignedIdentity));
         assertThat(button.isSelected(), is(true));
     }
 
