@@ -105,7 +105,7 @@ public class AssignContactControllerTest extends AbstractControllerTest {
         initController();
         controller.getButtonForIdentity(unassignedIdentity).fire();
 
-        assertThat(getAssignedIdentities(), contains(unassignedIdentity, assignedIdentity));
+        assertThat(getAssignedIdentities(), containsInAnyOrder(unassignedIdentity, assignedIdentity));
     }
 
     @Test

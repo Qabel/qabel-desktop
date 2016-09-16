@@ -1,5 +1,6 @@
 package de.qabel.desktop.ui.contact.context;
 
+import com.jfoenix.controls.JFXToggleButton;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.repository.ContactRepository;
@@ -64,12 +65,11 @@ public class AssignContactController extends AbstractController implements Initi
         int row = shownIdentities.indexOf(identity);
         Label label = new Label(identity.getAlias());
         container.add(label, 0, row);
-
-        ToggleButton toggleButton = new ToggleButton();
+        JFXToggleButton toggleButton = new JFXToggleButton();
         toggleButton.setId("assign-" + identity.getId());
         toggleButton.setSelected(assignedIdentities.contains(identity));
         toggleButton.setOnAction(this::toggle);
-        toggleButton.getStyleClass().add("switch");
+
         buttonByIdentity.put(identity, toggleButton);
         identityByButton.put(toggleButton, identity);
         container.add(toggleButton, 1, row);
