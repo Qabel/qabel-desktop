@@ -14,7 +14,7 @@ public class QuotaUtilTest {
 
     private QuotaState noSpaceQuota;
     private QuotaState qs10Free;
-    private static final String QUOTA_PATTERN = "{0} free of {1}";
+    private static final String QUOTA_PATTERN = "{0} used of {1}";
 
     @Before
     public void setUp() {
@@ -37,7 +37,7 @@ public class QuotaUtilTest {
     @Test
     public void quotaDescriptionWith90Free() {
         String quotaDescription = getQuotaDescription(qs10Free, QUOTA_PATTERN);
-        assertThat(quotaDescription, containsString("90"));
+        assertThat(quotaDescription, containsString("10"));
     }
 
     @Test
