@@ -7,8 +7,6 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.exceptions.QblInvalidCredentials;
-import de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuController;
-import de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuView;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 import org.junit.Test;
 
@@ -61,14 +59,6 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
         dropMessageRepository.save(message);
         waitUntil(() -> indicator.getText().equals("1"));
         assertTrue(indicator.isVisible());
-    }
-
-    @Test
-    public void testObservableIdentity() throws Exception {
-        IdentityContextMenuView menuView = new IdentityContextMenuView(generateInjection("identity", identity));
-        IdentityContextMenuController menuController = (IdentityContextMenuController) menuView.getPresenter();
-        menuController.setAlias("new alias identity");
-        assertEquals("new alias identity", identity.getAlias());
     }
 
     @Test

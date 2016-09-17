@@ -37,6 +37,7 @@ public class QRCodeGuiTest extends AbstractGuiTest<QRCodeController> {
     @Test
     public void showPopup() throws Exception {
         page.showPopup();
+        assertTrue(controller.isVisible());
         String textQRCode = "QABELCONTACT\n"
             + "alias" + "\n"
             + controller.getDropUrl() + "\n"

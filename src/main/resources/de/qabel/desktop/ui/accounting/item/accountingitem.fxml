@@ -36,7 +36,7 @@
                         </VBox>
                     </center>
                     <right>
-                        <Button fx:id="menu" alignment="CENTER" onMouseClicked="#openMenuQR"
+                        <Button fx:id="contextMenu" alignment="CENTER" onMouseClicked="#openMenu"
                                 styleClass="button-qrcode" prefHeight="25"
                                 BorderPane.alignment="CENTER"/>
                     </right>
