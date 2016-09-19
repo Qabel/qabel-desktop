@@ -252,8 +252,8 @@ public class LayoutController extends AbstractController implements Initializabl
             scrollContent.getChildren().setAll(new FeedbackView().getView());
             setActivityMenu(feedbackBackground, feedbackButton);
         });
-        Tooltip feebackTooltip = new Tooltip(resourceBundle.getString("layoutIconFeebackTooltip"));
-        Tooltip.install(feedbackButton, feebackTooltip);
+        Tooltip feedbackTooltip = new Tooltip(resourceBundle.getString("layoutIconFeebackTooltip"));
+        Tooltip.install(feedbackButton, feedbackTooltip);
 
         /*
         Image gearGraphic = new Image(getClass().getResourceAsStream("/img/gear.png"));
