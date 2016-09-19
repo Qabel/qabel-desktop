@@ -1,7 +1,8 @@
 package de.qabel.desktop.ui.remotefs;
 
 import de.qabel.box.storage.*;
-import de.qabel.box.storage.command.DirectoryMetadataChange;
+import de.qabel.box.storage.dto.BoxPath;
+import de.qabel.box.storage.dto.DirectoryMetadataChangeNotification;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.box.storage.jdbc.JdbcDirectoryMetadata;
 import de.qabel.core.crypto.QblECPublicKey;
@@ -357,13 +358,19 @@ public class FolderTreeItemTest extends AbstractControllerTest {
 
         @NotNull
         @Override
-        public rx.Observable<DirectoryMetadataChange<Object>> getChanges() {
+        public rx.Observable<DirectoryMetadataChangeNotification> getChanges() {
             return null;
         }
 
         @NotNull
         @Override
         public FileMetadata getMetadataFile(Share share) throws IOException, InvalidKeyException, QblStorageException {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public BoxPath.FolderLike getPath() {
             return null;
         }
     }

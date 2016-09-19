@@ -1,12 +1,14 @@
 package de.qabel.desktop.storage.cache;
 
 import de.qabel.box.storage.*;
-import de.qabel.box.storage.command.DirectoryMetadataChange;
+import de.qabel.box.storage.dto.BoxPath;
+import de.qabel.box.storage.dto.DirectoryMetadataChangeNotification;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
+import de.qabel.desktop.storage.PathNavigation;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -267,7 +269,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
         }
         notifyObservers(
             new RemoteChangeEvent(
-                getPath(file),
+                getDesktopPath(file),
                 file instanceof BoxFolder,
                 mtime,
                 type,
@@ -326,12 +328,12 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
     }
 
     @Override
-    public Path getPath() {
+    public Path getDesktopPath() {
         return path;
     }
 
     @Override
-    public Path getPath(BoxObject folder) {
+    public Path getDesktopPath(BoxObject folder) {
         return BoxFileSystem.get(path).resolve(folder.getName());
     }
 
@@ -398,13 +400,19 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 
     @NotNull
     @Override
-    public rx.Observable<DirectoryMetadataChange<Object>> getChanges() {
-        return null;
+    public rx.Observable<DirectoryMetadataChangeNotification> getChanges() {
+        return nav.getChanges();
     }
 
     @NotNull
     @Override
     public FileMetadata getMetadataFile(Share share) throws IOException, InvalidKeyException, QblStorageException {
-        return null;
+        return nav.getMetadataFile(share);
+    }
+
+    @NotNull
+    @Override
+    public BoxPath.FolderLike getPath() {
+        return nav.getPath();
     }
 }
