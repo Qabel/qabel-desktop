@@ -25,8 +25,8 @@ public class CachedBoxVolumeImplFactoryTest {
     public void setUp() throws Exception {
         account = new Account("a", "b", "c");
         account2 = new Account("a2", "b2", "c2");
-        identity = new IdentityBuilderFactory(new DropUrlGenerator("http://localhost")).factory().build();
-        identity2 = new IdentityBuilderFactory(new DropUrlGenerator("http://localhost")).factory().build();
+        identity = new IdentityBuilderFactory(new DropUrlGenerator("http://localhost")).factory().withAlias("foo").build();
+        identity2 = new IdentityBuilderFactory(new DropUrlGenerator("http://localhost")).factory().withAlias("foo").build();
         factory = new BoxVolumeFactoryStub();
         boxVolume1 = new BoxVolumeStub();
         factory.boxVolume = boxVolume1;
