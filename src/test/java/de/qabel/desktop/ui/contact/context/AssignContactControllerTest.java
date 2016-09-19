@@ -132,6 +132,9 @@ public class AssignContactControllerTest extends AbstractControllerTest {
 
     @Test
     public void ignoreContact() throws Exception {
+        initController();
+        controller.getIgnoreButton().fire();
+        assertThat(contact.isIgnored(), is(true));
 
     }
 

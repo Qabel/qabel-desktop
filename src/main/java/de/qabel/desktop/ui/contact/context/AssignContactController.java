@@ -72,6 +72,7 @@ public class AssignContactController extends AbstractController implements Initi
         toggleButton.setSelected(contact.isIgnored());
         toggleButton.setOnAction(this::ignore);
         container.add(toggleButton, 1, row);
+        ignoreButton = toggleButton;
     }
 
     private void ignore(ActionEvent actionEvent) {
