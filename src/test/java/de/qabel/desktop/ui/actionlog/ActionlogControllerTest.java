@@ -113,11 +113,11 @@ public class ActionlogControllerTest extends AbstractControllerTest {
 
     @Test
     public void notificationShownForUnknownContacts() throws Exception {
+        AsyncUtils.waitUntil(() -> controller.notification.isManaged());
+        toggleContactStatus();
         AsyncUtils.assertAsync(() -> controller.notification.isManaged(), is(false));
         toggleContactStatus();
         AsyncUtils.assertAsync(() -> controller.notification.isManaged(), is(true));
-        toggleContactStatus();
-        AsyncUtils.assertAsync(() -> controller.notification.isManaged(), is(false));
     }
 
     private void toggleContactStatus() throws PersistenceException {
@@ -161,6 +161,7 @@ public class ActionlogControllerTest extends AbstractControllerTest {
         super.setUp();
         i = identityBuilderFactory.factory().withAlias("TestAlias").build();
         c = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
+        c.setStatus(Contact.ContactStatus.UNKNOWN);
         createController(i);
         controller.setContact(c);
         controller = (ActionlogController) view.getPresenter();

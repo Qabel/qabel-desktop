@@ -254,6 +254,7 @@ public class ActionlogController extends AbstractController implements Initializ
         this.contact = contact;
         executor.submit(() -> {
             try {
+                toggleNotification();
                 loadMessages(this.contact);
             } catch (Exception e) {
                 alert(e);
