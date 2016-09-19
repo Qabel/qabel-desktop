@@ -49,12 +49,18 @@ public class SqliteDropMessageRepository extends AbstractSqliteRepository<Persis
         this(
             database,
             em,
-            new SqliteIdentityRepository(database, em),
+            new SqliteIdentityRepository(
+                database, em, new SqlitePrefixRepository(database),
+                new SqliteDropUrlRepository(database, new DropURLHydrator())
+            ),
             new SqliteContactRepository(
                 database,
                 em,
                 new SqliteDropUrlRepository(database, new DropURLHydrator()),
-                new SqliteIdentityRepository(database, em)
+                new SqliteIdentityRepository(
+                    database, em, new SqlitePrefixRepository(database),
+                    new SqliteDropUrlRepository(database, new DropURLHydrator())
+                )
             )
         );
     }
