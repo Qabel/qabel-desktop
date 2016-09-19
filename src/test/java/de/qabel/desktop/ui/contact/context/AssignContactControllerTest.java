@@ -46,7 +46,8 @@ public class AssignContactControllerTest extends AbstractControllerTest {
         initController();
 
         ObservableList<Node> children = controller.container.getChildren();
-        assertThat(children, hasSize(2 * ELEMENTS_PER_IDENTITY));
+        // one more because of the ignore button
+        assertThat(children, hasSize(3 * ELEMENTS_PER_IDENTITY ));
 
         assertLabelWithText(children.get(0), "identity1");
         assertSelectedToggle(children.get(1));
@@ -127,6 +128,11 @@ public class AssignContactControllerTest extends AbstractControllerTest {
 
         assertThat(getAssignedIdentities(), not(hasItem(assignedIdentity)));
         assertThat(button.isSelected(), is(false));
+    }
+
+    @Test
+    public void ignoreContact() throws Exception {
+
     }
 
     private List<Identity> getAssignedIdentities() throws PersistenceException {

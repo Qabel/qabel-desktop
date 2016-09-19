@@ -3,6 +3,7 @@ package de.qabel.desktop.ui.contact.context;
 import com.jfoenix.controls.JFXToggleButton;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
+import de.qabel.core.contacts.ContactData;
 import de.qabel.core.repository.ContactRepository;
 import de.qabel.core.repository.IdentityRepository;
 import de.qabel.core.repository.exception.EntityNotFoundException;
@@ -36,6 +37,7 @@ public class AssignContactController extends AbstractController implements Initi
     private Set<Identity> assignedIdentities = new HashSet<>();
     private Map<Identity, ToggleButton> buttonByIdentity = new HashMap<>();
     private Map<ToggleButton, Identity> identityByButton = new HashMap<>();
+    private ToggleButton ignoreButton;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -58,6 +60,26 @@ public class AssignContactController extends AbstractController implements Initi
         } catch (PersistenceException e) {
             alert(e);
         }
+        addIgnoreButton(resources);
+    }
+
+    private void addIgnoreButton(ResourceBundle resources) {
+        int row = shownIdentities.size();
+        Label label = new Label(resources.getString("ignoreContact"));
+        container.add(label, 0, row);
+        JFXToggleButton toggleButton = new JFXToggleButton();
+        toggleButton.setId("ignore-");
+        toggleButton.setSelected(contact.isIgnored());
+        toggleButton.setOnAction(this::ignore);
+        container.add(toggleButton, 1, row);
+    }
+
+    private void ignore(ActionEvent actionEvent) {
+        contact.setIgnored(ignoreButton.isSelected());
+        tryOrAlert(() -> {
+            ContactData withIdentities = contactRepository.findContactWithIdentities(contact.getKeyIdentifier());
+            contactRepository.update(contact, withIdentities.getIdentities());
+        });
     }
 
     private void addIdentity(Identity identity) {
@@ -79,18 +101,22 @@ public class AssignContactController extends AbstractController implements Initi
         return buttonByIdentity.get(identity);
     }
 
-    private void toggle(ActionEvent event) {
-        tryOrAlert(() -> {
-            Object source = event.getSource();
-            ToggleButton button = (ToggleButton) source;
-            Identity identity = identityByButton.get(button);
-            if (button.isSelected()) {
-                assign(identity);
-            } else {
-                unassign(identity);
-            }
-        });
+    ToggleButton getIgnoreButton() {
+        return ignoreButton;
     }
+
+    private void toggle(ActionEvent event) {
+    tryOrAlert(() -> {
+        Object source = event.getSource();
+        ToggleButton button = (ToggleButton) source;
+        Identity identity = identityByButton.get(button);
+        if (button.isSelected()) {
+            assign(identity);
+        } else {
+            unassign(identity);
+        }
+    });
+}
 
     private void unassign(Identity identity) throws PersistenceException {
         contactRepository.delete(contact, identity);

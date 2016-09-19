@@ -13,4 +13,8 @@ public class AssignContactPage extends AbstractPage {
     public void waitForIdentity(Identity identity) {
         waitForNode("#assign-" + identity.getId());
     }
+
+    public void waitForIgnore() {
+        waitForNode("#ignore-");
+    }
 }

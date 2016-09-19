@@ -59,6 +59,7 @@ public class ContactGuiTest extends AbstractGuiTest<ContactController> {
 
         AssignContactPage assignPage = page.getFirstItem().assign();
         assignPage.waitForIdentity(identity);
+        assignPage.waitForIgnore();
     }
 
     @Test
