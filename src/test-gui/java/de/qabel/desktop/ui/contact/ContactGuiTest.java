@@ -55,7 +55,7 @@ public class ContactGuiTest extends AbstractGuiTest<ContactController> {
     public void testAssignContactPopupOpens() throws Exception {
         expandStageForPopover();
         createNewContactAndSaveInRepo("1", identity);
-        runLaterAndWait(controller::update);
+        controller.update();
 
         AssignContactPage assignPage = page.getFirstItem().assign();
         assignPage.waitForIdentity(identity);
@@ -118,12 +118,12 @@ public class ContactGuiTest extends AbstractGuiTest<ContactController> {
 
         runLaterAndWait(() -> clientConfiguration.selectIdentity(identity));
         runLaterAndWait(() -> controller.filterCombo.getSelectionModel().select(controller.showNewContacts));
-        runLaterAndWait(controller::update);
-        assertThat(controller.contactItems, hasSize(2));
+        controller.update();
+        assertAsync(() -> controller.contactItems, hasSize(2));
 
         runLaterAndWait(() -> controller.filterCombo.getSelectionModel().select(controller.showNormalContacts));
-        runLaterAndWait(controller::update);
-        assertThat(controller.contactItems, hasSize(3));
+        controller.update();
+        assertAsync(() -> controller.contactItems, hasSize(3));
     }
 
 }
