@@ -37,7 +37,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.controlsfx.control.PopOver;
 import org.json.JSONException;
-import org.omg.CORBA.UNKNOWN;
 
 import javax.inject.Inject;
 import java.io.File;
