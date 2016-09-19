@@ -125,7 +125,10 @@ public class ContactController extends AbstractController implements Initializab
     }
 
     private void showActionlog(Contact contact) {
-        popOver.hide();
+        if (popOver != null) {
+            popOver.hide();
+        }
+
         if (actionlogController == null) {
             ActionlogView actionlogView = new ActionlogView();
             actionlogController = (ActionlogController) actionlogView.getPresenter();
