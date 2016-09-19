@@ -37,6 +37,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.controlsfx.control.PopOver;
 import org.json.JSONException;
+import org.omg.CORBA.UNKNOWN;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -44,6 +45,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ContactController extends AbstractController implements Initializable, EntityObserver {
 
@@ -93,6 +95,10 @@ public class ContactController extends AbstractController implements Initializab
     Label showNormalContacts;
     Label showIgnoredContacts;
     Label showNewContacts;
+
+    enum ContactsFilter {
+        ALL, NEW, IGNORED
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -186,6 +192,22 @@ public class ContactController extends AbstractController implements Initializab
         });
     }
 
+    List<Contact> filteredContacts(Collection<Contact> contacts, ContactsFilter filter) {
+        return contacts.stream().filter(contact -> {
+            switch (filter) {
+                case ALL:
+                    return !contact.isIgnored() && (contact.getStatus() == Contact.ContactStatus.NORMAL
+                        || contact.getStatus() == Contact.ContactStatus.UNKNOWN);
+                case NEW:
+                    return !contact.isIgnored() && contact.getStatus() == Contact.ContactStatus.UNKNOWN;
+                case IGNORED:
+                    return contact.isIgnored();
+            }
+            return  false;
+        }).collect(Collectors.toList());
+    }
+
+
     public void loadContacts() {
         contactList.getChildren().clear();
         contactItems.clear();
@@ -208,7 +230,16 @@ public class ContactController extends AbstractController implements Initializab
             contactList.getChildren().add(itemView.getView());
             return;
         }
-        List<Contact> cl = new LinkedList<>(contactsFromRepo.getContacts());
+        Label selectedItem = filterCombo.getSelectionModel().getSelectedItem();
+        ContactsFilter filter;
+        if (selectedItem == showNewContacts) {
+            filter = ContactsFilter.NEW;
+        } else if (selectedItem == showIgnoredContacts) {
+            filter = ContactsFilter.IGNORED;
+        } else {
+            filter = ContactsFilter.ALL;
+        }
+        List<Contact> cl = filteredContacts(contactsFromRepo.getContacts(), filter);
 
         cl.sort((c1, c2) -> c1.getAlias().toLowerCase().compareTo(c2.getAlias().toLowerCase()));
 

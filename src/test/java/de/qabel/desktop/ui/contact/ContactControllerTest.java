@@ -19,11 +19,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.*;
 
 public class ContactControllerTest extends AbstractControllerTest {
@@ -172,6 +170,41 @@ public class ContactControllerTest extends AbstractControllerTest {
 
         controller.importContacts(c2.toFile());
         assertEquals(2, contactRepository.find(identity).getContacts().size());
+    }
+
+    private Contact createContact(ContactController.ContactsFilter filter) throws Exception {
+        Identity i = identityBuilderFactory.factory().withAlias("unknown").build();
+        Contact c = new Contact("contact", i.getDropUrls(), i.getEcPublicKey());
+        switch (filter) {
+            case ALL:
+                c.setStatus(Contact.ContactStatus.NORMAL);
+                break;
+            case NEW:
+                c.setStatus(Contact.ContactStatus.UNKNOWN);
+                break;
+            case IGNORED:
+                c.setStatus(Contact.ContactStatus.NORMAL);
+                c.setIgnored(true);
+                break;
+        }
+        contactRepository.save(c, identity);
+        return c;
+    }
+
+    @Test
+    public void filterContacts() throws Exception {
+        Contact unknown1 = createContact(ContactController.ContactsFilter.NEW);
+        Contact unknown2 = createContact(ContactController.ContactsFilter.NEW);
+        Contact known = createContact(ContactController.ContactsFilter.ALL);
+        Contact ignored = createContact(ContactController.ContactsFilter.IGNORED);
+        List<Contact> contacts = Arrays.asList(unknown1, unknown2, known, ignored);
+        controller = getController();
+        assertThat(controller.filteredContacts(contacts, ContactController.ContactsFilter.NEW),
+            containsInAnyOrder(unknown1, unknown2));
+        assertThat(controller.filteredContacts(contacts, ContactController.ContactsFilter.ALL),
+            containsInAnyOrder(known, unknown1, unknown2));
+        assertThat(controller.filteredContacts(contacts, ContactController.ContactsFilter.IGNORED),
+            containsInAnyOrder(ignored));
     }
 
     private Contact getContact(String name) throws PersistenceException {
