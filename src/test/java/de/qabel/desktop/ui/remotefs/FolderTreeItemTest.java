@@ -352,7 +352,7 @@ public class FolderTreeItemTest extends AbstractControllerTest {
         @NotNull
         @Override
         public FileMetadata getMetadataFile(Share share) throws IOException, InvalidKeyException, QblStorageException {
-            return navigation.getMetadataFile(share);
+            return null;
         }
     }
 }

@@ -14,7 +14,6 @@ import de.qabel.desktop.ui.accounting.avatar.AvatarView;
 import de.qabel.desktop.ui.accounting.item.SelectionEvent;
 import de.qabel.desktop.ui.actionlog.ContactActionLog;
 import de.qabel.desktop.ui.actionlog.FxActionlog;
-import de.qabel.desktop.ui.contact.ContactController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -43,8 +42,6 @@ public class ContactItemController extends AbstractController implements Initial
     HBox contactRootItem;
     @Inject
     private ContactRepository contactRepository;
-
-    ContactController parent;
 
     List<Consumer> selectionListeners = new LinkedList<>();
 

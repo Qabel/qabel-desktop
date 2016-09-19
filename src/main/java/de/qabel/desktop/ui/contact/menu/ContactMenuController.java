@@ -22,7 +22,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import org.controlsfx.control.PopOver;
 import org.json.JSONException;
 
 import javax.inject.Inject;
@@ -49,13 +48,10 @@ public class ContactMenuController extends AbstractController implements Initial
     private TransactionManager transactionManager;
 
     @FXML
-    AnchorPane menuContact;
+    public AnchorPane menuContact;
 
     @FXML
     VBox vboxMenu;
-
-    @FXML
-    Button importButton;
 
     @FXML
     Button exportToFileButton;
@@ -75,59 +71,55 @@ public class ContactMenuController extends AbstractController implements Initial
 
     Identity identity;
 
-    ImageView imageView;
-
-    public PopOver popOver;
+    private static ImageView importFromFileImageView = setImageView(loadImage("/img/import_black.png"));
+    private static ImageView importFromQRImageView = setImageView(loadImage("/img/qrcode.png"));
+    private static ImageView searchButtonImageView = setImageView(loadImage("/img/cloud_search.png"));
+    private static ImageView enterContactImageView = setImageView(loadImage("/img/pencil.png"));
+    private static ImageView exportContactsToFileImageView = setImageView(loadImage("/img/export.png"));
+    private static ImageView exportContactsToQRImageView = setImageView(loadImage("/img/qrcode.png"));
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
         identity = clientConfiguration.getSelectedIdentity();
+        createButtonGraphics();
     }
 
-    public void showMenu(double coordX, double coordY) {
-        initializePopOver();
-        createButtonGraphics();
-        popOver.show(menuContact, coordX, coordY);
+    public void open() {
+        menuContact.setVisible(true);
     }
 
     private void createButtonGraphics() {
-        Tooltip.install(importButton, new Tooltip(resourceBundle.getString("contactImport")));
+        Tooltip.install(importFromFile, new Tooltip(resourceBundle.getString("contactImport")));
         Tooltip.install(exportToFileButton, new Tooltip(resourceBundle.getString("contactExport")));
-        importFromFile.setGraphic(getImage(new Image(getClass().getResourceAsStream("/img/import_black.png"))));
-        importFromQR.setGraphic(getImage(new Image(getClass().getResourceAsStream("/img/qrcode.png"))));
-        searchButton.setGraphic(getImage(new Image(getClass().getResourceAsStream("/img/cloud_search.png"))));
-        enterContact.setGraphic(getImage(new Image(getClass().getResourceAsStream("/img/pencil.png"))));
-        exportContactsToFile.setGraphic(getImage(new Image(getClass().getResourceAsStream("/img/export.png"))));
-        exportContactsToQR.setGraphic(getImage(new Image(getClass().getResourceAsStream("/img/qrcode.png"))));
+        Tooltip.install(searchButton, new Tooltip(resourceBundle.getString("searchContact")));
+        Tooltip.install(enterContact, new Tooltip(resourceBundle.getString("enterContactManually")));
+        Tooltip.install(exportContactsToFile, new Tooltip(resourceBundle.getString("contactExport")));
+        Tooltip.install(exportContactsToQR, new Tooltip(resourceBundle.getString("contactExport")));
+        importFromFile.setGraphic(importFromFileImageView);
+        importFromQR.setGraphic(importFromQRImageView);
+        searchButton.setGraphic(searchButtonImageView);
+        enterContact.setGraphic(enterContactImageView);
+        exportContactsToFile.setGraphic(exportContactsToFileImageView);
+        exportContactsToQR.setGraphic(exportContactsToQRImageView);
     }
 
-    private ImageView getImage(Image image) {
-        imageView = new ImageView();
-        imageView.setImage(image);
-        return imageView;
+    private static Image loadImage(String resourcePath) {
+        return new Image(ContactMenuController.class.getResourceAsStream(resourcePath), 32, 32, true, true);
     }
 
-    private void initializePopOver() {
-        popOver = new PopOver();
-        popOver.setArrowLocation(PopOver.ArrowLocation.TOP_RIGHT);
-        popOver.setContentNode(new VBox(vboxMenu));
-        popOver.setAutoFix(true);
-        popOver.setAutoHide(true);
-        popOver.setHideOnEscape(true);
-        popOver.setDetachable(false);
-        popOver.setOnHiding(event -> layoutWindow.getChildren().remove(menuContact));
+    private static ImageView setImageView(Image image) {
+        return new ImageView(image);
     }
 
     public void handleExportContactsButtonAction() throws EntityNotFoundException, IOException, JSONException {
         tryOrAlert(() -> {
-            try {
-                FileChooser chooser = new FileChooser();
-                chooser.setTitle(resourceBundle.getString("contactDownload"));
-                chooser.setInitialFileName("Contacts.qco");
-                File file = chooser.showSaveDialog(menuContact.getScene().getWindow());
+            FileChooser chooser = new FileChooser();
+            chooser.setTitle(resourceBundle.getString("contactDownload"));
+            chooser.setInitialFileName("Contacts.qco");
+            File file = chooser.showSaveDialog(layoutWindow.getScene().getWindow());
+            if (file != null) {
                 exportContacts(file);
-            } catch (NullPointerException ignored) {
             }
         });
     }
@@ -143,12 +135,13 @@ public class ContactMenuController extends AbstractController implements Initial
         chooser.setTitle(resourceBundle.getString("contactDownloadFolder"));
         FileChooser.ExtensionFilter qcoExtensionFilter = new FileChooser.ExtensionFilter(resourceBundle.getString("qcoExtensionFilterLabel"), "*.qco");
         chooser.getExtensionFilters().add(qcoExtensionFilter);
-        File file = chooser.showOpenDialog(menuContact.getScene().getWindow());
+        File file = chooser.showOpenDialog(layoutWindow.getScene().getWindow());
         try {
-            importContacts(file);
+            if (file != null) {
+                importContacts(file);
+            }
         } catch (IOException | PersistenceException | JSONException e) {
             alert(resourceBundle.getString("alertImportContactFail"), e);
-        } catch (NullPointerException ignored) {
         } catch (QblDropInvalidURL qblDropInvalidURL) {
             qblDropInvalidURL.printStackTrace();
         } catch (URISyntaxException e) {

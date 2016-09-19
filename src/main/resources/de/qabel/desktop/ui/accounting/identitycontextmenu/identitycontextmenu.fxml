@@ -5,7 +5,7 @@
 <?import javafx.scene.shape.Line?>
 
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane fx:id="menuQR" xmlns="http://javafx.com/javafx/8" visible="false" styleClass="popup-menu"
+<AnchorPane fx:id="contextMenu" xmlns="http://javafx.com/javafx/8" visible="false" styleClass="popup-menu"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuController">
     <children>

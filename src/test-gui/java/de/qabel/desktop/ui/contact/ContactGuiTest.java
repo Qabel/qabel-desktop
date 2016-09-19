@@ -47,11 +47,10 @@ public class ContactGuiTest extends AbstractGuiTest<ContactController> {
     @Test
     public void testOpenMenu() {
         ContactPage page = new ContactPage(baseFXRobot, robot, controller);
-        controller.layoutWindow = controller.contactList;
         page.openMenu();
         waitUntil(() -> controller.contactMenuController != null);
-        waitUntil(() -> controller.contactMenuController.popOver != null);
-        assertAsync(() -> controller.contactMenuController.popOver.isShowing());
+        waitUntil(() -> controller.contactMenuController.menuContact != null);
+        assertAsync(() -> controller.contactMenuController.menuContact.isVisible());
     }
 
     @Test

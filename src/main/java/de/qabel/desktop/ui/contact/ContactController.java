@@ -23,11 +23,14 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import org.controlsfx.control.PopOver;
 
 import javax.inject.Inject;
 
@@ -53,9 +56,6 @@ public class ContactController extends AbstractController implements Initializab
     Button contactMenu;
 
     @Inject
-    Pane layoutWindow;
-
-    @Inject
     private ClientConfig clientConfiguration;
 
     @Inject
@@ -76,6 +76,20 @@ public class ContactController extends AbstractController implements Initializab
     public ContactMenuController contactMenuController;
     ContactMenuView contactMenuView;
 
+    public PopOver popOver;
+
+    private static ImageView searchButtonImageView = setImageView(loadImage("/icon/search.png"));
+    private static ImageView contactImageView = setImageView(loadImage("/img/account_multiple.png"));
+    private static ImageView menuImageView = setImageView(loadImage("/img/dots_vertical.png"));
+
+    private static Image loadImage(String resourcePath) {
+        return new Image(ContactMenuController.class.getResourceAsStream(resourcePath), 25, 25, true, true);
+    }
+
+    private static ImageView setImageView(Image image) {
+        return new ImageView(image);
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
@@ -88,7 +102,7 @@ public class ContactController extends AbstractController implements Initializab
         details = (DetailsController) detailsView.getPresenter();
         detailsView.getViewAsync(contactroot.getChildren()::add);
 
-        contactRepository.attach(() -> Platform.runLater(() -> update()));
+        contactRepository.attach(this::update);
 
         try {
             buildGson();
@@ -102,12 +116,16 @@ public class ContactController extends AbstractController implements Initializab
     }
 
     private void createButtonGraphics() {
-        searchButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/icon/search.png"))));
-        contactsButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/img/account_multiple.png"))));
-        contactMenu.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/img/dots_vertical.png"))));
+        searchButton.setGraphic(searchButtonImageView);
+        contactsButton.setGraphic(contactImageView);
+        contactMenu.setGraphic(menuImageView);
+        Tooltip.install(searchButton, new Tooltip(resourceBundle.getString("searchContact")));
+        Tooltip.install(contactsButton, new Tooltip(resourceBundle.getString("contactsList")));
+        Tooltip.install(contactMenu, new Tooltip(resourceBundle.getString("contactsMenu")));
     }
 
     private void showActionlog(Contact contact) {
+        popOver.hide();
         if (actionlogController == null) {
             ActionlogView actionlogView = new ActionlogView();
             actionlogController = (ActionlogController) actionlogView.getPresenter();
@@ -191,7 +209,6 @@ public class ContactController extends AbstractController implements Initializab
     }
 
     private void createObserver() {
-
         contactsFromRepo.addObserver(this);
         clientConfiguration.onSelectIdentity(i -> {
             contactsFromRepo.removeObserver(this);
@@ -215,15 +232,19 @@ public class ContactController extends AbstractController implements Initializab
     }
 
     public void openContactMenu(MouseEvent event) {
-        initializeMenu();
-        Platform.runLater(() -> contactMenuController.showMenu(event.getSceneX()
-            + layoutWindow.getScene().getWindow().getX(), event.getSceneY()
-            + layoutWindow.getScene().getWindow().getY() + contactMenu.getHeight()));
+        initializeMenu(event.getScreenX(), event.getScreenY());
+        Platform.runLater(() -> contactMenuController.open());
     }
 
-    private void initializeMenu() {
+    private void initializeMenu(double coordX, double coordY) {
         contactMenuView = new ContactMenuView();
-        contactMenuView.getView(layoutWindow.getChildren()::add);
+        contactMenuView.getView(view -> {
+            popOver = new PopOver();
+            popOver.setArrowLocation(PopOver.ArrowLocation.TOP_RIGHT);
+            popOver.setContentNode(new VBox(contactMenuController.menuContact));
+            popOver.show(contactList, coordX, coordY);
+        });
+
         contactMenuController = (ContactMenuController) contactMenuView.getPresenter();
     }
 }

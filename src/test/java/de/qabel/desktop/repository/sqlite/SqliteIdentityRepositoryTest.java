@@ -41,7 +41,7 @@ public class SqliteIdentityRepositoryTest extends AbstractSqliteRepositoryTest<S
             dropUrlRepository,
             prefixRepository
         );
-        return new SqliteIdentityRepository(clientDatabase, hydrator, dropUrlRepository, prefixRepository);
+        return new SqliteIdentityRepository(clientDatabase, em, prefixRepository, dropUrlRepository);
     }
 
     @Test

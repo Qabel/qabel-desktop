@@ -8,9 +8,11 @@ import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.qrcode.QRCodeController;
 import de.qabel.desktop.ui.accounting.qrcode.QRCodeView;
+import de.qabel.desktop.ui.contact.menu.ContactMenuController;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
@@ -19,7 +21,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import org.controlsfx.control.PopOver;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -36,7 +37,7 @@ public class IdentityContextMenuController extends AbstractController implements
     private Pane layoutWindow;
 
     @FXML
-    AnchorPane menuQR;
+    public AnchorPane contextMenu;
 
     @FXML
     VBox vboxMenu;
@@ -59,23 +60,45 @@ public class IdentityContextMenuController extends AbstractController implements
 
     private TextInputDialog dialog;
 
+    private static ImageView editImageView = setImageView(loadImage("/img/pencil.png"));
+    private static ImageView deleteImageView = setImageView(loadImage("/img/delete.png"));
+    private static ImageView uploadImageView = setImageView(loadImage("/img/upload.png"));
+    private static ImageView privateKeyImageView = setImageView(loadImage("/img/qrcode.png"));
+    private static ImageView qrcodeImageView = setImageView(loadImage("/img/qrcode.png"));
+    private static ImageView emailImageView = setImageView(loadImage("/img/email.png"));
+
     private QRCodeView qrcodeView;
     private QRCodeController qrcodeController;
-    private PopOver popOver;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
         createButtonsGraphics();
+        eventHandlerOpenQRPopup();
+    }
+
+    private void eventHandlerOpenQRPopup() {
+        privateKeyButton.setOnAction(event -> {
+            ((Node)(event.getSource())).getScene().getWindow().hide();
+            openQRCode();
+        });
+    }
+
+    private static Image loadImage(String resourcePath) {
+        return new Image(ContactMenuController.class.getResourceAsStream(resourcePath), 32, 32, true, true);
+    }
+
+    private static ImageView setImageView(Image image) {
+        return new ImageView(image);
     }
 
     private void createButtonsGraphics() {
-        editButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/img/pencil.png"))));
-        removeButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/img/delete.png"))));
-        exportButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/img/upload.png"))));
-        privateKeyButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/img/qrcode.png"))));
-        publicKeyQRButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/img/qrcode.png"))));
-        publicKeyEmailButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/img/email.png"))));
+        editButton.setGraphic(editImageView);
+        removeButton.setGraphic(deleteImageView);
+        exportButton.setGraphic(uploadImageView);
+        privateKeyButton.setGraphic(privateKeyImageView);
+        publicKeyQRButton.setGraphic(qrcodeImageView);
+        publicKeyEmailButton.setGraphic(emailImageView);
     }
 
     private void initializeQRPopup() {
@@ -88,28 +111,11 @@ public class IdentityContextMenuController extends AbstractController implements
         }
     }
 
-    public void showMenu(double coordPopOverX, double coordPopOverY) {
-        initializePopOver();
-        popOver.show(menuQR, coordPopOverX, coordPopOverY);
-    }
-
-    private void initializePopOver() {
-        popOver = new PopOver();
-        popOver.setArrowLocation(PopOver.ArrowLocation.TOP_RIGHT);
-        popOver.setContentNode(new VBox(vboxMenu));
-        popOver.setAutoFix(true);
-        popOver.setAutoHide(true);
-        popOver.setHideOnEscape(true);
-        popOver.setDetachable(false);
-        popOver.setOnHiding(event -> layoutWindow.getChildren().remove(menuQR));
-    }
-
-    private void closeMenu() {
-        popOver.hide();
+    public void openMenu() {
+        contextMenu.setVisible(true);
     }
 
     public void openQRCode() {
-        closeMenu();
         initializeQRPopup();
         Platform.runLater(() -> qrcodeController.showPopup());
     }

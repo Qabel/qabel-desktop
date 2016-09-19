@@ -8,12 +8,12 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.21.1",
-            "requested": "0.21.1"
+            "locked": "0.23.2",
+            "requested": "0.23.2"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.21.1",
-            "requested": "0.21.1"
+            "locked": "0.23.2",
+            "requested": "0.23.2"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -116,12 +116,12 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.21.1",
-            "requested": "0.21.1"
+            "locked": "0.23.2",
+            "requested": "0.23.2"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.21.1",
-            "requested": "0.21.1"
+            "locked": "0.23.2",
+            "requested": "0.23.2"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -224,12 +224,12 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.21.1",
-            "requested": "0.21.1"
+            "locked": "0.23.2",
+            "requested": "0.23.2"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.21.1",
-            "requested": "0.21.1"
+            "locked": "0.23.2",
+            "requested": "0.23.2"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -264,11 +264,11 @@
             "requested": "1.10"
         },
         "info.cukes:cucumber-java": {
-            "locked": "1.2.4",
+            "locked": "1.2.5",
             "requested": "1.2.+"
         },
         "info.cukes:cucumber-junit": {
-            "locked": "1.2.4",
+            "locked": "1.2.5",
             "requested": "1.2.+"
         },
         "javax.inject:javax.inject": {
@@ -360,12 +360,12 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.21.1",
-            "requested": "0.21.1"
+            "locked": "0.23.2",
+            "requested": "0.23.2"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.21.1",
-            "requested": "0.21.1"
+            "locked": "0.23.2",
+            "requested": "0.23.2"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -400,11 +400,11 @@
             "requested": "1.10"
         },
         "info.cukes:cucumber-java": {
-            "locked": "1.2.4",
+            "locked": "1.2.5",
             "requested": "1.2.+"
         },
         "info.cukes:cucumber-junit": {
-            "locked": "1.2.4",
+            "locked": "1.2.5",
             "requested": "1.2.+"
         },
         "javax.inject:javax.inject": {
@@ -496,12 +496,12 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.21.1",
-            "requested": "0.21.1"
+            "locked": "0.23.2",
+            "requested": "0.23.2"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.21.1",
-            "requested": "0.21.1"
+            "locked": "0.23.2",
+            "requested": "0.23.2"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -604,12 +604,12 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.21.1",
-            "requested": "0.21.1"
+            "locked": "0.23.2",
+            "requested": "0.23.2"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.21.1",
-            "requested": "0.21.1"
+            "locked": "0.23.2",
+            "requested": "0.23.2"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -644,11 +644,11 @@
             "requested": "1.10"
         },
         "info.cukes:cucumber-java": {
-            "locked": "1.2.4",
+            "locked": "1.2.5",
             "requested": "1.2.+"
         },
         "info.cukes:cucumber-junit": {
-            "locked": "1.2.4",
+            "locked": "1.2.5",
             "requested": "1.2.+"
         },
         "javax.inject:javax.inject": {
@@ -740,12 +740,12 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.21.1",
-            "requested": "0.21.1"
+            "locked": "0.23.2",
+            "requested": "0.23.2"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.21.1",
-            "requested": "0.21.1"
+            "locked": "0.23.2",
+            "requested": "0.23.2"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -780,11 +780,11 @@
             "requested": "1.10"
         },
         "info.cukes:cucumber-java": {
-            "locked": "1.2.4",
+            "locked": "1.2.5",
             "requested": "1.2.+"
         },
         "info.cukes:cucumber-junit": {
-            "locked": "1.2.4",
+            "locked": "1.2.5",
             "requested": "1.2.+"
         },
         "javax.inject:javax.inject": {
