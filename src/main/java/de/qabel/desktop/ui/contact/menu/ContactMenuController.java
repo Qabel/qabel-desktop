@@ -82,26 +82,30 @@ public class ContactMenuController extends AbstractController implements Initial
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
         identity = clientConfiguration.getSelectedIdentity();
-        createButtonGraphics();
+        createButtonsGraphics();
+        createButtonsTooltip();
     }
 
     public void open() {
         menuContact.setVisible(true);
     }
 
-    private void createButtonGraphics() {
-        Tooltip.install(importFromFile, new Tooltip(resourceBundle.getString("contactImport")));
-        Tooltip.install(exportToFileButton, new Tooltip(resourceBundle.getString("contactExport")));
-        Tooltip.install(searchButton, new Tooltip(resourceBundle.getString("searchContact")));
-        Tooltip.install(enterContact, new Tooltip(resourceBundle.getString("enterContactManually")));
-        Tooltip.install(exportContactsToFile, new Tooltip(resourceBundle.getString("contactExport")));
-        Tooltip.install(exportContactsToQR, new Tooltip(resourceBundle.getString("contactExport")));
+    private void createButtonsGraphics() {
         importFromFile.setGraphic(importFromFileImageView);
         importFromQR.setGraphic(importFromQRImageView);
         searchButton.setGraphic(searchButtonImageView);
         enterContact.setGraphic(enterContactImageView);
         exportContactsToFile.setGraphic(exportContactsToFileImageView);
         exportContactsToQR.setGraphic(exportContactsToQRImageView);
+    }
+
+    private void createButtonsTooltip() {
+        Tooltip.install(importFromFile, new Tooltip(resourceBundle.getString("contactImport")));
+        Tooltip.install(exportToFileButton, new Tooltip(resourceBundle.getString("contactExport")));
+        Tooltip.install(searchButton, new Tooltip(resourceBundle.getString("searchContact")));
+        Tooltip.install(enterContact, new Tooltip(resourceBundle.getString("enterContactManually")));
+        Tooltip.install(exportContactsToFile, new Tooltip(resourceBundle.getString("contactExport")));
+        Tooltip.install(exportContactsToQR, new Tooltip(resourceBundle.getString("contactExport")));
     }
 
     private static Image loadImage(String resourcePath) {

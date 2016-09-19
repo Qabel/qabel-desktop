@@ -15,6 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -74,12 +75,13 @@ public class IdentityContextMenuController extends AbstractController implements
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
         createButtonsGraphics();
+        createButtonsTooltip();
         eventHandlerOpenQRPopup();
     }
 
     private void eventHandlerOpenQRPopup() {
         privateKeyButton.setOnAction(event -> {
-            ((Node)(event.getSource())).getScene().getWindow().hide();
+            ((Node) (event.getSource())).getScene().getWindow().hide();
             openQRCode();
         });
     }
@@ -99,6 +101,15 @@ public class IdentityContextMenuController extends AbstractController implements
         privateKeyButton.setGraphic(privateKeyImageView);
         publicKeyQRButton.setGraphic(qrcodeImageView);
         publicKeyEmailButton.setGraphic(emailImageView);
+    }
+
+    private void createButtonsTooltip() {
+        Tooltip.install(editButton, new Tooltip(resourceBundle.getString("editDetails")));
+        Tooltip.install(removeButton, new Tooltip(resourceBundle.getString("removeIdentity")));
+        Tooltip.install(exportButton, new Tooltip(resourceBundle.getString("exportIdentityQID")));
+        Tooltip.install(privateKeyButton, new Tooltip(resourceBundle.getString("exportPrivateKeyQR")));
+        Tooltip.install(publicKeyQRButton, new Tooltip(resourceBundle.getString("sharePublicKeyQR")));
+        Tooltip.install(publicKeyEmailButton, new Tooltip(resourceBundle.getString("sharePublicKeyEmail")));
     }
 
     private void initializeQRPopup() {
