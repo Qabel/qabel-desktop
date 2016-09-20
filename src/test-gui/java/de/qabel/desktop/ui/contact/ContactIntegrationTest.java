@@ -12,6 +12,7 @@ import de.qabel.desktop.repository.sqlite.SqliteDropMessageRepository;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import de.qabel.desktop.ui.actionlog.ActionlogController;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
+import de.qabel.desktop.ui.contact.item.ContactItemPage;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

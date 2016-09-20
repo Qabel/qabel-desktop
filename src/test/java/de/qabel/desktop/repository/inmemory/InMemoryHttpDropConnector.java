@@ -15,8 +15,6 @@ import java.util.List;
 
 public class InMemoryHttpDropConnector implements DropConnector {
     private Date date = new Date();
-    private RuntimeException exception;
-    private int polls;
 
     private HashMap<String, List<DropMessage>> contactLists = new HashMap<>();
 
@@ -33,22 +31,10 @@ public class InMemoryHttpDropConnector implements DropConnector {
 
     @Override
     public DropPollResponse receive(Identity i, Date sinceDate) {
-        polls++;
-        if (exception != null) {
-            throw exception;
-        }
         List<DropMessage> lst = contactLists.get(i.getKeyIdentifier());
         if(lst == null){
             return new DropPollResponse(new LinkedList<>(), date);
         }
         return new DropPollResponse(contactLists.get(i.getKeyIdentifier()), date);
-    }
-
-    public void throwException(RuntimeException e) {
-        exception = e;
-    }
-
-    public int getPolls() {
-        return polls;
     }
 }

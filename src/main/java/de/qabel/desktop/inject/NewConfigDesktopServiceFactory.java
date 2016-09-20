@@ -1,11 +1,20 @@
 package de.qabel.desktop.inject;
 
+import com.google.common.io.Files;
+import de.qabel.chat.repository.sqlite.SqliteChatDropMessageRepository;
+import de.qabel.chat.repository.sqlite.SqliteChatShareRepository;
+import de.qabel.chat.service.MainSharingService;
+import de.qabel.chat.service.SharingService;
 import de.qabel.core.config.factory.*;
+import de.qabel.core.crypto.CryptoUtils;
+import de.qabel.core.http.MainDropConnector;
+import de.qabel.core.http.MainDropServer;
 import de.qabel.core.repository.*;
 import de.qabel.core.repository.sqlite.*;
 import de.qabel.core.repository.sqlite.hydrator.AccountHydrator;
 import de.qabel.core.repository.sqlite.hydrator.DropURLHydrator;
 import de.qabel.core.repository.sqlite.hydrator.IdentityHydrator;
+import de.qabel.chat.service.MainChatService;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.RepositoryBasedClientConfig;
@@ -64,6 +73,7 @@ public class NewConfigDesktopServiceFactory extends RuntimeDesktopServiceFactory
         return contactRepository;
     }
 
+
     private SqliteAccountRepository accountRepository;
     @Override
     public synchronized AccountRepository getAccountRepository() {
@@ -74,6 +84,57 @@ public class NewConfigDesktopServiceFactory extends RuntimeDesktopServiceFactory
             );
         }
         return accountRepository;
+    }
+
+    private SqliteChatDropMessageRepository chatDropMessageRepository;
+    @Override
+    public synchronized SqliteChatDropMessageRepository getChatDropMessageRepository() {
+        if (chatDropMessageRepository == null) {
+            chatDropMessageRepository = new SqliteChatDropMessageRepository(
+                runtimeConfiguration.getConfigDatabase(),
+                getEntityManager());
+        }
+        return chatDropMessageRepository;
+    }
+
+    private SqliteChatShareRepository chatShareRepository;
+    private SqliteChatShareRepository getChatShareRepository() {
+        if (chatShareRepository == null) {
+            chatShareRepository = new SqliteChatShareRepository(
+                runtimeConfiguration.getConfigDatabase(), getEntityManager());
+        }
+        return chatShareRepository;
+    }
+
+    private MainChatService chatService;
+    @Override
+    public synchronized MainChatService getChatService() {
+        if (chatService == null) {
+            de.qabel.core.http.DropConnector dropConnector =
+                new MainDropConnector(new MainDropServer());
+            chatService = new MainChatService(
+                dropConnector,
+                getIdentityRepository(),
+                getContactRepository(),
+                getChatDropMessageRepository(),
+                getDropStateRepository(),
+                getChatSharingService()
+            );
+        }
+        return chatService;
+    }
+
+    private SharingService sharingService;
+    private SharingService getChatSharingService() {
+        if (sharingService == null) {
+            sharingService = new MainSharingService(
+                getChatShareRepository(),
+                getContactRepository(),
+                Files.createTempDir(),
+                new CryptoUtils());
+        }
+        return sharingService;
+
     }
 
     @Override

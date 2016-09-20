@@ -2,42 +2,36 @@ package de.qabel.desktop.daemon.drop;
 
 
 import de.qabel.core.config.Contact;
+import de.qabel.core.config.Entity;
 import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.repository.ContactRepository;
+import de.qabel.chat.repository.entities.ChatDropMessage;
+import de.qabel.chat.service.ChatService;
 import de.qabel.core.repository.IdentityRepository;
-import de.qabel.core.repository.exception.EntityNotFoundException;
-import de.qabel.core.repository.exception.PersistenceException;
-import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.repository.DropMessageRepository;
-import de.qabel.desktop.ui.connector.DropConnector;
-import de.qabel.desktop.ui.connector.DropPollResponse;
+import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 public class DropDaemon implements Runnable {
-    private ClientConfig config;
-    private DropConnector httpDropConnector;
-    private ContactRepository contactRepository;
-    private DropMessageRepository dropMessageRepository;
-    private IdentityRepository identityRepository;
+    private final ChatService chatService;
+    private final DropMessageRepository dropMessageRepository;
+    private final ContactRepository contactRepository;
+    private final IdentityRepository identityRepository;
     private long sleepTime = 10000L;
     private static final Logger logger = LoggerFactory.getLogger(DropDaemon.class);
 
-    public DropDaemon(ClientConfig config,
-                      DropConnector httpDropConnector,
-                      ContactRepository contactRepository,
+    public DropDaemon(ChatService chatService,
                       DropMessageRepository dropMessageRepository,
-                      IdentityRepository identityRepository
-    ) {
-        this.config = config;
-        this.httpDropConnector = httpDropConnector;
-        this.contactRepository = contactRepository;
+                      ContactRepository contactRepository, IdentityRepository identityRepository) {
+        this.chatService = chatService;
         this.dropMessageRepository = dropMessageRepository;
+        this.contactRepository = contactRepository;
         this.identityRepository = identityRepository;
     }
 
@@ -58,45 +52,24 @@ public class DropDaemon implements Runnable {
         }
     }
 
-    void receiveMessages() throws PersistenceException, EntityNotFoundException {
-        for (Identity identity : identityRepository.findAll().getIdentities()) {
-            try {
-                receiveMessages(identity);
-            } catch (Exception e) {
-                logger.error("Unexpected error while polling drops: " + e.getMessage(), e);
-            }
-        }
-    }
-
-    private void receiveMessages(Identity identity) throws PersistenceException, EntityNotFoundException {
+    void receiveMessages() {
         try {
-            Date lastDate = config.getLastDropPoll(identity);
-            DropPollResponse response = httpDropConnector.receive(identity, new Date(lastDate.getTime() + 1000L));
-            List<DropMessage> dropMessages = response.dropMessages;
-
-            Contact sender;
-            for (DropMessage d : dropMessages) {
-                lastDate = config.getLastDropPoll(identity);
-                if (lastDate.getTime() < d.getCreationDate().getTime()) {
-                    try {
-                        String senderKeyId = d.getSenderKeyId();
-                        if (senderKeyId == null) {
-                            senderKeyId = d.getSender().getKeyIdentifier();
-                        }
-                        sender = contactRepository.findByKeyId(identity, senderKeyId);
-                    } catch (EntityNotFoundException e) {
-                        logger.error("Contact: with ID: " + d.getSenderKeyId() + " not found " + e.getMessage(), e);
-                        continue;
-                    }
-                    dropMessageRepository.addMessage(d, sender, identity, false);
-                    logger.debug("setting response date to " + response.date);
+            Map<String, List<ChatDropMessage>> identityListMap = chatService.refreshMessages();
+            for (Map.Entry<String, List<ChatDropMessage>> messages: identityListMap.entrySet()) {
+                String identityKeyId = messages.getKey();
+                Identity identity = identityRepository.find(identityKeyId);
+                for (ChatDropMessage msg: messages.getValue()) {
+                    Contact contact = contactRepository.find(msg.getContactId());
+                    DropMessage dropMessage = new DropMessage(contact, msg.getPayload().toString(), msg.getMessageType().getType());
+                    boolean incoming = msg.getDirection().equals(ChatDropMessage.Direction.INCOMING);
+                    Entity sender = incoming ? contact : identity;
+                    Entity receiver = incoming ? identity : contact;
+                    PersistenceDropMessage message = new PersistenceDropMessage(dropMessage, sender, receiver, incoming, false);
+                    dropMessageRepository.save(message);
                 }
             }
-            if (response.date != null) {
-                config.setLastDropPoll(identity, response.date);
-            }
-        } catch (NullPointerException e) {
-            logger.warn("failed to receive dropMessage " + e.getMessage(), e);
+        } catch (Exception e) {
+            logger.error("Unexpected error while polling drops: " + e.getMessage(), e);
         }
     }
 
