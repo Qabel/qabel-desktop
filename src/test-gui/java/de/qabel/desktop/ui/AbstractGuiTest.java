@@ -52,7 +52,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 
     protected Object launchNode(FXMLView view) {
         Parent node = view.getView();
-        scene = new Scene(node, getWidth(), getHeight());
+        runLaterAndWait(() -> scene = new Scene(node, getWidth(), getHeight()));
         Object presenter = view.getPresenter();
         robot.targetWindow(scene);
 
@@ -101,12 +101,6 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 
     protected int getWidth() {
         return 500;
-    }
-
-    @Override
-    public void tearDown() throws Exception {
-        baseFXRobot.waitForIdle();
-        super.tearDown();
     }
 
     /**
@@ -180,5 +174,9 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
             return present;
         });
         return nodes[0];
+    }
+
+    protected void expandStageForPopover() {
+        stage.setWidth(1000);
     }
 }

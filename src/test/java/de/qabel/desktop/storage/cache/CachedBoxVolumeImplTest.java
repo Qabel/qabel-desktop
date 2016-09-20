@@ -171,8 +171,6 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
         foldernav2.upload("testfile", file);
         BoxNavigation subfoldernav2 = foldernav2.navigate(subfolder);
         subfoldernav2.upload("testfile", file);
-//        subfoldernav2.commit();
-//        foldernav2.commit();
 
         nav.refresh();
 

@@ -44,4 +44,6 @@ public interface ClientConfig {
     void setLastDropPoll(Identity identity, Date lastDropPoll);
 
     ShareNotifications getShareNotification(Identity identity);
+
+    boolean hasSelectedIdentity();
 }

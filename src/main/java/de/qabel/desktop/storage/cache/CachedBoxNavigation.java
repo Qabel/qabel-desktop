@@ -371,7 +371,6 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
                         Set<BoxFolder> oldFolders = new HashSet<>(nav.listFolders());
                         Set<BoxFile> oldFiles = new HashSet<>(nav.listFiles());
 
-                        //nav.setMetadata(dm);
                         nav.refresh(false);
 
                         Set<BoxFolder> newFolders = new HashSet<>(nav.listFolders());

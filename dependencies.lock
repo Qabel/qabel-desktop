@@ -11,6 +11,10 @@
             "locked": "0.24.1",
             "requested": "0.24.1"
         },
+        "com.github.Qabel.qabel-core:chat": {
+            "locked": "0.24.1",
+            "requested": "0.24.1"
+        },
         "com.github.Qabel.qabel-core:core": {
             "locked": "0.24.1",
             "requested": "0.24.1"
@@ -34,6 +38,10 @@
         "com.google.zxing:javase": {
             "locked": "3.1.0",
             "requested": "2.+"
+        },
+        "com.jfoenix:jfoenix": {
+            "locked": "1.0.0",
+            "requested": "1.+"
         },
         "commons-cli:commons-cli": {
             "locked": "1.2",
@@ -119,6 +127,10 @@
             "locked": "0.24.1",
             "requested": "0.24.1"
         },
+        "com.github.Qabel.qabel-core:chat": {
+            "locked": "0.24.1",
+            "requested": "0.24.1"
+        },
         "com.github.Qabel.qabel-core:core": {
             "locked": "0.24.1",
             "requested": "0.24.1"
@@ -142,6 +154,10 @@
         "com.google.zxing:javase": {
             "locked": "3.1.0",
             "requested": "2.+"
+        },
+        "com.jfoenix:jfoenix": {
+            "locked": "1.0.0",
+            "requested": "1.+"
         },
         "commons-cli:commons-cli": {
             "locked": "1.2",
@@ -227,6 +243,10 @@
             "locked": "0.24.1",
             "requested": "0.24.1"
         },
+        "com.github.Qabel.qabel-core:chat": {
+            "locked": "0.24.1",
+            "requested": "0.24.1"
+        },
         "com.github.Qabel.qabel-core:core": {
             "locked": "0.24.1",
             "requested": "0.24.1"
@@ -250,6 +270,10 @@
         "com.google.zxing:javase": {
             "locked": "3.1.0",
             "requested": "2.+"
+        },
+        "com.jfoenix:jfoenix": {
+            "locked": "1.0.0",
+            "requested": "1.+"
         },
         "com.tngtech.java:junit-dataprovider": {
             "locked": "1.10.4",
@@ -363,6 +387,10 @@
             "locked": "0.24.1",
             "requested": "0.24.1"
         },
+        "com.github.Qabel.qabel-core:chat": {
+            "locked": "0.24.1",
+            "requested": "0.24.1"
+        },
         "com.github.Qabel.qabel-core:core": {
             "locked": "0.24.1",
             "requested": "0.24.1"
@@ -386,6 +414,10 @@
         "com.google.zxing:javase": {
             "locked": "3.1.0",
             "requested": "2.+"
+        },
+        "com.jfoenix:jfoenix": {
+            "locked": "1.0.0",
+            "requested": "1.+"
         },
         "com.tngtech.java:junit-dataprovider": {
             "locked": "1.10.4",
@@ -499,6 +531,10 @@
             "locked": "0.24.1",
             "requested": "0.24.1"
         },
+        "com.github.Qabel.qabel-core:chat": {
+            "locked": "0.24.1",
+            "requested": "0.24.1"
+        },
         "com.github.Qabel.qabel-core:core": {
             "locked": "0.24.1",
             "requested": "0.24.1"
@@ -522,6 +558,10 @@
         "com.google.zxing:javase": {
             "locked": "3.1.0",
             "requested": "2.+"
+        },
+        "com.jfoenix:jfoenix": {
+            "locked": "1.0.0",
+            "requested": "1.+"
         },
         "commons-cli:commons-cli": {
             "locked": "1.2",
@@ -607,6 +647,10 @@
             "locked": "0.24.1",
             "requested": "0.24.1"
         },
+        "com.github.Qabel.qabel-core:chat": {
+            "locked": "0.24.1",
+            "requested": "0.24.1"
+        },
         "com.github.Qabel.qabel-core:core": {
             "locked": "0.24.1",
             "requested": "0.24.1"
@@ -630,6 +674,10 @@
         "com.google.zxing:javase": {
             "locked": "3.1.0",
             "requested": "2.+"
+        },
+        "com.jfoenix:jfoenix": {
+            "locked": "1.0.0",
+            "requested": "1.+"
         },
         "com.tngtech.java:junit-dataprovider": {
             "locked": "1.10.4",
@@ -743,6 +791,10 @@
             "locked": "0.24.1",
             "requested": "0.24.1"
         },
+        "com.github.Qabel.qabel-core:chat": {
+            "locked": "0.24.1",
+            "requested": "0.24.1"
+        },
         "com.github.Qabel.qabel-core:core": {
             "locked": "0.24.1",
             "requested": "0.24.1"
@@ -766,6 +818,10 @@
         "com.google.zxing:javase": {
             "locked": "3.1.0",
             "requested": "2.+"
+        },
+        "com.jfoenix:jfoenix": {
+            "locked": "1.0.0",
+            "requested": "1.+"
         },
         "com.tngtech.java:junit-dataprovider": {
             "locked": "1.10.4",
