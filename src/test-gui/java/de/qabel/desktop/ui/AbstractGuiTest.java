@@ -103,12 +103,6 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
         return 500;
     }
 
-    @Override
-    public void tearDown() throws Exception {
-        baseFXRobot.waitForIdle();
-        super.tearDown();
-    }
-
     /**
      * @deprecated use page objects
      */

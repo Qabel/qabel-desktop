@@ -19,8 +19,13 @@ public class ContactItemPage extends AbstractPage {
         return indicatorText.isEmpty() ? null : Integer.parseInt(indicatorText);
     }
 
+    private Node query(String query) {
+        waitUntil(() -> robot.lookup(query).tryQuery().isPresent());
+        return robot.lookup(query).tryQuery().get();
+    }
+
     public String getAvatarStyle() {
-        return getFirstNode("#avatar").getStyle();
+        return query("#avatar").getStyle();
     }
 
     public Node getDeleteButton() {

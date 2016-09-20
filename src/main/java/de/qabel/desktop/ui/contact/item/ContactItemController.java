@@ -73,6 +73,7 @@ public class ContactItemController extends AbstractController implements Initial
                 selectionEvent.setContact(contact);
                 selectionEvent.setController(this);
                 listener.accept(selectionEvent);
+                event.consume();
             });
         });
         resourceBundle = resources;
