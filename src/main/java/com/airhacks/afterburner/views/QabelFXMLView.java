@@ -11,7 +11,7 @@ import java.util.function.Function;
 
 public class QabelFXMLView extends FXMLView {
     private static ResourceBundle resourceBundle;
-    private String globalStyleCheat = "/main.css";
+    private static String globalStyleCheat = "/main.css";
 
 
     public QabelFXMLView() {
@@ -28,6 +28,10 @@ public class QabelFXMLView extends FXMLView {
             resourceBundle = ResourceBundle.getBundle("ui", Locale.getDefault(), new UTF8Converter());
         }
         return resourceBundle;
+    }
+
+    public static String getGlobalStyleCheat() {
+        return globalStyleCheat;
     }
 
     @Override

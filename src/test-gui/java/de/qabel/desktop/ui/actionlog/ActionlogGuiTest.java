@@ -8,6 +8,7 @@ import de.qabel.desktop.daemon.drop.TextMessage;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import javafx.scene.input.KeyCode;
+import org.junit.Before;
 import org.junit.Test;
 import org.testfx.api.FxRobot;
 
@@ -20,6 +21,13 @@ import static org.junit.Assert.assertTrue;
 
 
 public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+    }
+
 
     @Override
     protected FXMLView getView() {

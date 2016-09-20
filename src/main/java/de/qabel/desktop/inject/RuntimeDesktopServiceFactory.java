@@ -1,7 +1,7 @@
 package de.qabel.desktop.inject;
 
-import de.qabel.core.accounting.BoxClient;
 import de.qabel.core.accounting.AccountingProfile;
+import de.qabel.core.accounting.BoxClient;
 import de.qabel.core.accounting.BoxHttpClient;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.AccountingServer;
@@ -220,12 +220,10 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     public synchronized DropDaemon getDropDaemon() {
         if (dropDaemon == null) {
             dropDaemon = new DropDaemon(
-                getClientConfiguration(),
-                getDropConnector(),
-                getContactRepository(),
+                getChatService(),
                 getDropMessageRepository(),
-                getIdentityRepository()
-            );
+                getContactRepository(),
+                getIdentityRepository());
         }
         return dropDaemon;
     }

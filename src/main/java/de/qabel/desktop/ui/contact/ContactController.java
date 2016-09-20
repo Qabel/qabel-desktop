@@ -1,5 +1,6 @@
 package de.qabel.desktop.ui.contact;
 
+import com.airhacks.afterburner.views.QabelFXMLView;
 import com.google.gson.GsonBuilder;
 import de.qabel.core.config.*;
 import de.qabel.core.repository.ContactRepository;
@@ -13,6 +14,7 @@ import de.qabel.desktop.ui.DetailsView;
 import de.qabel.desktop.ui.accounting.item.SelectionEvent;
 import de.qabel.desktop.ui.actionlog.ActionlogController;
 import de.qabel.desktop.ui.actionlog.ActionlogView;
+import de.qabel.desktop.ui.contact.context.AssignContactView;
 import de.qabel.desktop.ui.contact.item.BlankItemView;
 import de.qabel.desktop.ui.contact.item.ContactItemController;
 import de.qabel.desktop.ui.contact.item.ContactItemView;
@@ -23,6 +25,8 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -30,12 +34,15 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import org.controlsfx.control.PopOver;
+import org.json.JSONException;
 
 import javax.inject.Inject;
 
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ContactController extends AbstractController implements Initializable, EntityObserver {
 
@@ -55,6 +62,9 @@ public class ContactController extends AbstractController implements Initializab
     @FXML
     Button contactMenu;
 
+    @FXML
+    ComboBox<Label> filterCombo;
+
     @Inject
     private ClientConfig clientConfiguration;
 
@@ -73,6 +83,15 @@ public class ContactController extends AbstractController implements Initializab
 
     DetailsController details;
     Contacts contactsFromRepo;
+    Label showNormalContacts;
+    Label showIgnoredContacts;
+    Label showNewContacts;
+
+    enum ContactsFilter {
+        ALL, NEW, IGNORED
+    }
+
+
     public ContactMenuController contactMenuController;
     ContactMenuView contactMenuView;
 
@@ -103,6 +122,7 @@ public class ContactController extends AbstractController implements Initializab
         detailsView.getViewAsync(contactroot.getChildren()::add);
 
         contactRepository.attach(this::update);
+        initFilterCombo(resources);
 
         try {
             buildGson();
@@ -113,6 +133,22 @@ public class ContactController extends AbstractController implements Initializab
             alert(e);
         }
 
+    }
+
+    private void initFilterCombo(ResourceBundle resources) {
+        initFilterLabels(resources);
+        filterCombo.getItems().addAll(showNormalContacts, showNewContacts, showIgnoredContacts);
+        filterCombo.getSelectionModel().select(showNormalContacts);
+        filterCombo.valueProperty().addListener((observable, oldValue, newValue) -> { update(); });
+    }
+
+    private void initFilterLabels(ResourceBundle resources) {
+        showNormalContacts = new Label(resources.getString("showNormalContacts"));
+        showNormalContacts.setId("showNormalContacts");
+        showIgnoredContacts = new Label(resources.getString("showIgnoredContacts"));
+        showIgnoredContacts.setId("showIgnoredContacts");
+        showNewContacts = new Label(resources.getString("showNewContacts"));
+        showNewContacts.setId("showNewContacts");
     }
 
     private void createButtonGraphics() {
@@ -161,7 +197,16 @@ public class ContactController extends AbstractController implements Initializab
             contactList.getChildren().add(itemView.getView());
             return;
         }
-        List<Contact> cl = new LinkedList<>(contactsFromRepo.getContacts());
+        Label selectedItem = filterCombo.getSelectionModel().getSelectedItem();
+        ContactsFilter filter;
+        if (selectedItem == showNewContacts) {
+            filter = ContactsFilter.NEW;
+        } else if (selectedItem == showIgnoredContacts) {
+            filter = ContactsFilter.IGNORED;
+        } else {
+            filter = ContactsFilter.ALL;
+        }
+        List<Contact> cl = filteredContacts(contactsFromRepo.getContacts(), filter);
 
         cl.sort((c1, c2) -> c1.getAlias().toLowerCase().compareTo(c2.getAlias().toLowerCase()));
 
@@ -182,6 +227,7 @@ public class ContactController extends AbstractController implements Initializab
             unselectAll();
             select(selectionEvent);
         });
+        controller.addContextListener(this::showAssignContactPopover);
         contactList.getChildren().add(itemView.getView());
         contactItems.add(controller);
         itemViews.add(itemView);
@@ -193,11 +239,29 @@ public class ContactController extends AbstractController implements Initializab
         showActionlog(selectionEvent.getContact());
     }
 
+    private PopOver assignContactPopover;
+
+    private void showAssignContactPopover(SelectionEvent selectionEvent) {
+        Contact contact = selectionEvent.getContact();
+        ContactItemController controller = selectionEvent.getController();
+        new AssignContactView(contact).getViewAsync(view -> {
+            if (assignContactPopover != null) {
+                assignContactPopover.hide();
+            }
+            assignContactPopover = new PopOver(view);
+            assignContactPopover.getStyleClass().add("assignContactPopover");
+
+            assignContactPopover.setTitle(contact.getAlias());
+            assignContactPopover.setHeaderAlwaysVisible(true);
+            assignContactPopover.getRoot().getStyleClass().add("assignContactPopover");
+            assignContactPopover.getRoot().getStylesheets().add(QabelFXMLView.getGlobalStyleCheat());
+
+            assignContactPopover.show(controller.getContactRootItem(), selectionEvent.getScreenX(), selectionEvent.getScreenY());
+        });
+    }
 
     private void unselectAll() {
-        for (ContactItemController c : contactItems) {
-            c.unselect();
-        }
+        contactItems.forEach(ContactItemController::unselect);
         details.hide();
     }
 

@@ -11,9 +11,16 @@ import org.junit.After;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 
-import java.util.Locale;
-
+import static de.qabel.desktop.ui.contact.ContactController.ContactsFilter.ALL;
+import static de.qabel.desktop.ui.contact.ContactController.ContactsFilter.IGNORED;
+import static de.qabel.desktop.ui.contact.ContactController.ContactsFilter.NEW;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.*;
 
 public class ContactControllerTest extends AbstractControllerTest {
@@ -80,6 +87,59 @@ public class ContactControllerTest extends AbstractControllerTest {
 
         ((InMemoryDropMessageRepository)dropMessageRepository).lastMessage.setSeen(true);
         waitUntil(() -> !controller.contactItems.get(0).getIndicator().isVisible());
+    }
+
+    @Test
+    public void importValidContactAfterFailedImport() throws Exception {
+        Contact contact1 = new Contact("one", new HashSet<>(), new QblECPublicKey("one".getBytes()));
+        Contact contact2 = new Contact("two", new HashSet<>(), new QblECPublicKey("two".getBytes()));
+
+        Path c1 = Files.createTempFile("testcontact", "one");
+        Path c2 = Files.createTempFile("testcontact", "two");
+        Files.write(c1, ContactExportImport.exportContact(contact1).getBytes());
+        Files.write(c2, ContactExportImport.exportContact(contact2).getBytes());
+
+        controller = getController();
+        controller.importContacts(c1.toFile());
+        try {
+            controller.importContacts(c1.toFile());
+            fail("expecting EntityExistsException on duplicate contact");
+        } catch (PersistenceException ignored) {}
+
+        controller.importContacts(c2.toFile());
+        assertEquals(2, contactRepository.find(identity).getContacts().size());
+    }
+
+    private Contact createContact(ContactController.ContactsFilter filter) throws Exception {
+        Identity i = identityBuilderFactory.factory().withAlias("unknown").build();
+        Contact c = new Contact("contact", i.getDropUrls(), i.getEcPublicKey());
+        switch (filter) {
+            case ALL:
+                c.setStatus(Contact.ContactStatus.NORMAL);
+                break;
+            case NEW:
+                c.setStatus(Contact.ContactStatus.UNKNOWN);
+                break;
+            case IGNORED:
+                c.setStatus(Contact.ContactStatus.NORMAL);
+                c.setIgnored(true);
+                break;
+        }
+        contactRepository.save(c, identity);
+        return c;
+    }
+
+    @Test
+    public void filterContacts() throws Exception {
+        Contact unknown1 = createContact(NEW);
+        Contact unknown2 = createContact(NEW);
+        Contact known = createContact(ALL);
+        Contact ignored = createContact(IGNORED);
+        List<Contact> contacts = Arrays.asList(unknown1, unknown2, known, ignored);
+        controller = getController();
+        assertThat(controller.filteredContacts(contacts, NEW), containsInAnyOrder(unknown1, unknown2));
+        assertThat(controller.filteredContacts(contacts, ALL), containsInAnyOrder(known, unknown1, unknown2));
+        assertThat(controller.filteredContacts(contacts, IGNORED), containsInAnyOrder(ignored));
     }
 
     private Contact getContact(String name) throws PersistenceException {

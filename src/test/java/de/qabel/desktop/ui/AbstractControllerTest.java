@@ -2,6 +2,8 @@ package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.injection.Injector;
 import com.airhacks.afterburner.views.QabelFXMLView;
+import de.qabel.chat.repository.ChatDropMessageRepository;
+import de.qabel.chat.repository.inmemory.InMemoryChatDropMessageRepository;
 import de.qabel.core.accounting.BoxClientStub;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
@@ -65,6 +67,7 @@ public class AbstractControllerTest extends AbstractFxTest {
     protected Identity identity;
     protected ClientConfigRepository clientConfigRepository = new InMemoryClientConfigRepository();
     protected AccountRepository accountRepository = new InMemoryAccountRepository();
+    protected ChatDropMessageRepository chatDropMessageRepository = new InMemoryChatDropMessageRepository();
     protected DropStateRepository dropStateRepository = new InMemoryDropStateRepository();
     protected ShareNotificationRepository shareNotificationRepository = new InMemoryShareNotificationRepository();
     protected BoxSyncRepository boxSyncRepository = new InMemoryBoxSyncRepository();
