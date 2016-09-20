@@ -1,12 +1,12 @@
 package de.qabel.desktop.ui.remotefs;
 
 import com.airhacks.afterburner.views.FXMLView;
-import de.qabel.desktop.daemon.sync.worker.BoxNavigationStub;
-import de.qabel.desktop.daemon.sync.worker.BoxVolumeStub;
-import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.box.storage.BoxFile;
 import de.qabel.box.storage.BoxFolder;
 import de.qabel.box.storage.BoxObject;
+import de.qabel.box.storage.exceptions.QblStorageException;
+import de.qabel.desktop.daemon.sync.worker.BoxNavigationStub;
+import de.qabel.desktop.daemon.sync.worker.BoxVolumeStub;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import javafx.scene.control.TreeItem;
 import org.junit.Before;
