@@ -7,13 +7,13 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.julianseeger.qabel-core:box": {
-            "locked": "8ad3299ebe0830a2091607a0c585b917816205a0",
-            "requested": "8ad3299ebe0830a2091607a0c585b917816205a0"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "0.24.1",
+            "requested": "0.24.1"
         },
-        "com.github.julianseeger.qabel-core:core": {
-            "locked": "8ad3299ebe0830a2091607a0c585b917816205a0",
-            "requested": "8ad3299ebe0830a2091607a0c585b917816205a0"
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "0.24.1",
+            "requested": "0.24.1"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -115,13 +115,13 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.julianseeger.qabel-core:box": {
-            "locked": "8ad3299ebe0830a2091607a0c585b917816205a0",
-            "requested": "8ad3299ebe0830a2091607a0c585b917816205a0"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "0.24.1",
+            "requested": "0.24.1"
         },
-        "com.github.julianseeger.qabel-core:core": {
-            "locked": "8ad3299ebe0830a2091607a0c585b917816205a0",
-            "requested": "8ad3299ebe0830a2091607a0c585b917816205a0"
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "0.24.1",
+            "requested": "0.24.1"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -223,13 +223,13 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.julianseeger.qabel-core:box": {
-            "locked": "8ad3299ebe0830a2091607a0c585b917816205a0",
-            "requested": "8ad3299ebe0830a2091607a0c585b917816205a0"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "0.24.1",
+            "requested": "0.24.1"
         },
-        "com.github.julianseeger.qabel-core:core": {
-            "locked": "8ad3299ebe0830a2091607a0c585b917816205a0",
-            "requested": "8ad3299ebe0830a2091607a0c585b917816205a0"
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "0.24.1",
+            "requested": "0.24.1"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -359,13 +359,13 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.julianseeger.qabel-core:box": {
-            "locked": "8ad3299ebe0830a2091607a0c585b917816205a0",
-            "requested": "8ad3299ebe0830a2091607a0c585b917816205a0"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "0.24.1",
+            "requested": "0.24.1"
         },
-        "com.github.julianseeger.qabel-core:core": {
-            "locked": "8ad3299ebe0830a2091607a0c585b917816205a0",
-            "requested": "8ad3299ebe0830a2091607a0c585b917816205a0"
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "0.24.1",
+            "requested": "0.24.1"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -495,13 +495,13 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.julianseeger.qabel-core:box": {
-            "locked": "8ad3299ebe0830a2091607a0c585b917816205a0",
-            "requested": "8ad3299ebe0830a2091607a0c585b917816205a0"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "0.24.1",
+            "requested": "0.24.1"
         },
-        "com.github.julianseeger.qabel-core:core": {
-            "locked": "8ad3299ebe0830a2091607a0c585b917816205a0",
-            "requested": "8ad3299ebe0830a2091607a0c585b917816205a0"
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "0.24.1",
+            "requested": "0.24.1"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -603,13 +603,13 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.julianseeger.qabel-core:box": {
-            "locked": "8ad3299ebe0830a2091607a0c585b917816205a0",
-            "requested": "8ad3299ebe0830a2091607a0c585b917816205a0"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "0.24.1",
+            "requested": "0.24.1"
         },
-        "com.github.julianseeger.qabel-core:core": {
-            "locked": "8ad3299ebe0830a2091607a0c585b917816205a0",
-            "requested": "8ad3299ebe0830a2091607a0c585b917816205a0"
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "0.24.1",
+            "requested": "0.24.1"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -739,13 +739,13 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.julianseeger.qabel-core:box": {
-            "locked": "8ad3299ebe0830a2091607a0c585b917816205a0",
-            "requested": "8ad3299ebe0830a2091607a0c585b917816205a0"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "0.24.1",
+            "requested": "0.24.1"
         },
-        "com.github.julianseeger.qabel-core:core": {
-            "locked": "8ad3299ebe0830a2091607a0c585b917816205a0",
-            "requested": "8ad3299ebe0830a2091607a0c585b917816205a0"
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "0.24.1",
+            "requested": "0.24.1"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
