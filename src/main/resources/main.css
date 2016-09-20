@@ -727,15 +727,3 @@ VBox.spaced, HBox.spaced {
 .popover.assignContactPopover .content Label {
     -fx-text-fill: white;
 }
-.toggle-button.switch {
-    -fx-cursor: pointer;
-    -fx-background-color: transparent;
-    -fx-background-image: url('/img/switch-off.png');
-    -fx-text-fill: white;
-    -fx-pref-width: 31px;
-    -fx-pref-height: 18px;
-    -fx-background-repeat: no-repeat;
-}
-.toggle-button.switch:selected {
-    -fx-background-image: url('/img/switch-on.png');
-}
