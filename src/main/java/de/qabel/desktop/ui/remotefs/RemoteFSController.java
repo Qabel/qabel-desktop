@@ -20,6 +20,7 @@ import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.DetailsController;
 import de.qabel.desktop.ui.DetailsView;
+import de.qabel.desktop.ui.remotefs.factory.BoxNameCell;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
@@ -240,43 +241,12 @@ public class RemoteFSController extends AbstractController implements Initializa
         }
     }
 
-    private static Image folderImg = new Image(FolderTreeItem.class.getResourceAsStream("/icon/folder.png"), 18, 18, true, true);
-    private static final Image fileImg = new Image(FilterableFolderTreeItem.class.getResourceAsStream("/icon/file.png"),  18, 18, true, false);
 
     private void setCellValueFactories() {
         nameColumn.setCellValueFactory(new BoxObjectCellValueFactory(BoxObjectCellValueFactory.NAME));
         sizeColumn.setCellValueFactory(new BoxObjectCellValueFactory(BoxObjectCellValueFactory.SIZE));
         dateColumn.setCellValueFactory(new BoxObjectCellValueFactory(BoxObjectCellValueFactory.MTIME));
-        nameColumn.setCellFactory(ttc -> new TreeTableCell<BoxObject, String>() {
-            private BoxObject lastObject;
-            private boolean wasEmpty;
-            private String lastItem;
-
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-
-                BoxObject boxObject = super.getTreeTableRow().getItem();
-                if (empty == wasEmpty && boxObject == lastObject && item != null && item.equals(lastItem)) {
-                    return;
-                }
-                lastObject = boxObject;
-                wasEmpty = empty;
-                lastItem = item;
-
-                ImageView icon = null;
-                if (boxObject == shareObject) {
-                    icon = new ImageView(shareImage);
-                } else if (boxObject instanceof BoxFile) {
-                    icon = new ImageView(fileImg);
-                } else if (boxObject instanceof BoxFolder) {
-                    icon = new ImageView(folderImg);
-                }
-
-                setText(empty ? null : item);
-                setGraphic(icon);
-            }
-        });
+        nameColumn.setCellFactory(ttc -> new BoxNameCell(shareObject));
 
         treeTable.setRowFactory(sharingRowFactory());
         optionsColumn.setCellValueFactory(inlineOptionsCellValueFactory());
