@@ -11,6 +11,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -28,6 +29,8 @@ import java.util.*;
 public class AboutController extends AbstractController implements Initializable {
     private static final String LICENSE_DEPENDENCY_MAPPING_LOCATION = "/license-dependency.xml";
     private static final String DEPENDENCY_LICENSE_MAPPING_LOCATION = "/dependency-license.xml";
+
+    public ScrollPane aboutViewRoot;
 
     @FXML
     private Pane linkContainer;
