@@ -12,14 +12,11 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.scene.control.TreeItem;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 import java.util.Collections;
 import java.util.LinkedList;
 
 public class FilterableFolderTreeItem extends FolderTreeItem {
-    private static final Image fileImg = new Image(FilterableFolderTreeItem.class.getResourceAsStream("/icon/file.png"),  18, 18, true, false);
     private final StringProperty filterProperty = new SimpleStringProperty(null);
     private final ObservableList<TreeItem<BoxObject>> filteredChildren = FXCollections.observableList(Collections.synchronizedList(new LinkedList<>()));
     private BooleanProperty hasVisibleChildren = new SimpleBooleanProperty(false);
@@ -28,11 +25,6 @@ public class FilterableFolderTreeItem extends FolderTreeItem {
 
     public FilterableFolderTreeItem(BoxFolder folder, ReadableBoxNavigation navigation) {
         super(folder, navigation);
-        initialize();
-    }
-
-    public FilterableFolderTreeItem(BoxFolder folder, ReadableBoxNavigation navigation, Image icon) {
-        super(folder, navigation, icon);
         initialize();
     }
 
@@ -119,7 +111,7 @@ public class FilterableFolderTreeItem extends FolderTreeItem {
 
     @Override
     protected FilterableTreeItem initSubFileItem(BoxFile file) {
-        final FilterableTreeItem item = new FilterableTreeItem(file, new ImageView(fileImg));
+        final FilterableTreeItem item = new FilterableTreeItem(file);
         item.visibleProperty().addListener((observable, oldValue, newValue) -> {
             if (oldValue == newValue) {
                 return;
