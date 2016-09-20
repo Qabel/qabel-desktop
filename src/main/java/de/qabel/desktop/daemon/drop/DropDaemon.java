@@ -57,23 +57,14 @@ public class DropDaemon implements Runnable {
             Map<String, List<ChatDropMessage>> identityListMap = chatService.refreshMessages();
             for (Map.Entry<String, List<ChatDropMessage>> messages: identityListMap.entrySet()) {
                 String identityKeyId = messages.getKey();
-                Identity identity= identityRepository.find(identityKeyId);
+                Identity identity = identityRepository.find(identityKeyId);
                 for (ChatDropMessage msg: messages.getValue()) {
                     Contact contact = contactRepository.find(msg.getContactId());
                     DropMessage dropMessage = new DropMessage(contact, msg.getPayload().toString(), msg.getMessageType().getType());
-                    Entity sender;
-                    Entity receiver;
-                    Boolean sent;
-                    if (msg.getDirection().equals(ChatDropMessage.Direction.INCOMING)) {
-                        sender = contact;
-                        receiver = identity;
-                        sent = false;
-                    } else {
-                        sender = identity;
-                        receiver = contact;
-                        sent = true;
-                    }
-                    PersistenceDropMessage message = new PersistenceDropMessage(dropMessage, sender, receiver, sent, false);
+                    boolean incoming = msg.getDirection().equals(ChatDropMessage.Direction.INCOMING);
+                    Entity sender = incoming ? contact : identity;
+                    Entity receiver = incoming ? identity : contact;
+                    PersistenceDropMessage message = new PersistenceDropMessage(dropMessage, sender, receiver, incoming, false);
                     dropMessageRepository.save(message);
                 }
             }
