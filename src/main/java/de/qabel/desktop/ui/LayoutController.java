@@ -203,6 +203,8 @@ public class LayoutController extends AbstractController implements Initializabl
         actionlogView = new ActionlogView();
         aboutView = new AboutView();
 
+        navi.getChildren().clear();
+
         accountingNav = createNavItem(resourceBundle.getString("layoutIdentity"),
             new Image(getClass().getResourceAsStream("/img/account_white.png")),
             accountingView);
@@ -218,14 +220,6 @@ public class LayoutController extends AbstractController implements Initializabl
         aboutNav = createNavItem(resourceBundle.getString("layoutAbout"),
             new Image(getClass().getResourceAsStream("/img/information_white.png")),
             aboutView);
-
-        navi.getChildren().clear();
-
-        navi.getChildren().add(accountingNav);
-        navi.getChildren().add(browseNav);
-        navi.getChildren().add(contactsNav);
-        navi.getChildren().add(syncNav);
-        navi.getChildren().add(aboutNav);
     }
 
     void fillQuotaInformation(QuotaState quotaState) {
@@ -375,6 +369,7 @@ public class LayoutController extends AbstractController implements Initializabl
                 alert(exception.getMessage(), exception);
             }
         });
+        navi.getChildren().add(naviItem);
         return naviItem;
     }
 
