@@ -20,6 +20,7 @@ import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.DetailsController;
 import de.qabel.desktop.ui.DetailsView;
+import de.qabel.desktop.ui.remotefs.factory.BoxNameCell;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
@@ -70,6 +71,7 @@ public class RemoteFSController extends AbstractController implements Initializa
     private static Image addFolderImage = optionImage("/icon/add_folder.png");
     private static Image deleteImage = optionImage("/icon/delete.png");
     private static Image shareImage = optionImage("/icon/share.png");
+    private FakeBoxObject shareObject;
 
     private static Image optionImage(String resourcePath) {
         return new Image(RemoteFSController.class.getResourceAsStream(resourcePath), OPTION_EDGE_SIZE, OPTION_EDGE_SIZE, true, true);
@@ -78,7 +80,7 @@ public class RemoteFSController extends AbstractController implements Initializa
     private BoxVolume volume;
     ReadableBoxNavigation nav;
     FilterableFolderTreeItem rootItem;
-    StaticTreeItemContainer virtualRoot;
+    TreeItem<BoxObject> virtualRoot;
     VirtualShareTreeItem shareRoot;
     ObjectProperty<TreeItem<BoxObject>> hoveredItem = new SimpleObjectProperty<>(null);
     ResourceBundle resourceBundle;
@@ -171,12 +173,12 @@ public class RemoteFSController extends AbstractController implements Initializa
             nav = createSetup();
             virtualRoot = new StaticTreeItemContainer(new FakeBoxObject("virtualRoot"), null);
 
+            shareObject = new FakeBoxObject("Shares");
             shareRoot = new VirtualShareTreeItem(
-                    sharingService,
-                    volume.getReadBackend(),
-                    notifications,
-                    new FakeBoxObject("Shares"),
-                    new ImageView(shareImage)
+                sharingService,
+                volume.getReadBackend(),
+                notifications,
+                shareObject
             );
 
             virtualRoot.getChildren().add(shareRoot);
@@ -239,10 +241,12 @@ public class RemoteFSController extends AbstractController implements Initializa
         }
     }
 
+
     private void setCellValueFactories() {
         nameColumn.setCellValueFactory(new BoxObjectCellValueFactory(BoxObjectCellValueFactory.NAME));
         sizeColumn.setCellValueFactory(new BoxObjectCellValueFactory(BoxObjectCellValueFactory.SIZE));
         dateColumn.setCellValueFactory(new BoxObjectCellValueFactory(BoxObjectCellValueFactory.MTIME));
+        nameColumn.setCellFactory(ttc -> new BoxNameCell(shareObject));
 
         treeTable.setRowFactory(sharingRowFactory());
         optionsColumn.setCellValueFactory(inlineOptionsCellValueFactory());

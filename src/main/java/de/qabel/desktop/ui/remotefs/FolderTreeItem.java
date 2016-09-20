@@ -10,8 +10,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -24,23 +22,10 @@ public class FolderTreeItem extends TreeItem<BoxObject> implements Observer {
     private boolean loading;
     private StringProperty nameProperty;
     private boolean isLeaf;
-    private Image fileImg = new Image(getClass().getResourceAsStream("/icon/file.png"),  18, 18, true, false);
-    private static Image folderImg = new Image(FolderTreeItem.class.getResourceAsStream("/icon/folder.png"), 18, 18, true, true);
     private static ExecutorService executorService = Executors.newCachedThreadPool();
 
     public FolderTreeItem(BoxFolder folder, ReadableBoxNavigation navigation) {
-        this(folder, navigation, folderImg);
-        getGraphic().focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                setExpanded(true);
-            }
-        });
-    }
-
-    public FolderTreeItem(BoxFolder folder, ReadableBoxNavigation navigation, Image icon) {
         super(folder);
-        ImageView value = new ImageView(icon);
-        super.setGraphic(value);
         this.folder = folder;
         this.navigation = navigation;
         nameProperty = new SimpleStringProperty(folder.getName());
@@ -137,7 +122,7 @@ public class FolderTreeItem extends TreeItem<BoxObject> implements Observer {
     }
 
     protected FilterableTreeItem initSubFileItem(BoxFile file) {
-        return new FilterableTreeItem(file, new ImageView(fileImg));
+        return new FilterableTreeItem(file);
     }
 
     protected FolderTreeItem initSubFolderItem(BoxFolder folder, BoxNavigation subNavigation) {
