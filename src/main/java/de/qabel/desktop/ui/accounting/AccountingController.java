@@ -7,6 +7,7 @@ import de.qabel.core.config.*;
 import de.qabel.core.config.factory.IdentityBuilderFactory;
 import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.core.repository.IdentityRepository;
+import de.qabel.core.repository.exception.EntityExistsException;
 import de.qabel.core.repository.exception.EntityNotFoundException;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.config.ClientConfig;
@@ -16,6 +17,7 @@ import de.qabel.desktop.ui.accounting.item.DummyAccountingItemView;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
@@ -121,6 +123,8 @@ public class AccountingController extends AbstractController implements Initiali
         try {
             importIdentity(file);
             loadIdentities();
+        } catch (EntityExistsException e) {
+            new Alert(Alert.AlertType.INFORMATION, resourceBundle.getString("identityExists")).show();
         } catch (IOException | PersistenceException | JSONException e) {
             alert(resourceBundle.getString("alertImportIdentityFail"), e);
         } catch (NullPointerException ignored) {
