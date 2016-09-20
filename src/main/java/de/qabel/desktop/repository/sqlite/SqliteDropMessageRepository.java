@@ -49,12 +49,18 @@ public class SqliteDropMessageRepository extends AbstractSqliteRepository<Persis
         this(
             database,
             em,
-            new SqliteIdentityRepository(database, em),
+            new SqliteIdentityRepository(
+                database, em, new SqlitePrefixRepository(database),
+                new SqliteDropUrlRepository(database, new DropURLHydrator())
+            ),
             new SqliteContactRepository(
                 database,
                 em,
                 new SqliteDropUrlRepository(database, new DropURLHydrator()),
-                new SqliteIdentityRepository(database, em)
+                new SqliteIdentityRepository(
+                    database, em, new SqlitePrefixRepository(database),
+                    new SqliteDropUrlRepository(database, new DropURLHydrator())
+                )
             )
         );
     }
@@ -76,15 +82,15 @@ public class SqliteDropMessageRepository extends AbstractSqliteRepository<Persis
 
     private void update(PersistenceDropMessage message) throws PersistenceException {
         try (PreparedStatement statement = database.update("drop_message")
-             .set("receiver_id")
-             .set("sender_id")
-             .set("sent")
-             .set("seen")
-             .set("created")
-             .set("payload_type")
-             .set("payload")
-             .where("id = ?")
-             .build()
+            .set("receiver_id")
+            .set("sender_id")
+            .set("sent")
+            .set("seen")
+            .set("created")
+            .set("payload_type")
+            .set("payload")
+            .where("id = ?")
+            .build()
         ) {
             int i = 0;
             statement.setInt(++i, message.getReceiver().getId());
@@ -130,11 +136,11 @@ public class SqliteDropMessageRepository extends AbstractSqliteRepository<Persis
     @Override
     public List<PersistenceDropMessage> loadConversation(Contact contact, Identity identity) throws PersistenceException {
         try (PreparedStatement statement = database.selectFrom("drop_message", "d")
-             .select(hydrator.getFields("d"))
-             .join("identity i ON (i.id = ? AND (i.id = d.receiver_id OR i.id = d.sender_id))")
-             .join("contact c ON (c.id = ? AND (c.id = d.receiver_id OR c.id = d.sender_id))")
-             .orderBy("d.created ASC")
-             .build()
+            .select(hydrator.getFields("d"))
+            .join("identity i ON (i.id = ? AND (i.id = d.receiver_id OR i.id = d.sender_id))")
+            .join("contact c ON (c.id = ? AND (c.id = d.receiver_id OR c.id = d.sender_id))")
+            .orderBy("d.created ASC")
+            .build()
         ) {
             statement.setMaxRows(100);
             statement.setInt(1, identity.getId());
