@@ -154,12 +154,6 @@ public class LayoutController extends AbstractController implements Initializabl
         updateIdentity();
         clientConfiguration.onSelectIdentity(i -> Platform.runLater(this::updateIdentity));
 
-        if (clientConfiguration.hasSelectedIdentity()) {
-            showContent(aboutView, aboutNav);
-        } else {
-            showContent(accountingView, accountingNav);
-        }
-
         fillQuotaInformation(getQuotaState());
 
         bottomContainer.getChildren().remove(uploadProgress);
@@ -192,6 +186,12 @@ public class LayoutController extends AbstractController implements Initializabl
         Indicator newMessageIndicator = contactsNav.getIndicator();
         newMessageIndicator.textProperty().bind(log.unseenMessageCountProperty().asString());
         newMessageIndicator.visibleProperty().bind(newMessageIndicator.textProperty().isNotEqualTo("0"));
+        
+        if (clientConfiguration.hasSelectedIdentity()) {
+            showContent(aboutView, aboutNav);
+        } else {
+            showContent(accountingView, accountingNav);
+        }
     }
 
     private void showContent(QabelFXMLView view, NaviItem navItem) {
