@@ -6,6 +6,9 @@ import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -35,6 +38,14 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
     @Override
     protected StorageReadBackend getReadBackend() {
         return readBackend;
+    }
+
+    @NotNull
+    @Override
+    public <T> Matcher<T> sameInstance(T target) {
+        return target instanceof CachedBoxNavigation ?
+            Matchers.sameInstance((T) ((CachedBoxNavigation) target).getNav())
+            : super.sameInstance(target);
     }
 
     @Override
@@ -158,7 +169,10 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
         BoxFolder subfolder = foldernav2.createFolder("subfolder");
         File file = createTmpFile();
         foldernav2.upload("testfile", file);
-        foldernav2.navigate(subfolder).upload("testfile", file);
+        BoxNavigation subfoldernav2 = foldernav2.navigate(subfolder);
+        subfoldernav2.upload("testfile", file);
+//        subfoldernav2.commit();
+//        foldernav2.commit();
 
         nav.refresh();
 

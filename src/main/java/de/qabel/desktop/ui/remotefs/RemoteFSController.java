@@ -276,7 +276,7 @@ public class RemoteFSController extends AbstractController implements Initializa
                         return;
                     }
                     ChangeEvent event = (ChangeEvent) arg;
-                    if (!event.getPath().equals(value instanceof BoxFolder ? nav.getPath() : nav.getDesktopPath(item.getValue()))) {
+                    if (!event.getPath().equals(value instanceof BoxFolder ? nav.getDesktopPath() : nav.getDesktopPath(item.getValue()))) {
                         return;
                     }
                     Platform.runLater(() -> {

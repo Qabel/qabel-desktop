@@ -102,7 +102,7 @@ public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSContro
 
 
         waitForUI();
-        waitUntil(() -> folderTree.getChildren().get(0).getChildren().isEmpty());
+        waitUntil(() -> folderTree.getChildren().get(0).getChildren().isEmpty(), 10000000L);
 
         search("inner");
         expectChildren(0);
