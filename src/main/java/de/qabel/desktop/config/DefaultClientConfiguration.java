@@ -34,9 +34,9 @@ public class DefaultClientConfiguration extends Observable implements ClientConf
         observeBoxSyncConfigs();
         addObserver((o, arg) -> {
             if (arg instanceof Account) {
-                accountObserver.forEach(c -> c.accept((Account)arg));
+                accountObserver.forEach(c -> c.accept((Account) arg));
             } else if (arg instanceof Identity) {
-                identityObserver.forEach(c -> c.accept((Identity)arg));
+                identityObserver.forEach(c -> c.accept((Identity) arg));
             }
         });
     }
@@ -141,6 +141,11 @@ public class DefaultClientConfiguration extends Observable implements ClientConf
             observeShare(shareNotifications);
         }
         return shareNotifications;
+    }
+
+    @Override
+    public boolean hasSelectedIdentity() {
+        return getSelectedIdentity() != null;
     }
 
     @Override
