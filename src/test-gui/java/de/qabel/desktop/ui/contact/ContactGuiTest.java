@@ -75,7 +75,7 @@ public class ContactGuiTest extends AbstractGuiTest<ContactController> {
     private void styleOfContact(boolean unknownContact, Matcher<String> stringMatcher) throws Exception {
         createContact(unknownContact);
 
-        runLaterAndWait(controller::update);
+        controller.update();
         waitUntil(() -> controller.contactList.getChildren().size() == 1);
 
         assertAsync(() -> {
