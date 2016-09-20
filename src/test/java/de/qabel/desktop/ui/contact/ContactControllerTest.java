@@ -21,6 +21,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
+import static de.qabel.desktop.ui.contact.ContactController.ContactsFilter.ALL;
+import static de.qabel.desktop.ui.contact.ContactController.ContactsFilter.IGNORED;
+import static de.qabel.desktop.ui.contact.ContactController.ContactsFilter.NEW;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.*;
 
@@ -193,18 +196,15 @@ public class ContactControllerTest extends AbstractControllerTest {
 
     @Test
     public void filterContacts() throws Exception {
-        Contact unknown1 = createContact(ContactController.ContactsFilter.NEW);
-        Contact unknown2 = createContact(ContactController.ContactsFilter.NEW);
-        Contact known = createContact(ContactController.ContactsFilter.ALL);
-        Contact ignored = createContact(ContactController.ContactsFilter.IGNORED);
+        Contact unknown1 = createContact(NEW);
+        Contact unknown2 = createContact(NEW);
+        Contact known = createContact(ALL);
+        Contact ignored = createContact(IGNORED);
         List<Contact> contacts = Arrays.asList(unknown1, unknown2, known, ignored);
         controller = getController();
-        assertThat(controller.filteredContacts(contacts, ContactController.ContactsFilter.NEW),
-            containsInAnyOrder(unknown1, unknown2));
-        assertThat(controller.filteredContacts(contacts, ContactController.ContactsFilter.ALL),
-            containsInAnyOrder(known, unknown1, unknown2));
-        assertThat(controller.filteredContacts(contacts, ContactController.ContactsFilter.IGNORED),
-            containsInAnyOrder(ignored));
+        assertThat(controller.filteredContacts(contacts, NEW), containsInAnyOrder(unknown1, unknown2));
+        assertThat(controller.filteredContacts(contacts, ALL), containsInAnyOrder(known, unknown1, unknown2));
+        assertThat(controller.filteredContacts(contacts, IGNORED), containsInAnyOrder(ignored));
     }
 
     private Contact getContact(String name) throws PersistenceException {
