@@ -16,6 +16,7 @@ import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.repository.DropMessageRepository;
+import de.qabel.desktop.storage.PathNavigation;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.DetailsController;
@@ -279,7 +280,7 @@ public class RemoteFSController extends AbstractController implements Initializa
                         return;
                     }
                     ChangeEvent event = (ChangeEvent) arg;
-                    if (!event.getPath().equals(value instanceof BoxFolder ? nav.getPath() : nav.getPath(item.getValue()))) {
+                    if (!event.getPath().equals(value instanceof BoxFolder ? nav.getDesktopPath() : nav.getDesktopPath(item.getValue()))) {
                         return;
                     }
                     Platform.runLater(() -> {
