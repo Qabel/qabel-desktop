@@ -190,4 +190,9 @@ public class RepositoryBasedClientConfig implements ClientConfig {
             throw new IllegalStateException("failed to load shares", e);
         }
     }
+
+    @Override
+    public boolean hasSelectedIdentity() {
+        return getSelectedIdentity() != null;
+    }
 }
