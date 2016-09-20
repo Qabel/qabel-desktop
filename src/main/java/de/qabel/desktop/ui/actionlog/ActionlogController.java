@@ -263,7 +263,7 @@ public class ActionlogController extends AbstractController implements Initializ
 
     }
 
-    public void handleAccept(ActionEvent actionEvent) {
+    public void handleAccept() {
         saveContact();
     }
 
@@ -272,7 +272,7 @@ public class ActionlogController extends AbstractController implements Initializ
         tryOrAlert(() -> contactRepository.save(contact, identity));
     }
 
-    public void handleIgnore(ActionEvent actionEvent) {
+    public void handleIgnore() {
         contact.setIgnored(true);
         saveContact();
     }
