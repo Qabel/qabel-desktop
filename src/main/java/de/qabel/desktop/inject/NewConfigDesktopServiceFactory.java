@@ -40,11 +40,11 @@ public class NewConfigDesktopServiceFactory extends RuntimeDesktopServiceFactory
     public NewConfigDesktopServiceFactory(
         RuntimeConfiguration runtimeConfiguration,
         TransactionManager transactionManager
-    ) {
+    )
+    {
         super(runtimeConfiguration);
         this.transactionManager = transactionManager;
     }
-
     protected SqliteIdentityRepository identityRepository;
     @Override
     public synchronized SqliteIdentityRepository getIdentityRepository() {

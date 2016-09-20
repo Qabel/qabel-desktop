@@ -2,9 +2,9 @@ package de.qabel.desktop.ui.remotefs.dialog;
 
 import de.qabel.box.storage.BoxObject;
 import de.qabel.box.storage.BoxVolume;
-import de.qabel.box.storage.PathNavigation;
 import de.qabel.box.storage.ReadableBoxNavigation;
 import de.qabel.box.storage.exceptions.QblStorageException;
+import de.qabel.desktop.storage.PathNavigation;
 import de.qabel.desktop.ui.remotefs.FolderTreeItem;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TreeItem;
@@ -30,7 +30,7 @@ public class RemoteFSDirectoryChooser extends RemoteFSChooser {
             selectedProperty.setValue(null);
             return;
         }
-        Path result = ((PathNavigation) navigation).getPath();
+        Path result = ((PathNavigation) navigation).getDesktopPath();
         selectedProperty.setValue(result);
     }
 }
