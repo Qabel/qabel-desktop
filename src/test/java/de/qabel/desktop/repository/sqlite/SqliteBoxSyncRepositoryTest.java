@@ -5,9 +5,8 @@ import de.qabel.core.config.Identity;
 import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.core.config.factory.IdentityBuilder;
 import de.qabel.core.repository.EntityManager;
-import de.qabel.core.repository.sqlite.ClientDatabase;
-import de.qabel.core.repository.sqlite.SqliteAccountRepository;
-import de.qabel.core.repository.sqlite.SqliteIdentityRepository;
+import de.qabel.core.repository.sqlite.*;
+import de.qabel.core.repository.sqlite.hydrator.DropURLHydrator;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.DefaultBoxSyncConfig;
 import de.qabel.desktop.daemon.sync.worker.index.memory.InMemorySyncIndexFactory;
@@ -44,7 +43,11 @@ public class SqliteBoxSyncRepositoryTest extends AbstractSqliteRepositoryTest<Sq
         repo.onDelete(deletes::add);
 
         accountRepo = new SqliteAccountRepository(clientDatabase, em);
-        identityRepo = new SqliteIdentityRepository(clientDatabase, em);
+        identityRepo = new SqliteIdentityRepository(
+            clientDatabase, em,
+            new SqlitePrefixRepository(clientDatabase),
+            new SqliteDropUrlRepository(clientDatabase, new DropURLHydrator())
+        );
         account = new Account("p", "u", "a");
         identity = new IdentityBuilder(new DropUrlGenerator("http://localhost")).withAlias("test").build();
 

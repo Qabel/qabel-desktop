@@ -10,8 +10,6 @@ import de.qabel.desktop.config.ShareNotifications;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.ui.AbstractFxTest;
 import javafx.collections.ObservableList;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +28,6 @@ public class VirtualShareTreeItemTest extends AbstractFxTest {
     private AuthenticatedDownloader readBackend;
     private ShareNotifications notifications = new ShareNotifications();
     private BoxObject value = new FakeBoxObject("test");
-    private Node graphic = new Label("test");
 
     @Before
     public void setUp() throws Exception {
@@ -78,8 +75,7 @@ public class VirtualShareTreeItemTest extends AbstractFxTest {
             sharingService,
             readBackend,
             notifications,
-            value,
-            graphic
+            value
         );
     }
 }

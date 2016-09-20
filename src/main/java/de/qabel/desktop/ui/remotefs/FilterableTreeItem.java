@@ -8,7 +8,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.Event;
 import javafx.scene.control.TreeItem;
-import javafx.scene.image.ImageView;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -19,11 +18,6 @@ public class FilterableTreeItem extends TreeItem<BoxObject> implements Filterabl
 
     public FilterableTreeItem(BoxObject value) {
         super(value);
-        initialize();
-    }
-
-    public FilterableTreeItem(BoxObject value, ImageView imageView) {
-        super(value, imageView);
         initialize();
     }
 

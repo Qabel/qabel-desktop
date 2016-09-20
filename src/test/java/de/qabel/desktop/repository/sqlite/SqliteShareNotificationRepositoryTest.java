@@ -7,7 +7,10 @@ import de.qabel.core.repository.EntityManager;
 import de.qabel.core.repository.IdentityRepository;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.core.repository.sqlite.ClientDatabase;
+import de.qabel.core.repository.sqlite.SqliteDropUrlRepository;
 import de.qabel.core.repository.sqlite.SqliteIdentityRepository;
+import de.qabel.core.repository.sqlite.SqlitePrefixRepository;
+import de.qabel.core.repository.sqlite.hydrator.DropURLHydrator;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.repository.ShareNotificationRepository;
 import org.junit.Test;
@@ -32,7 +35,11 @@ public class SqliteShareNotificationRepositoryTest extends AbstractSqliteReposit
         super.setUp();
         identity = new IdentityBuilder(new DropUrlGenerator("http://localhost")).withAlias("test").build();
         otherIdentity = new IdentityBuilder(new DropUrlGenerator("http://localhost")).withAlias("test2").build();
-        identityRepo = new SqliteIdentityRepository(clientDatabase, em);
+        identityRepo = new SqliteIdentityRepository(
+            clientDatabase, em,
+            new SqlitePrefixRepository(clientDatabase),
+            new SqliteDropUrlRepository(clientDatabase, new DropURLHydrator())
+        );
         identityRepo.save(identity);
 
         repo.onAdd(adds::add, identity);

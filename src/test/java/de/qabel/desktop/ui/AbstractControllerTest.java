@@ -2,7 +2,6 @@ package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.injection.Injector;
 import com.airhacks.afterburner.views.QabelFXMLView;
-import de.qabel.core.accounting.BoxClient;
 import de.qabel.core.accounting.BoxClientStub;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
@@ -71,7 +70,7 @@ public class AbstractControllerTest extends AbstractFxTest {
     protected BoxSyncRepository boxSyncRepository = new InMemoryBoxSyncRepository();
     protected SyncDaemon syncDaemon;
     protected Account account;
-    protected BoxClient boxClient = new BoxClientStub();
+    protected BoxClientStub boxClient = new BoxClientStub();
 
     static {
         logger = createLogger();
