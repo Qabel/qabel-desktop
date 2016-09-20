@@ -229,7 +229,7 @@ public class RemoteFSController extends AbstractController implements Initializa
                                 e.printStackTrace();
                             }
                             shareRoot.refresh();
-                            Thread.sleep(TimeUnit.MINUTES.toMillis(5));
+                            Thread.sleep(TimeUnit.SECONDS.toMillis(30));
                         }
                     } catch (InterruptedException ignored) {
                     }
