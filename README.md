@@ -54,7 +54,7 @@ After cloning this repository, don't forget to load the submodules, too. They ar
 git submodule update --init --recursive
 ```
 
-The easiest way to get started is using [Vagrant](https://www.vagrantup.com/):
+The easiest way to get started is using [Vagrant](https://www.vagrantup.com/) (docker required):
 ```
 vagrant up
 vagrant ssh

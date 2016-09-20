@@ -52,7 +52,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 
     protected Object launchNode(FXMLView view) {
         Parent node = view.getView();
-        scene = new Scene(node, getWidth(), getHeight());
+        runLaterAndWait(() -> scene = new Scene(node, getWidth(), getHeight()));
         Object presenter = view.getPresenter();
         robot.targetWindow(scene);
 
