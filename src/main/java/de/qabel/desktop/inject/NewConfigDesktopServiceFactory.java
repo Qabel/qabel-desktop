@@ -42,9 +42,9 @@ public class NewConfigDesktopServiceFactory extends RuntimeDesktopServiceFactory
         if (identityRepository == null) {
             identityRepository = new SqliteIdentityRepository(
                 runtimeConfiguration.getConfigDatabase(),
-                getIdentityHydrator(),
-                getDropUrlRepository(),
-                getPrefixRepository()
+                entityManager,
+                getPrefixRepository(),
+                getDropUrlRepository()
             );
         }
         return identityRepository;
