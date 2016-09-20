@@ -98,7 +98,6 @@ public class ContactController extends AbstractController implements Initializab
     public PopOver popOver;
 
     private static ImageView searchButtonImageView = setImageView(loadImage("/icon/search.png"));
-    private static ImageView contactImageView = setImageView(loadImage("/img/account_multiple.png"));
     private static ImageView menuImageView = setImageView(loadImage("/img/dots_vertical.png"));
 
     private static Image loadImage(String resourcePath) {
@@ -153,10 +152,8 @@ public class ContactController extends AbstractController implements Initializab
 
     private void createButtonGraphics() {
         searchButton.setGraphic(searchButtonImageView);
-        contactsButton.setGraphic(contactImageView);
         contactMenu.setGraphic(menuImageView);
         Tooltip.install(searchButton, new Tooltip(resourceBundle.getString("searchContact")));
-        Tooltip.install(contactsButton, new Tooltip(resourceBundle.getString("contactsList")));
         Tooltip.install(contactMenu, new Tooltip(resourceBundle.getString("contactsMenu")));
     }
 
@@ -174,6 +171,22 @@ public class ContactController extends AbstractController implements Initializab
         }
         actionlogController.setContact(contact);
     }
+
+    List<Contact> filteredContacts(Collection<Contact> contacts, ContactsFilter filter) {
+        return contacts.stream().filter(contact -> {
+            switch (filter) {
+                case ALL:
+                    return !contact.isIgnored() && (contact.getStatus() == Contact.ContactStatus.NORMAL
+                        || contact.getStatus() == Contact.ContactStatus.UNKNOWN);
+                case NEW:
+                    return !contact.isIgnored() && contact.getStatus() == Contact.ContactStatus.UNKNOWN;
+                case IGNORED:
+                    return contact.isIgnored();
+            }
+            return false;
+        }).collect(Collectors.toList());
+    }
+
 
     public void loadContacts() {
         contactList.getChildren().clear();

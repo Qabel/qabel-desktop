@@ -11,10 +11,6 @@ import org.junit.After;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 
 import static de.qabel.desktop.ui.contact.ContactController.ContactsFilter.ALL;
@@ -87,27 +83,6 @@ public class ContactControllerTest extends AbstractControllerTest {
 
         ((InMemoryDropMessageRepository)dropMessageRepository).lastMessage.setSeen(true);
         waitUntil(() -> !controller.contactItems.get(0).getIndicator().isVisible());
-    }
-
-    @Test
-    public void importValidContactAfterFailedImport() throws Exception {
-        Contact contact1 = new Contact("one", new HashSet<>(), new QblECPublicKey("one".getBytes()));
-        Contact contact2 = new Contact("two", new HashSet<>(), new QblECPublicKey("two".getBytes()));
-
-        Path c1 = Files.createTempFile("testcontact", "one");
-        Path c2 = Files.createTempFile("testcontact", "two");
-        Files.write(c1, ContactExportImport.exportContact(contact1).getBytes());
-        Files.write(c2, ContactExportImport.exportContact(contact2).getBytes());
-
-        controller = getController();
-        controller.importContacts(c1.toFile());
-        try {
-            controller.importContacts(c1.toFile());
-            fail("expecting EntityExistsException on duplicate contact");
-        } catch (PersistenceException ignored) {}
-
-        controller.importContacts(c2.toFile());
-        assertEquals(2, contactRepository.find(identity).getContacts().size());
     }
 
     private Contact createContact(ContactController.ContactsFilter filter) throws Exception {
