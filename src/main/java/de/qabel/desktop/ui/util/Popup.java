@@ -22,10 +22,21 @@ public class Popup {
     private Integer width;
 
     /**
-     * @TODO shrink popup to contents preferred size
+     * @TODO shrink popup to contents width size
      */
     public Popup(Pane parent, Parent content) {
         this(parent, content, null, null);
+    }
+
+    /**
+     * auto bind height to contents preferred height
+     *
+     * @param parent
+     * @param content
+     * @param width
+     */
+    public Popup(Pane parent, Parent content, Integer width) {
+        this(parent, content, width, null);
     }
 
     public Popup(Pane parent, Parent content, Integer width, Integer height) {
@@ -61,20 +72,36 @@ public class Popup {
         root.getStyleClass().add("bound-popup");
         root.setPickOnBounds(false);
 
-        if (height != null && width != null) {
+        styleContainer(container);
+    }
 
-            String styles = new StringBuilder()
-                .append("-fx-max-height: ").append(height + 30).append("px;")
+    private void styleContainer(StackPane container) {
+        StringBuilder styleBuilder = new StringBuilder();
+        if (width != null) {
+            styleBuilder
                 .append("-fx-max-width: ").append(width + 45).append("px;")
+                .append("-fx-pref-width: ").append(width + 45).append("px;");
+        }
+        if (height != null) {
+            styleBuilder
                 .append("-fx-pref-height: ").append(height + 30).append("px;")
-                .append("-fx-pref-width: ").append(width + 45).append("px;")
-                .toString();
-            container.setStyle(styles);
+                .append("-fx-max-height: ").append(height + 30).append("px;");
+        }
 
-            if (content instanceof Region) {
-                ((Region) content).setPadding(new Insets(15, 30, 15, 15));
+        String styles = styleBuilder.toString();
+        container.setStyle(styles);
+        content.setStyle(styles);
+
+
+        if (content instanceof Region) {
+            ((Region) content).setPadding(new Insets(15, 30, 15, 15));
+            if (height == null) {
+                System.out.println("autoconfig");
+                container.maxHeightProperty().bind(((Region) content).prefHeightProperty());
             }
-            content.setStyle(styles);
+            if (width == null) {
+                container.maxWidthProperty().bind(((Region) content).prefWidthProperty());
+            }
         }
     }
 

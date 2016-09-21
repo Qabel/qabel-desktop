@@ -7,6 +7,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 public class IdentityEditControllerTest extends AbstractControllerTest {
@@ -21,6 +24,10 @@ public class IdentityEditControllerTest extends AbstractControllerTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        identity.setUploadEnabled(true);
+        identity.setAlias("a");
+        identity.setEmail("b");
+        identity.setPhone("c");
         createController();
     }
 
@@ -36,17 +43,34 @@ public class IdentityEditControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    public void loadsIdentitiesValues() {
+        assertThat(controller.isPrivate(), is(false));
+        assertThat(controller.getAlias(), equalTo("a"));
+        assertThat(controller.getEmail(), equalTo("b"));
+        assertThat(controller.getPhone(), equalTo("c"));
+    }
+
+    @Test
+    public void loadsPrivateIdentities() {
+        identity.setUploadEnabled(false);
+        createController();
+        assertThat(controller.isPrivate(), is(true));
+    }
+
+    @Test
     public void canUpdateIdentity() throws Exception {
         controller.identityRepository = spy(identityRepository);
 
         controller.setAlias(ALIAS);
         controller.setEmail(EMAIL);
         controller.setPhone(PHONE);
+        controller.setPrivate(true);
         controller.saveIdentity();
 
         assertEquals(ALIAS, identity.getAlias());
         assertEquals(EMAIL, identity.getEmail());
         assertEquals(PHONE, identity.getPhone());
+        assertEquals(false, identity.isUploadEnabled());
         verify(controller.identityRepository).save(identity);
     }
 
@@ -68,5 +92,18 @@ public class IdentityEditControllerTest extends AbstractControllerTest {
         assertEquals("", controller.getAlias());
         assertEquals("", controller.getEmail());
         assertEquals("", controller.getPhone());
+    }
+
+    @Test
+    public void saveButtonSwitchesLabels() throws Exception {
+        controller.setPrivate(true);
+        assertThat(controller.saveIdentity.getText(), equalTo("Save"));
+        assertThat(controller.privateHint.getText(), equalTo("private description text"));
+        assertThat(controller.privateLabel.getText(), equalTo("Private"));
+
+        controller.setPrivate(false);
+        assertThat(controller.saveIdentity.getText(), equalTo("Save & Publish"));
+        assertThat(controller.privateHint.getText(), equalTo("public description text"));
+        assertThat(controller.privateLabel.getText(), equalTo("Public"));
     }
 }

@@ -612,7 +612,7 @@ VBox.spaced, HBox.spaced {
     -fx-font-weight: bold;
 }
 
-.container {
+.qr-container {
     -fx-max-width: 300px;
     -fx-max-height: 400px;
     -fx-position: absolute;

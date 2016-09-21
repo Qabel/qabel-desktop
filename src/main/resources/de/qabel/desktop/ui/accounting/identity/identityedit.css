@@ -1,6 +1,6 @@
 .identity-edit-label {
-    -fx-pref-width: 5em;
-    -fx-min-width: 4em
+    -fx-pref-width: 6em;
+    -fx-min-width: 5em
 }
 .identity-edit .text-field {
     -fx-pref-width: 40em;

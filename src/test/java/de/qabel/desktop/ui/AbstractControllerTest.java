@@ -48,6 +48,7 @@ import org.junit.Before;
 import org.slf4j.Logger;
 
 import java.net.URI;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.function.Function;
 
@@ -103,6 +104,7 @@ public class AbstractControllerTest extends AbstractFxTest {
 
     @Before
     public void setUp() throws Exception {
+        Locale.setDefault(new Locale("te", "ST"));
         clientConfiguration = new RepositoryBasedClientConfig(
             clientConfigRepository,
             accountRepository,

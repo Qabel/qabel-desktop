@@ -5,6 +5,7 @@ import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 
 public class IdentityEditGuiTest extends AbstractGuiTest<IdentityEditController> {
