@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Line?>
-<AnchorPane fx:id="identityContextMenu" xmlns="http://javafx.com/javafx/8" visible="false" styleClass="popup-menu"
+<VBox fx:id="identityContextMenu" xmlns="http://javafx.com/javafx/8" styleClass="popup-menu"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuController">
     <children>
@@ -78,4 +78,4 @@
             </HBox>
         </VBox>
     </children>
-</AnchorPane>
+</VBox>

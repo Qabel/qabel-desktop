@@ -63,17 +63,18 @@ public class Popup {
 
         if (height != null && width != null) {
 
-            StringBuilder styles = new StringBuilder();
-            styles.append("-fx-max-height: ").append(height + 20).append("px;");
-            styles.append("-fx-max-width: ").append(width + 40).append("px;");
-            styles.append("-fx-pref-height: ").append(height + 20).append("px;");
-            styles.append("-fx-pref-width: ").append(width + 40).append("px;");
-            container.setStyle(styles.toString());
+            String styles = new StringBuilder()
+                .append("-fx-max-height: ").append(height + 20).append("px;")
+                .append("-fx-max-width: ").append(width + 40).append("px;")
+                .append("-fx-pref-height: ").append(height + 20).append("px;")
+                .append("-fx-pref-width: ").append(width + 40).append("px;")
+                .toString();
+            container.setStyle(styles);
 
             if (content instanceof Region) {
                 ((Region) content).setPadding(new Insets(10, 30, 10, 10));
             }
-            content.setStyle(styles.toString());
+            content.setStyle(styles);
         }
     }
 

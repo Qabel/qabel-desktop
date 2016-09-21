@@ -31,7 +31,7 @@ public class QRCodeGuiTest extends AbstractGuiTest<QRCodeController> {
         } catch (URISyntaxException e) {
             throw new IllegalStateException("won't happen", e);
         }
-        return new QRCodeView(generateInjection("identity", identity));
+        return new QRCodeView(identity);
     }
 
     @Test

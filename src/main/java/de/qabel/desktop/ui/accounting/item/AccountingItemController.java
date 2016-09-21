@@ -16,6 +16,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import org.controlsfx.control.PopOver;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -87,21 +88,21 @@ public class AccountingItemController extends AbstractController implements Init
         return identity;
     }
 
-    private void initializeMenu() {
-        contextMenuView = new IdentityContextMenuView(identity);
-        contextMenuView.getView(layoutWindow.getChildren()::add);
-        contextMenuController = (IdentityContextMenuController) contextMenuView.getPresenter();
-    }
-
 
     @FXML
     public void openMenu(MouseEvent event) {
-        initializeMenu();
-        double x = event.getSceneX() + layoutWindow.getScene().getWindow().getX();
-        double y = event.getSceneY() + layoutWindow.getScene().getWindow().getY()
-            + contextMenu.getHeight();
+        contextMenuView = new IdentityContextMenuView(identity);
+        contextMenuView.getViewAsync(menu -> {
+            PopOver popOver = new PopOver(menu);
+            popOver.setArrowLocation(PopOver.ArrowLocation.TOP_RIGHT);
+            popOver.setAutoHide(true);
+            popOver.setHideOnEscape(true);
+            popOver.setAnimated(false);
 
-        Platform.runLater(() -> contextMenuController.openMenu(x, y));
+            contextMenuController = (IdentityContextMenuController) contextMenuView.getPresenter();
+            contextMenuController.onClose(popOver::hide);
+            popOver.show(contextMenu);
+        });
     }
 
     public void selectIdentity() {

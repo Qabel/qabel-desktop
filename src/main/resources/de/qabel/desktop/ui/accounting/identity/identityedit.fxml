@@ -7,34 +7,26 @@
 <VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
     fx:id="identityEdit" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
       fx:controller="de.qabel.desktop.ui.accounting.identity.IdentityEditController"
-              AnchorPane.topAnchor="0.0" styleClass="identity-edit">
+              AnchorPane.topAnchor="0.0" styleClass="identity-edit,form">
     <children>
         <HBox styleClass="edit-row">
             <children>
                 <Label styleClass="identity-edit-label" text="Alias"/>
                 <TextField fx:id="alias" BorderPane.alignment="CENTER"/>
             </children>
-            <VBox.margin>
-                <Insets bottom="10.0" top="10.0"/>
-            </VBox.margin>
         </HBox>
         <HBox styleClass="edit-row">
             <children>
                 <Label styleClass="identity-edit-label" text="Email"/>
                 <TextField fx:id="email"/>
             </children>
-            <VBox.margin>
-                <Insets bottom="10.0" top="10.0"/>
-            </VBox.margin>
         </HBox>
         <HBox styleClass="edit-row">
             <children>
                 <Label styleClass="identity-edit-label" text="Phone"/>
                 <TextField fx:id="phone"/>
             </children>
-            <VBox.margin>
-                <Insets bottom="10.0" top="10.0"/>
-            </VBox.margin>
+            <VBox.margin><Insets bottom="10.0" top="10.0"/></VBox.margin>
         </HBox>
         <HBox styleClass="edit-row" alignment="CENTER">
             <children>

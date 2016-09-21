@@ -7,13 +7,10 @@ import de.qabel.desktop.ui.accounting.identity.IdentityEditView;
 import de.qabel.desktop.ui.accounting.qrcode.QRCodeController;
 import de.qabel.desktop.ui.accounting.qrcode.QRCodeView;
 import de.qabel.desktop.ui.util.Popup;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import org.controlsfx.control.PopOver;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -30,7 +27,7 @@ public class IdentityContextMenuController extends AbstractController implements
     Pane layoutWindow;
 
     @FXML
-    AnchorPane identityContextMenu;
+    Pane identityContextMenu;
 
     @FXML
     VBox contextMenu;
@@ -41,56 +38,32 @@ public class IdentityContextMenuController extends AbstractController implements
     IdentityEditView identityEditView;
     public IdentityEditController identityEditController;
 
-    PopOver popOver;
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
     }
 
-    private void createPopOver() {
-        popOver = new PopOver();
-        popOver.setArrowLocation(PopOver.ArrowLocation.TOP_RIGHT);
-        popOver.setAutoFix(true);
-        popOver.setAutoHide(true);
-        popOver.setHideOnEscape(true);
-        popOver.setDetachable(false);
-        popOver.setContentNode(contextMenu);
-    }
-
-    public void openMenu() {
-        createPopOver();
-        popOver.show(identityContextMenu);
-    }
-
-    public void openMenu(double coordPopOverX, double coordPopOverY) {
-        createPopOver();
-        popOver.show(identityContextMenu, coordPopOverX, coordPopOverY);
-    }
-
     public void closeMenu() {
-        if (popOver != null && popOver.isShowing()) {
-            Platform.runLater(popOver::hide);
-        }
+        closeHandler.run();
     }
 
     private void createQrCodePopup(Pane container) {
         if (qrcodeView == null) {
-            qrcodeView = new QRCodeView(generateInjection("identity", identity));
-            qrcodeView.getView(container.getChildren()::add);
-            qrcodeController = (QRCodeController) qrcodeView.getPresenter();
+            qrcodeView = new QRCodeView(identity);
+            container.getChildren().add(qrcodeView.getView());
+            qrcodeController = qrcodeView.getPresenter();
         }
     }
 
     public void openQRCode() {
-        closeMenu();
         createQrCodePopup(layoutWindow);
         qrcodeController.show();
+        closeMenu();
     }
 
     public void openIdentityEdit() {
-        closeMenu();
         createIdentityEdit(layoutWindow);
+        closeMenu();
     }
 
     void createIdentityEdit(Pane container) {
@@ -107,11 +80,12 @@ public class IdentityContextMenuController extends AbstractController implements
         identityContextMenu.setVisible(true);
     }
 
-    public void hide() {
-        identityContextMenu.setVisible(true);
-    }
-
     public boolean isVisible() {
         return identityContextMenu.isVisible();
+    }
+
+    private Runnable closeHandler = () -> {};
+    public void onClose(Runnable closeHandler) {
+        this.closeHandler = closeHandler;
     }
 }
