@@ -16,25 +16,16 @@ public class IdentityContextMenuPage extends AbstractPage {
         this.controller = controller;
     }
 
-    void openIdentityEdit() {
+    IdentityEditViewPage openIdentityEdit() {
         clickOn(OPEN_ID_EDIT);
+        waitUntil(() -> controller.identityEditController != null);
+        return new IdentityEditViewPage(baseFXRobot, robot, controller.identityEditController);
     }
 
     public void openQrCode() {
         clickOn(OPEN_QR);
         waitUntil(() -> controller.qrcodeController != null);
         waitUntil(this::qrcodeIsVisible);
-    }
-
-    void changeIdentity(String alias, String email, String phone) {
-        waitUntil(() -> controller.identityEditController != null);
-        IdentityEditViewPage identityEditPage = new IdentityEditViewPage(baseFXRobot, robot, controller.identityEditController);
-
-        identityEditPage.clearFields();
-        identityEditPage.enterAlias(alias);
-        identityEditPage.enterEmail(email);
-        identityEditPage.enterPhone(phone);
-        identityEditPage.presSave();
     }
 
     boolean qrcodeIsVisible() {

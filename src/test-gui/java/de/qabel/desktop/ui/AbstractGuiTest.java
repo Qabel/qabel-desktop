@@ -48,6 +48,14 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
         controller = (T) presenter;
     }
 
+    @Override
+    public void tearDown() throws Exception {
+        runLaterAndWait(() -> {
+            stage.close();
+            scene.getWindow().hide();
+        });
+    }
+
     protected abstract FXMLView getView();
 
     protected Object launchNode(FXMLView view) {
@@ -56,14 +64,11 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
         Object presenter = view.getPresenter();
         robot.targetWindow(scene);
 
-        runLaterAndWait(() ->
-                {
-
-                    stage.setScene(scene);
-                    stage.show();
-                    robot.targetWindow(stage);
-                }
-        );
+        runLaterAndWait(() -> {
+            stage.setScene(scene);
+            stage.show();
+            robot.targetWindow(stage);
+        });
         baseFXRobot = new BaseFXRobot(scene);
         baseFXRobot.waitForIdle();
         waitTillTheEnd(robot.rootNode(scene));

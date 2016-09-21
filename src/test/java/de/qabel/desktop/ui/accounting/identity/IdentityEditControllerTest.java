@@ -1,10 +1,13 @@
 package de.qabel.desktop.ui.accounting.identity;
 
+import de.qabel.core.repository.IdentityRepository;
+import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
+import static org.mockito.Mockito.*;
 
 public class IdentityEditControllerTest extends AbstractControllerTest {
 
@@ -28,40 +31,32 @@ public class IdentityEditControllerTest extends AbstractControllerTest {
     }
 
     private void createController() {
-        IdentityEditView view = new IdentityEditView(generateInjection("identity", identity));
-        controller = (IdentityEditController) view.getPresenter();
+        IdentityEditView view = new IdentityEditView(identity);
+        controller = view.getPresenter();
     }
 
     @Test
-    public void canSetAlias() {
+    public void canUpdateIdentity() throws Exception {
+        controller.identityRepository = spy(identityRepository);
+
         controller.setAlias(ALIAS);
-        assertEquals(ALIAS, controller.getAlias());
-    }
-
-    @Test
-    public void canSetEmail() {
         controller.setEmail(EMAIL);
-        assertEquals(EMAIL, controller.getEmail());
-    }
-
-    @Test
-    public void canSetPhone() {
         controller.setPhone(PHONE);
-        assertEquals(PHONE, controller.getPhone());
-    }
-
-    @Test
-    public void canUpdateIdentity() {
-        setIdentityProperties();
         controller.saveIdentity();
+
         assertEquals(ALIAS, identity.getAlias());
+        assertEquals(EMAIL, identity.getEmail());
+        assertEquals(PHONE, identity.getPhone());
+        verify(controller.identityRepository).save(identity);
     }
 
     @Test
-    public void canSaveIdentity() {
-        setIdentityProperties();
-        controller.identityRepository = new IdentityRepositoryFake();
+    public void showsAlertIfSaveFailed() throws Exception {
+        controller.identityRepository = mock(IdentityRepository.class);
+        doThrow(new PersistenceException("fail")).when(controller.identityRepository).save(identity);
+
         controller.saveIdentity();
+        setIdentityProperties();
 
         runLaterAndWait(() -> controller.alert.getAlert().isShowing());
     }

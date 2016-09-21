@@ -6,6 +6,7 @@ import de.qabel.desktop.ui.accounting.identity.IdentityEditController;
 import de.qabel.desktop.ui.accounting.identity.IdentityEditView;
 import de.qabel.desktop.ui.accounting.qrcode.QRCodeController;
 import de.qabel.desktop.ui.accounting.qrcode.QRCodeView;
+import de.qabel.desktop.ui.util.Popup;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -37,7 +38,7 @@ public class IdentityContextMenuController extends AbstractController implements
     private QRCodeView qrcodeView;
     public QRCodeController qrcodeController;
 
-    private IdentityEditView identityEditView;
+    IdentityEditView identityEditView;
     public IdentityEditController identityEditController;
 
     PopOver popOver;
@@ -68,7 +69,9 @@ public class IdentityContextMenuController extends AbstractController implements
     }
 
     public void closeMenu() {
-        Platform.runLater(popOver::hide);
+        if (popOver != null && popOver.isShowing()) {
+            Platform.runLater(popOver::hide);
+        }
     }
 
     private void createQrCodePopup(Pane container) {
@@ -88,16 +91,16 @@ public class IdentityContextMenuController extends AbstractController implements
     public void openIdentityEdit() {
         closeMenu();
         createIdentityEdit(layoutWindow);
-        identityEditController.show();
     }
 
-    IdentityEditView createIdentityEdit(Pane container) {
-        if (identityEditView == null) {
-            identityEditView = new IdentityEditView(generateInjection("identity", identity));
-            identityEditView.getView(container.getChildren()::add);
-            identityEditController = (IdentityEditController) identityEditView.getPresenter();
-        }
-        return null;
+    void createIdentityEdit(Pane container) {
+        identityEditView = new IdentityEditView(identity);
+        identityEditView.getView(v -> {
+            Popup popup = new Popup(container, v, 300, 200);
+            popup.show();
+            identityEditView.getPresenter().onFinish(popup::close);
+        });
+        identityEditController = identityEditView.getPresenter();
     }
 
     public void show() {

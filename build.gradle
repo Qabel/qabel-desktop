@@ -98,10 +98,6 @@ dependencies {
     testCompile 'com.github.'+repo+'.qabel-core:chat:'+coreVersion+':sources'
 
     compile ':jfxrt:'                                        // built-in javafx to please sonarqube
-    testCompile 'junit:junit:4.+'                            // Eclipse Public License - v 1.0 https://github.com/junit-team/junit/blob/master/LICENSE-junit.txt
-    testCompile 'org.meanbean:meanbean:2.+'                  // Apache License V2.0 http://meanbean.sourceforge.net
-    testCompile 'org.testfx:testfx-core:4.+'                 // EUPL 1.1 https://github.com/TestFX/TestFX/blob/master/LICENSE.txt
-    testCompile 'org.testfx:testfx-junit:4.+'                // EUPL 1.1 https://github.com/TestFX/TestFX/blob/master/LICENSE.txt
 
     compile 'org.ocpsoft.prettytime:prettytime:3.2.+'        //Apache License https://github.com/ocpsoft/prettytime/blob/master/LICENSE
     compile 'commons-cli:commons-cli:1.2'                    //Apache License
@@ -135,6 +131,15 @@ dependencies {
     testCompile 'info.cukes:cucumber-java:1.2.+'
     testCompile 'info.cukes:cucumber-junit:1.2.+'
     testCompile 'com.tngtech.java:junit-dataprovider:1.10.+'    // Apache v2
+
+
+    testCompile 'junit:junit:4.+'                            // Eclipse Public License - v 1.0 https://github.com/junit-team/junit/blob/master/LICENSE-junit.txt
+    testCompile 'org.meanbean:meanbean:2.+'                  // Apache License V2.0 http://meanbean.sourceforge.net
+    testCompile 'org.testfx:testfx-core:4.+'                 // EUPL 1.1 https://github.com/TestFX/TestFX/blob/master/LICENSE.txt
+    testCompile 'org.testfx:testfx-junit:4.+'                // EUPL 1.1 https://github.com/TestFX/TestFX/blob/master/LICENSE.txt
+
+    testCompile 'org.hamcrest:java-hamcrest:2.0.0.0'
+    testCompile 'org.mockito:mockito-core:2.0.52-beta'
 }
 
 task copyToLib(type: Copy) {

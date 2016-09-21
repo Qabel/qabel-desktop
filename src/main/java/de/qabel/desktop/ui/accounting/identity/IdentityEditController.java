@@ -7,7 +7,6 @@ import de.qabel.desktop.ui.AbstractController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
 import javax.inject.Inject;
@@ -17,7 +16,7 @@ import java.util.ResourceBundle;
 public class IdentityEditController extends AbstractController implements Initializable {
 
     @FXML
-    AnchorPane identityEdit;
+    Pane identityEdit;
 
     @FXML
     TextField alias;
@@ -28,11 +27,6 @@ public class IdentityEditController extends AbstractController implements Initia
     @FXML
     TextField phone;
 
-    private ResourceBundle resourceBundle;
-
-    @Inject
-    private Pane layoutWindow;
-
     @Inject
     Identity identity;
 
@@ -41,9 +35,7 @@ public class IdentityEditController extends AbstractController implements Initia
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        resourceBundle = resources;
         initFromIdentity();
-        hide();
     }
 
     private void initFromIdentity() {
@@ -57,6 +49,7 @@ public class IdentityEditController extends AbstractController implements Initia
         updateIdentityFromView();
         try {
             identityRepository.save(identity);
+            finishHandler.run();
         } catch (PersistenceException e) {
             alert("Cannot save Identity!", e);
         }
@@ -68,23 +61,11 @@ public class IdentityEditController extends AbstractController implements Initia
         identity.setPhone(getPhone());
     }
 
-    public void show() {
-        identityEdit.setVisible(true);
-    }
-
-    void hide() {
-        identityEdit.setVisible(false);
-    }
-
-    public boolean isShowing() {
-        return identityEdit.isVisible();
-    }
-
-    public void setAlias(String alias) {
+    void setAlias(String alias) {
         this.alias.setText(alias);
     }
 
-    public void setEmail(String email) {
+    void setEmail(String email) {
         this.email.setText(email);
     }
 
@@ -92,11 +73,11 @@ public class IdentityEditController extends AbstractController implements Initia
         this.phone.setText(phone);
     }
 
-    public String getAlias() {
+    String getAlias() {
         return alias.getText();
     }
 
-    public String getEmail() {
+    String getEmail() {
         return email.getText();
     }
 
@@ -110,8 +91,9 @@ public class IdentityEditController extends AbstractController implements Initia
         setPhone("");
     }
 
-    @FXML
-    public void close() {
-        hide();
+    private Runnable finishHandler = () -> {};
+
+    public void onFinish(Runnable finishHandler) {
+        this.finishHandler = finishHandler;
     }
 }

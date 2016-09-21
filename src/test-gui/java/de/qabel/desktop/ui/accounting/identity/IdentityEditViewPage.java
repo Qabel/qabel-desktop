@@ -13,10 +13,12 @@ public class IdentityEditViewPage extends AbstractPage {
     private static final String EMAIL_FIELD = "#email";
     private static final String PHONE_FIELD = "#phone";
     private static final String UPDATE_BUTTON = "#saveIdentity";
+    private static final String ROOT_LOCATOR = "#identityEdit";
 
     public IdentityEditViewPage(FXRobot baseFXRobot, FxRobot robot, IdentityEditController controller) {
         super(baseFXRobot, robot);
         this.controller = controller;
+        waitForNode(ROOT_LOCATOR);
     }
 
     public void enterAlias(String s) {
@@ -31,7 +33,7 @@ public class IdentityEditViewPage extends AbstractPage {
         clickOn(PHONE_FIELD).write(s);
     }
 
-    public void presSave() {
+    public void pressSave() {
         clickOn(UPDATE_BUTTON);
     }
 

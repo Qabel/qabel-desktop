@@ -1,8 +1,7 @@
-#identityEdit > VBox {
-    -fx-background-color: white;
-    -fx-padding: 20px;
-}
-
 .identity-edit-label {
-    -fx-pref-width: 60px;
+    -fx-pref-width: 5em;
+    -fx-min-width: 4em
+}
+.identity-edit .text-field {
+    -fx-pref-width: 40em;
 }

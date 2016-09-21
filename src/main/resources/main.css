@@ -693,6 +693,13 @@ VBox.spaced, HBox.spaced {
     -fx-max-width: 200px;
 }
 
+.bound-popup {
+    -fx-margin: 10px 5px 5px 5px;
+    -fx-padding: 10px 10px 10px 10px;
+    -fx-pref-height: 0;
+    -fx-pref-width: 0;
+}
+
 .popup-menu {
     -fx-background-color: transparent;
     -fx-max-width: 200px;
@@ -726,4 +733,57 @@ VBox.spaced, HBox.spaced {
 }
 .popover.assignContactPopover .content Label {
     -fx-text-fill: white;
+}
+
+.vbox-popup {
+    -fx-background-color: rgba(0,0,0,0.8);
+    -fx-padding: 50px 50px 50px 50px;
+}
+
+.button-close-stackpane {
+    -fx-alignment: top-right;
+    -fx-padding: 5px 10px 10px 10px;
+    -fx-background-color: transparent;
+    -fx-border-style: none;
+    -fx-background-insets: 0px;
+    -fx-border-color: none;
+}
+
+.button-close-stackpane:hover {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0px;
+    -fx-border-style: none;
+    -fx-border-color: none;
+    -fx-text-fill: #ff690f;
+}
+
+.button-close-stackpane:pressed {
+    -fx-border-color: none;
+    -fx-text-fill: none;
+    -fx-border-style: none;
+}
+
+.fade-top {
+    -fx-position: absolute;
+    -fx-pref-height: 25px;
+    -fx-pref-width: 100%;
+    -fx-alignment: TOP_LEFT;
+    -fx-background-image: url('/img/fade-top.png');
+}
+
+.fade-bottom {
+    -fx-position: absolute;
+    -fx-pref-height: 40px;
+    -fx-pref-width: 100%;
+    -fx-alignment: BOTTOM_LEFT;
+    -fx-background-image: url('/img/fade-bottom.png');
+}
+
+.popup-container {
+    -fx-min-width: 0px;
+    -fx-min-height: 0px;
+    -fx-pref-width: 0px;
+    -fx-pref-height: 0px;
+    -fx-position: absolute;
+    -fx-background-color: white;
 }

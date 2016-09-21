@@ -17,7 +17,7 @@ public class IdentityEditGuiTest extends AbstractGuiTest<IdentityEditController>
 
     @Override
     protected FXMLView getView() {
-        return new IdentityEditView(generateInjection("identity", identity));
+        return new IdentityEditView(identity);
     }
 
     @Override
@@ -33,26 +33,14 @@ public class IdentityEditGuiTest extends AbstractGuiTest<IdentityEditController>
     }
 
     @Test
-    public void isHiddenOnStartup() {
-        assertFalse(controller.isShowing());
-    }
-
-    @Test
-    public void isVisibleOnShow() {
-        controller.show();
-        assertTrue(controller.isShowing());
-    }
-
-    @Test
     public void canFillInformationAndSave() {
-        controller.show();
         page.clearFields();
 
         page.enterAlias(ALIAS);
         page.enterEmail(EMAIL);
         page.enterPhone(PHONE);
 
-        page.presSave();
+        page.pressSave();
 
         waitUntil(() -> identity.getAlias().equals(ALIAS));
 
@@ -60,5 +48,4 @@ public class IdentityEditGuiTest extends AbstractGuiTest<IdentityEditController>
         assertEquals(EMAIL, identity.getEmail());
         assertEquals(PHONE, identity.getPhone());
     }
-
  }

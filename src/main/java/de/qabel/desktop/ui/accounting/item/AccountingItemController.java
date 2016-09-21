@@ -88,7 +88,7 @@ public class AccountingItemController extends AbstractController implements Init
     }
 
     private void initializeMenu() {
-        contextMenuView = new IdentityContextMenuView(generateInjection("identity", identity));
+        contextMenuView = new IdentityContextMenuView(identity);
         contextMenuView.getView(layoutWindow.getChildren()::add);
         contextMenuController = (IdentityContextMenuController) contextMenuView.getPresenter();
     }
