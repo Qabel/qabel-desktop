@@ -4,6 +4,9 @@ import de.qabel.core.config.Account;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
+import de.qabel.core.drop.DropMessageMetadata;
+import de.qabel.core.repository.exception.PersistenceException;
+import de.qabel.desktop.AsyncUtils;
 import de.qabel.desktop.daemon.drop.TextMessage;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.inmemory.InMemoryDropMessageRepository;
@@ -17,7 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.*;
 
 
 public class ActionlogControllerTest extends AbstractControllerTest {
@@ -65,7 +69,17 @@ public class ActionlogControllerTest extends AbstractControllerTest {
         List<PersistenceDropMessage> lst = dropMessageRepository.loadConversation(c, i);
 
         assertEquals(1, lst.size());
-        assertEquals("msg2", TextMessage.fromJson(lst.get(0).dropMessage.getDropPayload()).getText());
+        DropMessage dropMessage = lst.get(0).dropMessage;
+        assertEquals("msg2", TextMessage.fromJson(dropMessage.getDropPayload()).getText());
+    }
+
+    @Test
+    public void addDropMessageMetadata() throws Exception {
+        controller.sendDropMessage(c, "msg2");
+
+        List<PersistenceDropMessage> lst = dropMessageRepository.loadConversation(c, i);
+        DropMessageMetadata metadata = lst.get(0).dropMessage.getDropMessageMetadata();
+        assertEquals(metadata, new DropMessageMetadata(i));
     }
 
     @Test
@@ -97,6 +111,48 @@ public class ActionlogControllerTest extends AbstractControllerTest {
         );
     }
 
+    @Test
+    public void notificationShownForUnknownContacts() throws Exception {
+        AsyncUtils.waitUntil(() -> controller.notification.isManaged());
+        toggleContactStatus();
+        AsyncUtils.assertAsync(() -> controller.notification.isManaged(), is(false));
+        toggleContactStatus();
+        AsyncUtils.assertAsync(() -> controller.notification.isManaged(), is(true));
+    }
+
+    private void toggleContactStatus() throws PersistenceException {
+        if (controller.contact.getStatus() == Contact.ContactStatus.UNKNOWN) {
+            controller.contact.setStatus(Contact.ContactStatus.NORMAL);
+        } else {
+            controller.contact.setStatus(Contact.ContactStatus.UNKNOWN);
+        }
+        contactRepository.save(controller.contact, identity);
+    }
+
+    @Test
+    public void acceptContact() throws Exception {
+        toggleContactStatus();
+        controller.accept.fire();
+        AsyncUtils.assertAsync(() -> {
+            assertThat(controller.notification.isManaged(), is(false));
+            Contact contact = contactRepository.find(controller.contact.getId());
+            assertThat(contact.getStatus(), is(Contact.ContactStatus.NORMAL));
+            assertThat(contact.isIgnored(), is(false));
+        });
+    }
+
+    @Test
+    public void ignoreContact() throws Exception {
+        toggleContactStatus();
+        controller.ignore.fire();
+        AsyncUtils.assertAsync(() -> {
+            assertThat(controller.notification.isManaged(), is(false));
+            Contact contact = contactRepository.find(controller.contact.getId());
+            assertThat(contact.getStatus(), is(Contact.ContactStatus.NORMAL));
+            assertThat(contact.isIgnored(), is(true));
+        });
+    }
+
     @Override
     @Before
     public void setUp() throws Exception {
@@ -105,6 +161,7 @@ public class ActionlogControllerTest extends AbstractControllerTest {
         super.setUp();
         i = identityBuilderFactory.factory().withAlias("TestAlias").build();
         c = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
+        c.setStatus(Contact.ContactStatus.UNKNOWN);
         createController(i);
         controller.setContact(c);
         controller = (ActionlogController) view.getPresenter();

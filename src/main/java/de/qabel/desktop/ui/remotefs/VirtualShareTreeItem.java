@@ -10,7 +10,6 @@ import de.qabel.desktop.config.ShareNotifications;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,10 +33,9 @@ public class VirtualShareTreeItem extends TreeItem<BoxObject> {
             SharingService sharingService,
             AuthenticatedDownloader readBackend,
             ShareNotifications notifications,
-            BoxObject value,
-            Node graphic
+            BoxObject value
     ) {
-        super(value, graphic);
+        super(value);
         this.notifications = notifications;
         this.readBackend = readBackend;
         this.sharingService = sharingService;

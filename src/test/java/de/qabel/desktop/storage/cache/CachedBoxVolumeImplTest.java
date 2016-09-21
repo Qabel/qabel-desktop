@@ -4,10 +4,11 @@ import de.qabel.box.storage.*;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
-import kotlin.jvm.functions.Function0;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -21,7 +22,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 import static de.qabel.desktop.AsyncUtils.waitUntil;
 import static org.hamcrest.Matchers.hasItem;
@@ -32,10 +32,20 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
     private List<ChangeEvent> updates = new LinkedList<>();
     private CachedBoxNavigation nav;
     private LocalReadBackend readBackend;
+    private CachedBoxVolumeImpl volume;
+    private CachedBoxVolumeImpl volume2;
 
     @Override
     protected StorageReadBackend getReadBackend() {
         return readBackend;
+    }
+
+    @NotNull
+    @Override
+    public <T> Matcher<T> sameInstance(T target) {
+        return target instanceof CachedBoxNavigation ?
+            Matchers.sameInstance((T) ((CachedBoxNavigation) target).getNav())
+            : super.sameInstance(target);
     }
 
     @Override
@@ -46,10 +56,12 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
         readBackend = new LocalReadBackend(tempFolder);
         volume = new CachedBoxVolumeImpl(readBackend,
             new LocalWriteBackend(tempFolder),
-            keyPair, deviceID, volumeTmpDir, "");
+            keyPair, deviceID, volumeTmpDir, getPrefix());
         volume2 = new CachedBoxVolumeImpl(new LocalReadBackend(tempFolder),
             new LocalWriteBackend(tempFolder),
-            keyPair, deviceID2, volumeTmpDir, "");
+            keyPair, deviceID2, volumeTmpDir, getPrefix());
+        setVolume(volume);
+        setVolume2(volume2);
     }
 
     @Override
@@ -58,14 +70,14 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
         ByteArrayInputStream in = new ByteArrayInputStream("testContent".getBytes());
         Long size = 11L;
 
-        CachedBoxNavigation<DefaultIndexNavigation> nav = (CachedBoxNavigation<DefaultIndexNavigation>) volume.navigate();
-        nav.getNav().setTime(() -> 1234567890L);
+        CachedBoxNavigation<IndexNavigation> nav = volume.navigate();
+        ((DefaultIndexNavigation)nav.getNav()).setTime(() -> 1234567890L);
 
         BoxFile file = nav.upload("streamedFile", in, size);
         InputStream out = volume2.navigate().download("streamedFile");
-        Assert.assertEquals(Long.valueOf(11L), file.getSize());
-        Assert.assertEquals(Long.valueOf(1234567890L), file.getMtime());
-        Assert.assertEquals("testContent", new String(IOUtils.toByteArray(out)));
+        assertEquals(Long.valueOf(11L), file.getSize());
+        assertEquals(Long.valueOf(1234567890L), file.getMtime());
+        assertEquals("testContent", new String(IOUtils.toByteArray(out)));
     }
 
     @Override
@@ -75,19 +87,16 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
 
     @Test
     public void providesCachedNavigations() throws Exception {
-        assertTrue(volume.navigate() instanceof PathNavigation);
         assertSame(volume.navigate(), volume.navigate());
     }
 
     @Test
     public void navigationReturnsCachedNavigationsItself() throws Exception {
-        CachedBoxNavigation nav = (CachedBoxNavigation) volume.navigate();
+        CachedBoxNavigation nav = volume.navigate();
         BoxFolder subfolder = nav.createFolder("subfolder");
         BoxNavigation subnav = nav.navigate(subfolder);
         subnav.createFolder("marker");
 
-        assertTrue(subnav instanceof PathNavigation);
-        assertTrue(nav.navigate("subfolder") instanceof PathNavigation);
         assertEquals("marker", subnav.listFolders().get(0).getName());
         assertSame(subnav, nav.navigate("subfolder"));
     }
@@ -115,7 +124,7 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
 
     @Test
     public void isRefreshable() throws Exception {
-        CachedBoxNavigation nav = (CachedBoxNavigation) volume.navigate();
+        CachedBoxNavigation nav = volume.navigate();
         BoxNavigation nav2 = volume2.navigate();
         nav2.createFolder("test");
 
@@ -125,7 +134,7 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
 
     @Test
     public void refreshesRecursive() throws Exception {
-        CachedBoxNavigation nav = (CachedBoxNavigation) volume.navigate();
+        CachedBoxNavigation nav = volume.navigate();
         nav.createFolder("folder");
         CachedBoxNavigation subnav = nav.navigate("folder");
 
@@ -160,7 +169,8 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
         BoxFolder subfolder = foldernav2.createFolder("subfolder");
         File file = createTmpFile();
         foldernav2.upload("testfile", file);
-        foldernav2.navigate(subfolder).upload("testfile", file);
+        BoxNavigation subfoldernav2 = foldernav2.navigate(subfolder);
+        subfoldernav2.upload("testfile", file);
 
         nav.refresh();
 
@@ -174,7 +184,7 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
 
     protected void observe() throws QblStorageException {
         updates.clear();
-        nav = (CachedBoxNavigation) volume.navigate();
+        nav = volume.navigate();
         nav.addObserver((o, arg) -> updates.add((ChangeEvent) arg));
     }
 
@@ -202,7 +212,7 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
     public void notifiesOnShare() throws Exception {
         File file = createTmpFile();
         BoxFile boxFile = volume2.navigate().upload("testfile", file);
-        ((CachedBoxVolumeImpl) volume).navigate().refresh();
+        volume.navigate().refresh();
 
         observe();
         nav.share(new QblECKeyPair().getPub(), boxFile, "receiver");
@@ -222,7 +232,7 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
         File file = createTmpFile();
         BoxFile boxFile = volume2.navigate().upload("testfile", file);
         volume2.navigate().share(new QblECKeyPair().getPub(), boxFile, "receiver");
-        ((CachedBoxVolumeImpl) volume).navigate().refresh();
+        volume.navigate().refresh();
         observe();
 
         nav.unshare(nav.getFile("testfile"));

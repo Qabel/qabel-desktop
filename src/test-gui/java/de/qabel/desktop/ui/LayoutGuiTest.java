@@ -7,6 +7,8 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.exceptions.QblInvalidCredentials;
+import de.qabel.desktop.ui.about.AboutController;
+import de.qabel.desktop.ui.about.AboutPage;
 import de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuController;
 import de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuView;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
@@ -20,6 +22,7 @@ import static org.junit.Assert.*;
 public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
 
     private QuotaState quotaState;
+    private AboutPage aboutPage;
 
     @Override
     protected FXMLView getView() {
@@ -29,6 +32,13 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
     private LayoutController createController() {
         LayoutView view = new LayoutView();
         return (LayoutController) view.getPresenter();
+    }
+
+    @Test
+    public void showAboutViewOnStartIfAnIdentityExists() {
+        waitUntil(() -> controller.aboutView != null);
+        aboutPage = new AboutPage(baseFXRobot, robot, (AboutController) controller.aboutView.getPresenter());
+        aboutPage.waitForRootNode();
     }
 
     @Test

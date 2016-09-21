@@ -3,6 +3,7 @@ package de.qabel.desktop.repository.sqlite;
 import de.qabel.core.repository.EntityManager;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.core.repository.sqlite.*;
+import de.qabel.core.repository.sqlite.hydrator.DropURLHydrator;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.factory.DefaultBoxSyncConfigFactory;
 import de.qabel.desktop.daemon.sync.worker.index.sqlite.SqliteSyncIndexFactory;
@@ -33,7 +34,10 @@ public class SqliteBoxSyncRepository extends AbstractSqliteRepository<BoxSyncCon
             new BoxSyncConfigHydrator(
                 em,
                 new DefaultBoxSyncConfigFactory(new SqliteSyncIndexFactory()),
-                new SqliteIdentityRepository(clientDatabase, em),
+                new SqliteIdentityRepository(
+                    clientDatabase, em, new SqlitePrefixRepository(clientDatabase),
+                    new SqliteDropUrlRepository(clientDatabase, new DropURLHydrator())
+                ),
                 new SqliteAccountRepository(clientDatabase, em)
             )
         );

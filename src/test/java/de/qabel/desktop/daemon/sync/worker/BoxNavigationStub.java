@@ -55,7 +55,7 @@ public class BoxNavigationStub extends CachedIndexNavigation {
     @Override
     public BoxNavigationStub navigate(String name) throws QblStorageException {
         if (!subnavs.containsKey(name)) {
-            subnavs.put(name, new BoxNavigationStub(null, getPath().resolve(name + "/")));
+            subnavs.put(name, new BoxNavigationStub(null, getDesktopPath().resolve(name + "/")));
         }
         return subnavs.get(name);
     }

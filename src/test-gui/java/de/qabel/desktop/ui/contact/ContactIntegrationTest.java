@@ -12,6 +12,7 @@ import de.qabel.desktop.repository.sqlite.SqliteDropMessageRepository;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import de.qabel.desktop.ui.actionlog.ActionlogController;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
+import de.qabel.desktop.ui.contact.item.ContactItemPage;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,7 +50,11 @@ public class ContactIntegrationTest extends AbstractGuiTest<ContactController> {
 
     private void initRepositories() throws Exception {
         transactionManager = new SqliteTransactionManager(connection);
-        identityRepository = new SqliteIdentityRepository(clientDatabase, em);
+        identityRepository = new SqliteIdentityRepository(
+            clientDatabase, em,
+            new SqlitePrefixRepository(clientDatabase),
+            new SqliteDropUrlRepository(clientDatabase, new DropURLHydrator())
+        );
         contactRepository = new SqliteContactRepository(
             clientDatabase,
             em,

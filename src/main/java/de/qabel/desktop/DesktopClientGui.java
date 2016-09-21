@@ -57,7 +57,7 @@ public class DesktopClientGui extends Application {
         showLoginStage();
         config.onSetAccount(account -> {
                 initBackgroundServices();
-                showMainStage();
+                showLayoutStage();
             }
         );
         config.onSelectIdentity(this::addShareMessageRenderer);
@@ -105,7 +105,7 @@ public class DesktopClientGui extends Application {
         });
     }
 
-    private void showMainStage() {
+    private void showLayoutStage() {
         view = new LayoutView();
         Parent view = this.view.getView();
         runtimeConfiguration.setWindow(((LayoutController) this.view.getPresenter()).getWindow());
