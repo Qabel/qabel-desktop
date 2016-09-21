@@ -1,4 +1,5 @@
 drop.url=http://localhost:5000
 accounting.url=http://localhost:9696
 block.url=http://localhost:9697
+index.url=http://localhost:9698
 crashReport.url=https://rink.hockeyapp.net/api/2/apps/
