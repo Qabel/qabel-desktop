@@ -50,8 +50,11 @@ public class SyncController extends AbstractController implements Initializable 
 
     SyncSetupController syncSetupController;
 
+    ResourceBundle resourceBundle;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        resourceBundle = resources;
         syncItemNodes = syncItemContainer.getChildren();
 
         boxSyncRepository.onAdd(c -> reload());
@@ -91,6 +94,7 @@ public class SyncController extends AbstractController implements Initializable 
 
     public void addSync() {
         addStage = new Stage();
+        addStage.setTitle(resourceBundle.getString("syncAddSyncTitle"));
         SyncSetupView view = new SyncSetupView();
         Scene scene = new Scene(view.getView());
         addStage.setScene(scene);
