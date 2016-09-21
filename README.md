@@ -122,7 +122,7 @@ This is also used by the <a href="#installer">script building the windows instal
 ### Creating the Windows Setup
 From the `installer` directory you can create a versioned setup with
 ```BASH
-bash build-setup.sh {version}
+bash build-setup.sh {version} 
 ```
 and {version} needs to be a version of the form `x.y.z`.
 SemVer compatible prefixes or suffixes are currently not supported because the version is passed directly to launch4j which cannot handle that. Example:
@@ -137,6 +137,12 @@ This script will:
  * create a distribution with `./gradlew -Prelease={version} distZip`
  * create a wrapping launcher `.exe` for the `jar`
  * build the setup
+ 
+#### creating a dev-release using Vagrant
+```BASH
+vagrant up installer    # starts a docker container via vagrant building a setup
+docker ps | grep installer | cut -d' ' -f1 | xargs docker logs -f     # tails the containers logs
+```
 
 #### creating the windows setup manually
 
