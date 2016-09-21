@@ -64,15 +64,15 @@ public class Popup {
         if (height != null && width != null) {
 
             String styles = new StringBuilder()
-                .append("-fx-max-height: ").append(height + 20).append("px;")
-                .append("-fx-max-width: ").append(width + 40).append("px;")
-                .append("-fx-pref-height: ").append(height + 20).append("px;")
-                .append("-fx-pref-width: ").append(width + 40).append("px;")
+                .append("-fx-max-height: ").append(height + 30).append("px;")
+                .append("-fx-max-width: ").append(width + 45).append("px;")
+                .append("-fx-pref-height: ").append(height + 30).append("px;")
+                .append("-fx-pref-width: ").append(width + 45).append("px;")
                 .toString();
             container.setStyle(styles);
 
             if (content instanceof Region) {
-                ((Region) content).setPadding(new Insets(10, 30, 10, 10));
+                ((Region) content).setPadding(new Insets(15, 30, 15, 15));
             }
             content.setStyle(styles);
         }

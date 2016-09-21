@@ -788,8 +788,9 @@ VBox.spaced, HBox.spaced {
     -fx-background-color: white;
 }
 
-.form .vbox {
-    -fx-start-margin: 10px;
-    -fx-end-margin: 10px;
-    -fx-vgap: 10px;
+.form {
+    -fx-spacing: 1em;
+}
+.form-row {
+    -fx-spacing: 1em;
 }
