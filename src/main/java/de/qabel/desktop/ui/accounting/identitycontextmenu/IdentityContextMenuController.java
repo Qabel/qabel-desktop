@@ -1,7 +1,6 @@
 package de.qabel.desktop.ui.accounting.identitycontextmenu;
 
 import de.qabel.core.config.Identity;
-import de.qabel.core.repository.IdentityRepository;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.identity.IdentityEditController;
 import de.qabel.desktop.ui.accounting.identity.IdentityEditView;
@@ -12,7 +11,6 @@ import de.qabel.desktop.ui.util.Popup;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -32,9 +30,6 @@ public class IdentityContextMenuController extends AbstractController implements
 
     @Inject
     Pane layoutWindow;
-
-    @FXML
-    Pane identityContextMenu;
 
     @FXML
     VBox contextMenu;
@@ -63,12 +58,7 @@ public class IdentityContextMenuController extends AbstractController implements
     QRCodeController qrcodeController;
 
     IdentityEditView identityEditView;
-    public IdentityEditController identityEditController;
-
-    @Inject
-    private IdentityRepository identityRepository;
-
-    private TextInputDialog dialog;
+    IdentityEditController identityEditController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -142,14 +132,6 @@ public class IdentityContextMenuController extends AbstractController implements
             identityEditView.getPresenter().onFinish(popup::close);
         });
         identityEditController = identityEditView.getPresenter();
-    }
-
-    public void show() {
-        identityContextMenu.setVisible(true);
-    }
-
-    public boolean isVisible() {
-        return identityContextMenu.isVisible();
     }
 
     private Runnable closeHandler = () -> {};

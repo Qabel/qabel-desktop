@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.shape.Line?>
 
-<?import javafx.scene.layout.AnchorPane?>
 <VBox fx:id="contextMenu" xmlns="http://javafx.com/javafx/8" styleClass="popup-menu"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuController">

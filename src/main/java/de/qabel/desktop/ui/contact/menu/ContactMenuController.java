@@ -33,7 +33,7 @@ import java.util.*;
 
 public class ContactMenuController extends AbstractController implements Initializable {
 
-    ResourceBundle resourceBundle;
+    private ResourceBundle resourceBundle;
 
     @Inject
     private ContactRepository contactRepository;
@@ -54,9 +54,6 @@ public class ContactMenuController extends AbstractController implements Initial
     VBox vboxMenu;
 
     @FXML
-    Button exportToFileButton;
-
-    @FXML
     Button importFromFile;
     @FXML
     Button importFromQR;
@@ -69,7 +66,7 @@ public class ContactMenuController extends AbstractController implements Initial
     @FXML
     Button exportContactsToQR;
 
-    Identity identity;
+    private Identity identity;
 
     private static ImageView importFromFileImageView = setImageView(loadImage("/img/import_black.png"));
     private static ImageView importFromQRImageView = setImageView(loadImage("/img/qrcode.png"));
@@ -101,7 +98,6 @@ public class ContactMenuController extends AbstractController implements Initial
 
     private void createButtonsTooltip() {
         Tooltip.install(importFromFile, new Tooltip(resourceBundle.getString("contactImport")));
-        Tooltip.install(exportToFileButton, new Tooltip(resourceBundle.getString("contactExport")));
         Tooltip.install(searchButton, new Tooltip(resourceBundle.getString("searchContact")));
         Tooltip.install(enterContact, new Tooltip(resourceBundle.getString("enterContactManually")));
         Tooltip.install(exportContactsToFile, new Tooltip(resourceBundle.getString("contactExport")));
@@ -144,12 +140,8 @@ public class ContactMenuController extends AbstractController implements Initial
             if (file != null) {
                 importContacts(file);
             }
-        } catch (IOException | PersistenceException | JSONException e) {
+        } catch (IOException | PersistenceException | JSONException | QblDropInvalidURL | URISyntaxException e) {
             alert(resourceBundle.getString("alertImportContactFail"), e);
-        } catch (QblDropInvalidURL qblDropInvalidURL) {
-            qblDropInvalidURL.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
         }
     }
 
