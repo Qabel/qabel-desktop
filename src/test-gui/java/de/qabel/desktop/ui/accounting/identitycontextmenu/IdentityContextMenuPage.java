@@ -9,7 +9,7 @@ public class IdentityContextMenuPage extends AbstractPage {
     private IdentityContextMenuController controller;
 
     private static String OPEN_ID_EDIT = "#editButton";
-    private static String OPEN_QR = "#openQRCode";
+    private static String OPEN_QR = "#publicKeyQRButton";
 
     public IdentityContextMenuPage(FXRobot baseFXRobot, FxRobot robot, IdentityContextMenuController controller) {
         super(baseFXRobot, robot);

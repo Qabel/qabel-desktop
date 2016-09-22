@@ -15,6 +15,7 @@ public class AccountingItemGuiTest extends AbstractGuiTest<AccountingItemControl
     public void setUp() throws Exception {
         super.setUp();
         page = new AccountingItemPage(baseFXRobot, robot, controller);
+        //controller.layoutWindow = controller.root;
     }
 
     @Override

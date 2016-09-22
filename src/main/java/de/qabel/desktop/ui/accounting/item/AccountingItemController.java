@@ -68,9 +68,7 @@ public class AccountingItemController extends AbstractController implements Init
             mail.setText(account.getUser());
         }
 
-        identity.attach(() -> Platform.runLater(() -> {
-            alias.setText(identity.getAlias());
-        }));
+        identity.attach(() -> Platform.runLater(() -> alias.setText(identity.getAlias())));
 
         updateSelection();
         clientConfiguration.onSelectIdentity(i -> updateSelection());

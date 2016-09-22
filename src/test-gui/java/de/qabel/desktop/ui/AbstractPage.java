@@ -72,6 +72,8 @@ public class AbstractPage {
             false,
             new PickResult(node, scenePos.getX(), scenePos.getY())
         );
+
+
         EventHandler<? super MouseEvent> pressedHandler = node.getOnMousePressed();
         EventHandler<? super MouseEvent> clickedHandler = node.getOnMouseClicked();
         EventHandler<? super MouseEvent> releasedHandler = node.getOnMouseReleased();

@@ -14,8 +14,7 @@ public class IdentityContextMenuGuiTest extends AbstractGuiTest<IdentityContextM
     public void setUp() throws Exception {
         super.setUp();
         page = new IdentityContextMenuPage(baseFXRobot, robot, controller);
-        controller.identityContextMenu.setVisible(true);
-        controller.layoutWindow = controller.identityContextMenu;
+        controller.layoutWindow = controller.contextMenu;
     }
 
     @Override
