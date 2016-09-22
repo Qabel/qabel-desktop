@@ -20,6 +20,10 @@ import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static java.lang.Math.max;
+import static java.lang.System.currentTimeMillis;
+import static java.lang.Thread.sleep;
+
 public class IdentityEditController extends AbstractController implements Initializable {
     @FXML
     JFXSpinner uploadProgress;
@@ -89,17 +93,17 @@ public class IdentityEditController extends AbstractController implements Initia
         setPrivate(!identity.isUploadEnabled());
     }
 
-    private static final int MIN_SPIN_TIME = 200;
+    private static final int MIN_SPIN_TIME = 500;
 
     @FXML
     void saveIdentity() {
+        long start = currentTimeMillis();
+
         updateIdentityFromView();
         showUploadProgress();
-        long start = System.currentTimeMillis();
-        CheckedRunnable syntheticSleep = () ->
-            Thread.sleep(Math.max(0, MIN_SPIN_TIME - System.currentTimeMillis() - start));
+        CheckedRunnable timer = () -> sleep(max(0, MIN_SPIN_TIME - (currentTimeMillis() - start)));
 
-        new Thread(() -> saveAndUpload(syntheticSleep)).start();
+        new Thread(() -> saveAndUpload(timer)).start();
     }
 
     private void saveAndUpload(CheckedRunnable syntheticSleep) {
@@ -112,7 +116,9 @@ public class IdentityEditController extends AbstractController implements Initia
             }
             try {
                 syntheticSleep.run();
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+                ignored.printStackTrace();
+            }
             Platform.runLater(finishHandler);
         } catch (PersistenceException e) {
             alert("Cannot save Identity!", e);
