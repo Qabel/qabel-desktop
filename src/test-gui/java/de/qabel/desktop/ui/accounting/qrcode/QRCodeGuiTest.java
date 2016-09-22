@@ -31,12 +31,13 @@ public class QRCodeGuiTest extends AbstractGuiTest<QRCodeController> {
         } catch (URISyntaxException e) {
             throw new IllegalStateException("won't happen", e);
         }
-        return new QRCodeView(generateInjection("identity", identity));
+        return new QRCodeView(identity);
     }
 
     @Test
     public void showPopup() throws Exception {
         page.showPopup();
+        assertTrue(controller.isVisible());
         String textQRCode = "QABELCONTACT\n"
             + "alias" + "\n"
             + controller.getDropUrl() + "\n"

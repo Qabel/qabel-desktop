@@ -13,7 +13,7 @@ public class QRCodePage extends AbstractPage {
     }
 
     public void showPopup() {
-        controller.showPopup();
-        waitUntil(controller.qrcode::isVisible);
+        controller.show();
+        waitUntil(controller::isVisible);
     }
 }

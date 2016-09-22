@@ -37,6 +37,8 @@ import de.qabel.desktop.ui.connector.DropConnector;
 import de.qabel.desktop.ui.inject.AfterburnerInjector;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import javafx.beans.property.SimpleListProperty;
+import javafx.scene.Parent;
+import javafx.scene.layout.Pane;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.simple.SimpleLogger;
 import org.apache.logging.log4j.util.PropertiesUtil;
@@ -46,6 +48,7 @@ import org.junit.Before;
 import org.slf4j.Logger;
 
 import java.net.URI;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.function.Function;
 
@@ -74,6 +77,7 @@ public class AbstractControllerTest extends AbstractFxTest {
     protected SyncDaemon syncDaemon;
     protected Account account;
     protected BoxClientStub boxClient = new BoxClientStub();
+    protected Parent layoutWindow = new Pane();
 
     static {
         logger = createLogger();
@@ -100,6 +104,7 @@ public class AbstractControllerTest extends AbstractFxTest {
 
     @Before
     public void setUp() throws Exception {
+        Locale.setDefault(new Locale("te", "ST"));
         clientConfiguration = new RepositoryBasedClientConfig(
             clientConfigRepository,
             accountRepository,
@@ -108,6 +113,7 @@ public class AbstractControllerTest extends AbstractFxTest {
             shareNotificationRepository
         );
         diContainer.put("clientConfiguration", clientConfiguration);
+        diContainer.put("layoutWindow", layoutWindow);
         diContainer.put("dropUrlGenerator", new DropUrlGenerator("http://localhost:5000"));
         identityBuilderFactory = new IdentityBuilderFactory((DropUrlGenerator) diContainer.get("dropUrlGenerator"));
         diContainer.put("identityBuilderFactory", identityBuilderFactory);

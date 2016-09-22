@@ -65,14 +65,6 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
     }
 
     @Test
-    public void testObservableIdentity() throws Exception {
-        IdentityContextMenuView menuView = new IdentityContextMenuView(generateInjection("identity", identity));
-        IdentityContextMenuController menuController = (IdentityContextMenuController) menuView.getPresenter();
-        menuController.setAlias("new alias identity");
-        assertEquals("new alias identity", identity.getAlias());
-    }
-
-    @Test
     public void testInviteMenuStyle() throws Exception {
         clickOn(controller.inviteButton);
         waitUntil(()-> controller.inviteBackground != null);
