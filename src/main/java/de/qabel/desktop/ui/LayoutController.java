@@ -186,7 +186,7 @@ public class LayoutController extends AbstractController implements Initializabl
         Indicator newMessageIndicator = contactsNav.getIndicator();
         newMessageIndicator.textProperty().bind(log.unseenMessageCountProperty().asString());
         newMessageIndicator.visibleProperty().bind(newMessageIndicator.textProperty().isNotEqualTo("0"));
-        
+
         if (clientConfiguration.hasSelectedIdentity()) {
             showContent(aboutView, aboutNav);
         } else {
@@ -339,7 +339,6 @@ public class LayoutController extends AbstractController implements Initializabl
                 setActiveNavItem(naviItem);
                 cleanIconMenuStyle();
             } catch (Exception exception) {
-                exception.printStackTrace();
                 alert(exception.getMessage(), exception);
             }
         });

@@ -14,6 +14,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Function;
 
 
 public class AbstractController {
@@ -43,7 +44,7 @@ public class AbstractController {
         void run() throws Exception;
     }
 
-    CrashReportAlert alert;
+    public CrashReportAlert alert;
 
     protected void alert(String message, Exception e) {
         if (!Platform.isFxApplicationThread()) {
@@ -96,6 +97,10 @@ public class AbstractController {
             collection.add(dropURL);
         }
         return collection;
+    }
+
+    protected Function<String, Object> generateInjection(String name, Object instance) {
+        return requestedName -> requestedName.equals(name) ? instance : null;
     }
 
 }

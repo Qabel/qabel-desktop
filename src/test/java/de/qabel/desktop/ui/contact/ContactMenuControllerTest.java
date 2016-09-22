@@ -1,8 +1,10 @@
 package de.qabel.desktop.ui.contact;
 
 
-import de.qabel.core.config.*;
-import de.qabel.core.crypto.QblECKeyPair;
+import de.qabel.core.config.Contact;
+import de.qabel.core.config.ContactExportImport;
+import de.qabel.core.config.Contacts;
+import de.qabel.core.config.Identity;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.core.repository.exception.EntityNotFoundException;
@@ -24,13 +26,11 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class ContactMenuControllerTest extends AbstractControllerTest {
 
-    ContactMenuController controller;
+    private ContactMenuController controller;
     private static final String TEST_FOLDER = "tmp/test";
     private static final String TEST_JSON = "/TestContacts.json";
     private static final String TEST_ALIAS = "TestAlias";

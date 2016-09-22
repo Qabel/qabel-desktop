@@ -4,6 +4,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.desktop.ui.AbstractController;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -45,21 +46,20 @@ public class QRCodeController extends AbstractController {
     private String textQRCode;
 
     public void buttonClosePopup() {
-        hidePopup();
+        hide();
     }
 
-    public void showPopup() {
-        if (!layoutWindow.getChildren().contains(qrcode)) {
-            layoutWindow.getChildren().add(qrcode);
-        }
-
+    public void show() {
         setIdentity();
-        qrcode.setVisible(true);
+        Platform.runLater(() -> qrcode.setVisible(true));
     }
 
-    private void hidePopup() {
-        qrcode.setVisible(false);
-        layoutWindow.getChildren().remove(qrcode);
+    private void hide() {
+        Platform.runLater(() -> qrcode.setVisible(false));
+    }
+
+    public boolean isVisible() {
+        return qrcode.isVisible();
     }
 
     private void setIdentity() {

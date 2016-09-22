@@ -24,6 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import static de.qabel.desktop.AsyncUtils.assertAsync;
+
 public class AbstractPage {
     protected FXRobot baseFXRobot;
     protected FxRobot robot;
@@ -38,6 +40,8 @@ public class AbstractPage {
         Node node = waitForNode(query);
         Point2D pos = robot.point(node).getPosition();
         baseFXRobot.mouseMove((int)pos.getX(), (int)pos.getY());
+        Point2D screenPos = node.localToScreen(pos.getX(), pos.getY());
+        Point2D scenePos = node.localToScene(pos.getX(), pos.getY());
 
         if (node instanceof Region && !(node instanceof Control)) {
             throw new IllegalArgumentException("cannot fake clicks on random regions");
@@ -52,8 +56,8 @@ public class AbstractPage {
             MouseEvent.MOUSE_CLICKED,
             pos.getX(),
             pos.getY(),
-            pos.getX(),
-            pos.getY(),
+            screenPos.getX(),
+            screenPos.getY(),
             MouseButton.PRIMARY,
             1,
             false,
@@ -63,10 +67,10 @@ public class AbstractPage {
             false,
             false,
             false,
+            true,
             false,
             false,
-            false,
-            new PickResult(node, pos.getX(), pos.getY())
+            new PickResult(node, scenePos.getX(), scenePos.getY())
         );
 
 
@@ -174,18 +178,21 @@ public class AbstractPage {
 
     protected Node waitForNode(String query) {
         Node[] nodes = new Node[1];
-        waitUntil(() -> {
-            Optional<Node> node = robot.lookup(query).tryQuery();
-            boolean present = node.isPresent() && node.get() != null;
-            if (present) {
-                nodes[0] = node.get();
-            }
+        assertAsync(() -> {
             try {
+                Optional<Node> node = robot.lookup(query).tryQuery();
+                boolean present = node.isPresent() && node.get() != null;
+                if (present) {
+                    nodes[0] = node.get();
+                }
+
                 robot.point(nodes[0]).query();
-            } catch (NullPointerException e) {
-                return false;
+                if (!present) {
+                    throw new IllegalStateException("node not present");
+                }
+            } catch (Exception e) {
+                throw new AssertionError(e.getMessage(), e);
             }
-            return present;
         });
         if (nodes[0] == null) {
             throw new IllegalStateException("node should be present but is null: " + query);

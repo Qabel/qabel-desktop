@@ -189,7 +189,7 @@ public class LoginController extends AbstractController implements Initializable
                 config.setAccount(account);
 
             } catch (QblCreateAccountFailException e) {
-                e.printStackTrace();
+                logger.info("failed to create account: " + e.getMessage());
                 map = e.getMap();
                 String text = "";
                 if (map.containsKey("email")) {
@@ -235,9 +235,9 @@ public class LoginController extends AbstractController implements Initializable
             } catch (URISyntaxException | IOException e) {
                 logger.warn(e.getMessage(), e);
                 Platform.runLater(() -> toLoginFailureState(e.getMessage()));
-            } catch (QblInvalidCredentials qblInvalidCredentials) {
-                qblInvalidCredentials.printStackTrace();
-                Platform.runLater(() -> toLoginFailureState(qblInvalidCredentials.getMessage()));
+            } catch (QblInvalidCredentials e) {
+                logger.info("invalid credentials: " + e.getMessage());
+                Platform.runLater(() -> toLoginFailureState(e.getMessage()));
             } catch (Exception e) {
                 Platform.runLater(() -> toLoginFailureState(e.getMessage()));
             }

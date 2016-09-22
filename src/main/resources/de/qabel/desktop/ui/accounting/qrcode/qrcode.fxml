@@ -11,7 +11,7 @@
     <children>
         <HBox alignment="CENTER">
             <children>
-                <VBox alignment="TOP_RIGHT" styleClass="container">
+                <VBox alignment="TOP_RIGHT" styleClass="qr-container">
                     <children>
                         <StackPane>
                             <ImageView fx:id="imageQrCode" pickOnBounds="true" preserveRatio="true"

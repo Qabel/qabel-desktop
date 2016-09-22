@@ -346,6 +346,10 @@
             "locked": "8.40.12",
             "requested": "8.+"
         },
+        "org.hamcrest:java-hamcrest": {
+            "locked": "2.0.0.0",
+            "requested": "2.0.0.0"
+        },
         "org.json:json": {
             "locked": "20160212",
             "requested": "20090211"
@@ -353,6 +357,10 @@
         "org.meanbean:meanbean": {
             "locked": "2.0.3",
             "requested": "2.+"
+        },
+        "org.mockito:mockito-core": {
+            "locked": "2.0.52-beta",
+            "requested": "2.0.52-beta"
         },
         "org.ocpsoft.prettytime:prettytime": {
             "locked": "3.2.7.Final",
@@ -490,6 +498,10 @@
             "locked": "8.40.12",
             "requested": "8.+"
         },
+        "org.hamcrest:java-hamcrest": {
+            "locked": "2.0.0.0",
+            "requested": "2.0.0.0"
+        },
         "org.json:json": {
             "locked": "20160212",
             "requested": "20090211"
@@ -497,6 +509,10 @@
         "org.meanbean:meanbean": {
             "locked": "2.0.3",
             "requested": "2.+"
+        },
+        "org.mockito:mockito-core": {
+            "locked": "2.0.52-beta",
+            "requested": "2.0.52-beta"
         },
         "org.ocpsoft.prettytime:prettytime": {
             "locked": "3.2.7.Final",
@@ -750,6 +766,10 @@
             "locked": "8.40.12",
             "requested": "8.+"
         },
+        "org.hamcrest:java-hamcrest": {
+            "locked": "2.0.0.0",
+            "requested": "2.0.0.0"
+        },
         "org.json:json": {
             "locked": "20160212",
             "requested": "20090211"
@@ -757,6 +777,10 @@
         "org.meanbean:meanbean": {
             "locked": "2.0.3",
             "requested": "2.+"
+        },
+        "org.mockito:mockito-core": {
+            "locked": "2.0.52-beta",
+            "requested": "2.0.52-beta"
         },
         "org.ocpsoft.prettytime:prettytime": {
             "locked": "3.2.7.Final",
@@ -894,6 +918,10 @@
             "locked": "8.40.12",
             "requested": "8.+"
         },
+        "org.hamcrest:java-hamcrest": {
+            "locked": "2.0.0.0",
+            "requested": "2.0.0.0"
+        },
         "org.json:json": {
             "locked": "20160212",
             "requested": "20090211"
@@ -901,6 +929,10 @@
         "org.meanbean:meanbean": {
             "locked": "2.0.3",
             "requested": "2.+"
+        },
+        "org.mockito:mockito-core": {
+            "locked": "2.0.52-beta",
+            "requested": "2.0.52-beta"
         },
         "org.ocpsoft.prettytime:prettytime": {
             "locked": "3.2.7.Final",

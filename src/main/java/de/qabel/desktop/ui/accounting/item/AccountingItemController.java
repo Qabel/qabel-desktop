@@ -5,30 +5,29 @@ import de.qabel.core.config.Identity;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.avatar.AvatarView;
-import de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuView;
 import de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuController;
+import de.qabel.desktop.ui.accounting.identitycontextmenu.IdentityContextMenuView;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import org.controlsfx.control.PopOver;
 
 import javax.inject.Inject;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 public class AccountingItemController extends AbstractController implements Initializable {
 
-    ResourceBundle resourceBundle;
-
     @FXML
     HBox root;
+
+    ResourceBundle resourceBundle;
 
     @FXML
     Label alias;
@@ -42,16 +41,20 @@ public class AccountingItemController extends AbstractController implements Init
     @FXML
     RadioButton selectedRadio;
 
+    @FXML
+    private Button contextMenu;
+
     @Inject
     private Identity identity;
 
     @Inject
     private ClientConfig clientConfiguration;
 
-    public PopOver popOver;
+    @Inject
+    Pane layoutWindow;
 
-    public IdentityContextMenuView identityMenuView;
-    public IdentityContextMenuController identityMenuController;
+    private IdentityContextMenuView contextMenuView;
+    IdentityContextMenuController contextMenuController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -83,22 +86,21 @@ public class AccountingItemController extends AbstractController implements Init
         return identity;
     }
 
-    private void initializeMenu(double coordX, double coordY) {
-        final Map<String, Object> injectionContext = new HashMap<>();
-        injectionContext.put("identity", identity);
-        identityMenuView = new IdentityContextMenuView(injectionContext::get);
-        identityMenuView.getView(view -> {
-            popOver = new PopOver();
-            popOver.setArrowLocation(PopOver.ArrowLocation.TOP_RIGHT);
-            popOver.setContentNode(new VBox(identityMenuController.contextMenu));
-            popOver.show(root, coordX, coordY);
-        });
-        identityMenuController = (IdentityContextMenuController) identityMenuView.getPresenter();
-    }
 
-    public void openMenuQR(MouseEvent event) {
-        initializeMenu(event.getScreenX(), event.getScreenY());
-        Platform.runLater(() -> identityMenuController.openMenu());
+    @FXML
+    public void openMenu(MouseEvent event) {
+        contextMenuView = new IdentityContextMenuView(identity);
+        contextMenuView.getViewAsync(menu -> {
+            PopOver popOver = new PopOver(menu);
+            popOver.setArrowLocation(PopOver.ArrowLocation.TOP_RIGHT);
+            popOver.setAutoHide(true);
+            popOver.setHideOnEscape(true);
+            popOver.setAnimated(false);
+
+            contextMenuController = (IdentityContextMenuController) contextMenuView.getPresenter();
+            contextMenuController.onClose(popOver::hide);
+            popOver.show(contextMenu);
+        });
     }
 
     public void selectIdentity() {

@@ -1,7 +1,6 @@
 package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
-import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import org.junit.Test;
 
@@ -24,7 +23,6 @@ public class AbstractControllerGUITest extends AbstractGuiTest<AlertTestControll
         CrashReportAlert alert = controller.alert;
         try {
             runLaterAndWait(alert.getAlert().getDialogPane()::requestFocus);
-            waitTillTheEnd(alert.getAlert().getDialogPane());
             CrashReportAlertPage page = new CrashReportAlertPage(baseFXRobot, robot, alert);
 
             assertEquals("Error", page.getTitle());
