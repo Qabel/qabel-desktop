@@ -1,10 +1,13 @@
 package de.qabel.desktop.ui.accounting.identity;
 
+import com.jfoenix.controls.JFXSpinner;
 import com.jfoenix.controls.JFXToggleButton;
 import de.qabel.core.config.Identity;
+import de.qabel.core.index.IndexService;
 import de.qabel.core.repository.IdentityRepository;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
+import javafx.application.Platform;
 import javafx.beans.binding.When;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,6 +21,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class IdentityEditController extends AbstractController implements Initializable {
+    @FXML
+    JFXSpinner uploadProgress;
+
     @FXML
     Pane identityEdit;
 
@@ -46,7 +52,10 @@ public class IdentityEditController extends AbstractController implements Initia
     Identity identity;
 
     @Inject
-    protected IdentityRepository identityRepository;
+    IdentityRepository identityRepository;
+
+    @Inject
+    private IndexService indexService;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -67,6 +76,10 @@ public class IdentityEditController extends AbstractController implements Initia
                 .then(resources.getString("privateLabel"))
                 .otherwise(resources.getString("publicLabel"))
         );
+
+        saveIdentity.visibleProperty().bind(uploadProgress.visibleProperty().not());
+        saveIdentity.managedProperty().bind(saveIdentity.visibleProperty());
+        uploadProgress.managedProperty().bind(uploadProgress.visibleProperty());
     }
 
     private void initFromIdentity() {
@@ -76,15 +89,44 @@ public class IdentityEditController extends AbstractController implements Initia
         setPrivate(!identity.isUploadEnabled());
     }
 
+    private static final int MIN_SPIN_TIME = 200;
+
     @FXML
     void saveIdentity() {
         updateIdentityFromView();
+        showUploadProgress();
+        long start = System.currentTimeMillis();
+        CheckedRunnable syntheticSleep = () ->
+            Thread.sleep(Math.max(0, MIN_SPIN_TIME - System.currentTimeMillis() - start));
+
+        new Thread(() -> saveAndUpload(syntheticSleep)).start();
+    }
+
+    private void saveAndUpload(CheckedRunnable syntheticSleep) {
         try {
             identityRepository.save(identity);
-            finishHandler.run();
+            if (identity.isUploadEnabled()) {
+                indexService.updateIdentity(identity, null);
+            } else {
+                indexService.removeIdentity(identity);
+            }
+            try {
+                syntheticSleep.run();
+            } catch (Exception ignored) {}
+            Platform.runLater(finishHandler);
         } catch (PersistenceException e) {
             alert("Cannot save Identity!", e);
+        } finally {
+            Platform.runLater(this::hideUploadProgress);
         }
+    }
+
+    private void hideUploadProgress() {
+        uploadProgress.setVisible(false);
+    }
+
+    private void showUploadProgress() {
+        uploadProgress.setVisible(true);
     }
 
     private void updateIdentityFromView() {

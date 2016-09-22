@@ -9,6 +9,8 @@ import de.qabel.core.config.factory.*;
 import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.http.MainDropConnector;
 import de.qabel.core.http.MainDropServer;
+import de.qabel.core.index.IndexService;
+import de.qabel.core.index.MainIndexService;
 import de.qabel.core.repository.*;
 import de.qabel.core.repository.sqlite.*;
 import de.qabel.core.repository.sqlite.hydrator.AccountHydrator;
@@ -107,6 +109,16 @@ public class NewConfigDesktopServiceFactory extends RuntimeDesktopServiceFactory
     }
 
     private MainChatService chatService;
+
+    @Override
+    public IndexService getIndexService() {
+        return new MainIndexService(
+            getIndexServer(),
+            getContactRepository(),
+            getIdentityRepository()
+        );
+    }
+
     @Override
     public synchronized MainChatService getChatService() {
         if (chatService == null) {
