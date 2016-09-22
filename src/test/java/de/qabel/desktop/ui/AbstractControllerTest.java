@@ -9,6 +9,7 @@ import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.core.config.factory.IdentityBuilderFactory;
+import de.qabel.core.index.IndexService;
 import de.qabel.core.repository.*;
 import de.qabel.core.repository.inmemory.*;
 import de.qabel.desktop.BlockSharingService;
@@ -52,6 +53,8 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.function.Function;
 
+import static org.mockito.Mockito.mock;
+
 public class AbstractControllerTest extends AbstractFxTest {
     protected static Logger logger;
     protected TransactionManager transactionManager = new InMemoryTransactionManager();
@@ -74,6 +77,7 @@ public class AbstractControllerTest extends AbstractFxTest {
     protected DropStateRepository dropStateRepository = new InMemoryDropStateRepository();
     protected ShareNotificationRepository shareNotificationRepository = new InMemoryShareNotificationRepository();
     protected BoxSyncRepository boxSyncRepository = new InMemoryBoxSyncRepository();
+    protected IndexService indexService = mock(IndexService.class);
     protected SyncDaemon syncDaemon;
     protected Account account;
     protected BoxClientStub boxClient = new BoxClientStub();
@@ -112,6 +116,7 @@ public class AbstractControllerTest extends AbstractFxTest {
             dropStateRepository,
             shareNotificationRepository
         );
+        diContainer.put("indexService", indexService);
         diContainer.put("clientConfiguration", clientConfiguration);
         diContainer.put("layoutWindow", layoutWindow);
         diContainer.put("dropUrlGenerator", new DropUrlGenerator("http://localhost:5000"));
