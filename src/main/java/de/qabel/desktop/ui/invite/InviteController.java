@@ -23,14 +23,11 @@ public class InviteController extends AbstractController implements Initializabl
     private ResourceBundle bundle;
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
         bundle = resources;
-        textarea.setText(bundle.getString("inviteText"));
-        textarea.setEditable(false);
     }
 
     @FXML
-    protected void handleInviteButtonAction(ActionEvent event) throws IOException {
+    protected void handleInviteButtonAction() throws IOException {
         new Thread(() -> {
             Desktop desktop;
             if (Desktop.isDesktopSupported()
@@ -45,7 +42,7 @@ public class InviteController extends AbstractController implements Initializabl
                 try {
                     desktop.mail( new URI(mailURIStr));
                 } catch (URISyntaxException | IOException e) {
-                    alert("Failt to open mail client", e);
+                    alert("Failed to open mail client", e);
                 }
             }
         }

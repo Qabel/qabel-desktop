@@ -16,6 +16,8 @@ import org.testfx.api.FxRobot;
 import org.testfx.service.locator.BoundsLocatorException;
 import org.testfx.service.query.PointQuery;
 
+import static de.qabel.desktop.AsyncUtils.assertAsync;
+
 public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
     protected final FxRobot robot = new FxRobot();
     protected T controller;
@@ -48,22 +50,30 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
         controller = (T) presenter;
     }
 
+    @Override
+    public void tearDown() throws Exception {
+        baseFXRobot.waitForIdle();
+        runLaterAndWait(() -> {
+            stage.close();
+            scene.getWindow().hide();
+        });
+        baseFXRobot.waitForIdle();
+    }
+
     protected abstract FXMLView getView();
 
     protected Object launchNode(FXMLView view) {
         Parent node = view.getView();
+        layoutWindow = node;
         runLaterAndWait(() -> scene = new Scene(node, getWidth(), getHeight()));
         Object presenter = view.getPresenter();
         robot.targetWindow(scene);
 
-        runLaterAndWait(() ->
-                {
-
-                    stage.setScene(scene);
-                    stage.show();
-                    robot.targetWindow(stage);
-                }
-        );
+        runLaterAndWait(() -> {
+            stage.setScene(scene);
+            stage.show();
+            robot.targetWindow(stage);
+        });
         baseFXRobot = new BaseFXRobot(scene);
         baseFXRobot.waitForIdle();
         waitTillTheEnd(robot.rootNode(scene));
@@ -72,15 +82,13 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
     }
 
     protected void waitTillTheEnd(Node sceneNode) {
-        waitUntil(() -> {
-            try {
-                int a = (int) Math.round(sceneNode.computeAreaInScreen());
-                int b = Math.round(getWidth() * getHeight());
-                return a >= b;
-            } catch (Exception e) {
-                return false;
+        assertAsync(() -> {
+            int a = (int) Math.round(sceneNode.computeAreaInScreen());
+            int b = Math.round(getWidth() * getHeight());
+            if (a < b) {
+                throw new IllegalStateException("scene area " + a + " < expected size " + b);
             }
-        }, 10000L);
+        });
 
         double x = -1;
         double y = -1;
@@ -100,7 +108,7 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
     }
 
     protected int getWidth() {
-        return 500;
+        return 800;
     }
 
     /**

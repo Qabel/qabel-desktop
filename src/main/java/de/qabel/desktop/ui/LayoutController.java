@@ -178,6 +178,7 @@ public class LayoutController extends AbstractController implements Initializabl
         );
 
         createButtonGraphics();
+        createTooltipButton();
 
         new OfflineView().getViewAsync(window.getChildren()::add);
 
@@ -185,7 +186,7 @@ public class LayoutController extends AbstractController implements Initializabl
         Indicator newMessageIndicator = contactsNav.getIndicator();
         newMessageIndicator.textProperty().bind(log.unseenMessageCountProperty().asString());
         newMessageIndicator.visibleProperty().bind(newMessageIndicator.textProperty().isNotEqualTo("0"));
-        
+
         if (clientConfiguration.hasSelectedIdentity()) {
             showContent(aboutView, aboutNav);
         } else {
@@ -245,44 +246,17 @@ public class LayoutController extends AbstractController implements Initializabl
 
 
     private void createButtonGraphics() {
-        Image heartGraphic = new Image(getClass().getResourceAsStream("/img/heart_white.png"));
-        inviteButton.setImage(heartGraphic);
-        inviteButton.getStyleClass().add("inline-button");
-        inviteButton.setOnMouseClicked(e -> {
-            scrollContent.getChildren().setAll(new InviteView().getView());
-            setActivityMenu(inviteBackground, inviteButton);
-        });
-        Tooltip inviteTooltip = new Tooltip(resourceBundle.getString("layoutIconInviteTooltip"));
-        Tooltip.install(inviteButton, inviteTooltip);
-
-        Image exclamationGraphic = new Image(getClass().getResourceAsStream("/img/exclamation_white.png"));
-        feedbackButton.setImage(exclamationGraphic);
-        feedbackButton.getStyleClass().add("inline-button");
-        feedbackButton.setOnMouseClicked(e -> {
-            scrollContent.getChildren().setAll(new FeedbackView().getView());
-            setActivityMenu(feedbackBackground, feedbackButton);
-        });
-        Tooltip feebackTooltip = new Tooltip(resourceBundle.getString("layoutIconFeebackTooltip"));
-        Tooltip.install(feedbackButton, feebackTooltip);
-
-        Image faqGraphics = new Image(getClass().getResourceAsStream("/img/faq_white.png"));
-        faqButton.setImage(faqGraphics);
-        faqButton.getStyleClass().add("inline-button");
-        faqButton.setOnMouseClicked(e -> {
-            setActivityMenu(faqBackground, faqButton);
-            executor.submit(() -> {
-                try {
-                    Desktop.getDesktop().browse(new URI(resourceBundle.getString("faqUrl")));
-                } catch (Exception e1) {
-                    alert("failed to open FAQ: " + e1.getMessage(), e1);
-                }
-            });
-        });
-        Tooltip faq = new Tooltip(resourceBundle.getString("layoutIconFaqTooltip"));
-        Tooltip.install(faqButton, faq);
+        inviteButton.setImage(new Image(getClass().getResourceAsStream("/img/heart_white.png")));
+        feedbackButton.setImage(new Image(getClass().getResourceAsStream("/img/exclamation_white.png")));
+        faqButton.setImage(new Image(getClass().getResourceAsStream("/img/faq_white.png")));
 
     }
 
+    private void createTooltipButton() {
+        Tooltip.install(inviteButton, new Tooltip(resourceBundle.getString("layoutIconInviteTooltip")));
+        Tooltip.install(faqButton, new Tooltip(resourceBundle.getString("layoutIconFaqTooltip")));
+        Tooltip.install(feedbackButton, new Tooltip(resourceBundle.getString("layoutIconFeebackTooltip")));
+    }
 
     private void setActivityMenu(Label label, ImageView icon) {
         cleanIconMenuStyle();
@@ -365,7 +339,6 @@ public class LayoutController extends AbstractController implements Initializabl
                 setActiveNavItem(naviItem);
                 cleanIconMenuStyle();
             } catch (Exception exception) {
-                exception.printStackTrace();
                 alert(exception.getMessage(), exception);
             }
         });
@@ -387,5 +360,26 @@ public class LayoutController extends AbstractController implements Initializabl
 
     public Pane getWindow() {
         return window;
+    }
+
+    public void openFaq() {
+        setActivityMenu(faqBackground, faqButton);
+        executor.submit(() -> {
+            try {
+                Desktop.getDesktop().browse(new URI(resourceBundle.getString("faqUrl")));
+            } catch (Exception e1) {
+                alert("failed to open FAQ: " + e1.getMessage(), e1);
+            }
+        });
+    }
+
+    public void openInvite() {
+        setActivityMenu(inviteBackground, inviteButton);
+        Platform.runLater(() -> scrollContent.getChildren().setAll(new InviteView().getView()));
+    }
+
+    public void openFeedback() {
+        setActivityMenu(feedbackBackground, feedbackButton);
+        Platform.runLater(() -> scrollContent.getChildren().setAll(new FeedbackView().getView()));
     }
 }

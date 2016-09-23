@@ -143,7 +143,7 @@ public class Kernel {
     AtomicReference<Alert> alertRef = new AtomicReference<>();
     private void checkVersion() {
         try {
-            if (currentVersion.equals("dev")) {
+            if (currentVersion.equals("dev") || currentVersion.equals("0.0.0")) {
                 return;
             }
 

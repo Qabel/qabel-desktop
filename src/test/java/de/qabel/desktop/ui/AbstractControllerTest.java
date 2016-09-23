@@ -9,6 +9,7 @@ import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.core.config.factory.IdentityBuilderFactory;
+import de.qabel.core.index.IndexService;
 import de.qabel.core.repository.*;
 import de.qabel.core.repository.inmemory.*;
 import de.qabel.desktop.BlockSharingService;
@@ -37,6 +38,8 @@ import de.qabel.desktop.ui.connector.DropConnector;
 import de.qabel.desktop.ui.inject.AfterburnerInjector;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
 import javafx.beans.property.SimpleListProperty;
+import javafx.scene.Parent;
+import javafx.scene.layout.Pane;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.simple.SimpleLogger;
 import org.apache.logging.log4j.util.PropertiesUtil;
@@ -46,8 +49,11 @@ import org.junit.Before;
 import org.slf4j.Logger;
 
 import java.net.URI;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.function.Function;
+
+import static org.mockito.Mockito.mock;
 
 public class AbstractControllerTest extends AbstractFxTest {
     protected static Logger logger;
@@ -71,9 +77,11 @@ public class AbstractControllerTest extends AbstractFxTest {
     protected DropStateRepository dropStateRepository = new InMemoryDropStateRepository();
     protected ShareNotificationRepository shareNotificationRepository = new InMemoryShareNotificationRepository();
     protected BoxSyncRepository boxSyncRepository = new InMemoryBoxSyncRepository();
+    protected IndexService indexService = mock(IndexService.class);
     protected SyncDaemon syncDaemon;
     protected Account account;
     protected BoxClientStub boxClient = new BoxClientStub();
+    protected Parent layoutWindow = new Pane();
 
     static {
         logger = createLogger();
@@ -100,6 +108,7 @@ public class AbstractControllerTest extends AbstractFxTest {
 
     @Before
     public void setUp() throws Exception {
+        Locale.setDefault(new Locale("te", "ST"));
         clientConfiguration = new RepositoryBasedClientConfig(
             clientConfigRepository,
             accountRepository,
@@ -107,7 +116,9 @@ public class AbstractControllerTest extends AbstractFxTest {
             dropStateRepository,
             shareNotificationRepository
         );
+        diContainer.put("indexService", indexService);
         diContainer.put("clientConfiguration", clientConfiguration);
+        diContainer.put("layoutWindow", layoutWindow);
         diContainer.put("dropUrlGenerator", new DropUrlGenerator("http://localhost:5000"));
         identityBuilderFactory = new IdentityBuilderFactory((DropUrlGenerator) diContainer.get("dropUrlGenerator"));
         diContainer.put("identityBuilderFactory", identityBuilderFactory);

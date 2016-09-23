@@ -24,11 +24,14 @@ public class LaunchConfigurationReader {
             String accountingUrl = get("accounting.url");
             String blockUrl = get("block.url");
             String crashReportUrl = get("crashReport.url");
+            String indexUrl = get("index.url");
             return new LaunchConfig(
                 new URL(dropUrl),
                 new URL(accountingUrl),
                 new URL(blockUrl),
-                new URL(crashReportUrl));
+                new URL(crashReportUrl),
+                new URL(indexUrl)
+            );
         } catch (MalformedURLException e) {
             throw new IllegalStateException("invalid configuration: " + e.getMessage(), e);
         } catch (IOException e) {

@@ -5,6 +5,7 @@ import de.qabel.core.accounting.BoxClient;
 import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.core.config.factory.IdentityBuilderFactory;
 import de.qabel.chat.service.ChatService;
+import de.qabel.core.index.IndexService;
 import de.qabel.core.repository.AccountRepository;
 import de.qabel.core.repository.ContactRepository;
 import de.qabel.core.repository.IdentityRepository;
@@ -33,6 +34,15 @@ import java.net.URI;
 import java.util.ResourceBundle;
 
 public interface DesktopServices {
+    @Create(name="indexService")
+    IndexService getIndexService();
+
+    @Create(name="chatService")
+    ChatService getChatService();
+
+    @Create(name = "sharingService")
+    SharingService getSharingService();
+
     @Create(name = "loadManager")
     @Create(name = "transferManager")
     TransferManager getTransferManager();
@@ -64,9 +74,6 @@ public interface DesktopServices {
     @Create(name="chatDropMessageRepository")
     ChatDropMessageRepository getChatDropMessageRepository();
 
-    @Create(name="chatService")
-    ChatService getChatService();
-
     @Create(name = "clientConfiguration")
     @Create(name = "config")
     ClientConfig getClientConfiguration();
@@ -82,9 +89,6 @@ public interface DesktopServices {
 
     @Create(name = "messageRendererFactory")
     FXMessageRendererFactory getDropMessageRendererFactory();
-
-    @Create(name = "sharingService")
-    SharingService getSharingService();
 
     @Create(name = "boxVolumeFactory")
     BoxVolumeFactory getBoxVolumeFactory() throws IOException;
@@ -128,4 +132,5 @@ public interface DesktopServices {
 
     @Create(name="currentVersion")
     String getCurrentVersion();
+
 }

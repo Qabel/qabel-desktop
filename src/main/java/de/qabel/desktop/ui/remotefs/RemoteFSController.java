@@ -41,6 +41,8 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -63,6 +65,7 @@ import static javafx.scene.Cursor.HAND;
 
 
 public class RemoteFSController extends AbstractController implements Initializable {
+    private static final Logger logger = LoggerFactory.getLogger(RemoteFSController.class);
     private final ExecutorService searchExecutor = Executors.newSingleThreadExecutor();
     final String ROOT_FOLDER_NAME = "/";
     public static final int OPTION_EDGE_SIZE = 16;
@@ -226,7 +229,7 @@ public class RemoteFSController extends AbstractController implements Initializa
                             try {
                                 ((CachedBoxNavigation)nav).refresh();
                             } catch (QblStorageException e) {
-                                e.printStackTrace();
+                                logger.error("failed to refresh navi: " + e.getMessage(), e);
                             }
                             shareRoot.refresh();
                             Thread.sleep(TimeUnit.MINUTES.toMillis(5));

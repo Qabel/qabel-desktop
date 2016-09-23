@@ -101,7 +101,7 @@
                                         </ImageView>
                                         <StackPane>
                                             <Label fx:id="faqBackground" styleClass="menu-icons" visible="false"/>
-                                            <ImageView fx:id="faqButton">
+                                            <ImageView fx:id="faqButton" styleClass="inline-button" onMouseClicked="#openFaq">
                                                 <HBox.margin>
                                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                                                 </HBox.margin>
@@ -109,7 +109,7 @@
                                         </StackPane>
                                         <StackPane>
                                             <Label fx:id="inviteBackground" styleClass="menu-icons" visible="false"/>
-                                            <ImageView fx:id="inviteButton">
+                                            <ImageView fx:id="inviteButton" styleClass="inline-button" onMouseClicked="#openInvite">
                                                 <HBox.margin>
                                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                                                 </HBox.margin>
@@ -117,7 +117,7 @@
                                         </StackPane>
                                         <StackPane>
                                             <Label fx:id="feedbackBackground" styleClass="menu-icons" visible="false"/>
-                                            <ImageView fx:id="feedbackButton">
+                                            <ImageView fx:id="feedbackButton" styleClass="inline-button" onMouseClicked="#openFeedback">
                                                 <HBox.margin>
                                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                                                 </HBox.margin>
@@ -149,5 +149,6 @@
                 <Image url="@/beta-badge.png"/>
             </image>
         </ImageView>
+        <Pane fx:id="generalPopup" visible="false"></Pane>
     </children>
 </StackPane>

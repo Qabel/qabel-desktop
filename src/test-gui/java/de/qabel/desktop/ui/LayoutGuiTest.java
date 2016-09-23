@@ -29,11 +29,6 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
         return new LayoutView();
     }
 
-    private LayoutController createController() {
-        LayoutView view = new LayoutView();
-        return (LayoutController) view.getPresenter();
-    }
-
     @Test
     public void showAboutViewOnStartIfAnIdentityExists() {
         waitUntil(() -> controller.aboutView != null);
@@ -44,9 +39,7 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
     @Test
     public void hideQuotaBarWhenGetQuotaFails() {
         ((BoxClientStub) controller.boxClient).ioException = new IOException("LayoutGuiTest");
-        runLaterAndWait(() -> {
-            controller.fillQuotaInformation(controller.getQuotaState());
-        });
+        runLaterAndWait(() -> controller.fillQuotaInformation(controller.getQuotaState()));
         assertFalse(controller.quotaBlock.isVisible());
         assertFalse(controller.quotaDescription.isVisible());
     }
@@ -54,9 +47,7 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
     @Test
     public void showsQuotaBarWith0MinWidth() throws IOException, QblInvalidCredentials {
         quotaState = new QuotaState(100, 100);
-        runLaterAndWait(() -> {
-            controller.fillQuotaInformation(quotaState);
-        });
+        runLaterAndWait(() -> controller.fillQuotaInformation(quotaState));
         assertEquals(0, (int) controller.quotaBar.getMinWidth());
     }
 
@@ -74,17 +65,9 @@ public class LayoutGuiTest extends AbstractGuiTest<LayoutController> {
     }
 
     @Test
-    public void testObservableIdentity() throws Exception {
-        IdentityContextMenuView menuView = new IdentityContextMenuView(generateInjection("identity", identity));
-        IdentityContextMenuController menuController = (IdentityContextMenuController) menuView.getPresenter();
-        menuController.setAlias("new alias identity");
-        assertEquals("new alias identity", identity.getAlias());
-    }
-
-    @Test
     public void testInviteMenuStyle() throws Exception {
         clickOn(controller.inviteButton);
-        waitUntil(controller.inviteBackground::isVisible);
+        waitUntil(()-> controller.inviteBackground != null);
         assertTrue(controller.inviteBackground.isVisible());
         assertTrue(controller.inviteButton.getStyleClass().contains("darkgrey"));
     }

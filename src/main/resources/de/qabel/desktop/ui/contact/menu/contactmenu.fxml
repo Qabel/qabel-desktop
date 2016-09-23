@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.shape.Line?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane fx:id="menuContact" xmlns="http://javafx.com/javafx/8" visible="false" styleClass="popup-menu"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.contact.menu.ContactMenuController">
+    <children>
+        <VBox fx:id="vboxMenu" styleClass="vbox-menu">
+            <Button fx:id="importFromFile" text="%importContactFromFile" styleClass="button-menu"
+                    onAction="#handleImportContactsButtonAction"/>
+            <Button fx:id="importFromQR" wrapText="true" text="%importContactFromQR" disable="true"
+                    styleClass="button-menu"/>
+            <Button fx:id="searchButton" wrapText="true" text="%searchQabelRegister" disable="true"
+                    styleClass="button-menu"/>
+            <Button fx:id="enterContact" wrapText="true" text="%enterContactManually" disable="true"
+                    styleClass="button-menu"/>
+            <Line endX="00.0" startX="-250.0"/>
+            <Button fx:id="exportContactsToFile" text="%exportContactsToFile"
+                    styleClass="button-menu" onAction="#handleExportContactsButtonAction"/>
+            <Button fx:id="exportContactsToQR" wrapText="true" text="%exportContactsToQR" disable="true"
+                    styleClass="button-menu"/>
+        </VBox>
+    </children>
+</AnchorPane>

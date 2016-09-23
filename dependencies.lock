@@ -8,16 +8,16 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.24.1",
-            "requested": "0.24.1"
+            "locked": "0.24.2",
+            "requested": "0.24.2"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "0.24.1",
-            "requested": "0.24.1"
+            "locked": "0.24.2",
+            "requested": "0.24.2"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.24.1",
-            "requested": "0.24.1"
+            "locked": "0.24.2",
+            "requested": "0.24.2"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -124,16 +124,16 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.24.1",
-            "requested": "0.24.1"
+            "locked": "0.24.2",
+            "requested": "0.24.2"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "0.24.1",
-            "requested": "0.24.1"
+            "locked": "0.24.2",
+            "requested": "0.24.2"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.24.1",
-            "requested": "0.24.1"
+            "locked": "0.24.2",
+            "requested": "0.24.2"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -240,16 +240,16 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.24.1",
-            "requested": "0.24.1"
+            "locked": "0.24.2",
+            "requested": "0.24.2"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "0.24.1",
-            "requested": "0.24.1"
+            "locked": "0.24.2",
+            "requested": "0.24.2"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.24.1",
-            "requested": "0.24.1"
+            "locked": "0.24.2",
+            "requested": "0.24.2"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -346,6 +346,10 @@
             "locked": "8.40.12",
             "requested": "8.+"
         },
+        "org.hamcrest:java-hamcrest": {
+            "locked": "2.0.0.0",
+            "requested": "2.0.0.0"
+        },
         "org.json:json": {
             "locked": "20160212",
             "requested": "20090211"
@@ -353,6 +357,10 @@
         "org.meanbean:meanbean": {
             "locked": "2.0.3",
             "requested": "2.+"
+        },
+        "org.mockito:mockito-core": {
+            "locked": "2.0.52-beta",
+            "requested": "2.0.52-beta"
         },
         "org.ocpsoft.prettytime:prettytime": {
             "locked": "3.2.7.Final",
@@ -384,16 +392,16 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.24.1",
-            "requested": "0.24.1"
+            "locked": "0.24.2",
+            "requested": "0.24.2"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "0.24.1",
-            "requested": "0.24.1"
+            "locked": "0.24.2",
+            "requested": "0.24.2"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.24.1",
-            "requested": "0.24.1"
+            "locked": "0.24.2",
+            "requested": "0.24.2"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -490,6 +498,10 @@
             "locked": "8.40.12",
             "requested": "8.+"
         },
+        "org.hamcrest:java-hamcrest": {
+            "locked": "2.0.0.0",
+            "requested": "2.0.0.0"
+        },
         "org.json:json": {
             "locked": "20160212",
             "requested": "20090211"
@@ -497,6 +509,10 @@
         "org.meanbean:meanbean": {
             "locked": "2.0.3",
             "requested": "2.+"
+        },
+        "org.mockito:mockito-core": {
+            "locked": "2.0.52-beta",
+            "requested": "2.0.52-beta"
         },
         "org.ocpsoft.prettytime:prettytime": {
             "locked": "3.2.7.Final",
@@ -528,16 +544,16 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.24.1",
-            "requested": "0.24.1"
+            "locked": "0.24.2",
+            "requested": "0.24.2"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "0.24.1",
-            "requested": "0.24.1"
+            "locked": "0.24.2",
+            "requested": "0.24.2"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.24.1",
-            "requested": "0.24.1"
+            "locked": "0.24.2",
+            "requested": "0.24.2"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -644,16 +660,16 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.24.1",
-            "requested": "0.24.1"
+            "locked": "0.24.2",
+            "requested": "0.24.2"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "0.24.1",
-            "requested": "0.24.1"
+            "locked": "0.24.2",
+            "requested": "0.24.2"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.24.1",
-            "requested": "0.24.1"
+            "locked": "0.24.2",
+            "requested": "0.24.2"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -750,6 +766,10 @@
             "locked": "8.40.12",
             "requested": "8.+"
         },
+        "org.hamcrest:java-hamcrest": {
+            "locked": "2.0.0.0",
+            "requested": "2.0.0.0"
+        },
         "org.json:json": {
             "locked": "20160212",
             "requested": "20090211"
@@ -757,6 +777,10 @@
         "org.meanbean:meanbean": {
             "locked": "2.0.3",
             "requested": "2.+"
+        },
+        "org.mockito:mockito-core": {
+            "locked": "2.0.52-beta",
+            "requested": "2.0.52-beta"
         },
         "org.ocpsoft.prettytime:prettytime": {
             "locked": "3.2.7.Final",
@@ -788,16 +812,16 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.24.1",
-            "requested": "0.24.1"
+            "locked": "0.24.2",
+            "requested": "0.24.2"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "0.24.1",
-            "requested": "0.24.1"
+            "locked": "0.24.2",
+            "requested": "0.24.2"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.24.1",
-            "requested": "0.24.1"
+            "locked": "0.24.2",
+            "requested": "0.24.2"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -894,6 +918,10 @@
             "locked": "8.40.12",
             "requested": "8.+"
         },
+        "org.hamcrest:java-hamcrest": {
+            "locked": "2.0.0.0",
+            "requested": "2.0.0.0"
+        },
         "org.json:json": {
             "locked": "20160212",
             "requested": "20090211"
@@ -901,6 +929,10 @@
         "org.meanbean:meanbean": {
             "locked": "2.0.3",
             "requested": "2.+"
+        },
+        "org.mockito:mockito-core": {
+            "locked": "2.0.52-beta",
+            "requested": "2.0.52-beta"
         },
         "org.ocpsoft.prettytime:prettytime": {
             "locked": "3.2.7.Final",

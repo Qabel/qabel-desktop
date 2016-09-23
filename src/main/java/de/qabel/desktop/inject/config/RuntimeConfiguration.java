@@ -12,6 +12,7 @@ public interface RuntimeConfiguration {
     URI getAccountingUri();
     URI getBlockUri();
     URI getCrashReportUri();
+    URI getIndexUri();
     Stage getPrimaryStage();
     Pane getWindow();
     FilesAbout getAboutFilesContent();

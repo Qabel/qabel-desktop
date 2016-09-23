@@ -8,6 +8,9 @@ import de.qabel.core.config.AccountingServer;
 import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.core.config.factory.IdentityBuilderFactory;
 import de.qabel.core.http.DropHTTP;
+import de.qabel.core.index.server.IndexHTTP;
+import de.qabel.core.index.server.IndexHTTPLocation;
+import de.qabel.core.index.server.IndexServer;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.BlockSharingService;
 import de.qabel.desktop.SharingService;
@@ -44,7 +47,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.UUID;
 
 public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServiceFactory implements DesktopServices {
     protected RuntimeConfiguration runtimeConfiguration;
@@ -57,9 +59,20 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     private SharingService sharingService;
     private BoxVolumeFactory boxVolumeFactory;
     private BoxClient boxClient;
+    private IndexServer indexServer;
 
     public RuntimeDesktopServiceFactory(RuntimeConfiguration runtimeConfiguration) {
         this.runtimeConfiguration = runtimeConfiguration;
+    }
+
+    protected IndexServer getIndexServer() {
+        if (indexServer == null) {
+            indexServer = new IndexHTTP(
+                new IndexHTTPLocation(runtimeConfiguration.getIndexUri()),
+                HttpClients.createDefault()
+            );
+        }
+        return indexServer;
     }
 
     @Override
@@ -84,11 +97,6 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
             dropUrlGenerator = new DropUrlGenerator(runtimeConfiguration.getDropUri());
         }
         return dropUrlGenerator;
-    }
-
-    @Deprecated
-    protected String generateNewDeviceId() {
-        return UUID.randomUUID().toString();
     }
 
     @Override

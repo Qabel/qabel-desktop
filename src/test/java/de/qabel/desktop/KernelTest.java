@@ -26,7 +26,7 @@ public class KernelTest extends AbstractKernelTest {
 
     @Test
     public void testVersionCheckExitsOnRequiredCancel() throws Exception {
-        kernel = new TestKernel("0.0.0");
+        kernel = new TestKernel("0.0.1");
         kernel.setChecker(FakeUpdateChecker.builder().current("1.0.0").minimum("0.1.0").url("http://download").build());
 
         kernel.initialize();
@@ -39,7 +39,7 @@ public class KernelTest extends AbstractKernelTest {
 
     @Test
     public void testVersionCheckExitsOnUpdate() throws Exception {
-        kernel = new TestKernel("0.0.0");
+        kernel = new TestKernel("0.0.1");
         kernel.setChecker(FakeUpdateChecker.builder().current("1.0.0").minimum("0.1.0").url("http://download").build());
 
         AtomicReference<String> document = new AtomicReference<>();
