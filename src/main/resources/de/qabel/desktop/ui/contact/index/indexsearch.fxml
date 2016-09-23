@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXSpinner?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.layout.*?>
+<VBox
+    fx:id="indexSearchRoot"
+    minHeight="100"
+    minWidth="250"
+    prefWidth="500"
+    style="-fx-background-color: red"
+    xmlns="http://javafx.com/javafx/8"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="de.qabel.desktop.ui.contact.index.IndexSearchController">
+        <JFXTextField fx:id="search"
+                      promptText="%indexSearchPrompt"
+                      BorderPane.alignment="CENTER"/>
+        <HBox fillHeight="true"
+              minHeight="100"
+              alignment="CENTER"
+              fx:id="loader">
+            <JFXSpinner/>
+        </HBox>
+        <VBox fx:id="resultContainer"/>
+</VBox>

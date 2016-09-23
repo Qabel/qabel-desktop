@@ -1,6 +1,5 @@
 package de.qabel.desktop.ui.contact;
 
-import com.airhacks.afterburner.views.QabelFXMLView;
 import com.google.gson.GsonBuilder;
 import de.qabel.core.config.*;
 import de.qabel.core.repository.ContactRepository;
@@ -14,7 +13,6 @@ import de.qabel.desktop.ui.DetailsView;
 import de.qabel.desktop.ui.accounting.item.SelectionEvent;
 import de.qabel.desktop.ui.actionlog.ActionlogController;
 import de.qabel.desktop.ui.actionlog.ActionlogView;
-import de.qabel.desktop.ui.contact.context.AssignContactView;
 import de.qabel.desktop.ui.contact.item.BlankItemView;
 import de.qabel.desktop.ui.contact.item.ContactItemController;
 import de.qabel.desktop.ui.contact.item.ContactItemView;
@@ -33,12 +31,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import org.controlsfx.control.PopOver;
 
 import javax.inject.Inject;
 import java.net.URL;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 public class ContactController extends AbstractController implements Initializable, EntityObserver {
@@ -223,9 +223,7 @@ public class ContactController extends AbstractController implements Initializab
     }
 
     void createContactItem(Contact co) {
-        final Map<String, Object> injectionContext = new HashMap<>();
-        injectionContext.put("contact", co);
-        ContactItemView itemView = new ContactItemView(injectionContext::get);
+        ContactItemView itemView = new ContactItemView(co);
         ContactItemController controller = (ContactItemController) itemView.getPresenter();
         controller.addSelectionListener(selectionEvent -> {
             unselectAll();
@@ -248,20 +246,11 @@ public class ContactController extends AbstractController implements Initializab
     private void showAssignContactPopover(SelectionEvent selectionEvent) {
         Contact contact = selectionEvent.getContact();
         ContactItemController controller = selectionEvent.getController();
-        new AssignContactView(contact).getViewAsync(view -> {
-            if (assignContactPopover != null) {
-                assignContactPopover.hide();
-            }
-            assignContactPopover = new PopOver(view);
-            assignContactPopover.getStyleClass().add("assignContactPopover");
-
-            assignContactPopover.setTitle(contact.getAlias());
-            assignContactPopover.setHeaderAlwaysVisible(true);
-            assignContactPopover.getRoot().getStyleClass().add("assignContactPopover");
-            assignContactPopover.getRoot().getStylesheets().add(QabelFXMLView.getGlobalStyleCheat());
-
-            assignContactPopover.show(controller.getContactRootItem(), selectionEvent.getScreenX(), selectionEvent.getScreenY());
-        });
+        if (assignContactPopover != null) {
+            assignContactPopover.hide();
+        }
+        assignContactPopover = new AssignContactPopover(contact);
+        assignContactPopover.show(controller.getContactRootItem(), selectionEvent.getScreenX(), selectionEvent.getScreenY());
     }
 
     private void unselectAll() {
@@ -271,9 +260,7 @@ public class ContactController extends AbstractController implements Initializab
 
     private String createBlankItem(Contact co) {
         String old = co.getAlias().substring(0, 1).toUpperCase();
-        final Map<String, Object> injectionContext = new HashMap<>();
-        injectionContext.put("contact", co);
-        BlankItemView itemView = new BlankItemView(injectionContext::get);
+        BlankItemView itemView = new BlankItemView(co);
         contactList.getChildren().add(itemView.getView());
         itemViews.add(itemView);
         return old;
@@ -304,7 +291,6 @@ public class ContactController extends AbstractController implements Initializab
 
     public void openContactMenu(MouseEvent event) {
         initializeMenu(event.getScreenX(), event.getScreenY());
-        Platform.runLater(() -> contactMenuController.open());
     }
 
     private void initializeMenu(double coordX, double coordY) {
@@ -312,11 +298,13 @@ public class ContactController extends AbstractController implements Initializab
         contactMenuView.getView(view -> {
             popOver = new PopOver();
             popOver.setArrowLocation(PopOver.ArrowLocation.TOP_RIGHT);
-            popOver.setContentNode(new VBox(contactMenuController.menuContact));
+            popOver.setContentNode(view);
             popOver.show(contactList, coordX, coordY);
+
+            contactMenuController = contactMenuView.getPresenter();
+            contactMenuController.onClose(popOver::hide);
         });
 
-        contactMenuController = (ContactMenuController) contactMenuView.getPresenter();
     }
 }
 

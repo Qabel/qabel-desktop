@@ -133,4 +133,8 @@ public interface DesktopServices {
     @Create(name="currentVersion")
     String getCurrentVersion();
 
+    @Create(name="debounceTimeout")
+    default int getDebounceTimeout() {
+        return 500;
+    }
 }

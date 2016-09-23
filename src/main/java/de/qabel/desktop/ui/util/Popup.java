@@ -92,14 +92,16 @@ public class Popup {
         container.setStyle(styles);
         content.setStyle(styles);
 
-
+        ((Region)content).autosize();
         if (content instanceof Region) {
             ((Region) content).setPadding(new Insets(15, 30, 15, 15));
             if (height == null) {
                 System.out.println("autoconfig");
+                container.prefHeightProperty().bind(((Region) content).prefHeightProperty());
                 container.maxHeightProperty().bind(((Region) content).prefHeightProperty());
             }
             if (width == null) {
+                container.prefWidthProperty().bind(((Region) content).prefWidthProperty());
                 container.maxWidthProperty().bind(((Region) content).prefWidthProperty());
             }
         }
@@ -113,5 +115,6 @@ public class Popup {
     public void show() {
         parent.getChildren().add(root);
         root.setVisible(true);
+        root.toFront();
     }
 }

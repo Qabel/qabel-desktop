@@ -9,21 +9,24 @@ import de.qabel.core.repository.IdentityRepository;
 import de.qabel.core.repository.exception.EntityNotFoundException;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.util.Icons;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.*;
 
+import static de.qabel.desktop.ui.util.Icons.KEY_INVERSE;
+
 public class AssignContactController extends AbstractController implements Initializable {
     @Inject
     private Contact contact;
-
     @Inject
     private IdentityRepository identityRepository;
 
@@ -32,6 +35,10 @@ public class AssignContactController extends AbstractController implements Initi
 
     @FXML
     GridPane container;
+    @FXML
+    public ImageView keyIcon;
+    @FXML
+    public Label keyLabel;
 
     private List<Identity> shownIdentities = new LinkedList<>();
     private Set<Identity> assignedIdentities = new HashSet<>();
@@ -42,6 +49,9 @@ public class AssignContactController extends AbstractController implements Initi
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         container.getChildren().clear();
+
+        keyIcon.setImage(Icons.getImage(KEY_INVERSE));
+        keyLabel.setText(formatKey(contact.getKeyIdentifier()));
 
         try {
             try {
@@ -61,6 +71,18 @@ public class AssignContactController extends AbstractController implements Initi
             alert(e);
         }
         addIgnoreButton(resources);
+    }
+
+    String formatKey(String keyIdentifier) {
+        char[] chars = keyIdentifier.toCharArray();
+        StringBuilder formatted = new StringBuilder();
+        for (int i = 0; i < chars.length; i++) {
+            if (i > 0 && i%4 == 0) {
+                formatted.append(" ");
+            }
+            formatted.append(chars[i]);
+        }
+        return formatted.toString();
     }
 
     private void addIgnoreButton(ResourceBundle resources) {

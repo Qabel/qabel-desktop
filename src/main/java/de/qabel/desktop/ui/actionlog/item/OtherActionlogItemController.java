@@ -55,7 +55,7 @@ public class OtherActionlogItemController extends AbstractController implements 
     }
 
     private void updateAvatar() {
-        new AvatarView(e -> contact.getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
+        new AvatarView(contact.getAlias()).place(avatarContainer);
     }
 
 

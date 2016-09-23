@@ -1,6 +1,5 @@
 package de.qabel.desktop.ui.sync.item;
 
-import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.daemon.management.Transaction;
@@ -106,9 +105,7 @@ public class SyncItemController extends AbstractController implements Initializa
     }
 
     void createAvatar(String alias, Pane container) {
-        AvatarView avatarView = new AvatarView(e -> alias);
-        avatarView.getView(container.getChildren()::setAll);
-        avatarController = (AvatarController) avatarView.getPresenter();
+        avatarController = new AvatarView(alias).placeSync(container).getPresenter();
     }
 
     public void initModel(Syncer syncer) {
