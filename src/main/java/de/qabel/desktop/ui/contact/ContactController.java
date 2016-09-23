@@ -298,6 +298,7 @@ public class ContactController extends AbstractController implements Initializab
         contactMenuView.getView(view -> {
             popOver = new PopOver();
             popOver.setArrowLocation(PopOver.ArrowLocation.TOP_RIGHT);
+            popOver.setAnimated(false);
             popOver.setContentNode(view);
             popOver.show(contactList, coordX, coordY);
 
