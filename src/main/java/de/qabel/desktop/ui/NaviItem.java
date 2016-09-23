@@ -1,6 +1,5 @@
 package de.qabel.desktop.ui;
 
-import com.airhacks.afterburner.views.FXMLView;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
@@ -15,13 +14,14 @@ public class NaviItem extends HBox {
     public static final String ACTIVE_CLASS = "active";
     public Button button;
     private StringProperty labelProperty;
-    private ImageView imageView;
     private Indicator indicator = new Indicator();
 
     public NaviItem(String label, Image image) {
+        this(label, new ImageView(image));
+    }
+
+    public NaviItem(String label, ImageView imageView) {
         labelProperty = new SimpleStringProperty(label);
-        imageView = new ImageView();
-        imageView.setImage(image);
         button = new Button();
         button.setGraphic(imageView);
         button.textProperty().bindBidirectional(labelProperty);

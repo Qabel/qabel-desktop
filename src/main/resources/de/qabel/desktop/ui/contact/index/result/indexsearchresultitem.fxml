@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane
+    styleClass="resultItem"
+    maxWidth="Infinity"
+    minWidth="200"
+    xmlns="http://javafx.com/javafx/8"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="de.qabel.desktop.ui.contact.index.result.IndexSearchResultItemController">
+    <left>
+        <Pane fx:id="avatarContainer"/>
+    </left>
+    <center>
+        <VBox style="-fx-padding: 0 1em;" alignment="CENTER_LEFT" minWidth="0">
+            <Label fx:id="fieldLabel" text="field" managed="false" />
+            <Label fx:id="aliasLabel" text="alias" />
+            <Label fx:id="publicKeyLabel" text="key" />
+        </VBox>
+    </center>
+    <right>
+        <HBox alignment="CENTER">
+            <Button fx:id="assignButton"
+                styleClass="inline-button"
+                alignment="CENTER"
+                onAction="#assign" />
+        </HBox>
+    </right>
+</BorderPane>

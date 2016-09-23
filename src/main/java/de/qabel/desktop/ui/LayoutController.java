@@ -25,6 +25,7 @@ import de.qabel.desktop.ui.remotefs.RemoteFSView;
 import de.qabel.desktop.ui.sync.SyncView;
 import de.qabel.desktop.ui.transfer.ComposedProgressBar;
 import de.qabel.desktop.ui.transfer.TransferViewModel;
+import de.qabel.desktop.ui.util.Icons;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -48,6 +49,8 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static de.qabel.desktop.ui.util.Icons.BROWSE;
+import static de.qabel.desktop.ui.util.Icons.INFO;
 import static de.qabel.desktop.util.QuotaUtil.getQuotaDescription;
 import static de.qabel.desktop.util.QuotaUtil.getUsedRatioInPercent;
 
@@ -210,7 +213,7 @@ public class LayoutController extends AbstractController implements Initializabl
             new Image(getClass().getResourceAsStream("/img/account_white.png")),
             accountingView);
         browseNav = createNavItem(resourceBundle.getString("layoutBrowse"),
-            new Image(getClass().getResourceAsStream("/img/folder_white.png")),
+            Icons.getIcon(BROWSE),
             new RemoteFSView());
         contactsNav = createNavItem(resourceBundle.getString("layoutContacts"),
             new Image(getClass().getResourceAsStream("/img/account_multiple_white.png")),
@@ -219,7 +222,7 @@ public class LayoutController extends AbstractController implements Initializabl
             new Image(getClass().getResourceAsStream("/img/sync_white.png")),
             new SyncView());
         aboutNav = createNavItem(resourceBundle.getString("layoutAbout"),
-            new Image(getClass().getResourceAsStream("/img/information_white.png")),
+            Icons.getIcon(INFO),
             aboutView);
     }
 
@@ -322,17 +325,26 @@ public class LayoutController extends AbstractController implements Initializabl
 
     @NotNull
     private AvatarView createAvatarView(Identity identity) {
-        AvatarView avatarView = new AvatarView(e -> identity.getAlias());
-        avatarView.getView(avatarContainer.getChildren()::setAll);
-        return avatarView;
+        return new AvatarView(identity.getAlias()).place(avatarContainer);
     }
 
     private void updateAvatar(String alias) {
         avatarController.generateAvatar(alias);
     }
 
+    private NaviItem createNavItem(String label, ImageView image, FXMLView view) {
+        NaviItem naviItem = new NaviItem(label, image);
+        linkNaviItem(view, naviItem);
+        return naviItem;
+    }
+
     private NaviItem createNavItem(String label, Image image, FXMLView view) {
         NaviItem naviItem = new NaviItem(label, image);
+        linkNaviItem(view, naviItem);
+        return naviItem;
+    }
+
+    private void linkNaviItem(FXMLView view, NaviItem naviItem) {
         naviItem.setOnAction(e -> {
             try {
                 scrollContent.getChildren().setAll(view.getView());
@@ -343,7 +355,6 @@ public class LayoutController extends AbstractController implements Initializabl
             }
         });
         navi.getChildren().add(naviItem);
-        return naviItem;
     }
 
     void setActiveNavItem(NaviItem naviItem) {

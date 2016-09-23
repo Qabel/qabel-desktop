@@ -5,22 +5,50 @@
 <?import javafx.scene.shape.Line?>
 
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane fx:id="menuContact" xmlns="http://javafx.com/javafx/8" visible="false" styleClass="popup-menu"
+<AnchorPane fx:id="menuContact" xmlns="http://javafx.com/javafx/8" styleClass="popup-menu"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.contact.menu.ContactMenuController">
     <children>
         <VBox fx:id="vboxMenu" styleClass="vbox-menu">
-            <Button fx:id="importFromFile" text="%importContactFromFile" styleClass="button-menu"
+            <Button fx:id="importFromFile"
+                    text="%importContactFromFile"
+                    styleClass="button-menu"
                     onAction="#handleImportContactsButtonAction"/>
-            <Button fx:id="importFromQR" wrapText="true" text="%importContactFromQR" disable="true"
+
+            <Button fx:id="importFromQR"
+                    wrapText="true"
+                    text="%importContactFromQR"
+                    disable="true"
+                    visible="false"
+                    managed="false"
                     styleClass="button-menu"/>
-            <Button fx:id="searchButton" wrapText="true" text="%searchQabelRegister" disable="true"
+
+            <Button fx:id="searchButton"
+                    wrapText="true"
+                    text="%searchQabelRegister"
+                    onAction="#search"
                     styleClass="button-menu"/>
-            <Button fx:id="enterContact" wrapText="true" text="%enterContactManually" disable="true"
+
+            <Button fx:id="enterContact"
+                    wrapText="true"
+                    text="%enterContactManually"
+                    disable="true"
+                    visible="false"
+                    managed="false"
                     styleClass="button-menu"/>
+
             <Line endX="00.0" startX="-250.0"/>
-            <Button fx:id="exportContactsToFile" text="%exportContactsToFile"
-                    styleClass="button-menu" onAction="#handleExportContactsButtonAction"/>
-            <Button fx:id="exportContactsToQR" wrapText="true" text="%exportContactsToQR" disable="true"
+
+            <Button fx:id="exportContactsToFile"
+                    text="%exportContactsToFile"
+                    styleClass="button-menu"
+                    onAction="#handleExportContactsButtonAction"/>
+
+            <Button fx:id="exportContactsToQR"
+                    wrapText="true"
+                    text="%exportContactsToQR"
+                    disable="true"
+                    visible="false"
+                    managed="false"
                     styleClass="button-menu"/>
         </VBox>
     </children>

@@ -17,6 +17,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertEquals;
 
 public class AssignContactControllerTest extends AbstractControllerTest {
     private static final int ELEMENTS_PER_IDENTITY = 2;
@@ -136,6 +137,15 @@ public class AssignContactControllerTest extends AbstractControllerTest {
         controller.getIgnoreButton().fire();
         assertThat(contact.isIgnored(), is(true));
 
+    }
+
+    @Test
+    public void testKeyFormat() throws Exception {
+        initController();
+        String key = "12345678";
+        String formatted = controller.formatKey(key);
+
+        assertEquals(formatted, "1234 5678");
     }
 
     private List<Identity> getAssignedIdentities() throws PersistenceException {

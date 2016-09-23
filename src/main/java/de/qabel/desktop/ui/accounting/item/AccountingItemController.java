@@ -75,7 +75,7 @@ public class AccountingItemController extends AbstractController implements Init
     }
 
     private void updateAvatar() {
-        new AvatarView(e -> identity.getAlias()).getViewAsync(avatarContainer.getChildren()::setAll);
+        new AvatarView(identity.getAlias()).place(avatarContainer);
     }
 
     private void updateSelection() {

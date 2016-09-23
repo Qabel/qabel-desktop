@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
 <VBox maxHeight="Infinity" minWidth="100" maxWidth="Infinity" fx:id="assignContactRoot" xmlns="http://javafx.com/javafx/8"
-           xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.contact.context.AssignContactController"
-            style="-fx-text-fill: white; -fx-opacity: 1">
-    <children>
-        <GridPane alignment="center" hgap="10" vgap="10" fx:id="container">
-            <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.contact.context.AssignContactController"
+      style="-fx-text-fill: white; -fx-opacity: 1" spacing="20">
+    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+    <HBox spacing="20" alignment="CENTER_LEFT" minWidth="0">
+        <ImageView fx:id="keyIcon"/>
+        <Label wrapText="true" fx:id="keyLabel"
+               style="-fx-font-family: monospace; -fx-font-size: 12px;"
+               styleClass="key, compact"/>
+    </HBox>
+    <Label text="%assignContactTitle"/>
+    <GridPane alignment="center" hgap="1" fx:id="container">
+            <Label text="Guy Pearce" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <ToggleButton text="x-" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-            <children>
-                <Label text="Guy Pearce" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <ToggleButton text="x-" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-
-                <Label text="Space Invader" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                <ToggleButton text="x-" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-            </children>
-        </GridPane>
-    </children>
+            <Label text="Space Invader" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+            <ToggleButton text="x-" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+    </GridPane>
     <BorderPane.margin>
         <Insets right="10.0" left="15.0"/>
     </BorderPane.margin>

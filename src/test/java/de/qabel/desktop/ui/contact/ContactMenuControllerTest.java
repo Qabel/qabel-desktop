@@ -43,7 +43,7 @@ public class ContactMenuControllerTest extends AbstractControllerTest {
     private ContactMenuController getController() {
         ContactMenuView view = new ContactMenuView();
         view.getView();
-        return (ContactMenuController) view.getPresenter();
+        return view.getPresenter();
     }
 
     @Test

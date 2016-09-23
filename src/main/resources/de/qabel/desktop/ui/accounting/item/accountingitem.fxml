@@ -37,7 +37,7 @@
                     </center>
                     <right>
                         <Button fx:id="contextMenu" alignment="CENTER" onMouseClicked="#openMenu"
-                                styleClass="button-qrcode" prefHeight="25"
+                                styleClass="button-contextmenu" prefHeight="25"
                                 BorderPane.alignment="CENTER"/>
                     </right>
                 </BorderPane>
