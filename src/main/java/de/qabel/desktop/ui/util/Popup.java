@@ -67,7 +67,7 @@ public class Popup {
         container.getStyleClass().add("popup-container");
 
         root = new StackPane(container);
-        root.getStylesheets().add(QabelFXMLView.getGlobalStyleCheat());
+        root.getStylesheets().add(QabelFXMLView.getGlobalStyleSheet());
         root.getStyleClass().add("vbox-popup");
         root.getStyleClass().add("bound-popup");
         root.setPickOnBounds(false);

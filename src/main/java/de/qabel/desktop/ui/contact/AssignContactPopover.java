@@ -13,6 +13,6 @@ public class AssignContactPopover extends PopOver {
         setHeaderAlwaysVisible(true);
         getStyleClass().add("assignContactPopover");
         getRoot().getStyleClass().add("assignContactPopover");
-        getRoot().getStylesheets().add(QabelFXMLView.getGlobalStyleCheat());
+        getRoot().getStylesheets().add(QabelFXMLView.getGlobalStyleSheet());
     }
 }
