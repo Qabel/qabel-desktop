@@ -1,7 +1,9 @@
 package de.qabel.desktop.ui.accounting.wizard;
 
+import com.google.i18n.phonenumbers.NumberParseException;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.factory.IdentityBuilderFactory;
+import de.qabel.core.index.PhoneUtilsKt;
 import de.qabel.core.repository.IdentityRepository;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractController;
@@ -61,6 +63,10 @@ public class WizardController extends AbstractController implements Initializabl
     TextField email;
     @FXML
     Label emailIdentity;
+    @FXML
+    Label phoneIdentity;
+    @FXML
+    TextField phone;
 
     private Identity identity;
 
@@ -114,6 +120,10 @@ public class WizardController extends AbstractController implements Initializabl
 
     }
 
+    private void updateIdentityPhone(String phone) {
+        identity.setPhone(phone);
+    }
+
     private void validateButtons() {
         StringBinding emailValidation = Bindings.createStringBinding(() ->
             emailValidator.isValid(email.getText()) ? email.getText() : "", email.textProperty()
@@ -123,7 +133,6 @@ public class WizardController extends AbstractController implements Initializabl
         finish.visibleProperty().bind(currentStepIndex.isEqualTo(steps.size() - 1));
         emailIdentity.visibleProperty().bind(email.textProperty().isEqualTo(emailValidation));
         next.setDisable(true);
-
     }
 
     private void createIndicators() {
@@ -185,8 +194,25 @@ public class WizardController extends AbstractController implements Initializabl
                 next.setVisible(true);
                 break;
             case 3:
+                if (!phone.getText().isEmpty()) {
+                    validatePhone(phone.getText());
+                }
                 next.setVisible(false);
                 break;
+        }
+    }
+
+    private void validatePhone(String phone) {
+        try {
+            String formattedPhone = PhoneUtilsKt.formatPhoneNumber(phone);
+
+            if (PhoneUtilsKt.isValidPhoneNumber(formattedPhone)) {
+                phoneIdentity.setVisible(true);
+                updateIdentityPhone(formattedPhone);
+                phoneIdentity.setText(formattedPhone);
+            }
+        } catch (NumberParseException e) {
+            alert("Invalid phone number", e);
         }
     }
 

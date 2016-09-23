@@ -7,7 +7,7 @@
 <StackPane fx:id="wizardPane" styleClass="pane-popup" visible="false" xmlns="http://javafx.com/javafx/8"
            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.accounting.wizard.WizardController">
     <children>
-        <VBox fx:id="wizardVBox" styleClass="qr-container">
+        <VBox fx:id="wizardVBox" styleClass="wizard-container">
             <children>
                 <StackPane>
                     <children>
@@ -36,6 +36,7 @@
                 <VBox alignment="CENTER">
                     <Label fx:id="nameIdentity" visible="false" alignment="CENTER"/>
                     <Label fx:id="emailIdentity" visible="false" alignment="CENTER"/>
+                    <Label fx:id="phoneIdentity" visible="false" alignment="CENTER"/>
                     <VBox.margin>
                         <Insets top="10.0"/>
                     </VBox.margin>
@@ -64,12 +65,8 @@
                         </VBox>
                         <VBox fx:id="step3" visible="false">
                             <children>
-                                <ComboBox fx:id="country" promptText="%selectCountry"/>
-                                <HBox>
-                                    <TextField fx:id="countryCode"/>
-                                    <TextField fx:id="phone"/>
-                                </HBox>
-
+                                <TextField fx:id="phone" promptText="%phoneNumber" prefWidth="100"/>
+                                <Label text="%phoneInstructions" styleClass="text-field-wizard" wrapText="true"/>
                             </children>
                             <StackPane.margin>
                                 <Insets left="10.0" right="10.0" top="10.0"/>

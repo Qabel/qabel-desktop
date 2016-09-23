@@ -635,6 +635,13 @@ VBox.spaced, HBox.spaced {
     -fx-background-color: white;
 }
 
+.wizard-container {
+    -fx-max-width: 300px;
+    -fx-max-height: 450px;
+    -fx-position: absolute;
+    -fx-background-color: white;
+}
+
 .image-qrcode {
    -fx-alignment: center;
 }
