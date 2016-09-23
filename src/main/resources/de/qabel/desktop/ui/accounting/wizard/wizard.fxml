@@ -52,18 +52,7 @@
                                 <Insets left="10.0" right="10.0" top="10.0"/>
                             </StackPane.margin>
                         </VBox>
-                        <VBox fx:id="step2" visible="false" prefWidth="300">
-                            <children>
-                                <Label fx:id="welcome" styleClass="label-name" text="%identityWelcome"
-                                       alignment="CENTER"/>
-                                <Label fx:id="messageWelcome" text="%availableIdentity"
-                                       wrapText="true" styleClass="text-field-wizard"/>
-                            </children>
-                            <StackPane.margin>
-                                <Insets left="10.0" right="10.0" top="10.0"/>
-                            </StackPane.margin>
-                        </VBox>
-                        <VBox fx:id="step3" visible="false">
+                        <VBox fx:id="step2" visible="false">
                             <children>
                                 <TextField fx:id="email" promptText="%emailAddress" styleClass="text-field-wizard"/>
                                 <Label fx:id="emailInstructions" text="%emailInstructions"
@@ -73,7 +62,7 @@
                                 <Insets left="10.0" right="10.0" top="10.0"/>
                             </StackPane.margin>
                         </VBox>
-                        <VBox fx:id="step4" visible="false">
+                        <VBox fx:id="step3" visible="false">
                             <children>
                                 <ComboBox fx:id="country" promptText="%selectCountry"/>
                                 <HBox>
@@ -86,7 +75,7 @@
                                 <Insets left="10.0" right="10.0" top="10.0"/>
                             </StackPane.margin>
                         </VBox>
-                        <VBox fx:id="step5" visible="false">
+                        <VBox fx:id="step4" visible="false">
                             <children>
                                 <Label fx:id="finishWizard" styleClass="text-field-wizard" text="%finishWizard"
                                        wrapText="true" prefWidth="400"/>

@@ -44,8 +44,6 @@ public class WizardController extends AbstractController implements Initializabl
     @FXML
     VBox step4;
     @FXML
-    VBox step5;
-    @FXML
     Label labelWizard;
     @FXML
     TextField alias;
@@ -140,7 +138,7 @@ public class WizardController extends AbstractController implements Initializabl
 
     private void createSteps() {
         steps.addAll(Arrays.asList(
-            step1, step2, step3, step4, step5
+            step1, step2, step3, step4
         ));
     }
 
@@ -184,10 +182,9 @@ public class WizardController extends AbstractController implements Initializabl
                 nameIdentity.setText(alias.getText());
                 break;
             case 2:
-            case 3:
                 next.setVisible(true);
                 break;
-            case 4:
+            case 3:
                 next.setVisible(false);
                 break;
         }
