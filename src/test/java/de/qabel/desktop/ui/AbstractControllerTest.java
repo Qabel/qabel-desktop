@@ -82,7 +82,7 @@ public class AbstractControllerTest extends AbstractFxTest {
     protected Account account;
     protected BoxClientStub boxClient = new BoxClientStub();
     protected Parent layoutWindow = new Pane();
-    protected int debounceTimeout = 0;
+    protected int remoteDebounceTimeout;
 
     static {
         logger = createLogger();
@@ -118,7 +118,7 @@ public class AbstractControllerTest extends AbstractFxTest {
             shareNotificationRepository
         );
         diContainer.put("indexService", indexService);
-        diContainer.put("debounceTimeout", debounceTimeout);
+        diContainer.put("remoteDebounceTimeout", remoteDebounceTimeout);
         diContainer.put("clientConfiguration", clientConfiguration);
         diContainer.put("layoutWindow", layoutWindow);
         diContainer.put("dropUrlGenerator", new DropUrlGenerator("http://localhost:5000"));

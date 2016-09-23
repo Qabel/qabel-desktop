@@ -42,7 +42,7 @@ public class IndexSearchController extends AbstractController implements Initial
     @Inject
     private IndexService indexService;
     @Inject
-    private int debounceTimeout = 200;
+    private int remoteDebounceTimeout = 200;
 
     private final IntegerProperty pendingRequests = new SimpleIntegerProperty(0);
 
@@ -75,7 +75,7 @@ public class IndexSearchController extends AbstractController implements Initial
         })
         .subscribeOn(Schedulers.computation())
         .filter(this::isValidInput)
-        .debounce(debounceTimeout, TimeUnit.MILLISECONDS)
+        .debounce(remoteDebounceTimeout, TimeUnit.MILLISECONDS)
         .observeOn(Schedulers.io())
         .map(this::search)
         .filter(list -> !list.isEmpty())
