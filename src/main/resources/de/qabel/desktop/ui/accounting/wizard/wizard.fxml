@@ -7,7 +7,7 @@
 <StackPane fx:id="wizardPane" styleClass="pane-popup" visible="false" xmlns="http://javafx.com/javafx/8"
            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.accounting.wizard.WizardController">
     <children>
-        <VBox fx:id="wizardVBox" styleClass="container">
+        <VBox fx:id="wizardVBox" styleClass="qr-container">
             <children>
                 <StackPane>
                     <children>
