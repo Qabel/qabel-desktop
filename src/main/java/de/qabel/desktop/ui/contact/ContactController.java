@@ -34,12 +34,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import org.controlsfx.control.PopOver;
-import org.json.JSONException;
 
 import javax.inject.Inject;
-
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -52,9 +49,6 @@ public class ContactController extends AbstractController implements Initializab
 
     @FXML
     Pane contactList;
-
-    @FXML
-    Button searchButton;
 
     @FXML
     Button contactsButton;
@@ -151,9 +145,7 @@ public class ContactController extends AbstractController implements Initializab
     }
 
     private void createButtonGraphics() {
-        searchButton.setGraphic(searchButtonImageView);
         contactMenu.setGraphic(menuImageView);
-        Tooltip.install(searchButton, new Tooltip(resourceBundle.getString("searchContact")));
         Tooltip.install(contactMenu, new Tooltip(resourceBundle.getString("contactsMenu")));
     }
 
@@ -205,8 +197,7 @@ public class ContactController extends AbstractController implements Initializab
             return;
         }
         if (contactsFromRepo.getContacts().isEmpty()) {
-            final Map<String, Object> injectionContext = new HashMap<>();
-            DummyItemView itemView = new DummyItemView(injectionContext::get);
+            DummyItemView itemView = new DummyItemView();
             contactList.getChildren().add(itemView.getView());
             return;
         }

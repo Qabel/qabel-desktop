@@ -11,14 +11,8 @@
     <children>
         <VBox>
             <children>
-                <HBox>
-                    <Button fx:id="searchButton" mnemonicParsing="false" disable="true" text="%remoteFsSearchPrompt"
-                            prefWidth="150" prefHeight="50">
-                        <HBox.margin>
-                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
-                        </HBox.margin>
-                    </Button>
-                    <JFXComboBox fx:id="filterCombo" style="-fx-pref-width: 200px; -fx-pref-height: 45px">
+                <HBox spacing="10">
+                    <JFXComboBox fx:id="filterCombo" style="-fx-pref-height: 45px">
                         <HBox.margin>
                             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                         </HBox.margin>
