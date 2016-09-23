@@ -14,6 +14,9 @@ import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.item.AccountingItemView;
 import de.qabel.desktop.ui.accounting.item.DummyAccountingItemView;
+import de.qabel.desktop.ui.accounting.wizard.WizardController;
+import de.qabel.desktop.ui.accounting.wizard.WizardView;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -22,6 +25,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.json.JSONException;
@@ -51,11 +55,17 @@ public class AccountingController extends AbstractController implements Initiali
     @FXML
     Button exportContact;
 
+    @Inject
+    Pane layoutWindow;
+
     List<AccountingItemView> itemViews = new LinkedList<>();
     TextInputDialog dialog;
     ResourceBundle resourceBundle;
 
     ImageView imageView;
+
+    WizardView wizardView;
+    WizardController wizardController;
 
     @Inject
     private IdentityRepository identityRepository;
@@ -100,17 +110,15 @@ public class AccountingController extends AbstractController implements Initiali
         return imageView;
     }
 
-    public void addIdentity(ActionEvent actionEvent) {
-        addIdentity();
+    private void initializeWizard() {
+        wizardView = new WizardView();
+        wizardView.getView(layoutWindow.getChildren()::add);
+        wizardController = (WizardController) wizardView.getPresenter();
     }
 
     public void addIdentity() {
-        dialog = new TextInputDialog(resourceBundle.getString("accountingNewIdentity"));
-        dialog.setHeaderText(null);
-        dialog.setTitle(resourceBundle.getString("accountingNewIdentity"));
-        dialog.setContentText(resourceBundle.getString("accountingNewIdentity"));
-        Optional<String> result = dialog.showAndWait();
-        result.ifPresent(this::addIdentityWithAlias);
+        initializeWizard();
+        Platform.runLater(() -> wizardController.showPopup());
     }
 
     @FXML

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane fx:id="wizardPane" styleClass="pane-popup" visible="false" xmlns="http://javafx.com/javafx/8"
+           xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.accounting.wizard.WizardController">
+    <children>
+        <VBox fx:id="wizardVBox" styleClass="container">
+            <children>
+                <StackPane>
+                    <children>
+                        <HBox fx:id="progressIndicator" alignment="CENTER" spacing="2.0">
+                            <padding>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="10.0"/>
+                            </padding>
+                        </HBox>
+                        <Button fx:id="buttonClosePopup" alignment="TOP_RIGHT" onAction="#buttonClosePopup"
+                                styleClass="button-close-pane" StackPane.alignment="TOP_RIGHT"/>
+                    </children>
+                </StackPane>
+                <StackPane>
+                    <children>
+                        <Pane fx:id="avatarContainer" StackPane.alignment="CENTER">
+                            <children>
+                                <Label fx:id="labelWizard" alignment="CENTER" prefHeight="15.0" prefWidth="0.0"
+                                       styleClass="avatar-wizard"/>
+                            </children>
+                            <StackPane.margin>
+                                <Insets left="75.0"/>
+                            </StackPane.margin>
+                        </Pane>
+                    </children>
+                </StackPane>
+                <VBox alignment="CENTER">
+                    <Label fx:id="nameIdentity" visible="false" alignment="CENTER"/>
+                    <Label fx:id="emailIdentity" visible="false" alignment="CENTER"/>
+                    <VBox.margin>
+                        <Insets top="10.0"/>
+                    </VBox.margin>
+                </VBox>
+                <StackPane fx:id="loadStep">
+                    <children>
+                        <VBox fx:id="step1" visible="false">
+                            <children>
+                                <TextField fx:id="alias" promptText="%nameIdentityPromptText"
+                                           styleClass="text-field-wizard"/>
+                                <Label text="%nameIdentityInstructions" styleClass="text-field-wizard" wrapText="true"/>
+                            </children>
+                            <StackPane.margin>
+                                <Insets left="10.0" right="10.0" top="10.0"/>
+                            </StackPane.margin>
+                        </VBox>
+                        <VBox fx:id="step2" visible="false" prefWidth="300">
+                            <children>
+                                <Label fx:id="welcome" styleClass="label-name" text="%identityWelcome"
+                                       alignment="CENTER"/>
+                                <Label fx:id="messageWelcome" text="%availableIdentity"
+                                       wrapText="true" styleClass="text-field-wizard"/>
+                            </children>
+                            <StackPane.margin>
+                                <Insets left="10.0" right="10.0" top="10.0"/>
+                            </StackPane.margin>
+                        </VBox>
+                        <VBox fx:id="step3" visible="false">
+                            <children>
+                                <TextField fx:id="email" promptText="%emailAddress" styleClass="text-field-wizard"/>
+                                <Label fx:id="emailInstructions" text="%emailInstructions"
+                                       styleClass="text-field-wizard" wrapText="true"/>
+                            </children>
+                            <StackPane.margin>
+                                <Insets left="10.0" right="10.0" top="10.0"/>
+                            </StackPane.margin>
+                        </VBox>
+                        <VBox fx:id="step4" visible="false">
+                            <children>
+                                <ComboBox fx:id="country" promptText="%selectCountry"/>
+                                <HBox>
+                                    <TextField fx:id="countryCode"/>
+                                    <TextField fx:id="phone"/>
+                                </HBox>
+
+                            </children>
+                            <StackPane.margin>
+                                <Insets left="10.0" right="10.0" top="10.0"/>
+                            </StackPane.margin>
+                        </VBox>
+                        <VBox fx:id="step5" visible="false">
+                            <children>
+                                <Label fx:id="finishWizard" styleClass="text-field-wizard" text="%finishWizard"
+                                       wrapText="true" prefWidth="400"/>
+                            </children>
+                            <StackPane.margin>
+                                <Insets left="10.0" right="10.0" top="10.0"/>
+                            </StackPane.margin>
+                        </VBox>
+                    </children>
+                </StackPane>
+                <StackPane>
+                    <children>
+                        <Button fx:id="next" onAction="#next" text="%next" textAlignment="LEFT"
+                                StackPane.alignment="BOTTOM_RIGHT" styleClass="button-next" prefWidth="100">
+                            <StackPane.margin>
+                                <Insets left="10.0" right="10.0" bottom="10.0" top="10.0"/>
+                            </StackPane.margin>
+                        </Button>
+                        <Button fx:id="back" onAction="#back" text="%back" textAlignment="LEFT"
+                                StackPane.alignment="BOTTOM_LEFT" styleClass="button-back" prefWidth="100">
+                            <StackPane.margin>
+                                <Insets left="10.0" right="10.0" bottom="10.0" top="10.0"/>
+                            </StackPane.margin>
+                        </Button>
+                        <Button fx:id="finish" onAction="#buttonClosePopup" text="%finish" visible="false"
+                                textAlignment="LEFT"
+                                StackPane.alignment="BOTTOM_RIGHT" prefWidth="100">
+                            <StackPane.margin>
+                                <Insets left="10.0" right="10.0" bottom="10.0" top="10.0"/>
+                            </StackPane.margin>
+                        </Button>
+                    </children>
+                </StackPane>
+            </children>
+        </VBox>
+    </children>
+</StackPane>

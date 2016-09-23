@@ -131,6 +131,7 @@ dependencies {
     compile 'net.glxn.qrgen:javase:2.+'                     //Apache License https://github.com/kenglxn/QRGen
     compile 'org.controlsfx:controlsfx:8.+'
     compile 'com.jfoenix:jfoenix:1.+'
+    compile group: 'commons-validator', name: 'commons-validator', version: '1.4.0'
 
     testCompile 'info.cukes:cucumber-java:1.2.+'
     testCompile 'info.cukes:cucumber-junit:1.2.+'
