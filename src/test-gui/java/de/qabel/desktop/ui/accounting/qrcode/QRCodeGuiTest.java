@@ -11,7 +11,6 @@ import org.junit.Test;
 import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class QRCodeGuiTest extends AbstractGuiTest<QRCodeController> {
     private QRCodePage page;
@@ -37,7 +36,6 @@ public class QRCodeGuiTest extends AbstractGuiTest<QRCodeController> {
     @Test
     public void showPopup() throws Exception {
         page.showPopup();
-        assertTrue(controller.isVisible());
         String textQRCode = "QABELCONTACT\n"
             + "alias" + "\n"
             + identity.getHelloDropUrl().toString() + "\n"

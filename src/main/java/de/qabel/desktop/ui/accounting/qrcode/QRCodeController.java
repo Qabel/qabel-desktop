@@ -47,10 +47,8 @@ public class QRCodeController extends AbstractController {
     }
 
     public void show() {
-        Platform.runLater(() -> {
-            setIdentity();
-            qrcode.setVisible(true);
-        });
+        setIdentity();
+        Platform.runLater(() -> qrcode.setVisible(true));
     }
 
     private void hide() {
