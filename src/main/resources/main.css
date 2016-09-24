@@ -13,12 +13,17 @@
     src: url("/font/source-sans-pro.black.ttf") ;
 }
 
+@font-face {
+    -fx-font-family: 'Source Code Pro', monospace;
+    src: url("/font/SourceCodePro-Regular.ttf") ;
+}
+
 * {
     -fx-font-family: "Source Sans Pro";
     -fx-font-size: 14;
 }
 
-.text-field:focused {
+.text-field.form-control:focused {
     -fx-background-insets: 0, 4px;
     -fx-background-color: black, white;
 }
@@ -166,6 +171,7 @@
 .inline-button {
     -fx-cursor: hand;
     -fx-opacity: 1.0;
+    -fx-border-width: 0;
 }
 
 .inline-button.highlighted {
@@ -556,7 +562,7 @@ VBox.spaced, HBox.spaced {
     -fx-font-weight: bold;
 }
 
-.button-qrcode {
+.button-contextmenu {
     -fx-background-repeat: no-repeat;
     -fx-background-image: url('/img/settings.png');
     -fx-background-position: left;
@@ -566,7 +572,7 @@ VBox.spaced, HBox.spaced {
     -fx-border-color: none;
 }
 
-.button-qrcode:hover {
+.button-contextmenu:hover {
     -fx-background-color: transparent;
     -fx-background-insets: 0px;
     -fx-border-style: none;
@@ -574,7 +580,7 @@ VBox.spaced, HBox.spaced {
 
 }
 
-.button-qrcode:pressed {
+.button-contextmenu:pressed {
     -fx-border-color: none;
     -fx-text-fill: none;
     -fx-border-style: none;
@@ -687,6 +693,8 @@ VBox.spaced, HBox.spaced {
     -fx-padding: 10px 10px 10px 10px;
     -fx-pref-height: 0;
     -fx-pref-width: 0;
+    -fx-min-width: 50;
+    -fx-min-height: 50;
 }
 
 .popup-menu {
@@ -768,8 +776,6 @@ VBox.spaced, HBox.spaced {
 }
 
 .popup-container {
-    -fx-min-width: 0px;
-    -fx-min-height: 0px;
     -fx-pref-width: 0px;
     -fx-pref-height: 0px;
     -fx-position: absolute;
@@ -781,6 +787,15 @@ VBox.spaced, HBox.spaced {
 }
 .form-row {
     -fx-spacing: 1em;
+}
+.resultItem {
+    -fx-padding: 1em 0 1em 0;
+}
+
+.key.compact {
+    -fx-min-width: 5em;
+    -fx-pref-width: 12em;
+    -fx-font-size: 12px;
 }
 
 .text-field-wizard {

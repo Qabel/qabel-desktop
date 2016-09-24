@@ -12,6 +12,8 @@ import de.qabel.core.repository.exception.EntityNotFoundException;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.contact.index.IndexSearchView;
+import de.qabel.desktop.ui.util.Popup;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -81,10 +83,6 @@ public class ContactMenuController extends AbstractController implements Initial
         identity = clientConfiguration.getSelectedIdentity();
         createButtonsGraphics();
         createButtonsTooltip();
-    }
-
-    public void open() {
-        menuContact.setVisible(true);
     }
 
     private void createButtonsGraphics() {
@@ -159,5 +157,24 @@ public class ContactMenuController extends AbstractController implements Initial
                 contactRepository.save(c, identity);
             }
         });
+    }
+
+    Popup searchPopup;
+    @FXML
+    public void search() {
+        new IndexSearchView().getViewAsync(searchView -> {
+            searchPopup = new Popup(layoutWindow, searchView);
+            close();
+            searchPopup.show();
+        });
+    }
+
+    public void close() {
+        closeHandler.run();
+    }
+
+    private Runnable closeHandler = () -> {};
+    public void onClose(Runnable closeHandler) {
+        this.closeHandler = closeHandler;
     }
 }
