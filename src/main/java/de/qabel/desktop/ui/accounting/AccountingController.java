@@ -22,7 +22,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -59,7 +58,6 @@ public class AccountingController extends AbstractController implements Initiali
     Pane layoutWindow;
 
     List<AccountingItemView> itemViews = new LinkedList<>();
-    TextInputDialog dialog;
     ResourceBundle resourceBundle;
 
     ImageView imageView;
@@ -78,7 +76,6 @@ public class AccountingController extends AbstractController implements Initiali
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        loadIdentities();
         try {
             gson = buildGson();
         } catch (EntityNotFoundException | PersistenceException e) {
@@ -95,6 +92,7 @@ public class AccountingController extends AbstractController implements Initiali
         Identity identity = clientConfiguration.getSelectedIdentity();
         exportIdentity.setDisable(identity == null);
         exportContact.setDisable(identity == null);
+        loadIdentities();
     }
 
     private void updateButtonIcons() {
@@ -195,7 +193,6 @@ public class AccountingController extends AbstractController implements Initiali
                 identityList.getChildren().add(itemView.getView());
                 return;
             }
-
 
             for (Identity identity : identities.getIdentities()) {
                 final Map<String, Object> injectionContext = new HashMap<>();

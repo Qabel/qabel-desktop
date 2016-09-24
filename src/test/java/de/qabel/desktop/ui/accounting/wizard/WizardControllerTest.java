@@ -5,7 +5,6 @@ import de.qabel.core.config.Identity;
 import de.qabel.core.repository.exception.EntityNotFoundException;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractControllerTest;
-import org.junit.Assert;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertFalse;
@@ -140,5 +139,18 @@ public class WizardControllerTest extends AbstractControllerTest {
         controller.email.setText("test@test.de");
         Identity i = controller.clientConfiguration.getSelectedIdentity();
         assertEquals("test@test.de", identities.getByKeyIdentifier(i.getKeyIdentifier()).getEmail());
+    }
+
+    @Test
+    public void testEditAlias() throws EntityNotFoundException, PersistenceException {
+        goToStep2();
+        controller.back();
+        Identities identities = identityRepository.findAll();
+        assertEquals(2, identities.getIdentities().size());
+        assertEquals("step1", controller.getCurrentStep().getId());
+        controller.alias.setText("alias2");
+        controller.next();
+        Identity i = controller.clientConfiguration.getSelectedIdentity();
+        assertEquals("alias2", identities.getByKeyIdentifier(i.getKeyIdentifier()).getAlias());
     }
 }

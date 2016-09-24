@@ -8,6 +8,7 @@ import de.qabel.core.repository.IdentityRepository;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.ui.AbstractController;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.IntegerProperty;
@@ -125,7 +126,7 @@ public class WizardController extends AbstractController implements Initializabl
 
     private void updateIdentityPhone(String phone) {
         identity.setPhone(phone);
-        addIdentityWithAlias(alias.getText().toString());
+        addIdentityWithAlias(identity.getAlias());
     }
 
     private void validateButtons() {
@@ -237,7 +238,7 @@ public class WizardController extends AbstractController implements Initializabl
 
     protected void updateIdentityEmail(String email) {
         identity.setEmail(email);
-        addIdentityWithAlias(alias.getText().toString());
+        addIdentityWithAlias(identity.getAlias());
     }
 
     protected void addIdentityWithAlias(String alias) {
@@ -248,7 +249,7 @@ public class WizardController extends AbstractController implements Initializabl
             alert("Failed to save new identity", e);
         }
 
-        clientConfiguration.selectIdentity(identity);
+        Platform.runLater(() -> clientConfiguration.selectIdentity(identity));
     }
 
     public void showPopup() {
