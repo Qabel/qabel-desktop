@@ -36,9 +36,6 @@ public class QRCodeController extends AbstractController {
     private Pane layoutWindow;
 
     @Inject
-    private DropUrlGenerator dropUrlGenerator;
-
-    @Inject
     private Identity identity;
 
     private String dropUrl;
@@ -50,8 +47,10 @@ public class QRCodeController extends AbstractController {
     }
 
     public void show() {
-        setIdentity();
-        Platform.runLater(() -> qrcode.setVisible(true));
+        Platform.runLater(() -> {
+            setIdentity();
+            qrcode.setVisible(true);
+        });
     }
 
     private void hide() {
@@ -63,7 +62,7 @@ public class QRCodeController extends AbstractController {
     }
 
     private void setIdentity() {
-        dropUrl = dropUrlGenerator.generateUrl().getUri().toString();
+        dropUrl = identity.getHelloDropUrl().toString();
         textQRCode = "QABELCONTACT\n"
             + identity.getAlias() + "\n"
             + dropUrl + "\n"

@@ -40,11 +40,11 @@ public class QRCodeGuiTest extends AbstractGuiTest<QRCodeController> {
         assertTrue(controller.isVisible());
         String textQRCode = "QABELCONTACT\n"
             + "alias" + "\n"
-            + controller.getDropUrl() + "\n"
+            + identity.getHelloDropUrl().toString() + "\n"
             + controller.getPublicKey();
 
         assertEquals("alias", controller.getAlias());
-        assertTrue(controller.getDropUrl().startsWith("http://localhost:5000" + "/"));
+        assertEquals(identity.getHelloDropUrl().toString(), controller.getDropUrl());
         assertEquals(textQRCode, controller.getTextQRCode());
     }
 
