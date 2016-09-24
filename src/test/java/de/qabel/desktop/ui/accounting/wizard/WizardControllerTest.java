@@ -1,7 +1,5 @@
 package de.qabel.desktop.ui.accounting.wizard;
 
-import de.qabel.core.config.Identities;
-import de.qabel.core.config.Identity;
 import de.qabel.core.repository.exception.EntityNotFoundException;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractControllerTest;
@@ -116,10 +114,7 @@ public class WizardControllerTest extends AbstractControllerTest {
         controller.clientConfiguration.selectIdentity(null);
         controller.alias.setText("a new identity");
         controller.next();
-        Identities identities = identityRepository.findAll();
-        assertEquals(2, identities.getIdentities().size());
-        Identity i = controller.clientConfiguration.getSelectedIdentity();
-        assertEquals("a new identity", identities.getByKeyIdentifier(i.getKeyIdentifier()).getAlias());
+        assertEquals("a new identity", controller.identity.getAlias());
     }
 
     @Test
@@ -127,30 +122,31 @@ public class WizardControllerTest extends AbstractControllerTest {
         goToStep3();
         controller.phone.setText("+17626262626");
         controller.phoneValidator(controller.phone.getText());
-        Identities identities = identityRepository.findAll();
-        Identity i = controller.clientConfiguration.getSelectedIdentity();
-        assertEquals("+17626262626", identities.getByKeyIdentifier(i.getKeyIdentifier()).getPhone());
+        assertEquals("+17626262626", controller.identity.getPhone());
+    }
+
+    @Test
+    public void testEmptyPhone() throws EntityNotFoundException, PersistenceException {
+        goToStep3();
+        controller.phone.setText("+5656");
+        controller.phoneValidator(controller.phone.getText());
+        assertEquals("", controller.identity.getPhone());
     }
 
     @Test
     public void testAddsEmail() throws EntityNotFoundException, PersistenceException {
         goToStep2();
-        Identities identities = identityRepository.findAll();
         controller.email.setText("test@test.de");
-        Identity i = controller.clientConfiguration.getSelectedIdentity();
-        assertEquals("test@test.de", identities.getByKeyIdentifier(i.getKeyIdentifier()).getEmail());
+        assertEquals("test@test.de", controller.identity.getEmail());
     }
 
     @Test
     public void testEditAlias() throws EntityNotFoundException, PersistenceException {
         goToStep2();
         controller.back();
-        Identities identities = identityRepository.findAll();
-        assertEquals(2, identities.getIdentities().size());
         assertEquals("step1", controller.getCurrentStep().getId());
         controller.alias.setText("alias2");
         controller.next();
-        Identity i = controller.clientConfiguration.getSelectedIdentity();
-        assertEquals("alias2", identities.getByKeyIdentifier(i.getKeyIdentifier()).getAlias());
+        assertEquals("alias2", controller.identity.getAlias());
     }
 }

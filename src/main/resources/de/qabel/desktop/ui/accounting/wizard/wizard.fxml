@@ -65,7 +65,7 @@
                         </VBox>
                         <VBox fx:id="step3" visible="false">
                             <children>
-                                <TextField fx:id="phone" promptText="%phoneNumber" prefWidth="100"/>
+                                <TextField fx:id="phone" promptText="%phoneNumber" styleClass="text-field-wizard"/>
                                 <Label text="%phoneInstructions" styleClass="text-field-wizard" wrapText="true"/>
                             </children>
                             <StackPane.margin>

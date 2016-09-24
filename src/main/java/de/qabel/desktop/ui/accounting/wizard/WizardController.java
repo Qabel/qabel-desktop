@@ -8,7 +8,6 @@ import de.qabel.core.repository.IdentityRepository;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.ui.AbstractController;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.IntegerProperty;
@@ -38,7 +37,6 @@ public class WizardController extends AbstractController implements Initializabl
     public StackPane wizardPane;
     @FXML
     StackPane loadStep;
-
     @FXML
     VBox step1;
     @FXML
@@ -69,7 +67,6 @@ public class WizardController extends AbstractController implements Initializabl
     Label phoneIdentity;
     @FXML
     TextField phone;
-
     Identity identity;
 
     @Inject
@@ -193,7 +190,6 @@ public class WizardController extends AbstractController implements Initializabl
                 nameIdentity.setVisible(true);
                 if (nameIdentity.getText().isEmpty()) {
                     createIdentity(alias.getText().toString());
-
                 } else if (!nameIdentity.getText().equals(alias.getText())) {
                     updateIdentityAlias(alias.getText().toString());
                 }
@@ -248,8 +244,6 @@ public class WizardController extends AbstractController implements Initializabl
         } catch (PersistenceException e) {
             alert("Failed to save new identity", e);
         }
-
-        Platform.runLater(() -> clientConfiguration.selectIdentity(identity));
     }
 
     public void showPopup() {
@@ -258,6 +252,10 @@ public class WizardController extends AbstractController implements Initializabl
 
     public void buttonClosePopup() {
         wizardPane.setVisible(false);
+
+        if (identity != null) {
+            clientConfiguration.selectIdentity(identity);
+        }
     }
 
 }
