@@ -20,6 +20,7 @@ import de.qabel.desktop.daemon.NetworkStatus;
 import de.qabel.desktop.daemon.drop.DropDaemon;
 import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
+import de.qabel.desktop.event.EventDispatcher;
 import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.ShareNotificationRepository;
@@ -137,4 +138,12 @@ public interface DesktopServices {
     default int getRemoteDebounceTimeout() {
         return 500;
     }
+
+    @Create(name="debounceTimeout")
+    default int getDebounceTimeout() {
+        return 250;
+    }
+
+    @Create(name="eventDispatcher")
+    EventDispatcher getEventDispatcher();
 }

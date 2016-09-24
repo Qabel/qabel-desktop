@@ -11,9 +11,12 @@ import de.qabel.core.repository.exception.EntityExistsException;
 import de.qabel.core.repository.exception.EntityNotFoundException;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.config.ClientConfig;
+import de.qabel.desktop.event.EventDispatcher;
+import de.qabel.desktop.event.identity.IdentitiesChangedEvent;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.item.AccountingItemView;
 import de.qabel.desktop.ui.accounting.item.DummyAccountingItemView;
+import javafx.application.Platform;
 import de.qabel.desktop.ui.accounting.wizard.WizardController;
 import de.qabel.desktop.ui.accounting.wizard.WizardView;
 import javafx.application.Platform;
@@ -35,6 +38,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class AccountingController extends AbstractController implements Initializable {
     private Identity selectedIdentity;
@@ -74,6 +78,12 @@ public class AccountingController extends AbstractController implements Initiali
     @Inject
     ClientConfig clientConfiguration;
 
+    @Inject
+    private EventDispatcher eventDispatcher;
+
+    @Inject
+    private int debounceTimeout;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
@@ -87,7 +97,11 @@ public class AccountingController extends AbstractController implements Initiali
         updateIdentityState();
         updateButtonIcons();
         clientConfiguration.onSelectIdentity(identity -> updateIdentityState());
-        identityRepository.attach(() -> Platform.runLater(() -> loadIdentities()));
+
+        eventDispatcher.events()
+            .filter(e -> e instanceof IdentitiesChangedEvent)
+            .debounce(debounceTimeout, TimeUnit.MILLISECONDS)
+            .subscribe(e -> Platform.runLater(this::loadIdentities));
     }
 
     private void updateIdentityState() {

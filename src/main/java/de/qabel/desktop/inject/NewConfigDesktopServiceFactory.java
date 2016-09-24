@@ -26,6 +26,8 @@ import de.qabel.desktop.config.factory.DefaultBoxSyncConfigFactory;
 import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndexFactory;
 import de.qabel.desktop.daemon.sync.worker.index.sqlite.SqliteSyncIndexFactory;
+import de.qabel.desktop.event.EventDispatcher;
+import de.qabel.desktop.event.SubjectEventDispatcher;
 import de.qabel.desktop.inject.config.RuntimeConfiguration;
 import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
@@ -251,6 +253,12 @@ public class NewConfigDesktopServiceFactory extends RuntimeDesktopServiceFactory
     @Override
     public BoxSyncConfigFactory getBoxSyncConfigFactory() {
         return new DefaultBoxSyncConfigFactory(getSyncIndexFactory());
+    }
+
+    private EventDispatcher eventDispatcher = new SubjectEventDispatcher();
+    @Override
+    public EventDispatcher getEventDispatcher() {
+        return eventDispatcher;
     }
 
     private SyncIndexFactory getSyncIndexFactory() {
