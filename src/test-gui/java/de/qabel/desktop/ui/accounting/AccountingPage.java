@@ -2,7 +2,6 @@ package de.qabel.desktop.ui.accounting;
 
 import com.sun.javafx.robot.FXRobot;
 import de.qabel.desktop.ui.AbstractPage;
-import de.qabel.desktop.ui.InputDialogPage;
 import org.testfx.api.FxRobot;
 
 public class AccountingPage extends AbstractPage {
@@ -13,10 +12,9 @@ public class AccountingPage extends AbstractPage {
         this.controller = controller;
     }
 
-    public InputDialogPage add() {
-        controller.dialog = null;
+    public void open() {
         clickOn("#addIdentity");
-        waitUntil(() -> controller.dialog != null);
-        return new InputDialogPage(baseFXRobot, robot, controller.dialog);
+        waitUntil(() -> controller.wizardController != null);
+        waitUntil(() -> controller.wizardController.wizardPane != null);
     }
 }

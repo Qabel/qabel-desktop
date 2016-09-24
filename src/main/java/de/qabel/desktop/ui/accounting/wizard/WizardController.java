@@ -6,6 +6,7 @@ import de.qabel.core.config.factory.IdentityBuilderFactory;
 import de.qabel.core.index.PhoneUtilsKt;
 import de.qabel.core.repository.IdentityRepository;
 import de.qabel.core.repository.exception.PersistenceException;
+import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.ui.AbstractController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
@@ -33,7 +34,7 @@ public class WizardController extends AbstractController implements Initializabl
     ResourceBundle resourceBundle;
 
     @FXML
-    StackPane wizardPane;
+    public StackPane wizardPane;
     @FXML
     StackPane loadStep;
 
@@ -68,7 +69,7 @@ public class WizardController extends AbstractController implements Initializabl
     @FXML
     TextField phone;
 
-    private Identity identity;
+    Identity identity;
 
     @Inject
     private IdentityRepository identityRepository;
@@ -76,9 +77,12 @@ public class WizardController extends AbstractController implements Initializabl
     @Inject
     private IdentityBuilderFactory identityBuilderFactory;
 
+    @Inject
+    ClientConfig clientConfiguration;
+
     VBox currentStep;
     public ArrayList<VBox> steps = new ArrayList<>();
-    private IntegerProperty currentStepIndex = new SimpleIntegerProperty(-1);
+    public IntegerProperty currentStepIndex = new SimpleIntegerProperty(-1);
     EmailValidator emailValidator = EmailValidator.getInstance();
 
     @Override
@@ -117,11 +121,11 @@ public class WizardController extends AbstractController implements Initializabl
                 emailIdentity.setText(email.getText().toString());
             }
         });
-
     }
 
     private void updateIdentityPhone(String phone) {
         identity.setPhone(phone);
+        addIdentityWithAlias(alias.getText().toString());
     }
 
     private void validateButtons() {
@@ -176,7 +180,11 @@ public class WizardController extends AbstractController implements Initializabl
         }
     }
 
-    public void loadCurrentStep() {
+    public VBox getCurrentStep() {
+        return currentStep;
+    }
+
+    private void loadCurrentStep() {
         loadStep.getChildren().get(currentStepIndex.get()).setVisible(true);
 
         switch (currentStepIndex.get()) {
@@ -195,14 +203,14 @@ public class WizardController extends AbstractController implements Initializabl
                 break;
             case 3:
                 if (!phone.getText().isEmpty()) {
-                    validatePhone(phone.getText());
+                    phoneValidator(phone.getText());
                 }
                 next.setVisible(false);
                 break;
         }
     }
 
-    private void validatePhone(String phone) {
+    protected void phoneValidator(String phone) {
         try {
             String formattedPhone = PhoneUtilsKt.formatPhoneNumber(phone);
 
@@ -219,16 +227,17 @@ public class WizardController extends AbstractController implements Initializabl
     protected void createIdentity(String alias) {
         identity = identityBuilderFactory.factory().withAlias(alias).build();
         addIdentityWithAlias(alias);
-        identity.attach(() -> addIdentityWithAlias(alias));
     }
 
     protected void updateIdentityAlias(String alias) {
         identity.setAlias(alias);
         labelWizard.setText(alias.substring(0, 1).toUpperCase());
+        addIdentityWithAlias(alias);
     }
 
     protected void updateIdentityEmail(String email) {
         identity.setEmail(email);
+        addIdentityWithAlias(alias.getText().toString());
     }
 
     protected void addIdentityWithAlias(String alias) {
@@ -238,6 +247,8 @@ public class WizardController extends AbstractController implements Initializabl
         } catch (PersistenceException e) {
             alert("Failed to save new identity", e);
         }
+
+        clientConfiguration.selectIdentity(identity);
     }
 
     public void showPopup() {

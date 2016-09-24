@@ -165,19 +165,6 @@ public class AccountingController extends AbstractController implements Initiali
         }
     }
 
-    protected void addIdentityWithAlias(String alias) {
-        Identity identity = identityBuilderFactory.factory().withAlias(alias).build();
-        try {
-            identityRepository.save(identity);
-        } catch (PersistenceException e) {
-            alert("Failed to save new identity", e);
-        }
-        loadIdentities();
-        if (clientConfiguration.getSelectedIdentity() == null) {
-            clientConfiguration.selectIdentity(identity);
-        }
-    }
-
     void importIdentity(File file) throws IOException, PersistenceException, URISyntaxException, QblDropInvalidURL, JSONException {
         String content = readFile(file);
         Identity i = IdentityExportImport.parseIdentity(content);

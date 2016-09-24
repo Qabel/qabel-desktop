@@ -1,8 +1,6 @@
 package de.qabel.desktop.ui.accounting;
 
 import com.airhacks.afterburner.views.FXMLView;
-import de.qabel.core.config.Identities;
-import de.qabel.core.config.Identity;
 import de.qabel.core.repository.exception.EntityNotFoundException;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.core.repository.inmemory.InMemoryIdentityRepository;
@@ -10,7 +8,7 @@ import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static de.qabel.desktop.AsyncUtils.assertAsync;
 
 public class AccountingGuiTest extends AbstractGuiTest<AccountingController> {
     private AccountingPage page;
@@ -29,13 +27,9 @@ public class AccountingGuiTest extends AbstractGuiTest<AccountingController> {
     }
 
     @Test
-    public void testAddsIdentity() throws EntityNotFoundException, PersistenceException {
-        controller.clientConfiguration.selectIdentity(null);
-        page.add().inputAndConfirm("a new identity");
-
-        Identities identities = identityRepository.findAll();
-        assertEquals(1, identities.getIdentities().size());
-        Identity i = controller.clientConfiguration.getSelectedIdentity();
-        assertEquals("a new identity", identities.getByKeyIdentifier(i.getKeyIdentifier()).getAlias());
+    public void openWizard() throws EntityNotFoundException, PersistenceException {
+        controller.layoutWindow = controller.identityList;
+        page.open();
+        assertAsync(() -> controller.wizardController.wizardPane.isVisible());
     }
 }
