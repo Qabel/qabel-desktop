@@ -257,6 +257,7 @@ public class RemoteFSController extends AbstractController implements Initializa
     }
 
     private Callback<TreeTableColumn.CellDataFeatures<BoxObject, Node>, ObservableValue<Node>> inlineOptionsCellValueFactory() {
+        Map<String, Observer> observers = new WeakHashMap<String, Observer>();
         return param -> {
             TreeItem<BoxObject> item = param.getValue();
             HBox bar = new HBox(3);
@@ -274,29 +275,35 @@ public class RemoteFSController extends AbstractController implements Initializa
             }
             ReadableBoxNavigation rNav = ((FolderTreeItem)folder).getNavigation();
             if (!(rNav instanceof CachedBoxNavigation)) {
+                logger.warn("remote browser cell has no cached navigation, unable to observe changes!");
                 return result;
             }
-
             CachedBoxNavigation nav = (CachedBoxNavigation)rNav;
-            nav.addObserver((o, arg) -> {
-                    if (!(arg instanceof ChangeEvent)) {
-                        return;
-                    }
-                    ChangeEvent event = (ChangeEvent) arg;
-                    if (!event.getPath().equals(value instanceof BoxFolder ? nav.getDesktopPath() : nav.getDesktopPath(item.getValue()))) {
-                        return;
-                    }
-                    Platform.runLater(() -> {
-                        try {
-                            if (value instanceof BoxFile) {
-                                item.setValue(nav.getFile(value.getName()));
-                            }
-                            loadInlineButtons(item, bar);
-                            result.set(bar);
-                        } catch (QblStorageException ignored) {
+            String key = ((FolderTreeItem) folder).getPath().toString();
+            Observer observer = (o, arg) -> {
+                if (!(arg instanceof ChangeEvent)) {
+                    return;
+                }
+                ChangeEvent event = (ChangeEvent) arg;
+                if (!event.getPath().equals(value instanceof BoxFolder ? nav.getDesktopPath() : nav.getDesktopPath(item.getValue()))) {
+                    return;
+                }
+                Platform.runLater(() -> {
+                    try {
+                        if (value instanceof BoxFile) {
+                            item.setValue(nav.getFile(value.getName()));
                         }
-                    });
-            });
+                        loadInlineButtons(item, bar);
+                        result.set(bar);
+                    } catch (QblStorageException ignored) {
+                    }
+                });
+            };
+            if (observers.containsKey(key)) {
+                nav.deleteObserver(observers.get(key));
+            }
+            observers.put(key, observer);
+            nav.addObserver(observer);
 
             return result;
         };

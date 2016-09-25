@@ -18,6 +18,7 @@ import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.FilesAbout;
 import de.qabel.desktop.config.factory.BlockBoxVolumeFactory;
 import de.qabel.desktop.config.factory.BoxVolumeFactory;
+import de.qabel.desktop.config.factory.CachedBoxVolumeFactory;
 import de.qabel.desktop.crashReports.CrashReportHandler;
 import de.qabel.desktop.daemon.NetworkStatus;
 import de.qabel.desktop.daemon.drop.DropDaemon;
@@ -149,12 +150,12 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
     @Override
     public synchronized BoxVolumeFactory getBoxVolumeFactory() throws IOException {
         if (boxVolumeFactory == null) {
-            boxVolumeFactory = new BlockBoxVolumeFactory(
+            boxVolumeFactory = new CachedBoxVolumeFactory(new BlockBoxVolumeFactory(
                 getClientConfiguration().getDeviceId().getBytes(),
                 getBoxClient(),
                 getIdentityRepository(),
                 getBlockUri()
-            );
+            ));
         }
         return boxVolumeFactory;
     }
