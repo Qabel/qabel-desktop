@@ -2,7 +2,10 @@ package de.qabel.desktop.daemon.drop;
 
 
 import com.google.common.io.Files;
+import de.qabel.chat.repository.entities.ChatDropMessage;
 import de.qabel.chat.repository.inmemory.InMemoryChatShareRepository;
+import de.qabel.chat.service.ChatService;
+import de.qabel.chat.service.MainChatService;
 import de.qabel.chat.service.MainSharingService;
 import de.qabel.chat.service.SharingService;
 import de.qabel.core.config.Contact;
@@ -14,10 +17,7 @@ import de.qabel.core.drop.DropURL;
 import de.qabel.core.http.DropServerHttp;
 import de.qabel.core.http.MainDropConnector;
 import de.qabel.core.http.MockDropServer;
-import de.qabel.chat.repository.entities.ChatDropMessage;
 import de.qabel.core.repository.entities.DropState;
-import de.qabel.chat.service.ChatService;
-import de.qabel.chat.service.MainChatService;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 import org.jetbrains.annotations.NotNull;
@@ -25,13 +25,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.util.List;
 
 import static de.qabel.desktop.AsyncUtils.assertAsync;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class DropDaemonTest extends AbstractControllerTest {
     private Contact c;
@@ -84,6 +82,7 @@ public class DropDaemonTest extends AbstractControllerTest {
 
         List<PersistenceDropMessage> lst = dropMessageRepository.loadConversation(sender, identity);
         assertEquals(1, lst.size());
+        assertFalse(lst.get(0).isSent());
     }
 
     @Test
