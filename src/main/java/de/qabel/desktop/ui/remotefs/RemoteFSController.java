@@ -514,7 +514,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle(resourceBundle.getString("remoteFsDeleteQuestion"));
-                alert.setHeaderText(resourceBundle.getString("remoteFsDeleteFolder") + item.getValue().getName() + " ?");
+                alert.setHeaderText(resourceBundle.getString("remoteFsDeleteFolder") + " " + item.getValue().getName() + " ?");
                 Optional<ButtonType> result = alert.showAndWait();
 
                 FolderTreeItem updateTreeItem = (FolderTreeItem) item.getParent();
