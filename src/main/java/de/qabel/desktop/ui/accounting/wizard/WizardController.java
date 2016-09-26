@@ -103,6 +103,7 @@ public class WizardController extends AbstractController implements Initializabl
                     ((Circle) n).setFill(Color.WHITE);
                 }
             }
+            loadCurrentStep();
         });
 
         alias.lengthProperty().addListener((observable, oldValue, newValue) -> {
@@ -157,7 +158,6 @@ public class WizardController extends AbstractController implements Initializabl
         currentStep = steps.get(0);
         currentStepIndex.set(0);
         labelWizard.setText("?");
-        loadCurrentStep();
     }
 
     public void next() {
@@ -165,7 +165,6 @@ public class WizardController extends AbstractController implements Initializabl
             loadStep.getChildren().get(currentStepIndex.get()).setVisible(false);
             currentStepIndex.set(currentStepIndex.get() + 1);
             currentStep = steps.get(currentStepIndex.get());
-            loadCurrentStep();
         }
     }
 
@@ -174,7 +173,6 @@ public class WizardController extends AbstractController implements Initializabl
             loadStep.getChildren().get(currentStepIndex.get()).setVisible(false);
             currentStepIndex.set(currentStepIndex.get() - 1);
             currentStep = steps.get(currentStepIndex.get());
-            loadCurrentStep();
         }
     }
 
