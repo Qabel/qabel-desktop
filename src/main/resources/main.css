@@ -818,3 +818,7 @@ VBox.spaced, HBox.spaced {
     -fx-background-image: url('/img/chevron_left.png');
     -fx-background-position: left;
 }
+
+.error-textfield {
+    -fx-effect: dropshadow(three-pass-box, red, 8, 0.0, 0, 1);
+}

@@ -83,16 +83,17 @@ public class AccountingController extends AbstractController implements Initiali
         }
         resourceBundle = resources;
 
+        loadIdentities();
         updateIdentityState();
         updateButtonIcons();
         clientConfiguration.onSelectIdentity(identity -> updateIdentityState());
+        identityRepository.attach(() -> Platform.runLater(() -> loadIdentities()));
     }
 
     private void updateIdentityState() {
         Identity identity = clientConfiguration.getSelectedIdentity();
         exportIdentity.setDisable(identity == null);
         exportContact.setDisable(identity == null);
-        loadIdentities();
     }
 
     private void updateButtonIcons() {

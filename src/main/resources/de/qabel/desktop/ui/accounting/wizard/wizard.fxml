@@ -24,7 +24,7 @@
                     <children>
                         <Pane fx:id="avatarContainer" StackPane.alignment="CENTER">
                             <children>
-                                <Label fx:id="labelWizard" alignment="CENTER" prefHeight="15.0" prefWidth="0.0"
+                                <Label fx:id="avatarLabel" alignment="CENTER" prefHeight="15.0" prefWidth="0.0"
                                        styleClass="avatar-wizard"/>
                             </children>
                             <StackPane.margin>
@@ -34,18 +34,18 @@
                     </children>
                 </StackPane>
                 <VBox alignment="CENTER">
-                    <Label fx:id="nameIdentity" visible="false" alignment="CENTER"/>
-                    <Label fx:id="emailIdentity" visible="false" alignment="CENTER"/>
-                    <Label fx:id="phoneIdentity" visible="false" alignment="CENTER"/>
+                    <Label fx:id="aliasLabel" visible="false" alignment="CENTER"/>
+                    <Label fx:id="emailLabel" visible="false" alignment="CENTER"/>
+                    <Label fx:id="phoneLabel" visible="false" alignment="CENTER"/>
                     <VBox.margin>
                         <Insets top="10.0"/>
                     </VBox.margin>
                 </VBox>
-                <StackPane fx:id="loadStep">
+                <StackPane fx:id="stepContainer">
                     <children>
                         <VBox fx:id="step1" visible="false">
                             <children>
-                                <TextField fx:id="alias" promptText="%nameIdentityPromptText"
+                                <TextField fx:id="aliasInput" promptText="%nameIdentityPromptText"
                                            styleClass="text-field-wizard"/>
                                 <Label text="%nameIdentityInstructions" styleClass="text-field-wizard" wrapText="true"/>
                             </children>
@@ -55,7 +55,7 @@
                         </VBox>
                         <VBox fx:id="step2" visible="false">
                             <children>
-                                <TextField fx:id="email" promptText="%emailAddress" styleClass="text-field-wizard"/>
+                                <TextField fx:id="emailInput" promptText="%emailAddress" styleClass="text-field-wizard"/>
                                 <Label fx:id="emailInstructions" text="%emailInstructions"
                                        styleClass="text-field-wizard" wrapText="true"/>
                             </children>
@@ -65,7 +65,7 @@
                         </VBox>
                         <VBox fx:id="step3" visible="false">
                             <children>
-                                <TextField fx:id="phone" promptText="%phoneNumber" styleClass="text-field-wizard"/>
+                                <TextField fx:id="phoneInput" promptText="%phoneNumber" styleClass="text-field-wizard"/>
                                 <Label text="%phoneInstructions" styleClass="text-field-wizard" wrapText="true"/>
                             </children>
                             <StackPane.margin>
@@ -85,19 +85,19 @@
                 </StackPane>
                 <StackPane>
                     <children>
-                        <Button fx:id="next" onAction="#next" text="%next" textAlignment="LEFT"
+                        <Button fx:id="nextButton" onAction="#next" text="%next" textAlignment="LEFT"
                                 StackPane.alignment="BOTTOM_RIGHT" styleClass="button-next" prefWidth="100">
                             <StackPane.margin>
                                 <Insets left="10.0" right="10.0" bottom="10.0" top="10.0"/>
                             </StackPane.margin>
                         </Button>
-                        <Button fx:id="back" onAction="#back" text="%back" textAlignment="LEFT"
+                        <Button fx:id="backButton" onAction="#back" text="%back" textAlignment="LEFT"
                                 StackPane.alignment="BOTTOM_LEFT" styleClass="button-back" prefWidth="100">
                             <StackPane.margin>
                                 <Insets left="10.0" right="10.0" bottom="10.0" top="10.0"/>
                             </StackPane.margin>
                         </Button>
-                        <Button fx:id="finish" onAction="#buttonClosePopup" text="%finish" visible="false"
+                        <Button fx:id="finishButton" onAction="#finishWizard" text="%finish" visible="false"
                                 textAlignment="LEFT"
                                 StackPane.alignment="BOTTOM_RIGHT" prefWidth="100">
                             <StackPane.margin>

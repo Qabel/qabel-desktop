@@ -1,5 +1,7 @@
 package de.qabel.desktop.ui.accounting.wizard;
 
+import de.qabel.core.config.Identities;
+import de.qabel.core.config.Identity;
 import de.qabel.core.repository.exception.EntityNotFoundException;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractControllerTest;
@@ -30,20 +32,20 @@ public class WizardControllerTest extends AbstractControllerTest {
     public void loadFirstStep() throws Exception {
         controller = getController();
         assertEquals("step1", controller.getCurrentStep().getId());
-        assertEquals(controller.getCurrentStep().getChildren().get(0).getId(), "alias");
+        assertEquals(controller.getCurrentStep().getChildren().get(0).getId(), "aliasInput");
     }
 
     @Test
     public void goToNextSteps() throws Exception {
         controller = getController();
-        controller.alias.setText("test");
+        controller.aliasInput.setText("test");
         moveThrough4Steps();
     }
 
     @Test
     public void goBackToSteps() throws Exception {
         controller = getController();
-        controller.alias.setText("test");
+        controller.aliasInput.setText("test");
         moveThrough4Steps();
         back4Steps();
     }
@@ -61,7 +63,7 @@ public class WizardControllerTest extends AbstractControllerTest {
     @Test
     public void goToNextStepFailure() throws Exception {
         controller = getController();
-        controller.alias.setText("test");
+        controller.aliasInput.setText("test");
         moveThrough4Steps();
     }
 
@@ -78,17 +80,17 @@ public class WizardControllerTest extends AbstractControllerTest {
     @Test
     public void emptyIdentityValidation(){
         controller = getController();
-        controller.alias.setText("");
-        assertTrue(controller.next.isDisable());
+        controller.aliasInput.setText("");
+        assertTrue(controller.nextButton.isDisable());
     }
 
     @Test
     public void goToStep2(){
         controller = getController();
-        controller.alias.setText("test");
+        controller.aliasInput.setText("test");
         controller.next();
         assertEquals("step2", controller.getCurrentStep().getId());
-        assertEquals(controller.getCurrentStep().getChildren().get(0).getId(), "email");
+        assertEquals(controller.getCurrentStep().getChildren().get(0).getId(), "emailInput");
     }
 
     @Test
@@ -96,56 +98,74 @@ public class WizardControllerTest extends AbstractControllerTest {
         goToStep2();
         controller.next();
         assertEquals("step3", controller.getCurrentStep().getId());
-        assertEquals(controller.getCurrentStep().getChildren().get(0).getId(), "phone");
+        assertEquals(controller.getCurrentStep().getChildren().get(0).getId(), "phoneInput");
     }
 
     @Test
     public void emailValidation(){
         goToStep2();
-        controller.email.setText("test");
-        assertFalse(controller.emailValidator.isValid(controller.email.getText()));
-        controller.email.setText("test@test.de");
-        assertTrue(controller.emailValidator.isValid(controller.email.getText()));
+        controller.emailInput.setText("test");
+        assertFalse(controller.emailValidator.isValid(controller.emailInput.getText()));
+        controller.emailInput.setText("test@test.de");
+        assertTrue(controller.emailValidator.isValid(controller.emailInput.getText()));
     }
 
     @Test
     public void testAddsIdentity() throws EntityNotFoundException, PersistenceException {
         controller = getController();
         controller.clientConfiguration.selectIdentity(null);
-        controller.alias.setText("a new identity");
+        Identities identities = identityRepository.findAll();
+        assertEquals(1, identityRepository.findAll().getIdentities().size());
+        controller.aliasInput.setText("a new identity");
         controller.next();
-        assertEquals("a new identity", controller.identity.getAlias());
+        controller.next();
+        controller.next();
+        controller.finishWizard();
+        Identity selectedIdentity = controller.clientConfiguration.getSelectedIdentity();
+        assertEquals(2, identityRepository.findAll().getIdentities().size());
+        assertEquals("a new identity", identities.getByKeyIdentifier(selectedIdentity.getKeyIdentifier()).getAlias());
     }
 
     @Test
     public void testAddsPhone() throws EntityNotFoundException, PersistenceException {
         goToStep3();
-        controller.phone.setText("+17626262626");
-        controller.phoneValidator(controller.phone.getText());
-        assertEquals("+17626262626", controller.identity.getPhone());
+        controller.phoneInput.setText("+17626262626");
+        controller.validatePhone(controller.phoneInput.getText());
+        controller.next();
+        controller.finishWizard();
+        Identities identities = identityRepository.findAll();
+        Identity selectedIdentity = controller.clientConfiguration.getSelectedIdentity();
+        assertEquals(2, identityRepository.findAll().getIdentities().size());
+        assertEquals("+17626262626", identities.getByKeyIdentifier(selectedIdentity.getKeyIdentifier()).getPhone());
     }
 
     @Test
     public void testEmptyPhone() throws EntityNotFoundException, PersistenceException {
         goToStep3();
-        controller.phone.setText("+5656");
-        controller.phoneValidator(controller.phone.getText());
-        assertEquals("", controller.identity.getPhone());
+        controller.phoneInput.setText("+5656");
+        controller.validatePhone(controller.phoneInput.getText());
+        controller.finishWizard();
+        Identities identities = identityRepository.findAll();
+        Identity selectedIdentity = controller.clientConfiguration.getSelectedIdentity();
+        assertEquals("", identities.getByKeyIdentifier(selectedIdentity.getKeyIdentifier()).getPhone());
     }
 
     @Test
     public void testAddsEmail() throws EntityNotFoundException, PersistenceException {
         goToStep2();
-        controller.email.setText("test@test.de");
-        assertEquals("test@test.de", controller.identity.getEmail());
+        controller.emailInput.setText("test@test.de");
+        controller.finishWizard();
+        Identities identities = identityRepository.findAll();
+        Identity selectedIdentity = controller.clientConfiguration.getSelectedIdentity();
+        assertEquals("test@test.de", identities.getByKeyIdentifier(selectedIdentity.getKeyIdentifier()).getEmail());
     }
 
     @Test
-    public void testEditAlias() throws EntityNotFoundException, PersistenceException {
+    public void testEditAliasInput() throws EntityNotFoundException, PersistenceException {
         goToStep2();
         controller.back();
         assertEquals("step1", controller.getCurrentStep().getId());
-        controller.alias.setText("alias2");
+        controller.aliasInput.setText("alias2");
         controller.next();
         assertEquals("alias2", controller.identity.getAlias());
     }

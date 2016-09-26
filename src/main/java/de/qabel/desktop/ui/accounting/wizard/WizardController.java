@@ -8,8 +8,6 @@ import de.qabel.core.repository.IdentityRepository;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.ui.AbstractController;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.StringBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
@@ -34,9 +32,9 @@ public class WizardController extends AbstractController implements Initializabl
     ResourceBundle resourceBundle;
 
     @FXML
-    public StackPane wizardPane;
+    StackPane wizardPane;
     @FXML
-    StackPane loadStep;
+    StackPane stepContainer;
     @FXML
     VBox step1;
     @FXML
@@ -46,27 +44,28 @@ public class WizardController extends AbstractController implements Initializabl
     @FXML
     VBox step4;
     @FXML
-    Label labelWizard;
+    Label avatarLabel;
     @FXML
-    TextField alias;
+    Button nextButton;
     @FXML
-    Button next;
+    Button backButton;
     @FXML
-    Button back;
-    @FXML
-    Button finish;
-    @FXML
-    Label nameIdentity;
+    Button finishButton;
     @FXML
     HBox progressIndicator;
     @FXML
-    TextField email;
+    TextField aliasInput;
     @FXML
-    Label emailIdentity;
+    TextField emailInput;
     @FXML
-    Label phoneIdentity;
+    TextField phoneInput;
     @FXML
-    TextField phone;
+    Label aliasLabel;
+    @FXML
+    Label emailLabel;
+    @FXML
+    Label phoneLabel;
+
     Identity identity;
 
     @Inject
@@ -79,8 +78,8 @@ public class WizardController extends AbstractController implements Initializabl
     ClientConfig clientConfiguration;
 
     VBox currentStep;
-    public ArrayList<VBox> steps = new ArrayList<>();
-    public IntegerProperty currentStepIndex = new SimpleIntegerProperty(-1);
+    ArrayList<VBox> steps = new ArrayList<>();
+    IntegerProperty currentStepIndex = new SimpleIntegerProperty(-1);
     EmailValidator emailValidator = EmailValidator.getInstance();
 
     @Override
@@ -106,36 +105,37 @@ public class WizardController extends AbstractController implements Initializabl
             loadCurrentStep();
         });
 
-        alias.lengthProperty().addListener((observable, oldValue, newValue) -> {
-            if (alias.getText().length() > 0) {
-                next.setDisable(false);
+        emailInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (emailValidator.isValid(emailInput.getText())) {
+                updateIdentityEmail(emailInput.getText().toString());
+                emailLabel.setText(emailInput.getText().toString());
+                emailInput.getStyleClass().removeAll("error-textfield");
             } else {
-                next.setDisable(true);
+                emailInput.getStyleClass().add("error-textfield");
+                emailLabel.setText("");
             }
         });
 
-        email.lengthProperty().addListener((observable, oldValue, newValue) -> {
-            if (emailValidator.isValid(email.getText())) {
-                updateIdentityEmail(email.getText().toString());
-                emailIdentity.setText(email.getText().toString());
+        phoneInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.isEmpty()) {
+                if (validatePhone(newValue.toString())) {
+                    phoneInput.getStyleClass().removeAll("error-textfield");
+                } else {
+                    phoneInput.getStyleClass().add("error-textfield");
+                    phoneLabel.setText("");
+                }
             }
         });
-    }
-
-    private void updateIdentityPhone(String phone) {
-        identity.setPhone(phone);
-        addIdentityWithAlias(identity.getAlias());
     }
 
     private void validateButtons() {
-        StringBinding emailValidation = Bindings.createStringBinding(() ->
-            emailValidator.isValid(email.getText()) ? email.getText() : "", email.textProperty()
-        );
-
-        back.visibleProperty().bind(currentStepIndex.greaterThan(0));
-        finish.visibleProperty().bind(currentStepIndex.isEqualTo(steps.size() - 1));
-        emailIdentity.visibleProperty().bind(email.textProperty().isEqualTo(emailValidation));
-        next.setDisable(true);
+        backButton.visibleProperty().bind(currentStepIndex.greaterThan(0));
+        finishButton.visibleProperty().bind(currentStepIndex.isEqualTo(steps.size() - 1));
+        emailLabel.visibleProperty().bind(emailInput.textProperty().isEmpty().not());
+        nextButton.disableProperty().bind(aliasInput.textProperty().isEmpty());
+        nextButton.visibleProperty().bind(currentStepIndex.lessThan(3));
+        phoneLabel.visibleProperty().bind(phoneInput.textProperty().isEmpty().not());
+        aliasLabel.visibleProperty().bind(aliasInput.textProperty().isEmpty().not());
     }
 
     private void createIndicators() {
@@ -157,12 +157,12 @@ public class WizardController extends AbstractController implements Initializabl
     protected void setInitialStep() {
         currentStep = steps.get(0);
         currentStepIndex.set(0);
-        labelWizard.setText("?");
+        avatarLabel.setText("?");
     }
 
     public void next() {
         if (steps.size() >= currentStepIndex.get()) {
-            loadStep.getChildren().get(currentStepIndex.get()).setVisible(false);
+            stepContainer.getChildren().get(currentStepIndex.get()).setVisible(false);
             currentStepIndex.set(currentStepIndex.get() + 1);
             currentStep = steps.get(currentStepIndex.get());
         }
@@ -170,7 +170,7 @@ public class WizardController extends AbstractController implements Initializabl
 
     public void back() {
         if (currentStepIndex.get() > 0) {
-            loadStep.getChildren().get(currentStepIndex.get()).setVisible(false);
+            stepContainer.getChildren().get(currentStepIndex.get()).setVisible(false);
             currentStepIndex.set(currentStepIndex.get() - 1);
             currentStep = steps.get(currentStepIndex.get());
         }
@@ -181,64 +181,49 @@ public class WizardController extends AbstractController implements Initializabl
     }
 
     private void loadCurrentStep() {
-        loadStep.getChildren().get(currentStepIndex.get()).setVisible(true);
+        stepContainer.getChildren().get(currentStepIndex.get()).setVisible(true);
 
-        switch (currentStepIndex.get()) {
-            case 1:
-                nameIdentity.setVisible(true);
-                if (nameIdentity.getText().isEmpty()) {
-                    createIdentity(alias.getText().toString());
-                } else if (!nameIdentity.getText().equals(alias.getText())) {
-                    updateIdentityAlias(alias.getText().toString());
-                }
-                nameIdentity.setText(alias.getText());
-                break;
-            case 2:
-                next.setVisible(true);
-                break;
-            case 3:
-                if (!phone.getText().isEmpty()) {
-                    phoneValidator(phone.getText());
-                }
-                next.setVisible(false);
-                break;
+        if (currentStepIndex.get() == 1) {
+            if (aliasLabel.getText().isEmpty()) {
+                createIdentity(aliasInput.getText().toString());
+            } else if (!aliasLabel.getText().equals(aliasInput.getText())) {
+                updateIdentityAlias(aliasInput.getText().toString());
+            }
+            aliasLabel.setText(aliasInput.getText());
+            avatarLabel.setText(aliasInput.getText().substring(0, 1).toUpperCase());
+            return;
         }
     }
 
-    protected void phoneValidator(String phone) {
+    protected Boolean validatePhone(String phone) {
         try {
             String formattedPhone = PhoneUtilsKt.formatPhoneNumber(phone);
-
             if (PhoneUtilsKt.isValidPhoneNumber(formattedPhone)) {
-                phoneIdentity.setVisible(true);
-                updateIdentityPhone(formattedPhone);
-                phoneIdentity.setText(formattedPhone);
+                identity.setPhone(formattedPhone);
+                phoneLabel.setText(formattedPhone);
+                return true;
             }
         } catch (NumberParseException e) {
-            alert("Invalid phone number", e);
+            return false;
         }
+        return false;
     }
 
     protected void createIdentity(String alias) {
         identity = identityBuilderFactory.factory().withAlias(alias).build();
-        addIdentityWithAlias(alias);
     }
 
     protected void updateIdentityAlias(String alias) {
         identity.setAlias(alias);
-        labelWizard.setText(alias.substring(0, 1).toUpperCase());
-        addIdentityWithAlias(alias);
     }
 
     protected void updateIdentityEmail(String email) {
         identity.setEmail(email);
-        addIdentityWithAlias(identity.getAlias());
     }
 
-    protected void addIdentityWithAlias(String alias) {
+    protected void saveIdentity() {
         try {
             identityRepository.save(identity);
-            labelWizard.setText(alias.substring(0, 1).toUpperCase());
         } catch (PersistenceException e) {
             alert("Failed to save new identity", e);
         }
@@ -250,10 +235,14 @@ public class WizardController extends AbstractController implements Initializabl
 
     public void buttonClosePopup() {
         wizardPane.setVisible(false);
-
-        if (identity != null) {
-            clientConfiguration.selectIdentity(identity);
-        }
     }
 
+    public void finishWizard() {
+        if (identity != null && !aliasInput.getText().isEmpty()) {
+            saveIdentity();
+            clientConfiguration.selectIdentity(identity);
+        }
+
+        buttonClosePopup();
+    }
 }

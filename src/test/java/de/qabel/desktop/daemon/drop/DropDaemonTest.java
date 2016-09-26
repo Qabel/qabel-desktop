@@ -2,6 +2,7 @@ package de.qabel.desktop.daemon.drop;
 
 
 import com.google.common.io.Files;
+import de.qabel.box.storage.jdbc.JdbcFileMetadataFactory;
 import de.qabel.chat.repository.inmemory.InMemoryChatShareRepository;
 import de.qabel.chat.service.MainSharingService;
 import de.qabel.chat.service.SharingService;
@@ -25,7 +26,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.util.List;
 
 import static de.qabel.desktop.AsyncUtils.assertAsync;
@@ -57,10 +57,10 @@ public class DropDaemonTest extends AbstractControllerTest {
         senderIdentity = identityBuilderFactory.factory().withAlias("sender").build();
         sender = getContact(senderIdentity);
         contactRepository.save(sender, identity);
-        dropConnector= new MainDropConnector(new MockDropServer());
+        dropConnector = new MainDropConnector(new MockDropServer());
         mockCoreDropConnector = new MockCoreDropConnector();
         sharingService = new MainSharingService(new InMemoryChatShareRepository(), contactRepository,
-            Files.createTempDir(), new CryptoUtils());
+            Files.createTempDir(), new JdbcFileMetadataFactory(Files.createTempDir()), new CryptoUtils());
         chatService = new MainChatService(mockCoreDropConnector, identityRepository,
             contactRepository, chatDropMessageRepository, dropStateRepository, sharingService);
         dd = new DropDaemon(chatService, dropMessageRepository, contactRepository, identityRepository);
@@ -152,7 +152,8 @@ public class DropDaemonTest extends AbstractControllerTest {
         int polls;
 
         @Override
-        public void sendDropMessage(Identity identity, Contact contact, DropMessage dropMessage, DropURL dropURL) { }
+        public void sendDropMessage(Identity identity, Contact contact, DropMessage dropMessage, DropURL dropURL) {
+        }
 
         @NotNull
         @Override
