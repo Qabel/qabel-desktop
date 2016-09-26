@@ -3,6 +3,7 @@ package de.qabel.desktop;
 import com.sun.javafx.application.HostServicesDelegate;
 import com.sun.javafx.application.PlatformImpl;
 import de.qabel.box.storage.AbstractNavigation;
+import de.qabel.chat.repository.sqlite.ChatClientDatabase;
 import de.qabel.core.repository.sqlite.ClientDatabase;
 import de.qabel.core.repository.sqlite.DesktopClientDatabase;
 import de.qabel.core.repository.sqlite.SqliteTransactionManager;
@@ -192,7 +193,7 @@ public class Kernel {
                 try (Statement statement = connection.createStatement()) {
                     statement.execute("PRAGMA FOREIGN_KEYS = ON");
                 }
-                ClientDatabase clientDatabase = new DesktopClientDatabase(connection);
+                ClientDatabase clientDatabase = new ChatClientDatabase(connection);
                 clientDatabase.migrate();
 
                 return clientDatabase;

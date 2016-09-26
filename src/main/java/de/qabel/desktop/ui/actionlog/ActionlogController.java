@@ -18,7 +18,6 @@ import de.qabel.desktop.ui.actionlog.item.MyActionlogItemView;
 import de.qabel.desktop.ui.actionlog.item.OtherActionlogItemView;
 import de.qabel.desktop.ui.connector.DropConnector;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -26,6 +25,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.NotificationPane;
@@ -44,6 +44,9 @@ import static java.lang.Thread.sleep;
 public class ActionlogController extends AbstractController implements Initializable, Observer {
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
     private static final Logger logger = LoggerFactory.getLogger(ActionlogController.class);
+
+    @FXML
+    public BorderPane chat;
     @FXML
     Button accept;
 
