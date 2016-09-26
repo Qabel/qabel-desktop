@@ -16,7 +16,7 @@ public class IndexSearchControllerTest extends AbstractControllerTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        Locale.setDefault(Locale.GERMANY);
+        Locale.setDefault(Locale.US);
 
         initController();
     }
@@ -45,11 +45,11 @@ public class IndexSearchControllerTest extends AbstractControllerTest {
 
     @Test
     public void formatsNumber() throws Exception {
-        when(indexService.searchContacts("", "+4917612345678")).thenReturn(getSingleResult());
-        setText("0 176 12345678");
+        when(indexService.searchContacts("", "+18002332323")).thenReturn(getSingleResult());
+        setText("1 800 2332323");
 
-        assertAsync(this::getText, equalTo("+4917612345678"));
-        assertAsync(() -> verify(indexService).searchContacts("", "+4917612345678"));
+        assertAsync(this::getText, equalTo("+18002332323"));
+        assertAsync(() -> verify(indexService).searchContacts("", "+18002332323"));
         verifyNoMoreInteractions(indexService);
     }
 
