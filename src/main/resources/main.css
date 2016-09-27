@@ -531,6 +531,23 @@ VBox.spaced, HBox.spaced {
     -fx-sync-avatar-width: 25;
 }
 
+.avatar-wizard {
+    -fx-alignment: CENTER;
+    -fx-pref-height: 150px;
+    -fx-pref-width: 150px;
+    -fx-background-size: 150px;
+    -fx-background-color: magenta;
+    -fx-background-radius: 75;
+    -fx-border-radius: 75;
+    -fx-padding: 0 0 0 0;
+    -fx-margin: 3px;
+}
+
+.avatar-wizard .text {
+    -fx-font-size: 6em;
+    -fx-text-fill: #ffffff;
+}
+
 .sync-avatar .avatar {
     -fx-min-height: -fx-sync-avatar-width;
     -fx-min-width: -fx-sync-avatar-width;
@@ -620,6 +637,13 @@ VBox.spaced, HBox.spaced {
 .qr-container {
     -fx-max-width: 300px;
     -fx-max-height: 400px;
+    -fx-position: absolute;
+    -fx-background-color: white;
+}
+
+.wizard-container {
+    -fx-max-width: 300px;
+    -fx-max-height: 450px;
     -fx-position: absolute;
     -fx-background-color: white;
 }
@@ -772,4 +796,29 @@ VBox.spaced, HBox.spaced {
     -fx-min-width: 5em;
     -fx-pref-width: 12em;
     -fx-font-size: 12px;
+}
+
+.text-field-wizard {
+    -fx-pref-width: 250px;
+    -fx-padding: 10px;
+}
+
+.text-field-wizard .text{
+    -fx-font-size: 12;
+}
+
+.button-next {
+    -fx-background-repeat: no-repeat;
+    -fx-background-image: url('/img/chevron_right_small.png');
+    -fx-background-position: right;
+}
+
+.button-back {
+    -fx-background-repeat: no-repeat;
+    -fx-background-image: url('/img/chevron_left.png');
+    -fx-background-position: left;
+}
+
+.error-textfield {
+    -fx-effect: dropshadow(three-pass-box, red, 8, 0.0, 0, 1);
 }

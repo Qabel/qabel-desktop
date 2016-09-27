@@ -44,7 +44,6 @@ public class SyncControllerGuiTest extends AbstractGuiTest<SyncController> {
         setup.enterRemotePath("/");
         setup.startSync();
 
-        waitUntil(() -> !controller.addStage.isShowing());
         robot.targetWindow(scene);
 
         assertEquals(1, controller.syncItemNodes.size());

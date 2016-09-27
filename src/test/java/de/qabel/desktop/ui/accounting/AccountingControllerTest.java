@@ -59,17 +59,6 @@ public class AccountingControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void addsIdentitiesWithAlias() throws Exception {
-        AccountingController controller = getAccountingController();
-        controller.clientConfiguration.selectIdentity(null);
-        controller.addIdentityWithAlias("my ident");
-        Identities identities = identityRepository.findAll();
-        assertEquals(2, identities.getIdentities().size());
-        identity = controller.clientConfiguration.getSelectedIdentity();
-        assertEquals("my ident", identities.getByKeyIdentifier(identity.getKeyIdentifier()).getAlias());
-    }
-
-    @Test
     public void importIdentityTest() throws IOException, QblStorageException, PersistenceException, EntityNotFoundException, URISyntaxException, QblDropInvalidURL, JSONException {
         setupExport();
         controller.importIdentity(new File(System.class.getResource(TEST_JSON).toURI()));
