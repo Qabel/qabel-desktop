@@ -394,13 +394,8 @@ public class LayoutController extends AbstractController implements Initializabl
 
     public void openFaq() {
         setActivityMenu(faqBackground, faqButton);
-        executor.submit(() -> {
-            try {
-                Desktop.getDesktop().browse(new URI(resourceBundle.getString("faqUrl")));
-            } catch (Exception e1) {
-                alert("failed to open FAQ: " + e1.getMessage(), e1);
-            }
-        });
+        executor.submit(() -> tryOrAlert(() ->
+            Desktop.getDesktop().browse(new URI(resourceBundle.getString("faqUrl")))));
     }
 
     public void openInvite() {
