@@ -9,6 +9,7 @@ public class Icons {
     public static final String DOTS = "/img/dots_vertical.png";
     public static final String KEY = "/img/key_variant.png";
     public static final String KEY_INVERSE = "/img/key_variant_white.png";
+    public static final String LINK = "/img/earth_white.png";
 
     public static final int LARGE_ICON_WIDTH = 32;
 

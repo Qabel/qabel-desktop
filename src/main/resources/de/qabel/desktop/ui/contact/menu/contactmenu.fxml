@@ -24,7 +24,7 @@
 
             <Button fx:id="searchButton"
                     wrapText="true"
-                    text="%searchQabelRegister"
+                    text="%searchIndex"
                     onAction="#search"
                     styleClass="button-menu"/>
 
