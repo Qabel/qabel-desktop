@@ -83,8 +83,8 @@ jar.doFirst{
 }
 
 dependencies {
-    def coreVersion = 'de99e17f17a10d8d68ba3e0b979416c6b559098c'
-    def repo = 'julianseeger'
+    def coreVersion = '90145780680b7954f53d068126ec883a5d6e20ff'
+    def repo = 'Qabel'
 
     compile 'com.github.'+repo+'.qabel-core:core:'+coreVersion
     compile 'com.github.'+repo+'.qabel-core:box:'+coreVersion

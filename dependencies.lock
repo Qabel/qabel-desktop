@@ -7,17 +7,17 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.julianseeger.qabel-core:box": {
-            "locked": "de99e17f17a10d8d68ba3e0b979416c6b559098c",
-            "requested": "de99e17f17a10d8d68ba3e0b979416c6b559098c"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "90145780680b7954f53d068126ec883a5d6e20ff",
+            "requested": "90145780680b7954f53d068126ec883a5d6e20ff"
         },
-        "com.github.julianseeger.qabel-core:chat": {
-            "locked": "de99e17f17a10d8d68ba3e0b979416c6b559098c",
-            "requested": "de99e17f17a10d8d68ba3e0b979416c6b559098c"
+        "com.github.Qabel.qabel-core:chat": {
+            "locked": "90145780680b7954f53d068126ec883a5d6e20ff",
+            "requested": "90145780680b7954f53d068126ec883a5d6e20ff"
         },
-        "com.github.julianseeger.qabel-core:core": {
-            "locked": "de99e17f17a10d8d68ba3e0b979416c6b559098c",
-            "requested": "de99e17f17a10d8d68ba3e0b979416c6b559098c"
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "90145780680b7954f53d068126ec883a5d6e20ff",
+            "requested": "90145780680b7954f53d068126ec883a5d6e20ff"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -127,17 +127,17 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.julianseeger.qabel-core:box": {
-            "locked": "de99e17f17a10d8d68ba3e0b979416c6b559098c",
-            "requested": "de99e17f17a10d8d68ba3e0b979416c6b559098c"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "90145780680b7954f53d068126ec883a5d6e20ff",
+            "requested": "90145780680b7954f53d068126ec883a5d6e20ff"
         },
-        "com.github.julianseeger.qabel-core:chat": {
-            "locked": "de99e17f17a10d8d68ba3e0b979416c6b559098c",
-            "requested": "de99e17f17a10d8d68ba3e0b979416c6b559098c"
+        "com.github.Qabel.qabel-core:chat": {
+            "locked": "90145780680b7954f53d068126ec883a5d6e20ff",
+            "requested": "90145780680b7954f53d068126ec883a5d6e20ff"
         },
-        "com.github.julianseeger.qabel-core:core": {
-            "locked": "de99e17f17a10d8d68ba3e0b979416c6b559098c",
-            "requested": "de99e17f17a10d8d68ba3e0b979416c6b559098c"
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "90145780680b7954f53d068126ec883a5d6e20ff",
+            "requested": "90145780680b7954f53d068126ec883a5d6e20ff"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -247,17 +247,17 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.julianseeger.qabel-core:box": {
-            "locked": "de99e17f17a10d8d68ba3e0b979416c6b559098c",
-            "requested": "de99e17f17a10d8d68ba3e0b979416c6b559098c"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "90145780680b7954f53d068126ec883a5d6e20ff",
+            "requested": "90145780680b7954f53d068126ec883a5d6e20ff"
         },
-        "com.github.julianseeger.qabel-core:chat": {
-            "locked": "de99e17f17a10d8d68ba3e0b979416c6b559098c",
-            "requested": "de99e17f17a10d8d68ba3e0b979416c6b559098c"
+        "com.github.Qabel.qabel-core:chat": {
+            "locked": "90145780680b7954f53d068126ec883a5d6e20ff",
+            "requested": "90145780680b7954f53d068126ec883a5d6e20ff"
         },
-        "com.github.julianseeger.qabel-core:core": {
-            "locked": "de99e17f17a10d8d68ba3e0b979416c6b559098c",
-            "requested": "de99e17f17a10d8d68ba3e0b979416c6b559098c"
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "90145780680b7954f53d068126ec883a5d6e20ff",
+            "requested": "90145780680b7954f53d068126ec883a5d6e20ff"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -403,17 +403,17 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.julianseeger.qabel-core:box": {
-            "locked": "de99e17f17a10d8d68ba3e0b979416c6b559098c",
-            "requested": "de99e17f17a10d8d68ba3e0b979416c6b559098c"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "90145780680b7954f53d068126ec883a5d6e20ff",
+            "requested": "90145780680b7954f53d068126ec883a5d6e20ff"
         },
-        "com.github.julianseeger.qabel-core:chat": {
-            "locked": "de99e17f17a10d8d68ba3e0b979416c6b559098c",
-            "requested": "de99e17f17a10d8d68ba3e0b979416c6b559098c"
+        "com.github.Qabel.qabel-core:chat": {
+            "locked": "90145780680b7954f53d068126ec883a5d6e20ff",
+            "requested": "90145780680b7954f53d068126ec883a5d6e20ff"
         },
-        "com.github.julianseeger.qabel-core:core": {
-            "locked": "de99e17f17a10d8d68ba3e0b979416c6b559098c",
-            "requested": "de99e17f17a10d8d68ba3e0b979416c6b559098c"
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "90145780680b7954f53d068126ec883a5d6e20ff",
+            "requested": "90145780680b7954f53d068126ec883a5d6e20ff"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -559,17 +559,17 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.julianseeger.qabel-core:box": {
-            "locked": "de99e17f17a10d8d68ba3e0b979416c6b559098c",
-            "requested": "de99e17f17a10d8d68ba3e0b979416c6b559098c"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "90145780680b7954f53d068126ec883a5d6e20ff",
+            "requested": "90145780680b7954f53d068126ec883a5d6e20ff"
         },
-        "com.github.julianseeger.qabel-core:chat": {
-            "locked": "de99e17f17a10d8d68ba3e0b979416c6b559098c",
-            "requested": "de99e17f17a10d8d68ba3e0b979416c6b559098c"
+        "com.github.Qabel.qabel-core:chat": {
+            "locked": "90145780680b7954f53d068126ec883a5d6e20ff",
+            "requested": "90145780680b7954f53d068126ec883a5d6e20ff"
         },
-        "com.github.julianseeger.qabel-core:core": {
-            "locked": "de99e17f17a10d8d68ba3e0b979416c6b559098c",
-            "requested": "de99e17f17a10d8d68ba3e0b979416c6b559098c"
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "90145780680b7954f53d068126ec883a5d6e20ff",
+            "requested": "90145780680b7954f53d068126ec883a5d6e20ff"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -679,17 +679,17 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.julianseeger.qabel-core:box": {
-            "locked": "de99e17f17a10d8d68ba3e0b979416c6b559098c",
-            "requested": "de99e17f17a10d8d68ba3e0b979416c6b559098c"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "90145780680b7954f53d068126ec883a5d6e20ff",
+            "requested": "90145780680b7954f53d068126ec883a5d6e20ff"
         },
-        "com.github.julianseeger.qabel-core:chat": {
-            "locked": "de99e17f17a10d8d68ba3e0b979416c6b559098c",
-            "requested": "de99e17f17a10d8d68ba3e0b979416c6b559098c"
+        "com.github.Qabel.qabel-core:chat": {
+            "locked": "90145780680b7954f53d068126ec883a5d6e20ff",
+            "requested": "90145780680b7954f53d068126ec883a5d6e20ff"
         },
-        "com.github.julianseeger.qabel-core:core": {
-            "locked": "de99e17f17a10d8d68ba3e0b979416c6b559098c",
-            "requested": "de99e17f17a10d8d68ba3e0b979416c6b559098c"
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "90145780680b7954f53d068126ec883a5d6e20ff",
+            "requested": "90145780680b7954f53d068126ec883a5d6e20ff"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -835,17 +835,17 @@
             "locked": "1.7.0",
             "requested": "1.7.+"
         },
-        "com.github.julianseeger.qabel-core:box": {
-            "locked": "de99e17f17a10d8d68ba3e0b979416c6b559098c",
-            "requested": "de99e17f17a10d8d68ba3e0b979416c6b559098c"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "90145780680b7954f53d068126ec883a5d6e20ff",
+            "requested": "90145780680b7954f53d068126ec883a5d6e20ff"
         },
-        "com.github.julianseeger.qabel-core:chat": {
-            "locked": "de99e17f17a10d8d68ba3e0b979416c6b559098c",
-            "requested": "de99e17f17a10d8d68ba3e0b979416c6b559098c"
+        "com.github.Qabel.qabel-core:chat": {
+            "locked": "90145780680b7954f53d068126ec883a5d6e20ff",
+            "requested": "90145780680b7954f53d068126ec883a5d6e20ff"
         },
-        "com.github.julianseeger.qabel-core:core": {
-            "locked": "de99e17f17a10d8d68ba3e0b979416c6b559098c",
-            "requested": "de99e17f17a10d8d68ba3e0b979416c6b559098c"
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "90145780680b7954f53d068126ec883a5d6e20ff",
+            "requested": "90145780680b7954f53d068126ec883a5d6e20ff"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
