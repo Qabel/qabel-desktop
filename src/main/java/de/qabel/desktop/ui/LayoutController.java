@@ -27,6 +27,8 @@ import de.qabel.desktop.ui.transfer.ComposedProgressBar;
 import de.qabel.desktop.ui.transfer.TransferViewModel;
 import de.qabel.desktop.ui.util.Icons;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -44,6 +46,7 @@ import javax.inject.Inject;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
@@ -127,6 +130,7 @@ public class LayoutController extends AbstractController implements Initializabl
     NaviItem syncNav;
     NaviItem accountingNav;
     NaviItem aboutNav;
+    NaviItem upgradeNav;
     public QuotaState quotaState;
 
     @FXML
@@ -224,6 +228,14 @@ public class LayoutController extends AbstractController implements Initializabl
         aboutNav = createNavItem(resourceBundle.getString("layoutAbout"),
             Icons.getIcon(INFO),
             aboutView);
+        upgradeNav = createNavItem(resourceBundle.getString("upgrade"),  Icons.getIcon(Icons.LINK),
+            ((event) -> executor.submit(() -> {
+            try {
+                Desktop.getDesktop().browse(new URI(resourceBundle.getString("upgradeLink")));
+            } catch (IOException | URISyntaxException e) {
+                alert(e);
+            }
+        })));
     }
 
     void fillQuotaInformation(QuotaState quotaState) {
@@ -344,6 +356,13 @@ public class LayoutController extends AbstractController implements Initializabl
         return naviItem;
     }
 
+    private NaviItem createNavItem(String label, ImageView image, EventHandler<ActionEvent> callback) {
+        NaviItem naviItem = new NaviItem(label, image);
+        naviItem.setOnAction(callback);
+        navi.getChildren().add(naviItem);
+        return naviItem;
+    }
+
     private void linkNaviItem(FXMLView view, NaviItem naviItem) {
         naviItem.setOnAction(e -> {
             try {
@@ -375,13 +394,8 @@ public class LayoutController extends AbstractController implements Initializabl
 
     public void openFaq() {
         setActivityMenu(faqBackground, faqButton);
-        executor.submit(() -> {
-            try {
-                Desktop.getDesktop().browse(new URI(resourceBundle.getString("faqUrl")));
-            } catch (Exception e1) {
-                alert("failed to open FAQ: " + e1.getMessage(), e1);
-            }
-        });
+        executor.submit(() -> tryOrAlert(() ->
+            Desktop.getDesktop().browse(new URI(resourceBundle.getString("faqUrl")))));
     }
 
     public void openInvite() {
