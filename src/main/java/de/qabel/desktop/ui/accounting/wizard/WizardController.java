@@ -8,6 +8,7 @@ import de.qabel.core.repository.IdentityRepository;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.ui.AbstractController;
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
@@ -32,7 +33,7 @@ public class WizardController extends AbstractController implements Initializabl
     ResourceBundle resourceBundle;
 
     @FXML
-    StackPane wizardPane;
+    public StackPane wizardPane;
     @FXML
     StackPane stepContainer;
     @FXML

@@ -2,6 +2,7 @@ package de.qabel.desktop.daemon.drop;
 
 
 import com.google.common.io.Files;
+import de.qabel.box.storage.jdbc.JdbcFileMetadataFactory;
 import de.qabel.chat.repository.entities.ChatDropMessage;
 import de.qabel.chat.repository.inmemory.InMemoryChatShareRepository;
 import de.qabel.chat.service.ChatService;
