@@ -231,12 +231,11 @@ public class LayoutController extends AbstractController implements Initializabl
         upgradeNav = createNavItem(resourceBundle.getString("upgrade"),  Icons.getIcon(Icons.LINK),
             ((event) -> executor.submit(() -> {
             try {
-                Desktop.getDesktop().browse(new URI("https://qabel.de/de/qabelnow"));
+                Desktop.getDesktop().browse(new URI(resourceBundle.getString("upgradeLink")));
             } catch (IOException | URISyntaxException e) {
                 alert(e);
             }
         })));
-        navi.getChildren().add(upgradeNav);
     }
 
     void fillQuotaInformation(QuotaState quotaState) {
