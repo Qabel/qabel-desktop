@@ -14,14 +14,17 @@ import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.item.AccountingItemView;
 import de.qabel.desktop.ui.accounting.item.DummyAccountingItemView;
+import de.qabel.desktop.ui.accounting.wizard.WizardController;
+import de.qabel.desktop.ui.accounting.wizard.WizardView;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.json.JSONException;
@@ -51,11 +54,16 @@ public class AccountingController extends AbstractController implements Initiali
     @FXML
     Button exportContact;
 
+    @Inject
+    Pane layoutWindow;
+
     List<AccountingItemView> itemViews = new LinkedList<>();
-    TextInputDialog dialog;
     ResourceBundle resourceBundle;
 
     ImageView imageView;
+
+    WizardView wizardView;
+    WizardController wizardController;
 
     @Inject
     private IdentityRepository identityRepository;
@@ -68,7 +76,6 @@ public class AccountingController extends AbstractController implements Initiali
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        loadIdentities();
         try {
             gson = buildGson();
         } catch (EntityNotFoundException | PersistenceException e) {
@@ -76,9 +83,11 @@ public class AccountingController extends AbstractController implements Initiali
         }
         resourceBundle = resources;
 
+        loadIdentities();
         updateIdentityState();
         updateButtonIcons();
         clientConfiguration.onSelectIdentity(identity -> updateIdentityState());
+        identityRepository.attach(() -> Platform.runLater(() -> loadIdentities()));
     }
 
     private void updateIdentityState() {
@@ -100,17 +109,15 @@ public class AccountingController extends AbstractController implements Initiali
         return imageView;
     }
 
-    public void addIdentity(ActionEvent actionEvent) {
-        addIdentity();
+    private void initializeWizard() {
+        wizardView = new WizardView();
+        wizardView.getView(layoutWindow.getChildren()::add);
+        wizardController = (WizardController) wizardView.getPresenter();
     }
 
     public void addIdentity() {
-        dialog = new TextInputDialog(resourceBundle.getString("accountingNewIdentity"));
-        dialog.setHeaderText(null);
-        dialog.setTitle(resourceBundle.getString("accountingNewIdentity"));
-        dialog.setContentText(resourceBundle.getString("accountingNewIdentity"));
-        Optional<String> result = dialog.showAndWait();
-        result.ifPresent(this::addIdentityWithAlias);
+        initializeWizard();
+        Platform.runLater(() -> wizardController.showPopup());
     }
 
     @FXML
@@ -157,19 +164,6 @@ public class AccountingController extends AbstractController implements Initiali
         }
     }
 
-    protected void addIdentityWithAlias(String alias) {
-        Identity identity = identityBuilderFactory.factory().withAlias(alias).build();
-        try {
-            identityRepository.save(identity);
-        } catch (PersistenceException e) {
-            alert("Failed to save new identity", e);
-        }
-        loadIdentities();
-        if (clientConfiguration.getSelectedIdentity() == null) {
-            clientConfiguration.selectIdentity(identity);
-        }
-    }
-
     void importIdentity(File file) throws IOException, PersistenceException, URISyntaxException, QblDropInvalidURL, JSONException {
         String content = readFile(file);
         Identity i = IdentityExportImport.parseIdentity(content);
@@ -200,7 +194,6 @@ public class AccountingController extends AbstractController implements Initiali
                 identityList.getChildren().add(itemView.getView());
                 return;
             }
-
 
             for (Identity identity : identities.getIdentities()) {
                 final Map<String, Object> injectionContext = new HashMap<>();
