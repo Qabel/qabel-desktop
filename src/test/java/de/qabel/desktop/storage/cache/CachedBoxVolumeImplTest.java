@@ -23,8 +23,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import static de.qabel.desktop.AsyncUtils.assertAsync;
 import static de.qabel.desktop.AsyncUtils.waitUntil;
-import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 
 public class CachedBoxVolumeImplTest extends BoxVolumeTest {
@@ -153,7 +155,7 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
         nav2.createFolder("folder");
         nav.refresh();
 
-        assertFalse(updates.isEmpty());
+        assertAsync(updates::isEmpty, equalTo(false));
         ChangeEvent event = updates.get(0);
         assertTrue(event.isCreate());
         assertEquals("/folder", event.getPath().toString());
@@ -174,12 +176,16 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
 
         nav.refresh();
 
-        Set<String> foundPaths = new HashSet<>();
-        updates.forEach(changeEvent -> foundPaths.add(changeEvent.getPath().toString()));
-        assertThat(foundPaths, hasItem("/folder"));
-        assertThat(foundPaths, hasItem("/folder/subfolder"));
-        assertThat(foundPaths, hasItem("/folder/testfile"));
-        assertThat(foundPaths, hasItem("/folder/subfolder/testfile"));
+        assertAsync(() -> {
+            Set<String> foundPaths = new HashSet<>();
+            updates.forEach(changeEvent -> foundPaths.add(changeEvent.getPath().toString()));
+            return foundPaths;
+        }, contains(
+            "/folder",
+            "/folder/subfolder",
+            "/folder/testfile",
+            "/folder/subfolder/testfile"
+        ));
     }
 
     protected void observe() throws QblStorageException {
@@ -256,7 +262,7 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
         volume2.navigate().overwrite("testfile", file);
         nav.refresh();
 
-        assertEquals("no notification", 1, updates.size());
+        assertAsync(updates::size, equalTo(1));
         ChangeEvent event = updates.get(0);
         assertTrue("wrong event type " + event.getType(), event.isUpdate());
         assertEquals("/testfile", event.getPath().toString());
@@ -272,7 +278,7 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
         nav2.delete(nav2.getFolder("testfolder"));
         nav.refresh();
 
-        waitUntil(() -> updates.size() == 1, 10000L, () -> "no notification");
+        assertAsync(updates::size, equalTo(1));
         ChangeEvent event = updates.get(0);
         assertTrue("wrong event type " + event.getType(), event.isDelete());
         assertEquals("/testfolder", event.getPath().toString());

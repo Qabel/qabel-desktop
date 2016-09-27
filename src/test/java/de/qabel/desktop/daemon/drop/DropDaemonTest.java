@@ -2,6 +2,7 @@ package de.qabel.desktop.daemon.drop;
 
 
 import com.google.common.io.Files;
+import de.qabel.box.storage.jdbc.JdbcFileMetadataFactory;
 import de.qabel.chat.repository.inmemory.InMemoryChatShareRepository;
 import de.qabel.chat.service.MainSharingService;
 import de.qabel.chat.service.SharingService;
@@ -59,8 +60,14 @@ public class DropDaemonTest extends AbstractControllerTest {
         contactRepository.save(sender, identity);
         dropConnector= new MainDropConnector(new MockDropServer());
         mockCoreDropConnector = new MockCoreDropConnector();
-        sharingService = new MainSharingService(new InMemoryChatShareRepository(), contactRepository,
-            Files.createTempDir(), new CryptoUtils());
+        File tempDir = Files.createTempDir();
+        sharingService = new MainSharingService(
+            new InMemoryChatShareRepository(),
+            contactRepository,
+            tempDir,
+            new JdbcFileMetadataFactory(tempDir),
+            new CryptoUtils()
+        );
         chatService = new MainChatService(mockCoreDropConnector, identityRepository,
             contactRepository, chatDropMessageRepository, dropStateRepository, sharingService);
         dd = new DropDaemon(chatService, dropMessageRepository, contactRepository, identityRepository);

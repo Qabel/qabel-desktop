@@ -8,6 +8,8 @@ import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.storage.cache.CachedIndexNavigation;
+import org.jetbrains.annotations.NotNull;
+import rx.Observable;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -17,6 +19,8 @@ import java.util.Map;
 
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.SHARE;
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.UNSHARE;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.stub;
 
 public class BoxNavigationStub extends CachedIndexNavigation {
     public ChangeEvent event;
@@ -25,7 +29,13 @@ public class BoxNavigationStub extends CachedIndexNavigation {
     public List<BoxShare> shares = new LinkedList<>();
     public Map<String, BoxNavigationStub> subnavs = new HashMap<>();
 
-    public BoxNavigationStub(IndexNavigation nav, Path path) {
+    public static BoxNavigationStub create() {
+        IndexNavigation indexNavigation = mock(IndexNavigation.class);
+        stub(indexNavigation.getChanges()).toReturn(Observable.empty());
+        return new BoxNavigationStub(indexNavigation, null);
+    }
+
+    public BoxNavigationStub(@NotNull IndexNavigation nav, Path path) {
         super(nav, path);
     }
 

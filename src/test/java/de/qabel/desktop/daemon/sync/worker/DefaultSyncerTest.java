@@ -1,6 +1,7 @@
 package de.qabel.desktop.daemon.sync.worker;
 
 import de.qabel.box.storage.BoxFile;
+import de.qabel.box.storage.IndexNavigation;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.factory.DropUrlGenerator;
@@ -44,6 +45,7 @@ public class DefaultSyncerTest extends AbstractSyncTest {
     private Identity identity;
     private Account account;
     private DefaultSyncer syncer;
+    private BoxNavigationStub nav = BoxNavigationStub.create();
 
     @Override
     @Before
@@ -151,7 +153,8 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 
     @Test
     public void stopStopsRemoteWacher() throws Exception {
-        BoxNavigationStub nav = new BoxNavigationStub(null, BoxFileSystem.getRoot());
+        IndexNavigation indexNav = BoxNavigationStub.create().getNav();
+        BoxNavigationStub nav = new BoxNavigationStub(indexNav, BoxFileSystem.getRoot());
         BoxVolumeStub volume = new BoxVolumeStub();
         volume.rootNavigation = nav;
         syncer = new DefaultSyncer(config, volume, manager);
@@ -169,7 +172,6 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 
     @Test
     public void addsFoldersAsDownloads() throws Exception {
-        BoxNavigationStub nav = new BoxNavigationStub(null, null);
         nav.event = new RemoteChangeEvent(Paths.get("/tmp/someFolder"), true, 1000L, CREATE, null, nav);
         BoxVolumeStub volume = new BoxVolumeStub();
         volume.rootNavigation = nav;
@@ -187,7 +189,6 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 
     @Test
     public void addsRemoteDeletesAsDownload() throws Exception {
-        BoxNavigationStub nav = new BoxNavigationStub(null, null);
         nav.event = new RemoteChangeEvent(Paths.get("/tmp/someFile"), false, 1000L, DELETE, null, nav);
         BoxVolumeStub volume = new BoxVolumeStub();
         volume.rootNavigation = nav;
@@ -206,7 +207,6 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 
     @Test
     public void policyPreventsActionsOutsideOfTheSyncDir() throws Exception {
-        BoxNavigationStub nav = new BoxNavigationStub(null, null);
         nav.event = new RemoteChangeEvent(Paths.get("../../usr/local/tmp"), true, 1000L, DELETE, null, nav);
         BoxVolumeStub volume = new BoxVolumeStub();
         volume.rootNavigation = nav;
@@ -235,7 +235,6 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 
     @Test
     public void ignoresFilesOnBlacklist() throws Exception {
-        BoxNavigationStub nav = new BoxNavigationStub(null, null);
         BoxVolumeStub volume = new BoxVolumeStub();
         volume.rootNavigation = nav;
 
@@ -261,7 +260,7 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 
     @Test
     public void ignoresFoldersOnBlacklist() throws Exception {
-        BoxNavigationStub nav = new BoxNavigationStub(null, null);
+        BoxNavigationStub nav = BoxNavigationStub.create();
         BoxVolumeStub volume = new BoxVolumeStub();
         volume.rootNavigation = nav;
 

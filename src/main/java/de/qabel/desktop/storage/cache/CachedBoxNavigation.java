@@ -1,6 +1,7 @@
 package de.qabel.desktop.storage.cache;
 
 import de.qabel.box.storage.*;
+import de.qabel.box.storage.command.*;
 import de.qabel.box.storage.dto.BoxPath;
 import de.qabel.box.storage.dto.DirectoryMetadataChangeNotification;
 import de.qabel.box.storage.exceptions.QblStorageException;
@@ -18,15 +19,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.security.InvalidKeyException;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Observable;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.*;
 
+@Deprecated
 public class CachedBoxNavigation<T extends BoxNavigation> extends Observable implements BoxNavigation, PathNavigation {
     private static final Logger logger = LoggerFactory.getLogger(CachedBoxNavigation.class);
     protected final T nav;
@@ -37,6 +37,30 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
     public CachedBoxNavigation(T nav, Path path) {
         this.nav = nav;
         this.path = path;
+
+        nav.getChanges()
+//            .filter(notification -> notification.getNavigation() == nav)
+            .subscribe(it -> {
+                DirectoryMetadataChange change = it.getChange();
+                try {
+                    if (change instanceof UpdateFileChange) {
+                        UpdateFileChange update = (UpdateFileChange) change;
+                        if (update.getExpectedFile() == null) {
+                            notify(update.getNewFile(), CREATE);
+                        } else {
+                            notifyAsync(update.getNewFile(), UPDATE);
+                        }
+                    } else if (change instanceof DeleteFileChange) {
+                        notify(((DeleteFileChange) change).getFile(), DELETE);
+                    } else if (change instanceof CreateFolderChange) {
+                        notify(((CreateFolderChange) change).getFolder(), CREATE);
+                    } else if (change instanceof DeleteFolderChange) {
+                        notify(((DeleteFolderChange) change).getFolder(), DELETE);
+                    }
+                } catch (Exception e) {
+                    logger.error("failed to propagate event: " + change + " , " + e.getMessage(), e);
+                }
+            });
     }
 
     @Override
@@ -72,10 +96,10 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
                 BoxFileSystem.get(path).resolve(target.getName())
             );
             cache.cache(target, subnav);
-            subnav.addObserver((o, arg) -> {
-                setChanged();
-                notifyObservers(arg);
-            });
+//            subnav.addObserver((o, arg) -> {
+//                setChanged();
+//                notifyObservers(arg);
+//            });
         }
         return cache.get(target);
     }
@@ -102,9 +126,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 
     @Override
     public BoxFile upload(String name, File file, ProgressListener listener) throws QblStorageException {
-        BoxFile upload = nav.upload(name, file, listener);
-        notifyAsync(upload, CREATE);
-        return upload;
+        return nav.upload(name, file, listener);
     }
 
     @Override
@@ -114,9 +136,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 
     @Override
     public BoxFile upload(String name, File file) throws QblStorageException {
-        BoxFile upload = nav.upload(name, file);
-        notifyAsync(upload, CREATE);
-        return upload;
+        return nav.upload(name, file);
     }
 
     protected void notifyAsync(BoxObject boxObject, TYPE type) {
@@ -125,16 +145,12 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 
     @Override
     public BoxFile overwrite(String name, File file, ProgressListener listener) throws QblStorageException {
-        BoxFile overwrite = nav.overwrite(name, file, listener);
-        notifyAsync(overwrite, UPDATE);
-        return overwrite;
+        return nav.overwrite(name, file, listener);
     }
 
     @Override
     public BoxFile overwrite(String name, File file) throws QblStorageException {
-        BoxFile overwrite = nav.overwrite(name, file);
-        notifyAsync(overwrite, UPDATE);
-        return overwrite;
+        return nav.overwrite(name, file);
     }
 
     @Override
@@ -154,15 +170,12 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 
     @Override
     public BoxFolder createFolder(String name) throws QblStorageException {
-        BoxFolder folder = nav.createFolder(name);
-        notifyAsync(folder, CREATE);
-        return folder;
+        return nav.createFolder(name);
     }
 
     @Override
     public void delete(BoxFile file) throws QblStorageException {
         nav.delete(file);
-        notifyAsync(file, DELETE);
     }
 
     @Override
@@ -175,7 +188,6 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
     public void delete(BoxFolder folder) throws QblStorageException {
         nav.delete(folder);
         cache.remove(folder);
-        notifyAsync(folder, DELETE);
     }
 
     @Override
@@ -249,18 +261,6 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
         return nav.hasFile(name);
     }
 
-    protected void findDeletedFiles(Set<BoxFile> oldFiles, Set<BoxFile> newFiles, Set<BoxFile> changedFiles) {
-        for (BoxFile file : oldFiles) {
-            if (changedFiles.contains(file)) {
-                continue;
-            }
-            if (!newFiles.contains(file)) {
-                TYPE type = DELETE;
-                notify(file, type);
-            }
-        }
-    }
-
     private void notify(BoxObject file, TYPE type) {
         setChanged();
         Long mtime = file instanceof BoxFile ? ((BoxFile) file).getMtime() : null;
@@ -277,39 +277,6 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
                 this
             )
         );
-    }
-
-    protected void findDeletedFolders(Set<BoxFolder> oldFolders, Set<BoxFolder> newFolders) {
-        for (BoxFolder folder : oldFolders) {
-            if (!newFolders.contains(folder)) {
-                notify(folder, DELETE);
-            }
-        }
-    }
-
-    protected void findNewFiles(Set<BoxFile> oldFiles, Set<BoxFile> newFiles, Set<BoxFile> changedFiles) {
-        for (BoxFile file : newFiles) {
-            if (!oldFiles.contains(file)) {
-                TYPE type = CREATE;
-                for (BoxFile oldFile : oldFiles) {
-                    if (oldFile.getName().equals(file.getName())) {
-                        type = UPDATE;
-                        changedFiles.add(oldFile);
-                        break;
-                    }
-                }
-                notify(file, type);
-            }
-        }
-    }
-
-    protected void findNewFolders(Set<BoxFolder> oldFolders, Set<BoxFolder> newFolders) throws QblStorageException {
-        for (BoxFolder folder : newFolders) {
-            if (!oldFolders.contains(folder)) {
-                notify(folder, CREATE);
-                navigate(folder).notifyAllContents();
-            }
-        }
     }
 
     public void notifyAllContents() throws QblStorageException {
@@ -341,7 +308,6 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
     @Override
     public BoxFile upload(String s, InputStream inputStream, long l, ProgressListener progressListener) throws QblStorageException {
         return nav.upload(s, inputStream, l, progressListener);
-
     }
 
     @NotNull
@@ -363,39 +329,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 
     @Override
     public void refresh(boolean recursive) throws QblStorageException {
-        synchronized (this) {
-            synchronized (nav) {
-                if (nav.isUnmodified()) {
-                    DirectoryMetadata dm = nav.reloadMetadata();
-                    if (hasVersionChanged(dm)) {
-                        Set<BoxFolder> oldFolders = new HashSet<>(nav.listFolders());
-                        Set<BoxFile> oldFiles = new HashSet<>(nav.listFiles());
-
-                        nav.refresh(false);
-
-                        Set<BoxFolder> newFolders = new HashSet<>(nav.listFolders());
-                        Set<BoxFile> newFiles = new HashSet<>(nav.listFiles());
-                        Set<BoxFile> changedFiles = new HashSet<>();
-
-                        findNewFolders(oldFolders, newFolders);
-                        findNewFiles(oldFiles, newFiles, changedFiles);
-                        findDeletedFolders(oldFolders, newFolders);
-                        findDeletedFiles(oldFiles, newFiles, changedFiles);
-                    }
-                }
-            }
-        }
-
-        for (BoxFolder folder : listFolders()) {
-            if (Thread.currentThread().isInterrupted()) {
-                return;
-            }
-            try {
-                navigate(folder).refresh();
-            } catch (QblStorageException e) {
-                logger.error("failed to refresh directory: " + path + "/" + folder.getName() + " " + e.getMessage(), e);
-            }
-        }
+        nav.refresh(recursive);
     }
 
     @NotNull

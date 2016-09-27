@@ -30,6 +30,8 @@ import java.util.UUID;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.stub;
 
 
 public class RemoteFSControllerTest extends AbstractControllerTest {
@@ -77,7 +79,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
                 deviceID,
                 localStorageFile,
                 prefix);
-        boxVolumeFactory.boxVolume = volume;
+        stub(boxVolumeFactory.getVolume(any(), any())).toReturn(volume);
 
         String bucket = "qabel";
         volume.createIndex(bucket, prefix);

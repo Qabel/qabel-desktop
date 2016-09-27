@@ -1,16 +1,27 @@
 package de.qabel.desktop.daemon.sync.worker;
 
 import de.qabel.box.storage.BoxVolumeConfig;
+import de.qabel.box.storage.IndexNavigation;
 import de.qabel.box.storage.StorageReadBackend;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.desktop.storage.cache.CachedBoxVolume;
 import de.qabel.desktop.storage.cache.CachedIndexNavigation;
 import org.jetbrains.annotations.NotNull;
+import rx.Observable;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.stub;
 
 public class BoxVolumeStub implements CachedBoxVolume {
     public boolean indexCreated;
     public String rootRef = "/root/";
-    public CachedIndexNavigation rootNavigation = new BoxNavigationStub(null, null);
+    public CachedIndexNavigation rootNavigation;
+
+    public BoxVolumeStub() {
+        IndexNavigation mock = mock(IndexNavigation.class);
+        stub(mock.getChanges()).toReturn(Observable.empty());
+        rootNavigation = new BoxNavigationStub(mock, null);
+    }
 
     @Override
     public CachedIndexNavigation navigate() throws QblStorageException {

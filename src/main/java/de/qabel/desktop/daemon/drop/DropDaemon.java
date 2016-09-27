@@ -64,7 +64,7 @@ public class DropDaemon implements Runnable {
                     boolean incoming = msg.getDirection().equals(ChatDropMessage.Direction.INCOMING);
                     Entity sender = incoming ? contact : identity;
                     Entity receiver = incoming ? identity : contact;
-                    PersistenceDropMessage message = new PersistenceDropMessage(dropMessage, sender, receiver, incoming, false);
+                    PersistenceDropMessage message = new PersistenceDropMessage(dropMessage, sender, receiver, !incoming, false);
                     dropMessageRepository.save(message);
                 }
             }
