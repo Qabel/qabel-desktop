@@ -1,0 +1,106 @@
+Usage Note: This version is a translation of the German text provided for your convenience. In case of conflict or ambiguities the German version of this text shall prevail.
+
+Terms of Service of Qabel GmbH for the Beta Test Period of Qabel services.
+ 
+[1] Scope of Application, Formation of Contract
+[a] These terms and conditions apply to you as user and us, Qabel GmbH, Goseriede 4, 30159 Hannover (hereinafter also referred to as ?Provider?). In general the version of Terms of Services applies to the contract which is effective by the time the contract was formed.-
+[b] Subject of this agreement is the provision of the service "Qabel" (hereinafter also referred to as "Qabel Service") by the Provider. The Qabel service is a service that enables its users to communicate secure and through End-to-End-Encryption.
+[c] By using Qabel Services, you agree to the applicability of these Terms of Service and our privacy policy. If you are using our services for a legal entity, you agree to these terms and conditions on behalf of that legal entity.
+[d] The Provider provides Qabel Services subject to this Terms of Service free of charge and for a fee with extended features and services (?hereinafter also referred to as ?Upgrade?). User may buy the upgrade from our e-commerce provider MyCommerce Share-it. If user upgrades his/her account, Terms of Service of MyCommerce Share it apply and shall prevail in case of discrepancies and ambiguities with these Terms of Service.
+[e] These Terms of Service shall apply to consumers and businessperson. To use Qabel Services free of charge shall only be available to consumers.
+ 
+[2] Use of Qabel Service
+[a] To use Qabel Service a client software (hereinafter also referred to as "Qabel Client") must be downloaded. The Qabel Client may be downloaded from the provider?s website and Google Playstore.
+[b] By using Qabel Services, user may be liable to additional telecommunication costs, such as mobile costs and roaming charges.
+[c] To register, users must provide their user names, e-mail address and a secure password of their own choice. To complete registration, user must confirm his/her e-mail address. The user will receive a confirmation e-mail from provider containing a confirmation link, which user has to click within seven days. As long as the registration process is not completed, use of the account is restricted to basic functions.
+ 
+[3] Beta Test Period and further Instructions
+[a] The Qabel service is currently provided as a beta test only. Please note that the Qabel software including the Qabel Client is an unfinished version of software.
+[b] The user is aware that Qabel Service is a beta version. As a beta version Qabel Service and Qabel Client may be corrupted and may include flaws regarding software design, programming and security. The user is aware that Qabel Services may change in the future. Provider may in particular change and limit the feature set of Qabel Services or may of such features for a fee in the future. You will be informed prior to such changes. Please also note that the encryption system used may be insecure and unreliable in the future.
+ 
+[4] Data Storage on Test Account ? Duties of Provider
+[a] User may use Qabel service to save data on his/her storage account (Data Hosting). Prior to upload, such data will be encrypted by the Qabel Client.
+[b] Provider shall make all reasonable efforts to ensure that Data Hosting will be available 95,999999% in annual average. Server downtime due to software updates, other maintenance or force majeure shall be excluded. 
+[c] Storage space may not be used to store non-redundant data. User is responsible for his/her data including any existing legal record retention periods. User is solely responsible to create separate backups prior to uploading data to his/her storage account. Furthermore, before re-installing the Qabel Client user shall make a backup of his/her Qabel identities.
+[d] The provider may store the user?s data in a separate data recovery centre.
+ 
+[5] Duties of the User
+[a] The user must not misuse or not to let misuse the Qabel services and must comply with all applicable laws, legal provisions and any other rights of the Federal Republic of Germany or the place of his/her permanent residency. In particular the user agrees not to
+
+store or share any illegal, extremist, violent, racist or content violating the protection of minors.
+store or share any content that violates third party intellectual property rights, copyright or any other rights of third parties.
+store or share any defamatory, offensive or fraudulent content.
+harass other users, for instance through spam e-mails.
+violate the privacy of other users.
+store or share or otherwise use malicious software and other software that may affect the integrity and reliability of Qabel Services.
+use Qabel Services provided to him/her free of charge for commercial purposes unless otherwise agreed upon. 
+
+[b] With Qabel Service users may share content with other users. Users are advised to carefully consider with whom he/she shares such content. User must carefully verify content in particular regarding any third party rights, before sharing it with others and must share content only with persons who are trustworthy and personally known to him/her.
+[c] To access Qabel Services a password is required. The provider strongly recommends to abide by the principles of a safe password assignment. In addition, the user must keep the key, which has been generated by the Qabel Service, private and secure from access by any unauthorized third party. In case the user has evidence that his/her account has been compromised or misused by a third party, he/she must inform the provider immediately.
+[d] The user is not allowed to relinquish or otherwise assign his/her rights and duties under this agreement.
+ 
+[6] Fair Use
+[a] The provider strives to make the Qabel Services available in constant quality and speed. Excessive use of a few users, however, may overstress the capacity of Qabel Services as a whole and therefore negatively impact performance for the majority of users.
+For that reason Provider reserves the right to suspend, restrict or terminate user accounts in case of excessive use of Qabel Services (for instance in case of overly high traffic). Please refer to our Fair Use Policy for detailed information http://www.qabel.de/en/legal/fairuse/.
+ 
+[7] Intellectual Property
+[a] The Qabel Service and the software that is used for it, are protected by intellectual property rights, including copyright and industrial property rights. As long as the user complies with these Terms of Service, Provider grants a restricted, non-transferrable, revocable license, to use the software to access and use the Qabel Services.
+[b] As long as the software or their single components are offered under an open source licence, we will make that licence available. Provisions of such licence may modify provisions of these terms and conditions.
+[c] User grants to Provider the right to the data, which is stored in its data storage, only to such extent necessary to provide the Qabel Service according to this agreement.
+ 
+[8] Cooperation with authorities - Procedures for copyright violations
+[a] For prevention and investigation of criminal offenses Provider cooperates with legal authorities as required by applicable laws. Provider has no access to encryption keys to decrypt content that has been stored by the user. Provider may block users when it is required by law or judicial or administrative order.
+[b] Upon notification of an alleged copyright violation, Provider responds to this if the notification complies with the law and DMCA guideline https://qabel.de/en/dmca. Provider reserves the right to deactivate the account of users that presumably violate copyright or to delete the account of users that repeatedly violate the copyright of third parties.
+ 
+[9] Liability
+[a] If Qabel Service is provided free of charge liability of Provider is determined by German statutory law (Civil Code).
+[b] If the Qabel Service is provided for a fee, Provider shall be liable for losses caused intentionally or with gross negligence, for loss of life, personal injury and health and in accordance with the Product Liability Act in the event of product liability. In case of a simple negligent breach of primary obligations (such obligations which form the essence of the contract, which were decisive for the conclusion of the agreement and on the performance of which user may rely) liability of Provider shall be limited to the amount which was foreseeable and typically by time the service was performed. Provider shall be liable for loss of data only up to the amount of typical recovery costs which would have arisen had proper and regular data backup measures been taken. Any more extensive liability of Provider is excluded on the merits. This limitation of liability shall equally apply to the Provider?s legal representatives, senior executives and other assistants. 
+[c] The user must indemnify Provider from any third party claims that are based on the data the user has stored on the Providers system. This includes compensation for all expenses the Provider incurs in connection with the users rights violations. It also includes reasonable expenses for legal actions.
+[d] The Provider may immediately suspend the storage accounts when there is reasonable evidence that stored data is unlawful and/or violates the rights of third parties. Reasonable evidence may be assumed if a court, authorities and/or third parties notify the Provider of such violations. Provider will notify the user of suspension and its reasons immediately.
+ 
+[10] Termination
+[a] Qabel Services free of charge
+If Provider provides Qabel Services free of charge, contract is deemed to be concluded for an indefinite period of time. User may terminate the agreement with Provider on one week?s notice at any time by deleting the account by e-mail to delete@qabel.de. Provider may terminate the contract by the end of the month with one month notice.
+
+[b] Qabel Services subject to a fee
+If Provider provides extended features and services, the agreement regarding extended features and services shall be concluded for the agreement?s initial or otherwise stipulated period, which will be renewed automatically unless one of the parties terminates the agreement regarding such extended features and services. Termination of the agreement regarding extended features and services shall be made via the e-commerce provider MyCommerce Share-it. User may terminate the agreement regarding extended features and services at any time at the end of the stipulated period. Provider may terminate the agreement by the end of the stipulate period with one month notice.
+[c] The right of the parties to cancel the contract without notice for compelling reasons remains unaffected. In particular, Provider reserves the right to terminate the contract based on compelling reasons if Qabel Service is misused according to Sec. 5 of the Terms of Service and if, despite warnings, user does not refrain from any further violation. In case user fails to make payment when due, Provider reserves the right to reduce the storage space to the amount of free storage space applicable.
+ 
+[11] Changes of Terms of Services
+The Provider reserves the right to change these Terms of Service in particular in case of legislative changes, case law or significant economic and financial changes. The user will be informed about changes on the front page of the Qabel client or by e-mail. Changes in favour of the user take effect immediately or, provided that a date of entry into force is determined, on that date. Changes not in favour of the user restricting his/her rights not only insignificantly, take effect at least two weeks after the user has been informed and not deleted his/her account. If Qabel Services are provided for a fee, User has in such cases the right of special termination.
+ 
+[12] Miscellaneous
+This agreement shall be exclusively governed by the laws and statutes of the Federal Republic of Germany. Application of the United Nations Convention on Contracts for the International Sale of Goods shall be excluded. If the customer is a businessperson, the competent court at the providers headquarter shall have exclusive jurisdiction for all dispute arising out or from this agreement. The provider may also file proceedings to the competent court at the customer?s place of residence.
+ 
+Qabel GmbH, Hannover, September 2016
+Instructions on withdrawal
+Right of withdrawal
+You have the right to withdraw from this contract within 14 days without giving any reason. The withdrawal period will expire after 14 days from the day on which the contract was formed.
+
+To exercise the right of withdrawal, you must inform us 
+Qabel GmbH, Goseriede 4 (Tiedthof), 30159 Hannover, Deutschland
+E-Mail: delete@qabel.de
+
+of your decision to withdraw from this contract by an unambiguous  statement (e.g. a letter sent by post, fax or e-mail). You may use the attached model withdrawal form, but it is not obligatory. To meet the withdrawal deadline, it is sufficient for you to send your communication concerning your exercise of the right of withdrawal before the withdrawal period has expired.
+
+Effects of withdrawal
+If you withdraw from this contract, we shall reimburse to you all payments received from you, including the costs of delivery (with the exception of the supplementary costs resulting from your choice of a type of delivery other than the least expensive type of standard delivery offered by us), without undue delay and in any event not later than 14 days from the day on which we are informed about your decision to withdraw from this contract. We will carry out such reimbursement using the same means of payment as you used for the initial transaction, unless you have expressly agreed otherwise; in any event, you will not incur any fees as a result of such reimbursement. 
+
+Model withdrawal form
+(complete and return this form only if you wish to withdraw from the contract)
+- To
+Qabel GmbH, 
+Goseriede 4 (Tiedthof), 
+30159 Hannover, Germany
+E-Mail: info@qabel.de
+
+- I/We (*) hereby give notice that I/We (*) withdraw from my/our (*) contract of sale of the
+following goods (*)/for the provision of the following service (*),
+- Ordered on (*)/received on (*),
+- Name of consumer(s),
+- Address of consumer(s),
+- Signature of consumer(s) (only if this form is notified on paper),
+- Date
+___________
+(*) Delete as appropriate.
+

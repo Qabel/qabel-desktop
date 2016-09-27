@@ -1,0 +1,47 @@
+Datenschutzerklärung Qabel-App
+Die Qabel GmbH nimmt den Schutz Ihrer personenbezogenen Daten ernst. Dies ist kein Lippenbekenntnis, sondern der Grund warum wir Werkzeuge entwickeln, die dabei helfen, Nutzerdaten in Nutzerhand zu belassen. Wir bemühen uns deshalb, so wenig personenbezogene Daten wie möglich zu erheben, zu verarbeiten oder zu nutzen. Die personenbezogenen Daten, die bei der Nutzung unserer Dienste anfallen, verarbeiten wir nur unter Beachtung geltender datenschutzrechtlicher Bestimmungen. Wie das genau passiert, erläutern wir nachfolgend:
+[1] Verantwortliche Stelle - Geltungsbereich
+[a] Qabel GmbH, Goseriede 4, 30159 Hannover (nachfolgend auch ?Anbieter?)
+[b] Diese Datenschutzerklärung gilt für die Qabel-Plattform (nachfolgend auch ?Qabel-Dienste?) und deren Clientsoftware (nachfolgend auch ?Qabel-Client?).
+[c] Nimmt der Nutzer kostenpflichtige erweiterte Funktionen und Services in Anspruch (nachfolgend auch ?Upgrade?), werden diese über den E-Commerce-Anbieter MyCommerce Share-it angeboten. Die Datenschutzerklärung von MyCommerce Share-it gilt dann vorrangig.
+[2] Grundsätze der Datenverarbeitung
+[a] Ende-zu-Ende-Verschlüsselung: Wichtigstes Prinzip und zentrales Anliegen von Qabel ist eine wirkliche Ende-zu-Ende-Verschlüsselung aller Informationen, die Nutzer auf Qabel speichern oder über Qabel austauschen. Gespeicherte Inhalte sind so verschlüsselt, dass nach dem gegenwärtigen Stand der Technik weder Qabel selbst noch Dritte darauf zugreifen können. Daten werden auf dem Gerät des Nutzers durch den Qabel-Client verschlüsselt, bevor sie auf dem Online-Speicherplatz abgelegt werden. Weil Qabel die Schlüssel der Nutzer nicht vorhält, bedeutet dies allerdings auch, dass Qabel Nutzerinhalte nicht wiederherstellen kann, sollte der Schlüssel einmal verloren gehen. Qabel wird den Nutzer deshalb auch nie nach seinem Schlüssel fragen. 
+[b] Nutzerkontrolle: Durch den Einsatz von Verschlüsselung setzen wir eine zentrale Forderung von Datenschützern um. Der Nutzer soll selbst entscheiden und kontrollieren können, wer was wann über ihn weiß.
+[c] Datensparsamkeit: Dem Grundsatz der Datenvermeidung und Datensparsamkeit folgend (vgl. § 3a BDSG) versuchen wir so wenig personenbezogene Daten wie möglich zu erheben und zu verarbeiten. 
+[3] Technische Schutzmaßnahmen
+[a] Wir sichern unsere Systeme durch technische und organisatorische Schutzmaßnahmen gegen Verlust, Zerstörung, Zugriff, Veränderung oder Verbreitung von Nutzerdaten durch unbefugte Personen.
+Trotz regelmäßiger Kontrollen ist ein vollständiger Schutz gegen alle Gefahren jedoch nicht möglich. Insbesondere weisen wir darauf hin, dass die Datenübertragung im Internet Sicherheitslücken aufweisen kann. Ein lückenloser Schutz Ihrer Daten vor dem Zugriff durch Dritte ist deshalb nicht möglich.
+[b] Die Qabel-Dienste stehen als Beta Version zur Verfügung. Eine Beta Version ist eine unfertige Version einer Software, bei welcher wir den Schutz personenbezogener Daten der Nutzer, insbesondere das fehlerfreie Funktionieren der Verschlüsselung nicht vollständig garantieren können.
+[4] Registrierung eines Nutzeraccounts - Einwilligung
+[a] Um den Qabel-Dienst zu nutzen, willigt der Nutzer in die Erhebung, Verarbeitung und Nutzung folgender (personenbezogener) Daten ein:
+[b] Bestandsdaten: z. B. die im Rahmen der Registrierung mitgeteilte E-Mail-Adresse, sowie ein persönlicher Nutzername, das Nutzerpasswort (?Salting-Hashing Verfahren?), das Registrierungsdatum, ob/wann der Nutzer seine E-Mail-Adresse bestätigt hat und ggf. wann ihm zuletzt eine Erinnerungs-E-Mail mit der Aufforderung, die angegebene E-Mail-Adresse als dem Nutzer gehörend zu bestätigen, gesandt wurde.
+[c] Nutzungsdaten: z. B. die IP-Adresse des Nutzers, Datum und Anzahl der Zugriffe, verursachter Traffic sowie aktuell belegter Speicher.
+[d] Inhaltsdaten: die Inhalte, die der Nutzer auf seinem Speicherplatz hinterlegt, sind vollverschlüsselt und für den Anbieter ? der nicht über den Schlüssel verfügt ? nach dem gegenwärtigen Stand der Technik nicht zu entschlüsseln.
+[e] Nimmt der Nutzer das Upgrade in Anspruch, übermittelt MyCommerce Share-it weitere personenbezogenen Daten, die zur Einrichtung und Administrierung der Nutzeraccounts erforderlich sind (z. B. Namen, E-Mail-Adresse, Zahlungsart ? nicht aber Kreditkarteninformationen ?, Betrag, Lieferadresse, Rechnungsadresse) an den Anbieter. Diese Daten werden gespeichert.
+[5] Weitergabe an Dritte
+[a] Soweit in dieser Datenschutzerklärung nicht ausdrücklich anders bestimmt, gibt der Anbieter Nutzerdaten nicht an Dritte weiter.
+[b] Der Anbieter gibt Daten seiner Nutzer ausnahmsweise dann weiter, wenn
+er dazu gesetzlich verpflichtet ist, z. B. weil eine Strafverfolgungsbehörde oder andere staatliche Stelle diese Auskunft angefordert hat oder ein Dritter Daten im Rahmen technischen Support zur technischen Unterstützung oder Ausführung der Qabel-Dienste benötigt. In einem solchen Fall ist der Dritte verpflichtet, die an ihn weitergegebenen personenbezogenen Daten gemäß dieser Datenschutzerklärung zu verarbeiten oder zu nutzen. 
+[6] Einwilligung zur Einbindung von Diensten von Drittanbietern 
+[a] Zur Verbesserung, Fehlerbehebung und Schwachstellenanalyse der Qabel-Dienste setzt der Anbieter das Softwareanalyse-Tool HockeyApp ein. HockeyApp ist eine von der Microsoft Corporation betriebene Betatestplattform, mit der Fehlfunktionen der Qabel-Dienste analysiert werden können. Die Datenschutzerklärung von HockeyApp können Sie unter http://hockeyapp.net/privacy/ einsehen. Stürzt der Qabel-Client ab, kann der Nutzer einen Absturzbericht an HockeyApp übersenden. Darin enthalten sind Informationen zu Datum und Uhrzeit des Absturzes, das betroffene Softwaremodul, verwendetes Betriebssystem und Sprache, sowie Gerätetyp und IP-Adresse. Der Absturzbericht wird erst nach gesonderter Einwilligung durch den Nutzer an HockeyApp versandt. Die in dem Absturzbericht enthaltenen Informationen können teilweise in den USA verarbeitet werden. Der Nutzer willigt in die Übermittlung der vorgenannten Daten in die USA ein. Wenn Sie uns über die Feedback-Funktion eine Nachricht schicken, wird diese ebenfalls durch Hockey-APP übermittelt und verarbeitet.
+[b] Zum Betrieb des Indexservices, über welchen Nutzer Kontakte finden und sich mit Bekannten vernetzen können, setzt der Anbieter den SMS-Dienst Plivo ein. Die Datenschutzerklärung von Plivo können Sie hier einsehen https://www.plivo.com/privacy/. Der Nutzer kann seine Mobiltelefonnummer auf dem Indexserver des Qabel-Dienstes bekanntgeben, um von anderen Nutzern des Qabel-Dienstes gefunden zu werden. Die Mobilfunknummer wird mittels einer SMS an den Nutzer verifiziert.
+[7] Nutzung von Bestandsdaten
+Wir verwenden Ihre E-Mail-Adresse ausschließlich, um Sie über neue Versionen der Clientsoftware, neue Features, Änderungen der Datenschutzerklärung und AGB sowie weitere Sicherheitsinformationen zu informieren. 
+[8] Auswertung von Nutzerdaten, Log Files
+Um eine möglichst gleichbleibende Qualität und Geschwindigkeit für alle Nutzer sicherzustellen (Rate Limits), erheben und verarbeiten wir die Nutzungsdaten gem. 4c zur Bestimmung des von den Nutzern verursachten Traffics. Diese Daten werden gespeichert. Siehe hierzu auch unsere Fair Use Policy http://www.qabel.de/de/legal/fairuse/.
+[9] Kontenkündigung, Datenlöschung
+[a] Zur vollständigen Löschung Ihres Accounts, wenden Sie sich unter Angabe Ihres Benutzernamens und Ihrer E-Mail-Adresse an delete@qabel.de. Wir senden Ihnen dann eine Prüf-E-Mail um uns zu vergewissern, dass die Löschungsanfrage tatsächlich von Ihnen stammt. Wird das Nutzerkonto gelöscht, werden sämtliche darauf gespeicherten Daten inklusive der verschlüsselten Daten gelöscht.
+[b] Von der Löschung nicht betroffen sind Daten, die der Nutzer mit anderen Nutzern geteilt hat und welche diese Nutzer separat abgespeichert haben.
+[10] Kontaktmöglichkeit
+Sie haben die Möglichkeit mit uns in Kontakt zu treten. Wir verwenden die von Ihnen mitgeteilten Daten nur zur Bearbeitung Ihrer Anfragen. Sie werden nicht an Dritte weitergegeben oder zu Werbezwecken genutzt.
+[11] Neue Kontakte einladen
+Nutzer können Ihnen bekannte Personen per E-Mail zur Nutzung von Qabel einladen. Wählt der Nutzer diese Funktion im Qabel-Client aus, öffnet sich in einem neuen Fenster eine leere Nachricht (z. B. E-Mail, Messenger) mit einem Standardeinladungstext. Die Adressaten der Nachricht bestimmt der Nutzer selbst. Adressen der Empfänger werden von Qabel nicht gespeichert.
+[12] Auskunftsrecht
+Nach dem Bundesdatenschutzgesetz haben Sie ein Recht auf unentgeltliche Auskunft über Ihre gespeicherten Daten (umfasst sind davon auch negative Auskünfte, d. h. die Auskunft, dass zu Ihrer Person keine Daten gespeichert wurden) sowie ggf. das Recht auf Berichtigung, Sperrung oder Löschung dieser Daten. Bei Fragen zur Erhebung, Verarbeitung oder Nutzung Ihrer personenbezogenen Daten sowie bei Auskünften, Berichtigung, Sperrung oder Löschung von Daten wenden Sie sich bitte an:
+Qabel GmbH
+Goseriede 4 / Tiedthof
+30159 Hannover
+E-Mail: datenschutz@qabel.de
+[13] Änderungen der Datenschutzerklärung
+Der Anbieter behält sich das Recht vor, diese Datenschutzerklärung unter Beachtung der datenschutzrechtlichen Vorschriften zu ändern. Für Fragen und Anregungen, die sich auf den Schutz personenbezogener Daten bei dem Anbieter oder im Allgemeinen beziehen, schicken Sie uns gerne eine E-Mail an datenschutz@qabel.de.
+Qabel GmbH, Hannover, Stand September 2016
