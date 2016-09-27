@@ -8,6 +8,7 @@ import de.qabel.core.config.Identity;
 import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.core.repository.exception.EntityNotFoundException;
 import de.qabel.core.repository.exception.PersistenceException;
+import de.qabel.desktop.action.IdentityDeletedEvent;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import de.qabel.desktop.ui.accounting.item.AccountingItemController;
 import org.apache.commons.io.FileUtils;
@@ -33,6 +34,13 @@ public class AccountingControllerTest extends AbstractControllerTest {
     private static final String TEST_IDENTITY = TEST_ALIAS + "_Identity.json";
 
     AccountingController controller;
+    private Identity newIdentity;
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        newIdentity = identityBuilderFactory.factory().withAlias("new").build();
+    }
 
     @After
     public void after() throws Exception {
@@ -140,6 +148,24 @@ public class AccountingControllerTest extends AbstractControllerTest {
         clientConfiguration.selectIdentity(identityBuilderFactory.factory().withAlias("test").build());
         assertFalse(controller.exportIdentity.isDisabled());
         assertFalse(controller.exportContact.isDisabled());
+    }
+
+    @Test
+    public void refreshesOnIdentityDeletion() throws Exception {
+        identityRepository.save(newIdentity);
+        controller = getAccountingController();
+        identityRepository.delete(newIdentity);
+        eventDispatcher.push(new IdentityDeletedEvent(newIdentity));
+
+        waitUntil(() -> controller.identityList.getChildren().size() == 1);
+    }
+
+    @Test
+    public void refreshesOnIdentityAdd() throws Exception {
+        controller = getAccountingController();
+        identityRepository.save(newIdentity);
+
+        waitUntil(() -> controller.identityList.getChildren().size() == 2);
     }
 
     private File setupExport() throws URISyntaxException {

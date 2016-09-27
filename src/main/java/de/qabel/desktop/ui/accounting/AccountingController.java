@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.core.config.*;
 import de.qabel.core.config.factory.IdentityBuilderFactory;
+import de.qabel.core.event.EventSource;
+import de.qabel.core.event.identity.IdentitiesChangedEvent;
 import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.core.repository.IdentityRepository;
 import de.qabel.core.repository.exception.EntityExistsException;
@@ -35,6 +37,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class AccountingController extends AbstractController implements Initializable {
     private Identity selectedIdentity;
@@ -74,6 +77,12 @@ public class AccountingController extends AbstractController implements Initiali
     @Inject
     ClientConfig clientConfiguration;
 
+    @Inject
+    private EventSource eventSource;
+
+    @Inject
+    private int debounceTimeout;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
@@ -87,7 +96,13 @@ public class AccountingController extends AbstractController implements Initiali
         updateIdentityState();
         updateButtonIcons();
         clientConfiguration.onSelectIdentity(identity -> updateIdentityState());
-        identityRepository.attach(() -> Platform.runLater(() -> loadIdentities()));
+
+        eventSource.events()
+            .filter(e -> e instanceof IdentitiesChangedEvent)
+            .debounce(debounceTimeout, TimeUnit.MILLISECONDS)
+            .subscribe(e -> Platform.runLater(this::loadIdentities));
+
+        identityRepository.attach(() -> Platform.runLater(this::loadIdentities));
     }
 
     private void updateIdentityState() {

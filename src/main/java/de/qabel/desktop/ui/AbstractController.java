@@ -5,6 +5,9 @@ import de.qabel.core.drop.DropURL;
 import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.desktop.crashReports.CrashReportHandler;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
@@ -13,6 +16,7 @@ import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 
@@ -37,6 +41,31 @@ public class AbstractController {
 
     protected String getString(ResourceBundle resources, String message, Object... params) {
         return MessageFormat.format(resources.getString(message), params);
+    }
+
+    public Alert getConfirmDialog() {
+        return confirmDialog;
+    }
+
+    Alert confirmDialog;
+    protected void confirm(String title, String text, CheckedRunnable onConfirm) throws Exception {
+        confirmDialog = new Alert(
+            Alert.AlertType.CONFIRMATION,
+            "",
+            ButtonType.YES,
+            ButtonType.CANCEL
+        );
+        confirmDialog.setHeaderText(null);
+        Label content = new Label(text);
+        content.setWrapText(true);
+        confirmDialog.getDialogPane().setContent(content);
+        confirmDialog.setTitle(title);
+
+        Optional<ButtonType> result = confirmDialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.YES) {
+            onConfirm.run();
+        }
+        confirmDialog = null;
     }
 
     @FunctionalInterface

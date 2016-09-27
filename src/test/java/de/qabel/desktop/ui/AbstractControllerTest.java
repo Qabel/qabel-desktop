@@ -9,6 +9,8 @@ import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.core.config.factory.IdentityBuilderFactory;
+import de.qabel.core.event.EventDispatcher;
+import de.qabel.core.event.SubjectEventDispatcher;
 import de.qabel.core.index.IndexService;
 import de.qabel.core.repository.*;
 import de.qabel.core.repository.inmemory.*;
@@ -83,6 +85,7 @@ public class AbstractControllerTest extends AbstractFxTest {
     protected BoxClientStub boxClient = new BoxClientStub();
     protected Parent layoutWindow = new Pane();
     protected int remoteDebounceTimeout;
+    protected EventDispatcher eventDispatcher = new SubjectEventDispatcher();
 
     static {
         logger = createLogger();
@@ -117,6 +120,9 @@ public class AbstractControllerTest extends AbstractFxTest {
             dropStateRepository,
             shareNotificationRepository
         );
+        diContainer.put("eventDispatcher", eventDispatcher);
+        diContainer.put("eventSource", eventDispatcher);
+        diContainer.put("eventSink", eventDispatcher);
         diContainer.put("indexService", indexService);
         diContainer.put("remoteDebounceTimeout", remoteDebounceTimeout);
         diContainer.put("clientConfiguration", clientConfiguration);

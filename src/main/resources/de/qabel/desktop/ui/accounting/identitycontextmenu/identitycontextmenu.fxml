@@ -11,8 +11,7 @@
         <VBox fx:id="vboxMenu" styleClass="vbox-menu">
             <Button fx:id="editButton" text="%editDetails" styleClass="button-menu"
                     onMouseClicked="#editIdentity"/>
-            <Button fx:id="removeButton" wrapText="true" text="%removeIdentity" styleClass="button-menu"
-                    disable="true" visible="false" managed="false"/>
+            <Button fx:id="removeButton" wrapText="true" text="%removeIdentity" styleClass="button-menu" onAction="#delete"/>
             <Line endX="00.0" startX="-220.0"/>
             <Button fx:id="exportButton" wrapText="true" text="%exportIdentityQID" styleClass="button-menu" disable="true" visible="false" managed="false"/>
             <Button fx:id="privateKeyButton" onAction="#openQRCode" text="%exportPrivateKeyQR"
