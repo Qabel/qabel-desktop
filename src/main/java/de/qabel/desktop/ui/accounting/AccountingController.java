@@ -14,6 +14,7 @@ import de.qabel.core.repository.exception.EntityNotFoundException;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.accounting.interactor.ExportIdentityInteractor;
 import de.qabel.desktop.ui.accounting.item.AccountingItemView;
 import de.qabel.desktop.ui.accounting.item.DummyAccountingItemView;
 import de.qabel.desktop.ui.accounting.wizard.WizardController;
@@ -154,17 +155,9 @@ public class AccountingController extends AbstractController implements Initiali
     }
 
     @FXML
-    protected void handleExportIdentityButtonAction(ActionEvent event) {
-
+    protected void handleExportIdentityButtonAction() {
         Identity i = clientConfiguration.getSelectedIdentity();
-        File file = createSaveFileChooser(i.getAlias() + ".qid");
-        try {
-            exportIdentity(i, file);
-            loadIdentities();
-        } catch (IOException | QblStorageException e) {
-            alert("Export identity fail", e);
-        } catch (NullPointerException ignored) {
-        }
+        new ExportIdentityInteractor(resourceBundle).export(i, identityList.getScene().getWindow());
     }
 
     @FXML

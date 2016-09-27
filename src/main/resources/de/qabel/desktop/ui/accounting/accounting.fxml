@@ -5,38 +5,33 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <VBox fx:id="accountingroot" xmlns="http://javafx.com/javafx/8"
-      xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.accounting.AccountingController">
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.accounting.AccountingController" spacing="20">
 
-    <Button fx:id="addIdentity" mnemonicParsing="false" onAction="#addIdentity" text="%accountingAddIdentity">
-        <VBox.margin>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
-        </VBox.margin>
-    </Button>
-    <HBox prefHeight="100.0">
-        <children>
-            <Button fx:id="importIdentity" mnemonicParsing="false" onAction="#handleImportIdentityButtonAction"
-                    text="%accountingImportIdentity">
-                <HBox.margin>
-                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
-                </HBox.margin>
-            </Button>
-            <Button fx:id="exportIdentity" mnemonicParsing="false" onAction="#handleExportIdentityButtonAction"
-                    text="%accountingExportIdentity">
-                <HBox.margin>
-                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
-                </HBox.margin>
-            </Button>
+    <HBox prefHeight="100.0" spacing="20">
+        <Button fx:id="addIdentity" mnemonicParsing="false" onAction="#addIdentity" text="%accountingAddIdentity">
+            <VBox.margin>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+            </VBox.margin>
+        </Button>
+        <Button fx:id="importIdentity" mnemonicParsing="false" onAction="#handleImportIdentityButtonAction"
+                text="%accountingImportIdentity">
+            <HBox.margin>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+            </HBox.margin>
+        </Button>
+        <Button fx:id="exportIdentity" mnemonicParsing="false" onAction="#handleExportIdentityButtonAction"
+                text="%accountingExportIdentity">
+            <HBox.margin>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+            </HBox.margin>
+        </Button>
 
-            <Button fx:id="exportContact" mnemonicParsing="false" onAction="#handleExportContactButtonAction"
-                    text="%accountingExportContact">
-                <HBox.margin>
-                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
-                </HBox.margin>
-            </Button>
-        </children>
-        <VBox.margin>
-            <Insets/>
-        </VBox.margin>
+        <Button fx:id="exportContact" mnemonicParsing="false" onAction="#handleExportContactButtonAction"
+                text="%accountingExportContact">
+            <HBox.margin>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+            </HBox.margin>
+        </Button>
     </HBox>
 
     <ScrollPane prefWidth="Infinity" fitToWidth="true" minWidth="400">
