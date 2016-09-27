@@ -8,7 +8,9 @@
 <VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
       fx:id="identityEdit" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
       fx:controller="de.qabel.desktop.ui.accounting.identity.IdentityEditController"
-      AnchorPane.topAnchor="0.0" styleClass="identity-edit,form">
+      AnchorPane.topAnchor="0.0" styleClass="identity-edit,form"
+      minWidth="200" minHeight="200"
+      prefWidth="600">
     <children>
         <HBox styleClass="edit-row,form-row">
             <Label styleClass="identity-edit-label" text="%aliasLabel"/>
@@ -26,7 +28,7 @@
             <Label styleClass="identity-edit-label" fx:id="privateLabel" text="%privateLabel"/>
             <VBox spacing="1">
                 <JFXToggleButton fx:id="privateToggle" style="-fx-min-height: 1em; -fx-pref-height: 2em;"/>
-                <Label fx:id="privateHint" text="%privateHint" wrapText="true" style="-fx-pref-height: 10em;"/>
+                <Label fx:id="privateHint" text="%privateHint" wrapText="true" style="-fx-pref-height: 15em;"/>
             </VBox>
         </HBox>
         <HBox styleClass="edit-row,form-row" alignment="CENTER">

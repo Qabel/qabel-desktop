@@ -119,8 +119,8 @@ public class IdentityEditControllerTest extends AbstractControllerTest {
 
         controller.setPrivate(false);
         assertThat(controller.saveIdentity.getText(), equalTo("Save & Publish"));
-        assertThat(controller.privateHint.getText(), equalTo("public description text"));
-        assertThat(controller.privateLabel.getText(), equalTo("Public"));
+        assertThat(controller.privateHint.getText(), equalTo("private description text"));
+        assertThat(controller.privateLabel.getText(), equalTo("Private"));
     }
 
     @Test
