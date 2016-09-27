@@ -70,16 +70,6 @@ public class IdentityEditController extends AbstractController implements Initia
                 .then(resources.getString("saveIdentity"))
                 .otherwise(resources.getString("saveAndUploadIdentity"))
         );
-        privateHint.textProperty().bind(
-            new When(privateToggle.selectedProperty())
-                .then(resources.getString("privateHint"))
-                .otherwise(resources.getString("publicHint"))
-        );
-        privateLabel.textProperty().bind(
-            new When(privateToggle.selectedProperty())
-                .then(resources.getString("privateLabel"))
-                .otherwise(resources.getString("publicLabel"))
-        );
 
         saveIdentity.visibleProperty().bind(uploadProgress.visibleProperty().not());
         saveIdentity.managedProperty().bind(saveIdentity.visibleProperty());

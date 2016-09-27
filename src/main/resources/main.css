@@ -780,6 +780,7 @@ VBox.spaced, HBox.spaced {
     -fx-pref-height: 0px;
     -fx-position: absolute;
     -fx-background-color: white;
+    -fx-padding: 1em 1em 1em 1em;
 }
 
 .form {
