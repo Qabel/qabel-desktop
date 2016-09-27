@@ -1,10 +1,11 @@
 package de.qabel.desktop.inject;
 
 import de.qabel.chat.repository.ChatDropMessageRepository;
+import de.qabel.chat.service.ChatService;
 import de.qabel.core.accounting.BoxClient;
 import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.core.config.factory.IdentityBuilderFactory;
-import de.qabel.chat.service.ChatService;
+import de.qabel.core.event.EventDispatcher;
 import de.qabel.core.index.IndexService;
 import de.qabel.core.repository.AccountRepository;
 import de.qabel.core.repository.ContactRepository;
@@ -20,7 +21,6 @@ import de.qabel.desktop.daemon.NetworkStatus;
 import de.qabel.desktop.daemon.drop.DropDaemon;
 import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.daemon.sync.SyncDaemon;
-import de.qabel.desktop.event.EventDispatcher;
 import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.ShareNotificationRepository;
@@ -145,5 +145,7 @@ public interface DesktopServices {
     }
 
     @Create(name="eventDispatcher")
+    @Create(name="eventSource")
+    @Create(name="eventSink")
     EventDispatcher getEventDispatcher();
 }

@@ -43,8 +43,13 @@ public class AbstractController {
         return MessageFormat.format(resources.getString(message), params);
     }
 
-    protected void confirm(String title, String text, CheckedRunnable action) throws Exception {
-        Alert confirmDialog = new Alert(
+    public Alert getConfirmDialog() {
+        return confirmDialog;
+    }
+
+    Alert confirmDialog;
+    protected void confirm(String title, String text, CheckedRunnable onConfirm) throws Exception {
+        confirmDialog = new Alert(
             Alert.AlertType.CONFIRMATION,
             "",
             ButtonType.YES,
@@ -58,8 +63,9 @@ public class AbstractController {
 
         Optional<ButtonType> result = confirmDialog.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.YES) {
-            action.run();
+            onConfirm.run();
         }
+        confirmDialog = null;
     }
 
     @FunctionalInterface

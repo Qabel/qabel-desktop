@@ -3,12 +3,13 @@ package de.qabel.desktop.ui.accounting.wizard;
 import com.google.i18n.phonenumbers.NumberParseException;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.factory.IdentityBuilderFactory;
+import de.qabel.core.event.EventSink;
 import de.qabel.core.index.PhoneUtilsKt;
 import de.qabel.core.repository.IdentityRepository;
 import de.qabel.core.repository.exception.PersistenceException;
+import de.qabel.desktop.action.IdentityAddedEvent;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.ui.AbstractController;
-import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
@@ -26,7 +27,9 @@ import org.apache.commons.validator.routines.EmailValidator;
 
 import javax.inject.Inject;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.ResourceBundle;
 
 public class WizardController extends AbstractController implements Initializable {
 
@@ -77,6 +80,9 @@ public class WizardController extends AbstractController implements Initializabl
 
     @Inject
     ClientConfig clientConfiguration;
+
+    @Inject
+    private EventSink eventSink;
 
     VBox currentStep;
     ArrayList<VBox> steps = new ArrayList<>();
@@ -225,6 +231,7 @@ public class WizardController extends AbstractController implements Initializabl
     protected void saveIdentity() {
         try {
             identityRepository.save(identity);
+            eventSink.push(new IdentityAddedEvent(identity));
         } catch (PersistenceException e) {
             alert("Failed to save new identity", e);
         }

@@ -1,7 +1,7 @@
 package de.qabel.desktop.ui.accounting.identitycontextmenu;
 
 import de.qabel.core.config.Identity;
-import de.qabel.desktop.interactor.DeleteIdentityInteractor;
+import de.qabel.desktop.action.DeleteIdentityAction;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.identity.IdentityEditController;
 import de.qabel.desktop.ui.accounting.identity.IdentityEditView;
@@ -33,7 +33,7 @@ public class IdentityContextMenuController extends AbstractController implements
     Pane layoutWindow;
 
     @Inject
-    private DeleteIdentityInteractor deleteIdentityInteractor;
+    private DeleteIdentityAction deleteIdentityAction;
 
     @FXML
     VBox contextMenu;
@@ -134,7 +134,7 @@ public class IdentityContextMenuController extends AbstractController implements
             String title = identity.getAlias();
             String text = getString(resourceBundle, "confirmIdentitiyDeletion", identity.getAlias());
             confirm(title, text, () -> {
-                deleteIdentityInteractor.delete(identity);
+                deleteIdentityAction.delete(identity);
                 closeMenu();
             });
         });

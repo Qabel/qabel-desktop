@@ -5,18 +5,17 @@ import com.google.gson.GsonBuilder;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.core.config.*;
 import de.qabel.core.config.factory.IdentityBuilderFactory;
+import de.qabel.core.event.EventSource;
+import de.qabel.core.event.identity.IdentitiesChangedEvent;
 import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.core.repository.IdentityRepository;
 import de.qabel.core.repository.exception.EntityExistsException;
 import de.qabel.core.repository.exception.EntityNotFoundException;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.config.ClientConfig;
-import de.qabel.desktop.event.EventDispatcher;
-import de.qabel.desktop.event.identity.IdentitiesChangedEvent;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.item.AccountingItemView;
 import de.qabel.desktop.ui.accounting.item.DummyAccountingItemView;
-import javafx.application.Platform;
 import de.qabel.desktop.ui.accounting.wizard.WizardController;
 import de.qabel.desktop.ui.accounting.wizard.WizardView;
 import javafx.application.Platform;
@@ -79,7 +78,7 @@ public class AccountingController extends AbstractController implements Initiali
     ClientConfig clientConfiguration;
 
     @Inject
-    private EventDispatcher eventDispatcher;
+    private EventSource eventSource;
 
     @Inject
     private int debounceTimeout;
@@ -98,10 +97,12 @@ public class AccountingController extends AbstractController implements Initiali
         updateButtonIcons();
         clientConfiguration.onSelectIdentity(identity -> updateIdentityState());
 
-        eventDispatcher.events()
+        eventSource.events()
             .filter(e -> e instanceof IdentitiesChangedEvent)
             .debounce(debounceTimeout, TimeUnit.MILLISECONDS)
             .subscribe(e -> Platform.runLater(this::loadIdentities));
+
+        identityRepository.attach(() -> Platform.runLater(this::loadIdentities));
     }
 
     private void updateIdentityState() {
