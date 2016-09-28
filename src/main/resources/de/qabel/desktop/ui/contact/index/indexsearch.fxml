@@ -4,18 +4,20 @@
 <?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
 <VBox
     fx:id="indexSearchRoot"
     minHeight="100"
     minWidth="250"
     prefWidth="500"
-    style="-fx-background-color: red"
     xmlns="http://javafx.com/javafx/8"
     xmlns:fx="http://javafx.com/fxml/1"
     fx:controller="de.qabel.desktop.ui.contact.index.IndexSearchController">
         <JFXTextField fx:id="search"
                       promptText="%indexSearchPrompt"
                       BorderPane.alignment="CENTER"/>
+        <Label fx:id="emailSearch" text="Searching for +4912345678" style="-fx-padding: 0 0 0 1em"/>
+        <Label fx:id="phoneSearch" visible="false" text="" style="-fx-padding: 0 0 0 1em"/>
         <HBox fillHeight="true"
               minHeight="100"
               alignment="CENTER"
