@@ -2,13 +2,15 @@ package de.qabel.desktop.ui.contact.index;
 
 import de.qabel.core.config.Contact;
 import de.qabel.desktop.ui.AbstractControllerTest;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 import static de.qabel.desktop.AsyncUtils.assertAsync;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class IndexSearchControllerTest extends AbstractControllerTest {
@@ -17,7 +19,6 @@ public class IndexSearchControllerTest extends AbstractControllerTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        Locale.setDefault(Locale.US);
 
         initController();
     }
@@ -44,15 +45,16 @@ public class IndexSearchControllerTest extends AbstractControllerTest {
         verifyZeroInteractions(indexService);
     }
 
-    //FIXME: to fix locale
-    @Ignore
     @Test
     public void formatsNumber() throws Exception {
-        when(indexService.searchContacts("", "+18002332323")).thenReturn(getSingleResult());
-        setText("1 800 2332323");
+        when(indexService.searchContacts("", "+2392223456")).thenReturn(getSingleResult());
+        setText("222 / 3456");
 
-        assertAsync(this::getText, equalTo("+18002332323"));
-        assertAsync(() -> verify(indexService).searchContacts("", "+18002332323"));
+        assertAsync(this::getText, equalTo("222 / 3456"));
+        assertAsync(controller.phoneSearch::getText, equalTo("searching for +2392223456"));
+        assertAsync(() -> verify(indexService).searchContacts("", "+2392223456"), 2000L);
+        assertTrue(controller.phoneSearch.isVisible());
+        assertFalse(controller.emailSearch.isVisible());
         verifyNoMoreInteractions(indexService);
     }
 
@@ -62,6 +64,8 @@ public class IndexSearchControllerTest extends AbstractControllerTest {
         setText("test@test2.de");
 
         assertAsync(() -> verify(indexService).searchContacts("test@test2.de", ""));
+        assertFalse(controller.phoneSearch.isVisible());
+        assertTrue(controller.emailSearch.isVisible());
         verifyNoMoreInteractions(indexService);
     }
 

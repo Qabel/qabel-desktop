@@ -23,6 +23,7 @@ public class IdentityEditControllerTest extends AbstractControllerTest {
     static String ALIAS = "IDC Alias";
     static String EMAIL = "idcalias@examplemail.com";
     static String PHONE = "0121469465419";
+    static String FORMATTED_PHONE = "+2390121469465419";
 
     @Override
     @Before
@@ -53,7 +54,7 @@ public class IdentityEditControllerTest extends AbstractControllerTest {
         setIdentityProperties();
         saveAndWait();
 
-        assertThat(identity.getPhone(), equalTo(PHONE));
+        assertThat(identity.getPhone(), equalTo(FORMATTED_PHONE));
         assertThat(identity.getEmail(), equalTo(EMAIL));
         assertThat(identity.getAlias(), equalTo(ALIAS));
         assertThat(identity.isUploadEnabled(), equalTo(false));
@@ -86,7 +87,7 @@ public class IdentityEditControllerTest extends AbstractControllerTest {
 
         assertEquals(ALIAS, identity.getAlias());
         assertEquals(EMAIL, identity.getEmail());
-        assertEquals(PHONE, identity.getPhone());
+        assertEquals(FORMATTED_PHONE, identity.getPhone());
         assertEquals(false, identity.isUploadEnabled());
         verify(controller.identityRepository).save(identity);
     }

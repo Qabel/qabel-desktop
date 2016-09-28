@@ -1,5 +1,6 @@
 package de.qabel.desktop.ui.accounting.identity;
 
+import com.google.i18n.phonenumbers.NumberParseException;
 import com.jfoenix.controls.JFXSpinner;
 import com.jfoenix.controls.JFXToggleButton;
 import de.qabel.core.config.Identity;
@@ -20,6 +21,7 @@ import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static de.qabel.core.index.PhoneUtilsKt.formatPhoneNumber;
 import static java.lang.Math.max;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.sleep;
@@ -74,6 +76,14 @@ public class IdentityEditController extends AbstractController implements Initia
         saveIdentity.visibleProperty().bind(uploadProgress.visibleProperty().not());
         saveIdentity.managedProperty().bind(saveIdentity.visibleProperty());
         uploadProgress.managedProperty().bind(uploadProgress.visibleProperty());
+        phone.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                String formattedPhoneNumber = formatPhoneNumber(newValue);
+                if (!formattedPhoneNumber.equals(newValue)) {
+                    phone.setText(formattedPhoneNumber);
+                }
+            } catch (NumberParseException ignored) {}
+        });
     }
 
     private void initFromIdentity() {
