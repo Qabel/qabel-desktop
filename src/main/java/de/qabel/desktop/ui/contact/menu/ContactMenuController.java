@@ -76,11 +76,13 @@ public class ContactMenuController extends AbstractController implements Initial
     private static ImageView enterContactImageView = setImageView(loadImage("/img/pencil.png"));
     private static ImageView exportContactsToFileImageView = setImageView(loadImage("/img/export.png"));
     private static ImageView exportContactsToQRImageView = setImageView(loadImage("/img/qrcode.png"));
+    private FileChooser.ExtensionFilter qcoExtensionFilter;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         resourceBundle = resources;
         identity = clientConfiguration.getSelectedIdentity();
+        qcoExtensionFilter = new FileChooser.ExtensionFilter(resourceBundle.getString("qcoExtensionFilterLabel"), "*.qco");
         createButtonsGraphics();
         createButtonsTooltip();
     }
@@ -113,7 +115,8 @@ public class ContactMenuController extends AbstractController implements Initial
     public void handleExportContactsButtonAction() throws EntityNotFoundException, IOException, JSONException {
         tryOrAlert(() -> {
             FileChooser chooser = new FileChooser();
-            chooser.setTitle(resourceBundle.getString("contactDownload"));
+            chooser.setTitle(resourceBundle.getString("exportContactsToFile"));
+            chooser.setSelectedExtensionFilter(qcoExtensionFilter);
             chooser.setInitialFileName("Contacts.qco");
             File file = chooser.showSaveDialog(layoutWindow.getScene().getWindow());
             if (file != null) {
@@ -130,8 +133,7 @@ public class ContactMenuController extends AbstractController implements Initial
 
     public void handleImportContactsButtonAction() {
         FileChooser chooser = new FileChooser();
-        chooser.setTitle(resourceBundle.getString("contactDownloadFolder"));
-        FileChooser.ExtensionFilter qcoExtensionFilter = new FileChooser.ExtensionFilter(resourceBundle.getString("qcoExtensionFilterLabel"), "*.qco");
+        chooser.setTitle(resourceBundle.getString("importContactFromFile"));
         chooser.getExtensionFilters().add(qcoExtensionFilter);
         File file = chooser.showOpenDialog(layoutWindow.getScene().getWindow());
         try {

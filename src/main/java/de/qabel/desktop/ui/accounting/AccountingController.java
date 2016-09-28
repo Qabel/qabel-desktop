@@ -121,9 +121,9 @@ public class AccountingController extends AbstractController implements Initiali
     }
 
     @FXML
-    protected void handleImportIdentityButtonAction(ActionEvent event) throws URISyntaxException, QblDropInvalidURL {
+    protected void handleImportIdentityButtonAction() throws URISyntaxException, QblDropInvalidURL {
         FileChooser chooser = new FileChooser();
-        chooser.setTitle(resourceBundle.getString("accountingDownloadFolder"));
+        chooser.setTitle(resourceBundle.getString("accountingImportIdentity"));
         FileChooser.ExtensionFilter qidExtensionFilter = new FileChooser.ExtensionFilter(resourceBundle.getString("qidExtensionFilterLabel"), "*.qid");
         chooser.getExtensionFilters().add(qidExtensionFilter);
         File file = chooser.showOpenDialog(identityList.getScene().getWindow());
@@ -142,7 +142,7 @@ public class AccountingController extends AbstractController implements Initiali
     protected void handleExportIdentityButtonAction(ActionEvent event) {
 
         Identity i = clientConfiguration.getSelectedIdentity();
-        File file = createSaveFileChooser(i.getAlias() + ".qid");
+        File file = createSaveFileChooser(resourceBundle.getString("accountingExportIdentity"), i.getAlias() + ".qid");
         try {
             exportIdentity(i, file);
             loadIdentities();
@@ -155,7 +155,7 @@ public class AccountingController extends AbstractController implements Initiali
     @FXML
     protected void handleExportContactButtonAction(ActionEvent event) {
         Identity i = clientConfiguration.getSelectedIdentity();
-        File file = createSaveFileChooser(i.getAlias() + ".qco");
+        File file = createSaveFileChooser(resourceBundle.getString("accountingExportContact"), i.getAlias() + ".qco");
         try {
             exportContact(i, file);
         } catch (IOException | QblStorageException e) {
@@ -208,9 +208,9 @@ public class AccountingController extends AbstractController implements Initiali
 
     }
 
-    private File createSaveFileChooser(String defaultName) {
+    private File createSaveFileChooser(String title, String defaultName) {
         FileChooser chooser = new FileChooser();
-        chooser.setTitle(resourceBundle.getString("accountingExport"));
+        chooser.setTitle(title);
         chooser.setInitialFileName(defaultName);
         return chooser.showSaveDialog(identityList.getScene().getWindow());
     }
