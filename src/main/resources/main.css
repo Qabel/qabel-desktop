@@ -534,6 +534,7 @@ VBox.spaced, HBox.spaced {
 .avatar-wizard {
     -fx-alignment: CENTER;
     -fx-pref-height: 150px;
+    -fx-min-height: 150px;
     -fx-pref-width: 150px;
     -fx-background-size: 150px;
     -fx-background-color: magenta;
@@ -642,10 +643,12 @@ VBox.spaced, HBox.spaced {
 }
 
 .wizard-container {
-    -fx-max-width: 300px;
-    -fx-max-height: 450px;
+    -fx-max-width: 500px;
+    -fx-pref-height: inherit;
+    -fx-max-height: 600px;
     -fx-position: absolute;
     -fx-background-color: white;
+    -fx-padding: 1em;
 }
 
 .image-qrcode {
@@ -799,10 +802,6 @@ VBox.spaced, HBox.spaced {
     -fx-font-size: 12px;
 }
 
-.text-field-wizard {
-    -fx-pref-width: 250px;
-    -fx-padding: 10px;
-}
 
 .text-field-wizard .text{
     -fx-font-size: 12;
