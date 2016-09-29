@@ -7,7 +7,7 @@
 <StackPane fx:id="wizardPane" styleClass="pane-popup" visible="false" xmlns="http://javafx.com/javafx/8"
            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.accounting.wizard.WizardController">
     <children>
-        <VBox fx:id="wizardVBox" styleClass="wizard-container">
+        <VBox fx:id="wizardVBox" styleClass="wizard-container" spacing="10">
             <children>
                 <StackPane>
                     <children>
@@ -20,40 +20,37 @@
                                 styleClass="button-close-pane" StackPane.alignment="TOP_RIGHT"/>
                     </children>
                 </StackPane>
-                <StackPane>
+                <VBox fillWidth="true" alignment="CENTER" StackPane.alignment="CENTER">
                     <children>
-                        <Pane fx:id="avatarContainer" StackPane.alignment="CENTER">
+                        <HBox fx:id="avatarContainer" fillHeight="true" alignment="CENTER">
                             <children>
                                 <Label fx:id="avatarLabel" alignment="CENTER" prefHeight="15.0" prefWidth="0.0"
                                        styleClass="avatar-wizard"/>
                             </children>
-                            <StackPane.margin>
-                                <Insets left="75.0"/>
-                            </StackPane.margin>
-                        </Pane>
+                        </HBox>
                     </children>
-                </StackPane>
+                </VBox>
                 <VBox alignment="CENTER">
                     <Label fx:id="aliasLabel" visible="false" alignment="CENTER"/>
                     <Label fx:id="emailLabel" visible="false" alignment="CENTER"/>
                     <Label fx:id="phoneLabel" visible="false" alignment="CENTER"/>
-                    <VBox.margin>
-                        <Insets top="10.0"/>
-                    </VBox.margin>
                 </VBox>
-                <StackPane fx:id="stepContainer">
+                <VBox fx:id="stepContainer" fillWidth="true" style="-fx-padding: 1em">
                     <children>
-                        <VBox fx:id="step1" visible="false">
+                        <VBox fx:id="step1" visible="false" fillWidth="true" style="-fx-spacing: 1em">
                             <children>
                                 <TextField fx:id="aliasInput" promptText="%nameIdentityPromptText"
                                            styleClass="text-field-wizard"/>
-                                <Label text="%nameIdentityInstructions" styleClass="text-field-wizard" wrapText="true"/>
+                                <Label fx:id="nameInstructions" text="%nameIdentityInstructions"
+
+                                       styleClass="text-field-wizard"
+                                       wrapText="true"/>
                             </children>
                             <StackPane.margin>
                                 <Insets left="10.0" right="10.0" top="10.0"/>
                             </StackPane.margin>
                         </VBox>
-                        <VBox fx:id="step2" visible="false">
+                        <VBox fx:id="step2" visible="false" fillWidth="true" style="-fx-spacing: 1em">
                             <children>
                                 <TextField fx:id="emailInput" promptText="%emailAddress" styleClass="text-field-wizard"/>
                                 <Label fx:id="emailInstructions" text="%emailInstructions"
@@ -63,16 +60,16 @@
                                 <Insets left="10.0" right="10.0" top="10.0"/>
                             </StackPane.margin>
                         </VBox>
-                        <VBox fx:id="step3" visible="false">
+                        <VBox fx:id="step3" visible="false" style="-fx-spacing: 1em">
                             <children>
                                 <TextField fx:id="phoneInput" promptText="%phoneNumber" styleClass="text-field-wizard"/>
-                                <Label text="%phoneInstructions" styleClass="text-field-wizard" wrapText="true"/>
+                                <Label fx:id="phoneInstructions" text="%phoneInstructions" styleClass="text-field-wizard" wrapText="true"/>
                             </children>
                             <StackPane.margin>
                                 <Insets left="10.0" right="10.0" top="10.0"/>
                             </StackPane.margin>
                         </VBox>
-                        <VBox fx:id="step4" visible="false">
+                        <VBox fx:id="step4" visible="false" style="-fx-spacing: 1em">
                             <children>
                                 <Label fx:id="finishWizard" styleClass="text-field-wizard" text="%finishWizard"
                                        wrapText="true" prefWidth="400"/>
@@ -82,7 +79,7 @@
                             </StackPane.margin>
                         </VBox>
                     </children>
-                </StackPane>
+                </VBox>
                 <StackPane>
                     <children>
                         <Button fx:id="nextButton" onAction="#next" text="%next" textAlignment="LEFT"
@@ -99,7 +96,7 @@
                         </Button>
                         <Button fx:id="finishButton" onAction="#finishWizard" text="%finish" visible="false"
                                 textAlignment="LEFT"
-                                StackPane.alignment="BOTTOM_RIGHT" prefWidth="100">
+                                StackPane.alignment="BOTTOM_RIGHT">
                             <StackPane.margin>
                                 <Insets left="10.0" right="10.0" bottom="10.0" top="10.0"/>
                             </StackPane.margin>

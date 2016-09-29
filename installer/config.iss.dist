@@ -36,10 +36,10 @@ Name: "german"; MessagesFile: "compiler:Languages\German.isl"
 [CustomMessages]
 english.licenseFile=en_license.rtf
 german.licenseFile=de_license.rtf
-english.termsFile=en_terms.rtf
-german.termsFile=de_terms.rtf
-english.policyFile=en_policy.rtf
-german.policyFile=de_policy.rtf
+english.termsFile=en_terms.txt
+german.termsFile=de_terms.txt
+english.policyFile=de_policy.txt
+german.policyFile=de_policy.txt
 
 english.DeleteConfig=Do you want to delete the configuration file?
 german.DeleteConfig=Wollen Sie die Konfigurationsdatei löschen?

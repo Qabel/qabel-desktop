@@ -323,7 +323,12 @@ public class RemoteFSController extends AbstractController implements Initializa
             spacer(bar);
         }
 
-        buttonFromImage(item, bar, deleteImage, this::deleteItem, "delete");
+        Pane button = buttonFromImage(item, bar, deleteImage, this::deleteItem, "delete");
+        if (item.getValue() instanceof BoxExternal) {
+            button.visibleProperty().unbind();
+            button.setVisible(false);
+        }
+
         if (item.getValue() instanceof BoxFolder) {
             spacer(bar);
         } else if (!(item.getValue() instanceof BoxExternal)) {
@@ -376,8 +381,8 @@ public class RemoteFSController extends AbstractController implements Initializa
         bar.getChildren().add(label);
     }
 
-    private void buttonFromImage(TreeItem<BoxObject> item, HBox bar, Image image, Consumer<TreeItem<BoxObject>> handler, String name) {
-        buttonFromImage(item, bar, image, handler, name, hoveredItem.isEqualTo(item));
+    private Pane buttonFromImage(TreeItem<BoxObject> item, HBox bar, Image image, Consumer<TreeItem<BoxObject>> handler, String name) {
+        return buttonFromImage(item, bar, image, handler, name, hoveredItem.isEqualTo(item));
     }
 
     private Pane buttonFromImage(TreeItem<BoxObject> item, HBox bar, Image image, Consumer<TreeItem<BoxObject>> handler, String name, BooleanBinding showIf) {

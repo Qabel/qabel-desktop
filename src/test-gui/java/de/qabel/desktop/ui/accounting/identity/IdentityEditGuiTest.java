@@ -5,16 +5,15 @@ import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class IdentityEditGuiTest extends AbstractGuiTest<IdentityEditController> {
-
     protected IdentityEditViewPage page;
 
     private static String ALIAS = "IEGUI ALIAS";
     private static String EMAIL = "IEGUI EMAIL";
-    private static String PHONE = "IEGUI 01510518518";
+    private static String PHONE = "IEGUI 222 987";
+    private static String FORMATTED_PHONE = "+239222987";
 
     @Override
     protected FXMLView getView() {
@@ -47,6 +46,6 @@ public class IdentityEditGuiTest extends AbstractGuiTest<IdentityEditController>
 
         assertEquals(ALIAS, identity.getAlias());
         assertEquals(EMAIL, identity.getEmail());
-        assertEquals(PHONE, identity.getPhone());
+        assertEquals(FORMATTED_PHONE, identity.getPhone());
     }
  }
