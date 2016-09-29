@@ -26,6 +26,7 @@ import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.ShareNotificationRepository;
 import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRendererFactory;
 import de.qabel.desktop.ui.connector.DropConnector;
+import de.qabel.desktop.ui.util.FileChooserFactory;
 import de.qabel.desktop.util.Translator;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -148,4 +149,7 @@ public interface DesktopServices {
     @Create(name="eventSource")
     @Create(name="eventSink")
     EventDispatcher getEventDispatcher();
+
+    @Create(name="fileChooserFactory")
+    FileChooserFactory getFileChooserFactory();
 }

@@ -5,6 +5,8 @@ import de.qabel.desktop.action.DeleteIdentityAction;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.accounting.identity.IdentityEditController;
 import de.qabel.desktop.ui.accounting.identity.IdentityEditView;
+import de.qabel.desktop.ui.accounting.interactor.ExportIdentityContactInteractor;
+import de.qabel.desktop.ui.accounting.interactor.ExportIdentityInteractor;
 import de.qabel.desktop.ui.accounting.qrcode.QRCodeController;
 import de.qabel.desktop.ui.accounting.qrcode.QRCodeView;
 import de.qabel.desktop.ui.contact.menu.ContactMenuController;
@@ -23,7 +25,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class IdentityContextMenuController extends AbstractController implements Initializable {
-
     private ResourceBundle resourceBundle;
 
     @Inject
@@ -35,6 +36,12 @@ public class IdentityContextMenuController extends AbstractController implements
     @Inject
     private DeleteIdentityAction deleteIdentityAction;
 
+    @Inject
+    private ExportIdentityInteractor exportIdentityInteractor;
+
+    @Inject
+    private ExportIdentityContactInteractor exportIdentityContactInteractor;
+
     @FXML
     VBox contextMenu;
 
@@ -43,7 +50,9 @@ public class IdentityContextMenuController extends AbstractController implements
     @FXML
     Button removeButton;
     @FXML
-    Button exportButton;
+    Button exportIdentityButton;
+    @FXML
+    Button exportContactButton;
     @FXML
     Button privateKeyButton;
     @FXML
@@ -54,6 +63,8 @@ public class IdentityContextMenuController extends AbstractController implements
     private static ImageView editImageView = setImageView(loadImage("/img/pencil.png"));
     private static ImageView deleteImageView = setImageView(loadImage("/img/delete.png"));
     private static ImageView uploadImageView = setImageView(loadImage("/img/upload.png"));
+    private static ImageView exportIdentityImageView = setImageView(loadImage("/img/export.png"));
+    private static ImageView exportContactImageView = setImageView(loadImage("/img/export.png"));
     private static ImageView privateKeyImageView = setImageView(loadImage("/img/qrcode.png"));
     private static ImageView qrcodeImageView = setImageView(loadImage("/img/qrcode.png"));
     private static ImageView emailImageView = setImageView(loadImage("/img/email.png"));
@@ -90,7 +101,8 @@ public class IdentityContextMenuController extends AbstractController implements
     private void createButtonsGraphics() {
         editButton.setGraphic(editImageView);
         removeButton.setGraphic(deleteImageView);
-        exportButton.setGraphic(uploadImageView);
+        exportIdentityButton.setGraphic(exportIdentityImageView);
+        exportContactButton.setGraphic(exportContactImageView);
         privateKeyButton.setGraphic(privateKeyImageView);
         publicKeyQRButton.setGraphic(qrcodeImageView);
         publicKeyEmailButton.setGraphic(emailImageView);
@@ -99,7 +111,7 @@ public class IdentityContextMenuController extends AbstractController implements
     private void createButtonsTooltip() {
         Tooltip.install(editButton, new Tooltip(resourceBundle.getString("editDetails")));
         Tooltip.install(removeButton, new Tooltip(resourceBundle.getString("removeIdentity")));
-        Tooltip.install(exportButton, new Tooltip(resourceBundle.getString("exportIdentityQID")));
+        Tooltip.install(exportIdentityButton, new Tooltip(resourceBundle.getString("exportIdentityQID")));
         Tooltip.install(privateKeyButton, new Tooltip(resourceBundle.getString("exportPrivateKeyQR")));
         Tooltip.install(publicKeyQRButton, new Tooltip(resourceBundle.getString("sharePublicKeyQR")));
         Tooltip.install(publicKeyEmailButton, new Tooltip(resourceBundle.getString("sharePublicKeyEmail")));
@@ -153,5 +165,15 @@ public class IdentityContextMenuController extends AbstractController implements
     private Runnable closeHandler = () -> {};
     public void onClose(Runnable closeHandler) {
         this.closeHandler = closeHandler;
+    }
+
+    public void exportIdentity() {
+        exportIdentityInteractor.export(identity, layoutWindow.getScene().getWindow())
+            .subscribe(aBoolean -> {}, this::alert);
+    }
+
+    public void exportContact() {
+        exportIdentityContactInteractor.export(identity, layoutWindow.getScene().getWindow())
+            .subscribe(aBoolean -> {}, this::alert);
     }
 }

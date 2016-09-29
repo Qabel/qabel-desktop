@@ -27,7 +27,7 @@ public class AbstractController {
 
     protected Gson gson;
 
-    protected void alert(Exception e) {
+    protected void alert(Throwable e) {
         alert(e.getMessage(), e);
     }
 
@@ -75,7 +75,7 @@ public class AbstractController {
 
     public CrashReportAlert alert;
 
-    protected void alert(String message, Exception e) {
+    protected void alert(String message, Throwable e) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> alert(message, e));
             return;

@@ -38,6 +38,8 @@ import de.qabel.desktop.repository.sqlite.SqliteDropMessageRepository;
 import de.qabel.desktop.repository.sqlite.SqliteShareNotificationRepository;
 import de.qabel.desktop.repository.sqlite.hydrator.BoxSyncConfigHydrator;
 import de.qabel.desktop.repository.sqlite.hydrator.ShareNotificationMessageHydrator;
+import de.qabel.desktop.ui.util.DefaultFileChooserFactory;
+import de.qabel.desktop.ui.util.FileChooserFactory;
 
 import java.net.URI;
 
@@ -325,5 +327,10 @@ public class NewConfigDesktopServiceFactory extends RuntimeDesktopServiceFactory
     @Override
     public TransactionManager getTransactionManager() {
         return transactionManager;
+    }
+
+    @Override
+    public FileChooserFactory getFileChooserFactory() {
+        return new DefaultFileChooserFactory();
     }
 }

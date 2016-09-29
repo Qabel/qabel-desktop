@@ -53,6 +53,8 @@ public class RecursiveInjectionInstanceSupplier implements Function<Class<?>, Ob
             }
 
         } catch (Exception e) {
+            System.err.println(e.getMessage());
+            e.printStackTrace();
             throw new IllegalStateException(e.getMessage(), e);
         }
     }

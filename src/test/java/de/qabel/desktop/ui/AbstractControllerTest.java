@@ -39,6 +39,7 @@ import de.qabel.desktop.ui.actionlog.item.renderer.PlaintextMessageRenderer;
 import de.qabel.desktop.ui.connector.DropConnector;
 import de.qabel.desktop.ui.inject.AfterburnerInjector;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
+import de.qabel.desktop.ui.util.CallbackFileChooserFactory;
 import javafx.beans.property.SimpleListProperty;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
@@ -120,6 +121,8 @@ public class AbstractControllerTest extends AbstractFxTest {
             dropStateRepository,
             shareNotificationRepository
         );
+        diContainer.put("resourceBundle", QabelFXMLView.getDefaultResourceBundle());
+        diContainer.put("fileChooserFactory", new CallbackFileChooserFactory(() -> null));
         diContainer.put("eventDispatcher", eventDispatcher);
         diContainer.put("eventSource", eventDispatcher);
         diContainer.put("eventSink", eventDispatcher);
