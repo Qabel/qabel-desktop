@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="24"
+   height="24"
+   viewBox="0 0 24 24"
+   id="svg16178"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="folder-remove.svg">
+  <metadata
+     id="metadata16186">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs16184" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="3840"
+     inkscape:window-height="2086"
+     id="namedview16182"
+     showgrid="false"
+     inkscape:zoom="9.8333333"
+     inkscape:cx="-39.711864"
+     inkscape:cy="12"
+     inkscape:window-x="3200"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg16178" />
+  <g
+     id="folder_remove"
+     inkscape:label="#g16764">
+    <title
+       id="title16776">folder-remove</title>
+    <desc
+       id="desc16774">Community Icons - SIL Open Font License 1.1</desc>
+    <path
+       style="fill:#333333"
+       inkscape:connector-curvature="0"
+       id="path16180"
+       d="m 10,4.1016949 2,2 8,0 a 2,2 0 0 1 2,2 l 0,10.0000001 a 2,2 0 0 1 -2,2 l -16,0 c -1.11,0 -2,-0.9 -2,-2 L 2,6.1016949 c 0,-1.11 0.89,-2 2,-2 l 6,0 m 2.46,6.8800001 2.13,2.12 -2.13,2.12 1.42,1.42 2.12,-2.13 2.12,2.13 1.42,-1.42 -2.13,-2.12 2.13,-2.12 L 18.12,9.5616949 16,11.691695 13.88,9.5616949 12.46,10.981695 Z" />
+    <g
+       inkscape:label="#g4152"
+       id="arrow_left-92"
+       transform="translate(-0.08,0.10169495)"
+       style="display:inline">
+      <title
+         id="title7047-63">arrow-left</title>
+      <desc
+         id="desc7045-86">Google Material Design Icons - Attribution 4.0 International</desc>
+      <g
+         style="display:inline;opacity:1"
+         id="menu_up-64-1"
+         transform="matrix(0.49999967,0,0,0.49999967,0.08000792,7.92e-6)"
+         inkscape:label="#g5506">
+        <desc
+           id="desc23777-4-708">Google Material Design Icons - Attribution 4.0 International</desc>
+        <title
+           id="title23775-27-8">menu-up</title>
+        <path
+           id="path5498-0-05"
+           d="M 0,0 48,0 48,48 0,48 Z"
+           inkscape:connector-curvature="0"
+           style="fill:none" />
+      </g>
+    </g>
+  </g>
+</svg>

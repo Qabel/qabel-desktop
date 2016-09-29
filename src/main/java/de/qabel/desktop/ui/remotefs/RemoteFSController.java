@@ -75,7 +75,7 @@ public class RemoteFSController extends AbstractController implements Initializa
     private static Image uploadFolderImage = optionImage("/icon/folder-upload.png");
     private static Image downloadImage = optionImage("/icon/download.png");
     private static Image addFolderImage = optionImage("/icon/add_folder.png");
-    private static Image deleteImage = optionImage("/icon/delete.png");
+    private static ImageView deleteImage = Icons.getIcon(Icons.DELETE, OPTION_EDGE_SIZE);
     private static ImageView shareImage = Icons.getIcon(SHARE, OPTION_EDGE_SIZE);
     private FakeBoxObject shareObject;
 

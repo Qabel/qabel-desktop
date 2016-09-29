@@ -19,6 +19,7 @@ import de.qabel.desktop.ui.contact.item.ContactItemView;
 import de.qabel.desktop.ui.contact.item.DummyItemView;
 import de.qabel.desktop.ui.contact.menu.ContactMenuController;
 import de.qabel.desktop.ui.contact.menu.ContactMenuView;
+import de.qabel.desktop.ui.util.Icons;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -40,6 +41,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+
+import static de.qabel.desktop.ui.util.Icons.DOTS;
 
 public class ContactController extends AbstractController implements Initializable, EntityObserver {
 
@@ -92,7 +95,7 @@ public class ContactController extends AbstractController implements Initializab
     public PopOver popOver;
 
     private static ImageView searchButtonImageView = setImageView(loadImage("/icon/search.png"));
-    private static ImageView menuImageView = setImageView(loadImage("/img/dots_vertical.png"));
+    private static ImageView menuImageView = Icons.getIcon(DOTS);
 
     private static Image loadImage(String resourcePath) {
         return new Image(ContactMenuController.class.getResourceAsStream(resourcePath), 25, 25, true, true);
