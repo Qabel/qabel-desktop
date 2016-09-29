@@ -1,8 +1,6 @@
 package de.qabel.desktop.ui;
 
 import com.google.gson.Gson;
-import de.qabel.core.drop.DropURL;
-import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.desktop.crashReports.CrashReportHandler;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -12,13 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.*;
-import java.net.URISyntaxException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.function.Function;
 
 
 public class AbstractController {
@@ -115,21 +109,4 @@ public class AbstractController {
             br.close();
         }
     }
-
-
-    private ArrayList<DropURL> generateDropURLs(List<String> drops) throws URISyntaxException, QblDropInvalidURL {
-        ArrayList<DropURL> collection = new ArrayList<>();
-
-        for (String uri : drops) {
-            DropURL dropURL = new DropURL(uri);
-
-            collection.add(dropURL);
-        }
-        return collection;
-    }
-
-    protected Function<String, Object> generateInjection(String name, Object instance) {
-        return requestedName -> requestedName.equals(name) ? instance : null;
-    }
-
 }
