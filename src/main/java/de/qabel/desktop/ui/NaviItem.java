@@ -4,6 +4,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -20,7 +21,7 @@ public class NaviItem extends HBox {
         this(label, new ImageView(image));
     }
 
-    public NaviItem(String label, ImageView imageView) {
+    public NaviItem(String label, Node imageView) {
         labelProperty = new SimpleStringProperty(label);
         button = new Button();
         button.setGraphic(imageView);

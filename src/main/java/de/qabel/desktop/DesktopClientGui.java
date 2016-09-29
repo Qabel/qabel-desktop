@@ -57,7 +57,7 @@ public class DesktopClientGui extends Application {
         showLoginStage();
         config.onSetAccount(account -> {
                 initBackgroundServices();
-                showLayoutStage();
+                Platform.runLater(this::showLayoutStage);
             }
         );
         config.onSelectIdentity(this::addShareMessageRenderer);

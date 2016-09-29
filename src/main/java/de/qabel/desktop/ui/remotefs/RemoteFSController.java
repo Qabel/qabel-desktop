@@ -22,6 +22,7 @@ import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.DetailsController;
 import de.qabel.desktop.ui.DetailsView;
 import de.qabel.desktop.ui.remotefs.factory.BoxNameCell;
+import de.qabel.desktop.ui.util.Icons;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
@@ -61,6 +62,7 @@ import java.util.function.Consumer;
 
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.CREATE;
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.DELETE;
+import static de.qabel.desktop.ui.util.Icons.SHARE;
 import static javafx.scene.Cursor.HAND;
 
 
@@ -74,7 +76,7 @@ public class RemoteFSController extends AbstractController implements Initializa
     private static Image downloadImage = optionImage("/icon/download.png");
     private static Image addFolderImage = optionImage("/icon/add_folder.png");
     private static Image deleteImage = optionImage("/icon/delete.png");
-    private static Image shareImage = optionImage("/icon/share.png");
+    private static ImageView shareImage = Icons.getIcon(SHARE, OPTION_EDGE_SIZE);
     private FakeBoxObject shareObject;
 
     private static Image optionImage(String resourcePath) {
@@ -385,8 +387,14 @@ public class RemoteFSController extends AbstractController implements Initializa
         return buttonFromImage(item, bar, image, handler, name, hoveredItem.isEqualTo(item));
     }
 
+    private Pane buttonFromImage(TreeItem<BoxObject> item, HBox bar, ImageView image, Consumer<TreeItem<BoxObject>> handler, String name) {
+        return buttonFromImage(item, bar, image, handler, name, hoveredItem.isEqualTo(item));
+    }
+
     private Pane buttonFromImage(TreeItem<BoxObject> item, HBox bar, Image image, Consumer<TreeItem<BoxObject>> handler, String name, BooleanBinding showIf) {
-        ImageView buttonIcon = new ImageView(image);
+        return buttonFromImage(item, bar, new ImageView(image), handler, name, showIf);
+    }
+    private Pane buttonFromImage(TreeItem<BoxObject> item, HBox bar, ImageView buttonIcon, Consumer<TreeItem<BoxObject>> handler, String name, BooleanBinding showIf) {
         Pane button = new Pane(buttonIcon);
         ObservableList<String> styleClass = button.getStyleClass();
         styleClass.add("inline-button");

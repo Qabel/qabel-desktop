@@ -55,6 +55,10 @@
             "locked": "1.4.1",
             "requested": "1.4.+"
         },
+        "de.codecentric.centerdevice:javafxsvg": {
+            "locked": "1.2.1",
+            "requested": "1.2.+"
+        },
         "javax.inject:javax.inject": {
             "locked": "1",
             "requested": "1"
@@ -174,6 +178,10 @@
         "commons-validator:commons-validator": {
             "locked": "1.4.1",
             "requested": "1.4.+"
+        },
+        "de.codecentric.centerdevice:javafxsvg": {
+            "locked": "1.2.1",
+            "requested": "1.2.+"
         },
         "javax.inject:javax.inject": {
             "locked": "1",
@@ -298,6 +306,10 @@
         "commons-validator:commons-validator": {
             "locked": "1.4.1",
             "requested": "1.4.+"
+        },
+        "de.codecentric.centerdevice:javafxsvg": {
+            "locked": "1.2.1",
+            "requested": "1.2.+"
         },
         "info.cukes:cucumber-java": {
             "locked": "1.2.5",
@@ -455,6 +467,10 @@
             "locked": "1.4.1",
             "requested": "1.4.+"
         },
+        "de.codecentric.centerdevice:javafxsvg": {
+            "locked": "1.2.1",
+            "requested": "1.2.+"
+        },
         "info.cukes:cucumber-java": {
             "locked": "1.2.5",
             "requested": "1.2.+"
@@ -607,6 +623,10 @@
             "locked": "1.4.1",
             "requested": "1.4.+"
         },
+        "de.codecentric.centerdevice:javafxsvg": {
+            "locked": "1.2.1",
+            "requested": "1.2.+"
+        },
         "javax.inject:javax.inject": {
             "locked": "1",
             "requested": "1"
@@ -730,6 +750,10 @@
         "commons-validator:commons-validator": {
             "locked": "1.4.1",
             "requested": "1.4.+"
+        },
+        "de.codecentric.centerdevice:javafxsvg": {
+            "locked": "1.2.1",
+            "requested": "1.2.+"
         },
         "info.cukes:cucumber-java": {
             "locked": "1.2.5",
@@ -886,6 +910,10 @@
         "commons-validator:commons-validator": {
             "locked": "1.4.1",
             "requested": "1.4.+"
+        },
+        "de.codecentric.centerdevice:javafxsvg": {
+            "locked": "1.2.1",
+            "requested": "1.2.+"
         },
         "info.cukes:cucumber-java": {
             "locked": "1.2.5",
