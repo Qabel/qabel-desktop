@@ -3,7 +3,10 @@ package de.qabel.desktop.daemon.drop;
 
 import com.google.common.io.Files;
 import de.qabel.box.storage.jdbc.JdbcFileMetadataFactory;
+import de.qabel.chat.repository.entities.ChatDropMessage;
 import de.qabel.chat.repository.inmemory.InMemoryChatShareRepository;
+import de.qabel.chat.service.ChatService;
+import de.qabel.chat.service.MainChatService;
 import de.qabel.chat.service.MainSharingService;
 import de.qabel.chat.service.SharingService;
 import de.qabel.core.config.Contact;
@@ -15,10 +18,7 @@ import de.qabel.core.drop.DropURL;
 import de.qabel.core.http.DropServerHttp;
 import de.qabel.core.http.MainDropConnector;
 import de.qabel.core.http.MockDropServer;
-import de.qabel.chat.repository.entities.ChatDropMessage;
 import de.qabel.core.repository.entities.DropState;
-import de.qabel.chat.service.ChatService;
-import de.qabel.chat.service.MainChatService;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 import org.jetbrains.annotations.NotNull;
@@ -31,8 +31,7 @@ import java.util.List;
 
 import static de.qabel.desktop.AsyncUtils.assertAsync;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class DropDaemonTest extends AbstractControllerTest {
     private Contact c;
@@ -58,7 +57,7 @@ public class DropDaemonTest extends AbstractControllerTest {
         senderIdentity = identityBuilderFactory.factory().withAlias("sender").build();
         sender = getContact(senderIdentity);
         contactRepository.save(sender, identity);
-        dropConnector= new MainDropConnector(new MockDropServer());
+        dropConnector = new MainDropConnector(new MockDropServer());
         mockCoreDropConnector = new MockCoreDropConnector();
         File tempDir = Files.createTempDir();
         sharingService = new MainSharingService(
@@ -68,6 +67,8 @@ public class DropDaemonTest extends AbstractControllerTest {
             new JdbcFileMetadataFactory(tempDir),
             new CryptoUtils()
         );
+        sharingService = new MainSharingService(new InMemoryChatShareRepository(), contactRepository,
+            Files.createTempDir(), new JdbcFileMetadataFactory(Files.createTempDir()), new CryptoUtils());
         chatService = new MainChatService(mockCoreDropConnector, identityRepository,
             contactRepository, chatDropMessageRepository, dropStateRepository, sharingService);
         dd = new DropDaemon(chatService, dropMessageRepository, contactRepository, identityRepository);
@@ -91,6 +92,7 @@ public class DropDaemonTest extends AbstractControllerTest {
 
         List<PersistenceDropMessage> lst = dropMessageRepository.loadConversation(sender, identity);
         assertEquals(1, lst.size());
+        assertFalse(lst.get(0).isSent());
     }
 
     @Test

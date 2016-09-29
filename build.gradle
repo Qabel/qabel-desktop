@@ -83,7 +83,7 @@ jar.doFirst{
 }
 
 dependencies {
-    def coreVersion = '992917c6d0e1ecdaacff99f37eb706f15cea1976'
+    def coreVersion = '0.25.4'
     def repo = 'Qabel'
 
     compile 'com.github.'+repo+'.qabel-core:core:'+coreVersion
@@ -127,6 +127,7 @@ dependencies {
     compile 'net.glxn.qrgen:javase:2.+'                     //Apache License https://github.com/kenglxn/QRGen
     compile 'org.controlsfx:controlsfx:8.+'
     compile 'com.jfoenix:jfoenix:1.+'
+    compile group: 'commons-validator', name: 'commons-validator', version: '1.4.+'
 
     testCompile 'info.cukes:cucumber-java:1.2.+'
     testCompile 'info.cukes:cucumber-junit:1.2.+'

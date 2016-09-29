@@ -7,12 +7,18 @@ import de.qabel.core.index.IndexService;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.contact.index.result.IndexSearchResultItemView;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
@@ -38,6 +44,10 @@ public class IndexSearchController extends AbstractController implements Initial
     private Pane indexSearchRoot;
     @FXML
     JFXTextField search;
+    @FXML
+    Label emailSearch;
+    @FXML
+    Label phoneSearch;
 
     @Inject
     private IndexService indexService;
@@ -48,32 +58,27 @@ public class IndexSearchController extends AbstractController implements Initial
 
     private boolean subscriptionRunning;
 
+    private String searchingFor;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        searchingFor = resources.getString("searchingFor");
+
         loader.managedProperty().bind(loader.visibleProperty());
         loader.visibleProperty().bind(pendingRequests.greaterThan(0));
 
         resultContainer.managedProperty().bind(resultContainer.visibleProperty());
         resultContainer.visibleProperty().bind(loader.visibleProperty().not());
 
-        Observable.<String>create(subscriber -> {
-            search.textProperty().addListener((observable, oldValue, newValue) -> {
-                if (oldValue.equals(newValue)) {
-                    return;
-                }
-                try {
-                    String formattedNumber = formatPhoneNumber(newValue);
-                    if (!newValue.equals(formattedNumber)) {
-                        search.setText(formattedNumber);
-                        return;
-                    }
-                } catch (NumberParseException ignored) {}
+        bindPhoneSearch();
+        bindEmailSearch();
 
-                subscriber.onNext(newValue);
-            });
+        Observable.<String>create(subscriber -> {
+            search.textProperty().addListener((observable, oldValue, newValue) -> subscriber.onNext(newValue));
             subscriptionRunning = true;
         })
         .subscribeOn(Schedulers.computation())
+        .map(this::formatInput)
         .filter(this::isValidInput)
         .debounce(remoteDebounceTimeout, TimeUnit.MILLISECONDS)
         .observeOn(Schedulers.io())
@@ -84,6 +89,46 @@ public class IndexSearchController extends AbstractController implements Initial
             Platform.runLater(resultContainer.getChildren()::clear);
             contacts.forEach(this::showContact);
         });
+    }
+
+    protected void bindPhoneSearch() {
+        StringBinding formattedPhoneBinding = Bindings.createStringBinding(this::formatPhone, search.textProperty());
+        phoneSearch.textProperty().bind(new SimpleStringProperty(searchingFor).concat(" ").concat(formattedPhoneBinding));
+        BooleanBinding validPhoneBinding = Bindings.createBooleanBinding(this::isValidPhone, search.textProperty());
+        phoneSearch.visibleProperty().bind(validPhoneBinding);
+        phoneSearch.managedProperty().bind(phoneSearch.visibleProperty());
+    }
+
+    protected void bindEmailSearch() {
+        emailSearch.textProperty().bind(new SimpleStringProperty(searchingFor).concat(" ").concat(search.textProperty()));
+        BooleanBinding validEmailBinding = Bindings.createBooleanBinding(this::isValidEmail, search.textProperty());
+        emailSearch.visibleProperty().bind(validEmailBinding);
+        emailSearch.managedProperty().bind(emailSearch.visibleProperty());
+    }
+
+    private boolean isValidPhone() {
+        return isValidPhoneNumber(search.getText());
+    }
+
+    private boolean isValidEmail() {
+        return isValidEmail(search.getText());
+    }
+
+    @NotNull
+    private String formatInput(String text) {
+        return text.contains("@") ? text : formatPhone(text);
+    }
+
+    private String formatPhone() {
+        return formatPhone(search.getText());
+    }
+
+    private String formatPhone(String unformattedNumber) {
+        try {
+            return formatPhoneNumber(unformattedNumber);
+        } catch (NumberParseException e) {
+            return "";
+        }
     }
 
     boolean isSubscriptionRunning() {

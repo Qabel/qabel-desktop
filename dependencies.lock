@@ -8,16 +8,16 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "992917c6d0e1ecdaacff99f37eb706f15cea1976",
-            "requested": "992917c6d0e1ecdaacff99f37eb706f15cea1976"
+            "locked": "0.25.4",
+            "requested": "0.25.4"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "992917c6d0e1ecdaacff99f37eb706f15cea1976",
-            "requested": "992917c6d0e1ecdaacff99f37eb706f15cea1976"
+            "locked": "0.25.4",
+            "requested": "0.25.4"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "992917c6d0e1ecdaacff99f37eb706f15cea1976",
-            "requested": "992917c6d0e1ecdaacff99f37eb706f15cea1976"
+            "locked": "0.25.4",
+            "requested": "0.25.4"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -50,6 +50,10 @@
         "commons-codec:commons-codec": {
             "locked": "1.10",
             "requested": "1.10"
+        },
+        "commons-validator:commons-validator": {
+            "locked": "1.4.1",
+            "requested": "1.4.+"
         },
         "javax.inject:javax.inject": {
             "locked": "1",
@@ -124,16 +128,16 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "992917c6d0e1ecdaacff99f37eb706f15cea1976",
-            "requested": "992917c6d0e1ecdaacff99f37eb706f15cea1976"
+            "locked": "0.25.4",
+            "requested": "0.25.4"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "992917c6d0e1ecdaacff99f37eb706f15cea1976",
-            "requested": "992917c6d0e1ecdaacff99f37eb706f15cea1976"
+            "locked": "0.25.4",
+            "requested": "0.25.4"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "992917c6d0e1ecdaacff99f37eb706f15cea1976",
-            "requested": "992917c6d0e1ecdaacff99f37eb706f15cea1976"
+            "locked": "0.25.4",
+            "requested": "0.25.4"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -166,6 +170,10 @@
         "commons-codec:commons-codec": {
             "locked": "1.10",
             "requested": "1.10"
+        },
+        "commons-validator:commons-validator": {
+            "locked": "1.4.1",
+            "requested": "1.4.+"
         },
         "javax.inject:javax.inject": {
             "locked": "1",
@@ -240,16 +248,16 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "992917c6d0e1ecdaacff99f37eb706f15cea1976",
-            "requested": "992917c6d0e1ecdaacff99f37eb706f15cea1976"
+            "locked": "0.25.4",
+            "requested": "0.25.4"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "992917c6d0e1ecdaacff99f37eb706f15cea1976",
-            "requested": "992917c6d0e1ecdaacff99f37eb706f15cea1976"
+            "locked": "0.25.4",
+            "requested": "0.25.4"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "992917c6d0e1ecdaacff99f37eb706f15cea1976",
-            "requested": "992917c6d0e1ecdaacff99f37eb706f15cea1976"
+            "locked": "0.25.4",
+            "requested": "0.25.4"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -286,6 +294,10 @@
         "commons-codec:commons-codec": {
             "locked": "1.10",
             "requested": "1.10"
+        },
+        "commons-validator:commons-validator": {
+            "locked": "1.4.1",
+            "requested": "1.4.+"
         },
         "info.cukes:cucumber-java": {
             "locked": "1.2.5",
@@ -392,16 +404,16 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "992917c6d0e1ecdaacff99f37eb706f15cea1976",
-            "requested": "992917c6d0e1ecdaacff99f37eb706f15cea1976"
+            "locked": "0.25.4",
+            "requested": "0.25.4"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "992917c6d0e1ecdaacff99f37eb706f15cea1976",
-            "requested": "992917c6d0e1ecdaacff99f37eb706f15cea1976"
+            "locked": "0.25.4",
+            "requested": "0.25.4"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "992917c6d0e1ecdaacff99f37eb706f15cea1976",
-            "requested": "992917c6d0e1ecdaacff99f37eb706f15cea1976"
+            "locked": "0.25.4",
+            "requested": "0.25.4"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -438,6 +450,10 @@
         "commons-codec:commons-codec": {
             "locked": "1.10",
             "requested": "1.10"
+        },
+        "commons-validator:commons-validator": {
+            "locked": "1.4.1",
+            "requested": "1.4.+"
         },
         "info.cukes:cucumber-java": {
             "locked": "1.2.5",
@@ -544,16 +560,16 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "992917c6d0e1ecdaacff99f37eb706f15cea1976",
-            "requested": "992917c6d0e1ecdaacff99f37eb706f15cea1976"
+            "locked": "0.25.4",
+            "requested": "0.25.4"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "992917c6d0e1ecdaacff99f37eb706f15cea1976",
-            "requested": "992917c6d0e1ecdaacff99f37eb706f15cea1976"
+            "locked": "0.25.4",
+            "requested": "0.25.4"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "992917c6d0e1ecdaacff99f37eb706f15cea1976",
-            "requested": "992917c6d0e1ecdaacff99f37eb706f15cea1976"
+            "locked": "0.25.4",
+            "requested": "0.25.4"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -586,6 +602,10 @@
         "commons-codec:commons-codec": {
             "locked": "1.10",
             "requested": "1.10"
+        },
+        "commons-validator:commons-validator": {
+            "locked": "1.4.1",
+            "requested": "1.4.+"
         },
         "javax.inject:javax.inject": {
             "locked": "1",
@@ -660,16 +680,16 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "992917c6d0e1ecdaacff99f37eb706f15cea1976",
-            "requested": "992917c6d0e1ecdaacff99f37eb706f15cea1976"
+            "locked": "0.25.4",
+            "requested": "0.25.4"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "992917c6d0e1ecdaacff99f37eb706f15cea1976",
-            "requested": "992917c6d0e1ecdaacff99f37eb706f15cea1976"
+            "locked": "0.25.4",
+            "requested": "0.25.4"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "992917c6d0e1ecdaacff99f37eb706f15cea1976",
-            "requested": "992917c6d0e1ecdaacff99f37eb706f15cea1976"
+            "locked": "0.25.4",
+            "requested": "0.25.4"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -706,6 +726,10 @@
         "commons-codec:commons-codec": {
             "locked": "1.10",
             "requested": "1.10"
+        },
+        "commons-validator:commons-validator": {
+            "locked": "1.4.1",
+            "requested": "1.4.+"
         },
         "info.cukes:cucumber-java": {
             "locked": "1.2.5",
@@ -812,16 +836,16 @@
             "requested": "1.7.+"
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "992917c6d0e1ecdaacff99f37eb706f15cea1976",
-            "requested": "992917c6d0e1ecdaacff99f37eb706f15cea1976"
+            "locked": "0.25.4",
+            "requested": "0.25.4"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "992917c6d0e1ecdaacff99f37eb706f15cea1976",
-            "requested": "992917c6d0e1ecdaacff99f37eb706f15cea1976"
+            "locked": "0.25.4",
+            "requested": "0.25.4"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "992917c6d0e1ecdaacff99f37eb706f15cea1976",
-            "requested": "992917c6d0e1ecdaacff99f37eb706f15cea1976"
+            "locked": "0.25.4",
+            "requested": "0.25.4"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -858,6 +882,10 @@
         "commons-codec:commons-codec": {
             "locked": "1.10",
             "requested": "1.10"
+        },
+        "commons-validator:commons-validator": {
+            "locked": "1.4.1",
+            "requested": "1.4.+"
         },
         "info.cukes:cucumber-java": {
             "locked": "1.2.5",

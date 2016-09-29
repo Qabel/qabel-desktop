@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 
 public class LayoutControllerTest extends AbstractControllerTest {
 
-    private static final int MIN_ITEM_COUNT = 2;
+    private static final int MIN_ITEM_COUNT = 3;
 
     private int used300Mb = toMb(300);
     private int quota1000Mb = toMb(1000);

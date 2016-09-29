@@ -59,7 +59,7 @@
                                                         <Image url="@/icon/folder.png" />
                                                     </image>
                                                 </ImageView>
-                                                <ImageView fx:id="editSync" fitHeight="16" onMouseClicked="#edit" preserveRatio="true" style="-fx-alignment: CENTER-RIGHT" styleClass="inline-button">
+                                                <ImageView fx:id="editSync" fitHeight="16" onMouseClicked="#edit" preserveRatio="true" style="-fx-alignment: CENTER-RIGHT" styleClass="inline-button" visible="false" managed="false">
                                                     <image>
                                                         <Image url="@/icon/edit.png" />
                                                     </image>

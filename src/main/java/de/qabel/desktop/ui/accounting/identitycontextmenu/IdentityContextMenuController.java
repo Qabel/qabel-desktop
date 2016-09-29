@@ -127,7 +127,7 @@ public class IdentityContextMenuController extends AbstractController implements
     void createIdentityEdit(Pane container) {
         identityEditView = new IdentityEditView(identity);
         identityEditView.getView(v -> {
-            Popup popup = new Popup(container, v, 400, 280);
+            Popup popup = new Popup(container, v);
             popup.show();
             identityEditView.getPresenter().onFinish(popup::close);
         });

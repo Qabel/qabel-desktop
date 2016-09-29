@@ -531,6 +531,24 @@ VBox.spaced, HBox.spaced {
     -fx-sync-avatar-width: 25;
 }
 
+.avatar-wizard {
+    -fx-alignment: CENTER;
+    -fx-pref-height: 150px;
+    -fx-min-height: 150px;
+    -fx-pref-width: 150px;
+    -fx-background-size: 150px;
+    -fx-background-color: magenta;
+    -fx-background-radius: 75;
+    -fx-border-radius: 75;
+    -fx-padding: 0 0 0 0;
+    -fx-margin: 3px;
+}
+
+.avatar-wizard .text {
+    -fx-font-size: 6em;
+    -fx-text-fill: #ffffff;
+}
+
 .sync-avatar .avatar {
     -fx-min-height: -fx-sync-avatar-width;
     -fx-min-width: -fx-sync-avatar-width;
@@ -622,6 +640,15 @@ VBox.spaced, HBox.spaced {
     -fx-max-height: 400px;
     -fx-position: absolute;
     -fx-background-color: white;
+}
+
+.wizard-container {
+    -fx-max-width: 500px;
+    -fx-pref-height: inherit;
+    -fx-max-height: 600px;
+    -fx-position: absolute;
+    -fx-background-color: white;
+    -fx-padding: 1em;
 }
 
 .image-qrcode {
@@ -756,6 +783,7 @@ VBox.spaced, HBox.spaced {
     -fx-pref-height: 0px;
     -fx-position: absolute;
     -fx-background-color: white;
+    -fx-padding: 1em 1em 1em 1em;
 }
 
 .form {
@@ -772,4 +800,25 @@ VBox.spaced, HBox.spaced {
     -fx-min-width: 5em;
     -fx-pref-width: 12em;
     -fx-font-size: 12px;
+}
+
+
+.text-field-wizard .text{
+    -fx-font-size: 12;
+}
+
+.button-next {
+    -fx-background-repeat: no-repeat;
+    -fx-background-image: url('/img/chevron_right_small.png');
+    -fx-background-position: right;
+}
+
+.button-back {
+    -fx-background-repeat: no-repeat;
+    -fx-background-image: url('/img/chevron_left.png');
+    -fx-background-position: left;
+}
+
+.error-textfield {
+    -fx-effect: dropshadow(three-pass-box, red, 8, 0.0, 0, 1);
 }
