@@ -54,7 +54,6 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
         this.path = path;
 
         nav.getChanges()
-//            .filter(notification -> notification.getNavigation() == nav)
             .subscribe(it -> {
                 DirectoryMetadataChange change = it.getChange();
                 BoxNavigation eventNav = it.getNavigation();
@@ -116,10 +115,6 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
                 BoxFileSystem.get(path).resolve(target.getName())
             );
             cache.cache(target, subnav);
-//            subnav.addObserver((o, arg) -> {
-//                setChanged();
-//                notifyObservers(arg);
-//            });
         }
         return cache.get(target);
     }
