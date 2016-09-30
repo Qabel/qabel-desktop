@@ -25,7 +25,7 @@ import java.util.Set;
 
 import static de.qabel.desktop.AsyncUtils.assertAsync;
 import static de.qabel.desktop.AsyncUtils.waitUntil;
-import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 
@@ -180,7 +180,7 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
             Set<String> foundPaths = new HashSet<>();
             updates.forEach(changeEvent -> foundPaths.add(changeEvent.getPath().toString()));
             return foundPaths;
-        }, contains(
+        }, containsInAnyOrder(
             "/folder",
             "/folder/subfolder",
             "/folder/testfile",

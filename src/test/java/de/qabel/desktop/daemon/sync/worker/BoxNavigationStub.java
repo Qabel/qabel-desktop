@@ -6,6 +6,7 @@ import de.qabel.box.storage.exceptions.QblStorageNotFound;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE;
+import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.storage.cache.CachedIndexNavigation;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +33,7 @@ public class BoxNavigationStub extends CachedIndexNavigation {
     public static BoxNavigationStub create() {
         IndexNavigation indexNavigation = mock(IndexNavigation.class);
         stub(indexNavigation.getChanges()).toReturn(Observable.empty());
-        return new BoxNavigationStub(indexNavigation, null);
+        return new BoxNavigationStub(indexNavigation, BoxFileSystem.getRoot());
     }
 
     public BoxNavigationStub(@NotNull IndexNavigation nav, Path path) {
@@ -65,9 +66,15 @@ public class BoxNavigationStub extends CachedIndexNavigation {
     @Override
     public BoxNavigationStub navigate(String name) throws QblStorageException {
         if (!subnavs.containsKey(name)) {
-            subnavs.put(name, new BoxNavigationStub(null, getDesktopPath().resolve(name + "/")));
+            BoxNavigationStub subnav = BoxNavigationStub.create();
+            subnav.setDesktopPath(getDesktopPath().resolve(name + "/"));
+            subnavs.put(name, subnav);
         }
         return subnavs.get(name);
+    }
+
+    private void setDesktopPath(Path newPath) {
+        path = newPath;
     }
 
     @Override

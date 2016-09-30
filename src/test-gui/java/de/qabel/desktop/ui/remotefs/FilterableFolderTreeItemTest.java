@@ -1,9 +1,7 @@
 package de.qabel.desktop.ui.remotefs;
 
 import com.airhacks.afterburner.views.FXMLView;
-import de.qabel.box.storage.BoxFile;
-import de.qabel.box.storage.BoxFolder;
-import de.qabel.box.storage.BoxObject;
+import de.qabel.box.storage.*;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.desktop.daemon.sync.worker.BoxNavigationStub;
 import de.qabel.desktop.daemon.sync.worker.BoxVolumeStub;
@@ -17,6 +15,8 @@ import java.nio.file.Paths;
 
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.DELETE;
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.stub;
 
 public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSController> {
     private FilterableFolderTreeItem folderTree;
@@ -32,7 +32,7 @@ public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSContro
         subFolder = new BoxFolder("prefix", "folderName", new byte[0]);
 
         BoxFolder folder = new BoxFolder("ref", "folder", new byte[0]);
-        BoxNavigationStub indexNav = new BoxNavigationStub(null, Paths.get("/"));
+        BoxNavigationStub indexNav = BoxNavigationStub.create();
         navigation = new BoxNavigationStub(indexNav, Paths.get("/folder"));
         navigation.files.add(subFile);
         navigation.folders.add(subFolder);
@@ -42,7 +42,9 @@ public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSContro
             fail(e.getMessage());
         }
 
-        ((BoxVolumeStub)boxVolumeFactory.boxVolume).rootNavigation = navigation;
+        BoxVolumeStub volume = new BoxVolumeStub();
+        volume.rootNavigation = navigation;
+        stub(boxVolumeFactory.getVolume(any(), any())).toReturn(volume);
 
         return new RemoteFSView();
     }
@@ -113,6 +115,6 @@ public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSContro
         if (controller.searchQuery.textProperty().isNotEmpty().get()) {
             runLaterAndWait(() -> controller.searchQuery.textProperty().set(""));
         }
-        clickOn("#searchQuery").write(query);
+        new RemoteBrowserPage(baseFXRobot, robot, controller).search(query);
     }
 }

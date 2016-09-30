@@ -31,8 +31,23 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
     private static final Logger logger = LoggerFactory.getLogger(CachedBoxNavigation.class);
     protected final T nav;
     private final BoxNavigationCache<CachedBoxNavigation> cache = new BoxNavigationCache<>();
-    private final Path path;
+    protected Path path;
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    public de.qabel.desktop.nio.boxfs.BoxPath getEventPath(BoxObject object, BoxNavigation navigation) {
+        BoxPath.FolderLike folder = navigation.getPath();
+        BoxPath.Folder eventFolder;
+        if (object instanceof BoxFile) {
+            eventFolder = folder.resolveFile(object.getName());
+        } else {
+            eventFolder = folder.resolveFolder(object.getName());
+        }
+        de.qabel.desktop.nio.boxfs.BoxPath newPath = BoxFileSystem.getRoot();
+        for (String subpath : eventFolder.toList()) {
+            newPath = newPath.resolve(subpath);
+        }
+        return newPath;
+    }
 
     public CachedBoxNavigation(T nav, Path path) {
         this.nav = nav;
@@ -42,20 +57,25 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 //            .filter(notification -> notification.getNavigation() == nav)
             .subscribe(it -> {
                 DirectoryMetadataChange change = it.getChange();
+                BoxNavigation eventNav = it.getNavigation();
                 try {
                     if (change instanceof UpdateFileChange) {
                         UpdateFileChange update = (UpdateFileChange) change;
+                        BoxFile newFile = update.getNewFile();
                         if (update.getExpectedFile() == null) {
-                            notify(update.getNewFile(), CREATE);
+                            notify(newFile, CREATE, getEventPath(newFile, eventNav));
                         } else {
-                            notifyAsync(update.getNewFile(), UPDATE);
+                            notifyAsync(newFile, UPDATE, getEventPath(newFile, eventNav));
                         }
                     } else if (change instanceof DeleteFileChange) {
-                        notify(((DeleteFileChange) change).getFile(), DELETE);
+                        BoxFile deletedFile = ((DeleteFileChange) change).getFile();
+                        notify(deletedFile, DELETE, getEventPath(deletedFile, eventNav));
                     } else if (change instanceof CreateFolderChange) {
-                        notify(((CreateFolderChange) change).getFolder(), CREATE);
+                        BoxFolder changedFolder = ((CreateFolderChange) change).getFolder();
+                        notify(changedFolder, CREATE, getEventPath(changedFolder, eventNav));
                     } else if (change instanceof DeleteFolderChange) {
-                        notify(((DeleteFolderChange) change).getFolder(), DELETE);
+                        BoxFolder deletedFolder = ((DeleteFolderChange) change).getFolder();
+                        notify(deletedFolder, DELETE, getEventPath(deletedFolder, eventNav));
                     }
                 } catch (Exception e) {
                     logger.error("failed to propagate event: " + change + " , " + e.getMessage(), e);
@@ -139,8 +159,12 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
         return nav.upload(name, file);
     }
 
+    protected void notifyAsync(BoxObject boxObject, TYPE type, Path path) {
+        executor.submit(() -> notify(boxObject, type, getDesktopPath(boxObject)));
+    }
+
     protected void notifyAsync(BoxObject boxObject, TYPE type) {
-        executor.submit(() -> notify(boxObject, type));
+        notifyAsync(boxObject, type, getDesktopPath(boxObject));
     }
 
     @Override
@@ -261,7 +285,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
         return nav.hasFile(name);
     }
 
-    private void notify(BoxObject file, TYPE type) {
+    private void notify(BoxObject file, TYPE type, Path targetPath) {
         setChanged();
         Long mtime = file instanceof BoxFile ? ((BoxFile) file).getMtime() : null;
         if (type == DELETE) {
@@ -269,7 +293,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
         }
         notifyObservers(
             new RemoteChangeEvent(
-                getDesktopPath(file),
+                targetPath,
                 file instanceof BoxFolder,
                 mtime,
                 type,
@@ -286,11 +310,11 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 
         // TODO notify async and sync files first (better UX on files)
         for (BoxFolder folder : nav.listFolders()) {
-            notify(folder, CREATE);
+            notify(folder, CREATE, getDesktopPath(folder));
             navigate(folder).notifyAllContents();
         }
         for (BoxFile file : listFiles()) {
-            notify(file, CREATE);
+            notify(file, CREATE, getDesktopPath(file));
         }
     }
 

@@ -83,10 +83,14 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
 
     protected void waitTillTheEnd(Node sceneNode) {
         assertAsync(() -> {
-            int a = (int) Math.round(sceneNode.computeAreaInScreen());
-            int b = Math.round(getWidth() * getHeight());
-            if (a < b) {
-                throw new IllegalStateException("scene area " + a + " < expected size " + b);
+            try {
+                int a = (int) Math.round(sceneNode.computeAreaInScreen());
+                int b = Math.round(getWidth() * getHeight());
+                if (a < b) {
+                    throw new IllegalStateException("scene area " + a + " < expected size " + b);
+                }
+            } catch (IndexOutOfBoundsException e) {
+                System.err.println("failed to calculate bounds of test window: " + e.getMessage());
             }
         });
 

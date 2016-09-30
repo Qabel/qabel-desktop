@@ -21,6 +21,8 @@ public class CachedBoxVolumeImplFactoryTest {
     private Identity identity2;
     private BoxVolumeFactory factory;
     private BoxVolumeStub boxVolume1;
+    private BoxVolumeFactory sut;
+
 
     @Before
     public void setUp() throws Exception {
@@ -30,12 +32,12 @@ public class CachedBoxVolumeImplFactoryTest {
         identity2 = new IdentityBuilderFactory(new DropUrlGenerator("http://localhost")).factory().withAlias("foo").build();
         factory = mock(BoxVolumeFactory.class);
         boxVolume1 = new BoxVolumeStub();
-        stub(factory.getVolume(any(), any())).toReturn(boxVolume1);
+        stub(factory.getVolume(any(), any())).toReturn(boxVolume1).toReturn(new BoxVolumeStub());
+        sut = new CachedBoxVolumeFactory(factory);
     }
 
     @Test
     public void returnsSameFactoryForSameAccountAndIdentity() throws Exception {
-        BoxVolumeFactory sut = new CachedBoxVolumeFactory(factory);
         assertSame(boxVolume1, sut.getVolume(account, identity));
 
         assertSame(boxVolume1, sut.getVolume(account, identity));
@@ -44,19 +46,22 @@ public class CachedBoxVolumeImplFactoryTest {
 
     @Test
     public void retunsNewFactoryForAnotherAccount() throws Exception {
-        BoxVolumeFactory sut = new CachedBoxVolumeFactory(factory);
         sut.getVolume(account, identity);
 
-        stub(factory.getVolume(any(), any())).toReturn(new BoxVolumeStub());
-        assertNotSame(boxVolume1, sut.getVolume(account2, identity));
+        assertReturnsAnotherInstance(account2, identity);
+    }
+
+    private void assertReturnsAnotherInstance(Account nextAccount,Identity nextIdentity) {
+        assertNotSame(boxVolume1, sut.getVolume(nextAccount, nextIdentity));
+        verify(factory, times(1)).getVolume(account, identity);
+        verify(factory, times(1)).getVolume(nextAccount, nextIdentity);
+        verifyNoMoreInteractions(factory);
     }
 
     @Test
     public void returnsNewFactoryForAnotherIdentity() throws Exception {
-        BoxVolumeFactory sut = new CachedBoxVolumeFactory(factory);
         sut.getVolume(account, identity);
 
-        stub(factory.getVolume(any(), any())).toReturn(new BoxVolumeStub());
-        assertNotSame(boxVolume1, sut.getVolume(account, identity2));
+        assertReturnsAnotherInstance(account, identity2);
     }
 }
