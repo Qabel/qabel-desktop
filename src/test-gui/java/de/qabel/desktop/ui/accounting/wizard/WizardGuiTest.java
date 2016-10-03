@@ -7,8 +7,8 @@ import de.qabel.desktop.ui.AbstractGuiTest;
 import org.junit.Before;
 import org.junit.Test;
 
+import static de.qabel.desktop.AsyncUtils.assertAsync;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 
 public class WizardGuiTest extends AbstractGuiTest<WizardController> {
@@ -34,14 +34,11 @@ public class WizardGuiTest extends AbstractGuiTest<WizardController> {
         assertEquals(1, identityRepository.findAll().getIdentities().size());
         page.enterAlias("testGui");
         page.next();
-        waitUntil(() -> controller.emailInput.isVisible());
-        assertTrue(controller.emailInput.isVisible());
+        assertAsync(controller.emailInput::isVisible);
         page.next();
-        waitUntil(() -> controller.phoneInput.isVisible());
-        assertTrue(controller.phoneInput.isVisible());
+        assertAsync(controller.phoneInput::isVisible);
         page.next();
-        waitUntil(() -> controller.finishButton.isVisible());
-        assertTrue(controller.finishButton.isVisible());
+        assertAsync(controller.finishButton::isVisible);
         page.finish();
         waitUntil(() -> controller.clientConfiguration.getSelectedIdentity() != null);
         Identity selectedIdentity = controller.clientConfiguration.getSelectedIdentity();

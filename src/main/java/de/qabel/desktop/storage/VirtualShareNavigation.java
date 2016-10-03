@@ -1,7 +1,11 @@
 package de.qabel.desktop.storage;
 
 import de.qabel.box.storage.*;
+import de.qabel.box.storage.dto.BoxPath;
+import de.qabel.box.storage.dto.DMChangeNotification;
 import de.qabel.box.storage.exceptions.QblStorageException;
+import org.jetbrains.annotations.NotNull;
+import rx.Observable;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -61,5 +65,27 @@ public class VirtualShareNavigation implements ReadableBoxNavigation {
     @Override
     public boolean hasFile(String name) throws QblStorageException {
         return false;
+    }
+
+    @NotNull
+    @Override
+    public BoxPath.FolderLike getPath() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Observable<DMChangeNotification> getChanges() {
+        return null;
+    }
+
+    @Override
+    public void refresh() throws QblStorageException {
+
+    }
+
+    @Override
+    public void refresh(boolean b) throws QblStorageException {
+
     }
 }

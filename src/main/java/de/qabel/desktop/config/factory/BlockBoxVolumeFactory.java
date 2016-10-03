@@ -3,11 +3,11 @@ package de.qabel.desktop.config.factory;
 import de.qabel.box.http.BlockReadBackend;
 import de.qabel.box.http.BlockWriteBackend;
 import de.qabel.box.storage.BoxVolume;
+import de.qabel.box.storage.BoxVolumeImpl;
 import de.qabel.core.accounting.BoxClient;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.core.repository.IdentityRepository;
-import de.qabel.desktop.storage.cache.CachedBoxVolumeImpl;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class BlockBoxVolumeFactory extends AbstractBoxVolumeFactory {
             BlockReadBackend readBackend = new BlockReadBackend(root, boxClient);
             BlockWriteBackend writeBackend = new BlockWriteBackend(root, boxClient);
 
-            return new CachedBoxVolumeImpl(
+            return new BoxVolumeImpl(
                 readBackend,
                 writeBackend,
                 identity.getPrimaryKeyPair(),

@@ -1,18 +1,28 @@
 package de.qabel.desktop.daemon.sync.worker;
 
 import de.qabel.box.storage.*;
+import de.qabel.box.storage.dto.BoxPath;
+import de.qabel.box.storage.dto.DMChangeNotification;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.box.storage.exceptions.QblStorageNotFound;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE;
+import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
-import de.qabel.desktop.storage.cache.CachedBoxNavigation;
-import de.qabel.desktop.storage.cache.CachedIndexNavigation;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function2;
 import org.jetbrains.annotations.NotNull;
-import rx.Observable;
+import rx.subjects.PublishSubject;
+import rx.subjects.Subject;
 
+import java.util.Observable;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
+import java.security.InvalidKeyException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,24 +30,22 @@ import java.util.Map;
 
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.SHARE;
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.UNSHARE;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.stub;
 
-public class BoxNavigationStub extends CachedIndexNavigation {
+public class BoxNavigationStub extends Observable implements IndexNavigation {
     public ChangeEvent event;
     public List<BoxFolder> folders = new LinkedList<>();
     public List<BoxFile> files = new LinkedList<>();
     public List<BoxShare> shares = new LinkedList<>();
     public Map<String, BoxNavigationStub> subnavs = new HashMap<>();
+    public Subject<DMChangeNotification, DMChangeNotification> subject = PublishSubject.create();
+    public Path path;
 
     public static BoxNavigationStub create() {
-        IndexNavigation indexNavigation = mock(IndexNavigation.class);
-        stub(indexNavigation.getChanges()).toReturn(Observable.empty());
-        return new BoxNavigationStub(indexNavigation, BoxFileSystem.getRoot());
+        return new BoxNavigationStub(BoxFileSystem.getRoot());
     }
 
-    public BoxNavigationStub(@NotNull IndexNavigation nav, Path path) {
-        super(nav, path);
+    public BoxNavigationStub(Path path) {
+        this.path = path;
     }
 
     @Override
@@ -49,13 +57,20 @@ public class BoxNavigationStub extends CachedIndexNavigation {
         }
     }
 
-    @Override
-    public void notifyAllContents() throws QblStorageException {
-
-    }
-
     public void pushNotification(BoxObject object, TYPE type) {
         notifyAsync(object, type);
+    }
+
+    private void notifyAsync(BoxObject object, TYPE type) {
+        setChanged();
+        notifyObservers(new RemoteChangeEvent(
+            path.resolve(object.getName()),
+            object instanceof BoxFile,
+            1000L,
+            type,
+            object,
+            this
+        ));
     }
 
     @Override
@@ -73,12 +88,16 @@ public class BoxNavigationStub extends CachedIndexNavigation {
         return subnavs.get(name);
     }
 
+    public Path getDesktopPath() {
+        return path;
+    }
+
     private void setDesktopPath(Path newPath) {
         path = newPath;
     }
 
     @Override
-    public synchronized CachedBoxNavigation navigate(BoxFolder target) throws QblStorageException {
+    public synchronized BoxNavigation navigate(BoxFolder target) throws QblStorageException {
         return navigate(target.getName());
     }
 
@@ -130,5 +149,206 @@ public class BoxNavigationStub extends CachedIndexNavigation {
             }
         }
         throw new QblStorageNotFound("no file named " + name);
+    }
+
+    @NotNull
+    @Override
+    public DirectoryMetadata reloadMetadata() throws QblStorageException {
+        return null;
+    }
+
+    @Override
+    public void commit() throws QblStorageException {
+
+    }
+
+    @Override
+    public void commitIfChanged() throws QblStorageException {
+
+    }
+
+    @NotNull
+    @Override
+    public BoxFile upload(String s, File file, ProgressListener progressListener) throws QblStorageException {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public BoxFile upload(String s, File file) throws QblStorageException {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public BoxFile upload(String s, InputStream inputStream, long l, ProgressListener progressListener) throws QblStorageException {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public BoxFile upload(String s, InputStream inputStream, long l) throws QblStorageException {
+        return null;
+    }
+
+    @Override
+    public boolean isUnmodified() {
+        return false;
+    }
+
+    @NotNull
+    @Override
+    public BoxFile overwrite(String s, File file, ProgressListener progressListener) throws QblStorageException {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public BoxFile overwrite(String s, File file) throws QblStorageException {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public InputStream download(BoxFile boxFile, ProgressListener progressListener) throws QblStorageException {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public InputStream download(String s) throws QblStorageException {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public InputStream download(BoxFile boxFile) throws QblStorageException {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public FileMetadata getFileMetadata(BoxFile boxFile) throws IOException, InvalidKeyException, QblStorageException {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public FileMetadata getMetadataFile(Share share) throws IOException, InvalidKeyException, QblStorageException {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public BoxFolder createFolder(String s) throws QblStorageException {
+        return null;
+    }
+
+    @Override
+    public void delete(BoxFile boxFile) throws QblStorageException {
+
+    }
+
+    @Override
+    public void delete(BoxFolder boxFolder) throws QblStorageException {
+
+    }
+
+    @Override
+    public void delete(BoxExternal boxExternal) throws QblStorageException {
+
+    }
+
+    @Override
+    public void setAutocommit(boolean b) {
+
+    }
+
+    @Override
+    public void setAutocommitDelay(long l) {
+
+    }
+
+    @NotNull
+    @Override
+    public DirectoryMetadata getMetadata() {
+        return null;
+    }
+
+    @Override
+    public void setMetadata(DirectoryMetadata directoryMetadata) {
+
+    }
+
+    @NotNull
+    @Override
+    public BoxExternalReference getExternalReference(QblECPublicKey qblECPublicKey, BoxFile boxFile) {
+        return null;
+    }
+
+    @Override
+    public boolean hasVersionChanged(DirectoryMetadata directoryMetadata) throws QblStorageException {
+        return false;
+    }
+
+    @Override
+    public void visit(Function2<? super AbstractNavigation, ? super BoxObject, Unit> function2) {
+
+    }
+
+    @NotNull
+    @Override
+    public BoxPath.FolderLike getPath() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public rx.Observable<DMChangeNotification> getChanges() {
+        return subject;
+    }
+
+    @NotNull
+    @Override
+    public BoxNavigation navigate(BoxExternal boxExternal) {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public List<BoxExternal> listExternals() throws QblStorageException {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public BoxFolder getFolder(String s) throws QblStorageException {
+        return null;
+    }
+
+    @Override
+    public boolean hasFile(String s) throws QblStorageException {
+        return false;
+    }
+
+    @Override
+    public void refresh(boolean b) throws QblStorageException {
+
+    }
+
+    @NotNull
+    @Override
+    public List<BoxShare> listShares() throws QblStorageException {
+        return null;
+    }
+
+    @Override
+    public void insertShare(BoxShare boxShare) throws QblStorageException {
+
+    }
+
+    @Override
+    public void deleteShare(BoxShare boxShare) throws QblStorageException {
+
     }
 }

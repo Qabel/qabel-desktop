@@ -72,7 +72,11 @@ public class AccountingControllerTest extends AbstractControllerTest {
     @Test
     public void exportIdentityTest() throws URISyntaxException, IOException, QblStorageException, PersistenceException, EntityNotFoundException, QblDropInvalidURL, JSONException {
         File file = setupImport(TEST_IDENTITY);
-        Identity identity = identityBuilderFactory.factory().withAlias("Test").build();
+        Identity identity = identityBuilderFactory.factory()
+            .withAlias("Test")
+            .withEmail("test@example.com")
+            .withPhone("00000000")
+            .build();
 
         controller.exportIdentity(identity, file);
         File f = new File(TEST_FOLDER + "/" + TEST_IDENTITY);

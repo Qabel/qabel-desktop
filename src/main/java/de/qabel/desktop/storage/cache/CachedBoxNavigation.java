@@ -3,16 +3,19 @@ package de.qabel.desktop.storage.cache;
 import de.qabel.box.storage.*;
 import de.qabel.box.storage.command.*;
 import de.qabel.box.storage.dto.BoxPath;
-import de.qabel.box.storage.dto.DirectoryMetadataChangeNotification;
+import de.qabel.box.storage.dto.DMChangeNotification;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.storage.PathNavigation;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function2;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.schedulers.Schedulers;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +37,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
     protected Path path;
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    public de.qabel.desktop.nio.boxfs.BoxPath getEventPath(BoxObject object, BoxNavigation navigation) {
+    public static de.qabel.desktop.nio.boxfs.BoxPath getEventPath(BoxObject object, BoxNavigation navigation) {
         BoxPath.FolderLike folder = navigation.getPath();
         BoxPath.Folder eventFolder;
         if (object instanceof BoxFile) {
@@ -46,6 +49,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
         for (String subpath : eventFolder.toList()) {
             newPath = newPath.resolve(subpath);
         }
+        System.out.println("event path: " + newPath);
         return newPath;
     }
 
@@ -54,32 +58,70 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
         this.path = path;
 
         nav.getChanges()
+            .subscribeOn(Schedulers.immediate())
+            .observeOn(Schedulers.immediate())
             .subscribe(it -> {
-                DirectoryMetadataChange change = it.getChange();
-                BoxNavigation eventNav = it.getNavigation();
                 try {
-                    if (change instanceof UpdateFileChange) {
-                        UpdateFileChange update = (UpdateFileChange) change;
-                        BoxFile newFile = update.getNewFile();
-                        if (update.getExpectedFile() == null) {
-                            notify(newFile, CREATE, getEventPath(newFile, eventNav));
-                        } else {
-                            notifyAsync(newFile, UPDATE, getEventPath(newFile, eventNav));
-                        }
-                    } else if (change instanceof DeleteFileChange) {
-                        BoxFile deletedFile = ((DeleteFileChange) change).getFile();
-                        notify(deletedFile, DELETE, getEventPath(deletedFile, eventNav));
-                    } else if (change instanceof CreateFolderChange) {
-                        BoxFolder changedFolder = ((CreateFolderChange) change).getFolder();
-                        notify(changedFolder, CREATE, getEventPath(changedFolder, eventNav));
-                    } else if (change instanceof DeleteFolderChange) {
-                        BoxFolder deletedFolder = ((DeleteFolderChange) change).getFolder();
-                        notify(deletedFolder, DELETE, getEventPath(deletedFolder, eventNav));
-                    }
+                    RemoteChangeEvent event = createRemoteChangeEventFromNotification(this, it);
+                    setChanged();
+                    notifyObservers(event);
                 } catch (Exception e) {
-                    logger.error("failed to propagate event: " + change + " , " + e.getMessage(), e);
+                    logger.error("failed to propagate event: " + it.getChange() + " , " + e.getMessage(), e);
                 }
             });
+        throw new IllegalStateException("asd");
+    }
+
+    @NotNull
+    public static RemoteChangeEvent createRemoteChangeEventFromNotification(ReadableBoxNavigation nav, DMChangeNotification it) {
+        DMChange change = it.getChange();
+        BoxNavigation eventNav = it.getNavigation();
+        RemoteChangeEvent event = null;
+        if (change instanceof UpdateFileChange) {
+            UpdateFileChange update = (UpdateFileChange) change;
+            BoxFile newFile = update.getNewFile();
+            if (update.getExpectedFile() == null) {
+                event = createRemoteChangeEvent(nav, newFile, CREATE, getEventPath(newFile, eventNav));
+            } else {
+                event = createRemoteChangeEvent(nav, newFile, UPDATE, getEventPath(newFile, eventNav));
+            }
+        } else if (change instanceof DeleteFileChange) {
+            BoxFile deletedFile = ((DeleteFileChange) change).getFile();
+            event = createRemoteChangeEvent(nav, deletedFile, DELETE, getEventPath(deletedFile, eventNav));
+        } else if (change instanceof CreateFolderChange) {
+            BoxFolder changedFolder = ((CreateFolderChange) change).getFolder();
+            event = createRemoteChangeEvent(nav, changedFolder, CREATE, getEventPath(changedFolder, eventNav));
+        } else if (change instanceof DeleteFolderChange) {
+            BoxFolder deletedFolder = ((DeleteFolderChange) change).getFolder();
+            event = createRemoteChangeEvent(nav, deletedFolder, DELETE, getEventPath(deletedFolder, eventNav));
+        } else if (change instanceof ShareChange) {
+            BoxFile sharedFile = ((ShareChange) change).getFile();
+            event = createRemoteChangeEvent(nav, sharedFile, SHARE, getEventPath(sharedFile, eventNav));
+        } else if (change instanceof UnshareChange) {
+            BoxFile unsharedFile = ((UnshareChange)change).getFile();
+            event = createRemoteChangeEvent(nav, unsharedFile, UNSHARE, getEventPath(unsharedFile, eventNav));
+        }
+        if (event == null) {
+            throw new IllegalStateException("cannot create remote event from change " + change);
+        }
+        return event;
+    }
+
+
+    public static RemoteChangeEvent createRemoteChangeEvent(ReadableBoxNavigation navi, BoxObject file, TYPE type, Path targetPath) {
+        System.out.println("Notify " + targetPath);
+        Long mtime = file instanceof BoxFile ? ((BoxFile) file).getMtime() : null;
+        if (type == DELETE) {
+            mtime = System.currentTimeMillis();
+        }
+        return new RemoteChangeEvent(
+            targetPath,
+            file instanceof BoxFolder,
+            mtime,
+            type,
+            file,
+            navi
+        );
     }
 
     @Override
@@ -250,16 +292,6 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
     }
 
     @Override
-    public BoxExternalReference createFileMetadata(QblECPublicKey owner, BoxFile boxFile) throws QblStorageException {
-        return nav.createFileMetadata(owner, boxFile);
-    }
-
-    @Override
-    public void updateFileMetadata(BoxFile boxFile) throws QblStorageException, IOException, InvalidKeyException {
-        nav.updateFileMetadata(boxFile);
-    }
-
-    @Override
     public BoxExternalReference share(QblECPublicKey owner, BoxFile file, String receiver) throws QblStorageException {
         BoxExternalReference share = nav.share(owner, file, receiver);
         notifyAsync(file, SHARE);
@@ -281,20 +313,22 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
     }
 
     private void notify(BoxObject file, TYPE type, Path targetPath) {
+        System.out.println("Notify " + targetPath);
         setChanged();
         Long mtime = file instanceof BoxFile ? ((BoxFile) file).getMtime() : null;
         if (type == DELETE) {
             mtime = System.currentTimeMillis();
         }
+        RemoteChangeEvent event = new RemoteChangeEvent(
+            targetPath,
+            file instanceof BoxFolder,
+            mtime,
+            type,
+            file,
+            this
+        );
         notifyObservers(
-            new RemoteChangeEvent(
-                targetPath,
-                file instanceof BoxFolder,
-                mtime,
-                type,
-                file,
-                this
-            )
+            event
         );
     }
 
@@ -353,7 +387,7 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
 
     @NotNull
     @Override
-    public rx.Observable<DirectoryMetadataChangeNotification> getChanges() {
+    public rx.Observable<DMChangeNotification> getChanges() {
         return nav.getChanges();
     }
 
@@ -367,5 +401,16 @@ public class CachedBoxNavigation<T extends BoxNavigation> extends Observable imp
     @Override
     public BoxPath.FolderLike getPath() {
         return nav.getPath();
+    }
+
+    @Override
+    public void visit(Function2<? super AbstractNavigation, ? super BoxObject, Unit> function2) {
+        nav.visit(function2);
+    }
+
+    @NotNull
+    @Override
+    public BoxExternalReference getExternalReference(QblECPublicKey qblECPublicKey, BoxFile boxFile) {
+        return nav.getExternalReference(qblECPublicKey, boxFile);
     }
 }

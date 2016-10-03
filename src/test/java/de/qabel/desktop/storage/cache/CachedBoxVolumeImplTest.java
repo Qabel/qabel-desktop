@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
 public class CachedBoxVolumeImplTest extends BoxVolumeTest {
     private Path tempFolder;
     private List<ChangeEvent> updates = new LinkedList<>();
-    private CachedBoxNavigation nav;
+    private BoxNavigation nav;
     private LocalReadBackend readBackend;
     private CachedBoxVolumeImpl volume;
     private CachedBoxVolumeImpl volume2;
@@ -72,8 +72,8 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
         ByteArrayInputStream in = new ByteArrayInputStream("testContent".getBytes());
         Long size = 11L;
 
-        CachedBoxNavigation<IndexNavigation> nav = volume.navigate();
-        ((DefaultIndexNavigation)nav.getNav()).setTime(() -> 1234567890L);
+        IndexNavigation nav = volume.navigate();
+        ((DefaultIndexNavigation)nav).setTime(() -> 1234567890L);
 
         BoxFile file = nav.upload("streamedFile", in, size);
         InputStream out = volume2.navigate().download("streamedFile");
@@ -94,7 +94,7 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
 
     @Test
     public void navigationReturnsCachedNavigationsItself() throws Exception {
-        CachedBoxNavigation nav = volume.navigate();
+        BoxNavigation nav = volume.navigate();
         BoxFolder subfolder = nav.createFolder("subfolder");
         BoxNavigation subnav = nav.navigate(subfolder);
         subnav.createFolder("marker");
@@ -126,24 +126,24 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
 
     @Test
     public void isRefreshable() throws Exception {
-        CachedBoxNavigation nav = volume.navigate();
+        BoxNavigation nav = volume.navigate();
         BoxNavigation nav2 = volume2.navigate();
         nav2.createFolder("test");
 
-        nav.refresh();
+        nav.refresh(true);
         assertEquals(1, nav.listFolders().size());
     }
 
     @Test
     public void refreshesRecursive() throws Exception {
-        CachedBoxNavigation nav = volume.navigate();
+        BoxNavigation nav = volume.navigate();
         nav.createFolder("folder");
-        CachedBoxNavigation subnav = nav.navigate("folder");
+        BoxNavigation subnav = nav.navigate("folder");
 
         BoxNavigation nav2 = volume2.navigate();
         nav2.navigate("folder").createFolder("subfolder");
 
-        nav.refresh();
+        nav.refresh(true);
         assertEquals(1, subnav.listFolders().size());
     }
 
@@ -153,7 +153,7 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
 
         BoxNavigation nav2 = volume2.navigate();
         nav2.createFolder("folder");
-        nav.refresh();
+        nav.refresh(true);
 
         assertAsync(updates::isEmpty, equalTo(false));
         ChangeEvent event = updates.get(0);
@@ -174,7 +174,7 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
         BoxNavigation subfoldernav2 = foldernav2.navigate(subfolder);
         subfoldernav2.upload("testfile", file);
 
-        nav.refresh();
+        nav.refresh(true);
 
         assertAsync(() -> {
             Set<String> foundPaths = new HashSet<>();
@@ -191,7 +191,10 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
     protected void observe() throws QblStorageException {
         updates.clear();
         nav = volume.navigate();
-        nav.addObserver((o, arg) -> updates.add((ChangeEvent) arg));
+        nav.getChanges().subscribe(
+            dmChangeNotification ->
+                updates.add(
+                CachedBoxNavigation.createRemoteChangeEventFromNotification(nav, dmChangeNotification)));
     }
 
     @Test
@@ -199,7 +202,7 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
         observe();
         File file = createTmpFile();
         volume2.navigate().upload("testfile", file);
-        nav.refresh();
+        nav.refresh(true);
 
         assertFalse(updates.isEmpty());
         ChangeEvent event = updates.get(0);
@@ -218,7 +221,7 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
     public void notifiesOnShare() throws Exception {
         File file = createTmpFile();
         BoxFile boxFile = volume2.navigate().upload("testfile", file);
-        volume.navigate().refresh();
+        volume.navigate().refresh(true);
 
         observe();
         nav.share(new QblECKeyPair().getPub(), boxFile, "receiver");
@@ -238,7 +241,7 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
         File file = createTmpFile();
         BoxFile boxFile = volume2.navigate().upload("testfile", file);
         volume2.navigate().share(new QblECKeyPair().getPub(), boxFile, "receiver");
-        volume.navigate().refresh();
+        volume.navigate().refresh(true);
         observe();
 
         nav.unshare(nav.getFile("testfile"));
@@ -260,7 +263,7 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
 
         Files.write(tmpfile, "content2".getBytes());
         volume2.navigate().overwrite("testfile", file);
-        nav.refresh();
+        nav.refresh(true);
 
         assertAsync(updates::size, equalTo(1));
         ChangeEvent event = updates.get(0);
@@ -276,7 +279,7 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
 
         BoxNavigation nav2 = volume2.navigate();
         nav2.delete(nav2.getFolder("testfolder"));
-        nav.refresh();
+        nav.refresh(true);
 
         assertAsync(updates::size, equalTo(1));
         ChangeEvent event = updates.get(0);
@@ -292,7 +295,7 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
         clear(1);
 
         volume2.navigate().delete(boxFile);
-        nav.refresh();
+        nav.refresh(true);
 
         waitUntil(() -> updates.size() == 1, () -> "no notification");
         ChangeEvent event = updates.get(0);
@@ -312,7 +315,7 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
         clear(1);
 
         volume2.navigate().navigate("folder").createFolder("subchange");
-        nav.refresh();
+        nav.refresh(true);
 
         assertEquals("no notification", 1, updates.size());
         ChangeEvent event = updates.get(0);

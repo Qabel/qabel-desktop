@@ -307,7 +307,9 @@ public class WizardController extends AbstractController implements Initializabl
 
     public void finishWizard() {
         if (identity != null && !aliasInput.getText().isEmpty()) {
-            boolean uploadEnabled = !identity.getEmail().isEmpty() || !identity.getPhone().isEmpty();
+            boolean hasEmail = identity.getEmail() != null && !identity.getEmail().isEmpty();
+            boolean hasPhone = identity.getPhone() != null && !identity.getPhone().isEmpty();
+            boolean uploadEnabled = hasEmail || hasPhone;
             identity.setUploadEnabled(uploadEnabled);
             saveIdentity();
             clientConfiguration.selectIdentity(identity);

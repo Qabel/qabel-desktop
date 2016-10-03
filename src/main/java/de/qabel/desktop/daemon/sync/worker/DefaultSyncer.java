@@ -1,6 +1,9 @@
 package de.qabel.desktop.daemon.sync.worker;
 
+import de.qabel.box.storage.BoxFile;
+import de.qabel.box.storage.BoxFolder;
 import de.qabel.box.storage.BoxNavigation;
+import de.qabel.box.storage.BoxVolume;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.daemon.management.*;
@@ -16,9 +19,11 @@ import de.qabel.desktop.daemon.sync.worker.index.SyncState;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
-import de.qabel.desktop.storage.cache.CachedBoxVolume;
+import kotlin.Unit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Subscription;
+import rx.schedulers.Schedulers;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,6 +38,7 @@ import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.DELETE;
+import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.CREATE;
 import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.UPDATE;
 
 public class DefaultSyncer implements Syncer {
@@ -42,7 +48,7 @@ public class DefaultSyncer implements Syncer {
     private static final ExecutorService fileExecutor = Executors.newSingleThreadExecutor();
     private BoxSyncBasedUploadFactory uploadFactory = new BoxSyncBasedUploadFactory();
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private CachedBoxVolume boxVolume;
+    private BoxVolume boxVolume;
     private BoxSyncConfig config;
     private TransferManager manager;
     private int pollInterval = 1;
@@ -54,10 +60,11 @@ public class DefaultSyncer implements Syncer {
     private WindowedTransactionGroup progress = new WindowedTransactionGroup();
     private List<Transaction> history = new LinkedList<>();
     private Blacklist localBlacklist;
-    private Observer remoteChangeHandler;
-    private CachedBoxNavigation nav;
+    Observer remoteChangeHandler;
+    private BoxNavigation nav;
+    private Subscription subscription;
 
-    public DefaultSyncer(BoxSyncConfig config, CachedBoxVolume boxVolume, TransferManager manager) {
+    public DefaultSyncer(BoxSyncConfig config, BoxVolume boxVolume, TransferManager manager) {
         this.config = config;
         this.boxVolume = boxVolume;
         this.manager = manager;
@@ -87,20 +94,36 @@ public class DefaultSyncer implements Syncer {
             registerRemoteChangeHandler();
             registerRemotePoller();
 
-            boxVolume.navigate().notifyAllContents();
+            notifyAllContents(boxVolume.navigate(), remoteChangeHandler);
         } catch (QblStorageException | IOException e) {
             logger.error("failed to start sync: " + e.getMessage(), e);
         }
     }
 
+    public static void notifyAllContents(BoxNavigation navigation, Observer remoteChangeHandler) {
+        navigation.visit((nav, boxObject) ->  {
+            Path targetPath = null;
+            if (boxObject instanceof BoxFile) {
+                targetPath = BoxFileSystem.pathFromBoxDto(nav.getPath().resolveFile(boxObject.getName()));
+            } else if (boxObject instanceof BoxFolder) {
+                targetPath = BoxFileSystem.pathFromBoxDto(nav.getPath().resolveFolder(boxObject.getName()));
+            }
+            if (targetPath != null) {
+                RemoteChangeEvent event = CachedBoxNavigation.createRemoteChangeEvent(nav, boxObject, CREATE, targetPath);
+                remoteChangeHandler.update(null, event);
+            }
+            return Unit.INSTANCE;
+        });
+    }
+
     protected void registerRemotePoller() throws QblStorageException {
-        CachedBoxNavigation nav = navigateToRemoteDir();
+        BoxNavigation nav = navigateToRemoteDir();
 
         poller = new Thread(() -> {
             try {
                 while (!Thread.interrupted()) {
                     try {
-                        nav.refresh();
+                        nav.refresh(true);
                         polling = true;
                     } catch (QblStorageException e) {
                         logger.warn("polling failed: " + e.getMessage(), e);
@@ -133,12 +156,20 @@ public class DefaultSyncer implements Syncer {
                 logger.error("failed to handle remote change: " + e.getMessage(), e);
             }
         });
-        nav.addObserver(remoteChangeHandler);
+
+        if (subscription != null) {
+            subscription.unsubscribe();
+        }
+        subscription = nav.getChanges()
+            .subscribeOn(Schedulers.immediate())
+            .map(it -> CachedBoxNavigation.createRemoteChangeEventFromNotification(nav, it))
+            .observeOn(Schedulers.computation())
+            .subscribe(event -> remoteChangeHandler.update(null, event));
     }
 
-    private CachedBoxNavigation navigateToRemoteDir() throws QblStorageException {
+    private BoxNavigation navigateToRemoteDir() throws QblStorageException {
         Path remotePath = config.getRemotePath();
-        CachedBoxNavigation nav = boxVolume.navigate();
+        BoxNavigation nav = boxVolume.navigate();
 
         for (int i = 0; i < remotePath.getNameCount(); i++) {
             String name = remotePath.getName(i).toString();
@@ -359,8 +390,8 @@ public class DefaultSyncer implements Syncer {
 
     private void interrupt() {
         logger.trace("stopping syncer for " + config.getName());
-        if (nav != null) {
-            nav.deleteObserver(remoteChangeHandler);
+        if (nav != null && subscription != null) {
+            subscription.unsubscribe();
         }
         if (watcher != null && watcher.isAlive()) {
             watcher.interrupt();
@@ -368,7 +399,9 @@ public class DefaultSyncer implements Syncer {
         if (poller != null && poller.isAlive()) {
             poller.interrupt();
         }
-        executor.shutdown();
+        if (executor != null) {
+            executor.shutdown();
+        }
     }
 
     public boolean isPolling() {

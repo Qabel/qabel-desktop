@@ -32,8 +32,7 @@ public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSContro
         subFolder = new BoxFolder("prefix", "folderName", new byte[0]);
 
         BoxFolder folder = new BoxFolder("ref", "folder", new byte[0]);
-        BoxNavigationStub indexNav = BoxNavigationStub.create();
-        navigation = new BoxNavigationStub(indexNav, Paths.get("/folder"));
+        navigation = new BoxNavigationStub(Paths.get("/folder"));
         navigation.files.add(subFile);
         navigation.folders.add(subFolder);
         try {

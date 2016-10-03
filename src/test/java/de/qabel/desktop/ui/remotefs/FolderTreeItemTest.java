@@ -2,7 +2,7 @@ package de.qabel.desktop.ui.remotefs;
 
 import de.qabel.box.storage.*;
 import de.qabel.box.storage.dto.BoxPath;
-import de.qabel.box.storage.dto.DirectoryMetadataChangeNotification;
+import de.qabel.box.storage.dto.DMChangeNotification;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.box.storage.jdbc.JdbcDirectoryMetadata;
 import de.qabel.core.crypto.QblECPublicKey;
@@ -12,6 +12,8 @@ import de.qabel.desktop.ui.AbstractControllerTest;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function2;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
@@ -280,16 +282,6 @@ public class FolderTreeItemTest extends AbstractControllerTest {
         }
 
         @Override
-        public BoxExternalReference createFileMetadata(QblECPublicKey owner, BoxFile boxFile) throws QblStorageException {
-            return null;
-        }
-
-        @Override
-        public void updateFileMetadata(BoxFile boxFile) throws QblStorageException, IOException, InvalidKeyException {
-
-        }
-
-        @Override
         public BoxExternalReference share(QblECPublicKey owner, BoxFile file, String receiver) throws QblStorageException {
             return null;
         }
@@ -358,7 +350,7 @@ public class FolderTreeItemTest extends AbstractControllerTest {
 
         @NotNull
         @Override
-        public rx.Observable<DirectoryMetadataChangeNotification> getChanges() {
+        public rx.Observable<DMChangeNotification> getChanges() {
             return null;
         }
 
@@ -371,6 +363,17 @@ public class FolderTreeItemTest extends AbstractControllerTest {
         @NotNull
         @Override
         public BoxPath.FolderLike getPath() {
+            return null;
+        }
+
+        @Override
+        public void visit(Function2<? super AbstractNavigation, ? super BoxObject, Unit> function2) {
+
+        }
+
+        @NotNull
+        @Override
+        public BoxExternalReference getExternalReference(QblECPublicKey qblECPublicKey, BoxFile boxFile) {
             return null;
         }
     }
