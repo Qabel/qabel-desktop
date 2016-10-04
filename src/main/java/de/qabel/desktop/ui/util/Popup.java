@@ -96,7 +96,6 @@ public class Popup {
         if (content instanceof Region) {
             ((Region) content).setPadding(new Insets(15, 30, 15, 15));
             if (height == null) {
-                System.out.println("autoconfig");
                 container.prefHeightProperty().bind(((Region) content).prefHeightProperty());
                 container.maxHeightProperty().bind(((Region) content).prefHeightProperty());
             }

@@ -7,10 +7,11 @@ import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import org.junit.Test;
 
+import static de.qabel.desktop.AsyncUtils.assertAsync;
 import static junit.framework.TestCase.assertFalse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 public class WizardControllerTest extends AbstractControllerTest {
 
@@ -21,6 +22,8 @@ public class WizardControllerTest extends AbstractControllerTest {
         view.getView();
         return (WizardController) view.getPresenter();
     }
+
+
 
     @Test
     public void createController() throws Exception {
@@ -137,6 +140,9 @@ public class WizardControllerTest extends AbstractControllerTest {
         Identity selectedIdentity = controller.clientConfiguration.getSelectedIdentity();
         assertEquals(2, identityRepository.findAll().getIdentities().size());
         assertEquals("+17626262626", identities.getByKeyIdentifier(selectedIdentity.getKeyIdentifier()).getPhone());
+
+        assertTrue(selectedIdentity.isUploadEnabled());
+        assertAsync(() -> verify(indexService).updateIdentity(selectedIdentity, null));
     }
 
     @Test
@@ -158,6 +164,9 @@ public class WizardControllerTest extends AbstractControllerTest {
         Identities identities = identityRepository.findAll();
         Identity selectedIdentity = controller.clientConfiguration.getSelectedIdentity();
         assertEquals("test@test.de", identities.getByKeyIdentifier(selectedIdentity.getKeyIdentifier()).getEmail());
+
+        assertTrue(selectedIdentity.isUploadEnabled());
+        assertAsync(() -> verify(indexService).updateIdentity(selectedIdentity, null));
     }
 
     @Test
@@ -168,5 +177,18 @@ public class WizardControllerTest extends AbstractControllerTest {
         controller.aliasInput.setText("alias2");
         controller.next();
         assertEquals("alias2", controller.identity.getAlias());
+    }
+
+    @Test
+    public void testEmptyPhoneAndMailDoesNotGetUploaded() throws Exception {
+        controller = getController();
+        controller.aliasInput.setText("test");
+        moveThrough4Steps();
+        controller.finishButton.fire();
+
+        Identity selectedIdentity = controller.clientConfiguration.getSelectedIdentity();
+        assertFalse(selectedIdentity.isUploadEnabled());
+
+        verifyZeroInteractions(indexService);
     }
 }
