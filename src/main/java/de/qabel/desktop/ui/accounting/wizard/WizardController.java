@@ -3,10 +3,12 @@ package de.qabel.desktop.ui.accounting.wizard;
 import com.google.i18n.phonenumbers.NumberParseException;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.factory.IdentityBuilderFactory;
+import de.qabel.core.event.EventSink;
 import de.qabel.core.index.IndexService;
 import de.qabel.core.index.PhoneUtilsKt;
 import de.qabel.core.repository.IdentityRepository;
 import de.qabel.core.repository.exception.PersistenceException;
+import de.qabel.desktop.action.IdentityAddedEvent;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.ui.AbstractController;
 import javafx.beans.binding.BooleanBinding;
@@ -91,6 +93,9 @@ public class WizardController extends AbstractController implements Initializabl
 
     @Inject
     ClientConfig clientConfiguration;
+
+    @Inject
+    private EventSink eventSink;
 
     @Inject
     private IndexService indexService;
@@ -292,6 +297,7 @@ public class WizardController extends AbstractController implements Initializabl
     protected void saveIdentity() {
         try {
             identityRepository.save(identity);
+            eventSink.push(new IdentityAddedEvent(identity));
         } catch (PersistenceException e) {
             alert("Failed to save new identity", e);
         }
@@ -307,7 +313,9 @@ public class WizardController extends AbstractController implements Initializabl
 
     public void finishWizard() {
         if (identity != null && !aliasInput.getText().isEmpty()) {
-            boolean uploadEnabled = !identity.getEmail().isEmpty() || !identity.getPhone().isEmpty();
+            boolean hasEmail = identity.getEmail() != null && !identity.getEmail().isEmpty();
+            boolean hasPhone = identity.getPhone() != null && !identity.getPhone().isEmpty();
+            boolean uploadEnabled = hasEmail || hasPhone;
             identity.setUploadEnabled(uploadEnabled);
             saveIdentity();
             clientConfiguration.selectIdentity(identity);

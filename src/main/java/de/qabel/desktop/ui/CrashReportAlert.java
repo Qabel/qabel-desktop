@@ -20,7 +20,7 @@ public class CrashReportAlert {
     private Label exceptionLabel;
     private TextArea inputArea;
 
-    public CrashReportAlert(CrashReportHandler reportHandler, String message, Exception e) {
+    public CrashReportAlert(CrashReportHandler reportHandler, String message, Throwable e) {
         this.reportHandler = reportHandler;
 
         alert = new Alert(Alert.AlertType.ERROR);
@@ -88,7 +88,7 @@ public class CrashReportAlert {
         }
     }
 
-    private String getTraceAsString(Exception e) {
+    private String getTraceAsString(Throwable e) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
