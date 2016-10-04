@@ -1,10 +1,11 @@
 package de.qabel.desktop.inject;
 
 import de.qabel.chat.repository.ChatDropMessageRepository;
+import de.qabel.chat.service.ChatService;
 import de.qabel.core.accounting.BoxClient;
 import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.core.config.factory.IdentityBuilderFactory;
-import de.qabel.chat.service.ChatService;
+import de.qabel.core.event.EventDispatcher;
 import de.qabel.core.index.IndexService;
 import de.qabel.core.repository.AccountRepository;
 import de.qabel.core.repository.ContactRepository;
@@ -25,6 +26,7 @@ import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.ShareNotificationRepository;
 import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRendererFactory;
 import de.qabel.desktop.ui.connector.DropConnector;
+import de.qabel.desktop.ui.util.FileChooserFactory;
 import de.qabel.desktop.util.Translator;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -137,4 +139,17 @@ public interface DesktopServices {
     default int getRemoteDebounceTimeout() {
         return 500;
     }
+
+    @Create(name="debounceTimeout")
+    default int getDebounceTimeout() {
+        return 250;
+    }
+
+    @Create(name="eventDispatcher")
+    @Create(name="eventSource")
+    @Create(name="eventSink")
+    EventDispatcher getEventDispatcher();
+
+    @Create(name="fileChooserFactory")
+    FileChooserFactory getFileChooserFactory();
 }

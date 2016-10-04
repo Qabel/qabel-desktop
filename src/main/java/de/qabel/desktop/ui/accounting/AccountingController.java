@@ -2,9 +2,9 @@ package de.qabel.desktop.ui.accounting;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.core.config.*;
-import de.qabel.core.config.factory.IdentityBuilderFactory;
+import de.qabel.core.event.EventSource;
+import de.qabel.core.event.identity.IdentitiesChangedEvent;
 import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.core.repository.IdentityRepository;
 import de.qabel.core.repository.exception.EntityExistsException;
@@ -17,7 +17,6 @@ import de.qabel.desktop.ui.accounting.item.DummyAccountingItemView;
 import de.qabel.desktop.ui.accounting.wizard.WizardController;
 import de.qabel.desktop.ui.accounting.wizard.WizardView;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -35,10 +34,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class AccountingController extends AbstractController implements Initializable {
-    private Identity selectedIdentity;
-
     @FXML
     VBox identityList;
 
@@ -47,12 +45,6 @@ public class AccountingController extends AbstractController implements Initiali
 
     @FXML
     Button importIdentity;
-
-    @FXML
-    Button exportIdentity;
-
-    @FXML
-    Button exportContact;
 
     @Inject
     Pane layoutWindow;
@@ -69,10 +61,13 @@ public class AccountingController extends AbstractController implements Initiali
     private IdentityRepository identityRepository;
 
     @Inject
-    private IdentityBuilderFactory identityBuilderFactory;
+    ClientConfig clientConfiguration;
 
     @Inject
-    ClientConfig clientConfiguration;
+    private EventSource eventSource;
+
+    @Inject
+    private int debounceTimeout;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -84,23 +79,19 @@ public class AccountingController extends AbstractController implements Initiali
         resourceBundle = resources;
 
         loadIdentities();
-        updateIdentityState();
         updateButtonIcons();
-        clientConfiguration.onSelectIdentity(identity -> updateIdentityState());
-        identityRepository.attach(() -> Platform.runLater(() -> loadIdentities()));
-    }
 
-    private void updateIdentityState() {
-        Identity identity = clientConfiguration.getSelectedIdentity();
-        exportIdentity.setDisable(identity == null);
-        exportContact.setDisable(identity == null);
+        eventSource.events()
+            .filter(e -> e instanceof IdentitiesChangedEvent)
+            .debounce(debounceTimeout, TimeUnit.MILLISECONDS)
+            .subscribe(e -> Platform.runLater(this::loadIdentities));
+
+        identityRepository.attach(() -> Platform.runLater(this::loadIdentities));
     }
 
     private void updateButtonIcons() {
         addIdentity.setGraphic(getImage(new Image(getClass().getResourceAsStream("/img/account.png"))));
         importIdentity.setGraphic(getImage(new Image(getClass().getResourceAsStream("/img/import_black.png"))));
-        exportIdentity.setGraphic(getImage(new Image(getClass().getResourceAsStream("/img/export.png"))));
-        exportContact.setGraphic(getImage(new Image(getClass().getResourceAsStream("/img/account_multiple.png"))));
     }
 
     private ImageView getImage(Image image) {
@@ -138,46 +129,10 @@ public class AccountingController extends AbstractController implements Initiali
         }
     }
 
-    @FXML
-    protected void handleExportIdentityButtonAction(ActionEvent event) {
-
-        Identity i = clientConfiguration.getSelectedIdentity();
-        File file = createSaveFileChooser(resourceBundle.getString("accountingExportIdentity"), i.getAlias() + ".qid");
-        try {
-            exportIdentity(i, file);
-            loadIdentities();
-        } catch (IOException | QblStorageException e) {
-            alert("Export identity fail", e);
-        } catch (NullPointerException ignored) {
-        }
-    }
-
-    @FXML
-    protected void handleExportContactButtonAction(ActionEvent event) {
-        Identity i = clientConfiguration.getSelectedIdentity();
-        File file = createSaveFileChooser(resourceBundle.getString("accountingExportContact"), i.getAlias() + ".qco");
-        try {
-            exportContact(i, file);
-        } catch (IOException | QblStorageException e) {
-            alert("Export contact fail", e);
-        } catch (NullPointerException ignored) {
-        }
-    }
-
     void importIdentity(File file) throws IOException, PersistenceException, URISyntaxException, QblDropInvalidURL, JSONException {
         String content = readFile(file);
         Identity i = IdentityExportImport.parseIdentity(content);
         identityRepository.save(i);
-    }
-
-    void exportIdentity(Identity i, File file) throws IOException, QblStorageException {
-        String json = IdentityExportImport.exportIdentity(i);
-        writeStringInFile(json, file);
-    }
-
-    void exportContact(Identity i, File file) throws IOException, QblStorageException {
-        String json = ContactExportImport.exportIdentityAsContact(i);
-        writeStringInFile(json, file);
     }
 
     ResourceBundle getRessource() {
@@ -208,13 +163,6 @@ public class AccountingController extends AbstractController implements Initiali
 
     }
 
-    private File createSaveFileChooser(String title, String defaultName) {
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle(title);
-        chooser.setInitialFileName(defaultName);
-        return chooser.showSaveDialog(identityList.getScene().getWindow());
-    }
-
     Gson buildGson() throws EntityNotFoundException, PersistenceException {
         final GsonBuilder builder = new GsonBuilder();
         builder.excludeFieldsWithoutExposeAnnotation();
@@ -223,5 +171,4 @@ public class AccountingController extends AbstractController implements Initiali
         builder.registerTypeAdapter(Identities.class, new IdentitiesTypeAdapter());
         return builder.create();
     }
-
 }

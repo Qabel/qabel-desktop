@@ -1,13 +1,12 @@
 package de.qabel.desktop.ui.accounting;
 
 import de.qabel.box.storage.exceptions.QblStorageException;
-import de.qabel.core.config.Contact;
-import de.qabel.core.config.ContactExportImport;
 import de.qabel.core.config.Identities;
 import de.qabel.core.config.Identity;
 import de.qabel.core.exceptions.QblDropInvalidURL;
 import de.qabel.core.repository.exception.EntityNotFoundException;
 import de.qabel.core.repository.exception.PersistenceException;
+import de.qabel.desktop.action.IdentityDeletedEvent;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import de.qabel.desktop.ui.accounting.item.AccountingItemController;
 import org.apache.commons.io.FileUtils;
@@ -19,7 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 
 public class AccountingControllerTest extends AbstractControllerTest {
@@ -29,10 +28,15 @@ public class AccountingControllerTest extends AbstractControllerTest {
     private static final String TEST_FOLDER = TMP_DIR + "/" + TEST_DIR;
     private static final String TEST_ALIAS = "TestAlias";
     private static final String TEST_JSON = "/TestIdentity.json";
-    private static final String TEST_CONTACT = TEST_ALIAS + "_Contact.json";
-    private static final String TEST_IDENTITY = TEST_ALIAS + "_Identity.json";
 
     AccountingController controller;
+    private Identity newIdentity;
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        newIdentity = identityBuilderFactory.factory().withAlias("new").build();
+    }
 
     @After
     public void after() throws Exception {
@@ -70,76 +74,21 @@ public class AccountingControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void exportIdentityTest() throws URISyntaxException, IOException, QblStorageException, PersistenceException, EntityNotFoundException, QblDropInvalidURL, JSONException {
-        File file = setupImport(TEST_IDENTITY);
-        Identity identity = identityBuilderFactory.factory().withAlias("Test").build();
-
-        controller.exportIdentity(identity, file);
-        File f = new File(TEST_FOLDER + "/" + TEST_IDENTITY);
-        controller.importIdentity(f);
-
-        Identities identities = identityRepository.findAll();
-        Identity newIdentity = identities.getByKeyIdentifier(identity.getKeyIdentifier());
-        assertEquals(identity.getAlias(), newIdentity.getAlias());
-        assertEquals(identity.getEmail(), newIdentity.getEmail());
-        assertEquals(identity.getPrimaryKeyPair(), newIdentity.getPrimaryKeyPair());
-        assertEquals(identity.getPhone(), newIdentity.getPhone());
-        assertEquals(identity.getDropUrls(), newIdentity.getDropUrls());
-        assertEquals(identity.getCreated(), newIdentity.getCreated(), 100000);
-        assertEquals(identity.getDeleted(), newIdentity.getDeleted());
-    }
-
-    @Test
-    public void exportContactTest() throws IOException, QblStorageException, URISyntaxException, QblDropInvalidURL, EntityNotFoundException, PersistenceException, JSONException {
-        File file = setupImport(TEST_CONTACT);
-
-        Identity identity = identityBuilderFactory.factory().build();
-        identity.setAlias(TEST_ALIAS);
-        identity.setPhone("000");
-        identity.setEmail("abc");
-
-        controller.exportContact(identity, file);
-
-        File f = new File(TEST_FOLDER + "/" + TEST_CONTACT);
-        assertEquals(f.getName(), TEST_CONTACT);
-
-        String contentNew = controller.readFile(f);
-        Contact exportContact = ContactExportImport.parseContactForIdentity(contentNew);
-
-        assertEquals(exportContact.getAlias(), identity.getAlias());
-        assertEquals(exportContact.getEmail(), identity.getEmail());
-        assertEquals(exportContact.getPhone(), identity.getPhone());
-        assertEquals(exportContact.getEcPublicKey(), identity.getEcPublicKey());
-        assertEquals(exportContact.getDropUrls(), identity.getDropUrls());
-        assertEquals(exportContact.getCreated(), identity.getCreated(), 100000);
-        assertEquals(exportContact.getUpdated(), identity.getUpdated());
-        assertEquals(exportContact.getDeleted(), identity.getDeleted());
-    }
-
-    @Test
-    public void givenNoIdentity_unusableButtonsGetDisabled() throws Exception {
-        clientConfiguration.selectIdentity(null);
-
+    public void refreshesOnIdentityDeletion() throws Exception {
+        identityRepository.save(newIdentity);
         controller = getAccountingController();
-        assertTrue(controller.exportIdentity.isDisabled());
-        assertTrue(controller.exportContact.isDisabled());
+        identityRepository.delete(newIdentity);
+        eventDispatcher.push(new IdentityDeletedEvent(newIdentity));
+
+        waitUntil(() -> controller.identityList.getChildren().size() == 1);
     }
 
     @Test
-    public void givenAnIdentity_usableButtonsAreEnabled() throws Exception {
+    public void refreshesOnIdentityAdd() throws Exception {
         controller = getAccountingController();
-        assertFalse(controller.exportIdentity.isDisabled());
-        assertFalse(controller.exportContact.isDisabled());
-    }
+        identityRepository.save(newIdentity);
 
-    @Test
-    public void onIdentitySelection_usableButtonsAreEnabled() throws Exception {
-        clientConfiguration.selectIdentity(null);
-
-        controller = getAccountingController();
-        clientConfiguration.selectIdentity(identityBuilderFactory.factory().withAlias("test").build());
-        assertFalse(controller.exportIdentity.isDisabled());
-        assertFalse(controller.exportContact.isDisabled());
+        waitUntil(() -> controller.identityList.getChildren().size() == 2);
     }
 
     private File setupExport() throws URISyntaxException {
@@ -147,11 +96,5 @@ public class AccountingControllerTest extends AbstractControllerTest {
         File testDir = new File(TEST_FOLDER);
         testDir.mkdirs();
         return testDir;
-    }
-
-    private File setupImport(String type) throws URISyntaxException {
-        File testDir = setupExport();
-        File file = new File(testDir + "/" + type);
-        return file;
     }
 }
