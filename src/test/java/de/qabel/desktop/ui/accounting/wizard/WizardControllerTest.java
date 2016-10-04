@@ -9,6 +9,8 @@ import org.junit.Test;
 
 import static de.qabel.desktop.AsyncUtils.assertAsync;
 import static junit.framework.TestCase.assertFalse;
+import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -153,7 +155,7 @@ public class WizardControllerTest extends AbstractControllerTest {
         controller.finishWizard();
         Identities identities = identityRepository.findAll();
         Identity selectedIdentity = controller.clientConfiguration.getSelectedIdentity();
-        assertEquals("", identities.getByKeyIdentifier(selectedIdentity.getKeyIdentifier()).getPhone());
+        assertThat(identities.getByKeyIdentifier(selectedIdentity.getKeyIdentifier()).getPhone(), is(emptyOrNullString()));
     }
 
     @Test
