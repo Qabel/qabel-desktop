@@ -144,7 +144,7 @@ public class IdentityContextMenuController extends AbstractController implements
     public void delete() {
         tryOrAlert(() -> {
             String title = identity.getAlias();
-            String text = getString(resourceBundle, "confirmIdentitiyDeletion", identity.getAlias());
+            String text = getString(resourceBundle, "confirmIdentityDeletion", identity.getAlias());
             confirm(title, text, () -> {
                 deleteIdentityAction.delete(identity);
                 closeMenu();
