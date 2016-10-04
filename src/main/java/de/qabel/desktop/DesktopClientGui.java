@@ -27,6 +27,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.concurrent.*;
@@ -57,7 +58,11 @@ public class DesktopClientGui extends Application {
         showLoginStage();
         config.onSetAccount(account -> {
                 initBackgroundServices();
-                Platform.runLater(this::showLayoutStage);
+                if (SystemTray.isSupported()) {
+                    Platform.runLater(this::showLayoutStage);
+                } else {
+                    showLayoutStage();
+                }
             }
         );
         config.onSelectIdentity(this::addShareMessageRenderer);

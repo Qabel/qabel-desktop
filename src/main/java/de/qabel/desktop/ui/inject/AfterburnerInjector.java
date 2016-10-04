@@ -95,8 +95,12 @@ public class AfterburnerInjector implements PresenterFactory {
                     value = additionalInjectionContext.apply(key);
                 }
                 if (additionalInjectionContext == null || value == null) {
-                    value = configurator.getProperty(clazz, key);
-                    LOG.accept("Value returned by configurator is: " + value);
+                    try {
+                        value = configurator.getProperty(clazz, key);
+                        LOG.accept("Value returned by configurator is: " + value);
+                    } catch (IllegalArgumentException e) {
+                        LOG.accept("configurator could not create instance for " + clazz);
+                    }
                     if (value == null && isNotPrimitiveOrString(type)) {
                         LOG.accept("Field is not a JDK class");
                         value = instantiateModelOrService(type);

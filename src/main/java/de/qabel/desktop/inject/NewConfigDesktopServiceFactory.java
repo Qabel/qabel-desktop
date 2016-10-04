@@ -6,10 +6,13 @@ import de.qabel.box.storage.jdbc.JdbcFileMetadataFactory;
 import de.qabel.box.storage.jdbc.JdbcFileMetadataFactory;
 import de.qabel.chat.repository.sqlite.SqliteChatDropMessageRepository;
 import de.qabel.chat.repository.sqlite.SqliteChatShareRepository;
+import de.qabel.chat.service.MainChatService;
 import de.qabel.chat.service.MainSharingService;
 import de.qabel.chat.service.SharingService;
 import de.qabel.core.config.factory.*;
 import de.qabel.core.crypto.CryptoUtils;
+import de.qabel.core.event.EventDispatcher;
+import de.qabel.core.event.SubjectEventDispatcher;
 import de.qabel.core.http.MainDropConnector;
 import de.qabel.core.http.MainDropServer;
 import de.qabel.core.index.IndexService;
@@ -19,7 +22,6 @@ import de.qabel.core.repository.sqlite.*;
 import de.qabel.core.repository.sqlite.hydrator.AccountHydrator;
 import de.qabel.core.repository.sqlite.hydrator.DropURLHydrator;
 import de.qabel.core.repository.sqlite.hydrator.IdentityHydrator;
-import de.qabel.chat.service.MainChatService;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.RepositoryBasedClientConfig;
@@ -38,6 +40,8 @@ import de.qabel.desktop.repository.sqlite.SqliteDropMessageRepository;
 import de.qabel.desktop.repository.sqlite.SqliteShareNotificationRepository;
 import de.qabel.desktop.repository.sqlite.hydrator.BoxSyncConfigHydrator;
 import de.qabel.desktop.repository.sqlite.hydrator.ShareNotificationMessageHydrator;
+import de.qabel.desktop.ui.util.DefaultFileChooserFactory;
+import de.qabel.desktop.ui.util.FileChooserFactory;
 
 import java.net.URI;
 
@@ -266,6 +270,12 @@ public class NewConfigDesktopServiceFactory extends RuntimeDesktopServiceFactory
         return new DefaultBoxSyncConfigFactory(getSyncIndexFactory());
     }
 
+    private EventDispatcher eventDispatcher = new SubjectEventDispatcher();
+    @Override
+    public EventDispatcher getEventDispatcher() {
+        return eventDispatcher;
+    }
+
     private SyncIndexFactory getSyncIndexFactory() {
         return new SqliteSyncIndexFactory();
     }
@@ -330,5 +340,10 @@ public class NewConfigDesktopServiceFactory extends RuntimeDesktopServiceFactory
     @Override
     public TransactionManager getTransactionManager() {
         return transactionManager;
+    }
+
+    @Override
+    public FileChooserFactory getFileChooserFactory() {
+        return new DefaultFileChooserFactory();
     }
 }
