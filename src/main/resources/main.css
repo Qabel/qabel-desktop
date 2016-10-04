@@ -822,3 +822,11 @@ VBox.spaced, HBox.spaced {
 .error-textfield {
     -fx-effect: dropshadow(three-pass-box, red, 8, 0.0, 0, 1);
 }
+
+.selectable-text * {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0;
+    -fx-text-fill: white;
+}

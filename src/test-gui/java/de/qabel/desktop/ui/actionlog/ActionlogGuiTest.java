@@ -31,7 +31,7 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
         String text = "Message";
         waitUntil(() -> controller.textarea != null);
         Identity i = controller.identity;
-        controller.contact = new Contact(i.getAlias(),i.getDropUrls(), i.getEcPublicKey());
+        controller.contact = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
         clickOn("#textarea").write(text);
         robot.push(KeyCode.ENTER);
         List<DropMessage> list = receiveMessages();
@@ -48,6 +48,22 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
     @Test
     public void multilineInput() {
         controller.contact = new Contact(identity.getAlias(), identity.getDropUrls(), identity.getEcPublicKey());
+        writeTwoLinesOfText();
+
+        submitChat();
+
+        DropMessage message = receiveMessages().get(0);
+        assertEquals(DropMessageRepository.PAYLOAD_TYPE_MESSAGE, message.getDropPayloadType());
+        assertEquals("line1\nline2", TextMessage.fromJson(message.getDropPayload()).getText());
+    }
+
+    private void submitChat() {
+        assertTrue(receiveMessages().isEmpty());
+        robot.push(KeyCode.ENTER);
+        assertFalse(receiveMessages().isEmpty());
+    }
+
+    private void writeTwoLinesOfText() {
         FxRobot textArea = clickOn("#textarea");
         textArea.write("line1");
         robot.press(KeyCode.SHIFT);
@@ -57,15 +73,20 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
             robot.release(KeyCode.SHIFT);
         }
         robot.write("line2");
-
-        assertTrue(receiveMessages().isEmpty());
-        robot.push(KeyCode.ENTER);
-        assertFalse(receiveMessages().isEmpty());
-
-        DropMessage message = receiveMessages().get(0);
-        assertEquals(DropMessageRepository.PAYLOAD_TYPE_MESSAGE, message.getDropPayloadType());
-        assertEquals("line1\nline2", TextMessage.fromJson(message.getDropPayload()).getText());
     }
+
+    private void writeTwoLinesOfText(String line1, String line2) {
+        FxRobot textArea = clickOn("#textarea");
+        textArea.write(line1);
+        robot.press(KeyCode.SHIFT);
+        try {
+            robot.push(KeyCode.ENTER);
+        } finally {
+            robot.release(KeyCode.SHIFT);
+        }
+        robot.write(line2);
+    }
+
 
     @Test
     public void testSendMessageWithoutContent() {
