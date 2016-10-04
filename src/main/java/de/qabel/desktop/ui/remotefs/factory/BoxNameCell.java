@@ -3,14 +3,12 @@ package de.qabel.desktop.ui.remotefs.factory;
 import de.qabel.box.storage.BoxFile;
 import de.qabel.box.storage.BoxFolder;
 import de.qabel.box.storage.BoxObject;
-import de.qabel.desktop.ui.remotefs.FilterableFolderTreeItem;
 import de.qabel.desktop.ui.util.Icons;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import static de.qabel.desktop.ui.util.Icons.FOLDER;
-import static de.qabel.desktop.ui.util.Icons.SHARE;
+import static de.qabel.desktop.ui.util.Icons.*;
 
 public class BoxNameCell extends TreeTableCell<BoxObject, String> {
     private static Image folderImg = Icons.getImage(FOLDER);
@@ -43,7 +41,7 @@ public class BoxNameCell extends TreeTableCell<BoxObject, String> {
         if (boxObject == shareObject) {
             icon = Icons.iconFromImage(shareImg, 18);
         } else if (boxObject instanceof BoxFile) {
-            icon = Icons.iconFromImage(fileImg);
+            icon = Icons.iconFromImage(fileImg, 18);
         } else if (boxObject instanceof BoxFolder) {
             icon = Icons.iconFromImage(folderImg, 18);
         }
