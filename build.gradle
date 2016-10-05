@@ -107,6 +107,7 @@ dependencies {
     compile 'org.json:json:20090211'                         //None? https://github.com/stleary/JSON-java
     compile 'javax.inject:javax.inject:1'                    //Apache License http://mvnrepository.com/artifact/javax.inject/javax.inject/1
     compile 'com.airhacks:afterburner.fx:1.7.+'              //Apache License https://github.com/AdamBien/afterburner.fx
+    compile 'de.codecentric.centerdevice:javafxsvg:1.2.+'
 
     compile 'com.google.code.gson:gson:2.+'                  //Apache License https://github.com/google/gson/blob/master/LICENSE
     compile 'org.slf4j:slf4j-api:1.7.+'                      //MIT http://www.slf4j.org/license.html

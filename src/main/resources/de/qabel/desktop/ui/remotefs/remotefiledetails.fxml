@@ -15,7 +15,7 @@
                      <Label text="%remoteFileCurrentlySharedWith"/>
                      <ImageView fx:id="unshare" styleClass="inline-button" pickOnBounds="true" preserveRatio="true" fitWidth="16">
                          <image>
-                             <Image url="@/icon/delete.png" />
+                             <Image url="@/svg/delete.svg" />
                          </image>
                      </ImageView>
                  </children>
