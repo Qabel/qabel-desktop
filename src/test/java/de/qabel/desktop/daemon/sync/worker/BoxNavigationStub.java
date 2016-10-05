@@ -1,35 +1,28 @@
 package de.qabel.desktop.daemon.sync.worker;
 
 import de.qabel.box.storage.*;
+import de.qabel.box.storage.command.ShareChange;
+import de.qabel.box.storage.command.UnshareChange;
 import de.qabel.box.storage.dto.BoxPath;
 import de.qabel.box.storage.dto.DMChangeNotification;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.box.storage.exceptions.QblStorageNotFound;
 import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
-import de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE;
-import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function2;
 import org.jetbrains.annotations.NotNull;
 import rx.subjects.PublishSubject;
+import rx.subjects.SerializedSubject;
 import rx.subjects.Subject;
-
-import java.util.Observable;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.security.InvalidKeyException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.SHARE;
-import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.UNSHARE;
+import java.util.*;
 
 public class BoxNavigationStub extends Observable implements IndexNavigation {
     public ChangeEvent event;
@@ -37,7 +30,7 @@ public class BoxNavigationStub extends Observable implements IndexNavigation {
     public List<BoxFile> files = new LinkedList<>();
     public List<BoxShare> shares = new LinkedList<>();
     public Map<String, BoxNavigationStub> subnavs = new HashMap<>();
-    public Subject<DMChangeNotification, DMChangeNotification> subject = PublishSubject.create();
+    public Subject<DMChangeNotification, DMChangeNotification> subject = new SerializedSubject<>(PublishSubject.create());
     public Path path;
 
     public static BoxNavigationStub create() {
@@ -55,22 +48,6 @@ public class BoxNavigationStub extends Observable implements IndexNavigation {
             notifyObservers(event);
             event = null;
         }
-    }
-
-    public void pushNotification(BoxObject object, TYPE type) {
-        notifyAsync(object, type);
-    }
-
-    private void notifyAsync(BoxObject object, TYPE type) {
-        setChanged();
-        notifyObservers(new RemoteChangeEvent(
-            path.resolve(object.getName()),
-            object instanceof BoxFile,
-            1000L,
-            type,
-            object,
-            this
-        ));
     }
 
     @Override
@@ -120,7 +97,7 @@ public class BoxNavigationStub extends Observable implements IndexNavigation {
     public BoxExternalReference share(QblECPublicKey owner, BoxFile file, String receiver) throws QblStorageException {
         file.setShared(new Share(file.getBlock(), new byte[0]));
         shares.add(new BoxShare(file.getRef(), receiver));
-        notifyAsync(file, SHARE);
+        subject.onNext(new DMChangeNotification(new ShareChange(file, receiver), this));
         return new BoxExternalReference(false, file.getRef(), file.getName(), owner, new byte[0]);
     }
 
@@ -138,7 +115,7 @@ public class BoxNavigationStub extends Observable implements IndexNavigation {
             .filter(boxShare -> boxFile.getRef().equals(boxShare.getRef()))
             .forEach(shares::remove);
         boxFile.setShared(null);
-        notifyAsync(boxObject, UNSHARE);
+        subject.onNext(new DMChangeNotification(new UnshareChange(boxFile), this));
     }
 
     @Override
@@ -299,7 +276,7 @@ public class BoxNavigationStub extends Observable implements IndexNavigation {
     @NotNull
     @Override
     public BoxPath.FolderLike getPath() {
-        return null;
+        return ((de.qabel.desktop.nio.boxfs.BoxPath)path).toFilderLike();
     }
 
     @NotNull

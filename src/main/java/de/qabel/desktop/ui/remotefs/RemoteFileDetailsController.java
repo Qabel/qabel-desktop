@@ -190,8 +190,8 @@ public class RemoteFileDetailsController extends AbstractController implements I
     private void share(Contact contact, String message) {
         tryOrAlert(() -> {
             sharingService.shareAndSendMessage(clientConfiguration.getSelectedIdentity(), contact, (BoxFile) boxObject, message, navigation);
-                navigation.refresh();
-                loadShares();
+            navigation.refresh();
+            loadShares();
         });
     }
 

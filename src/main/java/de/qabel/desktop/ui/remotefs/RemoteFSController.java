@@ -271,7 +271,11 @@ public class RemoteFSController extends AbstractController implements Initializa
                 return result;
             }
             ReadableBoxNavigation nav = ((FolderTreeItem)folder).getNavigation();
-            String key = ((FolderTreeItem) folder).getPath().toString();
+            BoxPath folderPath = ((FolderTreeItem) folder).getPath();
+            if (value instanceof BoxFolder) {
+                folderPath.resolve(value.getName());
+            }
+            String key = folderPath.toString();
 
             if (subscriptions.containsKey(key)) {
                 subscriptions.get(key).unsubscribe();
@@ -279,7 +283,11 @@ public class RemoteFSController extends AbstractController implements Initializa
             subscriptions.put(key, nav.getChanges()
                 .map(change -> CachedBoxNavigation.createRemoteChangeEventFromNotification(nav, change))
                 .subscribe(event -> {
-                    if (!event.getPath().equals(BoxFileSystem.pathFromBoxDto(value instanceof BoxFolder ? nav.getPath() : nav.getPath().resolveFile(item.getValue().getName())))) {
+                    de.qabel.box.storage.dto.BoxPath.FolderLike dtoPath = nav.getPath();
+                    if (value instanceof BoxFolder) {
+                        dtoPath = dtoPath.resolveFile(item.getValue().getName());
+                    }
+                    if (!event.getPath().equals(BoxFileSystem.pathFromBoxDto(dtoPath))) {
                         return;
                     }
                     Platform.runLater(() -> {
@@ -323,12 +331,13 @@ public class RemoteFSController extends AbstractController implements Initializa
             spacer(bar);
         } else if (!(item.getValue() instanceof BoxExternal)) {
             if (((BoxFile)item.getValue()).isShared()) {
-                buttonFromImage(item, bar, shareImage, this::showDetails, "share", new BooleanBinding() {
+                BooleanBinding showIf = new BooleanBinding() {
                     @Override
                     protected boolean computeValue() {
                         return true;
                     }
-                }).getStyleClass().add("highlighted");
+                };
+                buttonFromImage(item, bar, shareImage, this::showDetails, "share", showIf).getStyleClass().add("highlighted");
             } else {
                 buttonFromImage(item, bar, shareImage, this::showDetails, "share");
             }

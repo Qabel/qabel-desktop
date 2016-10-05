@@ -1,19 +1,21 @@
 package de.qabel.desktop.ui.remotefs;
 
 import com.airhacks.afterburner.views.FXMLView;
-import de.qabel.box.storage.*;
+import de.qabel.box.storage.BoxFile;
+import de.qabel.box.storage.BoxFolder;
+import de.qabel.box.storage.BoxObject;
+import de.qabel.box.storage.command.DeleteFileChange;
+import de.qabel.box.storage.dto.DMChangeNotification;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.desktop.daemon.sync.worker.BoxNavigationStub;
 import de.qabel.desktop.daemon.sync.worker.BoxVolumeStub;
+import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import javafx.scene.control.TreeItem;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.nio.file.Paths;
-
-import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.DELETE;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.stub;
@@ -32,7 +34,7 @@ public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSContro
         subFolder = new BoxFolder("prefix", "folderName", new byte[0]);
 
         BoxFolder folder = new BoxFolder("ref", "folder", new byte[0]);
-        navigation = new BoxNavigationStub(Paths.get("/folder"));
+        navigation = new BoxNavigationStub(BoxFileSystem.getRoot().resolve("folder"));
         navigation.files.add(subFile);
         navigation.folders.add(subFolder);
         try {
@@ -98,9 +100,12 @@ public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSContro
 
     @Test
     public void reactsOnRemoteChanges() throws Exception {
-        navigation.navigate("folderName").files.remove(subSubFile);
-        navigation.navigate("folderName").pushNotification(subSubFile, DELETE);
-
+        BoxNavigationStub subnav = navigation.navigate("folderName");
+        subnav.files.remove(subSubFile);
+        subnav.subject.onNext(new DMChangeNotification(
+            new DeleteFileChange(subSubFile),
+            subnav
+        ));
 
         waitForUI();
         waitUntil(() -> folderTree.getChildren().get(0).getChildren().isEmpty());
