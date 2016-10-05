@@ -20,7 +20,6 @@ public abstract class RemoteFSChooser extends Dialog<Path> implements ChangeList
     private final TreeItem<BoxObject> root;
     ObjectPropertyBase<Path> selectedProperty = new SimpleObjectProperty<>(null);
     private Button okButton;
-    private Button cancelButton;
 
     RemoteFSChooser(ResourceBundle resources, BoxVolume volume) throws QblStorageException {
 
@@ -31,8 +30,6 @@ public abstract class RemoteFSChooser extends Dialog<Path> implements ChangeList
         getDialogPane().getButtonTypes().add(cancelType);
 
         okButton = (Button) getDialogPane().lookupButton(okType);
-        cancelButton = (Button) getDialogPane().lookupButton(cancelType);
-
 
         BoxNavigation nav = volume.navigate();
         root = new FolderTreeItem(new BoxFolder(volume.getRootRef(), "/", new byte[16]), nav);
