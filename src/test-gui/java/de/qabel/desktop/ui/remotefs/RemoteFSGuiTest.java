@@ -79,7 +79,6 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
         row.deleteIcon().assertHidden();
     }
 
-    @Ignore(value = "remove share was disabled because it was buggy (shares popped up again with the SharingService)")
     @Test
     public void loadsShares() throws Exception {
         ShareNotificationMessage notification = new ShareNotificationMessage("http://some.url.com", "key", "message");
@@ -92,7 +91,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
         RemoteBrowserRow sharedRow = page.getRow(sharedIndex);
         sharedRow.downloadIcon().hover();
         sharedRow.downloadIcon().assertVisible();
-        sharedRow.deleteIcon().assertVisible();
+        //sharedRow.deleteIcon().assertVisible();   // feature disabled currently
 
         assertThat(controller.shareRoot.getChildren().size(), is(1));
         assertThat(controller.shareRoot.getChildren().get(0).getValue().getName(), equalTo("share name"));
