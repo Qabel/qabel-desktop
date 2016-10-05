@@ -286,7 +286,7 @@ public class RemoteFSController extends AbstractController implements Initializa
                 .map(change -> CachedBoxNavigation.createRemoteChangeEventFromNotification(nav, change))
                 .subscribe(event -> {
                     de.qabel.box.storage.dto.BoxPath.FolderLike dtoPath = nav.getPath();
-                    if (value instanceof BoxFolder) {
+                    if (value instanceof BoxFile) {
                         dtoPath = dtoPath.resolveFile(item.getValue().getName());
                     }
                     if (!event.getPath().equals(BoxFileSystem.pathFromBoxDto(dtoPath))) {

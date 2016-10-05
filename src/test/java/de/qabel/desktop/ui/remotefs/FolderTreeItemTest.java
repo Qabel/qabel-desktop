@@ -15,6 +15,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function2;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+import rx.Observable;
 import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
 
@@ -323,7 +324,7 @@ public class FolderTreeItemTest extends AbstractControllerTest {
 
         @NotNull
         @Override
-        public rx.Observable<DMChangeNotification> getChanges() {
+        public Observable<DMChangeNotification> getChanges() {
             return subject;
         }
 

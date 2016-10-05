@@ -79,6 +79,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
         row.deleteIcon().assertHidden();
     }
 
+    @Ignore(value = "remove share was disabled because it was buggy (shares popped up again with the SharingService)")
     @Test
     public void loadsShares() throws Exception {
         ShareNotificationMessage notification = new ShareNotificationMessage("http://some.url.com", "key", "message");
