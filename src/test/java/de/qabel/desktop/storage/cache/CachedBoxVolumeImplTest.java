@@ -6,9 +6,6 @@ import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -40,14 +37,6 @@ public class CachedBoxVolumeImplTest extends BoxVolumeTest {
     @Override
     protected StorageReadBackend getReadBackend() {
         return readBackend;
-    }
-
-    @NotNull
-    @Override
-    public <T> Matcher<T> sameInstance(T target) {
-        return target instanceof CachedBoxNavigation ?
-            Matchers.sameInstance((T) ((CachedBoxNavigation) target).getNav())
-            : super.sameInstance(target);
     }
 
     @Override
