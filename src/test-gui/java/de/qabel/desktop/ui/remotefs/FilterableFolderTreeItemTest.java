@@ -18,7 +18,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.stub;
+import static org.mockito.Mockito.when;
 
 public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSController> {
     private FilterableFolderTreeItem folderTree;
@@ -33,7 +33,7 @@ public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSContro
         subSubFile = new BoxFile("prefix", "block", "innerFileName", 0L, 0L, new byte[0]);
         subFolder = new BoxFolder("prefix", "folderName", new byte[0]);
 
-        BoxFolder folder = new BoxFolder("ref", "folder", new byte[0]);
+        new BoxFolder("ref", "folder", new byte[0]);
         navigation = new BoxNavigationStub(BoxFileSystem.getRoot().resolve("folder"));
         navigation.files.add(subFile);
         navigation.folders.add(subFolder);
@@ -45,7 +45,7 @@ public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSContro
 
         BoxVolumeStub volume = new BoxVolumeStub();
         volume.rootNavigation = navigation;
-        stub(boxVolumeFactory.getVolume(any(), any())).toReturn(volume);
+        when(boxVolumeFactory.getVolume(any(), any())).thenReturn(volume);
 
         return new RemoteFSView();
     }

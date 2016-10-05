@@ -21,7 +21,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.stub;
+import static org.mockito.Mockito.when;
 
 public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
     private final BoxFile boxFile = new BoxFile("prefix", "123", "filename", 1L, 2L, new byte[0]);
@@ -36,7 +36,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
         rootNavigation.files.add(boxFile);
         BoxVolumeStub volume = new BoxVolumeStub();
         volume.rootNavigation = rootNavigation;
-        stub(boxVolumeFactory.getVolume(any(), any())).toReturn(volume);
+        when(boxVolumeFactory.getVolume(any(), any())).thenReturn(volume);
         diContainer.put("sharingService", sharingService);
 
         return new RemoteFSView();

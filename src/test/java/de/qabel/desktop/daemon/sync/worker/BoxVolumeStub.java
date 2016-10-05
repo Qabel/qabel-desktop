@@ -9,16 +9,15 @@ import org.jetbrains.annotations.NotNull;
 import rx.Observable;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.stub;
+import static org.mockito.Mockito.when;
 
 public class BoxVolumeStub implements CachedBoxVolume {
-    public boolean indexCreated;
     public String rootRef = "/root/";
     public IndexNavigation rootNavigation;
 
     public BoxVolumeStub() {
         IndexNavigation mock = mock(IndexNavigation.class);
-        stub(mock.getChanges()).toReturn(Observable.empty());
+        when(mock.getChanges()).thenReturn(Observable.empty());
         rootNavigation = mock;
     }
 

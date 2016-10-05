@@ -31,7 +31,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.stub;
+import static org.mockito.Mockito.when;
 
 
 public class RemoteFSControllerTest extends AbstractControllerTest {
@@ -79,7 +79,7 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
                 deviceID,
                 localStorageFile,
                 prefix);
-        stub(boxVolumeFactory.getVolume(any(), any())).toReturn(volume);
+        when(boxVolumeFactory.getVolume(any(), any())).thenReturn(volume);
 
         String bucket = "qabel";
         volume.createIndex(bucket, prefix);

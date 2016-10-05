@@ -32,7 +32,7 @@ public class CachedBoxVolumeImplFactoryTest {
         identity2 = new IdentityBuilderFactory(new DropUrlGenerator("http://localhost")).factory().withAlias("foo").build();
         factory = mock(BoxVolumeFactory.class);
         boxVolume1 = new BoxVolumeStub();
-        stub(factory.getVolume(any(), any())).toReturn(boxVolume1).toReturn(new BoxVolumeStub());
+        when(factory.getVolume(any(), any())).thenReturn(boxVolume1).thenReturn(new BoxVolumeStub());
         sut = new CachedBoxVolumeFactory(factory);
     }
 
