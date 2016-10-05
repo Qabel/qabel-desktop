@@ -3,16 +3,17 @@ package de.qabel.desktop.ui.remotefs.factory;
 import de.qabel.box.storage.BoxFile;
 import de.qabel.box.storage.BoxFolder;
 import de.qabel.box.storage.BoxObject;
-import de.qabel.desktop.ui.remotefs.FilterableFolderTreeItem;
-import de.qabel.desktop.ui.remotefs.FolderTreeItem;
+import de.qabel.desktop.ui.util.Icons;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import static de.qabel.desktop.ui.util.Icons.*;
+
 public class BoxNameCell extends TreeTableCell<BoxObject, String> {
-    private static Image folderImg = new Image(FolderTreeItem.class.getResourceAsStream("/icon/folder.png"), 18, 18, true, false);
-    private static final Image fileImg = new Image(FilterableFolderTreeItem.class.getResourceAsStream("/icon/file.png"),  18, 18, true, false);
-    private static final Image shareImg = new Image(FilterableFolderTreeItem.class.getResourceAsStream("/icon/share.png"),  18, 18, true, false);
+    private static Image folderImg = Icons.getImage(FOLDER);
+    private static final Image fileImg = Icons.getImage(FILE);
+    private static final Image shareImg = Icons.getImage(SHARE);
 
     private BoxObject shareObject;
 
@@ -38,11 +39,11 @@ public class BoxNameCell extends TreeTableCell<BoxObject, String> {
 
         ImageView icon = null;
         if (boxObject == shareObject) {
-            icon = new ImageView(shareImg);
+            icon = Icons.iconFromImage(shareImg, 18);
         } else if (boxObject instanceof BoxFile) {
-            icon = new ImageView(fileImg);
+            icon = Icons.iconFromImage(fileImg, 18);
         } else if (boxObject instanceof BoxFolder) {
-            icon = new ImageView(folderImg);
+            icon = Icons.iconFromImage(folderImg, 18);
         }
 
         setText(empty ? null : item);

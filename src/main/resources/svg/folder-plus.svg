@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="24"
+   height="24"
+   viewBox="0 0 24 24"
+   id="svg17533"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="folder-plus.svg">
+  <metadata
+     id="metadata17541">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs17539" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="3840"
+     inkscape:window-height="2086"
+     id="namedview17537"
+     showgrid="false"
+     inkscape:zoom="9.8333333"
+     inkscape:cx="11.440678"
+     inkscape:cy="0.81355932"
+     inkscape:window-x="3200"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg17533" />
+  <g
+     id="folder_plus"
+     inkscape:label="#g18119">
+    <title
+       id="title18131">folder-plus</title>
+    <desc
+       id="desc18129">Community Icons - SIL Open Font License 1.1</desc>
+    <path
+       style="fill:#333333"
+       id="path17535"
+       d="M10,4L12,6H20A2,2 0 0,1 22,8V18A2,2 0 0,1 20,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10M15,9V12H12V14H15V17H17V14H20V12H17V9H15Z" />
+    <g
+       inkscape:label="#g4152"
+       id="arrow_left-78"
+       transform="translate(-0.08,0)"
+       style="display:inline">
+      <title
+         id="title7047-36">arrow-left</title>
+      <desc
+         id="desc7045-11">Google Material Design Icons - Attribution 4.0 International</desc>
+      <g
+         style="display:inline;opacity:1"
+         id="menu_up-64-95"
+         transform="matrix(0.49999967,0,0,0.49999967,0.08000792,7.92e-6)"
+         inkscape:label="#g5506">
+        <desc
+           id="desc23777-4-00">Google Material Design Icons - Attribution 4.0 International</desc>
+        <title
+           id="title23775-27-40">menu-up</title>
+        <path
+           id="path5498-0-21"
+           d="M 0,0 48,0 48,48 0,48 Z"
+           inkscape:connector-curvature="0"
+           style="fill:none" />
+      </g>
+    </g>
+  </g>
+</svg>

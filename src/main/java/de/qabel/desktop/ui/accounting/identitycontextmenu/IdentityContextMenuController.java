@@ -10,6 +10,7 @@ import de.qabel.desktop.ui.accounting.interactor.ExportIdentityInteractor;
 import de.qabel.desktop.ui.accounting.qrcode.QRCodeController;
 import de.qabel.desktop.ui.accounting.qrcode.QRCodeView;
 import de.qabel.desktop.ui.contact.menu.ContactMenuController;
+import de.qabel.desktop.ui.util.Icons;
 import de.qabel.desktop.ui.util.Popup;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -23,6 +24,8 @@ import javafx.scene.layout.VBox;
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import static de.qabel.desktop.ui.util.Icons.DELETE;
 
 public class IdentityContextMenuController extends AbstractController implements Initializable {
     private ResourceBundle resourceBundle;
@@ -61,7 +64,7 @@ public class IdentityContextMenuController extends AbstractController implements
     Button publicKeyEmailButton;
 
     private static ImageView editImageView = setImageView(loadImage("/img/pencil.png"));
-    private static ImageView deleteImageView = setImageView(loadImage("/img/delete.png"));
+    private static ImageView deleteImageView = Icons.getIcon(DELETE);
     private static ImageView uploadImageView = setImageView(loadImage("/img/upload.png"));
     private static ImageView exportIdentityImageView = setImageView(loadImage("/img/export.png"));
     private static ImageView exportContactImageView = setImageView(loadImage("/img/export.png"));
