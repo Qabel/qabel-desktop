@@ -5,7 +5,7 @@ import de.qabel.box.storage.BoxFile;
 import de.qabel.box.storage.BoxFolder;
 import de.qabel.box.storage.BoxObject;
 import de.qabel.box.storage.command.DeleteFileChange;
-import de.qabel.box.storage.dto.DMChangeNotification;
+import de.qabel.box.storage.dto.DMChangeEvent;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.desktop.daemon.sync.worker.BoxNavigationStub;
 import de.qabel.desktop.daemon.sync.worker.BoxVolumeStub;
@@ -102,7 +102,7 @@ public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSContro
     public void reactsOnRemoteChanges() throws Exception {
         BoxNavigationStub subnav = navigation.navigate("folderName");
         subnav.files.remove(subSubFile);
-        subnav.subject.onNext(new DMChangeNotification(
+        subnav.subject.onNext(new DMChangeEvent(
             new DeleteFileChange(subSubFile),
             subnav
         ));

@@ -4,7 +4,7 @@ import de.qabel.box.storage.*;
 import de.qabel.box.storage.command.ShareChange;
 import de.qabel.box.storage.command.UnshareChange;
 import de.qabel.box.storage.dto.BoxPath;
-import de.qabel.box.storage.dto.DMChangeNotification;
+import de.qabel.box.storage.dto.DMChangeEvent;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.box.storage.exceptions.QblStorageNotFound;
 import de.qabel.core.crypto.QblECPublicKey;
@@ -30,7 +30,7 @@ public class BoxNavigationStub extends Observable implements IndexNavigation {
     public List<BoxFile> files = new LinkedList<>();
     public List<BoxShare> shares = new LinkedList<>();
     public Map<String, BoxNavigationStub> subnavs = new HashMap<>();
-    public Subject<DMChangeNotification, DMChangeNotification> subject = new SerializedSubject<>(PublishSubject.create());
+    public Subject<DMChangeEvent, DMChangeEvent> subject = new SerializedSubject<>(PublishSubject.create());
     public Path path;
 
     public static BoxNavigationStub create() {
@@ -97,7 +97,7 @@ public class BoxNavigationStub extends Observable implements IndexNavigation {
     public BoxExternalReference share(QblECPublicKey owner, BoxFile file, String receiver) throws QblStorageException {
         file.setShared(new Share(file.getBlock(), new byte[0]));
         shares.add(new BoxShare(file.getRef(), receiver));
-        subject.onNext(new DMChangeNotification(new ShareChange(file, receiver), this));
+        subject.onNext(new DMChangeEvent(new ShareChange(file, receiver), this));
         return new BoxExternalReference(false, file.getRef(), file.getName(), owner, new byte[0]);
     }
 
@@ -115,7 +115,7 @@ public class BoxNavigationStub extends Observable implements IndexNavigation {
             .filter(boxShare -> boxFile.getRef().equals(boxShare.getRef()))
             .forEach(shares::remove);
         boxFile.setShared(null);
-        subject.onNext(new DMChangeNotification(new UnshareChange(boxFile), this));
+        subject.onNext(new DMChangeEvent(new UnshareChange(boxFile), this));
     }
 
     @Override
@@ -281,13 +281,13 @@ public class BoxNavigationStub extends Observable implements IndexNavigation {
 
     @NotNull
     @Override
-    public rx.Observable<DMChangeNotification> getChanges() {
+    public rx.Observable<DMChangeEvent> getChanges() {
         return subject;
     }
 
     @NotNull
     @Override
-    public BoxNavigation navigate(BoxExternal boxExternal) {
+    public BoxNavigation navigate(BoxExternalFolder boxExternal) {
         return null;
     }
 

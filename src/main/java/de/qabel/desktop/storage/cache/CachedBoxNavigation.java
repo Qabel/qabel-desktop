@@ -3,7 +3,7 @@ package de.qabel.desktop.storage.cache;
 import de.qabel.box.storage.*;
 import de.qabel.box.storage.command.*;
 import de.qabel.box.storage.dto.BoxPath;
-import de.qabel.box.storage.dto.DMChangeNotification;
+import de.qabel.box.storage.dto.DMChangeEvent;
 import de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
@@ -31,7 +31,7 @@ public class CachedBoxNavigation {
     }
 
     @NotNull
-    public static RemoteChangeEvent createRemoteChangeEventFromNotification(ReadableBoxNavigation nav, DMChangeNotification it) {
+    public static RemoteChangeEvent createRemoteChangeEventFromNotification(ReadableBoxNavigation nav, DMChangeEvent it) {
         DMChange change = it.getChange();
         BoxNavigation eventNav = it.getNavigation();
         RemoteChangeEvent event = null;

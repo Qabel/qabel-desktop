@@ -3,7 +3,7 @@ package de.qabel.desktop.ui.remotefs;
 import de.qabel.box.storage.*;
 import de.qabel.box.storage.command.UpdateFileChange;
 import de.qabel.box.storage.dto.BoxPath;
-import de.qabel.box.storage.dto.DMChangeNotification;
+import de.qabel.box.storage.dto.DMChangeEvent;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.box.storage.jdbc.JdbcDirectoryMetadata;
 import de.qabel.core.crypto.QblECPublicKey;
@@ -103,7 +103,7 @@ public class FolderTreeItemTest extends AbstractControllerTest {
 
         BoxFile someFile = createSomeFile();
         navigation.files.add(someFile);
-        navigation.subject.onNext(new DMChangeNotification(
+        navigation.subject.onNext(new DMChangeEvent(
             new UpdateFileChange(null, someFile),
             navigation
         ));
@@ -119,7 +119,7 @@ public class FolderTreeItemTest extends AbstractControllerTest {
 
         public List<BoxFile> files = new LinkedList<>();
         public List<BoxFolder> folders = new LinkedList<>();
-        public Subject<DMChangeNotification, DMChangeNotification> subject = PublishSubject.create();
+        public Subject<DMChangeEvent, DMChangeEvent> subject = PublishSubject.create();
 
         @Override
         public DirectoryMetadata reloadMetadata() throws QblStorageException {
@@ -142,7 +142,7 @@ public class FolderTreeItemTest extends AbstractControllerTest {
         }
 
         @Override
-        public BoxNavigation navigate(BoxExternal target) {
+        public BoxNavigation navigate(BoxExternalFolder target) {
             return null;
         }
 
@@ -324,7 +324,7 @@ public class FolderTreeItemTest extends AbstractControllerTest {
 
         @NotNull
         @Override
-        public Observable<DMChangeNotification> getChanges() {
+        public Observable<DMChangeEvent> getChanges() {
             return subject;
         }
 

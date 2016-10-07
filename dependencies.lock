@@ -7,17 +7,17 @@
             "locked": "1.7.0",
             "requested": "[1.7.0,2.0["
         },
-        "com.github.julianseeger.qabel-core:box": {
-            "locked": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f",
-            "requested": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "0.25.6",
+            "requested": "0.25.6"
         },
-        "com.github.julianseeger.qabel-core:chat": {
-            "locked": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f",
-            "requested": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f"
+        "com.github.Qabel.qabel-core:chat": {
+            "locked": "0.25.6",
+            "requested": "0.25.6"
         },
-        "com.github.julianseeger.qabel-core:core": {
-            "locked": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f",
-            "requested": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f"
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "0.25.6",
+            "requested": "0.25.6"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -91,15 +91,15 @@
             "requested": "0.7.+"
         },
         "org.apache.logging.log4j:log4j-api": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "[2.4.0,3.0["
         },
         "org.apache.logging.log4j:log4j-core": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "[2.4.0,3.0["
         },
         "org.apache.logging.log4j:log4j-slf4j-impl": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "[2.4.0,3.0["
         },
         "org.controlsfx:controlsfx": {
@@ -131,17 +131,17 @@
             "locked": "1.7.0",
             "requested": "[1.7.0,2.0["
         },
-        "com.github.julianseeger.qabel-core:box": {
-            "locked": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f",
-            "requested": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "0.25.6",
+            "requested": "0.25.6"
         },
-        "com.github.julianseeger.qabel-core:chat": {
-            "locked": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f",
-            "requested": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f"
+        "com.github.Qabel.qabel-core:chat": {
+            "locked": "0.25.6",
+            "requested": "0.25.6"
         },
-        "com.github.julianseeger.qabel-core:core": {
-            "locked": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f",
-            "requested": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f"
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "0.25.6",
+            "requested": "0.25.6"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -215,15 +215,15 @@
             "requested": "0.7.+"
         },
         "org.apache.logging.log4j:log4j-api": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "[2.4.0,3.0["
         },
         "org.apache.logging.log4j:log4j-core": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "[2.4.0,3.0["
         },
         "org.apache.logging.log4j:log4j-slf4j-impl": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "[2.4.0,3.0["
         },
         "org.controlsfx:controlsfx": {
@@ -255,17 +255,17 @@
             "locked": "1.7.0",
             "requested": "[1.7.0,2.0["
         },
-        "com.github.julianseeger.qabel-core:box": {
-            "locked": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f",
-            "requested": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "0.25.6",
+            "requested": "0.25.6"
         },
-        "com.github.julianseeger.qabel-core:chat": {
-            "locked": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f",
-            "requested": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f"
+        "com.github.Qabel.qabel-core:chat": {
+            "locked": "0.25.6",
+            "requested": "0.25.6"
         },
-        "com.github.julianseeger.qabel-core:core": {
-            "locked": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f",
-            "requested": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f"
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "0.25.6",
+            "requested": "0.25.6"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -355,15 +355,15 @@
             "requested": "0.7.+"
         },
         "org.apache.logging.log4j:log4j-api": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "[2.4.0,3.0["
         },
         "org.apache.logging.log4j:log4j-core": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "[2.4.0,3.0["
         },
         "org.apache.logging.log4j:log4j-slf4j-impl": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "[2.4.0,3.0["
         },
         "org.controlsfx:controlsfx": {
@@ -415,17 +415,17 @@
             "locked": "1.7.0",
             "requested": "[1.7.0,2.0["
         },
-        "com.github.julianseeger.qabel-core:box": {
-            "locked": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f",
-            "requested": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "0.25.6",
+            "requested": "0.25.6"
         },
-        "com.github.julianseeger.qabel-core:chat": {
-            "locked": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f",
-            "requested": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f"
+        "com.github.Qabel.qabel-core:chat": {
+            "locked": "0.25.6",
+            "requested": "0.25.6"
         },
-        "com.github.julianseeger.qabel-core:core": {
-            "locked": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f",
-            "requested": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f"
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "0.25.6",
+            "requested": "0.25.6"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -515,15 +515,15 @@
             "requested": "0.7.+"
         },
         "org.apache.logging.log4j:log4j-api": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "[2.4.0,3.0["
         },
         "org.apache.logging.log4j:log4j-core": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "[2.4.0,3.0["
         },
         "org.apache.logging.log4j:log4j-slf4j-impl": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "[2.4.0,3.0["
         },
         "org.controlsfx:controlsfx": {
@@ -575,17 +575,17 @@
             "locked": "1.7.0",
             "requested": "[1.7.0,2.0["
         },
-        "com.github.julianseeger.qabel-core:box": {
-            "locked": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f",
-            "requested": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "0.25.6",
+            "requested": "0.25.6"
         },
-        "com.github.julianseeger.qabel-core:chat": {
-            "locked": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f",
-            "requested": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f"
+        "com.github.Qabel.qabel-core:chat": {
+            "locked": "0.25.6",
+            "requested": "0.25.6"
         },
-        "com.github.julianseeger.qabel-core:core": {
-            "locked": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f",
-            "requested": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f"
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "0.25.6",
+            "requested": "0.25.6"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -659,15 +659,15 @@
             "requested": "0.7.+"
         },
         "org.apache.logging.log4j:log4j-api": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "[2.4.0,3.0["
         },
         "org.apache.logging.log4j:log4j-core": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "[2.4.0,3.0["
         },
         "org.apache.logging.log4j:log4j-slf4j-impl": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "[2.4.0,3.0["
         },
         "org.controlsfx:controlsfx": {
@@ -699,17 +699,17 @@
             "locked": "1.7.0",
             "requested": "[1.7.0,2.0["
         },
-        "com.github.julianseeger.qabel-core:box": {
-            "locked": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f",
-            "requested": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "0.25.6",
+            "requested": "0.25.6"
         },
-        "com.github.julianseeger.qabel-core:chat": {
-            "locked": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f",
-            "requested": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f"
+        "com.github.Qabel.qabel-core:chat": {
+            "locked": "0.25.6",
+            "requested": "0.25.6"
         },
-        "com.github.julianseeger.qabel-core:core": {
-            "locked": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f",
-            "requested": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f"
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "0.25.6",
+            "requested": "0.25.6"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -799,15 +799,15 @@
             "requested": "0.7.+"
         },
         "org.apache.logging.log4j:log4j-api": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "[2.4.0,3.0["
         },
         "org.apache.logging.log4j:log4j-core": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "[2.4.0,3.0["
         },
         "org.apache.logging.log4j:log4j-slf4j-impl": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "[2.4.0,3.0["
         },
         "org.controlsfx:controlsfx": {
@@ -859,17 +859,17 @@
             "locked": "1.7.0",
             "requested": "[1.7.0,2.0["
         },
-        "com.github.julianseeger.qabel-core:box": {
-            "locked": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f",
-            "requested": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f"
+        "com.github.Qabel.qabel-core:box": {
+            "locked": "0.25.6",
+            "requested": "0.25.6"
         },
-        "com.github.julianseeger.qabel-core:chat": {
-            "locked": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f",
-            "requested": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f"
+        "com.github.Qabel.qabel-core:chat": {
+            "locked": "0.25.6",
+            "requested": "0.25.6"
         },
-        "com.github.julianseeger.qabel-core:core": {
-            "locked": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f",
-            "requested": "6af5fcb7bbcc19deacb8caee38f0df34f1aeaf8f"
+        "com.github.Qabel.qabel-core:core": {
+            "locked": "0.25.6",
+            "requested": "0.25.6"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -959,15 +959,15 @@
             "requested": "0.7.+"
         },
         "org.apache.logging.log4j:log4j-api": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "[2.4.0,3.0["
         },
         "org.apache.logging.log4j:log4j-core": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "[2.4.0,3.0["
         },
         "org.apache.logging.log4j:log4j-slf4j-impl": {
-            "locked": "2.6.2",
+            "locked": "2.7",
             "requested": "[2.4.0,3.0["
         },
         "org.controlsfx:controlsfx": {
