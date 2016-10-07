@@ -184,10 +184,8 @@ public class AbstractPage {
                 boolean present = node.isPresent() && node.get() != null;
                 if (present) {
                     nodes[0] = node.get();
-                }
-
-                robot.point(nodes[0]).query();
-                if (!present) {
+                    robot.point(nodes[0]).query();
+                } else {
                     throw new IllegalStateException("node not present");
                 }
             } catch (Exception e) {

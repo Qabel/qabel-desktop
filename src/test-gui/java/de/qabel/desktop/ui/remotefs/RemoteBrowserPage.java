@@ -25,4 +25,8 @@ public class RemoteBrowserPage extends AbstractPage {
         waitUntil(() -> getNodes(".tree-disclosure-node > .arrow").size() >= nodeToExpand, 5000L);
         return clickOn(getNodes(".tree-disclosure-node > .arrow").get(nodeToExpand));
     }
+
+    public void search(String query) {
+        clickOn("#searchQuery").write(query);
+    }
 }

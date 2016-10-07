@@ -83,7 +83,7 @@ jar.doFirst{
 }
 
 dependencies {
-    def coreVersion = '0.25.5'
+    def coreVersion = '0.25.6'
     def repo = 'Qabel'
 
     compile 'com.github.'+repo+'.qabel-core:core:'+coreVersion
@@ -99,49 +99,49 @@ dependencies {
 
     compile ':jfxrt:'                                        // built-in javafx to please sonarqube
 
-    compile 'org.ocpsoft.prettytime:prettytime:3.2.+'        //Apache License https://github.com/ocpsoft/prettytime/blob/master/LICENSE
-    compile 'commons-cli:commons-cli:1.2'                    //Apache License
-    compile 'commons-codec:commons-codec:1.10'               //Apache License
-    compile 'org.apache.httpcomponents:httpclient:4.5.+'     //Apache License
-    compile 'org.apache.httpcomponents:httpmime:4.5.+'       //Apache License
+    compile 'org.ocpsoft.prettytime:prettytime:[3.2.0,4.0['        //Apache License https://github.com/ocpsoft/prettytime/blob/master/LICENSE
+    compile 'commons-cli:commons-cli:[1.2,2.0['                    //Apache License
+    compile 'commons-codec:commons-codec:[1.10,2.0['               //Apache License
+    compile 'org.apache.httpcomponents:httpclient:[4.5.0,5.0['     //Apache License
+    compile 'org.apache.httpcomponents:httpmime:[4.5.0,5.0['       //Apache License
     compile 'org.json:json:20090211'                         //None? https://github.com/stleary/JSON-java
     compile 'javax.inject:javax.inject:1'                    //Apache License http://mvnrepository.com/artifact/javax.inject/javax.inject/1
-    compile 'com.airhacks:afterburner.fx:1.7.+'              //Apache License https://github.com/AdamBien/afterburner.fx
-    compile 'de.codecentric.centerdevice:javafxsvg:1.2.+'
+    compile 'com.airhacks:afterburner.fx:[1.7.0,2.0['              //Apache License https://github.com/AdamBien/afterburner.fx
+    compile 'de.codecentric.centerdevice:javafxsvg:[1.2.0,2.0['
 
-    compile 'com.google.code.gson:gson:2.+'                  //Apache License https://github.com/google/gson/blob/master/LICENSE
-    compile 'org.slf4j:slf4j-api:1.7.+'                      //MIT http://www.slf4j.org/license.html
-    compile 'log4j:log4j:1.2.+'                              //Apache License https://logging.apache.org/log4j/1.2/license.html
-    compile 'org.apache.logging.log4j:log4j-api:2.4.+'
-    compile 'org.apache.logging.log4j:log4j-core:2.4.+'
-    compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.4.+'
+    compile 'com.google.code.gson:gson:[2.0,3.0['                  //Apache License https://github.com/google/gson/blob/master/LICENSE
+    compile 'org.slf4j:slf4j-api:[1.7.0,2.0['                      //MIT http://www.slf4j.org/license.html
+    compile 'log4j:log4j:[1.2.0,2.0['                              //Apache License https://logging.apache.org/log4j/1.2/license.html
+    compile 'org.apache.logging.log4j:log4j-api:[2.4.0,3.0['
+    compile 'org.apache.logging.log4j:log4j-core:[2.4.0,3.0['
+    compile 'org.apache.logging.log4j:log4j-slf4j-impl:[2.4.0,3.0['
     compile 'org.apache.james:apache-mime4j:0.7.+'
-    compile 'org.apache.commons:commons-lang3:3.+'
+    compile 'org.apache.commons:commons-lang3:[3.0.0,4.0['
 
-    compile 'org.xerial:sqlite-jdbc:3.8.+'                   //Apache License https://bitbucket.org/xerial/sqlite-jdbc
+    compile 'org.xerial:sqlite-jdbc:[3.8.0,4.0['                   //Apache License https://bitbucket.org/xerial/sqlite-jdbc
 
-    compile 'com.github.mfornos:humanize-slim:1.2.2'
+    compile 'com.github.mfornos:humanize-slim:[1.2.2,2.0['
     compile 'com.github.zafarkhaja:java-semver:0.9.+'        // MIT https://github.com/zafarkhaja/jsemver/blob/master/LICENSE
 
-    compile 'com.google.zxing:core:2.+'                     //Apache License https://github.com/zxing/zxing/wiki/License-Questions
-    compile 'com.google.zxing:javase:2.+'                   //Apache License https://github.com/zxing/zxing/wiki/License-Questions
-    compile 'net.glxn.qrgen:javase:2.+'                     //Apache License https://github.com/kenglxn/QRGen
-    compile 'org.controlsfx:controlsfx:8.+'
-    compile 'com.jfoenix:jfoenix:1.+'
-    compile group: 'commons-validator', name: 'commons-validator', version: '1.4.+'
+    compile 'com.google.zxing:core:[2.0,3.0['                     //Apache License https://github.com/zxing/zxing/wiki/License-Questions
+    compile 'com.google.zxing:javase:[2.0,3.0['                   //Apache License https://github.com/zxing/zxing/wiki/License-Questions
+    compile 'net.glxn.qrgen:javase:[2.0,3.0['                     //Apache License https://github.com/kenglxn/QRGen
+    compile 'org.controlsfx:controlsfx:[8.0,9.0['
+    compile 'com.jfoenix:jfoenix:[1.0,2.0['
+    compile group: 'commons-validator', name: 'commons-validator', version: '[1.4.0,2.0['
 
-    testCompile 'info.cukes:cucumber-java:1.2.+'
-    testCompile 'info.cukes:cucumber-junit:1.2.+'
-    testCompile 'com.tngtech.java:junit-dataprovider:1.10.+'    // Apache v2
+    testCompile 'info.cukes:cucumber-java:[1.2.0,2.0['
+    testCompile 'info.cukes:cucumber-junit:[1.2.0,2.0['
+    testCompile 'com.tngtech.java:junit-dataprovider:[1.10.0,2.0['    // Apache v2
 
 
-    testCompile 'junit:junit:4.+'                            // Eclipse Public License - v 1.0 https://github.com/junit-team/junit/blob/master/LICENSE-junit.txt
-    testCompile 'org.meanbean:meanbean:2.+'                  // Apache License V2.0 http://meanbean.sourceforge.net
-    testCompile 'org.testfx:testfx-core:4.+'                 // EUPL 1.1 https://github.com/TestFX/TestFX/blob/master/LICENSE.txt
-    testCompile 'org.testfx:testfx-junit:4.+'                // EUPL 1.1 https://github.com/TestFX/TestFX/blob/master/LICENSE.txt
+    testCompile 'junit:junit:[4.0.0,5.0['                            // Eclipse Public License - v 1.0 https://github.com/junit-team/junit/blob/master/LICENSE-junit.txt
+    testCompile 'org.meanbean:meanbean:[2.0,3.0['                  // Apache License V2.0 http://meanbean.sourceforge.net
+    testCompile 'org.testfx:testfx-core:[4.0,5.0['                 // EUPL 1.1 https://github.com/TestFX/TestFX/blob/master/LICENSE.txt
+    testCompile 'org.testfx:testfx-junit:[4.0,5.0['                // EUPL 1.1 https://github.com/TestFX/TestFX/blob/master/LICENSE.txt
 
-    testCompile 'org.hamcrest:java-hamcrest:2.0.0.0'
-    testCompile 'org.mockito:mockito-core:2.0.52-beta'
+    testCompile 'org.hamcrest:java-hamcrest:[2.0.0.0,3.0['
+    testCompile 'org.mockito:mockito-core:[2.0.52-beta,3.0['
 }
 
 task copyToLib(type: Copy) {

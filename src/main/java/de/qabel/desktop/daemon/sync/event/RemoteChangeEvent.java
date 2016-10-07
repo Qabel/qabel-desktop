@@ -1,14 +1,14 @@
 package de.qabel.desktop.daemon.sync.event;
 
 import de.qabel.box.storage.BoxFile;
-import de.qabel.box.storage.BoxNavigation;
 import de.qabel.box.storage.BoxObject;
+import de.qabel.box.storage.ReadableBoxNavigation;
 
 import java.nio.file.Path;
 
 public class RemoteChangeEvent extends AbstractChangeEvent {
     private final BoxObject boxObject;
-    private final BoxNavigation navigation;
+    private final ReadableBoxNavigation navigation;
 
     public RemoteChangeEvent(
             Path path,
@@ -16,7 +16,7 @@ public class RemoteChangeEvent extends AbstractChangeEvent {
             Long mtime,
             ChangeEvent.TYPE type,
             BoxObject boxObject,
-            BoxNavigation navigation
+            ReadableBoxNavigation navigation
     ) {
         super(path, isDirecotry, mtime, type);
         this.boxObject = boxObject;
@@ -32,7 +32,7 @@ public class RemoteChangeEvent extends AbstractChangeEvent {
         return boxObject;
     }
 
-    public BoxNavigation getBoxNavigation() {
+    public ReadableBoxNavigation getBoxNavigation() {
         return navigation;
     }
 

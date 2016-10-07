@@ -15,6 +15,14 @@ public class BoxFileSystem extends FileSystem {
         return new BoxFileSystemProvider();
     }
 
+    public static BoxPath pathFromBoxDto(de.qabel.box.storage.dto.BoxPath dto) {
+        BoxPath result = getRoot();
+        for (String part : dto.toList()) {
+            result = result.resolve(part);
+        }
+        return result;
+    }
+
     @Override
     public void close() throws IOException {
         throw new NotImplementedException();

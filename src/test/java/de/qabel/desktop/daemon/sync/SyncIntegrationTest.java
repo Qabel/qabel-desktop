@@ -187,11 +187,7 @@ public class SyncIntegrationTest {
         Files.createDirectories(dir1);
 
         Path dir2 = Paths.get(tmpDir2.toString(), "dir");
-        final SyncIntegrationTest test = this;
-        waitUntil(() -> {
-            final SyncIntegrationTest test2 = test;
-            return Files.isDirectory(dir2);
-        }, TIMEOUT);
+        waitUntil(() -> Files.isDirectory(dir2), TIMEOUT);
 
         Path file1 = Paths.get(dir1.toString(), "file");
         Files.write(file1, "text".getBytes());

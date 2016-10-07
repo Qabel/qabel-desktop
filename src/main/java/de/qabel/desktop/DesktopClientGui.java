@@ -66,6 +66,7 @@ public class DesktopClientGui extends Application {
             }
         );
         config.onSelectIdentity(this::addShareMessageRenderer);
+        services.getDropMessageRepository().addObserver(new ShareNotificationHandler(getShareRepository()));
 
         QabelTray tray = new QabelTray(primaryStage, new AwtToast());
         tray.install();
@@ -133,7 +134,6 @@ public class DesktopClientGui extends Application {
     }
 
     private void trayNotifications(QabelTray tray) {
-        services.getDropMessageRepository().addObserver(new ShareNotificationHandler(getShareRepository()));
         services.getDropMessageRepository().addObserver(
             (o, arg) -> scheduler.schedule(
                 () -> {

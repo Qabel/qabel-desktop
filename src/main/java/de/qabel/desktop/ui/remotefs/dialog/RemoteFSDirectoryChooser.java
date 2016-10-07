@@ -4,7 +4,7 @@ import de.qabel.box.storage.BoxObject;
 import de.qabel.box.storage.BoxVolume;
 import de.qabel.box.storage.ReadableBoxNavigation;
 import de.qabel.box.storage.exceptions.QblStorageException;
-import de.qabel.desktop.storage.PathNavigation;
+import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.ui.remotefs.FolderTreeItem;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TreeItem;
@@ -26,11 +26,7 @@ public class RemoteFSDirectoryChooser extends RemoteFSChooser {
         }
         FolderTreeItem folderItem = (FolderTreeItem)newValue;
         ReadableBoxNavigation navigation = folderItem.getNavigation();
-        if (!(navigation instanceof PathNavigation)) {
-            selectedProperty.setValue(null);
-            return;
-        }
-        Path result = ((PathNavigation) navigation).getDesktopPath();
+        Path result = BoxFileSystem.pathFromBoxDto(navigation.getPath());
         selectedProperty.setValue(result);
     }
 }

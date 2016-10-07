@@ -15,12 +15,13 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.nio.file.Paths;
 import java.util.LinkedList;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
     private final BoxFile boxFile = new BoxFile("prefix", "123", "filename", 1L, 2L, new byte[0]);
@@ -31,11 +32,11 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
 
     @Override
     protected FXMLView getView() {
-        rootNavigation = new BoxNavigationStub(null, Paths.get("/"));
+        rootNavigation = BoxNavigationStub.create();
         rootNavigation.files.add(boxFile);
         BoxVolumeStub volume = new BoxVolumeStub();
         volume.rootNavigation = rootNavigation;
-        boxVolumeFactory.boxVolume = volume;
+        when(boxVolumeFactory.getVolume(any(), any())).thenReturn(volume);
         diContainer.put("sharingService", sharingService);
 
         return new RemoteFSView();
@@ -90,7 +91,7 @@ public class RemoteFSGuiTest extends AbstractGuiTest<RemoteFSController> {
         RemoteBrowserRow sharedRow = page.getRow(sharedIndex);
         sharedRow.downloadIcon().hover();
         sharedRow.downloadIcon().assertVisible();
-        sharedRow.deleteIcon().assertVisible();
+        //sharedRow.deleteIcon().assertVisible();   // feature disabled currently
 
         assertThat(controller.shareRoot.getChildren().size(), is(1));
         assertThat(controller.shareRoot.getChildren().get(0).getValue().getName(), equalTo("share name"));
