@@ -24,9 +24,7 @@ public class PlaintextMessageRenderer implements FXMessageRenderer {
 
         TextArea textField = new TextArea(label.getText());
         textField.setEditable(false);
-        textField.setWrapText(true);
-        String style = "-fx-background-color: transparent; -fx-background-insets: 0; -fx-background-radius: 0; -fx-padding: 0;";
-        textField.setStyle(style);
+        textField.setPrefRowCount(1);
         // the invisible label is a hack to get the textField to size like a label.
         Label invisibleLabel = new Label();
         invisibleLabel.textProperty().bind(label.textProperty());

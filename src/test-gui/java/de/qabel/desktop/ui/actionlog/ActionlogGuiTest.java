@@ -48,7 +48,16 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
     @Test
     public void multilineInput() {
         controller.contact = new Contact(identity.getAlias(), identity.getDropUrls(), identity.getEcPublicKey());
-        writeTwoLinesOfText();
+
+        FxRobot textArea = clickOn("#textarea");
+        textArea.write("line1");
+        robot.press(KeyCode.SHIFT);
+        try {
+            robot.push(KeyCode.ENTER);
+        } finally {
+            robot.release(KeyCode.SHIFT);
+        }
+        robot.write("line2");
 
         submitChat();
 
@@ -62,31 +71,6 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
         robot.push(KeyCode.ENTER);
         assertFalse(receiveMessages().isEmpty());
     }
-
-    private void writeTwoLinesOfText() {
-        FxRobot textArea = clickOn("#textarea");
-        textArea.write("line1");
-        robot.press(KeyCode.SHIFT);
-        try {
-            robot.push(KeyCode.ENTER);
-        } finally {
-            robot.release(KeyCode.SHIFT);
-        }
-        robot.write("line2");
-    }
-
-    private void writeTwoLinesOfText(String line1, String line2) {
-        FxRobot textArea = clickOn("#textarea");
-        textArea.write(line1);
-        robot.press(KeyCode.SHIFT);
-        try {
-            robot.push(KeyCode.ENTER);
-        } finally {
-            robot.release(KeyCode.SHIFT);
-        }
-        robot.write(line2);
-    }
-
 
     @Test
     public void testSendMessageWithoutContent() {

@@ -823,8 +823,12 @@ VBox.spaced, HBox.spaced {
     -fx-effect: dropshadow(three-pass-box, red, 8, 0.0, 0, 1);
 }
 
-.selectable-text * {
-    -fx-background-color: transparent;
+.selectable-text,
+.selectable-text .text-area,
+.selectable-text .text-area .scroll-pane,
+.selectable-text .text-area .viewport,
+.selectable-text .text-area .content {
+    -fx-background-color: #4d4d4d;
     -fx-background-insets: 0;
     -fx-background-radius: 0;
     -fx-padding: 0;
