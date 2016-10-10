@@ -12,16 +12,15 @@ import de.qabel.desktop.daemon.management.ManualDownload;
 import de.qabel.desktop.daemon.management.ManualUpload;
 import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.daemon.management.Upload;
-import de.qabel.desktop.daemon.sync.event.ChangeEvent;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.nio.boxfs.BoxPath;
 import de.qabel.desktop.repository.DropMessageRepository;
-import de.qabel.desktop.storage.PathNavigation;
 import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.DetailsController;
 import de.qabel.desktop.ui.DetailsView;
 import de.qabel.desktop.ui.remotefs.factory.BoxNameCell;
+import de.qabel.desktop.ui.util.Icons;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
@@ -43,6 +42,7 @@ import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Subscription;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -61,6 +61,7 @@ import java.util.function.Consumer;
 
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.CREATE;
 import static de.qabel.desktop.daemon.management.Transaction.TYPE.DELETE;
+import static de.qabel.desktop.ui.util.Icons.SHARE;
 import static javafx.scene.Cursor.HAND;
 
 
@@ -73,8 +74,8 @@ public class RemoteFSController extends AbstractController implements Initializa
     private static Image uploadFolderImage = optionImage("/icon/folder-upload.png");
     private static Image downloadImage = optionImage("/icon/download.png");
     private static Image addFolderImage = optionImage("/icon/add_folder.png");
-    private static Image deleteImage = optionImage("/icon/delete.png");
-    private static Image shareImage = optionImage("/icon/share.png");
+    private static ImageView deleteImage = Icons.getIcon(Icons.DELETE, OPTION_EDGE_SIZE);
+    private static ImageView shareImage = Icons.getIcon(SHARE, OPTION_EDGE_SIZE);
     private FakeBoxObject shareObject;
 
     private static Image optionImage(String resourcePath) {
@@ -222,24 +223,22 @@ public class RemoteFSController extends AbstractController implements Initializa
             treeTable.setShowRoot(false);
             treeTable.setRoot(virtualRoot);
 
-            if (nav instanceof PathNavigation) {
-                Thread poller = new Thread(() -> {
-                    try {
-                        while (!Thread.interrupted()) {
-                            try {
-                                ((CachedBoxNavigation)nav).refresh();
-                            } catch (QblStorageException e) {
-                                logger.error("failed to refresh navi: " + e.getMessage(), e);
-                            }
-                            shareRoot.refresh();
-                            Thread.sleep(TimeUnit.MINUTES.toMillis(5));
+            Thread poller = new Thread(() -> {
+                try {
+                    while (!Thread.interrupted()) {
+                        try {
+                            nav.refresh(true);
+                        } catch (QblStorageException e) {
+                            logger.error("failed to refresh navi: " + e.getMessage(), e);
                         }
-                    } catch (InterruptedException ignored) {
+                        shareRoot.refresh();
+                        Thread.sleep(TimeUnit.MINUTES.toMillis(5));
                     }
-                });
-                poller.setDaemon(true);
-                poller.start();
-            }
+                } catch (InterruptedException ignored) {
+                }
+            });
+            poller.setDaemon(true);
+            poller.start();
         } catch (QblStorageException e) {
             alert("failed to load remotefs", e);
         }
@@ -257,7 +256,7 @@ public class RemoteFSController extends AbstractController implements Initializa
     }
 
     private Callback<TreeTableColumn.CellDataFeatures<BoxObject, Node>, ObservableValue<Node>> inlineOptionsCellValueFactory() {
-        Map<String, Observer> observers = new WeakHashMap<String, Observer>();
+        Map<String, Subscription> subscriptions = new WeakHashMap<>();
         return param -> {
             TreeItem<BoxObject> item = param.getValue();
             HBox bar = new HBox(3);
@@ -273,37 +272,38 @@ public class RemoteFSController extends AbstractController implements Initializa
             if (!(folder instanceof FolderTreeItem)) {
                 return result;
             }
-            ReadableBoxNavigation rNav = ((FolderTreeItem)folder).getNavigation();
-            if (!(rNav instanceof CachedBoxNavigation)) {
-                logger.warn("remote browser cell has no cached navigation, unable to observe changes!");
-                return result;
+            ReadableBoxNavigation nav = ((FolderTreeItem)folder).getNavigation();
+            BoxPath folderPath = ((FolderTreeItem) folder).getPath();
+            if (value instanceof BoxFolder) {
+                folderPath.resolve(value.getName());
             }
-            CachedBoxNavigation nav = (CachedBoxNavigation)rNav;
-            String key = ((FolderTreeItem) folder).getPath().toString();
-            Observer observer = (o, arg) -> {
-                if (!(arg instanceof ChangeEvent)) {
-                    return;
-                }
-                ChangeEvent event = (ChangeEvent) arg;
-                if (!event.getPath().equals(value instanceof BoxFolder ? nav.getDesktopPath() : nav.getDesktopPath(item.getValue()))) {
-                    return;
-                }
-                Platform.runLater(() -> {
-                    try {
-                        if (value instanceof BoxFile) {
-                            item.setValue(nav.getFile(value.getName()));
-                        }
-                        loadInlineButtons(item, bar);
-                        result.set(bar);
-                    } catch (QblStorageException ignored) {
+            String key = folderPath.toString();
+
+            if (subscriptions.containsKey(key)) {
+                subscriptions.get(key).unsubscribe();
+            }
+            subscriptions.put(key, nav.getChanges()
+                .map(change -> CachedBoxNavigation.createRemoteChangeEventFromNotification(nav, change))
+                .subscribe(event -> {
+                    de.qabel.box.storage.dto.BoxPath.FolderLike dtoPath = nav.getPath();
+                    if (value instanceof BoxFile) {
+                        dtoPath = dtoPath.resolveFile(item.getValue().getName());
                     }
-                });
-            };
-            if (observers.containsKey(key)) {
-                nav.deleteObserver(observers.get(key));
-            }
-            observers.put(key, observer);
-            nav.addObserver(observer);
+                    if (!event.getPath().equals(BoxFileSystem.pathFromBoxDto(dtoPath))) {
+                        return;
+                    }
+                    Platform.runLater(() -> {
+                        try {
+                            if (value instanceof BoxFile) {
+                                item.setValue(nav.getFile(value.getName()));
+                            }
+                            loadInlineButtons(item, bar);
+                            result.set(bar);
+                        } catch (QblStorageException ignored) {
+                        }
+                    });
+                })
+            );
 
             return result;
         };
@@ -333,12 +333,13 @@ public class RemoteFSController extends AbstractController implements Initializa
             spacer(bar);
         } else if (!(item.getValue() instanceof BoxExternal)) {
             if (((BoxFile)item.getValue()).isShared()) {
-                buttonFromImage(item, bar, shareImage, this::showDetails, "share", new BooleanBinding() {
+                BooleanBinding showIf = new BooleanBinding() {
                     @Override
                     protected boolean computeValue() {
                         return true;
                     }
-                }).getStyleClass().add("highlighted");
+                };
+                buttonFromImage(item, bar, shareImage, this::showDetails, "share", showIf).getStyleClass().add("highlighted");
             } else {
                 buttonFromImage(item, bar, shareImage, this::showDetails, "share");
             }
@@ -385,8 +386,14 @@ public class RemoteFSController extends AbstractController implements Initializa
         return buttonFromImage(item, bar, image, handler, name, hoveredItem.isEqualTo(item));
     }
 
+    private Pane buttonFromImage(TreeItem<BoxObject> item, HBox bar, ImageView image, Consumer<TreeItem<BoxObject>> handler, String name) {
+        return buttonFromImage(item, bar, image, handler, name, hoveredItem.isEqualTo(item));
+    }
+
     private Pane buttonFromImage(TreeItem<BoxObject> item, HBox bar, Image image, Consumer<TreeItem<BoxObject>> handler, String name, BooleanBinding showIf) {
-        ImageView buttonIcon = new ImageView(image);
+        return buttonFromImage(item, bar, new ImageView(image), handler, name, showIf);
+    }
+    private Pane buttonFromImage(TreeItem<BoxObject> item, HBox bar, ImageView buttonIcon, Consumer<TreeItem<BoxObject>> handler, String name, BooleanBinding showIf) {
         Pane button = new Pane(buttonIcon);
         ObservableList<String> styleClass = button.getStyleClass();
         styleClass.add("inline-button");

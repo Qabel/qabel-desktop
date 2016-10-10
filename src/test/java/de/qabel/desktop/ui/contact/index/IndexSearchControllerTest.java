@@ -71,7 +71,7 @@ public class IndexSearchControllerTest extends AbstractControllerTest {
 
     @Test
     public void showsResults() throws Exception {
-        stub(indexService.searchContacts("test@test.de", "")).toReturn(getResults(2));
+        when(indexService.searchContacts("test@test.de", "")).thenReturn(getResults(2));
         setText("test@test.de");
 
         assertAsync(controller.resultContainer.getChildren()::size, equalTo(2));

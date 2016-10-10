@@ -1,11 +1,11 @@
 package de.qabel.desktop.config.factory;
 
 import de.qabel.box.storage.BoxVolume;
+import de.qabel.box.storage.BoxVolumeImpl;
 import de.qabel.box.storage.LocalReadBackend;
 import de.qabel.box.storage.LocalWriteBackend;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
-import de.qabel.desktop.storage.cache.CachedBoxVolumeImpl;
 
 import java.nio.file.Path;
 import java.util.UUID;
@@ -33,7 +33,7 @@ public class LocalBoxVolumeFactory implements BoxVolumeFactory {
             }
             prefix = identity.getPrefixes().get(0);
         }
-        return new CachedBoxVolumeImpl(
+        return new BoxVolumeImpl(
                 new LocalReadBackend(tmpDir),
                 new LocalWriteBackend(tmpDir),
                 identity.getPrimaryKeyPair(),

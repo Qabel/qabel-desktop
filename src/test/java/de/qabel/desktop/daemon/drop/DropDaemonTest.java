@@ -26,6 +26,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.List;
 
 import static de.qabel.desktop.AsyncUtils.assertAsync;
@@ -58,6 +59,14 @@ public class DropDaemonTest extends AbstractControllerTest {
         contactRepository.save(sender, identity);
         dropConnector = new MainDropConnector(new MockDropServer());
         mockCoreDropConnector = new MockCoreDropConnector();
+        File tempDir = Files.createTempDir();
+        sharingService = new MainSharingService(
+            new InMemoryChatShareRepository(),
+            contactRepository,
+            tempDir,
+            new JdbcFileMetadataFactory(tempDir),
+            new CryptoUtils()
+        );
         sharingService = new MainSharingService(new InMemoryChatShareRepository(), contactRepository,
             Files.createTempDir(), new JdbcFileMetadataFactory(Files.createTempDir()), new CryptoUtils());
         chatService = new MainChatService(mockCoreDropConnector, identityRepository,

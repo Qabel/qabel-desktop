@@ -1,6 +1,6 @@
 package de.qabel.desktop.daemon.sync.worker;
 
-import de.qabel.box.storage.BoxFile;
+import de.qabel.box.storage.*;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.factory.DropUrlGenerator;
@@ -27,8 +27,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -39,11 +39,14 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
 public class DefaultSyncerTest extends AbstractSyncTest {
+    private ExecutorService executor = Executors.newSingleThreadExecutor();
     private MonitoredTransferManager manager;
     private BoxSyncConfig config;
     private Identity identity;
     private Account account;
     private DefaultSyncer syncer;
+    private BoxNavigation nav;
+    private BoxVolume volume;
 
     @Override
     @Before
@@ -63,6 +66,19 @@ public class DefaultSyncerTest extends AbstractSyncTest {
             account,
             new SqliteSyncIndexFactory()
         );
+
+        Path storage = Files.createTempDirectory("tmp");
+        volume = new BoxVolumeImpl(
+            new LocalReadBackend(storage),
+            new LocalWriteBackend(storage),
+            identity.getPrimaryKeyPair(),
+            new byte[0],
+            storage.toFile(),
+            "prefix"
+        );
+        volume.createIndex(volume.getRootRef());
+        nav = volume.navigate();
+        syncer = new DefaultSyncer(config, volume, manager);
     }
 
     @Override
@@ -78,7 +94,6 @@ public class DefaultSyncerTest extends AbstractSyncTest {
     public void addsFilesAsUploads() throws IOException {
         new File(tmpDir.toFile(), "file").createNewFile();
 
-        syncer = new DefaultSyncer(config, new BoxVolumeStub(), manager);
         syncer.run();
 
         waitUntil(() -> manager.getTransactions().size() == 2);
@@ -88,7 +103,6 @@ public class DefaultSyncerTest extends AbstractSyncTest {
     public void createsLocalDirIfNotExisting() throws Exception {
         Path newDir = tmpDir.resolve("subdir");
         config.setLocalPath(newDir);
-        syncer = new DefaultSyncer(config, new BoxVolumeStub(), manager);
         syncer.run();
 
         waitUntil(() -> Files.isDirectory(newDir));
@@ -96,7 +110,6 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 
     @Test
     public void afterStopFilesAreNotAddedAsUploads() throws Exception {
-        syncer = new DefaultSyncer(config, new BoxVolumeStub(), manager);
         syncer.run();
 
         waitUntil(() -> manager.getTransactions().size() == 1);
@@ -130,7 +143,6 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 
     @Test
     public void stopStopsPolling() throws Exception {
-        syncer = new DefaultSyncer(config, new BoxVolumeStub(), manager);
         syncer.run();
 
         waitUntil(() -> manager.getTransactions().size() == 1 && syncer.isPolling());
@@ -140,7 +152,6 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 
     @Test
     public void stopStopsTransactions() throws Exception {
-        syncer = new DefaultSyncer(config, new BoxVolumeStub(), manager);
         syncer.run();
 
         waitUntil(() -> manager.getTransactions().size() == 1, () -> manager.getTransactions().toString());
@@ -151,17 +162,14 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 
     @Test
     public void stopStopsRemoteWacher() throws Exception {
-        BoxNavigationStub nav = new BoxNavigationStub(null, BoxFileSystem.getRoot());
-        BoxVolumeStub volume = new BoxVolumeStub();
-        volume.rootNavigation = nav;
-        syncer = new DefaultSyncer(config, volume, manager);
         syncer.run();
 
         waitUntil(() -> manager.getTransactions().size() == 1 && syncer.isPolling());
         syncer.stop();
         manager.getHistory().clear();
 
-        nav.pushNotification(new BoxFile("a", "b", "c", 1L, 2L, new byte[0], null, null), CREATE);
+        push(new RemoteChangeEvent(Paths.get("/c"), false, 1000L, CREATE, new BoxFile("a", "b", "c", 1L, 2L, new byte[0], null, null), nav));
+
         // wait for something to not happen?
         Thread.sleep(100);
         assertThat(manager.getHistory(), is(empty()));
@@ -169,15 +177,12 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 
     @Test
     public void addsFoldersAsDownloads() throws Exception {
-        BoxNavigationStub nav = new BoxNavigationStub(null, null);
-        nav.event = new RemoteChangeEvent(Paths.get("/tmp/someFolder"), true, 1000L, CREATE, null, nav);
-        BoxVolumeStub volume = new BoxVolumeStub();
-        volume.rootNavigation = nav;
         syncer = new DefaultSyncer(config, volume, manager);
         syncer.setPollInterval(1, TimeUnit.MILLISECONDS);
         syncer.run();
 
         waitUntil(syncer::isPolling);
+        push(new RemoteChangeEvent(Paths.get("/tmp/someFolder"), true, 1000L, CREATE, null, nav));
 
         waitUntil(() -> manager.getTransactions().size() == 2);
         Transaction transaction = manager.getTransactions().get(0) instanceof Download ? manager.getTransactions().get(0) : manager.getTransactions().get(1);
@@ -187,16 +192,12 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 
     @Test
     public void addsRemoteDeletesAsDownload() throws Exception {
-        BoxNavigationStub nav = new BoxNavigationStub(null, null);
-        nav.event = new RemoteChangeEvent(Paths.get("/tmp/someFile"), false, 1000L, DELETE, null, nav);
-        BoxVolumeStub volume = new BoxVolumeStub();
-        volume.rootNavigation = nav;
-
         syncer = new DefaultSyncer(config, volume, manager);
         syncer.setPollInterval(1, TimeUnit.MILLISECONDS);
         syncer.run();
 
         waitUntil(syncer::isPolling);
+        push(new RemoteChangeEvent(Paths.get("/tmp/someFile"), false, 1000L, DELETE, null, nav));
 
         waitUntil(() -> manager.getTransactions().size() == 2);
         Transaction transaction = manager.getTransactions().get(0) instanceof Download ? manager.getTransactions().get(0) : manager.getTransactions().get(1);
@@ -204,21 +205,22 @@ public class DefaultSyncerTest extends AbstractSyncTest {
         assertEquals(Transaction.TYPE.DELETE, transaction.getType());
     }
 
+    protected void push(RemoteChangeEvent event) {
+        try {
+            executor.submit(() -> syncer.remoteChangeHandler.update(null, event)).get();
+        } catch (Exception e) {
+            System.err.println("failed to push event: " + e.getMessage());
+        }
+    }
+
     @Test
     public void policyPreventsActionsOutsideOfTheSyncDir() throws Exception {
-        BoxNavigationStub nav = new BoxNavigationStub(null, null);
-        nav.event = new RemoteChangeEvent(Paths.get("../../usr/local/tmp"), true, 1000L, DELETE, null, nav);
-        BoxVolumeStub volume = new BoxVolumeStub();
-        volume.rootNavigation = nav;
-        final List<Object> events = new LinkedList<>();
-        nav.addObserver((o, arg) -> events.add(arg));
-
         syncer = new DefaultSyncer(config, volume, manager);
         syncer.setPollInterval(1, TimeUnit.DAYS);
         syncer.run();
 
         waitUntil(syncer::isPolling);
-        waitUntil(() -> !events.isEmpty());
+        push(new RemoteChangeEvent(Paths.get("../../usr/local/tmp"), true, 1000L, DELETE, null, nav));
 
         manager.getTransactions().stream().filter(transaction -> transaction instanceof Download).findFirst()
             .ifPresent(transaction -> fail("policy should have prevented delete but " + transaction + " happened"));
@@ -228,17 +230,13 @@ public class DefaultSyncerTest extends AbstractSyncTest {
     public void bootstrappingCreatesDirIfLocalDirDoesNotExist() throws IOException {
         FileUtils.deleteDirectory(tmpDir.toFile());
 
-        syncer = new DefaultSyncer(config, new BoxVolumeStub(), manager);
+        syncer = new DefaultSyncer(config, volume, manager);
         syncer.run();
         assertTrue(Files.isDirectory(tmpDir));
     }
 
     @Test
     public void ignoresFilesOnBlacklist() throws Exception {
-        BoxNavigationStub nav = new BoxNavigationStub(null, null);
-        BoxVolumeStub volume = new BoxVolumeStub();
-        volume.rootNavigation = nav;
-
         PatternBlacklist blacklist = new PatternBlacklist();
         blacklist.add(Pattern.compile("\\..*\\.qpart~"));
         blacklist.add(Pattern.compile("\\..*~"));
@@ -261,10 +259,6 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 
     @Test
     public void ignoresFoldersOnBlacklist() throws Exception {
-        BoxNavigationStub nav = new BoxNavigationStub(null, null);
-        BoxVolumeStub volume = new BoxVolumeStub();
-        volume.rootNavigation = nav;
-
         PatternBlacklist blacklist = new PatternBlacklist();
         blacklist.add(Pattern.compile(".*\\.*"));
         BlacklistSpy spy = new BlacklistSpy(blacklist);

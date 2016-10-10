@@ -5,7 +5,6 @@ import de.qabel.desktop.config.factory.BoxVolumeFactory;
 import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.daemon.sync.blacklist.Blacklist;
 import de.qabel.desktop.daemon.sync.blacklist.FileBasedSyncBlacklist;
-import de.qabel.desktop.storage.cache.CachedBoxVolumeImpl;
 
 import java.io.IOException;
 
@@ -25,7 +24,7 @@ public class DefaultSyncerFactory implements SyncerFactory {
     public Syncer factory(BoxSyncConfig config) {
         DefaultSyncer syncer = new DefaultSyncer(
                 config,
-                (CachedBoxVolumeImpl) boxVolumeFactory.getVolume(config.getAccount(), config.getIdentity()),
+                boxVolumeFactory.getVolume(config.getAccount(), config.getIdentity()),
                 manager
         );
         syncer.setLocalBlacklist(blacklist);

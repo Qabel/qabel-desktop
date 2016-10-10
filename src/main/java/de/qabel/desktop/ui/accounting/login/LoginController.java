@@ -239,6 +239,7 @@ public class LoginController extends AbstractController implements Initializable
                 logger.info("invalid credentials: " + e.getMessage());
                 Platform.runLater(() -> toLoginFailureState(e.getMessage()));
             } catch (Exception e) {
+                logger.warn(e.getMessage(), e);
                 Platform.runLater(() -> toLoginFailureState(e.getMessage()));
             }
             Platform.runLater(() -> buttonBar.setVisible(true));

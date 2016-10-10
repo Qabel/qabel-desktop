@@ -73,6 +73,8 @@ public abstract class AbstractGuiTest<T> extends AbstractControllerTest {
             stage.setScene(scene);
             stage.show();
             robot.targetWindow(stage);
+            stage.requestFocus();
+            stage.getScene().getWindow().requestFocus();
         });
         baseFXRobot = new BaseFXRobot(scene);
         baseFXRobot.waitForIdle();

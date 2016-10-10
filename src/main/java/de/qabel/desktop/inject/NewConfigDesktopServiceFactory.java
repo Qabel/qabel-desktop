@@ -1,6 +1,8 @@
 package de.qabel.desktop.inject;
 
 import com.google.common.io.Files;
+import de.qabel.box.storage.FileMetadataFactory;
+import de.qabel.box.storage.jdbc.JdbcFileMetadataFactory;
 import de.qabel.box.storage.jdbc.JdbcFileMetadataFactory;
 import de.qabel.chat.repository.sqlite.SqliteChatDropMessageRepository;
 import de.qabel.chat.repository.sqlite.SqliteChatShareRepository;
@@ -141,6 +143,17 @@ public class NewConfigDesktopServiceFactory extends RuntimeDesktopServiceFactory
         return chatService;
     }
 
+    private FileMetadataFactory fileMetadataFactory;
+    private FileMetadataFactory getFileMetadataFactory() {
+        if (fileMetadataFactory == null) {
+            fileMetadataFactory = new JdbcFileMetadataFactory(
+                Files.createTempDir(),
+                PragmaVersionAdapter::new
+            );
+        }
+        return fileMetadataFactory;
+    }
+
     private SharingService sharingService;
     private SharingService getChatSharingService() {
         if (sharingService == null) {
@@ -148,7 +161,7 @@ public class NewConfigDesktopServiceFactory extends RuntimeDesktopServiceFactory
                 getChatShareRepository(),
                 getContactRepository(),
                 Files.createTempDir(),
-                new JdbcFileMetadataFactory(Files.createTempDir()),
+                getFileMetadataFactory(),
                 new CryptoUtils());
         }
         return sharingService;

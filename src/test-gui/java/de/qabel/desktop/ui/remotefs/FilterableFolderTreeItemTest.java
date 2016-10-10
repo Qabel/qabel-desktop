@@ -4,19 +4,21 @@ import com.airhacks.afterburner.views.FXMLView;
 import de.qabel.box.storage.BoxFile;
 import de.qabel.box.storage.BoxFolder;
 import de.qabel.box.storage.BoxObject;
+import de.qabel.box.storage.command.DeleteFileChange;
+import de.qabel.box.storage.dto.DMChangeEvent;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.desktop.daemon.sync.worker.BoxNavigationStub;
 import de.qabel.desktop.daemon.sync.worker.BoxVolumeStub;
+import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.ui.AbstractGuiTest;
 import javafx.scene.control.TreeItem;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.nio.file.Paths;
-
-import static de.qabel.desktop.daemon.sync.event.ChangeEvent.TYPE.DELETE;
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSController> {
     private FilterableFolderTreeItem folderTree;
@@ -31,9 +33,8 @@ public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSContro
         subSubFile = new BoxFile("prefix", "block", "innerFileName", 0L, 0L, new byte[0]);
         subFolder = new BoxFolder("prefix", "folderName", new byte[0]);
 
-        BoxFolder folder = new BoxFolder("ref", "folder", new byte[0]);
-        BoxNavigationStub indexNav = new BoxNavigationStub(null, Paths.get("/"));
-        navigation = new BoxNavigationStub(indexNav, Paths.get("/folder"));
+        new BoxFolder("ref", "folder", new byte[0]);
+        navigation = new BoxNavigationStub(BoxFileSystem.getRoot().resolve("folder"));
         navigation.files.add(subFile);
         navigation.folders.add(subFolder);
         try {
@@ -42,7 +43,9 @@ public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSContro
             fail(e.getMessage());
         }
 
-        ((BoxVolumeStub)boxVolumeFactory.boxVolume).rootNavigation = navigation;
+        BoxVolumeStub volume = new BoxVolumeStub();
+        volume.rootNavigation = navigation;
+        when(boxVolumeFactory.getVolume(any(), any())).thenReturn(volume);
 
         return new RemoteFSView();
     }
@@ -97,9 +100,12 @@ public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSContro
 
     @Test
     public void reactsOnRemoteChanges() throws Exception {
-        navigation.navigate("folderName").files.remove(subSubFile);
-        navigation.navigate("folderName").pushNotification(subSubFile, DELETE);
-
+        BoxNavigationStub subnav = navigation.navigate("folderName");
+        subnav.files.remove(subSubFile);
+        subnav.subject.onNext(new DMChangeEvent(
+            new DeleteFileChange(subSubFile),
+            subnav
+        ));
 
         waitForUI();
         waitUntil(() -> folderTree.getChildren().get(0).getChildren().isEmpty());
@@ -113,6 +119,6 @@ public class FilterableFolderTreeItemTest extends AbstractGuiTest<RemoteFSContro
         if (controller.searchQuery.textProperty().isNotEmpty().get()) {
             runLaterAndWait(() -> controller.searchQuery.textProperty().set(""));
         }
-        clickOn("#searchQuery").write(query);
+        new RemoteBrowserPage(baseFXRobot, robot, controller).search(query);
     }
 }

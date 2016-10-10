@@ -23,6 +23,7 @@ public class AbstractControllerGUITest extends AbstractGuiTest<AlertTestControll
         CrashReportAlert alert = controller.alert;
         try {
             runLaterAndWait(alert.getAlert().getDialogPane()::requestFocus);
+            runLaterAndWait(alert.getAlert().getDialogPane().getScene().getWindow()::requestFocus);
             CrashReportAlertPage page = new CrashReportAlertPage(baseFXRobot, robot, alert);
 
             assertEquals("Error", page.getTitle());

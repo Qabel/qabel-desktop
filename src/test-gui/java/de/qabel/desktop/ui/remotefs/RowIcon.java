@@ -21,7 +21,7 @@ public class RowIcon extends AbstractPage {
     }
 
     public void assertVisible() {
-        waitUntil(() -> waitForNode(selector()).isVisible());
+        waitUntil(() -> waitForNode(selector()).isVisible(), 10000L);
     }
 
     private String selector() {

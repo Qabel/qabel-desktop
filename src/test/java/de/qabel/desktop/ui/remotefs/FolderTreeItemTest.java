@@ -1,31 +1,32 @@
 package de.qabel.desktop.ui.remotefs;
 
 import de.qabel.box.storage.*;
+import de.qabel.box.storage.command.UpdateFileChange;
 import de.qabel.box.storage.dto.BoxPath;
-import de.qabel.box.storage.dto.DirectoryMetadataChangeNotification;
+import de.qabel.box.storage.dto.DMChangeEvent;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.box.storage.jdbc.JdbcDirectoryMetadata;
 import de.qabel.core.crypto.QblECPublicKey;
-import de.qabel.desktop.daemon.sync.event.ChangeEvent;
-import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function2;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+import rx.Observable;
+import rx.subjects.PublishSubject;
+import rx.subjects.Subject;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Observable;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 public class FolderTreeItemTest extends AbstractControllerTest {
     private FakeBoxNavigation navigation;
@@ -70,18 +71,6 @@ public class FolderTreeItemTest extends AbstractControllerTest {
         navigation.loading = false;
     }
 
-    @Test(timeout = 10000)
-    public void loadsChildrenAsynchonously() throws InterruptedException {
-        navigation = new FakeBoxNavigation();
-        item = new FolderTreeItem(createSomeFolder(), navigation);
-        navigation.folders.add(createSomeFolder());
-
-        ObservableList<TreeItem<BoxObject>> children = load();
-
-        waitUntil(() -> children.size() == 1);
-        assertFalse(item.isLeaf());
-    }
-
     private BoxFolder createSomeFolder() {
         return new BoxFolder("ref", "name", new byte[0]);
     }
@@ -112,14 +101,10 @@ public class FolderTreeItemTest extends AbstractControllerTest {
         List children = load();
         assertEquals(0, children.size());
 
-        navigation.files.add(createSomeFile());
-        navigation.setChanged();
-        navigation.notifyObservers(new RemoteChangeEvent(
-            Paths.get("/name2"),
-            false,
-            navigation.files.get(0).getMtime(),
-            ChangeEvent.TYPE.CREATE,
-            navigation.files.get(0),
+        BoxFile someFile = createSomeFile();
+        navigation.files.add(someFile);
+        navigation.subject.onNext(new DMChangeEvent(
+            new UpdateFileChange(null, someFile),
             navigation
         ));
         waitUntil(() -> children.size() == 1);
@@ -129,11 +114,12 @@ public class FolderTreeItemTest extends AbstractControllerTest {
         return new BoxFile("prefix", "ref2", "name2", 0L, 0L, new byte[0], null, null);
     }
 
-    private class FakeBoxNavigation extends Observable implements BoxNavigation {
+    private class FakeBoxNavigation implements BoxNavigation {
         public boolean loading;
 
         public List<BoxFile> files = new LinkedList<>();
         public List<BoxFolder> folders = new LinkedList<>();
+        public Subject<DMChangeEvent, DMChangeEvent> subject = PublishSubject.create();
 
         @Override
         public DirectoryMetadata reloadMetadata() throws QblStorageException {
@@ -156,7 +142,7 @@ public class FolderTreeItemTest extends AbstractControllerTest {
         }
 
         @Override
-        public BoxNavigation navigate(BoxExternal target) {
+        public BoxNavigation navigate(BoxExternalFolder target) {
             return null;
         }
 
@@ -280,16 +266,6 @@ public class FolderTreeItemTest extends AbstractControllerTest {
         }
 
         @Override
-        public BoxExternalReference createFileMetadata(QblECPublicKey owner, BoxFile boxFile) throws QblStorageException {
-            return null;
-        }
-
-        @Override
-        public void updateFileMetadata(BoxFile boxFile) throws QblStorageException, IOException, InvalidKeyException {
-
-        }
-
-        @Override
         public BoxExternalReference share(QblECPublicKey owner, BoxFile file, String receiver) throws QblStorageException {
             return null;
         }
@@ -306,16 +282,6 @@ public class FolderTreeItemTest extends AbstractControllerTest {
         @Override
         public boolean hasFile(String name) throws QblStorageException {
             return false;
-        }
-
-        @Override
-        public synchronized void setChanged() {
-            super.setChanged();
-        }
-
-        @Override
-        public void notifyObservers() {
-            super.notifyObservers();
         }
 
         @NotNull
@@ -358,8 +324,8 @@ public class FolderTreeItemTest extends AbstractControllerTest {
 
         @NotNull
         @Override
-        public rx.Observable<DirectoryMetadataChangeNotification> getChanges() {
-            return null;
+        public Observable<DMChangeEvent> getChanges() {
+            return subject;
         }
 
         @NotNull
@@ -371,6 +337,17 @@ public class FolderTreeItemTest extends AbstractControllerTest {
         @NotNull
         @Override
         public BoxPath.FolderLike getPath() {
+            return BoxPath.Root.INSTANCE;
+        }
+
+        @Override
+        public void visit(Function2<? super AbstractNavigation, ? super BoxObject, Unit> function2) {
+
+        }
+
+        @NotNull
+        @Override
+        public BoxExternalReference getExternalReference(QblECPublicKey qblECPublicKey, BoxFile boxFile) {
             return null;
         }
     }

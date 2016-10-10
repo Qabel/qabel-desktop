@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import static de.qabel.box.storage.dto.BoxPath.*;
+
 public class BoxPath implements Path {
 
     private String path;
@@ -35,6 +37,14 @@ public class BoxPath implements Path {
             elements.add(workingPath);
         }
         this.elements = elements.toArray(new String[elements.size()]);
+    }
+
+    public FolderLike toFilderLike() {
+        FolderLike result = Root.INSTANCE;
+        for (String element : elements) {
+            result = result.resolveFolder(element);
+        }
+        return result;
     }
 
     @Override

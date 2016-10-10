@@ -5,6 +5,7 @@ import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.desktop.daemon.sync.event.RemoteChangeEvent;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.nio.boxfs.BoxPath;
+import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -30,9 +31,9 @@ public class FolderTreeItem extends TreeItem<BoxObject> implements Observer {
         this.navigation = navigation;
         nameProperty = new SimpleStringProperty(folder.getName());
 
-        if (navigation instanceof Observable) {
-            ((Observable) navigation).addObserver(this);
-        }
+        navigation.getChanges()
+            .map(change -> CachedBoxNavigation.createRemoteChangeEventFromNotification(navigation, change))
+            .subscribe(remoteChangeEvent -> update(null, remoteChangeEvent));
     }
 
     public BoxPath getPath() {
@@ -144,7 +145,7 @@ public class FolderTreeItem extends TreeItem<BoxObject> implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if (o != navigation || !(arg instanceof RemoteChangeEvent)) {
+        if (!(arg instanceof RemoteChangeEvent)) {
             return;
         }
         RemoteChangeEvent event = (RemoteChangeEvent)arg;

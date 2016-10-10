@@ -31,6 +31,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
@@ -52,7 +53,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static de.qabel.desktop.ui.util.Icons.BROWSE;
+import static de.qabel.desktop.ui.util.Icons.BROWSE_INVERSE;
 import static de.qabel.desktop.ui.util.Icons.INFO;
 import static de.qabel.desktop.util.QuotaUtil.getQuotaDescription;
 import static de.qabel.desktop.util.QuotaUtil.getUsedRatioInPercent;
@@ -217,7 +218,7 @@ public class LayoutController extends AbstractController implements Initializabl
             new Image(getClass().getResourceAsStream("/img/account_white.png")),
             accountingView);
         browseNav = createNavItem(resourceBundle.getString("layoutBrowse"),
-            Icons.getIcon(BROWSE),
+            Icons.getIcon(BROWSE_INVERSE),
             new RemoteFSView());
         contactsNav = createNavItem(resourceBundle.getString("layoutContacts"),
             new Image(getClass().getResourceAsStream("/img/account_multiple_white.png")),
@@ -319,7 +320,7 @@ public class LayoutController extends AbstractController implements Initializabl
         }
 
         AvatarView avatarView = createAvatarView(identity);
-        avatarController = (AvatarController) avatarView.getPresenter();
+        avatarController = avatarView.getPresenter();
 
         identity.attach(() -> Platform.runLater(() -> {
             alias.setText(identity.getAlias());
@@ -351,6 +352,12 @@ public class LayoutController extends AbstractController implements Initializabl
     }
 
     private NaviItem createNavItem(String label, Image image, FXMLView view) {
+        NaviItem naviItem = new NaviItem(label, image);
+        linkNaviItem(view, naviItem);
+        return naviItem;
+    }
+
+    private NaviItem createNavItem(String label, Node image, FXMLView view) {
         NaviItem naviItem = new NaviItem(label, image);
         linkNaviItem(view, naviItem);
         return naviItem;

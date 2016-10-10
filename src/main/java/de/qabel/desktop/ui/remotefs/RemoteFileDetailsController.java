@@ -11,7 +11,6 @@ import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.desktop.SharingService;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.repository.DropMessageRepository;
-import de.qabel.desktop.storage.cache.CachedBoxNavigation;
 import de.qabel.desktop.ui.AbstractController;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -191,10 +190,8 @@ public class RemoteFileDetailsController extends AbstractController implements I
     private void share(Contact contact, String message) {
         tryOrAlert(() -> {
             sharingService.shareAndSendMessage(clientConfiguration.getSelectedIdentity(), contact, (BoxFile) boxObject, message, navigation);
-            if (navigation instanceof CachedBoxNavigation) {
-                ((CachedBoxNavigation) navigation).refresh();
-                loadShares();
-            }
+            navigation.refresh();
+            loadShares();
         });
     }
 
