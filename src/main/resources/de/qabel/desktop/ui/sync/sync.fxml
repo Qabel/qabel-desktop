@@ -5,217 +5,232 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<VBox styleClass="sync" fx:controller="de.qabel.desktop.ui.sync.SyncController" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-       <Button fx:id="addSync" onAction="#addSync" mnemonicParsing="false" text="%syncAddSync">
-           <VBox.margin>
-               <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-           </VBox.margin>
-       </Button>
-      <VBox fx:id="syncItemContainer">
-         <children>
-            <BorderPane prefHeight="130.0" prefWidth="600.0" style="-fx-border-color: darkgrey; -fx-border-width: 0 0 1 0;">
-               <left>
-                  <VBox BorderPane.alignment="CENTER">
-                     <children>
-                        <ImageView fitHeight="41.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../../../../folder.png" />
-                           </image>
-                           <VBox.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </VBox.margin>
-                        </ImageView>
-                        <ProgressIndicator progress="0.92" />
-                     </children>
-                  </VBox>
-               </left>
-               <padding>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </padding>
-               <center>
-                  <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                     <center>
-                        <VBox BorderPane.alignment="CENTER">
-                           <children>
-                              <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-spacing: 3;">
-                                 <padding>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </padding>
-                                 <children>
-                                    <Label text="My Documents">
-                                       <font>
-                                          <Font name="System Bold" size="22.0" />
-                                       </font>
-                                    </Label>
-                                    <Label text="local: /home/yourname/Documents" />
-                                    <Label text="remote: /private/documents" />
-                                 </children>
-                              </VBox>
-                              <Label maxWidth="1.7976931348623157E308" text="Currently uploading: Documents/Images/someImage.png">
-                                 <VBox.margin>
-                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                 </VBox.margin>
-                                 <padding>
-                                    <Insets left="3.0" />
-                                 </padding>
-                              </Label>
-                              <ProgressBar maxHeight="11.0" maxWidth="1.7976931348623157E308" prefHeight="0.0" prefWidth="519.0" progress="0.29">
-                                 <VBox.margin>
-                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                 </VBox.margin>
-                              </ProgressBar>
-                           </children>
-                        </VBox>
-                     </center>
-                     <right>
-                        <VBox alignment="TOP_RIGHT" BorderPane.alignment="CENTER">
-                           <children>
-                              <Button mnemonicParsing="false" text="..." />
-                           </children>
-                           <padding>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </padding>
-                        </VBox>
-                     </right>
-                  </BorderPane>
-               </center>
-            </BorderPane>
-            <BorderPane prefHeight="130.0" prefWidth="600.0" style="-fx-border-color: darkgrey; -fx-border-width: 0 0 1 0;">
-               <center>
-                  <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                     <center>
-                        <VBox BorderPane.alignment="CENTER">
-                           <children>
-                              <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-spacing: 3;">
-                                 <children>
-                                    <Label text="Backup">
-                                       <font>
-                                          <Font name="System Bold" size="22.0" />
-                                       </font>
-                                    </Label>
-                                    <Label text="local: /mnt/backup" />
-                                    <Label text="remote: /office/backup" />
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </padding>
-                              </VBox>
-                              <Label maxWidth="1.7976931348623157E308" text="initializing...">
-                                 <VBox.margin>
-                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                 </VBox.margin>
-                                 <padding>
-                                    <Insets left="3.0" />
-                                 </padding>
-                              </Label>
-                              <ProgressBar maxHeight="11.0" maxWidth="1.7976931348623157E308" prefHeight="0.0" prefWidth="519.0">
-                                 <VBox.margin>
-                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                 </VBox.margin>
-                              </ProgressBar>
-                           </children>
-                        </VBox>
-                     </center>
-                     <right>
-                        <VBox alignment="TOP_RIGHT" BorderPane.alignment="CENTER">
-                           <children>
-                              <Button mnemonicParsing="false" text="..." />
-                           </children>
-                           <padding>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </padding>
-                        </VBox>
-                     </right>
-                  </BorderPane>
-               </center>
-               <left>
-                  <VBox BorderPane.alignment="CENTER">
-                     <children>
-                        <ImageView fitHeight="41.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../../../../folder.png" />
-                           </image>
-                           <VBox.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </VBox.margin>
-                        </ImageView>
-                        <ProgressIndicator prefHeight="27.0" prefWidth="0.0" />
-                     </children>
-                  </VBox>
-               </left>
-               <padding>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </padding>
-            </BorderPane>
-            <BorderPane prefHeight="130.0" prefWidth="600.0" style="-fx-border-color: darkgrey; -fx-border-width: 0 0 1 0;">
-               <center>
-                  <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                     <center>
-                        <VBox BorderPane.alignment="CENTER">
-                           <children>
-                              <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-spacing: 3;">
-                                 <children>
-                                    <Label text="invoices">
-                                       <font>
-                                          <Font name="System Bold" size="22.0" />
-                                       </font>
-                                    </Label>
-                                    <Label text="local: /home/yourname/invoices" />
-                                    <Label text="remote: /office/invoice" />
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </padding>
-                              </VBox>
-                              <Label maxWidth="1.7976931348623157E308" text="in sync: 95 files and 10 folders">
-                                 <VBox.margin>
-                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                 </VBox.margin>
-                                 <padding>
-                                    <Insets left="3.0" />
-                                 </padding>
-                              </Label>
-                              <ProgressBar disable="true" maxHeight="11.0" maxWidth="1.7976931348623157E308" prefHeight="0.0" prefWidth="519.0" progress="1.0" visible="false">
-                                 <VBox.margin>
-                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                                 </VBox.margin>
-                              </ProgressBar>
-                           </children>
-                        </VBox>
-                     </center>
-                     <right>
-                        <VBox alignment="TOP_RIGHT" BorderPane.alignment="CENTER">
-                           <children>
-                              <Button mnemonicParsing="false" text="..." />
-                           </children>
-                           <padding>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </padding>
-                        </VBox>
-                     </right>
-                  </BorderPane>
-               </center>
-               <left>
-                  <VBox BorderPane.alignment="CENTER">
-                     <children>
-                        <ImageView fitHeight="41.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../../../../folder.png" />
-                           </image>
-                           <VBox.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </VBox.margin>
-                        </ImageView>
-                        <ProgressIndicator prefHeight="63.0" prefWidth="60.0" progress="1.0" />
-                     </children>
-                  </VBox>
-               </left>
-               <padding>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </padding>
-            </BorderPane>
-         </children>
-      </VBox>
-   </children>
+<VBox styleClass="sync" fx:controller="de.qabel.desktop.ui.sync.SyncController" xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <Button fx:id="addSync" onAction="#addSync" mnemonicParsing="false" text="%syncAddSync">
+            <VBox.margin>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+            </VBox.margin>
+        </Button>
+        <ScrollPane>
+            <VBox fx:id="syncItemContainer">
+                <children>
+                    <BorderPane prefHeight="130.0" prefWidth="600.0"
+                                style="-fx-border-color: darkgrey; -fx-border-width: 0 0 1 0;">
+                        <left>
+                            <VBox BorderPane.alignment="CENTER">
+                                <children>
+                                    <ImageView fitHeight="41.0" fitWidth="44.0" pickOnBounds="true"
+                                               preserveRatio="true">
+                                        <image>
+                                            <Image url="@../../../../../folder.png"/>
+                                        </image>
+                                        <VBox.margin>
+                                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                                        </VBox.margin>
+                                    </ImageView>
+                                    <ProgressIndicator progress="0.92"/>
+                                </children>
+                            </VBox>
+                        </left>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                        <center>
+                            <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                <center>
+                                    <VBox BorderPane.alignment="CENTER">
+                                        <children>
+                                            <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-spacing: 3;">
+                                                <padding>
+                                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                                </padding>
+                                                <children>
+                                                    <Label text="My Documents">
+                                                        <font>
+                                                            <Font name="System Bold" size="22.0"/>
+                                                        </font>
+                                                    </Label>
+                                                    <Label text="local: /home/yourname/Documents"/>
+                                                    <Label text="remote: /private/documents"/>
+                                                </children>
+                                            </VBox>
+                                            <Label maxWidth="1.7976931348623157E308"
+                                                   text="Currently uploading: Documents/Images/someImage.png">
+                                                <VBox.margin>
+                                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                                </VBox.margin>
+                                                <padding>
+                                                    <Insets left="3.0"/>
+                                                </padding>
+                                            </Label>
+                                            <ProgressBar maxHeight="11.0" maxWidth="1.7976931348623157E308"
+                                                         prefHeight="0.0" prefWidth="519.0" progress="0.29">
+                                                <VBox.margin>
+                                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                                </VBox.margin>
+                                            </ProgressBar>
+                                        </children>
+                                    </VBox>
+                                </center>
+                                <right>
+                                    <VBox alignment="TOP_RIGHT" BorderPane.alignment="CENTER">
+                                        <children>
+                                            <Button mnemonicParsing="false" text="..."/>
+                                        </children>
+                                        <padding>
+                                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                        </padding>
+                                    </VBox>
+                                </right>
+                            </BorderPane>
+                        </center>
+                    </BorderPane>
+                    <BorderPane prefHeight="130.0" prefWidth="600.0"
+                                style="-fx-border-color: darkgrey; -fx-border-width: 0 0 1 0;">
+                        <center>
+                            <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                <center>
+                                    <VBox BorderPane.alignment="CENTER">
+                                        <children>
+                                            <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-spacing: 3;">
+                                                <children>
+                                                    <Label text="Backup">
+                                                        <font>
+                                                            <Font name="System Bold" size="22.0"/>
+                                                        </font>
+                                                    </Label>
+                                                    <Label text="local: /mnt/backup"/>
+                                                    <Label text="remote: /office/backup"/>
+                                                </children>
+                                                <padding>
+                                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                                </padding>
+                                            </VBox>
+                                            <Label maxWidth="1.7976931348623157E308" text="initializing...">
+                                                <VBox.margin>
+                                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                                </VBox.margin>
+                                                <padding>
+                                                    <Insets left="3.0"/>
+                                                </padding>
+                                            </Label>
+                                            <ProgressBar maxHeight="11.0" maxWidth="1.7976931348623157E308"
+                                                         prefHeight="0.0" prefWidth="519.0">
+                                                <VBox.margin>
+                                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                                </VBox.margin>
+                                            </ProgressBar>
+                                        </children>
+                                    </VBox>
+                                </center>
+                                <right>
+                                    <VBox alignment="TOP_RIGHT" BorderPane.alignment="CENTER">
+                                        <children>
+                                            <Button mnemonicParsing="false" text="..."/>
+                                        </children>
+                                        <padding>
+                                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                        </padding>
+                                    </VBox>
+                                </right>
+                            </BorderPane>
+                        </center>
+                        <left>
+                            <VBox BorderPane.alignment="CENTER">
+                                <children>
+                                    <ImageView fitHeight="41.0" fitWidth="44.0" pickOnBounds="true"
+                                               preserveRatio="true">
+                                        <image>
+                                            <Image url="@../../../../../folder.png"/>
+                                        </image>
+                                        <VBox.margin>
+                                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                                        </VBox.margin>
+                                    </ImageView>
+                                    <ProgressIndicator prefHeight="27.0" prefWidth="0.0"/>
+                                </children>
+                            </VBox>
+                        </left>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                    </BorderPane>
+                    <BorderPane prefHeight="130.0" prefWidth="600.0"
+                                style="-fx-border-color: darkgrey; -fx-border-width: 0 0 1 0;">
+                        <center>
+                            <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                <center>
+                                    <VBox BorderPane.alignment="CENTER">
+                                        <children>
+                                            <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-spacing: 3;">
+                                                <children>
+                                                    <Label text="invoices">
+                                                        <font>
+                                                            <Font name="System Bold" size="22.0"/>
+                                                        </font>
+                                                    </Label>
+                                                    <Label text="local: /home/yourname/invoices"/>
+                                                    <Label text="remote: /office/invoice"/>
+                                                </children>
+                                                <padding>
+                                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                                </padding>
+                                            </VBox>
+                                            <Label maxWidth="1.7976931348623157E308"
+                                                   text="in sync: 95 files and 10 folders">
+                                                <VBox.margin>
+                                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                                </VBox.margin>
+                                                <padding>
+                                                    <Insets left="3.0"/>
+                                                </padding>
+                                            </Label>
+                                            <ProgressBar disable="true" maxHeight="11.0"
+                                                         maxWidth="1.7976931348623157E308" prefHeight="0.0"
+                                                         prefWidth="519.0" progress="1.0" visible="false">
+                                                <VBox.margin>
+                                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+                                                </VBox.margin>
+                                            </ProgressBar>
+                                        </children>
+                                    </VBox>
+                                </center>
+                                <right>
+                                    <VBox alignment="TOP_RIGHT" BorderPane.alignment="CENTER">
+                                        <children>
+                                            <Button mnemonicParsing="false" text="..."/>
+                                        </children>
+                                        <padding>
+                                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                        </padding>
+                                    </VBox>
+                                </right>
+                            </BorderPane>
+                        </center>
+                        <left>
+                            <VBox BorderPane.alignment="CENTER">
+                                <children>
+                                    <ImageView fitHeight="41.0" fitWidth="44.0" pickOnBounds="true"
+                                               preserveRatio="true">
+                                        <image>
+                                            <Image url="@../../../../../folder.png"/>
+                                        </image>
+                                        <VBox.margin>
+                                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                                        </VBox.margin>
+                                    </ImageView>
+                                    <ProgressIndicator prefHeight="63.0" prefWidth="60.0" progress="1.0"/>
+                                </children>
+                            </VBox>
+                        </left>
+                        <padding>
+                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                    </BorderPane>
+                </children>
+            </VBox>
+        </ScrollPane>
+    </children>
 </VBox>
