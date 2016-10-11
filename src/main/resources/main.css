@@ -254,13 +254,6 @@
     -fx-text-fill: -fx-text-inner-color;
 }
 
-.message-text {
-    -fx-padding: 1em 1em 1em 1em;
-    -fx-text-alignment: justify;
-    -fx-wrap-text: true;
-    -fx-text-fill: white;
-}
-
 .message-date {
     -fx-padding: 0 1em 0.5em 1em;
     -fx-text-alignment: justify;
@@ -272,17 +265,21 @@
     -fx-text-alignment: right;
 }
 
-.own .message-text .label {
+.message-text {
+    -fx-padding: 1em 1em 1em 1em;
+    -fx-background-color: transparent;
+}
+
+.message-text .text {
+    -fx-fill: white;
+    -fx-text-alignment: justify;
+}
+
+.own .message-text .text {
     -fx-text-alignment: right;
 }
-
-.other .message-text .label {
+.other .message-text .text {
     -fx-text-alignment: left;
-}
-
-.message-text .label {
-    -fx-wrap-text: true;
-    -fx-text-fill: white;
 }
 
 .payload-type-icon {
@@ -823,14 +820,4 @@ VBox.spaced, HBox.spaced {
     -fx-effect: dropshadow(three-pass-box, red, 8, 0.0, 0, 1);
 }
 
-.selectable-text,
-.selectable-text .text-area,
-.selectable-text .text-area .scroll-pane,
-.selectable-text .text-area .viewport,
-.selectable-text .text-area .content {
-    -fx-background-color: #4d4d4d;
-    -fx-background-insets: 0;
-    -fx-background-radius: 0;
-    -fx-padding: 0;
-    -fx-text-fill: white;
-}
+.own > text
