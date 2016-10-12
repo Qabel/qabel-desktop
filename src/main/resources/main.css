@@ -270,9 +270,21 @@
     -fx-background-color: transparent;
 }
 
-.message-text .text {
+.message-text .text-area {
     -fx-fill: white;
+    -fx-text-fill: white;
     -fx-text-alignment: justify;
+    -fx-background-color: #4d4d4d;
+    -fx-background-insets: 0; -fx-background-radius: 0; -fx-padding: 0;
+}
+
+.own .message-text .text-area .content,
+.own .message-text .text-area .scroll-pane {
+    -fx-background-color: #4d4d4d;
+}
+.other .message-text .text-area .content,
+.other .message-text .text-area .scroll-pane {
+    -fx-background-color: #ff690f;
 }
 
 .own .message-text .text {

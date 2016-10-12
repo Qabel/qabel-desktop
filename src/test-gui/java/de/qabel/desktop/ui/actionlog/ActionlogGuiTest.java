@@ -13,6 +13,7 @@ import org.testfx.api.FxRobot;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -24,6 +25,51 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
     @Override
     protected FXMLView getView() {
         return new ActionlogView();
+    }
+
+    @Test
+    public void name() throws Exception {
+        controller.contact = new Contact(identity.getAlias(), identity.getDropUrls(), identity.getEcPublicKey());
+
+        FxRobot textArea = clickOn("#textarea");
+        textArea.write("line1");
+        robot.press(KeyCode.SHIFT);
+        try {
+            robot.push(KeyCode.ENTER);
+        } finally {
+            robot.release(KeyCode.SHIFT);
+        }
+        robot.write("line2line2line2line2 line2");
+        robot.press(KeyCode.SHIFT);
+        try {
+            robot.push(KeyCode.ENTER);
+        } finally {
+            robot.release(KeyCode.SHIFT);
+        }
+        robot.write("3");
+        robot.press(KeyCode.SHIFT);
+        try {
+            robot.push(KeyCode.ENTER);
+        } finally {
+            robot.release(KeyCode.SHIFT);
+        }
+        robot.write("4");
+        robot.press(KeyCode.SHIFT);
+        try {
+            robot.push(KeyCode.ENTER);
+        } finally {
+            robot.release(KeyCode.SHIFT);
+        }
+        robot.write("4");
+        robot.press(KeyCode.SHIFT);
+        try {
+            robot.push(KeyCode.ENTER);
+        } finally {
+            robot.release(KeyCode.SHIFT);
+        }
+        robot.write("4");
+        submitChat();
+        robot.sleep(15, TimeUnit.SECONDS);
     }
 
     @Test
@@ -39,6 +85,8 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
         assertEquals(text, TextMessage.fromJson(list.get(0).getDropPayload()).getText());
         assertEquals(new Date().getTime(), list.get(0).getCreationDate().getTime(), 100000);
         assertEquals(controller.identity.getId(), list.get(0).getSender().getId());
+
+        robot.sleep(5, TimeUnit.SECONDS);
     }
 
     private List<DropMessage> receiveMessages() {
