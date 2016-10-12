@@ -31,7 +31,7 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
         String text = "Message";
         waitUntil(() -> controller.textarea != null);
         Identity i = controller.identity;
-        controller.contact = new Contact(i.getAlias(),i.getDropUrls(), i.getEcPublicKey());
+        controller.contact = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
         clickOn("#textarea").write(text);
         robot.push(KeyCode.ENTER);
         List<DropMessage> list = receiveMessages();
@@ -39,6 +39,7 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
         assertEquals(text, TextMessage.fromJson(list.get(0).getDropPayload()).getText());
         assertEquals(new Date().getTime(), list.get(0).getCreationDate().getTime(), 100000);
         assertEquals(controller.identity.getId(), list.get(0).getSender().getId());
+
     }
 
     private List<DropMessage> receiveMessages() {
@@ -48,6 +49,7 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
     @Test
     public void multilineInput() {
         controller.contact = new Contact(identity.getAlias(), identity.getDropUrls(), identity.getEcPublicKey());
+
         FxRobot textArea = clickOn("#textarea");
         textArea.write("line1");
         robot.press(KeyCode.SHIFT);
@@ -58,13 +60,17 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
         }
         robot.write("line2");
 
-        assertTrue(receiveMessages().isEmpty());
-        robot.push(KeyCode.ENTER);
-        assertFalse(receiveMessages().isEmpty());
+        submitChat();
 
         DropMessage message = receiveMessages().get(0);
         assertEquals(DropMessageRepository.PAYLOAD_TYPE_MESSAGE, message.getDropPayloadType());
         assertEquals("line1\nline2", TextMessage.fromJson(message.getDropPayload()).getText());
+    }
+
+    private void submitChat() {
+        assertTrue(receiveMessages().isEmpty());
+        robot.push(KeyCode.ENTER);
+        assertFalse(receiveMessages().isEmpty());
     }
 
     @Test

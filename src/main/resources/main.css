@@ -254,13 +254,6 @@
     -fx-text-fill: -fx-text-inner-color;
 }
 
-.message-text {
-    -fx-padding: 1em 1em 1em 1em;
-    -fx-text-alignment: justify;
-    -fx-wrap-text: true;
-    -fx-text-fill: white;
-}
-
 .message-date {
     -fx-padding: 0 1em 0.5em 1em;
     -fx-text-alignment: justify;
@@ -272,17 +265,40 @@
     -fx-text-alignment: right;
 }
 
-.own .message-text .label {
+.message-text {
+    -fx-padding: 1em 1em 1em 1em;
+    -fx-background-color: transparent;
+}
+
+.message-text .text-area {
+    -fx-fill: white;
+    -fx-text-fill: white;
+    -fx-text-alignment: justify;
+    -fx-background-color: #4d4d4d;
+
+}
+
+.own .message-text,
+.own .message-text .text-area .content,
+.own .message-text .text-area ScrollPane,
+.own .message-text .text-area .scroll-pane {
+    -fx-background-color: #4d4d4d;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+.other .message-text,
+.other .message-text .text-area .content,
+.other .message-text .text-area ScrollPane,
+.other .message-text .text-area .scroll-pane {
+    -fx-background-color: #ff690f;
+    -fx-background-insets: 0; -fx-background-radius: 0;
+}
+
+.own .message-text .text {
     -fx-text-alignment: right;
 }
-
-.other .message-text .label {
+.other .message-text .text {
     -fx-text-alignment: left;
-}
-
-.message-text .label {
-    -fx-wrap-text: true;
-    -fx-text-fill: white;
 }
 
 .payload-type-icon {

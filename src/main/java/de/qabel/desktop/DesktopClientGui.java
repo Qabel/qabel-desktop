@@ -78,6 +78,8 @@ public class DesktopClientGui extends Application {
         });
 
         trayNotifications(tray);
+
+//        ScenicView.show(primaryStage.getScene());
     }
 
     private void setUpWindow() {
