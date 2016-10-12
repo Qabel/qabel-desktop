@@ -275,16 +275,20 @@
     -fx-text-fill: white;
     -fx-text-alignment: justify;
     -fx-background-color: #4d4d4d;
-    -fx-background-insets: 0; -fx-background-radius: 0; -fx-padding: 0;
+
 }
 
 .own .message-text .text-area .content,
+.own .message-text .text-area ScrollPane,
 .own .message-text .text-area .scroll-pane {
     -fx-background-color: #4d4d4d;
+    -fx-background-insets: 0; -fx-background-radius: 0; -fx-padding: 0;
 }
 .other .message-text .text-area .content,
+.other .message-text .text-area ScrollPane,
 .other .message-text .text-area .scroll-pane {
     -fx-background-color: #ff690f;
+    -fx-background-insets: 0; -fx-background-radius: 0; -fx-padding: 0;
 }
 
 .own .message-text .text {
