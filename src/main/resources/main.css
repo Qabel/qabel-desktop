@@ -278,17 +278,20 @@
 
 }
 
+.own .message-text,
 .own .message-text .text-area .content,
 .own .message-text .text-area ScrollPane,
 .own .message-text .text-area .scroll-pane {
     -fx-background-color: #4d4d4d;
-    -fx-background-insets: 0; -fx-background-radius: 0; -fx-padding: 0;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
 }
+.other .message-text,
 .other .message-text .text-area .content,
 .other .message-text .text-area ScrollPane,
 .other .message-text .text-area .scroll-pane {
     -fx-background-color: #ff690f;
-    -fx-background-insets: 0; -fx-background-radius: 0; -fx-padding: 0;
+    -fx-background-insets: 0; -fx-background-radius: 0;
 }
 
 .own .message-text .text {
@@ -835,5 +838,3 @@ VBox.spaced, HBox.spaced {
 .error-textfield {
     -fx-effect: dropshadow(three-pass-box, red, 8, 0.0, 0, 1);
 }
-
-.own > text
