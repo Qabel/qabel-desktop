@@ -155,14 +155,14 @@
     -fx-background-radius: 5;
 }
 
-#shadow {
-    -fx-effect: dropshadow(one-pass-box, grey, 5, -1, 0, 2);
-}
-
 #myMessagebox {
     -fx-background-color: #4d4d4d;
     -fx-background-radius: 5;
 }
+#shadow {
+    -fx-effect: dropshadow(one-pass-box, grey, 5, -1, 0, 2);
+}
+
 
 .selected {
     -fx-background-color: #b3b3b3;
@@ -254,12 +254,29 @@
     -fx-text-fill: -fx-text-inner-color;
 }
 
-.message-text {
-    -fx-padding: 1em 1em 1em 1em;
-    -fx-text-alignment: justify;
-    -fx-wrap-text: true;
-    -fx-text-fill: white;
+
+.hyperlink {
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+    -fx-underline: false;
 }
+
+.hyperlink .text {
+    -fx-fill: #222222;
+}
+
+.hyperlink:visited .text {
+    -fx-fill: #222222;
+}
+
+.hyperlink:hover .text {
+    -fx-fill: #787878;
+}
+
+.hyperlink:pressed .text {
+    -fx-fill: #fd670d;
+}
+
 
 .message-date {
     -fx-padding: 0 1em 0.5em 1em;
@@ -267,22 +284,47 @@
     -fx-wrap-text: true;
 }
 
+
 .own .message-date {
     -fx-alignment: bottom-right;
     -fx-text-alignment: right;
 }
 
-.own .message-text .label {
-    -fx-text-alignment: right;
-}
-
-.other .message-text .label {
-    -fx-text-alignment: left;
-}
-
-.message-text .label {
+.message-text {
+    -fx-padding: 1em 1em 1em 1em;
+    -fx-text-alignment: justify;
     -fx-wrap-text: true;
     -fx-text-fill: white;
+    -fx-fill: white;
+}
+
+.message-text,
+.message-text .label,
+.message-text .text,
+.message-text Text {
+    -fx-wrap-text: true;
+    -fx-text-fill: white;
+    -fx-fill: white;
+}
+
+.own .message-text .label,
+.own .message-text Text {
+    -fx-text-alignment: right;
+    -fx-text-fill: #4d4d4d;
+}
+
+.other .message-text .label ,
+.other .message-text Text {
+    -fx-text-alignment: left;
+
+}
+
+.own .message-text .hyperlink .text {
+    -fx-fill: #ff690f;
+}
+
+.other .message-text .hyperlink .text {
+    -fx-fill: #4d4d4d;
 }
 
 .payload-type-icon {
@@ -456,28 +498,6 @@ VBox.spaced, HBox.spaced {
 .headline {
     -fx-font-weight: bolder;
     -fx-border-width: 0 0 1px 0;
-}
-
-.hyperlink {
-    -fx-border-color: transparent;
-    -fx-padding: 0;
-    -fx-underline: false;
-}
-
-.hyperlink .text {
-    -fx-fill: #222222;
-}
-
-.hyperlink:visited .text {
-    -fx-fill: #222222;
-}
-
-.hyperlink:hover .text {
-    -fx-fill: #787878;
-}
-
-.hyperlink:pressed .text {
-    -fx-fill: #fd670d;
 }
 
 .labeled-link {
