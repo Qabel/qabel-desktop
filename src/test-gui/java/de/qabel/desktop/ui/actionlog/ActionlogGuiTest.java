@@ -13,13 +13,15 @@ import org.testfx.api.FxRobot;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.*;
 
 
 public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
+    private AtomicReference<String> browserOpener = new AtomicReference<>();
 
     @Override
     protected FXMLView getView() {
@@ -27,11 +29,41 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
     }
 
     @Test
+    public void typeMessageWithHyperlinkAndClickIt() throws Exception {
+        controller.contact = new Contact(identity.getAlias(), identity.getDropUrls(), identity.getEcPublicKey());
+        writeTwoLinesWithOneHyperlink();
+        submitChat();
+
+        plaintextMessageRenderer.browserOpener = browserOpener::set;
+        fxMessageRendererFactory.setFallbackRenderer(plaintextMessageRenderer);
+        clickOn(".hyperlink");
+        assertThat(browserOpener.get(), is("http://qabel.de"));
+    }
+
+    private void submitChat() {
+        assertTrue(receiveMessages().isEmpty());
+        robot.push(KeyCode.ENTER);
+        assertFalse(receiveMessages().isEmpty());
+    }
+
+    private void writeTwoLinesWithOneHyperlink() {
+        FxRobot textArea = clickOn("#textarea");
+        textArea.write("line1");
+        robot.press(KeyCode.SHIFT);
+        try {
+            robot.push(KeyCode.ENTER);
+        } finally {
+            robot.release(KeyCode.SHIFT);
+        }
+        robot.write("http://qabel.de");
+    }
+
+    @Test
     public void testSendMessage() {
         String text = "Message";
         waitUntil(() -> controller.textarea != null);
         Identity i = controller.identity;
-        controller.contact = new Contact(i.getAlias(),i.getDropUrls(), i.getEcPublicKey());
+        controller.contact = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
         clickOn("#textarea").write(text);
         robot.push(KeyCode.ENTER);
         List<DropMessage> list = receiveMessages();
@@ -58,9 +90,7 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
         }
         robot.write("line2");
 
-        assertTrue(receiveMessages().isEmpty());
-        robot.push(KeyCode.ENTER);
-        assertFalse(receiveMessages().isEmpty());
+        submitChat();
 
         DropMessage message = receiveMessages().get(0);
         assertEquals(DropMessageRepository.PAYLOAD_TYPE_MESSAGE, message.getDropPayloadType());
