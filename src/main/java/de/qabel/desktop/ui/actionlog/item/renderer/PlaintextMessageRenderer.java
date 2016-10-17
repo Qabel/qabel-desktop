@@ -59,7 +59,8 @@ public class PlaintextMessageRenderer implements FXMessageRenderer {
     }
 
     @NotNull
-    private Label renderLabel(String text) {
+    @Deprecated
+    Label renderLabel(String text) {
         Label label = new Label(text);
         label.getStyleClass().add(STYLE_CLASS);
         return label;

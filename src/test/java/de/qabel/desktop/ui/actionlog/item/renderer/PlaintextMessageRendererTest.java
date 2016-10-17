@@ -31,7 +31,8 @@ public class PlaintextMessageRendererTest extends AbstractFxTest {
 
     @Test
     public void rendersMessageNode() {
-        Node node = renderer.render(payload, null);
+        String message = renderer.renderString(payload, null);
+        Node node = renderer.renderLabel(message);
         assertTrue(node instanceof Labeled);
         assertEquals("content", ((Labeled) node).getText());
     }
