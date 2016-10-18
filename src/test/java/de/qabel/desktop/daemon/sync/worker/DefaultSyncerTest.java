@@ -46,7 +46,7 @@ public class DefaultSyncerTest extends AbstractSyncTest {
     private Account account;
     private DefaultSyncer syncer;
     private BoxNavigation nav;
-    private BoxVolume volume;
+    private BoxVolumeImpl volume;
 
     @Override
     @Before
@@ -76,7 +76,7 @@ public class DefaultSyncerTest extends AbstractSyncTest {
             storage.toFile(),
             "prefix"
         );
-        volume.createIndex(volume.getRootRef());
+        volume.createIndex("indexexexex");
         nav = volume.navigate();
         syncer = new DefaultSyncer(config, volume, manager);
     }

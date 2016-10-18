@@ -45,7 +45,7 @@ public class SqliteBoxSyncRepositoryTest extends AbstractSqliteRepositoryTest<Sq
         accountRepo = new SqliteAccountRepository(clientDatabase, em);
         identityRepo = new SqliteIdentityRepository(
             clientDatabase, em,
-            new SqlitePrefixRepository(clientDatabase),
+            new SqlitePrefixRepository(clientDatabase, em),
             new SqliteDropUrlRepository(clientDatabase, new DropURLHydrator())
         );
         account = new Account("p", "u", "a");

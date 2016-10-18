@@ -1,7 +1,7 @@
 package de.qabel.desktop.daemon.sync.worker;
 
+import de.qabel.box.storage.factory.BoxVolumeFactory;
 import de.qabel.desktop.config.BoxSyncConfig;
-import de.qabel.desktop.config.factory.BoxVolumeFactory;
 import de.qabel.desktop.daemon.management.TransferManager;
 import de.qabel.desktop.daemon.sync.blacklist.Blacklist;
 import de.qabel.desktop.daemon.sync.blacklist.FileBasedSyncBlacklist;

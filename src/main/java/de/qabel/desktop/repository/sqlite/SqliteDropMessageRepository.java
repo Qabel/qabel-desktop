@@ -7,7 +7,6 @@ import de.qabel.core.drop.DropMessage;
 import de.qabel.core.repository.EntityManager;
 import de.qabel.core.repository.exception.PersistenceException;
 import de.qabel.core.repository.sqlite.*;
-import de.qabel.core.repository.sqlite.hydrator.DropURLHydrator;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.sqlite.hydrator.DropMessageHydrator;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
@@ -49,19 +48,8 @@ public class SqliteDropMessageRepository extends AbstractSqliteRepository<Persis
         this(
             database,
             em,
-            new SqliteIdentityRepository(
-                database, em, new SqlitePrefixRepository(database),
-                new SqliteDropUrlRepository(database, new DropURLHydrator())
-            ),
-            new SqliteContactRepository(
-                database,
-                em,
-                new SqliteDropUrlRepository(database, new DropURLHydrator()),
-                new SqliteIdentityRepository(
-                    database, em, new SqlitePrefixRepository(database),
-                    new SqliteDropUrlRepository(database, new DropURLHydrator())
-                )
-            )
+            new SqliteIdentityRepository(database, em),
+            new SqliteContactRepository(database, em)
         );
     }
 
