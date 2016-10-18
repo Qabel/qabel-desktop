@@ -69,8 +69,8 @@ public class DefaultSyncerTest extends AbstractSyncTest {
 
         Path storage = Files.createTempDirectory("tmp");
         volume = new BoxVolumeImpl(
-            new LocalReadBackend(storage),
-            new LocalWriteBackend(storage),
+            new LocalReadBackend(storage.toFile()),
+            new LocalWriteBackend(storage.toFile()),
             identity.getPrimaryKeyPair(),
             new byte[0],
             storage.toFile(),

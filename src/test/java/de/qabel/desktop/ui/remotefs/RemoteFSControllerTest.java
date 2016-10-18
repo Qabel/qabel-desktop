@@ -67,8 +67,8 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
         bb.putLong(uuid.getMostSignificantBits());
         bb.putLong(uuid.getLeastSignificantBits());
 
-        LocalReadBackend localRead = new LocalReadBackend(tempFolder);
-        localWrite = new LocalWriteBackend(tempFolder);
+        LocalReadBackend localRead = new LocalReadBackend(tempFolder.toFile());
+        localWrite = new LocalWriteBackend(tempFolder.toFile());
         localStorageFile = new File(System.getProperty("java.io.tmpdir"));
 
         BoxVolume volume = new BoxVolumeImpl(

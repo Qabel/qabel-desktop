@@ -88,8 +88,8 @@ public class SyncIntegrationTest {
                 account,
                 new SqliteSyncIndexFactory()
             );
-            LocalReadBackend readBackend = new LocalReadBackend(remoteDir);
-            LocalWriteBackend writeBackend = new LocalWriteBackend(remoteDir);
+            LocalReadBackend readBackend = new LocalReadBackend(remoteDir.toFile());
+            LocalWriteBackend writeBackend = new LocalWriteBackend(remoteDir.toFile());
             volume1 = new BoxVolumeImpl(readBackend, writeBackend, identity.getPrimaryKeyPair(), new byte[0], new File(System.getProperty("java.io.tmpdir")), "prefix");
             volume2 = new BoxVolumeImpl(readBackend, writeBackend, identity.getPrimaryKeyPair(), new byte[0], new File(System.getProperty("java.io.tmpdir")), "prefix");
             volume1.createIndex("qabel", "prefix");
