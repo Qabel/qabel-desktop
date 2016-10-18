@@ -87,17 +87,12 @@ public class QabelTray {
 
         icon.addMouseListener(new MouseAdapter() {
 
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-                if (e.getButton() != MouseEvent.BUTTON1) {
-                    return;
-                }
-
+            int x,y;
+            private void calculatePosition(MouseEvent e){
                 Point point = e.getPoint();
                 Rectangle bounds = getScreenViewableBounds(getGraphicsDeviceAt(point));
-                int x = point.x;
-                int y = point.y;
+                x = point.x;
+                y = point.y;
                 if (y < bounds.y) {
                     y = bounds.y;
                 } else if (y > bounds.y + bounds.height) {
@@ -108,7 +103,6 @@ public class QabelTray {
                 } else if (x > bounds.x + bounds.width) {
                     x = bounds.x + bounds.width;
                 }
-
                 if (x + popup.getWidth() > bounds.x + bounds.width) {
                     x = bounds.x + bounds.width - popup.getWidth();
                 }
@@ -116,12 +110,42 @@ public class QabelTray {
                     y = bounds.y + bounds.height - popup.getHeight();
                 }
 
-                visible = !visible;
+            }
 
+            private void showPopup(){
+                calculatePosition(event);
+                visible = !visible;
                 if (visible) {
                     popup.setLocation(x, y);
                 }
                 popup.setVisible(visible);
+            }
+
+            private void bringAppToFront() {
+
+                Platform.runLater(() -> {
+                    if(!primaryStage.isShowing()){
+                        primaryStage.show();
+                    }else{
+                        primaryStage.toFront();
+                    }
+                });
+            }
+
+            MouseEvent event;
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                event = e;
+                if(isDoubleLeftClicked(e)){
+                    bringAppToFront();
+                }else if(e.getButton() == MouseEvent.BUTTON3){
+                    showPopup();
+                }
+            }
+
+            private boolean isDoubleLeftClicked(MouseEvent e) {
+                return e.getClickCount() == 2;
             }
 
             @Override
@@ -145,6 +169,8 @@ public class QabelTray {
             }
         });
     }
+
+
 
     protected JPopupMenu buildSystemTrayJPopupMenu(Stage primaryStage) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
         final JPopupMenu menu = new JPopupMenu();
