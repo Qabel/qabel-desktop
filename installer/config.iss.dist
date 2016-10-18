@@ -42,21 +42,21 @@ english.policyFile=de_policy.txt
 german.policyFile=de_policy.txt
 
 english.DeleteConfig=Do you want to delete the configuration file?%n%nIf you delete the configuration file, your identities will be deleted as well and you will not be able to access your uploaded data anymore. Export your identities before you delete the configuration file, if you would still like to be able to access your data (e.g. from a different device or anytime in the future).%n%nTo export your identity, click on "Export identity" under "Identities" in your Qabel client.%n%nYour identity contains your private key. Store it safely and don't pass it on to third parties.
-german.DeleteConfig=Wollen Sie die Konfigurationsdatei l√∂schen?%n%nWenn Sie die Konfigurationsdatei l√∂schen, werden auch Ihre Identit√§ten entfernt und Sie haben somit keinen Zugriff mehr auf Ihre hochgeladenen Daten. Exportieren Sie Ihre Identit√§ten, bevor Sie die Konfigurationsdatei l√∂schen, wenn Sie weiterhin die M√∂glichkeit haben wollen, auf Ihre Daten zuzugreifen (z. B. von einem anderen Ger√§t oder irgendwann in der Zukunft).%n%nZum Export Ihrer Identit√§t klicken Sie auf "Identit√§t exportieren" unter "Identit√§t" in Ihrem Qabel-Client.%n%nIhre Identit√§t enth√§lt Ihren privaten Schl√ºssel. Bewahren Sie die Datei also sicher auf und geben Sie sie nicht an Dritte weiter.
+german.DeleteConfig=Wollen Sie die Konfigurationsdatei lˆschen?%n%nWenn Sie die Konfigurationsdatei lˆschen, werden auch Ihre Identit‰ten entfernt und Sie haben somit keinen Zugriff mehr auf Ihre hochgeladenen Daten. Exportieren Sie Ihre Identit‰ten, bevor Sie die Konfigurationsdatei lˆschen, wenn Sie weiterhin die Mˆglichkeit haben wollen, auf Ihre Daten zuzugreifen (z. B. von einem anderen Ger‰t oder irgendwann in der Zukunft).%n%nZum Export Ihrer Identit‰t klicken Sie auf "Identit‰t exportieren" unter "Identit‰t" in Ihrem Qabel-Client.%n%nIhre Identit‰t enth‰lt Ihren privaten Schl¸ssel. Bewahren Sie die Datei also sicher auf und geben Sie sie nicht an Dritte weiter.
 
 english.Terms=Terms of Service
-german.Terms=Allgemeine Gesch√§ftsbedingungen
+german.Terms=Allgemeine Gesch‰ftsbedingungen
 english.TermsHeader=Please read the following Terms of Service. You must accept the Terms of Service before continuing with the installation.
 german.TermsHeader=Bitte lesen Sie folgende Bestimmungen
 english.TermsAccept=I accept the Terms of Service
-german.TermsAccept=Ich akzeptiere die allgemeinen Gesch√§ftsbedingungen
+german.TermsAccept=Ich akzeptiere die allgemeinen Gesch‰ftsbedingungen
 
 english.Policy=Privacy Policy
-german.Policy=Datenschutzerkl√§rung
+german.Policy=Datenschutzerkl‰rung
 english.PolicyHeader=Please read the following Privacy Policy. You must accept the Privacy Policy before continuing with the installation.
-german.PolicyHeader=Bitte lesen Sie folgende Datenschutzerkl√§rung
+german.PolicyHeader=Bitte lesen Sie folgende Datenschutzerkl‰rung
 english.PolicyAccept=I accept the Privacy Policy
-german.PolicyAccept=Ich akzeptiere die Datenschutzerkl√§rung
+german.PolicyAccept=Ich akzeptiere die Datenschutzerkl‰rung
 english.LoadingTerms=Loading legal notices...
 german.LoadingTerms=Lade Rechtliches...
 
