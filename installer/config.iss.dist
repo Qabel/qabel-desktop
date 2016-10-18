@@ -23,7 +23,6 @@ Compression=lzma
 SolidCompression=yes
 PrivilegesRequired=admin
 SetupIconFile={#SetupIcon}
-UninstallIconFile={#SetupIcon}
 UsePreviousAppDir=True
 AppCopyright={#AppPublisher}
 ArchitecturesAllowed=x64
