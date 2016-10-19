@@ -2,11 +2,11 @@ package de.qabel.desktop.ui.tray;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
-class TrayIconMouseAdapter implements MouseListener {
+class TrayIconMouseAdapter extends MouseAdapter {
     private final JPopupMenu popup;
     private final QabelTray qabelTray;
     private boolean visible;
@@ -27,11 +27,9 @@ class TrayIconMouseAdapter implements MouseListener {
         }
     }
 
-
     private boolean isRightClick(MouseEvent e) {
         return e.getButton() == MouseEvent.BUTTON3;
     }
-
 
     private boolean isDoubleLeftClick(MouseEvent e) {
         return e.getClickCount() == 2;
@@ -102,18 +100,4 @@ class TrayIconMouseAdapter implements MouseListener {
         return bounds;
     }
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
 }

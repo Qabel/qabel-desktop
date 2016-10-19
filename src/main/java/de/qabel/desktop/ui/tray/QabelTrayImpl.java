@@ -76,11 +76,6 @@ public class QabelTrayImpl implements QabelTray {
     }
 
     @Override
-    public void showNotification(String title, String message, TrayIcon icon) {
-        toastStrategy.showNotification(title, message, icon);
-    }
-
-    @Override
     public void showNotification(String title, String message) {
         toastStrategy.showNotification(title, message, icon);
     }
@@ -123,6 +118,7 @@ public class QabelTrayImpl implements QabelTray {
                 visible = !visible;
                 popup.setVisible(false);
             }
+
             private boolean isInBounds(MouseEvent e, JPopupMenu popup) {
                 return e.getX() < popup.getBounds().getMaxX() &&
                     e.getX() >= popup.getBounds().getMinX() &&
