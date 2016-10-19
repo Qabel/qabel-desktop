@@ -1,9 +1,7 @@
 package de.qabel.desktop.ui.actionlog.item.renderer;
 
 import de.qabel.desktop.ui.AbstractFxTest;
-import javafx.scene.Node;
 import javafx.scene.control.Labeled;
-import javafx.scene.text.TextFlow;
 import org.controlsfx.control.HyperlinkLabel;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,8 +30,7 @@ public class PlaintextMessageRendererTest extends AbstractFxTest {
     @Test
     public void rendersMessageNode() {
         String message = renderer.renderString(payload, null);
-        Node node = renderer.renderLabel(message);
-        assertTrue(node instanceof Labeled);
+        Labeled node = renderer.renderLabel(message);
         assertEquals("content", ((Labeled) node).getText());
     }
 
@@ -47,9 +44,8 @@ public class PlaintextMessageRendererTest extends AbstractFxTest {
         AtomicReference<String> browserOpener = new AtomicReference<>();
         renderer.browserOpener = browserOpener::set;
 
-        Node node = renderer.renderHyperlinks(string);
-        HyperlinkLabel hyperLinkLabel = ((HyperlinkLabel) ((TextFlow) node).getChildren().get(0));
-        assertTrue(hyperLinkLabel.getText().contains(expectedUriFormat));
+        HyperlinkLabel node = renderer.renderHyperlinks(string);
+        assertTrue(node.getText().contains(expectedUriFormat));
     }
 
 
