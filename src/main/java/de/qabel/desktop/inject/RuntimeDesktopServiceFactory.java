@@ -159,8 +159,10 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
         return directoryMetadataFactory;
     }
 
-    private File getTempDir() {
-        return Files.createTempDir();
+    private File tmpDir = Files.createTempDir();
+
+    private synchronized File getTempDir() {
+        return tmpDir;
     }
 
     @Override
@@ -171,7 +173,8 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
                 getBoxClient(),
                 getIdentityRepository(),
                 getDirectoryMetadataFactory(),
-                getBlockUri()
+                getBlockUri(),
+                getTempDir()
             ));
         }
         return boxVolumeFactory;
