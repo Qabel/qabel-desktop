@@ -5,7 +5,6 @@ import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.text.TextFlow;
 import org.controlsfx.control.HyperlinkLabel;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,15 +34,12 @@ public class PlaintextMessageRenderer implements FXMessageRenderer {
     }
 
     @NotNull
-    TextFlow renderHyperlinks(String message) {
+    HyperlinkLabel renderHyperlinks(String message) {
         HyperlinkLabel hyperLinkLabel = new HyperlinkLabel(detectUri(message));
         hyperLinkLabel.getStyleClass().add("text");
-
+        hyperLinkLabel.getStyleClass().add(STYLE_CLASS);
         hyperLinkLabel.setOnAction(this::openUriInBrowser);
-
-        TextFlow node = new TextFlow(hyperLinkLabel);
-        node.getStyleClass().add(STYLE_CLASS);
-        return node;
+        return hyperLinkLabel;
     }
 
     private void openUriInBrowser(ActionEvent event) {

@@ -293,7 +293,6 @@
 .message-text {
     -fx-padding: 1em 1em 1em 1em;
     -fx-text-alignment: justify;
-    -fx-wrap-text: true;
     -fx-text-fill: white;
     -fx-fill: white;
 }
@@ -305,6 +304,7 @@
     -fx-wrap-text: true;
     -fx-text-fill: white;
     -fx-fill: white;
+    -fx-wrap-text: true;
 }
 
 .own .message-text .label,

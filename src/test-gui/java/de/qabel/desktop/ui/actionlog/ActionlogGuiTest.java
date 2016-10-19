@@ -13,6 +13,7 @@ import org.testfx.api.FxRobot;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static junit.framework.TestCase.assertEquals;
@@ -38,6 +39,7 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
         fxMessageRendererFactory.setFallbackRenderer(plaintextMessageRenderer);
         clickOn(".hyperlink");
         assertThat(browserOpener.get(), is("http://qabel.de"));
+        robot.sleep(5, TimeUnit.SECONDS);
     }
 
     private void submitChat() {
@@ -48,7 +50,7 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
 
     private void writeTwoLinesWithOneHyperlink() {
         FxRobot textArea = clickOn("#textarea");
-        textArea.write("line1");
+        textArea.write("Minions ipsum pepete underweaaar daa hahaha potatoooo tatata bala tu ti aamoo! Aaaaaah bappleees chasy. Potatoooo tulaliloo potatoooo chasy bananaaaa ti aamoo!");
         robot.press(KeyCode.SHIFT);
         try {
             robot.push(KeyCode.ENTER);
