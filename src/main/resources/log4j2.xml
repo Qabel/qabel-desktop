@@ -3,7 +3,7 @@
 
 <Configuration>
     <Appenders>
-        <RandomAccessFile name="RandomAccessFile" fileName="log/desktop.log" immediateFlush="false" append="false">
+        <RandomAccessFile name="RandomAccessFile"  fileName="${sys:log.root}/log/desktop.log" filePattern="${sys:log.root}/log/desktop.%i.log.gz" immediateFlush="false" append="false">
             <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </RandomAccessFile>
 
