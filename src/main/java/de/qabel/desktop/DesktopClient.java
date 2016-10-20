@@ -4,6 +4,8 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 
 public class DesktopClient {
@@ -15,6 +17,10 @@ public class DesktopClient {
                 System.exit(-1);
             }
         }
+
+
+        Path qabelConfigRoot = Paths.get(System.getProperty("user.home")).resolve(".qabel");
+        System.setProperty("log.root", qabelConfigRoot.toAbsolutePath().toString());
 
         Kernel kernel = new Kernel(version);
 
