@@ -39,7 +39,6 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
         fxMessageRendererFactory.setFallbackRenderer(plaintextMessageRenderer);
         clickOn(".hyperlink");
         assertThat(browserOpener.get(), is("http://qabel.de"));
-        robot.sleep(5, TimeUnit.SECONDS);
     }
 
     private void submitChat() {

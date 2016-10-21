@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+
+<BorderPane fx:id="messageItem" styleClass="" xmlns="http://javafx.com/javafx/8.0.112-ea"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="de.qabel.desktop.ui.actionlog.item.NewActionlogItemController">
+    <left>
+        <Label fx:id="dateLabel" text="somedate" styleClass="message-date">
+            <BorderPane.margin>
+                <Insets right="5.0"/>
+            </BorderPane.margin>
+        </Label>
+    </left>
+    <center>
+        <BorderPane>
+            <left>
+                <Label fx:id="senderName" styleClass="message-sendername" text="ALIAS">
+                    <BorderPane.margin>
+                        <Insets right="5.0"/>
+                    </BorderPane.margin>
+                </Label>
+            </left>
+            <center>
+                <TextFlow fx:id="messageContainer">
+                    <Text text="MESSAGE COMES IN HERE "/>
+                </TextFlow>
+            </center>
+        </BorderPane>
+    </center>
+    <padding>
+        <Insets bottom="15.0" left="5.0" right="15.0" top="5.0"/>
+    </padding>
+</BorderPane>
