@@ -12,10 +12,7 @@ import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.daemon.drop.TextMessage;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.ui.AbstractController;
-import de.qabel.desktop.ui.actionlog.item.ActionlogItem;
-import de.qabel.desktop.ui.actionlog.item.ActionlogItemView;
-import de.qabel.desktop.ui.actionlog.item.MyActionlogItemView;
-import de.qabel.desktop.ui.actionlog.item.OtherActionlogItemView;
+import de.qabel.desktop.ui.actionlog.item.*;
 import de.qabel.desktop.ui.connector.DropConnector;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -178,7 +175,11 @@ public class ActionlogController extends AbstractController implements Initializ
         for (PersistenceDropMessage d : dropMessages) {
             Platform.runLater(() -> {
                 if (d.isSent()) {
-                    addOwnMessageToActionlog(d.getDropMessage());
+                    try {
+                        addOwnMessageToActionlog(d.getDropMessage());
+                    } catch (EntityNotFoundException e) {
+                        logger.warn("failed to show message: " + e.getMessage(), e);
+                    }
                 } else {
                     try {
                         addMessageToActionlog(d.getDropMessage());
@@ -213,29 +214,31 @@ public class ActionlogController extends AbstractController implements Initializ
         }
         Contact sender = contactRepository.findByKeyId(identity, senderKeyId);
 
-        if(sender == null){
+        if (sender == null) {
             sender = contactRepository.findByKeyId(identity, dropMessage.getSender().getKeyIdentifier());
         }
         injectionContext.put("dropMessage", dropMessage);
-        injectionContext.put("contact", sender);
-        OtherActionlogItemView otherItemView = new OtherActionlogItemView(injectionContext::get);
+        injectionContext.put("sender", sender.getAlias());
+        NewActionlogItemView otherItemView = new NewActionlogItemView(injectionContext::get);
         messages.getChildren().add(otherItemView.getView());
         messageView.add(otherItemView);
         messageControllers.add((ActionlogItem) otherItemView.getPresenter());
     }
 
-    void addOwnMessageToActionlog(DropMessage dropMessage) {
+    void addOwnMessageToActionlog(DropMessage dropMessage) throws EntityNotFoundException {
 
         if (dropMessage.getDropPayload().equals("")) {
             return;
         }
         Map<String, Object> injectionContext = new HashMap<>();
         injectionContext.put("dropMessage", dropMessage);
-        MyActionlogItemView myItemView = new MyActionlogItemView(injectionContext::get);
+        injectionContext.put("sender", identity.getAlias());
+
+        NewActionlogItemView myItemView = new NewActionlogItemView(injectionContext::get);
+
         messages.getChildren().add(myItemView.getView());
         messageView.add(myItemView);
         messageControllers.add((ActionlogItem) myItemView.getPresenter());
-
     }
 
     void setText(String text) {
