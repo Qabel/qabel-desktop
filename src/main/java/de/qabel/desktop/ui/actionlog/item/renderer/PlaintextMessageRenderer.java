@@ -1,12 +1,10 @@
 package de.qabel.desktop.ui.actionlog.item.renderer;
 
 import de.qabel.desktop.daemon.drop.TextMessage;
-import javafx.event.ActionEvent;
+import de.qabel.desktop.ui.actionlog.util.QabelChatLabel;
 import javafx.scene.Node;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.text.Text;
-import org.controlsfx.control.HyperlinkLabel;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -35,18 +33,19 @@ public class PlaintextMessageRenderer implements FXMessageRenderer {
     }
 
     @NotNull
-    HyperlinkLabel renderHyperlinks(String message) {
-        HyperlinkLabel hyperLinkLabel = new HyperlinkLabel(detectUri(message));
-        hyperLinkLabel.getStyleClass().add("text");
-        hyperLinkLabel.getStyleClass().add(STYLE_CLASS);
-        hyperLinkLabel.setOnAction(this::openUriInBrowser);
-        return hyperLinkLabel;
+    QabelChatLabel renderHyperlinks(String message) {
+        QabelChatLabel node = new QabelChatLabel(detectUri(message));
+        node.getStyleClass().add("text");
+        node.getStyleClass().add(STYLE_CLASS);
+        node.setOnMouseClicked(this::openUriInBrowser);
+        return node;
     }
 
-    private void openUriInBrowser(ActionEvent event) {
-        Hyperlink link = (Hyperlink) event.getSource();
+    private void openUriInBrowser(javafx.event.Event event) {
+        Text link = (Text) event.getSource();
         final String uri = link == null ? "" : link.getText();
         new Thread(() -> browserOpener.accept(uri)).start();
+        event.consume();
     }
 
     private String detectUri(String message) {

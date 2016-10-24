@@ -13,12 +13,13 @@ import org.testfx.api.FxRobot;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 
 public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
@@ -48,15 +49,13 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
     }
 
     private void writeTwoLinesWithOneHyperlink() {
-        FxRobot textArea = clickOn("#textarea");
-        textArea.write("Minions ipsum pepete underweaaar daa hahaha potatoooo tatata bala tu ti aamoo! Aaaaaah bappleees chasy. Potatoooo tulaliloo potatoooo chasy bananaaaa ti aamoo!");
-        robot.press(KeyCode.SHIFT);
-        try {
-            robot.push(KeyCode.ENTER);
-        } finally {
-            robot.release(KeyCode.SHIFT);
-        }
-        robot.write("http://qabel.de");
+        waitUntil(() -> controller.textarea != null);
+        clickOn("#textarea");
+        controller.textarea.setText(
+            "Minions ipsum pepete underweaaar daa hahaha potatoooo tatata bala tu ti aamoo! Aaaaaah bappleees chasy. Potatoooo tulaliloo potatoooo chasy bananaaaa ti aamoo!\n" +
+                "http://qabel.de"
+        );
+
     }
 
     @Test
