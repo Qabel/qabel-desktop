@@ -23,7 +23,6 @@ Compression=lzma
 SolidCompression=yes
 PrivilegesRequired=admin
 SetupIconFile={#SetupIcon}
-UninstallIconFile={#SetupIcon}
 UsePreviousAppDir=True
 AppCopyright={#AppPublisher}
 ArchitecturesAllowed=x64
@@ -34,15 +33,15 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "german"; MessagesFile: "compiler:Languages\German.isl"
 
 [CustomMessages]
-english.licenseFile=en_license.rtf
-german.licenseFile=de_license.rtf
+english.licenseFile=en_license.txt
+german.licenseFile=de_license.txt
 english.termsFile=en_terms.txt
 german.termsFile=de_terms.txt
 english.policyFile=de_policy.txt
 german.policyFile=de_policy.txt
 
-english.DeleteConfig=Do you want to delete the configuration file?
-german.DeleteConfig=Wollen Sie die Konfigurationsdatei löschen?
+english.DeleteConfig=Do you want to delete the configuration file?%n%nIf you delete the configuration file, your identities will be deleted as well and you will not be able to access your uploaded data anymore. Export your identities before you delete the configuration file, if you would still like to be able to access your data (e.g. from a different device or anytime in the future).%n%nTo export your identity, click on "Export identity" under "Identities" in your Qabel client.%n%nYour identity contains your private key. Store it safely and don't pass it on to third parties.
+german.DeleteConfig=Wollen Sie die Konfigurationsdatei löschen?%n%nWenn Sie die Konfigurationsdatei löschen, werden auch Ihre Identitäten entfernt und Sie haben somit keinen Zugriff mehr auf Ihre hochgeladenen Daten. Exportieren Sie Ihre Identitäten, bevor Sie die Konfigurationsdatei löschen, wenn Sie weiterhin die Möglichkeit haben wollen, auf Ihre Daten zuzugreifen (z. B. von einem anderen Gerät oder irgendwann in der Zukunft).%n%nZum Export Ihrer Identität klicken Sie auf "Identität exportieren" unter "Identität" in Ihrem Qabel-Client.%n%nIhre Identität enthält Ihren privaten Schlüssel. Bewahren Sie die Datei also sicher auf und geben Sie sie nicht an Dritte weiter.
 
 english.Terms=Terms of Service
 german.Terms=Allgemeine Geschäftsbedingungen

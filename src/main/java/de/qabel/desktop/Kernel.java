@@ -5,7 +5,6 @@ import com.sun.javafx.application.PlatformImpl;
 import de.qabel.box.storage.AbstractNavigation;
 import de.qabel.chat.repository.sqlite.ChatClientDatabase;
 import de.qabel.core.repository.sqlite.ClientDatabase;
-import de.qabel.core.repository.sqlite.DesktopClientDatabase;
 import de.qabel.core.repository.sqlite.SqliteTransactionManager;
 import de.qabel.desktop.config.LaunchConfig;
 import de.qabel.desktop.inject.DesktopServices;
@@ -72,7 +71,6 @@ public class Kernel {
     }
 
     public void initialize() throws Exception {
-        System.setProperty("log.root", databaseFile.getParent().toAbsolutePath().toString());
         Security.setProperty("networkaddress.cache.ttl",  AWS_RECOMMENDED_DNS_CACHE_TTL);
         AbstractNavigation.DEFAULT_AUTOCOMMIT_DELAY = 2000;
 
