@@ -46,69 +46,44 @@ block.url=https://block.qabel.org
 ```
 this will override the default URLs.
 
-# <a name="getting_started"></a>Getting started
-// TODO move this to a separate install instruction
-
-After cloning this repository, don't forget to load the submodules, too. They are required to run the tests or the client locally.
-```BASH
-git submodule update --init --recursive
-```
-
-The easiest way to get started is using [Vagrant](https://www.vagrantup.com/) (docker required):
-```
-vagrant up
-vagrant ssh
-cd /vagrant
-./gradlew test
-```
-
 If that doesn't work for you for any reason, you need to follow the long way with <a href="#usage">Usage</a>
 
 # Usage
-**(aka "the long way")**
 
 ### preconditions
 
 * to build the java code, you need an **OracleJDK 1.8 u67** or higher
-* the easiest way to get started is using [Vagrant](https://www.vagrantup.com/)
+* to run the server locally, you should have [Vagrant](https://www.vagrantup.com/) and docker installed
 
 ### start up vagrant
 
-(If you want to use vagrant,) start the vagrant vm with `vagrant up`.
-It will install all requirements like java or postgres and run the three qabel servers (drop, accounting and block).
-
-### server test-instances
-
-the submodules include three required **servers**: [Qabel Drop Server](https://github.com/Qabel/qabel-drop), [Qabel Accounting Server](https://github.com/Qabel/qabel-accounting) and [Qabel Block Server](https://github.com/Qabel/qabel-block) to work. They will be started automatically for you when using the Vagrantbox or running `start-server.sh` inside the Vagrantbox.
-
-When not using Vagrant, follow the instructions of the project readmes of take a look inside the Vagrantfile to run all thee locally.
-The tests assume the drop server on port 5000, the accounting server on port 9696 and the block server on port 9697.
+Start the servers in the vagrant vm with `vagrant up`.
 
 ### build it
 
 The build is using gradle to compile the code, run all tests and assemble the jar.
- * when using vagrant, enter the vagrant vm and switch to the source dir
-```BASH
-vagrant ssh
-cd /vagrant
-```
- * (not required with vagrant) start both the drop-server, the accounting-server and the drop-server with the script `start-servers.sh`
  * run the gradle-based build with `./gradlew build`
- * (not required with vagrant) you may stop the servers afterwards with `stop-servers.sh`
 
 **The tests require an X-Server to be running. The Vagrantfile enables X-Forwarding to allow using X inside the VM. If problems occur, you can alternatively use XVFB to create a virtual framebuffer and run the tests headless:**
 ```
-xvfb-run -s "-screen 0 1280x1024x8" ./gradlew test
+xvfb-run -a -s "-screen scrn 1280x1024x8" ./gradlew test
 ```
+
+#### modules
+
+The Qabel Desktop Client provides the following modules:
+* **client**: contains the actual sources and all tests without GUI interactions
+* **guiTest**: contains the GUI tests (those that actually move, hover or click in the UI)
+* **debugLauncher**: contains options to launch the Client with debug tools or parts of the gui standalone
 
 #### build targets
 
 `./gradlew` accepts different targets. The (probably) most important ones are:
-* **test**: run the unit tests (Tests that don't start a GUI)
-* **testGui**: run the gui tests (Tests tat start a real GUI and use mouse actions to test it)
+* **client:test**: run the unit tests (Tests that don't start a GUI)
+* **testGui:test**: run the gui tests (Tests tat start a real GUI and use mouse actions to test it)
 * **jar**: create a JAR with the compile qabel-desktop code but no dependencies
 * **distZip**: create a zip file containing all dependencies (like libcurve) and start-scripts
-* **run**: start the desktop-client
+* **client:run**: start the desktop-client
 * **downloadLicenses**: downloads licenses from dependencies and generates an overview at `build/reports`
 * **lock**: locks current dependencies to exact versions
 
@@ -122,7 +97,7 @@ This is also used by the <a href="#installer">script building the windows instal
 ### Creating the Windows Setup
 From the `installer` directory you can create a versioned setup with
 ```BASH
-bash build-setup.sh {version} 
+bash build-setup.sh {version}
 ```
 and {version} needs to be a version of the form `x.y.z`.
 SemVer compatible prefixes or suffixes are currently not supported because the version is passed directly to launch4j which cannot handle that. Example:
@@ -137,7 +112,7 @@ This script will:
  * create a distribution with `./gradlew -Prelease={version} distZip`
  * create a wrapping launcher `.exe` for the `jar`
  * build the setup
- 
+
 #### creating a dev-release using Vagrant
 ```BASH
 vagrant up installer    # starts a docker container via vagrant building a setup

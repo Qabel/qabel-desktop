@@ -31,6 +31,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.concurrent.*;
+import java.util.function.Consumer;
 
 import static de.qabel.desktop.daemon.management.BoxSyncBasedUpload.logger;
 
@@ -42,10 +43,15 @@ public class DesktopClientGui extends Application {
     private ExecutorService executorService = Executors.newCachedThreadPool();
     private StaticRuntimeConfiguration runtimeConfiguration;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private Consumer<DesktopClientGui> postInit;
 
     DesktopClientGui(DesktopServices services, StaticRuntimeConfiguration runtimeConfiguration) {
         this.services = services;
         this.runtimeConfiguration = runtimeConfiguration;
+    }
+
+    public void setPostInit(Consumer<DesktopClientGui> postInit) {
+        this.postInit = postInit;
     }
 
     @Override
@@ -78,12 +84,20 @@ public class DesktopClientGui extends Application {
         });
 
         trayNotifications(tray);
+
+        if (postInit != null) {
+            postInit.accept(this);
+        }
     }
 
     private void setUpWindow() {
         primaryStage.getIcons().setAll(new Image(getClass().getResourceAsStream("/logo-invert_small.png")));
         Platform.setImplicitExit(false);
         primaryStage.setTitle(getResources().getString("title"));
+    }
+
+    public Stage getPrimaryStage() {
+        return primaryStage;
     }
 
     @NotNull

@@ -22,7 +22,7 @@ if [ -d tmp ]; then
     rm -r tmp
 fi
 mkdir tmp
-cd ../build/distributions
+cd ../client/build/distributions
 ls -1 qabel-desktop-linux* | xargs -I{} cp {} ../../installer/tmp/dist.zip
 cd ../../installer/tmp
 unzip -n dist.zip
@@ -51,5 +51,6 @@ wine inno/ISCC.exe config.iss
 
 mv qabel-desktop-client-${version}-beta.exe qabel-desktop-client-${version}-${targetRelease}.exe
 cd ..
+mkdir -p build/distributions
 mv build/distributions/qabel-desktop-linux_amd64-${version}.zip build/distributions/qabel-desktop-linux_amd64-${version}-${targetRelease}.zip
 

@@ -224,4 +224,8 @@ public class Kernel {
     public void setChecker(UpdateChecker checker) {
         this.checker = checker;
     }
+
+    public DesktopClientGui getApp() {
+        return app;
+    }
 }

@@ -18,7 +18,6 @@ public class DesktopClient {
             }
         }
 
-
         Path qabelConfigRoot = Paths.get(System.getProperty("user.home")).resolve(".qabel");
         System.setProperty("log.root", qabelConfigRoot.toAbsolutePath().toString());
 
