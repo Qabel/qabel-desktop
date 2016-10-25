@@ -26,6 +26,7 @@ import javafx.scene.SceneAntialiasing;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
+import org.scenicview.ScenicView;
 
 import java.awt.*;
 import java.io.IOException;
@@ -78,6 +79,7 @@ public class DesktopClientGui extends Application {
         });
 
         trayNotifications(tray);
+        ScenicView.show(primaryStage.getScene());
     }
 
     private void setUpWindow() {

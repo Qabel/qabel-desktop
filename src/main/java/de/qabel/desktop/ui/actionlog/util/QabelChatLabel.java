@@ -5,16 +5,15 @@ import org.controlsfx.control.HyperlinkLabel;
 
 public class QabelChatLabel extends HyperlinkLabel {
 
-    public QabelChatLabel() {
-        this(null);
-    }
+    private String prefixAlias;
 
-    public QabelChatLabel(String text) {
+    public QabelChatLabel(String prefixAlias, String text) {
         super(text);
+        this.prefixAlias = prefixAlias;
     }
 
     @Override
     protected Skin<?> createDefaultSkin() {
-        return new QabelChatSkin(this);
+        return new QabelChatSkin(prefixAlias, this);
     }
 }

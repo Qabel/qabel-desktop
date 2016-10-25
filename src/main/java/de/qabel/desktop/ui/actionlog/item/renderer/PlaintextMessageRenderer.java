@@ -27,14 +27,14 @@ public class PlaintextMessageRenderer implements FXMessageRenderer {
     private static final String DETECT_URI = "(https?:\\/\\/(?:www\\.|(?!www))[^\\s\\.]+\\.[^\\s]{2,}|www\\.[^\\s]+\\.[^\\s]{2,})";
 
     @Override
-    public Node render(String dropPayload, ResourceBundle resourceBundle) {
+    public Node render(String prefixAlias, String dropPayload, ResourceBundle resourceBundle) {
         String text = renderString(dropPayload, resourceBundle);
-        return renderHyperlinks(text);
+        return renderTextFlow(prefixAlias, text);
     }
 
     @NotNull
-    QabelChatLabel renderHyperlinks(String message) {
-        QabelChatLabel node = new QabelChatLabel(detectUri(message));
+    QabelChatLabel renderTextFlow(String prefixAlias, String message) {
+        QabelChatLabel node = new QabelChatLabel(prefixAlias, detectUri(message));
         node.getStyleClass().add("text");
         node.getStyleClass().add(STYLE_CLASS);
         node.setOnMouseClicked(this::openUriInBrowser);

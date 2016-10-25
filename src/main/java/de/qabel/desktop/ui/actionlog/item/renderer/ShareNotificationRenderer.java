@@ -28,7 +28,7 @@ public class ShareNotificationRenderer implements FXMessageRenderer {
     }
 
     @Override
-    public Node render(String dropPayload, ResourceBundle resourceBundle) {
+    public Node render(String prefixAlias, String dropPayload, ResourceBundle resourceBundle) {
         VBox result = new VBox();
         result.getStyleClass().add("message-text");
         result.setStyle("-fx-spacing: 1em;");

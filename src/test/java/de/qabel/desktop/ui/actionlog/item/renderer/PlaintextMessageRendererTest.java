@@ -44,7 +44,7 @@ public class PlaintextMessageRendererTest extends AbstractFxTest {
         AtomicReference<String> browserOpener = new AtomicReference<>();
         renderer.browserOpener = browserOpener::set;
 
-        HyperlinkLabel node = renderer.renderHyperlinks(string);
+        HyperlinkLabel node = renderer.renderTextFlow("", string);
         assertTrue(node.getText().contains(expectedUriFormat));
     }
 

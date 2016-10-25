@@ -11,8 +11,8 @@ import de.qabel.desktop.daemon.drop.TextMessage;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.inmemory.InMemoryDropMessageRepository;
 import de.qabel.desktop.ui.AbstractControllerTest;
-import de.qabel.desktop.ui.actionlog.item.MyActionlogItemController;
-import de.qabel.desktop.ui.actionlog.item.MyActionlogItemView;
+import de.qabel.desktop.ui.actionlog.item.NewActionlogItemController;
+import de.qabel.desktop.ui.actionlog.item.NewActionlogItemView;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -93,8 +93,8 @@ public class ActionlogControllerTest extends AbstractControllerTest {
         injectionContext.put("dropMessage", d);
         injectionContext.put("contact", sender);
 
-        MyActionlogItemView my = new MyActionlogItemView(injectionContext::get);
-        MyActionlogItemController messagesController = (MyActionlogItemController) my.getPresenter();
+        NewActionlogItemView my = new NewActionlogItemView(injectionContext::get);
+        NewActionlogItemController messagesController = (NewActionlogItemController) my.getPresenter();
         controller.messageControllers.add(messagesController);
 
         messagesController.setDropMessage(d);

@@ -17,10 +17,7 @@ import de.qabel.desktop.ui.connector.DropConnector;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
@@ -93,6 +90,7 @@ public class ActionlogController extends AbstractController implements Initializ
         clientConfiguration.onSelectIdentity(identity -> this.identity = identity);
         addListener();
         contactRepository.attach(this::toggleNotification);
+        scroller.setFitToWidth(true);
     }
 
     private void toggleNotification() {

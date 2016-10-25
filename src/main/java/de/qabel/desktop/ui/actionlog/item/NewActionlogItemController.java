@@ -1,7 +1,5 @@
 package de.qabel.desktop.ui.actionlog.item;
 
-import de.qabel.core.config.Contact;
-import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.desktop.ui.AbstractController;
 import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRenderer;
@@ -11,10 +9,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import org.controlsfx.control.HyperlinkLabel;
+import org.jetbrains.annotations.NotNull;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import javax.inject.Inject;
@@ -22,9 +18,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class NewActionlogItemController extends AbstractController implements Initializable, ActionlogItem {
-
-    @FXML
-    Label senderName;
 
     @FXML
     TextFlow messageContainer;
@@ -48,14 +41,16 @@ public class NewActionlogItemController extends AbstractController implements In
         p = new PrettyTime(resources.getLocale());
         dateLabel.setText(p.format(dropMessage.getCreationDate()));
 
-        senderName.setText(sender);
-
-        FXMessageRenderer renderer = messageRendererFactory.getRenderer(dropMessage.getDropPayloadType());
-        Node renderedMessage = renderer.render(dropMessage.getDropPayload(), resources);
-        renderedMessage.getStyleClass().add("sent");
+        Node renderedMessage = getRenderedMessage(sender, resources);
         messageContainer.getChildren().addAll(renderedMessage);
+    }
 
-
+    @NotNull
+    private Node getRenderedMessage(String prefixAlias, ResourceBundle resources) {
+        FXMessageRenderer renderer = messageRendererFactory.getRenderer(dropMessage.getDropPayloadType());
+        Node renderedMessage = renderer.render(prefixAlias, dropMessage.getDropPayload(), resources);
+        renderedMessage.getStyleClass().add("sent");
+        return renderedMessage;
     }
 
     @Override

@@ -266,19 +266,13 @@
     -fx-fill: #fd670d;
 }
 
-
-.message-date {
-    -fx-padding: 0 1em 0.5em 1em;
-    -fx-text-alignment: justify;
-    -fx-wrap-text: true;
-}
 .message-sendername {
     -fx-font-weight: bold;
 }
 
-.own .message-date {
-    -fx-alignment: bottom-right;
-    -fx-text-alignment: right;
+.message-text .hyperlink  {
+    -fx-fill: #ff690f;
+    -fx-text-fill: #ff690f;
 }
 
 
