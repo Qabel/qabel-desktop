@@ -5,6 +5,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 public class Icons {
     public static final String INFO = "/img/information_white.png";
     public static final String BROWSE = "/img/folder_white.png";
@@ -17,6 +21,7 @@ public class Icons {
     public static final String DELETE = "/svg/delete.svg";
     public static final String FOLDER = "/svg/ic_folder_black_24px.svg";
     public static final String FILE = "/svg/ic_folder_black_24px.svg";
+    private static final Map<String, ImageView> imageCache = Collections.synchronizedMap(new HashMap<>());
 
     public static final int LARGE_ICON_WIDTH = 32;
 
@@ -29,7 +34,17 @@ public class Icons {
     }
 
     public static ImageView getIcon(String path, Integer width) {
-        return resize(width, new ImageView(path));
+        ImageView imageView;
+        synchronized (imageCache) {
+            if (imageCache.containsKey(path)) {
+                ImageView cachedView = imageCache.get(path);
+                imageView = new ImageView(cachedView.getImage());
+            } else {
+                imageView = new ImageView(path);
+                imageCache.put(path, imageView);
+            }
+        }
+        return resize(width, imageView);
     }
 
     @NotNull
