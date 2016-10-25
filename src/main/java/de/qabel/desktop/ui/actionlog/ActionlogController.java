@@ -33,7 +33,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.NotificationPane;
 import org.controlsfx.control.PopOver;
-import org.scenicview.ScenicView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Subscription;
@@ -104,11 +103,6 @@ public class ActionlogController extends AbstractController implements Initializ
         clientConfiguration.onSelectIdentity(identity -> this.identity = identity);
         addListener();
         contactRepository.attach(this::toggleNotification);
-
-        new Thread(() -> {
-            try { sleep(1000); } catch (Exception e) {}
-            Platform.runLater(() -> ScenicView.show(textarea.getScene()));
-        }).start();
     }
 
     private void toggleNotification() {
