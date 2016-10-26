@@ -136,7 +136,7 @@ public class ActionlogController extends AbstractController implements Initializ
             }
         });
 
-        ((Region) scroller.getContent()).heightProperty().addListener((ov, old_val, new_val) -> {
+        ((Region) scroller.getContent()).heightProperty().addListener(o -> {
             if (scroller.getVvalue() != scroller.getVmax()) {
                 scroller.setVvalue(scroller.getVmax());
             }
@@ -197,7 +197,7 @@ public class ActionlogController extends AbstractController implements Initializ
     }
 
     private void markSeen(PersistenceDropMessage d) {
-        if (!d.isSeen()) {
+        if (!d.isSeen() && chat.isVisible()) {
             d.setSeen(true);
             System.out.println("marked message seen " + d);
             executor.submit(() -> {
@@ -262,12 +262,22 @@ public class ActionlogController extends AbstractController implements Initializ
 
     @Override
     public void update(Observable o, Object arg) {
-        if (arg instanceof PersistenceDropMessage) {
-            if (contact == null) {
-                throw new IllegalStateException("cannot load messages without contact");
-            }
-            executor.submit(() -> tryOrAlert(() -> loadMessages(contact)));
+        if (!(arg instanceof PersistenceDropMessage))
+            return;
+        PersistenceDropMessage message = (PersistenceDropMessage)arg;
+        markSeen(message);
+
+        if (contact == null) {
+            throw new IllegalStateException("cannot load messages without contact");
         }
+
+        Platform.runLater(() -> tryOrAlert(() -> {
+            if (message.getSender() == identity) {
+                addOwnMessageToActionlog(message.getDropMessage());
+            } else {
+                addMessageToActionlog(message.getDropMessage());
+            }
+        }));
     }
 
     public void setContact(Contact contact) {
