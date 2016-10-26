@@ -51,9 +51,15 @@ public class ActionlogControllerTest extends AbstractControllerTest {
         controller.setContact(c);
         waitUntil(() -> controller.contact == c);
         PersistenceDropMessage message = new PersistenceDropMessage(dm, c, i, false, false);
-        System.out.println("saving message " + message);
         dropMessageRepository.save(message);
         waitUntil(message::isSeen, 10000L); // is done in cascaded async calls => higher timeout
+    }
+
+    @Test
+    public void doesNotMarkSeenIfChatIsClosed() throws Exception {
+        controller.setContact(c);
+        waitUntil(() -> controller.contact == c);
+        PersistenceDropMessage message = new PersistenceDropMessage(dm, c, i, false, false);
     }
 
     @Test

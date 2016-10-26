@@ -21,21 +21,36 @@ public class DetailsController extends AbstractController implements Initializab
     @FXML
     Pane detailsContainer;
 
+    private Node content;
+
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         closeDetails.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> detailsPane.setVisible(false));
     }
 
     public void hide() {
-        Platform.runLater(() -> detailsPane.setVisible(false));
+        Platform.runLater(() -> {
+            detailsPane.setVisible(false);
+            if (content != null)
+                content.setVisible(false);
+        });
     }
 
     public void show() {
-        Platform.runLater(() -> detailsPane.setVisible(true));
+        Platform.runLater(() -> {
+            detailsPane.setVisible(true);
+            if (content != null)
+                content.setVisible(true);
+        });
     }
 
     public void show(Node content) {
         Platform.runLater(() -> {
+            if (this.content != null && this.content != content) {
+                this.content.setVisible(false);
+            }
+            this.content = content;
             detailsContainer.getChildren().setAll(content);
             detailsPane.setVisible(true);
         });
