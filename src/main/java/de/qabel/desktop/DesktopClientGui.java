@@ -118,7 +118,7 @@ public class DesktopClientGui extends Application {
         Scene layoutScene = new Scene(view, 900, 600, true, SceneAntialiasing.BALANCED);
         Platform.runLater(() -> primaryStage.setScene(layoutScene));
         primaryStage.show();
-//        closeStage();
+        closeStage();
     }
 
     private void closeStage() {
