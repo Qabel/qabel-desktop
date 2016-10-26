@@ -1,15 +1,17 @@
 package de.qabel.desktop.ui.actionlog.item.renderer;
 
+import com.airhacks.afterburner.views.QabelFXMLView;
 import de.qabel.desktop.ui.AbstractFxTest;
-import javafx.scene.control.Labeled;
-import org.controlsfx.control.HyperlinkLabel;
+import de.qabel.desktop.ui.actionlog.Hyperlink;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.concurrent.atomic.AtomicReference;
-
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class PlaintextMessageRendererTest extends AbstractFxTest {
     private PlaintextMessageRenderer renderer;
@@ -29,24 +31,18 @@ public class PlaintextMessageRendererTest extends AbstractFxTest {
 
     @Test
     public void rendersMessageNode() {
-        String message = renderer.renderString(payload, null);
-        Labeled node = renderer.renderLabel(message);
-        assertEquals("content", ((Labeled) node).getText());
+        TextFlow node = renderer.render("alias", payload, QabelFXMLView.getDefaultResourceBundle());
+        assertEquals("content", ((Text)node.getChildren().get(1)).getText());
     }
 
     @Test
-    public void renderHyperlinks() throws Exception {
-        final String string = "This is a Text,\n"
-            + " wich has a neat hyperlinks www.qabel.de";
-
-        String expectedUriFormat = "[www.qabel.de]";
-
-        AtomicReference<String> browserOpener = new AtomicReference<>();
-        renderer.browserOpener = browserOpener::set;
-
-        HyperlinkLabel node = renderer.renderTextFlow("", string);
-        assertTrue(node.getText().contains(expectedUriFormat));
+    public void rendersNodes() {
+        TextFlow flow = renderer.render("alias", createPayload("contains http://qabel.de"), null);
+        assertThat(flow.getChildren().size(), equalTo(3));
+        assertThat(flow.getChildren().get(2), instanceOf(Hyperlink.class));
     }
 
-
+    private String createPayload(String message) {
+        return "{'msg': '" + message.replace("'", "\\'") + "'}";
+    }
 }

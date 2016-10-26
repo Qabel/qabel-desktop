@@ -36,7 +36,7 @@ public class ActionlogGuiTest extends AbstractGuiTest<ActionlogController> {
         writeTwoLinesWithOneHyperlink();
         submitChat();
 
-        plaintextMessageRenderer.browserOpener = browserOpener::set;
+        plaintextMessageRenderer.getHyperlinkRenderer().setBrowserOpener(browserOpener::set);
         fxMessageRendererFactory.setFallbackRenderer(plaintextMessageRenderer);
         clickOn(".hyperlink");
         assertThat(browserOpener.get(), is("http://qabel.de"));

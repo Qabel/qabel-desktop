@@ -20,7 +20,7 @@
 
 * {
     -fx-font-family: "Source Sans Pro";
-    -fx-font-size: 14;
+    -fx-font-size: 14px;
 }
 
 .text-field.form-control:focused {
@@ -270,11 +270,48 @@
     -fx-font-weight: bold;
 }
 
+.message {
+    -fx-padding: 0 0 0.5em 1em;
+}
+
+.message-text {
+    -fx-text-fill: #222222;
+}
 .message-text .hyperlink  {
     -fx-fill: #ff690f;
     -fx-text-fill: #ff690f;
 }
 
+.message-text .alias {
+    -fx-font-family: "Source Sans Pro Black", "Source Sans Pro Bold", Bold, Black;
+    -fx-padding: 0 2em 0 0;
+}
+.message.sequence .message-text .alias {
+    visibility: hidden;
+    -fx-text-fill: transparent;
+    -fx-max-width: 0;
+}
+
+.sent .message-text .alias {
+    -fx-fill: orange;
+}
+.received .message-text .alias {
+    -fx-fill: darkviolet;
+}
+
+.message-date {
+    -fx-text-fill: #666666;
+    -fx-min-width: 2em;
+    -fx-pref-height: 1em;
+    -fx-padding: 2px 0 0 0;
+}
+.message.sequence .message-date {
+    -fx-text-fill: #CCCCCC;
+}
+.message-date > .text {
+    -fx-font-size: 12px!important;
+    -fx-alignment: bottom-left;
+}
 
 .payload-type-icon {
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 2, 0.0, 0, 2);
@@ -552,7 +589,6 @@ VBox.spaced, HBox.spaced {
 
 .button-contextmenu:pressed {
     -fx-border-color: none;
-    -fx-text-fill: none;
     -fx-border-style: none;
     -fx-text-fill: #ff690f;
 }

@@ -1,65 +1,69 @@
 package de.qabel.desktop.ui.actionlog.item.renderer;
 
 import de.qabel.desktop.daemon.drop.TextMessage;
-import de.qabel.desktop.ui.actionlog.util.QabelChatLabel;
+import de.qabel.desktop.ui.actionlog.item.renderer.partial.HyperlinkRenderer;
+import de.qabel.desktop.ui.actionlog.item.renderer.partial.PartialFXMessageRenderer;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class PlaintextMessageRenderer implements FXMessageRenderer {
-    private static final String STYLE_CLASS = "message-text";
-    public Consumer<String> browserOpener = (uri) -> {
-        try {
-            Desktop.getDesktop().browse(new URI(uri));
-        } catch (IOException | URISyntaxException ignored) {
-        }
-    };
-    private static final String DETECT_URI = "(https?:\\/\\/(?:www\\.|(?!www))[^\\s\\.]+\\.[^\\s]{2,}|www\\.[^\\s]+\\.[^\\s]{2,})";
+    private final HyperlinkRenderer hyperlinkRenderer = new HyperlinkRenderer();
 
     @Override
-    public Node render(String prefixAlias, String dropPayload, ResourceBundle resourceBundle) {
-        String text = renderString(dropPayload, resourceBundle);
-        return renderTextFlow(prefixAlias, text);
+    public TextFlow render(String prefixAlias, String dropPayload, ResourceBundle resourceBundle) {
+        TextFlow flow = new TextFlow();
+        flow.getChildren().setAll(renderTextFlowElements(prefixAlias, renderString(dropPayload, resourceBundle)));
+        return flow;
     }
 
     @NotNull
-    QabelChatLabel renderTextFlow(String prefixAlias, String message) {
-        QabelChatLabel node = new QabelChatLabel(prefixAlias, detectUri(message));
-        node.getStyleClass().add("text");
-        node.getStyleClass().add(STYLE_CLASS);
-        node.setOnMouseClicked(this::openUriInBrowser);
+    List<Node> renderTextFlowElements(String prefixAlias, String message) {
+        List<Node> children = new LinkedList<>();
+        children.add(new Text(message));
+
+        replaceRenderableChildren(children);
+
+        children.add(0, renderAlias(prefixAlias));
+        return children;
+    }
+
+    private void replaceRenderableChildren(List<Node> children) {
+        List<PartialFXMessageRenderer> partialRenderers = new LinkedList<>();
+        partialRenderers.add(hyperlinkRenderer);
+
+        int size;
+        do {
+            size = children.size();
+            for (int i = 0; i < children.size(); i++) {
+                Node child = children.get(i);
+                if (!(child instanceof Text))
+                    continue;
+
+                for (PartialFXMessageRenderer renderer : partialRenderers) {
+                    String unrenderedText = ((Text) child).getText();
+                    if (renderer.needsFormatting(unrenderedText)) {
+                        List<Node> replacement = renderer.render(unrenderedText);
+                        children.remove(i);
+                        children.addAll(i, replacement);
+                        i = i + replacement.size() - 1;
+                        break;
+                    }
+                }
+            }
+        } while (size != children.size());
+    }
+
+    private Node renderAlias(String alias) {
+        Text node = new Text(alias + "   ");
+        node.getStyleClass().add("alias");
+        node.managedProperty().bind(node.visibleProperty());
         return node;
-    }
-
-    private void openUriInBrowser(javafx.event.Event event) {
-        Text link = (Text) event.getSource();
-        final String uri = link == null ? "" : link.getText();
-        new Thread(() -> browserOpener.accept(uri)).start();
-        event.consume();
-    }
-
-    private String detectUri(String message) {
-        Pattern pattern = Pattern.compile(DETECT_URI, Pattern.CASE_INSENSITIVE | Pattern.COMMENTS | Pattern.MULTILINE);
-        Matcher matcher = pattern.matcher(message);
-        return matcher.replaceAll("[$1]");
-    }
-
-    @NotNull
-    @Deprecated
-    Label renderLabel(String text) {
-        Label label = new Label(text);
-        label.getStyleClass().add(STYLE_CLASS);
-        return label;
     }
 
     @Override
@@ -67,5 +71,7 @@ public class PlaintextMessageRenderer implements FXMessageRenderer {
         return TextMessage.fromJson(dropPayload).getText();
     }
 
-
+    public HyperlinkRenderer getHyperlinkRenderer() {
+        return hyperlinkRenderer;
+    }
 }

@@ -9,18 +9,20 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.text.TextFlow;
+import javafx.scene.layout.HBox;
 import org.jetbrains.annotations.NotNull;
-import org.ocpsoft.prettytime.PrettyTime;
 
 import javax.inject.Inject;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
-public class NewActionlogItemController extends AbstractController implements Initializable, ActionlogItem {
+public class ActionlogItemController extends AbstractController implements Initializable, ActionlogItem {
+    @FXML
+    Node messageItem;
 
     @FXML
-    TextFlow messageContainer;
+    HBox messageContainer;
 
     @FXML
     Label dateLabel;
@@ -32,25 +34,18 @@ public class NewActionlogItemController extends AbstractController implements In
     @Inject
     FXMessageRendererFactory messageRendererFactory;
 
-    private PrettyTime p;
+    private SimpleDateFormat p = new SimpleDateFormat("HH:mm");
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        messageContainer.getChildren().clear();
-
-        p = new PrettyTime(resources.getLocale());
         dateLabel.setText(p.format(dropMessage.getCreationDate()));
-
-        Node renderedMessage = getRenderedMessage(sender, resources);
-        messageContainer.getChildren().addAll(renderedMessage);
+        messageContainer.getChildren().setAll(getRenderedMessage(sender, resources));
     }
 
     @NotNull
     private Node getRenderedMessage(String prefixAlias, ResourceBundle resources) {
         FXMessageRenderer renderer = messageRendererFactory.getRenderer(dropMessage.getDropPayloadType());
-        Node renderedMessage = renderer.render(prefixAlias, dropMessage.getDropPayload(), resources);
-        renderedMessage.getStyleClass().add("sent");
-        return renderedMessage;
+        return renderer.render(prefixAlias, dropMessage.getDropPayload(), resources);
     }
 
     @Override
@@ -60,10 +55,6 @@ public class NewActionlogItemController extends AbstractController implements In
 
     public Label getDateLabel() {
         return dateLabel;
-    }
-
-    public void setDateLabel(Label dateLabel) {
-        this.dateLabel = dateLabel;
     }
 
     public DropMessage getDropMessage() {

@@ -1,6 +1,7 @@
 package de.qabel.desktop.ui.actionlog;
 
 import de.qabel.core.config.Contact;
+import de.qabel.core.config.Entity;
 import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.drop.DropMessageMetadata;
@@ -12,12 +13,17 @@ import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.daemon.drop.TextMessage;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.ui.AbstractController;
-import de.qabel.desktop.ui.actionlog.item.*;
+import de.qabel.desktop.ui.actionlog.item.ActionlogItem;
+import de.qabel.desktop.ui.actionlog.item.ActionlogItemView;
 import de.qabel.desktop.ui.connector.DropConnector;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.Parent;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
@@ -204,6 +210,7 @@ public class ActionlogController extends AbstractController implements Initializ
         }
     }
 
+    private Entity lastSender;
     void addMessageToActionlog(DropMessage dropMessage) throws EntityNotFoundException {
         Map<String, Object> injectionContext = new HashMap<>();
         String senderKeyId = dropMessage.getSenderKeyId();
@@ -215,10 +222,15 @@ public class ActionlogController extends AbstractController implements Initializ
         if (sender == null) {
             sender = contactRepository.findByKeyId(identity, dropMessage.getSender().getKeyIdentifier());
         }
+        boolean first = lastSender != sender;
+        lastSender = sender;
         injectionContext.put("dropMessage", dropMessage);
         injectionContext.put("sender", sender.getAlias());
-        NewActionlogItemView otherItemView = new NewActionlogItemView(injectionContext::get);
-        messages.getChildren().add(otherItemView.getView());
+        ActionlogItemView otherItemView = new ActionlogItemView(injectionContext::get);
+        Parent view = otherItemView.getView();
+        view.getStyleClass().add("sent");
+        view.getStyleClass().add(first ? "first" : "sequence");
+        messages.getChildren().add(view);
         messageView.add(otherItemView);
         messageControllers.add((ActionlogItem) otherItemView.getPresenter());
     }
@@ -232,9 +244,14 @@ public class ActionlogController extends AbstractController implements Initializ
         injectionContext.put("dropMessage", dropMessage);
         injectionContext.put("sender", identity.getAlias());
 
-        NewActionlogItemView myItemView = new NewActionlogItemView(injectionContext::get);
+        boolean first = lastSender != identity;
+        lastSender = identity;
+        ActionlogItemView myItemView = new ActionlogItemView(injectionContext::get);
 
-        messages.getChildren().add(myItemView.getView());
+        Parent view = myItemView.getView();
+        view.getStyleClass().add("received");
+        view.getStyleClass().add(first ? "first" : "sequence");
+        messages.getChildren().add(view);
         messageView.add(myItemView);
         messageControllers.add((ActionlogItem) myItemView.getPresenter());
     }
