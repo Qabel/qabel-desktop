@@ -88,6 +88,9 @@ public class AbstractControllerTest extends AbstractFxTest {
     protected int remoteDebounceTimeout;
     protected EventDispatcher eventDispatcher = new SubjectEventDispatcher();
 
+    protected FXMessageRendererFactory fxMessageRendererFactory = new FXMessageRendererFactory();
+    protected PlaintextMessageRenderer plaintextMessageRenderer = new PlaintextMessageRenderer();
+
     static {
         logger = createLogger();
     }
@@ -150,9 +153,10 @@ public class AbstractControllerTest extends AbstractFxTest {
         diContainer.put("boxSyncConfigRepository", boxSyncRepository);
         diContainer.put("boxSyncRepository", boxSyncRepository);
         diContainer.put("transactionManager", transactionManager);
-        FXMessageRendererFactory FXMessageRendererFactory = new FXMessageRendererFactory();
-        FXMessageRendererFactory.setFallbackRenderer(new PlaintextMessageRenderer());
-        diContainer.put("messageRendererFactory", FXMessageRendererFactory);
+
+        fxMessageRendererFactory.setFallbackRenderer(plaintextMessageRenderer);
+        diContainer.put("messageRendererFactory", fxMessageRendererFactory);
+
         SyncIndexFactory syncIndexFactory = new SqliteSyncIndexFactory();
         diContainer.put("boxSyncConfigFactory", new DefaultBoxSyncConfigFactory(syncIndexFactory));
         diContainer.put("boxSyncIndexFactory", syncIndexFactory);

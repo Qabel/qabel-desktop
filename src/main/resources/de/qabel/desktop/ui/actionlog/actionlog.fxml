@@ -9,58 +9,60 @@
 <BorderPane fx:id="chat" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="de.qabel.desktop.ui.actionlog.ActionlogController" maxHeight="Infinity" prefHeight="4000">
     <top>
-                <NotificationPane fx:id="notification" managed="false" showFromTop="true">
-                    <content>
-                        <BorderPane >
-                            <center>
-                                <Label fx:id="notifcationMessage" text="%unknownContact"/>
-                            </center>
-                            <right>
-                                <HBox>
-                                    <Button fx:id="accept" mnemonicParsing="false" onAction="#handleAccept"
-                                            text="%acceptContact">
-                                        <HBox.margin>
-                                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
-                                        </HBox.margin>
-                                    </Button>
-                                    <Button fx:id="ignore" mnemonicParsing="false" onAction="#handleIgnore"
-                                            text="%ignoreContact">
-                                        <HBox.margin>
-                                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
-                                        </HBox.margin>
-                                    </Button>
-                                </HBox>
-                            </right>
-                        </BorderPane>
-                    </content>
-                </NotificationPane>
+        <NotificationPane fx:id="notification" managed="false" showFromTop="true">
+            <content>
+                <BorderPane>
+                    <center>
+                        <Label fx:id="notifcationMessage" text="%unknownContact"/>
+                    </center>
+                    <right>
+                        <HBox>
+                            <Button fx:id="accept" mnemonicParsing="false" onAction="#handleAccept"
+                                    text="%acceptContact">
+                                <HBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                                </HBox.margin>
+                            </Button>
+                            <Button fx:id="ignore" mnemonicParsing="false" onAction="#handleIgnore"
+                                    text="%ignoreContact">
+                                <HBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                                </HBox.margin>
+                            </Button>
+                        </HBox>
+                    </right>
+                </BorderPane>
+            </content>
+        </NotificationPane>
     </top>
     <center>
         <ScrollPane fx:id="scroller" fitToWidth="true">
             <content>
-                <VBox>
-                    <children>
-                        <VBox fx:id="messages" alignment="BOTTOM_LEFT">
-                        </VBox>
-                    </children>
+                <VBox fillWidth="true" fx:id="messages" alignment="BOTTOM_LEFT">
+
                 </VBox>
             </content>
             <VBox.margin>
-                <Insets left="10.0"/>
+                <Insets left="10.0" right="10.0"/>
             </VBox.margin>
         </ScrollPane>
     </center>
     <bottom>
-        <HBox styleClass="chat-input">
-            <children>
-                <ImageView pickOnBounds="true" styleClass="edit-icon" preserveRatio="true">
-                    <image>
-                        <Image url="@/icon/edit_inverse.png"/>
-                    </image>
-                </ImageView>
-                <TextArea promptText="%actionlogInputPlaceholder" fx:id="textarea" wrapText="true" BorderPane.alignment="BOTTOM_CENTER">
+        <BorderPane styleClass="chat-input">
+            <center>
+                <TextArea
+                    promptText="%actionlogInputPlaceholder"
+                    fx:id="textarea"
+                    wrapText="true"
+                    BorderPane.alignment="BOTTOM_LEFT"
+                    prefRowCount="1">
                 </TextArea>
-            </children>
-        </HBox>
+            </center>
+            <right>
+                <ImageView pickOnBounds="true" fx:id="emojiSelector" BorderPane.alignment="CENTER_RIGHT" onMouseClicked="#selectEmoji" smooth="true" fitWidth="25" styleClass="clickable" preserveRatio="true">
+                    <image><Image url="@/icon/emoji/emoji_1f600.png"/></image>
+                </ImageView>
+            </right>
+        </BorderPane>
     </bottom>
 </BorderPane>

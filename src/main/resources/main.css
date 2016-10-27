@@ -20,7 +20,7 @@
 
 * {
     -fx-font-family: "Source Sans Pro";
-    -fx-font-size: 14;
+    -fx-font-size: 14px;
 }
 
 .text-field.form-control:focused {
@@ -76,7 +76,7 @@
     -fx-background-image: url("/scroll-horizontal.png");
 }
 
-.scroll-bar:vertical .track {
+.scroll-bar:vertical .track, .virtual-flow .scroll-bar .track {
     -fx-background-repeat: repeat-y;
     -fx-background-image: url("/scroll.png");
 }
@@ -94,8 +94,7 @@
 }
 
 .scroll-bar .increment-arrow, .scroll-bar .decrement-arrow {
-    -fx-shape: " ";
-    -fx-padding: 0;
+    -fx-opacity: 0;
 }
 
 .scroll-bar:horizontal .thumb, .scroll-bar:vertical .thumb {
@@ -150,19 +149,10 @@
     -fx-background-color: transparent;
 }
 
-#otherMessagebox {
-    -fx-background-color: #ff690f;
-    -fx-background-radius: 5;
-}
-
 #shadow {
     -fx-effect: dropshadow(one-pass-box, grey, 5, -1, 0, 2);
 }
 
-#myMessagebox {
-    -fx-background-color: #4d4d4d;
-    -fx-background-radius: 5;
-}
 
 .selected {
     -fx-background-color: #b3b3b3;
@@ -254,35 +244,72 @@
     -fx-text-fill: -fx-text-inner-color;
 }
 
+
+.hyperlink {
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+    -fx-underline: false;
+}
+
+.hyperlink .text {
+    -fx-fill: #222222;
+}
+.hyperlink:visited .text {
+    -fx-fill: #222222;
+}
+.hyperlink:hover .text {
+    -fx-fill: #787878;
+}
+
+.hyperlink:pressed .text {
+    -fx-fill: #fd670d;
+}
+
+.message-sendername {
+    -fx-font-weight: bold;
+}
+
+.message {
+    -fx-padding: 0 0 0.5em 1em;
+}
+
 .message-text {
-    -fx-padding: 1em 1em 1em 1em;
-    -fx-text-alignment: justify;
-    -fx-wrap-text: true;
-    -fx-text-fill: white;
+    -fx-text-fill: #222222;
+}
+.message-text .hyperlink  {
+    -fx-fill: #ff690f;
+    -fx-text-fill: #ff690f;
+}
+
+.message-text .alias {
+    -fx-font-family: "Source Sans Pro Black", "Source Sans Pro Bold", Bold, Black;
+    -fx-padding: 0 2em 0 0;
+}
+.message.sequence .message-text .alias {
+    visibility: hidden;
+    -fx-text-fill: transparent;
+    -fx-max-width: 0;
+}
+
+.sent .message-text .alias {
+    -fx-fill: orange;
+}
+.received .message-text .alias {
+    -fx-fill: darkviolet;
 }
 
 .message-date {
-    -fx-padding: 0 1em 0.5em 1em;
-    -fx-text-alignment: justify;
-    -fx-wrap-text: true;
+    -fx-text-fill: #666666;
+    -fx-min-width: 2em;
+    -fx-pref-height: 1em;
+    -fx-padding: 2px 0 0 0;
 }
-
-.own .message-date {
-    -fx-alignment: bottom-right;
-    -fx-text-alignment: right;
+.message.sequence .message-date {
+    -fx-text-fill: #CCCCCC;
 }
-
-.own .message-text .label {
-    -fx-text-alignment: right;
-}
-
-.other .message-text .label {
-    -fx-text-alignment: left;
-}
-
-.message-text .label {
-    -fx-wrap-text: true;
-    -fx-text-fill: white;
+.message-date > .text {
+    -fx-font-size: 12px!important;
+    -fx-alignment: bottom-left;
 }
 
 .payload-type-icon {
@@ -308,7 +335,7 @@
 .chat-input {
     -fx-background-color: #4d4d4d;
     -fx-spacing: 1em;
-    -fx-padding: 0.5em 0.5em 0 0.5em;
+    -fx-padding: 0 0.5em 0 0.5em;
 }
 
 .chat-input > .edit-icon {
@@ -339,6 +366,7 @@
     -fx-effect: none;
     -fx-prompt-text-fill: rgba(255, 255, 255, 0.5);
     -fx-text-fill: white;
+    -fx-padding: 0.5em 0 0.5em 0;
 }
 
 .text-field.inline {
@@ -458,28 +486,6 @@ VBox.spaced, HBox.spaced {
     -fx-border-width: 0 0 1px 0;
 }
 
-.hyperlink {
-    -fx-border-color: transparent;
-    -fx-padding: 0;
-    -fx-underline: false;
-}
-
-.hyperlink .text {
-    -fx-fill: #222222;
-}
-
-.hyperlink:visited .text {
-    -fx-fill: #222222;
-}
-
-.hyperlink:hover .text {
-    -fx-fill: #787878;
-}
-
-.hyperlink:pressed .text {
-    -fx-fill: #fd670d;
-}
-
 .labeled-link {
     -fx-spacing: 0.5em;
 }
@@ -583,7 +589,6 @@ VBox.spaced, HBox.spaced {
 
 .button-contextmenu:pressed {
     -fx-border-color: none;
-    -fx-text-fill: none;
     -fx-border-style: none;
     -fx-text-fill: #ff690f;
 }
@@ -734,6 +739,11 @@ VBox.spaced, HBox.spaced {
     -fx-text-fill: white;
 }
 
+.emojiSelector {
+    -fx-text-fill: #222222;
+    -fx-background-color: white;
+}
+
 .vbox-popup {
     -fx-background-color: rgba(0,0,0,0.8);
     -fx-padding: 50px 50px 50px 50px;
@@ -821,4 +831,8 @@ VBox.spaced, HBox.spaced {
 
 .error-textfield {
     -fx-effect: dropshadow(three-pass-box, red, 8, 0.0, 0, 1);
+}
+
+.clickable {
+    -fx-cursor: hand;
 }

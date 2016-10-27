@@ -2,6 +2,7 @@ package de.qabel.desktop.ui.remotefs;
 
 import de.qabel.box.storage.*;
 import de.qabel.box.storage.exceptions.QblStorageException;
+import de.qabel.box.storage.exceptions.QblStorageNotFound;
 import de.qabel.box.storage.factory.BoxVolumeFactory;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.SharingService;
