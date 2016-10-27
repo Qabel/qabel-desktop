@@ -2,6 +2,7 @@ package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.injection.Injector;
 import com.airhacks.afterburner.views.QabelFXMLView;
+import de.qabel.box.storage.factory.BoxVolumeFactory;
 import de.qabel.chat.repository.ChatDropMessageRepository;
 import de.qabel.chat.repository.inmemory.InMemoryChatDropMessageRepository;
 import de.qabel.core.accounting.BoxClientStub;
@@ -20,7 +21,6 @@ import de.qabel.desktop.SharingService;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.FilesAbout;
 import de.qabel.desktop.config.RepositoryBasedClientConfig;
-import de.qabel.desktop.config.factory.BoxVolumeFactory;
 import de.qabel.desktop.config.factory.DefaultBoxSyncConfigFactory;
 import de.qabel.desktop.crashReports.StubCrashReportHandler;
 import de.qabel.desktop.daemon.NetworkStatus;

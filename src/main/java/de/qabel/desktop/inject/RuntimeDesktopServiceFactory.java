@@ -1,5 +1,11 @@
 package de.qabel.desktop.inject;
 
+import com.google.common.io.Files;
+import de.qabel.box.storage.DirectoryMetadataFactory;
+import de.qabel.box.storage.factory.BlockBoxVolumeFactory;
+import de.qabel.box.storage.factory.BoxVolumeFactory;
+import de.qabel.box.storage.factory.CachedBoxVolumeFactory;
+import de.qabel.box.storage.jdbc.JdbcDirectoryMetadataFactory;
 import de.qabel.core.accounting.AccountingProfile;
 import de.qabel.core.accounting.BoxClient;
 import de.qabel.core.accounting.BoxHttpClient;
@@ -16,9 +22,6 @@ import de.qabel.desktop.BlockSharingService;
 import de.qabel.desktop.SharingService;
 import de.qabel.desktop.config.BoxSyncConfig;
 import de.qabel.desktop.config.FilesAbout;
-import de.qabel.desktop.config.factory.BlockBoxVolumeFactory;
-import de.qabel.desktop.config.factory.BoxVolumeFactory;
-import de.qabel.desktop.config.factory.CachedBoxVolumeFactory;
 import de.qabel.desktop.crashReports.CrashReportHandler;
 import de.qabel.desktop.daemon.NetworkStatus;
 import de.qabel.desktop.daemon.drop.DropDaemon;
@@ -43,6 +46,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.apache.http.impl.client.HttpClients;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -147,17 +151,37 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
         return sharingService;
     }
 
+    private DirectoryMetadataFactory directoryMetadataFactory;
+    public synchronized DirectoryMetadataFactory getDirectoryMetadataFactory() {
+        if (directoryMetadataFactory == null) {
+            directoryMetadataFactory = new JdbcDirectoryMetadataFactory(getTempDir(), getDeviceId());
+        }
+        return directoryMetadataFactory;
+    }
+
+    private File tmpDir = Files.createTempDir();
+
+    private synchronized File getTempDir() {
+        return tmpDir;
+    }
+
     @Override
     public synchronized BoxVolumeFactory getBoxVolumeFactory() throws IOException {
         if (boxVolumeFactory == null) {
             boxVolumeFactory = new CachedBoxVolumeFactory(new BlockBoxVolumeFactory(
-                getClientConfiguration().getDeviceId().getBytes(),
+                getDeviceId(),
                 getBoxClient(),
                 getIdentityRepository(),
-                getBlockUri()
+                getDirectoryMetadataFactory(),
+                getBlockUri(),
+                getTempDir()
             ));
         }
         return boxVolumeFactory;
+    }
+
+    private byte[] getDeviceId() {
+        return getClientConfiguration().getDeviceId().getBytes();
     }
 
     @Override

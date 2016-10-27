@@ -3,7 +3,6 @@ package de.qabel.desktop.inject;
 import com.google.common.io.Files;
 import de.qabel.box.storage.FileMetadataFactory;
 import de.qabel.box.storage.jdbc.JdbcFileMetadataFactory;
-import de.qabel.box.storage.jdbc.JdbcFileMetadataFactory;
 import de.qabel.chat.repository.sqlite.SqliteChatDropMessageRepository;
 import de.qabel.chat.repository.sqlite.SqliteChatShareRepository;
 import de.qabel.chat.service.MainChatService;
@@ -299,7 +298,10 @@ public class NewConfigDesktopServiceFactory extends RuntimeDesktopServiceFactory
     private SqlitePrefixRepository prefixRepository;
     private synchronized SqlitePrefixRepository getPrefixRepository() {
         if (prefixRepository == null) {
-            prefixRepository = new SqlitePrefixRepository(runtimeConfiguration.getConfigDatabase());
+            prefixRepository = new SqlitePrefixRepository(
+                runtimeConfiguration.getConfigDatabase(),
+                getEntityManager()
+            );
         }
         return prefixRepository;
     }

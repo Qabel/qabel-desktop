@@ -31,7 +31,7 @@ public class VirtualShareTreeItemTest extends AbstractFxTest {
 
     @Before
     public void setUp() throws Exception {
-        readBackend = new LocalReadBackend(Files.createTempDirectory("qbl_test"));
+        readBackend = new LocalReadBackend(Files.createTempDirectory("qbl_test").toFile());
     }
 
     private BoxExternalFile createShareWitzSize(long shareSize) {

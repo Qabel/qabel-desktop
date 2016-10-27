@@ -1,6 +1,7 @@
 package de.qabel.desktop.daemon.sync;
 
 import de.qabel.box.storage.AbstractNavigation;
+import de.qabel.box.storage.BoxVolumeImpl;
 import de.qabel.box.storage.LocalReadBackend;
 import de.qabel.box.storage.LocalWriteBackend;
 import de.qabel.core.config.Account;
@@ -16,7 +17,6 @@ import de.qabel.desktop.daemon.sync.worker.index.SyncState;
 import de.qabel.desktop.daemon.sync.worker.index.sqlite.SqliteSyncIndexFactory;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.nio.boxfs.BoxPath;
-import de.qabel.desktop.storage.cache.CachedBoxVolumeImpl;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -46,8 +46,8 @@ public class SyncIntegrationTest {
     private DefaultSyncer syncer2;
     private Thread managerThread1;
     private Thread managerThread2;
-    private CachedBoxVolumeImpl volume1;
-    private CachedBoxVolumeImpl volume2;
+    private BoxVolumeImpl volume1;
+    private BoxVolumeImpl volume2;
     private MonitoredTransferManager manager1;
     private MonitoredTransferManager manager2;
     private BoxSyncConfig config1;
@@ -88,10 +88,10 @@ public class SyncIntegrationTest {
                 account,
                 new SqliteSyncIndexFactory()
             );
-            LocalReadBackend readBackend = new LocalReadBackend(remoteDir);
-            LocalWriteBackend writeBackend = new LocalWriteBackend(remoteDir);
-            volume1 = new CachedBoxVolumeImpl(readBackend, writeBackend, identity.getPrimaryKeyPair(), new byte[0], new File(System.getProperty("java.io.tmpdir")), "prefix");
-            volume2 = new CachedBoxVolumeImpl(readBackend, writeBackend, identity.getPrimaryKeyPair(), new byte[0], new File(System.getProperty("java.io.tmpdir")), "prefix");
+            LocalReadBackend readBackend = new LocalReadBackend(remoteDir.toFile());
+            LocalWriteBackend writeBackend = new LocalWriteBackend(remoteDir.toFile());
+            volume1 = new BoxVolumeImpl(readBackend, writeBackend, identity.getPrimaryKeyPair(), new byte[0], new File(System.getProperty("java.io.tmpdir")), "prefix");
+            volume2 = new BoxVolumeImpl(readBackend, writeBackend, identity.getPrimaryKeyPair(), new byte[0], new File(System.getProperty("java.io.tmpdir")), "prefix");
             volume1.createIndex("qabel", "prefix");
             volume1.navigate().createFolder("sync");
             volume2.navigate().createFolder("sync");

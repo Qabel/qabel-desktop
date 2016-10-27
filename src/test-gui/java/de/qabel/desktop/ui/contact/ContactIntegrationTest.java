@@ -6,7 +6,6 @@ import de.qabel.core.crypto.QblECPublicKey;
 import de.qabel.core.drop.DropMessage;
 import de.qabel.core.repository.EntityManager;
 import de.qabel.core.repository.sqlite.*;
-import de.qabel.core.repository.sqlite.hydrator.DropURLHydrator;
 import de.qabel.desktop.daemon.drop.TextMessage;
 import de.qabel.desktop.repository.sqlite.SqliteDropMessageRepository;
 import de.qabel.desktop.ui.AbstractGuiTest;
@@ -50,17 +49,8 @@ public class ContactIntegrationTest extends AbstractGuiTest<ContactController> {
 
     private void initRepositories() throws Exception {
         transactionManager = new SqliteTransactionManager(connection);
-        identityRepository = new SqliteIdentityRepository(
-            clientDatabase, em,
-            new SqlitePrefixRepository(clientDatabase),
-            new SqliteDropUrlRepository(clientDatabase, new DropURLHydrator())
-        );
-        contactRepository = new SqliteContactRepository(
-            clientDatabase,
-            em,
-            new SqliteDropUrlRepository(clientDatabase, new DropURLHydrator()),
-            identityRepository
-        );
+        identityRepository = new SqliteIdentityRepository(clientDatabase, em);
+        contactRepository = new SqliteContactRepository(clientDatabase, em);
         dropMessageRepository = new SqliteDropMessageRepository(clientDatabase, em);
     }
 
