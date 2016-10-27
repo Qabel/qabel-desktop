@@ -190,7 +190,6 @@ public class ActionlogController extends AbstractController implements Initializ
     private void markSeen(PersistenceDropMessage d) {
         if (!d.isSeen() && chat.isVisible()) {
             d.setSeen(true);
-            System.out.println("marked message seen " + d);
             executor.submit(() -> {
                 try {
                     dropMessageRepository.save(d);
@@ -262,7 +261,6 @@ public class ActionlogController extends AbstractController implements Initializ
         }
         knownMessages.add(message);
 
-        System.out.println("update: " + message.getDropMessage().getDropPayload() + " on " + Thread.currentThread().getName());
         if (contact == null) {
             throw new IllegalStateException("cannot load messages without contact");
         }

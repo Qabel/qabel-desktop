@@ -10,6 +10,7 @@ import org.junit.Test;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static junit.framework.TestCase.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -61,14 +62,68 @@ public class HyperlinkRendererTest {
         assertThat(lastHyperlink.get(), equalTo("https://qabel.de"));
     }
 
-    protected void assertHyperlink(Text link) {
-        assertTrue(link.getStyleClass().contains("hyperlink"));
+    @Test
+    public void parsesNonHttpSchemes() {
+        Text link = (Text) renderer.render("ftp://qabel.de").get(0);
+        assertHyperlink(link);
     }
 
     @Test
-    public void parsesNonHttpSchemes() {
-        Text link = (Text)renderer.render("ftp://qabel.de").get(0);
+    public void rendersSpaces() {
+        List<Node> nodes = renderer.render("http://qabel.de http://qabel.de");
+        assertThat(nodes, hasSize(3));
+        assertThat(((Text)nodes.get(1)).getText(), equalTo(" "));
+    }
+
+    @Test
+    public void detectsUrlWithSubdomainWithoutSchema() {
+        assertRendersHyperlink("www.qabel.de");
+    }
+
+    @Test
+    public void detectsUrlWithoutSchema() {
+        assertRendersHyperlink("qabel.de");
+    }
+
+    @Test
+    public void detectsNewTldWithoutSchema() {
+        assertRendersHyperlink("qabel.computer");
+    }
+
+    @Test
+    public void rejectsSchemalessUrlWithInvalidTLD() {
+        assertRendersNoHyperlink("qabel.sooooinvalid");
+    }
+
+    @Test
+    public void allowsIps() {
+        assertRendersHyperlink("http://192.168.1.1:8080/index.html");
+    }
+
+    @Test
+    public void allowsLocalhostWithScheme() {
+        assertRendersHyperlink("http://localhost");
+    }
+
+    private void assertRendersHyperlink(String text) {
+        assertTrue(renderer.needsFormatting(text));
+        List<Node> nodes = renderer.render(text);
+        Text link = (Text) nodes.get(0);
         assertHyperlink(link);
+        assertThat(nodes, hasSize(1));
+    }
+
+    private void assertRendersNoHyperlink(String text) {
+        Text link = (Text) renderer.render(text).get(0);
+        assertNoHyperlink(link);
+    }
+
+
+    protected void assertHyperlink(Text link) {
+        assertTrue(link.getStyleClass().contains("hyperlink"));
+    }
+    protected void assertNoHyperlink(Text link) {
+        assertFalse(link.getStyleClass().contains("hyperlink"));
     }
 
     protected void click(Text link) {

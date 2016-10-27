@@ -11,7 +11,11 @@ import java.util.regex.Pattern;
 public abstract class AbstractPatternExtractionRenderer implements PartialFXMessageRenderer {
     @Override
     public boolean needsFormatting(String text) {
-        return getPattern().matcher(text).find();
+        return getDetectionPattern().matcher(text).find();
+    }
+
+    protected Pattern getDetectionPattern() {
+        return getPattern();
     }
 
     protected abstract Pattern getPattern();
