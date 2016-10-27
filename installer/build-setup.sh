@@ -4,6 +4,7 @@ set -x
 cd "$(dirname "$0")"
 
 version=$1
+targetRelease=$2
 if [ "${version}" == "" ]; then
     echo "please specify a release version number as first parameter: ./build-setup.sh version"
     exit -1
@@ -23,7 +24,7 @@ if [ -d tmp ]; then
 fi
 mkdir tmp
 cd ../client/build/distributions
-ls -1 qabel-desktop-linux* | xargs -I{} cp {} ../../../installer/tmp/dist.zip
+ls -1 client-linux* | xargs -I{} cp {} ../../../installer/tmp/dist.zip
 cd ../../../installer/tmp
 unzip -n dist.zip
 rm dist.zip
@@ -52,5 +53,5 @@ wine inno/ISCC.exe config.iss
 mv qabel-desktop-client-${version}-beta.exe qabel-desktop-client-${version}-${targetRelease}.exe
 cd ..
 mkdir -p build/distributions
-mv build/distributions/qabel-desktop-linux_amd64-${version}.zip build/distributions/qabel-desktop-linux_amd64-${version}-${targetRelease}.zip
+mv client/build/distributions/client-linux_amd64-${version}.zip build/distributions/qabel-desktop-linux_amd64-${version}-${targetRelease}.zip
 
