@@ -13,7 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -21,6 +21,7 @@ public class ShareNotificationRenderer implements FXMessageRenderer {
     private static final ExecutorService renderExecutor = Executors.newSingleThreadExecutor();
     private AuthenticatedDownloader downloader;
     private SharingService sharingService;
+    private PlaintextMessageRenderer messageRenderer = new PlaintextMessageRenderer();
 
     public ShareNotificationRenderer(AuthenticatedDownloader downloader, SharingService sharingService) {
         this.downloader = downloader;
@@ -28,13 +29,13 @@ public class ShareNotificationRenderer implements FXMessageRenderer {
     }
 
     @Override
-    public Node render(String dropPayload, ResourceBundle resourceBundle) {
+    public Node render(String alias, String dropPayload, ResourceBundle resourceBundle) {
         VBox result = new VBox();
         result.getStyleClass().add("message-text");
         result.setStyle("-fx-spacing: 1em;");
 
         ShareNotificationMessage message = ShareNotificationMessage.fromJson(dropPayload);
-        Label text = new Label(message.getMsg());
+        Node text = messageRenderer.render(alias, dropPayload, resourceBundle);
         result.getChildren().add(text);
 
             HBox fileBox = new HBox();
