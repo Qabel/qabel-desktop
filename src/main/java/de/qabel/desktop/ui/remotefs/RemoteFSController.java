@@ -2,6 +2,7 @@ package de.qabel.desktop.ui.remotefs;
 
 import de.qabel.box.storage.*;
 import de.qabel.box.storage.exceptions.QblStorageException;
+import de.qabel.box.storage.exceptions.QblStorageNotFound;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.SharingService;
 import de.qabel.desktop.cellValueFactory.BoxObjectCellValueFactory;
@@ -410,8 +411,12 @@ public class RemoteFSController extends AbstractController implements Initializa
 
     private ReadableBoxNavigation createSetup() throws QblStorageException {
         volume = boxVolumeFactory.getVolume(clientConfiguration.getAccount(), clientConfiguration.getSelectedIdentity());
-        nav = volume.navigate();
-
+        try {
+            nav = volume.navigate();
+        } catch (QblStorageNotFound e) {
+            volume.createIndex("meh");
+            nav = volume.navigate();
+        }
         return nav;
     }
 

@@ -43,6 +43,10 @@
             "locked": "1.0.0",
             "requested": "[1.0,2.0["
         },
+        "com.vdurmont:emoji-java": {
+            "locked": "3.1.3",
+            "requested": "[3.1.3,4.0["
+        },
         "commons-cli:commons-cli": {
             "locked": "1.3.1",
             "requested": "[1.2,2.0["
@@ -75,7 +79,7 @@
             "project": true
         },
         "org.apache.commons:commons-lang3": {
-            "locked": "3.4",
+            "locked": "3.5",
             "requested": "[3.0.0,4.0["
         },
         "org.apache.httpcomponents:httpclient": {
@@ -167,6 +171,10 @@
             "locked": "1.0.0",
             "requested": "[1.0,2.0["
         },
+        "com.vdurmont:emoji-java": {
+            "locked": "3.1.3",
+            "requested": "[3.1.3,4.0["
+        },
         "commons-cli:commons-cli": {
             "locked": "1.3.1",
             "requested": "[1.2,2.0["
@@ -199,7 +207,7 @@
             "project": true
         },
         "org.apache.commons:commons-lang3": {
-            "locked": "3.4",
+            "locked": "3.5",
             "requested": "[3.0.0,4.0["
         },
         "org.apache.httpcomponents:httpclient": {
@@ -295,6 +303,10 @@
             "locked": "1.11.0",
             "requested": "[1.10.0,2.0["
         },
+        "com.vdurmont:emoji-java": {
+            "locked": "3.1.3",
+            "requested": "[3.1.3,4.0["
+        },
         "commons-cli:commons-cli": {
             "locked": "1.3.1",
             "requested": "[1.2,2.0["
@@ -339,7 +351,7 @@
             "project": true
         },
         "org.apache.commons:commons-lang3": {
-            "locked": "3.4",
+            "locked": "3.5",
             "requested": "[3.0.0,4.0["
         },
         "org.apache.httpcomponents:httpclient": {
@@ -383,7 +395,7 @@
             "requested": "[2.0,3.0["
         },
         "org.mockito:mockito-core": {
-            "locked": "2.2.0-beta.1",
+            "locked": "2.2.6",
             "requested": "[2.0.52-beta,3.0["
         },
         "org.ocpsoft.prettytime:prettytime": {
@@ -455,6 +467,10 @@
             "locked": "1.11.0",
             "requested": "[1.10.0,2.0["
         },
+        "com.vdurmont:emoji-java": {
+            "locked": "3.1.3",
+            "requested": "[3.1.3,4.0["
+        },
         "commons-cli:commons-cli": {
             "locked": "1.3.1",
             "requested": "[1.2,2.0["
@@ -499,7 +515,7 @@
             "project": true
         },
         "org.apache.commons:commons-lang3": {
-            "locked": "3.4",
+            "locked": "3.5",
             "requested": "[3.0.0,4.0["
         },
         "org.apache.httpcomponents:httpclient": {
@@ -543,7 +559,7 @@
             "requested": "[2.0,3.0["
         },
         "org.mockito:mockito-core": {
-            "locked": "2.2.0-beta.1",
+            "locked": "2.2.6",
             "requested": "[2.0.52-beta,3.0["
         },
         "org.ocpsoft.prettytime:prettytime": {
@@ -611,6 +627,10 @@
             "locked": "1.0.0",
             "requested": "[1.0,2.0["
         },
+        "com.vdurmont:emoji-java": {
+            "locked": "3.1.3",
+            "requested": "[3.1.3,4.0["
+        },
         "commons-cli:commons-cli": {
             "locked": "1.3.1",
             "requested": "[1.2,2.0["
@@ -643,7 +663,7 @@
             "project": true
         },
         "org.apache.commons:commons-lang3": {
-            "locked": "3.4",
+            "locked": "3.5",
             "requested": "[3.0.0,4.0["
         },
         "org.apache.httpcomponents:httpclient": {
@@ -739,6 +759,10 @@
             "locked": "1.11.0",
             "requested": "[1.10.0,2.0["
         },
+        "com.vdurmont:emoji-java": {
+            "locked": "3.1.3",
+            "requested": "[3.1.3,4.0["
+        },
         "commons-cli:commons-cli": {
             "locked": "1.3.1",
             "requested": "[1.2,2.0["
@@ -783,7 +807,7 @@
             "project": true
         },
         "org.apache.commons:commons-lang3": {
-            "locked": "3.4",
+            "locked": "3.5",
             "requested": "[3.0.0,4.0["
         },
         "org.apache.httpcomponents:httpclient": {
@@ -827,7 +851,7 @@
             "requested": "[2.0,3.0["
         },
         "org.mockito:mockito-core": {
-            "locked": "2.2.0-beta.1",
+            "locked": "2.2.6",
             "requested": "[2.0.52-beta,3.0["
         },
         "org.ocpsoft.prettytime:prettytime": {
@@ -899,6 +923,10 @@
             "locked": "1.11.0",
             "requested": "[1.10.0,2.0["
         },
+        "com.vdurmont:emoji-java": {
+            "locked": "3.1.3",
+            "requested": "[3.1.3,4.0["
+        },
         "commons-cli:commons-cli": {
             "locked": "1.3.1",
             "requested": "[1.2,2.0["
@@ -943,7 +971,7 @@
             "project": true
         },
         "org.apache.commons:commons-lang3": {
-            "locked": "3.4",
+            "locked": "3.5",
             "requested": "[3.0.0,4.0["
         },
         "org.apache.httpcomponents:httpclient": {
@@ -987,7 +1015,7 @@
             "requested": "[2.0,3.0["
         },
         "org.mockito:mockito-core": {
-            "locked": "2.2.0-beta.1",
+            "locked": "2.2.6",
             "requested": "[2.0.52-beta,3.0["
         },
         "org.ocpsoft.prettytime:prettytime": {
