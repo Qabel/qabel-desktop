@@ -1,0 +1,36 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
+mainClassName = "de.qabel.desktop.debug.DebugClient"
+version = 'dev'
+new File('dist/resources/version').write version.toString()
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url "https://jitpack.io" }
+    flatDir {
+        dir '../libs'
+        dir '../libs/dev'
+        dir System.getProperty('java.home') + '/lib/ext'        // to please sonarqube
+    }
+}
+
+dependencies {
+    compile name: 'scenicView'
+    compile project(':client')
+    compile project(path: ':client', configuration: 'tests')
+    compile project(':client').sourceSets.test.output
+}
+
+tasks.withType(Test) {
+    systemProperty 'java.library.path', '../libs/'
+
+    reports.html.destination = file("${reporting.baseDir}/${name}")
+}
+run {
+    systemProperty 'java.library.path', '../libs/'
+}
