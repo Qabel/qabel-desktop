@@ -54,11 +54,21 @@ public class HyperlinkRendererTest {
     public void createsHyperlinks() {
         renderer.browserOpener = lastHyperlink::set;
 
-        Text link = (Text) renderer.render("https://qabel.de").get(0);
-        assertTrue(link.getStyleClass().contains("hyperlink"));
+        Text link = (Text)renderer.render("https://qabel.de").get(0);
+        assertHyperlink(link);
         click(link);
 
         assertThat(lastHyperlink.get(), equalTo("https://qabel.de"));
+    }
+
+    protected void assertHyperlink(Text link) {
+        assertTrue(link.getStyleClass().contains("hyperlink"));
+    }
+
+    @Test
+    public void parsesNonHttpSchemes() {
+        Text link = (Text)renderer.render("ftp://qabel.de").get(0);
+        assertHyperlink(link);
     }
 
     protected void click(Text link) {

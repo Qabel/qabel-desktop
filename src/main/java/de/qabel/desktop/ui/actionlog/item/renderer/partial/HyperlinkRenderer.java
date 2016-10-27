@@ -18,7 +18,7 @@ public class HyperlinkRenderer extends AbstractPatternExtractionRenderer {
             Desktop.getDesktop().browse(new URI(uri));
         } catch (IOException | URISyntaxException ignored) {}
     }).start();
-    private static final Pattern LINK_PATTERN = Pattern.compile("(https?:\\/\\/(?:www\\.|(?!www))[^\\s\\.]+\\.[^\\s]{2,}|www\\.[^\\s]+\\.[^\\s]{2,})");
+    private static final Pattern LINK_PATTERN = Pattern.compile("(\\w+:\\/\\/(?:www\\.|(?!www))[^\\s\\.]+\\.[^\\s]{2,}|www\\.[^\\s]+\\.[^\\s]{2,})");
 
     @Override
     protected Pattern getPattern() {

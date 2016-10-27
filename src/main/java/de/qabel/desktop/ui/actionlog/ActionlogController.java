@@ -45,6 +45,8 @@ public class ActionlogController extends AbstractController implements Initializ
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
     private static final Logger logger = LoggerFactory.getLogger(ActionlogController.class);
 
+    private ExecutorService messageLoadingExecutor = executor;
+
     @FXML
     public BorderPane chat;
     @FXML
@@ -84,9 +86,10 @@ public class ActionlogController extends AbstractController implements Initializ
 
     Identity identity;
     Contact contact;
-    List<PersistenceDropMessage> receivedDropMessages;
+    private final List<PersistenceDropMessage> receivedDropMessages = new LinkedList<>();
     List<ActionlogItem> messageControllers = new LinkedList<>();
     Thread dateRefresher;
+    private Set<PersistenceDropMessage> knownMessages = new HashSet<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -95,11 +98,11 @@ public class ActionlogController extends AbstractController implements Initializ
         dropMessageRepository.addObserver(this);
         clientConfiguration.onSelectIdentity(identity -> this.identity = identity);
         addListener();
-        contactRepository.attach(this::toggleNotification);
+        contactRepository.attach(this::updateNotification);
         scroller.setFitToWidth(true);
     }
 
-    private void toggleNotification() {
+    private void updateNotification() {
         notification.setManaged(contact.getStatus() == Contact.ContactStatus.UNKNOWN);
     }
 
@@ -158,16 +161,13 @@ public class ActionlogController extends AbstractController implements Initializ
         dropMessageRepository.addMessage(d, identity, c, true);
     }
 
-    void loadMessages(Contact c) throws EntityNotFoundException {
+    private void loadMessages(Contact c) throws EntityNotFoundException {
         try {
-            if (receivedDropMessages == null) {
+            if (receivedDropMessages.isEmpty()) {
                 Platform.runLater(messages.getChildren()::clear);
-                receivedDropMessages = dropMessageRepository.loadConversation(c, identity);
-                addMessagesToView(receivedDropMessages);
+                addMessagesToView(dropMessageRepository.loadConversation(c, identity));
             } else {
-                List<PersistenceDropMessage> newMessages = dropMessageRepository.loadNewMessagesFromConversation(receivedDropMessages, c, identity);
-                receivedDropMessages.addAll(newMessages);
-                addMessagesToView(newMessages);
+                addMessagesToView(dropMessageRepository.loadNewMessagesFromConversation(receivedDropMessages, c, identity));
             }
 
         } catch (PersistenceException e) {
@@ -178,20 +178,11 @@ public class ActionlogController extends AbstractController implements Initializ
     private void addMessagesToView(List<PersistenceDropMessage> dropMessages) {
         for (PersistenceDropMessage d : dropMessages) {
             Platform.runLater(() -> {
-                if (d.isSent()) {
-                    try {
-                        addOwnMessageToActionlog(d.getDropMessage());
-                    } catch (EntityNotFoundException e) {
-                        logger.warn("failed to show message: " + e.getMessage(), e);
-                    }
-                } else {
-                    try {
-                        addMessageToActionlog(d.getDropMessage());
-                    } catch (EntityNotFoundException e) {
-                        logger.warn("failed to show message: " + e.getMessage(), e);
-                    }
+                try {
+                    addMessage(d);
+                } catch (EntityNotFoundException e) {
+                    logger.warn("failed to show message: " + e.getMessage(), e);
                 }
-                markSeen(d);
             });
         }
     }
@@ -211,7 +202,7 @@ public class ActionlogController extends AbstractController implements Initializ
     }
 
     private Entity lastSender;
-    void addMessageToActionlog(DropMessage dropMessage) throws EntityNotFoundException {
+    void addReceivedMessage(DropMessage dropMessage) throws EntityNotFoundException {
         Map<String, Object> injectionContext = new HashMap<>();
         String senderKeyId = dropMessage.getSenderKeyId();
         if (senderKeyId == null) {
@@ -235,7 +226,7 @@ public class ActionlogController extends AbstractController implements Initializ
         messageControllers.add((ActionlogItem) otherItemView.getPresenter());
     }
 
-    void addOwnMessageToActionlog(DropMessage dropMessage) throws EntityNotFoundException {
+    void addSentMessage(DropMessage dropMessage) throws EntityNotFoundException {
 
         if (dropMessage.getDropPayload().equals("")) {
             return;
@@ -261,37 +252,60 @@ public class ActionlogController extends AbstractController implements Initializ
     }
 
     @Override
-    public void update(Observable o, Object arg) {
+    public synchronized void update(Observable o, Object arg) {
         if (!(arg instanceof PersistenceDropMessage))
             return;
         PersistenceDropMessage message = (PersistenceDropMessage)arg;
-        markSeen(message);
 
+        if (knownMessages.contains(message)) {
+            return;
+        }
+        knownMessages.add(message);
+
+        System.out.println("update: " + message.getDropMessage().getDropPayload() + " on " + Thread.currentThread().getName());
         if (contact == null) {
             throw new IllegalStateException("cannot load messages without contact");
         }
+        if (messageIsFromAnotherConversation(message)) {
+            return;
+        }
 
-        Platform.runLater(() -> tryOrAlert(() -> {
-            if (message.getSender() == identity) {
-                addOwnMessageToActionlog(message.getDropMessage());
-            } else {
-                addMessageToActionlog(message.getDropMessage());
-            }
-        }));
+        Platform.runLater(() -> tryOrAlert(() -> addMessage(message)));
     }
 
-    public void setContact(Contact contact) {
-        receivedDropMessages = null;
+    private boolean messageIsFromAnotherConversation(PersistenceDropMessage message) {
+        return !(message.isSent() && contact == message.getReceiver() || !message.isSent() && contact == message.getSender());
+    }
+
+    protected void addMessage(PersistenceDropMessage message) throws EntityNotFoundException {
+        knownMessages.add(message);
+        receivedDropMessages.add(message);
+        markSeen(message);
+        if (message.getSender() == identity) {
+            addSentMessage(message.getDropMessage());
+        } else {
+            addReceivedMessage(message.getDropMessage());
+        }
+    }
+
+    public synchronized void setContact(Contact contact) {
+        receivedDropMessages.clear();
+        knownMessages.clear();
         this.contact = contact;
-        executor.submit(() -> {
+        lastSender = null;
+        messageLoadingExecutor.submit(() -> {
             try {
-                toggleNotification();
+                updateNotification();
                 loadMessages(this.contact);
             } catch (Exception e) {
                 alert(e);
             }
         });
 
+    }
+
+    void setMessageLoadingExecutor(ExecutorService messageLoadingExecutor) {
+        this.messageLoadingExecutor = messageLoadingExecutor;
     }
 
     public void handleAccept() {
