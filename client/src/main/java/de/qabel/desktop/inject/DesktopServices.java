@@ -1,5 +1,6 @@
 package de.qabel.desktop.inject;
 
+import de.qabel.box.storage.factory.BoxVolumeFactory;
 import de.qabel.chat.repository.ChatDropMessageRepository;
 import de.qabel.chat.service.ChatService;
 import de.qabel.core.accounting.BoxClient;
@@ -15,7 +16,6 @@ import de.qabel.desktop.SharingService;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.FilesAbout;
 import de.qabel.desktop.config.factory.BoxSyncConfigFactory;
-import de.qabel.desktop.config.factory.BoxVolumeFactory;
 import de.qabel.desktop.crashReports.CrashReportHandler;
 import de.qabel.desktop.daemon.NetworkStatus;
 import de.qabel.desktop.daemon.drop.DropDaemon;

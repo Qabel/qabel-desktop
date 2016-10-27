@@ -32,7 +32,7 @@ public abstract class RemoteFSChooser extends Dialog<Path> implements ChangeList
         okButton = (Button) getDialogPane().lookupButton(okType);
 
         BoxNavigation nav = volume.navigate();
-        root = new FolderTreeItem(new BoxFolder(volume.getRootRef(), "/", new byte[16]), nav);
+        root = new FolderTreeItem(new BoxFolder("don't care", "/", new byte[16]), nav);
         tree = new TreeView<>(root);
         getDialogPane().setContent(tree);
 

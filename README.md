@@ -194,4 +194,4 @@ For issues using the Qabel Desktop Client, use the **feedback button** (<img alt
 
 Otherwise, use the Issue tracker of GitHub.
 
-Please read the contribution guidelines at https://github.com/Qabel/qabel-core/blob/master/CONTRIBUTING.md carefully.
+Please read the contribution guidelines at https://github.com/Qabel/qabel-core/blob/master/CONTRIBUTING.md carefully and don't forget to keep a [keep a changelog](http://keepachangelog.com).

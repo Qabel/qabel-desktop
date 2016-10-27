@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+<HBox fx:id="messageItem" styleClass="message" spacing="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.qabel.desktop.ui.actionlog.item.ActionlogItemController">
+    <Label fx:id="dateLabel" styleClass="message-date">11:32</Label>
+    <HBox fx:id="messageContainer" styleClass="message-text">
+        <TextFlow>
+            <Text>
+                sdfh jkhsadkf hkajsdhf kjashd flkajsdhf kjsahdf klashdf kjashdflkjash dfkjsh kasjhd
+                fkaslhdf kshd fklasjhdf kasljhdf ksajhdf lasdfhaksldhf kasdhf ksajhdf ksahd
+                fkjsahdfksjahdf lkshdf kasdhfl ksahdf kshdfkasjhdf kasdf
+            </Text>
+        </TextFlow>
+    </HBox>
+</HBox>

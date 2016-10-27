@@ -5,11 +5,11 @@ import de.qabel.box.storage.BoxFolder;
 import de.qabel.box.storage.BoxNavigation;
 import de.qabel.box.storage.BoxVolume;
 import de.qabel.box.storage.exceptions.QblStorageException;
+import de.qabel.box.storage.factory.LocalBoxVolumeFactory;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.core.config.factory.IdentityBuilder;
-import de.qabel.desktop.config.factory.LocalBoxVolumeFactory;
 import de.qabel.desktop.daemon.sync.AbstractSyncTest;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.nio.boxfs.BoxPath;
@@ -57,7 +57,7 @@ public class DefaultTransferManagerTest extends AbstractSyncTest {
         try {
             Account account = new Account("a", "b", "c");
             Identity identity = new IdentityBuilder(new DropUrlGenerator("http://localhost")).build();
-            volume = new LocalBoxVolumeFactory(tmpDir, "abc", "prefix").getVolume(account, identity);
+            volume = new LocalBoxVolumeFactory(tmpDir.toFile(), "abc", "prefix").getVolume(account, identity);
             volume.createIndex("??");
 
             upload = new UploadStub();

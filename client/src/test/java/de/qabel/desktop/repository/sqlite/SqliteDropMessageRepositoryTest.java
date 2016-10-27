@@ -35,7 +35,7 @@ public class SqliteDropMessageRepositoryTest extends AbstractSqliteRepositoryTes
     protected DropMessageRepository createRepo(ClientDatabase clientDatabase, EntityManager em) throws Exception {
         identityRepository = new SqliteIdentityRepository(
             clientDatabase, em,
-            new SqlitePrefixRepository(clientDatabase),
+            new SqlitePrefixRepository(clientDatabase, em),
             new SqliteDropUrlRepository(clientDatabase, new DropURLHydrator())
         );
         contactRepository = new SqliteContactRepository(
