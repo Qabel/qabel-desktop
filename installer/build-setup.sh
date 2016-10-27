@@ -23,8 +23,8 @@ if [ -d tmp ]; then
 fi
 mkdir tmp
 cd ../client/build/distributions
-ls -1 qabel-desktop-linux* | xargs -I{} cp {} ../../installer/tmp/dist.zip
-cd ../../installer/tmp
+ls -1 qabel-desktop-linux* | xargs -I{} cp {} ../../../installer/tmp/dist.zip
+cd ../../../installer/tmp
 unzip -n dist.zip
 rm dist.zip
 ls -1 | xargs -I{} mv {} ../dist

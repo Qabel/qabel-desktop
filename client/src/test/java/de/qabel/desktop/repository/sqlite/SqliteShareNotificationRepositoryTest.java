@@ -37,7 +37,7 @@ public class SqliteShareNotificationRepositoryTest extends AbstractSqliteReposit
         otherIdentity = new IdentityBuilder(new DropUrlGenerator("http://localhost")).withAlias("test2").build();
         identityRepo = new SqliteIdentityRepository(
             clientDatabase, em,
-            new SqlitePrefixRepository(clientDatabase),
+            new SqlitePrefixRepository(clientDatabase, em),
             new SqliteDropUrlRepository(clientDatabase, new DropURLHydrator())
         );
         identityRepo.save(identity);

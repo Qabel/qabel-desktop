@@ -27,13 +27,6 @@ public class BoxVolumeStub implements CachedBoxVolume {
         return rootNavigation;
     }
 
-    @NotNull
-    @Override
-    public String getRootRef() {
-        return rootRef;
-    }
-
-
     @Override
     public StorageReadBackend getReadBackend() {
         return null;
