@@ -57,6 +57,9 @@ public class HyperlinkRenderer extends AbstractPatternExtractionRenderer {
         } catch (URISyntaxException e) {
             match = "http://" + match;
             uri = new URI(match);
+            if (uri.getHost() == null) {
+                throw new URISyntaxException(match, "failed to parse host");
+            }
             if (hasValidTld(uri) || isIp(uri)) {
                 return match;
             }
@@ -77,6 +80,9 @@ public class HyperlinkRenderer extends AbstractPatternExtractionRenderer {
 
     private boolean hasValidTld(URI uri) throws URISyntaxException {
         String host = uri.getHost();
+        if (!host.contains(".") || host.lastIndexOf(".") == host.length()) {
+            return false;
+        }
         String tld = host.substring(host.lastIndexOf(".") + 1);
         return TLD.isValid(tld);
     }

@@ -48,17 +48,21 @@
         </ScrollPane>
     </center>
     <bottom>
-        <HBox styleClass="chat-input">
-            <children>
-                <ImageView pickOnBounds="true" styleClass="edit-icon" preserveRatio="true">
-                    <image>
-                        <Image url="@/icon/edit_inverse.png"/>
-                    </image>
-                </ImageView>
-                <TextArea promptText="%actionlogInputPlaceholder" fx:id="textarea" wrapText="true"
-                          BorderPane.alignment="BOTTOM_CENTER">
+        <BorderPane styleClass="chat-input">
+            <center>
+                <TextArea
+                    promptText="%actionlogInputPlaceholder"
+                    fx:id="textarea"
+                    wrapText="true"
+                    BorderPane.alignment="BOTTOM_LEFT"
+                    prefRowCount="1">
                 </TextArea>
-            </children>
-        </HBox>
+            </center>
+            <right>
+                <ImageView pickOnBounds="true" fx:id="emojiSelector" BorderPane.alignment="CENTER_RIGHT" onMouseClicked="#selectEmoji" smooth="true" fitWidth="25" styleClass="clickable" preserveRatio="true">
+                    <image><Image url="@/icon/emoji/emoji_1f600.png"/></image>
+                </ImageView>
+            </right>
+        </BorderPane>
     </bottom>
 </BorderPane>

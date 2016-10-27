@@ -76,7 +76,7 @@
     -fx-background-image: url("/scroll-horizontal.png");
 }
 
-.scroll-bar:vertical .track {
+.scroll-bar:vertical .track, .virtual-flow .scroll-bar .track {
     -fx-background-repeat: repeat-y;
     -fx-background-image: url("/scroll.png");
 }
@@ -94,8 +94,7 @@
 }
 
 .scroll-bar .increment-arrow, .scroll-bar .decrement-arrow {
-    -fx-shape: " ";
-    -fx-padding: 0;
+    -fx-opacity: 0;
 }
 
 .scroll-bar:horizontal .thumb, .scroll-bar:vertical .thumb {
@@ -336,7 +335,7 @@
 .chat-input {
     -fx-background-color: #4d4d4d;
     -fx-spacing: 1em;
-    -fx-padding: 0.5em 0.5em 0 0.5em;
+    -fx-padding: 0 0.5em 0 0.5em;
 }
 
 .chat-input > .edit-icon {
@@ -367,6 +366,7 @@
     -fx-effect: none;
     -fx-prompt-text-fill: rgba(255, 255, 255, 0.5);
     -fx-text-fill: white;
+    -fx-padding: 0.5em 0 0.5em 0;
 }
 
 .text-field.inline {
@@ -739,6 +739,11 @@ VBox.spaced, HBox.spaced {
     -fx-text-fill: white;
 }
 
+.emojiSelector {
+    -fx-text-fill: #222222;
+    -fx-background-color: white;
+}
+
 .vbox-popup {
     -fx-background-color: rgba(0,0,0,0.8);
     -fx-padding: 50px 50px 50px 50px;
@@ -826,4 +831,8 @@ VBox.spaced, HBox.spaced {
 
 .error-textfield {
     -fx-effect: dropshadow(three-pass-box, red, 8, 0.0, 0, 1);
+}
+
+.clickable {
+    -fx-cursor: hand;
 }

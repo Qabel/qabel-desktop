@@ -1,5 +1,6 @@
 package de.qabel.desktop.ui.actionlog;
 
+import com.airhacks.afterburner.views.QabelFXMLView;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Entity;
 import de.qabel.core.config.Identity;
@@ -13,6 +14,7 @@ import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.daemon.drop.TextMessage;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.ui.AbstractController;
+import de.qabel.desktop.ui.actionlog.emoji.EmojiSelector;
 import de.qabel.desktop.ui.actionlog.item.ActionlogItem;
 import de.qabel.desktop.ui.actionlog.item.ActionlogItemView;
 import de.qabel.desktop.ui.connector.DropConnector;
@@ -24,13 +26,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.NotificationPane;
+import org.controlsfx.control.PopOver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Subscription;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -49,6 +54,8 @@ public class ActionlogController extends AbstractController implements Initializ
 
     @FXML
     public BorderPane chat;
+    @FXML
+    public ImageView emojiSelector;
     @FXML
     Button accept;
 
@@ -173,6 +180,10 @@ public class ActionlogController extends AbstractController implements Initializ
         } catch (PersistenceException e) {
             alert("Failed to load messages", e);
         }
+    }
+
+    private void insert(String text) {
+        textarea.insertText(textarea.getCaretPosition(), text);
     }
 
     private void addMessagesToView(List<PersistenceDropMessage> dropMessages) {
@@ -318,5 +329,23 @@ public class ActionlogController extends AbstractController implements Initializ
     public void handleIgnore() {
         contact.setIgnored(true);
         saveContact();
+    }
+
+    public void selectEmoji() {
+        PopOver popOver = new PopOver();
+        popOver.getStyleClass().add("emojiSelector");
+        EmojiSelector emojiSelector = new EmojiSelector();
+        emojiSelector.getStylesheets().add(QabelFXMLView.getGlobalStyleSheet());
+        Subscription subscription = emojiSelector.onSelect().subscribe(emoji -> {
+            Platform.runLater(() -> {
+                insert(emoji.getUnicode());
+                textarea.requestFocus();
+                popOver.hide();
+            });
+        });
+        popOver.setOnCloseRequest(event -> subscription.unsubscribe());
+        popOver.setArrowLocation(PopOver.ArrowLocation.BOTTOM_RIGHT);
+        popOver.setContentNode(emojiSelector);
+        popOver.show(this.emojiSelector);
     }
 }
