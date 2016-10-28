@@ -1,6 +1,7 @@
 package de.qabel.desktop.ui.actionlog;
 
 import com.airhacks.afterburner.views.QabelFXMLView;
+import com.vdurmont.emoji.EmojiParser;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Entity;
 import de.qabel.core.config.Identity;
@@ -162,6 +163,7 @@ public class ActionlogController extends AbstractController implements Initializ
     }
 
     void sendDropMessage(Contact c, String text) throws QblDropPayloadSizeException, QblNetworkInvalidResponseException, PersistenceException {
+        text = EmojiParser.parseToUnicode(text);
         DropMessage d = new DropMessage(identity, new TextMessage(text).toJson(), DropMessageRepository.PAYLOAD_TYPE_MESSAGE);
         d.setDropMessageMetadata(new DropMessageMetadata(identity));
         dropConnector.send(c, d);
