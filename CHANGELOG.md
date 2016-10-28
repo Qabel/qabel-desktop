@@ -14,5 +14,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - extracted three modules
 - #522 new lightweight, TextFlow based chat layout
+- #531 emojiSelector selections show as alias (:alias:) in input
 
 ## 0.10.0-beta.3 [BASELINE]

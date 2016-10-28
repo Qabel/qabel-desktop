@@ -336,13 +336,11 @@ public class ActionlogController extends AbstractController implements Initializ
         popOver.getStyleClass().add("emojiSelector");
         EmojiSelector emojiSelector = new EmojiSelector();
         emojiSelector.getStylesheets().add(QabelFXMLView.getGlobalStyleSheet());
-        Subscription subscription = emojiSelector.onSelect().subscribe(emoji -> {
-            Platform.runLater(() -> {
-                insert(emoji.getUnicode());
-                textarea.requestFocus();
-                popOver.hide();
-            });
-        });
+        Subscription subscription = emojiSelector.onSelect().subscribe(emoji -> Platform.runLater(() -> {
+            insert(" :" + emoji.getAliases().get(0) + ": ");
+            textarea.requestFocus();
+            popOver.hide();
+        }));
         popOver.setOnCloseRequest(event -> subscription.unsubscribe());
         popOver.setArrowLocation(PopOver.ArrowLocation.BOTTOM_RIGHT);
         popOver.setContentNode(emojiSelector);
