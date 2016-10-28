@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - changelog
 - #522 links in chat are now clickable
 - #531 emojiSelector for chat
+- #531 emojis get rendered as images in chat
 
 ### Changed
 - extracted three modules
