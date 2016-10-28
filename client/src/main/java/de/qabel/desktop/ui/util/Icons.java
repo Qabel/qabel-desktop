@@ -1,5 +1,6 @@
 package de.qabel.desktop.ui.util;
 
+import com.vdurmont.emoji.Emoji;
 import de.codecentric.centerdevice.javafxsvg.SvgImageLoaderFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -22,6 +23,7 @@ public class Icons {
     public static final String FOLDER = "/svg/ic_folder_black_24px.svg";
     public static final String FILE = "/svg/ic_folder_black_24px.svg";
     private static final Map<String, ImageView> imageCache = Collections.synchronizedMap(new HashMap<>());
+    private static final Map<Emoji, String> emojiCache = Collections.synchronizedMap(new HashMap<>());
 
     public static final int LARGE_ICON_WIDTH = 32;
 
@@ -62,5 +64,21 @@ public class Icons {
 
     public static Image getImage(String path) {
         return new Image(Icons.class.getResourceAsStream(path));
+    }
+
+    public static ImageView getIcon(Emoji emoji) {
+        return getIcon(emoji, LARGE_ICON_WIDTH);
+    }
+
+    public static ImageView getIcon(Emoji emoji, int width) {
+        synchronized (emojiCache) {
+            if (!emojiCache.containsKey(emoji)) {
+                String emojiCode = emoji.getHtmlHexadecimal().replace(";&#x", "_").replace(";", "").replace("&#x", "");
+                String path = "/icon/emoji/emoji_" + emojiCode + (emoji.supportsFitzpatrick() ? "_1f3fb" : "") + ".png";
+                emojiCache.put(emoji, path);
+            }
+        }
+
+        return getIcon(emojiCache.get(emoji), width);
     }
 }

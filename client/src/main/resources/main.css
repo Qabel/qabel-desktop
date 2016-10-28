@@ -276,6 +276,9 @@
 .message-text {
     -fx-text-fill: #222222;
 }
+.message-text > * > * {
+    -fx-font-size: 15px;
+}
 .message-text .hyperlink  {
     -fx-fill: #ff690f;
     -fx-text-fill: #ff690f;
@@ -303,6 +306,7 @@
     -fx-min-width: 2em;
     -fx-pref-height: 1em;
     -fx-padding: 2px 0 0 0;
+    -fx-translate-y: 1px;
 }
 .message.sequence .message-date {
     -fx-text-fill: #CCCCCC;
