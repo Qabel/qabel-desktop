@@ -26,7 +26,7 @@ public class DetailsController extends AbstractController implements Initializab
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        closeDetails.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> detailsPane.setVisible(false));
+        closeDetails.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> hide());
     }
 
     public void hide() {
