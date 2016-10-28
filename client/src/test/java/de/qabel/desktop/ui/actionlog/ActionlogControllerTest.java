@@ -11,8 +11,9 @@ import de.qabel.desktop.daemon.drop.TextMessage;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.inmemory.InMemoryDropMessageRepository;
 import de.qabel.desktop.ui.AbstractControllerTest;
-import de.qabel.desktop.ui.actionlog.item.MyActionlogItemController;
-import de.qabel.desktop.ui.actionlog.item.MyActionlogItemView;
+import de.qabel.desktop.ui.actionlog.item.ActionlogItemController;
+import de.qabel.desktop.ui.actionlog.item.ActionlogItemView;
+import de.qabel.desktop.util.ImmediateExecutor;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,28 +22,46 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 
 public class ActionlogControllerTest extends AbstractControllerTest {
-    ActionlogController controller;
-    Identity i;
-    ActionlogView view;
-    Contact c;
-    String text = "MessageString";
-    DropMessage dm;
-    InMemoryDropMessageRepository repo;
+    private ActionlogController controller;
+    private Identity i;
+    private ActionlogView view;
+    private Contact c;
+    private String text = "MessageString";
+    private DropMessage dm;
+    private InMemoryDropMessageRepository repo;
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        repo = new InMemoryDropMessageRepository();
+        dropMessageRepository = repo;
+        super.setUp();
+        i = identityBuilderFactory.factory().withAlias("TestAlias").build();
+        c = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
+        c.setStatus(Contact.ContactStatus.UNKNOWN);
+        createController(i);
+        controller.setMessageLoadingExecutor(new ImmediateExecutor());
+        controller.setContact(c);
+
+        dm = new DropMessage(c, new TextMessage(text).toJson(), DropMessageRepository.PAYLOAD_TYPE_MESSAGE);
+    }
 
     @Test
     public void addMessageToActionlogTest() throws Exception {
         contactRepository.save((Contact) dm.getSender(), i);
-        controller.addMessageToActionlog(dm);
+        controller.addReceivedMessage(dm);
         assertEquals(1, controller.messages.getChildren().size());
     }
 
     @Test
     public void addOwnMessageToActionlogTest() throws Exception {
-        controller.addOwnMessageToActionlog(dm);
+        controller.addSentMessage(dm);
         assertEquals(1, controller.messages.getChildren().size());
     }
 
@@ -80,6 +99,36 @@ public class ActionlogControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    public void doesNotShowMessagesOfOtherConversations() throws Exception {
+        clientConfiguration.selectIdentity(i);
+        contactRepository.save(c, i);
+        Contact followMe = identityBuilderFactory.factory().withAlias("followMe").build().toContact();
+        controller.setContact(followMe);
+
+        controller.sendDropMessage(c, "you won't see this");
+        receiveMessageFromC();
+
+        runLaterAndWait(() -> {}); // wait for the started ui thread to finish
+        assertEquals(0, controller.messages.getChildren().size());
+    }
+
+    @Test
+    public void showsMessagesOfCurrentConversation() throws Exception {
+        clientConfiguration.selectIdentity(i);
+        contactRepository.save(c, i);
+
+        controller.sendDropMessage(c, "you won't see this");
+        receiveMessageFromC();
+
+        runLaterAndWait(() -> {}); // wait for the started ui thread to finish
+        assertEquals(2, controller.messages.getChildren().size());
+    }
+
+    protected void receiveMessageFromC() throws PersistenceException {
+        dropMessageRepository.addMessage(new DropMessage(c, new TextMessage("won't see this").toJson(), DropMessageRepository.PAYLOAD_TYPE_MESSAGE), c, i, false);
+    }
+
+    @Test
     public void addDropMessageMetadata() throws Exception {
         controller.sendDropMessage(c, "msg2");
 
@@ -99,8 +148,8 @@ public class ActionlogControllerTest extends AbstractControllerTest {
         injectionContext.put("dropMessage", d);
         injectionContext.put("contact", sender);
 
-        MyActionlogItemView my = new MyActionlogItemView(injectionContext::get);
-        MyActionlogItemController messagesController = (MyActionlogItemController) my.getPresenter();
+        ActionlogItemView my = new ActionlogItemView(injectionContext::get);
+        ActionlogItemController messagesController = (ActionlogItemController) my.getPresenter();
         controller.messageControllers.add(messagesController);
 
         messagesController.setDropMessage(d);
@@ -157,22 +206,6 @@ public class ActionlogControllerTest extends AbstractControllerTest {
             assertThat(contact.getStatus(), is(Contact.ContactStatus.NORMAL));
             assertThat(contact.isIgnored(), is(true));
         });
-    }
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        repo = new InMemoryDropMessageRepository();
-        dropMessageRepository = repo;
-        super.setUp();
-        i = identityBuilderFactory.factory().withAlias("TestAlias").build();
-        c = new Contact(i.getAlias(), i.getDropUrls(), i.getEcPublicKey());
-        c.setStatus(Contact.ContactStatus.UNKNOWN);
-        createController(i);
-        controller.setContact(c);
-        controller = (ActionlogController) view.getPresenter();
-
-        dm = new DropMessage(c, new TextMessage(text).toJson(), DropMessageRepository.PAYLOAD_TYPE_MESSAGE);
     }
 
     private void createController(Identity i) {

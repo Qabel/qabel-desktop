@@ -2,6 +2,7 @@ package de.qabel.desktop.repository.sqlite;
 
 import de.qabel.core.config.Identities;
 import de.qabel.core.config.Identity;
+import de.qabel.core.config.Prefix;
 import de.qabel.core.config.factory.DefaultIdentityFactory;
 import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.core.config.factory.IdentityBuilder;
@@ -34,7 +35,7 @@ public class SqliteIdentityRepositoryTest extends AbstractSqliteRepositoryTest<S
     @Override
     protected SqliteIdentityRepository createRepo(ClientDatabase clientDatabase, EntityManager em) {
         SqliteDropUrlRepository dropUrlRepository = new SqliteDropUrlRepository(clientDatabase, new DropURLHydrator());
-        SqlitePrefixRepository prefixRepository = new SqlitePrefixRepository(clientDatabase);
+        SqlitePrefixRepository prefixRepository = new SqlitePrefixRepository(clientDatabase, em);
         IdentityHydrator hydrator = new IdentityHydrator(
             new DefaultIdentityFactory(),
             em,
@@ -71,7 +72,7 @@ public class SqliteIdentityRepositoryTest extends AbstractSqliteRepositoryTest<S
         Identity identity = identityBuilder.build();
         identity.setEmail("email");
         identity.setPhone("phone");
-        identity.getPrefixes().add("my prefix");
+        identity.getPrefixes().add(new Prefix("my prefix"));
         repo.save(identity);
         em.clear();
 

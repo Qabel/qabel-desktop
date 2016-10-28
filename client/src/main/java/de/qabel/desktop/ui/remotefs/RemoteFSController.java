@@ -3,12 +3,12 @@ package de.qabel.desktop.ui.remotefs;
 import de.qabel.box.storage.*;
 import de.qabel.box.storage.exceptions.QblStorageException;
 import de.qabel.box.storage.exceptions.QblStorageNotFound;
+import de.qabel.box.storage.factory.BoxVolumeFactory;
 import de.qabel.core.config.Identity;
 import de.qabel.desktop.SharingService;
 import de.qabel.desktop.cellValueFactory.BoxObjectCellValueFactory;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.ShareNotifications;
-import de.qabel.desktop.config.factory.BoxVolumeFactory;
 import de.qabel.desktop.daemon.management.ManualDownload;
 import de.qabel.desktop.daemon.management.ManualUpload;
 import de.qabel.desktop.daemon.management.TransferManager;
@@ -191,7 +191,7 @@ public class RemoteFSController extends AbstractController implements Initializa
 
             rootItem = new FilterableFolderTreeItem(
                     new BoxFolder(
-                            volume.getRootRef(),
+                            "don't care",
                             ROOT_FOLDER_NAME,
                             new byte[16]
                     ),
@@ -411,12 +411,8 @@ public class RemoteFSController extends AbstractController implements Initializa
 
     private ReadableBoxNavigation createSetup() throws QblStorageException {
         volume = boxVolumeFactory.getVolume(clientConfiguration.getAccount(), clientConfiguration.getSelectedIdentity());
-        try {
-            nav = volume.navigate();
-        } catch (QblStorageNotFound e) {
-            volume.createIndex("meh");
-            nav = volume.navigate();
-        }
+        nav = volume.navigate();
+
         return nav;
     }
 

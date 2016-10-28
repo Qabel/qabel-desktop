@@ -2,6 +2,7 @@ package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.injection.Injector;
 import com.airhacks.afterburner.views.QabelFXMLView;
+import de.qabel.box.storage.factory.BoxVolumeFactory;
 import de.qabel.chat.repository.ChatDropMessageRepository;
 import de.qabel.chat.repository.inmemory.InMemoryChatDropMessageRepository;
 import de.qabel.core.accounting.BoxClientStub;
@@ -20,7 +21,6 @@ import de.qabel.desktop.SharingService;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.FilesAbout;
 import de.qabel.desktop.config.RepositoryBasedClientConfig;
-import de.qabel.desktop.config.factory.BoxVolumeFactory;
 import de.qabel.desktop.config.factory.DefaultBoxSyncConfigFactory;
 import de.qabel.desktop.crashReports.StubCrashReportHandler;
 import de.qabel.desktop.daemon.NetworkStatus;
@@ -88,6 +88,9 @@ public class AbstractControllerTest extends AbstractFxTest {
     protected int remoteDebounceTimeout;
     protected EventDispatcher eventDispatcher = new SubjectEventDispatcher();
 
+    protected FXMessageRendererFactory fxMessageRendererFactory = new FXMessageRendererFactory();
+    protected PlaintextMessageRenderer plaintextMessageRenderer = new PlaintextMessageRenderer();
+
     static {
         logger = createLogger();
     }
@@ -150,9 +153,10 @@ public class AbstractControllerTest extends AbstractFxTest {
         diContainer.put("boxSyncConfigRepository", boxSyncRepository);
         diContainer.put("boxSyncRepository", boxSyncRepository);
         diContainer.put("transactionManager", transactionManager);
-        FXMessageRendererFactory FXMessageRendererFactory = new FXMessageRendererFactory();
-        FXMessageRendererFactory.setFallbackRenderer(new PlaintextMessageRenderer());
-        diContainer.put("messageRendererFactory", FXMessageRendererFactory);
+
+        fxMessageRendererFactory.setFallbackRenderer(plaintextMessageRenderer);
+        diContainer.put("messageRendererFactory", fxMessageRendererFactory);
+
         SyncIndexFactory syncIndexFactory = new SqliteSyncIndexFactory();
         diContainer.put("boxSyncConfigFactory", new DefaultBoxSyncConfigFactory(syncIndexFactory));
         diContainer.put("boxSyncIndexFactory", syncIndexFactory);

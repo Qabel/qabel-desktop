@@ -50,8 +50,8 @@ public class BoxObjectCellValueFactoryTest extends AbstractControllerTest {
         bb.putLong(uuid.getLeastSignificantBits());
 
         BoxVolume volume = new BoxVolumeImpl(
-            new LocalReadBackend(tempFolder),
-            new LocalWriteBackend(tempFolder),
+            new LocalReadBackend(tempFolder.toFile()),
+            new LocalWriteBackend(tempFolder.toFile()),
             keyPair,
             deviceID,
             new File(System.getProperty("java.io.tmpdir")),

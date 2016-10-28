@@ -41,7 +41,6 @@ public class EmojiSelector extends BorderPane {
             search.textProperty().addListener((o, old, newValue) -> subscriber.onNext(newValue)))
             .debounce(250, TimeUnit.MILLISECONDS)
             .subscribe(filter -> {
-                System.out.println("filtering by " + filter);
                 String normalizedFilter = filter.toLowerCase();
                 Predicate<String> aliasFilter = alias -> alias.contains(normalizedFilter);
 

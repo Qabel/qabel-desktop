@@ -9,50 +9,52 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
-import org.ocpsoft.prettytime.PrettyTime;
+import javafx.scene.layout.HBox;
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
-public class MyActionlogItemController extends AbstractController implements Initializable, ActionlogItem {
+public class ActionlogItemController extends AbstractController implements Initializable, ActionlogItem {
     @FXML
-    Pane messageContainer;
+    Node messageItem;
+
+    @FXML
+    HBox messageContainer;
+
     @FXML
     Label dateLabel;
 
+    @Inject
+    String sender;
     @Inject
     private DropMessage dropMessage;
     @Inject
     FXMessageRendererFactory messageRendererFactory;
 
-    PrettyTime p;
+    private SimpleDateFormat p = new SimpleDateFormat("HH:mm");
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        FXMessageRenderer renderer = messageRendererFactory.getRenderer(dropMessage.getDropPayloadType());
-        Node renderedMessage = renderer.render(dropMessage.getDropPayload(), resources);
-        renderedMessage.getStyleClass().add("sent");
-        messageContainer.getChildren().addAll(renderedMessage);
-
-        p = new PrettyTime(resources.getLocale());
         dateLabel.setText(p.format(dropMessage.getCreationDate()));
+        messageContainer.getChildren().setAll(getRenderedMessage(sender, resources));
     }
 
+    @NotNull
+    private Node getRenderedMessage(String prefixAlias, ResourceBundle resources) {
+        FXMessageRenderer renderer = messageRendererFactory.getRenderer(dropMessage.getDropPayloadType());
+        return renderer.render(prefixAlias, dropMessage.getDropPayload(), resources);
+    }
 
     @Override
     public void refreshDate() {
-        Platform.runLater(()-> dateLabel.setText(p.format(dropMessage.getCreationDate())));
+        Platform.runLater(() -> dateLabel.setText(p.format(dropMessage.getCreationDate())));
     }
-
 
     public Label getDateLabel() {
         return dateLabel;
-    }
-
-    public void setDateLabel(Label dateLabel) {
-        this.dateLabel = dateLabel;
     }
 
     public DropMessage getDropMessage() {

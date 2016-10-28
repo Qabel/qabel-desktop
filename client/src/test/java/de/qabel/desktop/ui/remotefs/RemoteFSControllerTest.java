@@ -8,7 +8,6 @@ import de.qabel.core.crypto.CryptoUtils;
 import de.qabel.core.crypto.QblECKeyPair;
 import de.qabel.desktop.nio.boxfs.BoxFileSystem;
 import de.qabel.desktop.nio.boxfs.BoxPath;
-import de.qabel.desktop.storage.cache.CachedBoxVolumeImpl;
 import de.qabel.desktop.ui.AbstractControllerTest;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ButtonType;
@@ -68,11 +67,11 @@ public class RemoteFSControllerTest extends AbstractControllerTest {
         bb.putLong(uuid.getMostSignificantBits());
         bb.putLong(uuid.getLeastSignificantBits());
 
-        LocalReadBackend localRead = new LocalReadBackend(tempFolder);
-        localWrite = new LocalWriteBackend(tempFolder);
+        LocalReadBackend localRead = new LocalReadBackend(tempFolder.toFile());
+        localWrite = new LocalWriteBackend(tempFolder.toFile());
         localStorageFile = new File(System.getProperty("java.io.tmpdir"));
 
-        BoxVolume volume = new CachedBoxVolumeImpl(
+        BoxVolume volume = new BoxVolumeImpl(
                 localRead,
                 localWrite,
                 keyPair,
