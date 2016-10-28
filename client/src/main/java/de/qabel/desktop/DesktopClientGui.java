@@ -16,7 +16,7 @@ import de.qabel.desktop.ui.accounting.login.LoginView;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 import de.qabel.desktop.ui.actionlog.item.renderer.ShareNotificationRenderer;
 import de.qabel.desktop.ui.tray.AwtToast;
-import de.qabel.desktop.ui.tray.QabelTrayImpl;
+import de.qabel.desktop.ui.tray.AwtQabelTray;
 import de.qabel.desktop.ui.tray.QabelTray;
 import de.qabel.desktop.util.Translator;
 import javafx.application.Application;
@@ -75,7 +75,7 @@ public class DesktopClientGui extends Application {
         config.onSelectIdentity(this::addShareMessageRenderer);
         services.getDropMessageRepository().addObserver(new ShareNotificationHandler(getShareRepository()));
 
-        QabelTray qabelTray = new QabelTrayImpl(primaryStage, new AwtToast());
+        QabelTray qabelTray = new AwtQabelTray(primaryStage, new AwtToast());
         qabelTray.install();
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override

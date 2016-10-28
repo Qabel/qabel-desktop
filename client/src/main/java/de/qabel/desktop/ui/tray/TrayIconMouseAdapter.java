@@ -4,26 +4,98 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 class TrayIconMouseAdapter extends MouseAdapter {
     private final JPopupMenu popup;
-    private final QabelTray qabelTray;
-    private boolean visible;
+    private final Runnable showApp;
+    private final Runnable bringAppToFront;
+    private boolean inBound;
+    private Timer notificationTimer;
 
-    TrayIconMouseAdapter(QabelTrayImpl qabelTray) {
-        this.qabelTray = qabelTray;
-        this.popup = qabelTray.popup;
+    TrayIconMouseAdapter(Runnable showApp, Runnable bringAppToFront) {
+        popup = buildSystemTrayJPopupMenu();
+        this.showApp = showApp;
+        this.bringAppToFront = bringAppToFront;
+
+        popup.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                inBound = true;
+            }
+        });
+
+        popup.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if (isInBounds(e, popup)) {
+                    return;
+                }
+                inBound = false;
+            }
+
+            private boolean isInBounds(MouseEvent e, JPopupMenu popup) {
+                return e.getX() < popup.getBounds().getMaxX() &&
+                    e.getX() >= popup.getBounds().getMinX() &&
+                    e.getY() < popup.getBounds().getMaxY() &&
+                    e.getY() >= popup.getBounds().getMinY();
+            }
+        });
+    }
+
+    private void hideIfOutOfBounds() {
+        if (popup.isVisible() && !inBound) {
+            popup.setVisible(false);
+            stopTimer();
+        }
+        inBound = false;
+    }
+
+    private synchronized void startTimer() {
+        stopTimer();
+        notificationTimer = new Timer();
+        notificationTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                hideIfOutOfBounds();
+            }
+        }, 500, 1500);
+    }
+
+    private synchronized void stopTimer() {
+        if (notificationTimer != null) {
+            notificationTimer.cancel();
+            notificationTimer = null;
+        }
+    }
+
+    public void setInBound(boolean inBound) {
+        this.inBound = inBound;
+    }
+
+    private JPopupMenu buildSystemTrayJPopupMenu() {
+        final JPopupMenu menu = new JPopupMenu();
+        final JMenuItem exitMenuItem = new JMenuItem("Exit");
+
+        menu.add(exitMenuItem);
+        exitMenuItem.addActionListener(ae -> System.exit(0));
+        return menu;
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (isDoubleLeftClick(e)) {
-            qabelTray.bringAppToFront();
+        if (isSingleLeftClick(e)) {
+            bringAppToFront.run();
+        } else if (isDoubleLeftClick(e)) {
+            showApp.run();
         } else if (isRightClick(e)) {
             Point position = calculatePosition(e);
-            visible = !visible;
-            qabelTray.showPopup(visible, position.x, position.y);
+            popup.setLocation(position.x, position.y);
+            popup.setVisible(true);
+            startTimer();
         }
     }
 
@@ -31,14 +103,12 @@ class TrayIconMouseAdapter extends MouseAdapter {
         return e.getButton() == MouseEvent.BUTTON3;
     }
 
-    private boolean isDoubleLeftClick(MouseEvent e) {
-        return e.getClickCount() == 2;
+    private boolean isSingleLeftClick(MouseEvent e) {
+        return e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1;
     }
 
-    @Override
-    public void mouseExited(MouseEvent e) {
-        visible = false;
-        popup.setVisible(false);
+    private boolean isDoubleLeftClick(MouseEvent e) {
+        return e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2;
     }
 
     private Point calculatePosition(MouseEvent e) {
@@ -99,5 +169,4 @@ class TrayIconMouseAdapter extends MouseAdapter {
         }
         return bounds;
     }
-
 }
