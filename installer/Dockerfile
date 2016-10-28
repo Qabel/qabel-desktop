@@ -24,5 +24,10 @@ RUN apt-get update -y && \
     apt-get update -y && \
     apt-get install -yqf oracle-java8-installer
 
+RUN apt-get update -y && \
+    apt-get install -yqf \
+        git && \
+    apt-get clean
+
 RUN useradd -ms /bin/bash vagrant
 USER vagrant

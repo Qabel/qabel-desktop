@@ -1,0 +1,44 @@
+plugins {
+    id "com.github.hierynomus.license" version "0.12.1"     // Apache V2 https://github.com/hierynomus/license-gradle-plugin/blob/master/LICENSE
+    id 'nebula.dependency-lock' version '4.2.0'             // Apache V2 https://github.com/nebula-plugins/gradle-dependency-lock-plugin/blob/master/LICENSE
+    id "org.sonarqube" version "2.0.1"
+}
+
+
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'eclipse'
+apply plugin: 'c'
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
+mainClassName = "de.qabel.desktop.DesktopClient"
+version = hasProperty('release') ? release : 'dev'
+new File('dist/resources/version').write version.toString()
+def platform = "${System.properties['os.name'].toLowerCase()}_${System.properties['os.arch']}"
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url "https://jitpack.io" }
+    flatDir {
+        dir '../libs'
+        dir System.getProperty('java.home') + '/lib/ext'        // to please sonarqube
+    }
+}
+
+dependencies {
+    testCompile project(':client')
+    testCompile project(path: ':client', configuration: 'tests')
+    testCompile project(':client').sourceSets.test.output
+}
+
+tasks.withType(Test) {
+    systemProperty 'java.library.path', '../libs/'
+
+    reports.html.destination = file("${reporting.baseDir}/${name}")
+}
+run {
+    systemProperty 'java.library.path', 'libs/'
+}
