@@ -30,6 +30,7 @@ import de.qabel.desktop.ui.util.FileChooserFactory;
 import de.qabel.desktop.util.Translator;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import rx.Scheduler;
 
 import java.io.IOException;
 import java.net.URI;
@@ -152,4 +153,13 @@ public interface DesktopServices {
 
     @Create(name="fileChooserFactory")
     FileChooserFactory getFileChooserFactory();
+
+    @Create(name="fxScheduler")
+    Scheduler getFxScheduler();
+
+    @Create(name="ioScheduler")
+    Scheduler getIoScheduler();
+
+    @Create(name="computationScheduler")
+    Scheduler getComputationScheduler();
 }

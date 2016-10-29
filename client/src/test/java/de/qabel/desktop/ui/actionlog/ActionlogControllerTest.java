@@ -138,6 +138,15 @@ public class ActionlogControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    public void convertsEmojiAliasesToUnicode() throws Exception {
+        controller.sendDropMessage(c, "contains :smiley:");
+
+        List<PersistenceDropMessage> lst = dropMessageRepository.loadConversation(c, i);
+        String message = TextMessage.fromJson(lst.get(0).dropMessage.getDropPayload()).getText();
+        assertEquals("contains \uD83D\uDE03", message);
+    }
+
+    @Test
     public void refreshTime() throws Exception {
         controller.sleepTime = 1;
         controller.dateRefresher.interrupt();

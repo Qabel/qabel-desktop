@@ -1,6 +1,7 @@
 package de.qabel.desktop.ui.actionlog.item.renderer;
 
 import de.qabel.desktop.daemon.drop.TextMessage;
+import de.qabel.desktop.ui.actionlog.item.renderer.partial.EmojiRenderer;
 import de.qabel.desktop.ui.actionlog.item.renderer.partial.HyperlinkRenderer;
 import de.qabel.desktop.ui.actionlog.item.renderer.partial.PartialFXMessageRenderer;
 import javafx.scene.Node;
@@ -13,7 +14,13 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class PlaintextMessageRenderer implements FXMessageRenderer {
+    private final List<PartialFXMessageRenderer> partialRenderers = new LinkedList<>();
     private final HyperlinkRenderer hyperlinkRenderer = new HyperlinkRenderer();
+
+    public PlaintextMessageRenderer() {
+        partialRenderers.add(hyperlinkRenderer);
+        partialRenderers.add(new EmojiRenderer());
+    }
 
     @Override
     public TextFlow render(String prefixAlias, String dropPayload, ResourceBundle resourceBundle) {
@@ -34,9 +41,6 @@ public class PlaintextMessageRenderer implements FXMessageRenderer {
     }
 
     private void replaceRenderableChildren(List<Node> children) {
-        List<PartialFXMessageRenderer> partialRenderers = new LinkedList<>();
-        partialRenderers.add(hyperlinkRenderer);
-
         int size;
         do {
             size = children.size();

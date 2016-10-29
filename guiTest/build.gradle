@@ -42,3 +42,9 @@ tasks.withType(Test) {
 run {
     systemProperty 'java.library.path', 'libs/'
 }
+
+test {
+    testLogging {
+        events 'started'
+    }
+}
