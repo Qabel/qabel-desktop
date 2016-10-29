@@ -37,11 +37,9 @@ public class EmojiGridCell extends GridCell<Emoji> {
     }
 
     private void loadEmojiImage(Emoji emoji) {
-        String emojiCode = emoji.getHtmlHexadecimal().replace(";&#x", "_").replace(";", "").replace("&#x", "");
-        String filename = "/icon/emoji/emoji_" + emojiCode + (emoji.supportsFitzpatrick() ? "_1f3fb" : "") + ".png";
         setOnMouseClicked(event -> emojiSelect.onNext(emoji));
         int width = getWidth() == 0 ? 25 : (int) getWidth();
-        ImageView icon = Icons.getIcon(filename, width);
+        ImageView icon = Icons.getIcon(emoji, width);
         icon.fitWidthProperty().bind(widthProperty());
         setGraphic(icon);
     }

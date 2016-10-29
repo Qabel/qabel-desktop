@@ -1,6 +1,7 @@
 package de.qabel.desktop.ui.actionlog;
 
 import com.airhacks.afterburner.views.QabelFXMLView;
+import com.vdurmont.emoji.EmojiParser;
 import de.qabel.core.config.Contact;
 import de.qabel.core.config.Entity;
 import de.qabel.core.config.Identity;
@@ -35,6 +36,7 @@ import org.controlsfx.control.NotificationPane;
 import org.controlsfx.control.PopOver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Scheduler;
 import rx.Subscription;
 
 import javax.inject.Inject;
@@ -90,6 +92,9 @@ public class ActionlogController extends AbstractController implements Initializ
     private DropMessageRepository dropMessageRepository;
     @Inject
     DropConnector dropConnector;
+
+    @Inject
+    Scheduler fxScheduler;
 
     Identity identity;
     Contact contact;
@@ -162,6 +167,7 @@ public class ActionlogController extends AbstractController implements Initializ
     }
 
     void sendDropMessage(Contact c, String text) throws QblDropPayloadSizeException, QblNetworkInvalidResponseException, PersistenceException {
+        text = EmojiParser.parseToUnicode(text);
         DropMessage d = new DropMessage(identity, new TextMessage(text).toJson(), DropMessageRepository.PAYLOAD_TYPE_MESSAGE);
         d.setDropMessageMetadata(new DropMessageMetadata(identity));
         dropConnector.send(c, d);
@@ -336,16 +342,17 @@ public class ActionlogController extends AbstractController implements Initializ
         popOver.getStyleClass().add("emojiSelector");
         EmojiSelector emojiSelector = new EmojiSelector();
         emojiSelector.getStylesheets().add(QabelFXMLView.getGlobalStyleSheet());
-        Subscription subscription = emojiSelector.onSelect().subscribe(emoji -> {
-            Platform.runLater(() -> {
-                insert(emoji.getUnicode());
-                textarea.requestFocus();
-                popOver.hide();
-            });
-        });
-        popOver.setOnCloseRequest(event -> subscription.unsubscribe());
         popOver.setArrowLocation(PopOver.ArrowLocation.BOTTOM_RIGHT);
         popOver.setContentNode(emojiSelector);
         popOver.show(this.emojiSelector);
+
+        Subscription subscription = emojiSelector.onSelect()
+            .subscribeOn(fxScheduler)
+            .subscribe(emoji -> {
+                insert(" :" + emoji.getAliases().get(0) + ": ");
+                textarea.requestFocus();
+                popOver.hide();
+            });
+        popOver.setOnCloseRequest(event -> subscription.unsubscribe());
     }
 }

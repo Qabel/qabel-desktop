@@ -70,9 +70,15 @@ public class ActionlogControllerTest extends AbstractControllerTest {
         controller.setContact(c);
         waitUntil(() -> controller.contact == c);
         PersistenceDropMessage message = new PersistenceDropMessage(dm, c, i, false, false);
-        System.out.println("saving message " + message);
         dropMessageRepository.save(message);
         waitUntil(message::isSeen, 10000L); // is done in cascaded async calls => higher timeout
+    }
+
+    @Test
+    public void doesNotMarkSeenIfChatIsClosed() throws Exception {
+        controller.setContact(c);
+        waitUntil(() -> controller.contact == c);
+        PersistenceDropMessage message = new PersistenceDropMessage(dm, c, i, false, false);
     }
 
     @Test
@@ -129,6 +135,15 @@ public class ActionlogControllerTest extends AbstractControllerTest {
         List<PersistenceDropMessage> lst = dropMessageRepository.loadConversation(c, i);
         DropMessageMetadata metadata = lst.get(0).dropMessage.getDropMessageMetadata();
         assertEquals(metadata, new DropMessageMetadata(i));
+    }
+
+    @Test
+    public void convertsEmojiAliasesToUnicode() throws Exception {
+        controller.sendDropMessage(c, "contains :smiley:");
+
+        List<PersistenceDropMessage> lst = dropMessageRepository.loadConversation(c, i);
+        String message = TextMessage.fromJson(lst.get(0).dropMessage.getDropPayload()).getText();
+        assertEquals("contains \uD83D\uDE03", message);
     }
 
     @Test
