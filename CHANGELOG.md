@@ -14,4 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - extracted three modules
 - #522 new lightweight, TextFlow based chat layout
 
+### Fixed
+- message indicator no longer disappears when chat is closed #436
+
 ## 0.10.0-beta.3 [BASELINE]
