@@ -10,9 +10,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 class TrayIconMouseAdapter extends MouseAdapter {
-    private final JPopupMenu popup;
+    final JPopupMenu popup;
     private final Runnable showApp;
     private final Runnable bringAppToFront;
+    int popupCloseCheckDelay = 500;
+    int popupCloseCheckPeriod = 1500;
     private boolean inBound;
     private Timer notificationTimer;
 
@@ -62,7 +64,7 @@ class TrayIconMouseAdapter extends MouseAdapter {
             public void run() {
                 hideIfOutOfBounds();
             }
-        }, 500, 1500);
+        }, popupCloseCheckDelay, popupCloseCheckPeriod);
     }
 
     private synchronized void stopTimer() {
@@ -86,7 +88,7 @@ class TrayIconMouseAdapter extends MouseAdapter {
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseClicked(MouseEvent e) {
         if (isSingleLeftClick(e)) {
             bringAppToFront.run();
         } else if (isDoubleLeftClick(e)) {
