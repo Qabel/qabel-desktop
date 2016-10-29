@@ -45,6 +45,9 @@ import javafx.collections.ObservableList;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.apache.http.impl.client.HttpClients;
+import rx.Scheduler;
+import rx.schedulers.JavaFxScheduler;
+import rx.schedulers.Schedulers;
 
 import java.io.File;
 import java.io.IOException;
@@ -273,4 +276,18 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
         return runtimeConfiguration.getCurrentVersion();
     }
 
+    @Override
+    public Scheduler getFxScheduler() {
+        return JavaFxScheduler.getInstance();
+    }
+
+    @Override
+    public Scheduler getIoScheduler() {
+        return Schedulers.io();
+    }
+
+    @Override
+    public Scheduler getComputationScheduler() {
+        return Schedulers.computation();
+    }
 }

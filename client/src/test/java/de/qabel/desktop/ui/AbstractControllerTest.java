@@ -50,6 +50,8 @@ import org.apache.logging.slf4j.Log4jLogger;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
+import rx.schedulers.JavaFxScheduler;
+import rx.schedulers.Schedulers;
 
 import java.net.URI;
 import java.util.Locale;
@@ -167,6 +169,10 @@ public class AbstractControllerTest extends AbstractFxTest {
         syncDaemon = new SyncDaemon(new SimpleListProperty<>(), new FakeSyncerFactory());
         diContainer.put("syncDaemon", syncDaemon);
         diContainer.put("accountingUri", new URI("http://localhost:9696"));
+
+        diContainer.put("fxScheduler", JavaFxScheduler.getInstance());
+        diContainer.put("ioScheduler", Schedulers.immediate());
+        diContainer.put("computationScheduler", Schedulers.immediate());
 
         AfterburnerInjector.setConfigurationSource(key -> diContainer.get((String) key));
         AfterburnerInjector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(diContainer));

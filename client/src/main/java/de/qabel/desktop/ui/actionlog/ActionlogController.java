@@ -36,8 +36,8 @@ import org.controlsfx.control.NotificationPane;
 import org.controlsfx.control.PopOver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Scheduler;
 import rx.Subscription;
-import rx.schedulers.JavaFxScheduler;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -92,6 +92,9 @@ public class ActionlogController extends AbstractController implements Initializ
     private DropMessageRepository dropMessageRepository;
     @Inject
     DropConnector dropConnector;
+
+    @Inject
+    Scheduler fxScheduler;
 
     Identity identity;
     Contact contact;
@@ -344,7 +347,7 @@ public class ActionlogController extends AbstractController implements Initializ
         popOver.show(this.emojiSelector);
 
         Subscription subscription = emojiSelector.onSelect()
-            .subscribeOn(JavaFxScheduler.getInstance())
+            .subscribeOn(fxScheduler)
             .subscribe(emoji -> {
                 insert(" :" + emoji.getAliases().get(0) + ": ");
                 textarea.requestFocus();
