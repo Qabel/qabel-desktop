@@ -23,6 +23,10 @@
             "locked": "1.2.2",
             "requested": "[1.2.2,2.0["
         },
+        "com.github.thomasnield:rxkotlinfx": {
+            "locked": "0.2.0",
+            "requested": "0.2.0"
+        },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
             "requested": "0.9.+"
@@ -150,6 +154,10 @@
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
             "requested": "[1.2.2,2.0["
+        },
+        "com.github.thomasnield:rxkotlinfx": {
+            "locked": "0.2.0",
+            "requested": "0.2.0"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -279,12 +287,16 @@
             "locked": "1.2.2",
             "requested": "[1.2.2,2.0["
         },
+        "com.github.thomasnield:rxkotlinfx": {
+            "locked": "0.2.0",
+            "requested": "0.2.0"
+        },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
             "requested": "0.9.+"
         },
         "com.google.code.gson:gson": {
-            "locked": "2.7",
+            "locked": "2.8.0",
             "requested": "[2.0,3.0["
         },
         "com.google.zxing:core": {
@@ -406,6 +418,10 @@
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
             "requested": "[1.2.2,2.0["
+        },
+        "com.github.thomasnield:rxkotlinfx": {
+            "locked": "0.2.0",
+            "requested": "0.2.0"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
@@ -571,6 +587,10 @@
             "locked": "1.2.2",
             "requested": "[1.2.2,2.0["
         },
+        "com.github.thomasnield:rxkotlinfx": {
+            "locked": "0.2.0",
+            "requested": "0.2.0"
+        },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",
             "requested": "0.9.+"
@@ -734,6 +754,10 @@
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
             "requested": "[1.2.2,2.0["
+        },
+        "com.github.thomasnield:rxkotlinfx": {
+            "locked": "0.2.0",
+            "requested": "0.2.0"
         },
         "com.github.zafarkhaja:java-semver": {
             "locked": "0.9.0",

@@ -37,6 +37,7 @@ import org.controlsfx.control.PopOver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Subscription;
+import rx.schedulers.JavaFxScheduler;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -338,14 +339,17 @@ public class ActionlogController extends AbstractController implements Initializ
         popOver.getStyleClass().add("emojiSelector");
         EmojiSelector emojiSelector = new EmojiSelector();
         emojiSelector.getStylesheets().add(QabelFXMLView.getGlobalStyleSheet());
-        Subscription subscription = emojiSelector.onSelect().subscribe(emoji -> Platform.runLater(() -> {
-            insert(" :" + emoji.getAliases().get(0) + ": ");
-            textarea.requestFocus();
-            popOver.hide();
-        }));
-        popOver.setOnCloseRequest(event -> subscription.unsubscribe());
         popOver.setArrowLocation(PopOver.ArrowLocation.BOTTOM_RIGHT);
         popOver.setContentNode(emojiSelector);
         popOver.show(this.emojiSelector);
+
+        Subscription subscription = emojiSelector.onSelect()
+            .subscribeOn(JavaFxScheduler.getInstance())
+            .subscribe(emoji -> {
+                insert(" :" + emoji.getAliases().get(0) + ": ");
+                textarea.requestFocus();
+                popOver.hide();
+            });
+        popOver.setOnCloseRequest(event -> subscription.unsubscribe());
     }
 }
