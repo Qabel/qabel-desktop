@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertTrue;
 
 public class KernelTest extends AbstractKernelTest {
 
@@ -22,6 +23,15 @@ public class KernelTest extends AbstractKernelTest {
 
         DesktopServices container = kernel.getContainer();
         assertThat(container.getAboutFilesContent().thanksFileContent, is(not("")));
+    }
+
+    @Test
+    public void initializesPlugins() throws Exception {
+        kernel = new TestKernel("dev");
+        kernel.registerPlugin(ExamplePlugin.class);
+        kernel.initialize();
+
+        assertTrue(ExamplePlugin.initialized);
     }
 
     @Test

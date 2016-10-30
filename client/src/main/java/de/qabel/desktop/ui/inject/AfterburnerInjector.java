@@ -73,7 +73,10 @@ public class AfterburnerInjector implements PresenterFactory {
         return product;
     }
 
-    private static void injectMembers(final Object instance, Function<String, Object> additionalInjectionContext) {
+    public static void injectMembers(final Object instance) {
+        injectMembers(instance, null);
+    }
+    public static void injectMembers(final Object instance, Function<String, Object> additionalInjectionContext) {
         Class<?> clazz = instance.getClass();
         injectMembers(clazz, instance, additionalInjectionContext);
     }

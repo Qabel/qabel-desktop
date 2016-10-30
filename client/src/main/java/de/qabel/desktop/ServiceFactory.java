@@ -11,7 +11,7 @@ public interface ServiceFactory {
      * @deprecated only used for magic DI and tests
      */
     @Deprecated
-    Object getByType(Class type);
+    <T> T getByType(Class<T> type);
 
     /**
      * @deprecated only used for magic DI and tests

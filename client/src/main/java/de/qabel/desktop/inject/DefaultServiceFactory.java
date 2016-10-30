@@ -14,10 +14,10 @@ public class DefaultServiceFactory implements ServiceFactory {
     }
 
     @Override
-    public Object getByType(Class type) {
+    public <T> T getByType(Class<T> type) {
         for (Object value : cache.values()) {
             if (type.isInstance(value)) {
-                return value;
+                return (T)value;
             }
         }
         return null;

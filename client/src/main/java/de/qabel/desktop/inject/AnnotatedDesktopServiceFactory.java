@@ -48,14 +48,14 @@ public abstract class AnnotatedDesktopServiceFactory extends DefaultServiceFacto
     }
 
     @Override
-    public Object getByType(Class type) {
-        Object instance = super.getByType(type);
+    public <T> T getByType(Class<T> type) {
+        T instance = super.getByType(type);
         if (instance != null) {
             return instance;
         }
         for (Method method : creators.values()) {
             if (type.isAssignableFrom(method.getReturnType())) {
-                return invoke(method);
+                return (T) invoke(method);
             }
         }
         return null;

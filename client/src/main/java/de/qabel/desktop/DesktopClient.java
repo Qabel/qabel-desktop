@@ -1,5 +1,6 @@
 package de.qabel.desktop;
 
+import de.qabel.desktop.ui.tray.TrayPlugin;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -26,6 +27,7 @@ public class DesktopClient {
         if (args.length > 0) {
             kernel.setDatabaseFile(new File(args[0]).getAbsoluteFile().toPath());
         }
+        kernel.registerPlugin(TrayPlugin.class);
         kernel.initialize();
         kernel.start();
     }
