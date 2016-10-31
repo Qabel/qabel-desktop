@@ -31,7 +31,7 @@ public class DeleteIdentityActionTest {
             .withAlias("tester").build();
         repo.save(identity);
         EventDispatcher dispatcher = new SubjectEventDispatcher();
-        dispatcher.events().subscribe(subscriber);
+        dispatcher.getEvents().subscribe(subscriber);
         action = new DeleteIdentityAction(repo, dispatcher);
     }
 

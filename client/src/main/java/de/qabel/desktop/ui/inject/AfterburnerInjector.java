@@ -54,7 +54,7 @@ public class AfterburnerInjector implements PresenterFactory {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> T instantiateModelOrService(Class<T> clazz) {
+    public static <T> T instantiateModelOrService(Class<T> clazz) {
         T product = (T) modelsAndServices.get(clazz);
         if (product == null) {
             product = injectAndInitialize((T) instanceSupplier.apply(clazz));

@@ -1,7 +1,5 @@
 package de.qabel.desktop.ui.tray;
 
-import de.qabel.core.config.Contact;
-import de.qabel.core.drop.DropMessage;
 import de.qabel.core.event.EventSource;
 import de.qabel.desktop.ClientPlugin;
 import de.qabel.desktop.event.ClientStartedEvent;
@@ -9,12 +7,9 @@ import de.qabel.desktop.inject.AnnotatedDesktopServiceFactory;
 import de.qabel.desktop.inject.CompositeServiceFactory;
 import de.qabel.desktop.inject.Create;
 import de.qabel.desktop.repository.DropMessageRepository;
-import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
-import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRenderer;
 import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRendererFactory;
 import de.qabel.desktop.ui.inject.AfterburnerInjector;
 import de.qabel.desktop.util.Translator;
-import javafx.application.Platform;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,13 +39,20 @@ public class TrayPlugin implements ClientPlugin {
     @Inject
     private ResourceBundle resourceBundle;
 
+    @Inject
+    private DropMessageNotificator dropMessageNotificator;
+
     @Override
     public void initialize(CompositeServiceFactory serviceFactory, EventSource events) {
         serviceFactory.addServiceFactory(new TrayServiceFactory());
         AfterburnerInjector.injectMembers(this);
 
-        events.events().filter(e -> e instanceof ClientStartedEvent)
-            .map(e -> (ClientStartedEvent)e)
+        installTray(events);
+        dropMessageNotificator.subscribe(events);
+    }
+
+    private void installTray(EventSource events) {
+        events.events(ClientStartedEvent.class)
             .subscribe(event -> {
                 try {
                     tray.setInstance(trayFactory.apply(event.getPrimaryStage()));
@@ -59,27 +61,6 @@ public class TrayPlugin implements ClientPlugin {
                     logger.error("failed to install tray", e);
                 }
             });
-
-
-        dropMessageRepository.addObserver(
-            (o, arg) -> {
-                if (!(arg instanceof PersistenceDropMessage)) {
-                    return;
-                }
-                PersistenceDropMessage message = (PersistenceDropMessage) arg;
-                if (message.isSent() || message.isSeen()) {
-                    return;
-                }
-                Contact sender = (Contact) message.getSender();
-                DropMessage dropMessage = message.getDropMessage();
-                FXMessageRenderer renderer = messageRendererFactory
-                    .getRenderer(dropMessage.getDropPayloadType());
-                String content = renderer
-                    .renderString(dropMessage.getDropPayload(), resourceBundle);
-                String title = translator.getString("newMessageNotification", sender.getAlias());
-                Platform.runLater(() -> tray.showNotification(title, content));
-            }
-        );
     }
 
     private class TrayServiceFactory extends AnnotatedDesktopServiceFactory {

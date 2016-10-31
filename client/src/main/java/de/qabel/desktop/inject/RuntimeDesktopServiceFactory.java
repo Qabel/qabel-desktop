@@ -259,7 +259,9 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
                 getChatService(),
                 getDropMessageRepository(),
                 getContactRepository(),
-                getIdentityRepository());
+                getIdentityRepository(),
+                getEventDispatcher()
+            );
         }
         return dropDaemon;
     }
