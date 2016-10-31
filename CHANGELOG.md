@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- kotlin support
 - plugins
 - changelog
 - links in chat are now clickable #522

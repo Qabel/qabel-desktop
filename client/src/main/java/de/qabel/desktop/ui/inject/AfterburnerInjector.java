@@ -106,7 +106,11 @@ public class AfterburnerInjector implements PresenterFactory {
                     }
                     if (value == null && isNotPrimitiveOrString(type)) {
                         LOG.accept("Field is not a JDK class");
-                        value = instantiateModelOrService(type);
+                        try {
+                            value = instantiateModelOrService(type);
+                        } catch (IllegalStateException e) {
+                            throw new IllegalStateException("failed to inject " + field.getName() + " into " + clazz.getSimpleName(), e);
+                        }
                     }
                 }
 

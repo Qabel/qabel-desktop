@@ -34,15 +34,15 @@ public class TrayIconMouseAdapterTest {
 
     @Test
     public void showsPopupOnRightClick() {
-        adapter.popupCloseCheckDelay = 0;
-        adapter.popupCloseCheckPeriod = 250;
+        adapter.setPopupCloseCheckDelay(0);
+        adapter.setPopupCloseCheckPeriod(250);
         adapter.mouseClicked(mouseEvent(MouseEvent.BUTTON3, 1));
 
-        assertAsync(adapter.popup::isVisible, equalTo(true));
+        assertAsync(adapter.getPopup()::isVisible, equalTo(true));
         assertFalse(shown.get());
         assertFalse(front.get());
 
-        assertAsync(adapter.popup::isVisible, equalTo(false));
+        assertAsync(adapter.getPopup()::isVisible, equalTo(false));
     }
 
     private MouseEvent mouseEvent(int buttonId, int clickCount) {
