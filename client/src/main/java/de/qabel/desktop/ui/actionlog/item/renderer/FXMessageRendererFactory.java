@@ -3,7 +3,7 @@ package de.qabel.desktop.ui.actionlog.item.renderer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FXMessageRendererFactory {
+public class FXMessageRendererFactory implements MessageRendererFactory {
     private FXMessageRenderer fallbackRenderer;
     private Map<String, FXMessageRenderer> renderers = new HashMap<>();
 
