@@ -63,7 +63,7 @@ public class TrayPlugin implements ClientPlugin {
             });
     }
 
-    private class TrayServiceFactory extends AnnotatedDesktopServiceFactory {
+    public class TrayServiceFactory extends AnnotatedDesktopServiceFactory {
         private TrayProxy trayProxy = new TrayProxy();
 
         @Create(name = "tray")

@@ -7,7 +7,7 @@ import de.qabel.desktop.daemon.drop.MessageReceivedEvent;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory;
 import de.qabel.desktop.util.Translator;
-import javafx.application.Platform;
+import rx.Scheduler;
 
 import javax.inject.Inject;
 import java.util.ResourceBundle;
@@ -18,18 +18,24 @@ public class DropMessageNotificator {
     private ResourceBundle resourceBundle;
     private Translator translator;
     private QabelTray tray;
+    private Scheduler computationScheduler;
+    private Scheduler fxScheduler;
 
     @Inject
     public DropMessageNotificator(
         MessageRendererFactory messageRendererFactory,
         ResourceBundle resourceBundle,
         Translator translator,
-        QabelTray tray
+        QabelTray tray,
+        Scheduler computationScheduler,
+        Scheduler fxScheduler
     ) {
         this.messageRendererFactory = messageRendererFactory;
         this.resourceBundle = resourceBundle;
         this.translator = translator;
         this.tray = tray;
+        this.computationScheduler = computationScheduler;
+        this.fxScheduler = fxScheduler;
     }
 
     public void subscribe(EventSource events) {
@@ -37,11 +43,10 @@ public class DropMessageNotificator {
             .map(MessageReceivedEvent::getMessage)
             .filter(message -> !message.isSeen() && !message.isSent())
             .debounce(1, TimeUnit.SECONDS)
-            .subscribe(message -> {
-                String title = renderTitle(message);
-                String content = renderPlaintextMessage(message);
-                Platform.runLater(() -> tray.showNotification(title, content));
-            });
+            .observeOn(computationScheduler)
+            .map(message -> new TrayNotification(renderTitle(message), renderPlaintextMessage(message)))
+            .subscribeOn(fxScheduler)
+            .subscribe(tray::showNotification);
     }
 
     private String renderTitle(PersistenceDropMessage message) {
