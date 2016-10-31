@@ -1,5 +1,6 @@
 package de.qabel.desktop.ui.inject;
 
+import com.airhacks.afterburner.injection.Injector;
 import de.qabel.desktop.ServiceFactory;
 
 import javax.inject.Inject;
@@ -41,7 +42,7 @@ public class RecursiveInjectionInstanceSupplier implements Function<Class<?>, Ob
                         continue;
                     }
                     try {
-                        instances.add(AfterburnerInjector.instantiateModelOrService(parameterClass));
+                        instances.add(Injector.instantiateModelOrService(parameterClass));
                     } catch (IllegalStateException e) {
                         throw new IllegalStateException("failed to create parameter " + parameterClass.getSimpleName() + " for constructor of " + aClass.getSimpleName(), e);
                     }
