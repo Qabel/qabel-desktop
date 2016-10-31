@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -37,7 +36,7 @@ public class AwtQabelTray implements QabelTray {
     }
 
     @Override
-    public void install() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
+    public void install() {
         if (!SystemTray.isSupported()) {
             return;
         }
@@ -64,8 +63,8 @@ public class AwtQabelTray implements QabelTray {
     }
 
     @Override
-    public void showNotification(String title, String message) {
-        toastStrategy.showNotification(title, message, icon);
+    public void showNotification(TrayNotification notification) {
+        toastStrategy.showNotification(notification.getTitle(), notification.getContent(), icon);
     }
 
     private void trayIconListener(TrayIcon icon) {

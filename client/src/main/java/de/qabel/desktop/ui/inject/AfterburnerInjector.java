@@ -54,7 +54,7 @@ public class AfterburnerInjector implements PresenterFactory {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> T instantiateModelOrService(Class<T> clazz) {
+    public static <T> T instantiateModelOrService(Class<T> clazz) {
         T product = (T) modelsAndServices.get(clazz);
         if (product == null) {
             product = injectAndInitialize((T) instanceSupplier.apply(clazz));
@@ -73,7 +73,10 @@ public class AfterburnerInjector implements PresenterFactory {
         return product;
     }
 
-    private static void injectMembers(final Object instance, Function<String, Object> additionalInjectionContext) {
+    public static void injectMembers(final Object instance) {
+        injectMembers(instance, null);
+    }
+    public static void injectMembers(final Object instance, Function<String, Object> additionalInjectionContext) {
         Class<?> clazz = instance.getClass();
         injectMembers(clazz, instance, additionalInjectionContext);
     }

@@ -71,7 +71,13 @@ public class DropDaemonTest extends AbstractControllerTest {
             Files.createTempDir(), new JdbcFileMetadataFactory(Files.createTempDir()), new CryptoUtils());
         chatService = new MainChatService(mockCoreDropConnector, identityRepository,
             contactRepository, chatDropMessageRepository, dropStateRepository, sharingService);
-        dd = new DropDaemon(chatService, dropMessageRepository, contactRepository, identityRepository);
+        dd = new DropDaemon(
+            chatService,
+            dropMessageRepository,
+            contactRepository,
+            identityRepository,
+            eventDispatcher
+        );
     }
 
     private void send(Contact contact, Identity sender) {

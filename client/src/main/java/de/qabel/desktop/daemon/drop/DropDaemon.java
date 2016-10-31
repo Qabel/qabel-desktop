@@ -5,6 +5,7 @@ import de.qabel.core.config.Contact;
 import de.qabel.core.config.Entity;
 import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropMessage;
+import de.qabel.core.event.EventSink;
 import de.qabel.core.repository.ContactRepository;
 import de.qabel.chat.repository.entities.ChatDropMessage;
 import de.qabel.chat.service.ChatService;
@@ -23,16 +24,21 @@ public class DropDaemon implements Runnable {
     private final DropMessageRepository dropMessageRepository;
     private final ContactRepository contactRepository;
     private final IdentityRepository identityRepository;
+    private final EventSink events;
     private long sleepTime = 10000L;
     private static final Logger logger = LoggerFactory.getLogger(DropDaemon.class);
 
     public DropDaemon(ChatService chatService,
                       DropMessageRepository dropMessageRepository,
-                      ContactRepository contactRepository, IdentityRepository identityRepository) {
+                      ContactRepository contactRepository,
+                      IdentityRepository identityRepository,
+                      EventSink events
+    ) {
         this.chatService = chatService;
         this.dropMessageRepository = dropMessageRepository;
         this.contactRepository = contactRepository;
         this.identityRepository = identityRepository;
+        this.events = events;
     }
 
     @Override
@@ -66,6 +72,7 @@ public class DropDaemon implements Runnable {
                     Entity receiver = incoming ? identity : contact;
                     PersistenceDropMessage message = new PersistenceDropMessage(dropMessage, sender, receiver, !incoming, false);
                     dropMessageRepository.save(message);
+                    events.push(new MessageReceivedEvent(message));
                 }
             }
         } catch (Exception e) {

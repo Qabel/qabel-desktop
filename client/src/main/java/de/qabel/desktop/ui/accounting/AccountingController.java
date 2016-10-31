@@ -81,8 +81,7 @@ public class AccountingController extends AbstractController implements Initiali
         loadIdentities();
         updateButtonIcons();
 
-        eventSource.events()
-            .filter(e -> e instanceof IdentitiesChangedEvent)
+        eventSource.events(IdentitiesChangedEvent.class)
             .debounce(debounceTimeout, TimeUnit.MILLISECONDS)
             .subscribe(e -> Platform.runLater(this::loadIdentities));
 

@@ -8,16 +8,16 @@
             "requested": "[1.7.0,2.0["
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.26.0",
-            "requested": "0.26.0"
+            "locked": "0.26.2",
+            "requested": "0.26.2"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "0.26.0",
-            "requested": "0.26.0"
+            "locked": "0.26.2",
+            "requested": "0.26.2"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.26.0",
-            "requested": "0.26.0"
+            "locked": "0.26.2",
+            "requested": "0.26.2"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -32,7 +32,7 @@
             "requested": "0.9.+"
         },
         "com.google.code.gson:gson": {
-            "locked": "2.7",
+            "locked": "2.8.0",
             "requested": "[2.0,3.0["
         },
         "com.google.zxing:core": {
@@ -140,16 +140,16 @@
             "requested": "[1.7.0,2.0["
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.26.0",
-            "requested": "0.26.0"
+            "locked": "0.26.2",
+            "requested": "0.26.2"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "0.26.0",
-            "requested": "0.26.0"
+            "locked": "0.26.2",
+            "requested": "0.26.2"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.26.0",
-            "requested": "0.26.0"
+            "locked": "0.26.2",
+            "requested": "0.26.2"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -164,7 +164,7 @@
             "requested": "0.9.+"
         },
         "com.google.code.gson:gson": {
-            "locked": "2.7",
+            "locked": "2.8.0",
             "requested": "[2.0,3.0["
         },
         "com.google.zxing:core": {
@@ -272,16 +272,16 @@
             "requested": "[1.7.0,2.0["
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.26.0",
-            "requested": "0.26.0"
+            "locked": "0.26.2",
+            "requested": "0.26.2"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "0.26.0",
-            "requested": "0.26.0"
+            "locked": "0.26.2",
+            "requested": "0.26.2"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.26.0",
-            "requested": "0.26.0"
+            "locked": "0.26.2",
+            "requested": "0.26.2"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -404,16 +404,16 @@
             "requested": "[1.7.0,2.0["
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.26.0",
-            "requested": "0.26.0"
+            "locked": "0.26.2",
+            "requested": "0.26.2"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "0.26.0",
-            "requested": "0.26.0"
+            "locked": "0.26.2",
+            "requested": "0.26.2"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.26.0",
-            "requested": "0.26.0"
+            "locked": "0.26.2",
+            "requested": "0.26.2"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -428,7 +428,7 @@
             "requested": "0.9.+"
         },
         "com.google.code.gson:gson": {
-            "locked": "2.7",
+            "locked": "2.8.0",
             "requested": "[2.0,3.0["
         },
         "com.google.zxing:core": {
@@ -572,16 +572,16 @@
             "requested": "[1.7.0,2.0["
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.26.0",
-            "requested": "0.26.0"
+            "locked": "0.26.2",
+            "requested": "0.26.2"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "0.26.0",
-            "requested": "0.26.0"
+            "locked": "0.26.2",
+            "requested": "0.26.2"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.26.0",
-            "requested": "0.26.0"
+            "locked": "0.26.2",
+            "requested": "0.26.2"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -596,7 +596,7 @@
             "requested": "0.9.+"
         },
         "com.google.code.gson:gson": {
-            "locked": "2.7",
+            "locked": "2.8.0",
             "requested": "[2.0,3.0["
         },
         "com.google.zxing:core": {
@@ -740,16 +740,16 @@
             "requested": "[1.7.0,2.0["
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.26.0",
-            "requested": "0.26.0"
+            "locked": "0.26.2",
+            "requested": "0.26.2"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "0.26.0",
-            "requested": "0.26.0"
+            "locked": "0.26.2",
+            "requested": "0.26.2"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.26.0",
-            "requested": "0.26.0"
+            "locked": "0.26.2",
+            "requested": "0.26.2"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -764,7 +764,7 @@
             "requested": "0.9.+"
         },
         "com.google.code.gson:gson": {
-            "locked": "2.7",
+            "locked": "2.8.0",
             "requested": "[2.0,3.0["
         },
         "com.google.zxing:core": {

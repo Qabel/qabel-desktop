@@ -7,6 +7,7 @@ import de.qabel.chat.repository.sqlite.ChatClientDatabase;
 import de.qabel.core.repository.sqlite.ClientDatabase;
 import de.qabel.core.repository.sqlite.SqliteTransactionManager;
 import de.qabel.desktop.config.LaunchConfig;
+import de.qabel.desktop.inject.CompositeServiceFactory;
 import de.qabel.desktop.inject.DesktopServices;
 import de.qabel.desktop.inject.NewConfigDesktopServiceFactory;
 import de.qabel.desktop.inject.RuntimeDesktopServiceFactory;
@@ -33,6 +34,8 @@ import java.security.Security;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicReference;
@@ -48,7 +51,7 @@ public class Kernel {
     private Path databaseFile = Paths.get(System.getProperty("user.home")).resolve(".qabel/config.sqlite");
     private StaticRuntimeConfiguration runtimeConfiguration;
     private Connection connection;
-    private DesktopServices services;
+    private RuntimeDesktopServiceFactory services;
     DesktopClientGui app;
 
     private final String currentVersion;
@@ -57,9 +60,10 @@ public class Kernel {
     private Callable<ClientDatabase> configDatabaseLoader = this::getConfigDatabase;
     private Runnable shutdown = this::shutdown;
     private UpdateChecker checker = new HttpUpdateChecker();
-    private RuntimeDesktopServiceFactory staticDesktopServiceFactory;
+    private CompositeServiceFactory desktopServiceFactory;
     Consumer<String> documentLauncher;
     private LaunchConfig launchConfig;
+    private List<Class<? extends ClientPlugin>> clientPlugins = new LinkedList<>();
 
     public Kernel(String currentVersion) {
         this.currentVersion = currentVersion;
@@ -80,13 +84,23 @@ public class Kernel {
         }
 
         initContainer();
+        initPlugins();
         initGui();
         documentLauncher = HostServicesDelegate.getInstance(app)::showDocument;
     }
 
+    private void initPlugins() {
+        for (Class<? extends ClientPlugin> clazz : clientPlugins) {
+            try {
+                ClientPlugin plugin = clazz.newInstance();
+                plugin.initialize(desktopServiceFactory, services.getEventDispatcher());
+            } catch (InstantiationException | IllegalAccessException e) {
+                logger.error("failed to initialized plugin " + clazz.getName() + ": " + e.getMessage(), e);
+            }
+        }
+    }
+
     public void initGui() throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
-        AfterburnerInjector.setConfigurationSource(key -> staticDesktopServiceFactory.get((String) key));
-        AfterburnerInjector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(staticDesktopServiceFactory));
         System.setProperty("prism.lcdtext", "false");
         UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         app = new DesktopClientGui(services, runtimeConfiguration);
@@ -101,11 +115,14 @@ public class Kernel {
         }
         runtimeConfiguration = new StaticRuntimeConfiguration(launchConfig, configDatabaseLoader.call());
         runtimeConfiguration.setCurrentVersion(currentVersion);
-        staticDesktopServiceFactory = new NewConfigDesktopServiceFactory(
+        services = new NewConfigDesktopServiceFactory(
             runtimeConfiguration,
             new SqliteTransactionManager(connection)
         );
-        services = staticDesktopServiceFactory;
+        desktopServiceFactory = new CompositeServiceFactory();
+        desktopServiceFactory.addServiceFactory(services);
+        AfterburnerInjector.setConfigurationSource(key -> desktopServiceFactory.get((String) key));
+        AfterburnerInjector.setInstanceSupplier(new RecursiveInjectionInstanceSupplier(desktopServiceFactory));
     }
 
     public DesktopServices getContainer() {
@@ -227,5 +244,9 @@ public class Kernel {
 
     public DesktopClientGui getApp() {
         return app;
+    }
+
+    public void registerPlugin(Class<? extends ClientPlugin> pluginClass) {
+        clientPlugins.add(pluginClass);
     }
 }
