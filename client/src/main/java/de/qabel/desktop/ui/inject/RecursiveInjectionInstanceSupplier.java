@@ -41,7 +41,11 @@ public class RecursiveInjectionInstanceSupplier implements Function<Class<?>, Ob
                         instances.add(instance);
                         continue;
                     }
-                    instances.add(Injector.instantiateModelOrService(parameterClass));
+                    try {
+                        instances.add(Injector.instantiateModelOrService(parameterClass));
+                    } catch (IllegalStateException e) {
+                        throw new IllegalStateException("failed to create parameter " + parameterClass.getSimpleName() + " for constructor of " + aClass.getSimpleName(), e);
+                    }
                 }
 
                 return constructor.newInstance(instances.toArray());

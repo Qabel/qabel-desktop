@@ -1,0 +1,18 @@
+buildscript {
+    ext.kotlin_version = '1.0.4'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+subprojects {
+    apply plugin: 'kotlin'
+
+    dependencies {
+        compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+        testCompile 'com.nhaarman:mockito-kotlin:0.6.0'
+    }
+}

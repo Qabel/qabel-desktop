@@ -63,8 +63,8 @@ public class AwtQabelTray implements QabelTray {
     }
 
     @Override
-    public void showNotification(TrayNotification notification) {
-        toastStrategy.showNotification(notification.getTitle(), notification.getContent(), icon);
+    public void showNotification(TrayNotification trayNotification) {
+        toastStrategy.showNotification(trayNotification.getTitle(), trayNotification.getContent(), icon);
     }
 
     private void trayIconListener(TrayIcon icon) {
