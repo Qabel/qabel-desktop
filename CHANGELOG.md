@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- plugins
 - changelog
 - links in chat are now clickable #522
 - emojiSelector for chat #531
