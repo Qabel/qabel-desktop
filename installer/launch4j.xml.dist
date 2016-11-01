@@ -2,7 +2,7 @@
 <launch4jConfig>
   <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>lib\qabel-desktop-{version}.jar</jar>
+  <jar>lib\client-{version}.jar</jar>
   <outfile>QabelDesktop.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
