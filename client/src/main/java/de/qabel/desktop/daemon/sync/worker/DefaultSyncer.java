@@ -91,10 +91,11 @@ public class DefaultSyncer implements Syncer {
             index = config.getSyncIndex();
 
             startWatcher();
-            registerRemoteChangeHandler();
+            nav = navigateToRemoteDir();
+            registerRemoteChangeHandler(nav);
             registerRemotePoller();
 
-            notifyAllContents(boxVolume.navigate(), remoteChangeHandler);
+            notifyAllContents(nav, remoteChangeHandler);
         } catch (QblStorageException | IOException e) {
             logger.error("failed to start sync: " + e.getMessage(), e);
         }
@@ -141,9 +142,7 @@ public class DefaultSyncer implements Syncer {
         poller.start();
     }
 
-    protected void registerRemoteChangeHandler() throws QblStorageException {
-        nav = navigateToRemoteDir();
-
+    protected void registerRemoteChangeHandler(BoxNavigation nav) throws QblStorageException {
         remoteChangeHandler = (o, arg) -> executor.submit(() -> {
             try {
                 if (!(arg instanceof ChangeEvent)) {
@@ -164,6 +163,7 @@ public class DefaultSyncer implements Syncer {
             .subscribeOn(Schedulers.immediate())
             .map(it -> CachedBoxNavigation.createRemoteChangeEventFromNotification(nav, it))
             .observeOn(Schedulers.computation())
+            .subscribeOn(Schedulers.computation())
             .subscribe(event -> remoteChangeHandler.update(null, event));
     }
 
@@ -245,6 +245,12 @@ public class DefaultSyncer implements Syncer {
                 return;
             }
         }
+
+        if (!upload.getSource().normalize().startsWith(config.getLocalPath().normalize())) {
+            logger.warn("syncer received event from outside sync path: " + upload);
+            return;
+        }
+
         SyncState targetState;
         targetState = new SyncState(
             upload.getType() != DELETE,
