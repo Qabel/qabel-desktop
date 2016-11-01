@@ -76,6 +76,12 @@ public class Icons {
                 String emojiCode = emoji.getHtmlHexadecimal().replace(";&#x", "_").replace(";", "").replace("&#x", "");
                 String path = "/icon/emoji/emoji_" + emojiCode + (emoji.supportsFitzpatrick() ? "_1f3fb" : "") + ".png";
                 emojiCache.put(emoji, path);
+                try {
+                    return getIcon(emojiCache.get(emoji), width);
+                } catch (IllegalArgumentException e) {
+                    path = "/icon/emoji/emoji_" + emojiCode + "_1f3fb" + ".png";
+                }
+                emojiCache.put(emoji, path);
             }
         }
 
