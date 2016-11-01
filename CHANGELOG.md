@@ -4,15 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [ UNRELEASED ]
+## [UNRELEASED]
+
+## [0.11.2-beta.3] - Astonishing Arielle - 2016-11-01
 ### Fixed
 - sync stops trying to sync parents
 
-## 0.11.1-beta.3 [ 🎃 Absurd Abigail 👻 ] - 2016-11-01
+## [0.11.1-beta.3] - 🎃 Absurd Abigail 👻 - 2016-11-01
 ### Fixed
 - windows launcher
 
-## 0.11.0-beta.3 [ 👻 Amazing Alice 🎃 ] - 2016-11-01
+## [0.11.0-beta.3] - 👻 Amazing Alice 🎃 - 2016-11-01
 ### Added
 - kotlin support
 - plugins
@@ -33,4 +35,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - logging #547
 - sync overview has scrollbars #418  
 
-## 0.10.0-beta.3 [BASELINE]
+## [0.10.0-beta.3] - BASELINE
