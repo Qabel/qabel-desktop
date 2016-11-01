@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## 0.11.0-beta.3 [ 👻 Amazing Alice 🎃 ] - 2016-11-01
 ### Added
 - kotlin support
 - plugins
@@ -21,5 +21,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - message indicator no longer disappears when chat is closed #436
+- tray icon behavior #525 
+- logging #547
+- sync overview has scrollbars #418  
 
 ## 0.10.0-beta.3 [BASELINE]
