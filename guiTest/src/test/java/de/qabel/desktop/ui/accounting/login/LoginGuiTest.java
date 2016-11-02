@@ -127,6 +127,6 @@ public class LoginGuiTest extends AbstractGuiTest<LoginController> {
         page.setPassword("testuser");
         page.pressEnterKey();
 
-        assertAsync(() -> clientConfiguration.getAccount().getToken(), notNullValue(), 100000L);
+        assertAsync(() -> clientConfiguration.getAccount().getToken(), notNullValue());
     }
 }
