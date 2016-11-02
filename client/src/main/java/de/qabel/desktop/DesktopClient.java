@@ -1,6 +1,5 @@
 package de.qabel.desktop;
 
-import de.qabel.desktop.ui.tray.TrayPlugin;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -22,12 +21,11 @@ public class DesktopClient {
         Path qabelConfigRoot = Paths.get(System.getProperty("user.home")).resolve(".qabel");
         System.setProperty("log.root", qabelConfigRoot.toAbsolutePath().toString());
 
-        Kernel kernel = new Kernel(version);
+        Kernel kernel = Kernel.createWithDefaultPlugins(version);
 
         if (args.length > 0) {
             kernel.setDatabaseFile(new File(args[0]).getAbsoluteFile().toPath());
         }
-        kernel.registerPlugin(TrayPlugin.class);
         kernel.initialize();
         kernel.start();
     }

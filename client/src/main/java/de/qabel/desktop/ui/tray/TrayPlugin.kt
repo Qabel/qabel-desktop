@@ -2,20 +2,22 @@ package de.qabel.desktop.ui.tray
 
 import de.qabel.core.event.EventSource
 import de.qabel.core.logging.QabelLog
-import de.qabel.desktop.ClientPlugin
+import de.qabel.desktop.ServiceFactory
 import de.qabel.desktop.event.ClientStartedEvent
+import de.qabel.desktop.event.MainStageShownEvent
 import de.qabel.desktop.inject.AnnotatedDesktopServiceFactory
 import de.qabel.desktop.inject.CompositeServiceFactory
 import de.qabel.desktop.inject.Create
+import de.qabel.desktop.plugin.ClientPlugin
+import de.qabel.desktop.plugin.ServiceFactoryProvider
 import de.qabel.desktop.repository.DropMessageRepository
 import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRendererFactory
-import de.qabel.desktop.ui.inject.AfterburnerInjector
 import de.qabel.desktop.util.Translator
 import javafx.stage.Stage
 import java.util.*
 import javax.inject.Inject
 
-class TrayPlugin : ClientPlugin, QabelLog {
+class TrayPlugin : ClientPlugin, ServiceFactoryProvider, QabelLog {
     @Inject
     private lateinit var dropMessageRepository: DropMessageRepository
     @Inject
@@ -31,13 +33,16 @@ class TrayPlugin : ClientPlugin, QabelLog {
     @Inject
     private lateinit var dropMessageNotificator: DropMessageNotificator
 
-    override fun initialize(serviceFactory: CompositeServiceFactory, events: EventSource) {
-        serviceFactory.addServiceFactory(TrayServiceFactory())
-        AfterburnerInjector.injectMembers(this)
+    override fun getServiceFactory(): ServiceFactory = TrayServiceFactory()
 
+    override fun initialize(serviceFactory: CompositeServiceFactory, events: EventSource) {
         installTray(events)
         dropMessageNotificator.subscribe(events)
+        closeOnMainStage(events)
     }
+
+    private fun closeOnMainStage(events: EventSource) = events.events(MainStageShownEvent::class.java)
+        .subscribe { event -> event.primaryStage.close() }
 
     private fun installTray(events: EventSource) = events.events(ClientStartedEvent::class.java)
         .subscribe { event ->
