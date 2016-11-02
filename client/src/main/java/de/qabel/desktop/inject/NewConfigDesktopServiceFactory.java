@@ -187,7 +187,8 @@ public class NewConfigDesktopServiceFactory extends RuntimeDesktopServiceFactory
                 getAccountRepository(),
                 getIdentityRepository(),
                 getDropStateRepository(),
-                getShareNotificationRepository()
+                getShareNotificationRepository(),
+                getEventDispatcher()
             );
         }
         return clientConfiguration;

@@ -7,13 +7,18 @@ import de.qabel.chat.repository.sqlite.ChatClientDatabase;
 import de.qabel.core.repository.sqlite.ClientDatabase;
 import de.qabel.core.repository.sqlite.SqliteTransactionManager;
 import de.qabel.desktop.config.LaunchConfig;
+import de.qabel.desktop.daemon.drop.DropDaemonPlugin;
+import de.qabel.desktop.daemon.sync.SyncPlugin;
 import de.qabel.desktop.inject.CompositeServiceFactory;
 import de.qabel.desktop.inject.DesktopServices;
 import de.qabel.desktop.inject.NewConfigDesktopServiceFactory;
 import de.qabel.desktop.inject.RuntimeDesktopServiceFactory;
 import de.qabel.desktop.inject.config.StaticRuntimeConfiguration;
+import de.qabel.desktop.plugin.ClientPlugin;
+import de.qabel.desktop.plugin.ServiceFactoryProvider;
 import de.qabel.desktop.ui.inject.AfterburnerInjector;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
+import de.qabel.desktop.ui.tray.TrayPlugin;
 import de.qabel.desktop.ui.util.FXApplicationLauncher;
 import de.qabel.desktop.ui.util.PlatformUtils;
 import de.qabel.desktop.update.HttpUpdateChecker;
@@ -65,6 +70,14 @@ public class Kernel {
     private LaunchConfig launchConfig;
     private List<Class<? extends ClientPlugin>> clientPlugins = new LinkedList<>();
 
+    public static Kernel createWithDefaultPlugins(String currentVersion) {
+        Kernel kernel = new Kernel(currentVersion);
+        kernel.registerPlugin(TrayPlugin.class);
+        kernel.registerPlugin(DropDaemonPlugin.class);
+        kernel.registerPlugin(SyncPlugin.class);
+        return kernel;
+    }
+
     public Kernel(String currentVersion) {
         this.currentVersion = currentVersion;
     }
@@ -93,6 +106,10 @@ public class Kernel {
         for (Class<? extends ClientPlugin> clazz : clientPlugins) {
             try {
                 ClientPlugin plugin = clazz.newInstance();
+                if (plugin instanceof ServiceFactoryProvider) {
+                    desktopServiceFactory.addServiceFactory(((ServiceFactoryProvider) plugin).getServiceFactory());
+                }
+                AfterburnerInjector.injectMembers(plugin);
                 plugin.initialize(desktopServiceFactory, services.getEventDispatcher());
             } catch (InstantiationException | IllegalAccessException e) {
                 logger.error("failed to initialized plugin " + clazz.getName() + ": " + e.getMessage(), e);
