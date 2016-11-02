@@ -1,8 +1,8 @@
 package de.qabel.desktop.ui.accounting.login;
 
 import com.sun.javafx.collections.ObservableListWrapper;
-import de.qabel.core.accounting.BoxClient;
 import de.qabel.core.accounting.AccountingProfile;
+import de.qabel.core.accounting.BoxClient;
 import de.qabel.core.accounting.BoxHttpClient;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.AccountingServer;
@@ -31,6 +31,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Function;
 
 public class LoginController extends AbstractController implements Initializable {
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
@@ -73,6 +74,10 @@ public class LoginController extends AbstractController implements Initializable
     private ResourceBundle resourceBundle;
     private ClientConfig config;
     private Account account;
+    AccountingServer server;
+    private BoxClient http;
+    Function<AccountingServer, BoxClient> boxClientFactory
+        = server -> new BoxHttpClient(server, new AccountingProfile());
 
     @Inject
     public LoginController(ClientConfig config) {
@@ -222,11 +227,13 @@ public class LoginController extends AbstractController implements Initializable
     public void login() {
         toProgressState();
 
-        // TODO extract login to daemon
         new Thread(() -> {
             try {
-                BoxClient http = createAccount();
-                http.login();
+                http = createAccount();
+                if (account.getToken() == null) {
+                    http.login();
+                    account.setToken(server.getAuthToken());
+                }
 
                 try (Transaction ignored = transactionManager.beginTransaction()) {
                     config.setAccount(account);
@@ -255,15 +262,16 @@ public class LoginController extends AbstractController implements Initializable
         account.setUser(user.getText());
         account.setAuth(password.getText());
 
-        return new BoxHttpClient(
-                new AccountingServer(
-                        new URL(account.getProvider()).toURI(),
-                        new URL(account.getProvider()).toURI(),
-                        account.getUser(),
-                        account.getAuth()
-                ),
-                new AccountingProfile()
+        server = new AccountingServer(
+            new URL(account.getProvider()).toURI(),
+            new URL(account.getProvider()).toURI(),
+            account.getUser(),
+            account.getAuth()
         );
+        if (account.getToken() != null) {
+            server.setAuthToken(account.getToken());
+        }
+        return boxClientFactory.apply(server);
     }
 
     private void toLoginFailureState(String message) {

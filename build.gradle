@@ -12,7 +12,29 @@ subprojects {
     apply plugin: 'kotlin'
 
     dependencies {
+        def coreVersion = '246cef90b31d6fef3ecf00aaeb9ad54ae8c51850'
+        def repo = 'julianseeger'
+
+        compile 'com.github.'+repo+'.qabel-core:core:'+coreVersion
+        compile 'com.github.'+repo+'.qabel-core:box:'+coreVersion
+        compile 'com.github.'+repo+'.qabel-core:chat:'+coreVersion
+
+        testCompile 'com.github.'+repo+'.qabel-core:box:'+coreVersion+':tests'
+        testCompile 'com.github.'+repo+'.qabel-core:box:'+coreVersion+':sources'
+        testCompile 'com.github.'+repo+'.qabel-core:core:'+coreVersion+':tests'
+        testCompile 'com.github.'+repo+'.qabel-core:core:'+coreVersion+':sources'
+        testCompile 'com.github.'+repo+'.qabel-core:chat:'+coreVersion+':tests'
+        testCompile 'com.github.'+repo+'.qabel-core:chat:'+coreVersion+':sources'
         compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
         testCompile 'com.nhaarman:mockito-kotlin:0.6.0'
+
+        testCompile 'junit:junit:[4.0.0,5.0['                            // Eclipse Public License - v 1.0 https://github.com/junit-team/junit/blob/master/LICENSE-junit.txt
+        testCompile 'org.meanbean:meanbean:[2.0,3.0['                  // Apache License V2.0 http://meanbean.sourceforge.net
+        testCompile 'org.testfx:testfx-core:[4.0,5.0['                 // EUPL 1.1 https://github.com/TestFX/TestFX/blob/master/LICENSE.txt
+        testCompile 'org.testfx:testfx-junit:[4.0,5.0['                // EUPL 1.1 https://github.com/TestFX/TestFX/blob/master/LICENSE.txt
+
+        testCompile 'org.hamcrest:java-hamcrest:[2.0.0.0,3.0['
+        testCompile 'org.mockito:mockito-core:[2.0.52-beta,3.0['
     }
 }

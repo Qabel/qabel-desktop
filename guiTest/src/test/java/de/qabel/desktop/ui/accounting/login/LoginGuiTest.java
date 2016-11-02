@@ -6,6 +6,8 @@ import org.junit.Test;
 
 import java.util.Random;
 
+import static de.qabel.desktop.AsyncUtils.assertAsync;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertTrue;
 
 public class LoginGuiTest extends AbstractGuiTest<LoginController> {
@@ -115,5 +117,16 @@ public class LoginGuiTest extends AbstractGuiTest<LoginController> {
         page.setPassword("password");
         page.setPasswordConfirmation("password");
         page.pressEnterKey();
+    }
+
+    @Test
+    public void setsTokenOnLogin() {
+        setup();
+
+        page.setUsername("testuser");
+        page.setPassword("testuser");
+        page.pressEnterKey();
+
+        assertAsync(() -> clientConfiguration.getAccount().getToken(), notNullValue(), 100000L);
     }
 }
