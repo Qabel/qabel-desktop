@@ -1,6 +1,5 @@
 package de.qabel.desktop;
 
-import com.sun.javafx.application.HostServicesDelegate;
 import com.sun.javafx.application.PlatformImpl;
 import de.qabel.box.storage.AbstractNavigation;
 import de.qabel.chat.repository.sqlite.ChatClientDatabase;
@@ -30,8 +29,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -99,7 +102,13 @@ public class Kernel {
         initContainer();
         initPlugins();
         initGui();
-        documentLauncher = HostServicesDelegate.getInstance(app)::showDocument;
+        documentLauncher = url -> new Thread(() -> {
+            try {
+                Desktop.getDesktop().browse(new URI(url));
+            } catch (IOException | URISyntaxException e) {
+                logger.error("failed to open uri", e);
+            }
+        }).start();
     }
 
     private void initPlugins() {

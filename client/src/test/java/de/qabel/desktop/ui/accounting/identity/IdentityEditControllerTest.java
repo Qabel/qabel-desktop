@@ -99,7 +99,7 @@ public class IdentityEditControllerTest extends AbstractControllerTest {
 
         controller.saveIdentity();
 
-        waitUntil(() -> controller.alert != null && controller.alert.getAlert().isShowing());
+        waitUntil(() -> controller.getAlert() != null && controller.getAlert().getAlert().isShowing());
     }
 
     @Test
