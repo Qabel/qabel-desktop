@@ -8,16 +8,16 @@
             "requested": "[1.7.0,2.0["
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.26.2",
-            "requested": "0.26.2"
+            "locked": "0.26.3",
+            "requested": "0.26.3"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "0.26.2",
-            "requested": "0.26.2"
+            "locked": "0.26.3",
+            "requested": "0.26.3"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.26.2",
-            "requested": "0.26.2"
+            "locked": "0.26.3",
+            "requested": "0.26.3"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -113,6 +113,10 @@
         "org.controlsfx:controlsfx": {
             "locked": "8.40.12",
             "requested": "[8.0,9.0["
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.0.4",
+            "requested": "1.0.4"
         },
         "org.json:json": {
             "locked": "20160212",
@@ -140,16 +144,16 @@
             "requested": "[1.7.0,2.0["
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.26.2",
-            "requested": "0.26.2"
+            "locked": "0.26.3",
+            "requested": "0.26.3"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "0.26.2",
-            "requested": "0.26.2"
+            "locked": "0.26.3",
+            "requested": "0.26.3"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.26.2",
-            "requested": "0.26.2"
+            "locked": "0.26.3",
+            "requested": "0.26.3"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -245,6 +249,10 @@
         "org.controlsfx:controlsfx": {
             "locked": "8.40.12",
             "requested": "[8.0,9.0["
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.0.4",
+            "requested": "1.0.4"
         },
         "org.json:json": {
             "locked": "20160212",
@@ -263,6 +271,24 @@
             "requested": "[3.8.0,4.0["
         }
     },
+    "kapt": {
+        "org.jetbrains.kotlin:kotlin-annotation-processing": {
+            "locked": "1.0.4",
+            "requested": "1.0.4"
+        }
+    },
+    "kaptDist": {
+        "org.jetbrains.kotlin:kotlin-annotation-processing": {
+            "locked": "1.0.4",
+            "requested": "1.0.4"
+        }
+    },
+    "kaptTest": {
+        "org.jetbrains.kotlin:kotlin-annotation-processing": {
+            "locked": "1.0.4",
+            "requested": "1.0.4"
+        }
+    },
     "runtime": {
         ":jfxrt": {
             "project": true
@@ -272,16 +298,16 @@
             "requested": "[1.7.0,2.0["
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.26.2",
-            "requested": "0.26.2"
+            "locked": "0.26.3",
+            "requested": "0.26.3"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "0.26.2",
-            "requested": "0.26.2"
+            "locked": "0.26.3",
+            "requested": "0.26.3"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.26.2",
-            "requested": "0.26.2"
+            "locked": "0.26.3",
+            "requested": "0.26.3"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -377,6 +403,10 @@
         "org.controlsfx:controlsfx": {
             "locked": "8.40.12",
             "requested": "[8.0,9.0["
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.0.4",
+            "requested": "1.0.4"
         },
         "org.json:json": {
             "locked": "20160212",
@@ -404,16 +434,16 @@
             "requested": "[1.7.0,2.0["
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.26.2",
-            "requested": "0.26.2"
+            "locked": "0.26.3",
+            "requested": "0.26.3"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "0.26.2",
-            "requested": "0.26.2"
+            "locked": "0.26.3",
+            "requested": "0.26.3"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.26.2",
-            "requested": "0.26.2"
+            "locked": "0.26.3",
+            "requested": "0.26.3"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -442,6 +472,10 @@
         "com.jfoenix:jfoenix": {
             "locked": "1.0.0",
             "requested": "[1.0,2.0["
+        },
+        "com.nhaarman:mockito-kotlin": {
+            "locked": "0.6.0",
+            "requested": "0.6.0"
         },
         "com.tngtech.java:junit-dataprovider": {
             "locked": "1.12.0",
@@ -529,6 +563,10 @@
         "org.hamcrest:java-hamcrest": {
             "locked": "2.0.0.0",
             "requested": "[2.0.0.0,3.0["
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.0.4",
+            "requested": "1.0.4"
         },
         "org.json:json": {
             "locked": "20160212",
@@ -572,16 +610,16 @@
             "requested": "[1.7.0,2.0["
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.26.2",
-            "requested": "0.26.2"
+            "locked": "0.26.3",
+            "requested": "0.26.3"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "0.26.2",
-            "requested": "0.26.2"
+            "locked": "0.26.3",
+            "requested": "0.26.3"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.26.2",
-            "requested": "0.26.2"
+            "locked": "0.26.3",
+            "requested": "0.26.3"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -610,6 +648,10 @@
         "com.jfoenix:jfoenix": {
             "locked": "1.0.0",
             "requested": "[1.0,2.0["
+        },
+        "com.nhaarman:mockito-kotlin": {
+            "locked": "0.6.0",
+            "requested": "0.6.0"
         },
         "com.tngtech.java:junit-dataprovider": {
             "locked": "1.12.0",
@@ -697,6 +739,10 @@
         "org.hamcrest:java-hamcrest": {
             "locked": "2.0.0.0",
             "requested": "[2.0.0.0,3.0["
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.0.4",
+            "requested": "1.0.4"
         },
         "org.json:json": {
             "locked": "20160212",
@@ -740,16 +786,16 @@
             "requested": "[1.7.0,2.0["
         },
         "com.github.Qabel.qabel-core:box": {
-            "locked": "0.26.2",
-            "requested": "0.26.2"
+            "locked": "0.26.3",
+            "requested": "0.26.3"
         },
         "com.github.Qabel.qabel-core:chat": {
-            "locked": "0.26.2",
-            "requested": "0.26.2"
+            "locked": "0.26.3",
+            "requested": "0.26.3"
         },
         "com.github.Qabel.qabel-core:core": {
-            "locked": "0.26.2",
-            "requested": "0.26.2"
+            "locked": "0.26.3",
+            "requested": "0.26.3"
         },
         "com.github.mfornos:humanize-slim": {
             "locked": "1.2.2",
@@ -778,6 +824,10 @@
         "com.jfoenix:jfoenix": {
             "locked": "1.0.0",
             "requested": "[1.0,2.0["
+        },
+        "com.nhaarman:mockito-kotlin": {
+            "locked": "0.6.0",
+            "requested": "0.6.0"
         },
         "com.tngtech.java:junit-dataprovider": {
             "locked": "1.12.0",
@@ -865,6 +915,10 @@
         "org.hamcrest:java-hamcrest": {
             "locked": "2.0.0.0",
             "requested": "[2.0.0.0,3.0["
+        },
+        "org.jetbrains.kotlin:kotlin-stdlib": {
+            "locked": "1.0.4",
+            "requested": "1.0.4"
         },
         "org.json:json": {
             "locked": "20160212",

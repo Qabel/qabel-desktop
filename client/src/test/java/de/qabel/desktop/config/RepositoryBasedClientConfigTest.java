@@ -4,6 +4,7 @@ import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.core.config.factory.DropUrlGenerator;
 import de.qabel.core.config.factory.IdentityBuilder;
+import de.qabel.core.event.SubjectEventDispatcher;
 import de.qabel.core.repository.AccountRepository;
 import de.qabel.core.repository.ClientConfigRepository;
 import de.qabel.core.repository.DropStateRepository;
@@ -15,7 +16,10 @@ import de.qabel.desktop.daemon.drop.ShareNotificationMessage;
 import de.qabel.desktop.repository.ShareNotificationRepository;
 import de.qabel.desktop.repository.inmemory.InMemoryClientConfigRepository;
 import de.qabel.desktop.repository.inmemory.InMemoryShareNotificationRepository;
+import org.junit.Before;
 import org.junit.Test;
+import rx.observers.TestSubscriber;
+import rx.schedulers.Schedulers;
 
 import java.util.Date;
 import java.util.List;
@@ -29,14 +33,22 @@ public class RepositoryBasedClientConfigTest {
     private IdentityRepository identityRepo = new InMemoryIdentityRepository();
     private DropStateRepository dropStateRepo = new InMemoryDropStateRepository();
     private ShareNotificationRepository shareRepo = new InMemoryShareNotificationRepository();
+    private TestSubscriber<AccountSelectedEvent> subscriber = new TestSubscriber<>();
 
+    private final SubjectEventDispatcher events = new SubjectEventDispatcher();
     private RepositoryBasedClientConfig config = new RepositoryBasedClientConfig(
         clientConfigRepo,
         accountRepo,
         identityRepo,
         dropStateRepo,
-        shareRepo
+        shareRepo,
+        events
     );
+
+    @Before
+    public void setUp() {
+        events.events(AccountSelectedEvent.class).subscribeOn(Schedulers.immediate()).subscribe(subscriber);
+    }
 
     @Test
     public void savesAccount() throws Exception {
@@ -51,6 +63,10 @@ public class RepositoryBasedClientConfigTest {
         assertEquals(1, accounts.size());
         assertSame(account, accounts.get(0));
 
+        assertEquals(1, subscriber.getOnNextEvents().size());
+        assertEquals(account, subscriber.getOnNextEvents().get(0).getAccount());
+
+        // test update
         config.setAccount(account);
         assertEquals(1, accountRepo.findAll().size());
     }

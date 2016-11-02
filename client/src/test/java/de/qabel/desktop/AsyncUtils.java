@@ -74,4 +74,8 @@ public class AsyncUtils {
     public static <T> void assertAsync(Callable<T> actual, Matcher<? super T> matcher) {
         assertAsync(() -> assertThat(actual.call(), matcher));
     }
+
+    public static <T> void assertAsync(Callable<T> actual, Matcher<? super T> matcher, long timeout) {
+        assertAsync(() -> assertThat(actual.call(), matcher), timeout);
+    }
 }

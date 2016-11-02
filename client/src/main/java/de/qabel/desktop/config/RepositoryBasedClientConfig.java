@@ -3,6 +3,7 @@ package de.qabel.desktop.config;
 import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
 import de.qabel.core.drop.DropURL;
+import de.qabel.core.event.EventSink;
 import de.qabel.core.repository.AccountRepository;
 import de.qabel.core.repository.ClientConfigRepository;
 import de.qabel.core.repository.DropStateRepository;
@@ -30,19 +31,22 @@ public class RepositoryBasedClientConfig implements ClientConfig {
     private final ShareNotificationRepository shareRepo;
     private final List<Consumer<Identity>> identityListener = new CopyOnWriteArrayList<>();
     private final List<Consumer<Account>> accountListener = new CopyOnWriteArrayList<>();
+    private final EventSink events;
 
     public RepositoryBasedClientConfig(
         ClientConfigRepository configRepo,
         AccountRepository accountRepo,
         IdentityRepository identityRepo,
         DropStateRepository dropStateRepo,
-        ShareNotificationRepository shareRepo
+        ShareNotificationRepository shareRepo,
+        EventSink events
     ) {
         this.configRepo = configRepo;
         this.accountRepo = accountRepo;
         this.identityRepo = identityRepo;
         this.dropStateRepo = dropStateRepo;
         this.shareRepo = shareRepo;
+        this.events = events;
     }
 
     @Override
@@ -69,6 +73,7 @@ public class RepositoryBasedClientConfig implements ClientConfig {
             accountRepo.save(account);
             configRepo.save("account", String.valueOf(account.getId()));
             accountListener.forEach(c -> c.accept(account));
+            events.push(new AccountSelectedEvent(account));
         } catch (PersistenceException e) {
             throw new IllegalStateException("failed to set account", e);
         }

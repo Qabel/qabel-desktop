@@ -124,7 +124,8 @@ public class AbstractControllerTest extends AbstractFxTest {
             accountRepository,
             identityRepository,
             dropStateRepository,
-            shareNotificationRepository
+            shareNotificationRepository,
+            eventDispatcher
         );
         diContainer.put("resourceBundle", QabelFXMLView.getDefaultResourceBundle());
         diContainer.put("fileChooserFactory", new CallbackFileChooserFactory(() -> null));

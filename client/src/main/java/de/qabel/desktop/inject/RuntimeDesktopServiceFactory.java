@@ -201,6 +201,7 @@ public abstract class RuntimeDesktopServiceFactory extends AnnotatedDesktopServi
                     acc.getUser(),
                     acc.getAuth()
                 );
+                server.setAuthToken(acc.getToken());
                 boxClient = new BoxHttpClient(server, new AccountingProfile());
             } catch (URISyntaxException e) {
                 throw new IllegalStateException("cannot get box client without valid account: " + e.getMessage(), e);

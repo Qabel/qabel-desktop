@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [UNRELEASED]
+### Fixed
+- auth token stored and used for box communication #474
 
 ## [0.11.2-beta.3] - Astonishing Arielle - 2016-11-01
 ### Fixed
