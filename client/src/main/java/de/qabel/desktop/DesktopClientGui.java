@@ -1,9 +1,12 @@
 package de.qabel.desktop;
 
+import de.qabel.core.config.Account;
 import de.qabel.core.config.Identity;
+import de.qabel.desktop.config.AccountSelectedEvent;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.daemon.share.ShareNotificationHandler;
 import de.qabel.desktop.event.ClientStartedEvent;
+import de.qabel.desktop.event.MainStageShownEvent;
 import de.qabel.desktop.inject.DesktopServices;
 import de.qabel.desktop.inject.config.StaticRuntimeConfiguration;
 import de.qabel.desktop.repository.DropMessageRepository;
@@ -22,7 +25,6 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
@@ -39,15 +41,10 @@ public class DesktopClientGui extends Application {
     private DesktopServices services;
     private ExecutorService executorService = Executors.newCachedThreadPool();
     private StaticRuntimeConfiguration runtimeConfiguration;
-    private Consumer<DesktopClientGui> postInit;
 
     DesktopClientGui(DesktopServices services, StaticRuntimeConfiguration runtimeConfiguration) {
         this.services = services;
         this.runtimeConfiguration = runtimeConfiguration;
-    }
-
-    public void setPostInit(Consumer<DesktopClientGui> postInit) {
-        this.postInit = postInit;
     }
 
     @Override
@@ -57,16 +54,18 @@ public class DesktopClientGui extends Application {
         config = services.getClientConfiguration();
         setUpWindow();
 
-        showLoginStage();
-        config.onSetAccount(account -> {
-                initBackgroundServices();
-                if (SystemTray.isSupported()) {
-                    Platform.runLater(this::showLayoutStage);
-                } else {
-                    showLayoutStage();
-                }
-            }
-        );
+        Consumer<Account> accountConsumer = account -> {
+            initBackgroundServices();
+            Platform.runLater(this::showLayoutStage);
+        };
+        config.onSetAccount(accountConsumer);
+        if (!config.hasAccount() || config.getAccount().getToken() == null) {
+            showLoginStage();
+        } else {
+            services.getEventDispatcher().push(new AccountSelectedEvent(config.getAccount()));
+            accountConsumer.accept(config.getAccount());
+        }
+
         config.onSelectIdentity(this::addShareMessageRenderer);
         services.getDropMessageRepository().addObserver(new ShareNotificationHandler(getShareRepository()));
 
@@ -78,9 +77,6 @@ public class DesktopClientGui extends Application {
         });
 
         services.getEventDispatcher().push(new ClientStartedEvent(primaryStage));
-        if (postInit != null) {
-            postInit.accept(this);
-        }
     }
 
     private void setUpWindow() {
@@ -98,8 +94,6 @@ public class DesktopClientGui extends Application {
         return executorService.submit(() -> {
             try {
                 startTransferManager();
-                startSyncDaemon();
-                startDropDaemon();
                 if (config.getSelectedIdentity() != null) {
                     addShareMessageRenderer(config.getSelectedIdentity());
                 }
@@ -125,13 +119,7 @@ public class DesktopClientGui extends Application {
         Scene layoutScene = new Scene(view, 900, 600, true, SceneAntialiasing.BALANCED);
         Platform.runLater(() -> primaryStage.setScene(layoutScene));
         primaryStage.show();
-        closeStage();
-    }
-
-    private void closeStage() {
-        if (config.hasAccount()) {
-            primaryStage.close();
-        }
+        services.getEventDispatcher().push(new MainStageShownEvent(primaryStage));
     }
 
     private void showLoginStage() {
@@ -142,14 +130,6 @@ public class DesktopClientGui extends Application {
 
     public ResourceBundle getResources() {
         return services.getResourceBundle();
-    }
-
-    private void startDropDaemon() {
-        new Thread(services.getDropDaemon()).start();
-    }
-
-    private void startSyncDaemon() {
-        new Thread(services.getSyncDaemon()).start();
     }
 
     private ShareNotificationRepository getShareRepository() {
