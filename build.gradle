@@ -12,8 +12,8 @@ subprojects {
     apply plugin: 'kotlin'
 
     dependencies {
-        def coreVersion = '246cef90b31d6fef3ecf00aaeb9ad54ae8c51850'
-        def repo = 'julianseeger'
+        def coreVersion = '0.26.3'
+        def repo = 'Qabel'
 
         compile 'com.github.'+repo+'.qabel-core:core:'+coreVersion
         compile 'com.github.'+repo+'.qabel-core:box:'+coreVersion
