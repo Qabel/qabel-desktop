@@ -11,9 +11,6 @@ import rx.Scheduler;
 import javax.inject.Inject;
 
 public class ScenicPlugin implements ClientPlugin {
-    @Inject
-    Scheduler fxScheduler;
-
     @Override
     public void initialize(CompositeServiceFactory serviceFactory, EventSource events) {
         events.events(MainStageShownEvent.class).subscribe(event ->
