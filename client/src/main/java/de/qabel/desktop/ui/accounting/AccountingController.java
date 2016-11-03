@@ -72,7 +72,7 @@ public class AccountingController extends AbstractController implements Initiali
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
-            gson = buildGson();
+            setGson(buildGson());
         } catch (EntityNotFoundException | PersistenceException e) {
             alert(e);
         }
