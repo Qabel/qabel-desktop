@@ -7,6 +7,7 @@ import de.qabel.desktop.daemon.drop.MessageReceivedEvent;
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage;
 import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory;
 import de.qabel.desktop.util.Translator;
+import rx.Observable;
 import rx.Scheduler;
 
 import javax.inject.Inject;
@@ -39,21 +40,32 @@ public class DropMessageNotificator {
     }
 
     public void subscribe(EventSource events) {
-        events.events(MessageReceivedEvent.class)
-            .map(MessageReceivedEvent::getMessage)
-            .filter(message -> !message.isSeen() && !message.isSent())
-            .debounce(1, TimeUnit.SECONDS)
-            .observeOn(computationScheduler)
-            .map(message -> new TrayNotification(renderTitle(message), renderPlaintextMessage(message)))
-            .subscribeOn(fxScheduler)
+        Observable<MessageReceivedEvent> eventObservable = events.events(MessageReceivedEvent.class);
+        subscribeToEvents(eventObservable)
             .subscribe(tray::showNotification);
+
     }
 
-    private String renderTitle(PersistenceDropMessage message) {
+    Observable<TrayNotification> subscribeToEvents(Observable<MessageReceivedEvent> eventObservable) {
+        return preFilterEvents(eventObservable)
+            .observeOn(computationScheduler)
+            .debounce(1, TimeUnit.SECONDS, computationScheduler)
+            .map(message -> new TrayNotification(renderTitle(message), renderPlaintextMessage(message)))
+            .subscribeOn(fxScheduler)
+            ;
+    }
+
+    Observable<PersistenceDropMessage> preFilterEvents(Observable<MessageReceivedEvent> eventObservable) {
+        return eventObservable
+            .map(MessageReceivedEvent::getMessage)
+            .filter(message -> !message.isSeen() && !message.isSent());
+    }
+
+    String renderTitle(PersistenceDropMessage message) {
         return translator.getString("newMessageNotification", ((Contact) message.getSender()).getAlias());
     }
 
-    private String renderPlaintextMessage(PersistenceDropMessage message) {
+    String renderPlaintextMessage(PersistenceDropMessage message) {
         DropMessage dropMessage = message.getDropMessage();
         return messageRendererFactory
             .getRenderer(dropMessage.getDropPayloadType())
