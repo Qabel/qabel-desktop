@@ -10,6 +10,7 @@ import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory;
 import de.qabel.desktop.util.Translator;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import rx.Scheduler;
@@ -70,6 +71,7 @@ public class DropMessageNotificatorTest extends AbstractControllerTest {
     }
 
 
+    @Ignore
     @Test
     public void groupBySender() {
 //        MessageReceivedEvent v = createNewMessageReceivedEvent(senderContact);
