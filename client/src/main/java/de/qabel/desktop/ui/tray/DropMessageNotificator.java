@@ -12,7 +12,6 @@ import rx.Scheduler;
 
 import javax.inject.Inject;
 import java.util.ResourceBundle;
-import java.util.concurrent.TimeUnit;
 
 public class DropMessageNotificator {
     private MessageRendererFactory messageRendererFactory;
@@ -49,10 +48,8 @@ public class DropMessageNotificator {
     Observable<TrayNotification> subscribeToEvents(Observable<MessageReceivedEvent> eventObservable) {
         return preFilterEvents(eventObservable)
             .observeOn(computationScheduler)
-            .debounce(1, TimeUnit.SECONDS, computationScheduler)
             .map(message -> new TrayNotification(renderTitle(message), renderPlaintextMessage(message)))
-            .subscribeOn(fxScheduler)
-            ;
+            .subscribeOn(fxScheduler);
     }
 
     Observable<PersistenceDropMessage> preFilterEvents(Observable<MessageReceivedEvent> eventObservable) {
@@ -60,6 +57,7 @@ public class DropMessageNotificator {
             .map(MessageReceivedEvent::getMessage)
             .filter(message -> !message.isSeen() && !message.isSent());
     }
+
 
     String renderTitle(PersistenceDropMessage message) {
         return translator.getString("newMessageNotification", ((Contact) message.getSender()).getAlias());
