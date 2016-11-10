@@ -34,7 +34,7 @@ public class CrashReportAlertPage extends AbstractPage {
     }
 
     public CrashReportAlertPage send() {
-        clickOn(".send");
+        clickOn(".sendEvent");
         waitUntil(() -> alert.getInputArea().getText().isEmpty());
         return this;
     }
