@@ -8,6 +8,8 @@ import de.qabel.desktop.ui.AbstractControllerTest
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage
 import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory
 import de.qabel.desktop.util.Translator
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.hasSize
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
@@ -29,9 +31,10 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
     private val me = Contact("the teser", null, QblECKeyPair().pub)
     private val senderContact = Contact("senderContact", null, QblECKeyPair().pub)
     private val senderContact2 = Contact("senderContact2", null, QblECKeyPair().pub)
+    private val messageRendererFactory: MessageRendererFactory = Mockito.mock(MessageRendererFactory::class.java)
 
     val delay1Sec: Long = 1000
-    val delay7Sec: Long = 7000
+    val delay6Sec: Long = 6000
 
     private inner class Tester
     internal constructor(tray: QabelTray, computationScheduler: Scheduler, fxScheduler: Scheduler) :
@@ -39,16 +42,23 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
             Mockito.mock(ResourceBundle::class.java), Mockito.mock(Translator::class.java),
             tray, computationScheduler, fxScheduler) {
 
-        override fun renderPlaintextMessage(message: PersistenceDropMessage): String {
-            return "plaintext"
-        }
 
         override fun renderTitle(message: PersistenceDropMessage): String {
-            return "title"
+            return (message.sender as Contact).alias
         }
 
         override fun renderMultiMessageBody(messages: List<PersistenceDropMessage>): String {
-            return "multi"
+            val alias = (messages.first().sender as Contact).alias
+            val size = messages.size
+            println(" $size msg from $alias")
+            return "multi from $alias"
+        }
+
+        override fun renderPlaintextMessage(message: PersistenceDropMessage): String {
+            val alias = (message.sender as Contact).alias
+            val size = 1
+            println(" $size msg from $alias")
+            return "plain"
         }
     }
 
@@ -83,7 +93,23 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
         sendEvent(delay1Sec)
         sendEvent(delay1Sec, senderContact2)
         testScheduler.advanceTimeBy(3, TimeUnit.SECONDS)
-        testSubscriber.assertValueCount(2)
+        assertThat(testSubscriber.onNextEvents, hasSize(2))
+    }
+
+
+    @Test
+    fun multipleMessagesInMultipleTimeframe() {
+
+        sendEvent(delay1Sec)
+        sendEvent(delay1Sec)
+        sendEvent(delay6Sec)
+        sendEvent(delay6Sec, senderContact2)
+
+        testScheduler.advanceTimeTo(3, TimeUnit.SECONDS)
+        testSubscriber.assertValueCount(1)
+
+        testScheduler.advanceTimeTo(6, TimeUnit.SECONDS)
+        testSubscriber.assertValueCount(3)
     }
 
     fun sendEvent(delay: Long, contact: Contact = senderContact) = eventTestSubject.onNext(createNewMessageReceivedEvent(contact), delay)

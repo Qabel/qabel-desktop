@@ -8,7 +8,6 @@ import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory
 import de.qabel.desktop.util.Translator
 import rx.Observable
 import rx.Scheduler
-import rx.Subscriber
 import rx.lang.kotlin.observable
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -42,27 +41,29 @@ constructor(
     }
 
     private fun createCombinedNotification(): (MutableList<PersistenceDropMessage>) -> Observable<TrayNotification> {
+
         return {
             observable { subscriber ->
                 val listBySender = it.groupBy { it.sender }
                 for ((contact, messages) in listBySender) {
                     val msgCount = messages.count()
                     if (msgCount > 1) {
-                        createMultiMessageNotification(messages, subscriber)
+                        subscriber.onNext(createMultiMessageNotification(messages))
+                        break
                     } else {
-                        createSingleMessageNotification(messages.first(), subscriber)
+                        subscriber.onNext(createSingleMessageNotification(messages.first()))
                     }
                 }
             }
         }
     }
 
-    private fun createMultiMessageNotification(messages: List<PersistenceDropMessage>, subscriber: Subscriber<in TrayNotification>) {
-        return subscriber.onNext(TrayNotification(renderTitle(messages.first()), renderMultiMessageBody(messages)))
+    private fun createMultiMessageNotification(messages: List<PersistenceDropMessage>): TrayNotification {
+        return TrayNotification(renderTitle(messages.first()), renderMultiMessageBody(messages))
     }
 
-    private fun createSingleMessageNotification(message: PersistenceDropMessage, subscriber: Subscriber<in TrayNotification>) {
-        return subscriber.onNext(TrayNotification(renderTitle(message), renderPlaintextMessage(message)))
+    private fun createSingleMessageNotification(message: PersistenceDropMessage): TrayNotification {
+        return TrayNotification(renderTitle(message), renderPlaintextMessage(message))
     }
 
     internal open fun renderMultiMessageBody(messages: List<PersistenceDropMessage>): String {
