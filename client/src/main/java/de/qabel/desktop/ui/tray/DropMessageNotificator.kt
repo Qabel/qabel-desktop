@@ -8,6 +8,7 @@ import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory
 import de.qabel.desktop.util.Translator
 import rx.Observable
 import rx.Scheduler
+import rx.Subscriber
 import rx.lang.kotlin.observable
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -34,10 +35,8 @@ constructor(
         return eventObservable
             .map { it.message }
             .filter { message -> !message.isSeen && !message.isSent }
-
             .buffer(3, TimeUnit.SECONDS, computationScheduler)
             .flatMap(createCombinedNotification())
-
             .observeOn(computationScheduler)
             .subscribeOn(fxScheduler)
     }
@@ -45,35 +44,25 @@ constructor(
     private fun createCombinedNotification(): (MutableList<PersistenceDropMessage>) -> Observable<TrayNotification> {
         return {
             observable { subscriber ->
-                if (it.size > 1) {
-                    val listBySender = it.groupBy { it.sender }
-                    if (listBySender.isNotEmpty()) {
-                        subscriber.onNext(multipleSenderNotifications(listBySender.values))
+                val listBySender = it.groupBy { it.sender }
+                for ((contact, messages) in listBySender) {
+                    val msgCount = messages.count()
+                    if (msgCount > 1) {
+                        createMultiMessageNotification(messages, subscriber)
                     } else {
-                        subscriber.onNext(simpleSingleNotification(it[0]))
+                        createSingleMessageNotification(messages.first(), subscriber)
                     }
-                } else {
-                    subscriber.onNext(simpleSingleNotification(it[0]))
                 }
-
             }
         }
     }
 
-    private fun simpleSingleNotification(message: PersistenceDropMessage): TrayNotification {
-        return TrayNotification(renderTitle(message), renderPlaintextMessage(message))
+    private fun createMultiMessageNotification(messages: List<PersistenceDropMessage>, subscriber: Subscriber<in TrayNotification>) {
+        return subscriber.onNext(TrayNotification(renderTitle(messages.first()), renderMultiMessageBody(messages)))
     }
 
-    private fun multipleSenderNotifications(listBySender: Collection<List<PersistenceDropMessage>>): TrayNotification? {
-        listBySender.forEach { messages ->
-            val message: PersistenceDropMessage = messages.first()
-            if (messages.size > 1) {
-                return TrayNotification(renderTitle(message), renderMultiMessageBody(messages))
-            } else {
-                return simpleSingleNotification(message)
-            }
-        }
-        return null
+    private fun createSingleMessageNotification(message: PersistenceDropMessage, subscriber: Subscriber<in TrayNotification>) {
+        return subscriber.onNext(TrayNotification(renderTitle(message), renderPlaintextMessage(message)))
     }
 
     internal open fun renderMultiMessageBody(messages: List<PersistenceDropMessage>): String {
@@ -93,7 +82,4 @@ constructor(
             .renderString(dropMessage.dropPayload, resourceBundle)
     }
 
-    open fun renderMutlipleMessages(messages: List<PersistenceDropMessage>): String {
-        throw UnsupportedOperationException()
-    }
 }

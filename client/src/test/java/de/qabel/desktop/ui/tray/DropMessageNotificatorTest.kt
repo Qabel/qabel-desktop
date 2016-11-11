@@ -47,8 +47,8 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
             return "title"
         }
 
-        override fun renderMutlipleMessages(messages: List<PersistenceDropMessage>): String {
-            return "mulitple"
+        override fun renderMultiMessageBody(messages: List<PersistenceDropMessage>): String {
+            return "multi"
         }
     }
 
@@ -56,6 +56,7 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
     @Throws(Exception::class)
     override fun setUp() {
         super.setUp()
+
         notificator
             .subscribeToEvents(eventTestSubject)
             .subscribe(testSubscriber)
@@ -63,52 +64,38 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
 
     @Test
     @Throws(Exception::class)
-    fun oneNotificationByOneSender() {
-
+    fun oneMessageByOneSender() {
         sendEvent(delay1Sec)
-
         testScheduler.advanceTimeBy(3, TimeUnit.SECONDS)
         testSubscriber.assertValueCount(1)
     }
 
-    fun sendEvent(delay: Long, contact: Contact = senderContact) {
-        eventTestSubject.onNext(createNewMessageReceivedEvent(contact), delay)
+    @Test
+    fun multipleMessagesByOneSender() {
+        sendEvent(delay1Sec)
+        sendEvent(delay1Sec)
+        testScheduler.advanceTimeBy(3, TimeUnit.SECONDS)
+        testSubscriber.assertValueCount(1)
     }
 
     @Test
-    fun multipleNotificationsByMultipleSenders() {
-
+    fun oneMessageByTwoSenders() {
         sendEvent(delay1Sec)
-        sendEvent(delay1Sec)
-        sendEvent(delay1Sec, senderContact2)
         sendEvent(delay1Sec, senderContact2)
         testScheduler.advanceTimeBy(3, TimeUnit.SECONDS)
         testSubscriber.assertValueCount(2)
-
-        //fixme: still have a bug in here
-        sendEvent(delay7Sec, senderContact2)
-        testScheduler.advanceTimeBy(3, TimeUnit.SECONDS)
-        testSubscriber.assertValueCount(1)
     }
 
-    @Test
-    fun testRenderer() {
-        val message: PersistenceDropMessage = createPersistenceDropMessage(createDropMessage(senderContact), senderContact)
-        val message2: PersistenceDropMessage = createPersistenceDropMessage(createDropMessage(senderContact2), senderContact2)
+    fun sendEvent(delay: Long, contact: Contact = senderContact) = eventTestSubject.onNext(createNewMessageReceivedEvent(contact), delay)
 
-        val messages: List<PersistenceDropMessage> = mutableListOf(message, message2)
-
-
-    }
-
-    private fun createNewMessageReceivedEvent(senderContact: Contact): MessageReceivedEvent {
+    internal fun createNewMessageReceivedEvent(senderContact: Contact): MessageReceivedEvent {
         val persistenceDropMessage = createPersistenceDropMessage(createDropMessage(senderContact), senderContact)
         return MessageReceivedEvent(persistenceDropMessage)
     }
 
-    private fun createPersistenceDropMessage(dropMessage: DropMessage, senderContact: Contact) = PersistenceDropMessage(dropMessage, senderContact, me, false, false)
+    internal fun createPersistenceDropMessage(dropMessage: DropMessage, senderContact: Contact) = PersistenceDropMessage(dropMessage, senderContact, me, false, false)
 
-    private fun createDropMessage(senderContact: Contact) = DropMessage(senderContact, "payload" + Math.random(), "type")
+    internal fun createDropMessage(senderContact: Contact) = DropMessage(senderContact, "payload" + Math.random(), "type")
 
 
 }
