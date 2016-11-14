@@ -4,10 +4,13 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class TransactionGroup extends Observable implements Observer, HasProgressCollection<TransactionGroup, Transaction> {
-    public static final long METADATA_SIZE = 56320L;
     protected final Set<Transaction> transactions = new HashSet<>();
     protected final Map<Transaction, Long> transactionSize = new WeakHashMap<>();
     protected final Map<Transaction, Long> transactionTransferred = new WeakHashMap<>();
+    private List<Transaction> transactionsList;
+    private List<Transaction> filesList;
+    Boolean foundFile;
+
     private long size;
     private long transferred;
     private Runnable progressListener;
@@ -69,7 +72,7 @@ public class TransactionGroup extends Observable implements Observer, HasProgres
 
     @Override
     public double getProgress() {
-        return size == 0 ? 1.0 : (double)transferred / (double)size;
+        return size == 0 ? 1.0 : (double) transferred / (double) size;
     }
 
     @Override
@@ -108,7 +111,7 @@ public class TransactionGroup extends Observable implements Observer, HasProgres
     }
 
     public synchronized void cancel() {
-        for (Transaction t: transactions.toArray(new Transaction[0])) {
+        for (Transaction t : transactions.toArray(new Transaction[0])) {
             if (t.isDone()) {
                 continue;
             }
@@ -134,8 +137,59 @@ public class TransactionGroup extends Observable implements Observer, HasProgres
     @Override
     public long finishedElements() {
         final long[] finished = {0};
-        visitAll(t -> { if (t.isDone()) { finished[0]++;}});
+        visitAll(t -> {
+            if (t.isDone()) {
+                finished[0]++;
+            }
+        });
 
         return finished[0];
+    }
+
+    private Boolean isRemote(Transaction transaction) {
+        if (transaction instanceof Upload) {
+            return true;
+        }
+        return false;
+    }
+
+    private int countAllFiles(Boolean allFiles) {
+        synchronized (transactions) {
+            transactionsList = new ArrayList<>(transactions);
+            filesList = new LinkedList<>();
+            foundFile = false;
+            if (totalElements() > 0) {
+                filesList.add(transactionsList.get(0));
+                for (int i = 1; i < transactionsList.size(); i++) {
+                    for (int j = 0; j < filesList.size(); j++) {
+                        if (transactionsList.get(i).getDestination().equals(filesList.get(j).getDestination()) &&
+                            transactionsList.get(i).getSource().getFileName().equals(filesList.get(j).getSource().getFileName())) {
+                            foundFile = true;
+                            break;
+                        }
+                    }
+                    if (!foundFile && isRemote(transactionsList.get(i)) && !transactionsList.get(i).isDir()) {
+                        if (allFiles) {
+                            filesList.add(transactionsList.get(i));
+                        } else if (transactionsList.get(i).isDone()) {
+                            filesList.add(transactionsList.get(i));
+                        }
+                    }
+                    foundFile = false;
+                }
+                return filesList.size();
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public int totalFiles() {
+        return countAllFiles(true);
+    }
+
+    @Override
+    public int currentFinishedFiles() {
+        return countAllFiles(false);
     }
 }

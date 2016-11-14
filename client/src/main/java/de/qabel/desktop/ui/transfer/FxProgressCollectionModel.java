@@ -11,9 +11,11 @@ import java.util.function.Consumer;
 public class FxProgressCollectionModel<T> {
     boolean usePlaformThread = true;
     private DoubleProperty progressProperty = new SimpleDoubleProperty(1.0);
+    private LongProperty totalFilesProperty = new SimpleLongProperty(0);
     private LongProperty totalItemsProperty = new SimpleLongProperty(0);
     private LongProperty currentItemsProperty = new SimpleLongProperty(0);
     private ObjectProperty<T> currentItemProperty = new SimpleObjectProperty<>();
+    private LongProperty currentFilesProperty = new SimpleLongProperty(0);
     private HasProgressCollection<?, T> progress;
     private List<Consumer<T>> changeHandlers = new LinkedList<>();
 
@@ -33,6 +35,14 @@ public class FxProgressCollectionModel<T> {
         return currentItemsProperty;
     }
 
+    public LongProperty totalFilesProperty() {
+        return totalFilesProperty;
+    }
+
+    public LongProperty currentFilesProperty() {
+        return currentFilesProperty;
+    }
+
     public ObjectProperty<T> currentItemProperty() {
         return currentItemProperty;
     }
@@ -46,8 +56,10 @@ public class FxProgressCollectionModel<T> {
         run(() -> {
             progressProperty.set(progress.getProgress());
             currentItemProperty.set(currentItem);
+            totalFilesProperty.setValue(progress.totalFiles());
             totalItemsProperty.setValue(progress.totalElements());
             currentItemsProperty.setValue(progress.finishedElements());
+            currentFilesProperty.setValue(progress.currentFinishedFiles());
             for (Consumer<T> handler : changeHandlers) {
                 handler.accept(currentItem);
             }

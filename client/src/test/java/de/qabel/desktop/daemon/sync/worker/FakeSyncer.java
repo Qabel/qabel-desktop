@@ -63,6 +63,16 @@ public class FakeSyncer implements Syncer {
     }
 
     @Override
+    public int totalFiles() {
+        return 0;
+    }
+
+    @Override
+    public int currentFinishedFiles() {
+        return 0;
+    }
+
+    @Override
     public boolean isSynced() {
         return false;
     }
