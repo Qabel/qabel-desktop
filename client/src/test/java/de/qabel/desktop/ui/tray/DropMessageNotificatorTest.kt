@@ -8,8 +8,6 @@ import de.qabel.desktop.ui.AbstractControllerTest
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage
 import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory
 import de.qabel.desktop.util.Translator
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.hasSize
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
@@ -86,6 +84,7 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
         sendEvent(delay1Sec)
         testScheduler.advanceTimeBy(3, TimeUnit.SECONDS)
         testSubscriber.assertValueCount(1)
+        testSubscriber.assertValuesAndClear(testSubscriber.onNextEvents[0])
     }
 
     @Test
@@ -93,23 +92,34 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
         sendEvent(delay1Sec)
         sendEvent(delay1Sec, senderContact2)
         testScheduler.advanceTimeBy(3, TimeUnit.SECONDS)
-        assertThat(testSubscriber.onNextEvents, hasSize(2))
+        testSubscriber.assertValueCount(2)
+        testSubscriber.assertValuesAndClear(
+            testSubscriber.onNextEvents[0],
+            testSubscriber.onNextEvents[1]
+        )
     }
 
 
     @Test
     fun multipleMessagesInMultipleTimeframe() {
 
-        sendEvent(delay1Sec)
-        sendEvent(delay1Sec)
+        sendEvent(delay1Sec, senderContact2)
+        sendEvent(delay1Sec, senderContact2)
+
         sendEvent(delay6Sec)
         sendEvent(delay6Sec, senderContact2)
 
         testScheduler.advanceTimeTo(3, TimeUnit.SECONDS)
         testSubscriber.assertValueCount(1)
+        testSubscriber.assertValuesAndClear(testSubscriber.onNextEvents[0])
 
         testScheduler.advanceTimeTo(6, TimeUnit.SECONDS)
-        testSubscriber.assertValueCount(3)
+        testSubscriber.assertValueCount(2)
+        testSubscriber.assertValuesAndClear(
+            testSubscriber.onNextEvents[0],
+            testSubscriber.onNextEvents[1]
+        )
+
     }
 
     fun sendEvent(delay: Long, contact: Contact = senderContact) = eventTestSubject.onNext(createNewMessageReceivedEvent(contact), delay)
