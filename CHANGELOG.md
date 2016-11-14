@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [UNRELEASED]
 ### Fixed
 - auth token stored and used for box communication #474
+- merge sync transactions when files are pasted into synced dirs #313
 
 ## [0.11.2-beta.3] - Astonishing Arielle - 2016-11-01
 ### Fixed
@@ -33,8 +34,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - message indicator no longer disappears when chat is closed #436
-- tray icon behavior #525 
+- tray icon behavior #525
 - logging #547
-- sync overview has scrollbars #418  
+- sync overview has scrollbars #418
 
 ## [0.10.0-beta.3] - BASELINE
