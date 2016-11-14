@@ -75,6 +75,8 @@ public class RemoteFSController extends AbstractController implements Initializa
     private static Image uploadFolderImage = optionImage("/icon/folder-upload.png");
     private static Image downloadImage = optionImage("/icon/download.png");
     private static Image addFolderImage = optionImage("/icon/add_folder.png");
+    private static ImageView deleteImage = Icons.getIcon(Icons.DELETE, OPTION_EDGE_SIZE);
+    private static ImageView shareImage = Icons.getIcon(SHARE, OPTION_EDGE_SIZE);
     private FakeBoxObject shareObject;
 
     private static Image optionImage(String resourcePath) {
@@ -311,8 +313,6 @@ public class RemoteFSController extends AbstractController implements Initializa
     private void loadInlineButtons(TreeItem<BoxObject> item, HBox bar) {
         bar.getChildren().clear();
         buttonFromImage(item, bar, downloadImage, this::download, "download");
-        ImageView deleteImage = Icons.getIcon(Icons.DELETE, OPTION_EDGE_SIZE);
-        ImageView shareImage = Icons.getIcon(SHARE, OPTION_EDGE_SIZE);
 
         if (item.getValue() instanceof BoxFolder) {
             buttonFromImage(item, bar, uploadFileImage, this::uploadFile, "upload_file");
