@@ -2,6 +2,7 @@ package de.qabel.desktop.ui.tray
 
 import de.qabel.core.config.Contact
 import de.qabel.core.event.EventSource
+import de.qabel.core.util.DefaultHashMap
 import de.qabel.desktop.daemon.drop.MessageReceivedEvent
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage
 import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory
@@ -44,32 +45,45 @@ constructor(
 
         return {
             observable { subscriber ->
-                val listBySender = it.groupBy { it.sender }
-                for ((contact, messages) in listBySender) {
-                    val msgCount = messages.count()
-                    if (msgCount > 1) {
-                        subscriber.onNext(createMultiMessageNotification(messages))
-                        break
+                val messages = it
+                countMessagesByContact(messages).let { byContact ->
+                    val firstMessage = messages.first()
+                    if (byContact.size > 1) {
+                        val header = renderMultiMsgTitle(messages.size)
+                        val body = renderMultiMessageBody(messages.size, byContact)
+                        subscriber.onNext(TrayNotification(header, body))
                     } else {
-                        subscriber.onNext(createSingleMessageNotification(messages.first()))
+                        if (messages.size > 1) {
+                            val body = renderMultiMessageBody(messages.size, byContact)
+                            subscriber.onNext(TrayNotification(renderTitle(firstMessage), body))
+                        } else {
+                            subscriber.onNext(createSingleMessageNotification(firstMessage))
+                        }
                     }
                 }
             }
         }
     }
 
-    private fun createMultiMessageNotification(messages: List<PersistenceDropMessage>): TrayNotification {
-        return TrayNotification(renderTitle(messages.first()), renderMultiMessageBody(messages))
+    internal open fun renderMultiMsgTitle(size: Int): String {
+        return translator.getString("newMultipleMessagesNotificationTitle", size)
     }
 
-    private fun createSingleMessageNotification(message: PersistenceDropMessage): TrayNotification {
+    internal open fun createSingleMessageNotification(message: PersistenceDropMessage): TrayNotification {
         return TrayNotification(renderTitle(message), renderPlaintextMessage(message))
     }
 
-    internal open fun renderMultiMessageBody(messages: List<PersistenceDropMessage>): String {
-        val count = messages.size
-        val sender = (messages.first().sender as Contact).alias
-        return translator.getString("newMultipleMessagesNotification", count, sender)
+    private fun countMessagesByContact(messages: List<PersistenceDropMessage>): DefaultHashMap<Contact, Int> =
+        DefaultHashMap<Contact, Int>({ 0 }).apply {
+            messages.forEach {
+                val c = it.sender as Contact
+                put(c, getOrDefault(c).plus(1))
+            }
+        }
+
+    internal open fun renderMultiMessageBody(msgCount: Int, byContact: DefaultHashMap<Contact, Int>): String {
+        val contactsCombined = byContact.keys.map { it.alias }.sorted().joinToString(",")
+        return translator.getString("newMultipleMessagesNotification", msgCount, contactsCombined)
     }
 
     internal open fun renderTitle(message: PersistenceDropMessage): String {

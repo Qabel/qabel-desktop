@@ -3,6 +3,7 @@ package de.qabel.desktop.ui.tray
 import de.qabel.core.config.Contact
 import de.qabel.core.crypto.QblECKeyPair
 import de.qabel.core.drop.DropMessage
+import de.qabel.core.util.DefaultHashMap
 import de.qabel.desktop.daemon.drop.MessageReceivedEvent
 import de.qabel.desktop.ui.AbstractControllerTest
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage
@@ -40,23 +41,22 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
             Mockito.mock(ResourceBundle::class.java), Mockito.mock(Translator::class.java),
             tray, computationScheduler, fxScheduler) {
 
-
-        override fun renderTitle(message: PersistenceDropMessage): String {
-            return (message.sender as Contact).alias
+        override fun renderMultiMsgTitle(size: Int): String {
+            return "$size new messages"
         }
 
-        override fun renderMultiMessageBody(messages: List<PersistenceDropMessage>): String {
-            val alias = (messages.first().sender as Contact).alias
-            val size = messages.size
-            println(" $size msg from $alias")
-            return "multi from $alias"
+        override fun renderMultiMessageBody(msgCount: Int, byContact: DefaultHashMap<Contact, Int>): String {
+            val contactsCombined = byContact.keys.map { it.alias }.sorted().joinToString(",")
+            return "$msgCount new messages from $contactsCombined"
+        }
+
+        override fun renderTitle(message: PersistenceDropMessage): String {
+            val alias = (message.sender as Contact).alias
+            return "msg from $alias"
         }
 
         override fun renderPlaintextMessage(message: PersistenceDropMessage): String {
-            val alias = (message.sender as Contact).alias
-            val size = 1
-            println(" $size msg from $alias")
-            return "plain"
+            return message.dropMessage.dropPayload
         }
     }
 
@@ -92,11 +92,8 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
         sendEvent(delay1Sec)
         sendEvent(delay1Sec, senderContact2)
         testScheduler.advanceTimeBy(3, TimeUnit.SECONDS)
-        testSubscriber.assertValueCount(2)
-        testSubscriber.assertValuesAndClear(
-            testSubscriber.onNextEvents[0],
-            testSubscriber.onNextEvents[1]
-        )
+        testSubscriber.assertValueCount(1)
+
     }
 
 
@@ -107,6 +104,8 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
         sendEvent(delay1Sec, senderContact2)
 
         sendEvent(delay6Sec)
+        sendEvent(delay6Sec)
+        sendEvent(delay6Sec, senderContact2)
         sendEvent(delay6Sec, senderContact2)
 
         testScheduler.advanceTimeTo(3, TimeUnit.SECONDS)
@@ -114,11 +113,7 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
         testSubscriber.assertValuesAndClear(testSubscriber.onNextEvents[0])
 
         testScheduler.advanceTimeTo(6, TimeUnit.SECONDS)
-        testSubscriber.assertValueCount(2)
-        testSubscriber.assertValuesAndClear(
-            testSubscriber.onNextEvents[0],
-            testSubscriber.onNextEvents[1]
-        )
+        testSubscriber.assertValueCount(1)
 
     }
 
