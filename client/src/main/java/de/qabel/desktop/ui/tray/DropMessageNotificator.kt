@@ -36,6 +36,7 @@ constructor(
             .map { it.message }
             .filter { message -> !message.isSeen && !message.isSent }
             .buffer(3, TimeUnit.SECONDS, computationScheduler)
+            .filter { it.size > 0 }
             .flatMap(createCombinedNotification())
             .observeOn(computationScheduler)
             .subscribeOn(fxScheduler)
