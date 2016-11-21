@@ -5,8 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [UNRELEASED]
+
+## [0.11.3-beta.3] - Aged Autumn - 2016-11-21
 ### Fixed
 - auth token stored and used for box communication #474
+- issues with officially unsupported openJRE #420
+- missing sharing icon in filebrowser #571
+
+### Internal
+- added plugin support
 
 ## [0.11.2-beta.3] - Astonishing Arielle - 2016-11-01
 ### Fixed
