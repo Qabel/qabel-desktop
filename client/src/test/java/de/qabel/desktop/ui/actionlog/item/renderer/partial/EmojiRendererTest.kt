@@ -2,6 +2,7 @@ package de.qabel.desktop.ui.actionlog.item.renderer.partial
 
 import com.vdurmont.emoji.EmojiManager
 import de.qabel.desktop.ui.AbstractFxTest
+import de.qabel.desktop.ui.util.StaticIconProvider
 import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.image.ImageView
@@ -12,7 +13,7 @@ import org.junit.Test
 
 class EmojiRendererTest : AbstractFxTest() {
     private val EMOJI = EmojiManager.getForAlias("smiley").unicode
-    private val emojiRenderer = EmojiRenderer()
+    private val emojiRenderer = EmojiRenderer(StaticIconProvider())
 
     @Test
     fun rendersSingleEmoji() {
@@ -30,7 +31,6 @@ class EmojiRendererTest : AbstractFxTest() {
         assertThat(imageView, instanceOf<Node>(ImageView::class.java))
         return imageView as ImageView
     }
-
 
     private fun assertText(actual: Node) = assertThat(actual, instanceOf<Node>(Text::class.java))
 
