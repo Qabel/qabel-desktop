@@ -9,6 +9,7 @@ import de.qabel.desktop.ui.AbstractControllerTest
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage
 import de.qabel.desktop.util.Translator
 import de.qabel.desktop.util.UTF8Converter
+import junit.framework.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
@@ -35,7 +36,7 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
 
     val delay1Sec: Long = 1000
     val delay6Sec: Long = 6000
-
+    val chatMessageContent = "myChatDropMessagePayload"
     @Before
     @Throws(Exception::class)
     override fun setUp() {
@@ -57,6 +58,10 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
         sendEvent(delay1Sec)
         testScheduler.advanceTimeBy(3, TimeUnit.SECONDS)
         testSubscriber.assertValueCount(1)
+
+        val title = "New message from senderContact:"
+        assertEquals(title, testSubscriber.onNextEvents[0].title)
+        assertEquals(chatMessageContent, testSubscriber.onNextEvents[0].content)
     }
 
     @Test
@@ -65,7 +70,10 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
         sendEvent(delay1Sec)
         testScheduler.advanceTimeBy(3, TimeUnit.SECONDS)
         testSubscriber.assertValueCount(1)
-        testSubscriber.assertValuesAndClear(testSubscriber.onNextEvents[0])
+        val title = "New message from senderContact:"
+        val chatMessageContent = "2 messages from senderContact"
+        assertEquals(title, testSubscriber.onNextEvents[0].title)
+        assertEquals(chatMessageContent, testSubscriber.onNextEvents[0].content)
     }
 
     @Test
@@ -74,7 +82,11 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
         sendEvent(delay1Sec, senderContact2)
         testScheduler.advanceTimeBy(3, TimeUnit.SECONDS)
         testSubscriber.assertValueCount(1)
+        val title = "2 new  messages"
+        val chatMessageContent = "2 messages from senderContact, senderContact2"
 
+        assertEquals(title, testSubscriber.onNextEvents[0].title)
+        assertEquals(chatMessageContent, testSubscriber.onNextEvents[0].content)
     }
 
 
@@ -91,10 +103,21 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
 
         testScheduler.advanceTimeTo(3, TimeUnit.SECONDS)
         testSubscriber.assertValueCount(1)
+        var title = "New message from senderContact2:"
+        var chatMessageContent = "2 messages from senderContact2"
+
+        assertEquals(title, testSubscriber.onNextEvents[0].title)
+        assertEquals(chatMessageContent, testSubscriber.onNextEvents[0].content)
         testSubscriber.assertValuesAndClear(testSubscriber.onNextEvents[0])
 
         testScheduler.advanceTimeTo(6, TimeUnit.SECONDS)
         testSubscriber.assertValueCount(1)
+
+        title = "4 new  messages"
+        chatMessageContent = "4 messages from senderContact, senderContact2"
+
+        assertEquals(title, testSubscriber.onNextEvents[0].title)
+        assertEquals(chatMessageContent, testSubscriber.onNextEvents[0].content)
 
     }
 
@@ -107,6 +130,6 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
 
     internal fun createPersistenceDropMessage(dropMessage: DropMessage, senderContact: Contact) = PersistenceDropMessage(dropMessage, senderContact, me, false, false)
 
-    internal fun createDropMessage(senderContact: Contact) = DropMessage(senderContact, TextMessage("myChatDropMessagePayload").toJson(), "type")
+    internal fun createDropMessage(senderContact: Contact) = DropMessage(senderContact, TextMessage(chatMessageContent).toJson(), "type")
 
 }

@@ -83,7 +83,7 @@ constructor(
         }
 
     internal open fun renderMultiMessageBody(msgCount: Int, byContact: DefaultHashMap<Contact, Int>): String {
-        val contactsCombined = byContact.keys.map { it.alias }.sorted().joinToString(",")
+        val contactsCombined = byContact.keys.map { it.alias }.sorted().joinToString(", ")
         return translator.getString("newMultipleMessagesNotification", msgCount, contactsCombined)
     }
 
