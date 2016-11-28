@@ -4,6 +4,7 @@ import de.qabel.desktop.daemon.drop.TextMessage;
 import de.qabel.desktop.ui.actionlog.item.renderer.partial.EmojiRenderer;
 import de.qabel.desktop.ui.actionlog.item.renderer.partial.HyperlinkRenderer;
 import de.qabel.desktop.ui.actionlog.item.renderer.partial.PartialFXMessageRenderer;
+import de.qabel.desktop.ui.util.StaticIconProvider;
 import javafx.scene.Node;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -19,7 +20,7 @@ public class PlaintextMessageRenderer implements FXMessageRenderer {
 
     public PlaintextMessageRenderer() {
         partialRenderers.add(hyperlinkRenderer);
-        partialRenderers.add(new EmojiRenderer());
+        partialRenderers.add(new EmojiRenderer(new StaticIconProvider()));
     }
 
     @Override

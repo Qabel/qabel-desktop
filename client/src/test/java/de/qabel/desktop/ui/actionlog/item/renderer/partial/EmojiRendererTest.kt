@@ -18,7 +18,7 @@ class EmojiRendererTest : AbstractFxTest() {
     @Test
     fun rendersSingleEmoji() {
         val nodes = emojiRenderer.render(EMOJI)
-        assertEquals(1, nodes.size.toLong())
+        assertEquals(1, nodes.size)
         val image = assertImageView(nodes[0])
 
         assertTrue(image.styleClass.contains("emoji"))
@@ -37,10 +37,18 @@ class EmojiRendererTest : AbstractFxTest() {
     @Test
     fun rendersEmojiTextSequence() {
         val nodes = emojiRenderer.render("text with $EMOJI and another $EMOJI")
-        assertEquals(4, nodes.size.toLong())
+        assertEquals(4, nodes.size)
         assertText(nodes[0])
         assertImageView(nodes[1])
         assertText(nodes[2])
         assertImageView(nodes[3])
+    }
+
+    @Test
+    fun usesFallbackRenderingOnException() {
+        val nodes = emojiRenderer.render(":meh:").apply { assertEquals(1, this.size) }
+        val node = nodes[0]
+        assertThat(node, instanceOf<Node>(Text::class.java))
+        assertEquals(":meh:", (node as Text).text)
     }
 }
