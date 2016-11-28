@@ -284,7 +284,7 @@ public class ContactController extends AbstractController implements Initializab
         Identities ids = identityRepository.findAll();
         builder.registerTypeAdapter(Contacts.class, new ContactsTypeAdapter(ids));
         builder.registerTypeAdapter(Contact.class, new ContactTypeAdapter());
-        gson = builder.create();
+        setGson(builder.create());
     }
 
     @Override
