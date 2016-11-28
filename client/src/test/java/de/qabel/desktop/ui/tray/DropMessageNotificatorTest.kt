@@ -3,16 +3,15 @@ package de.qabel.desktop.ui.tray
 import de.qabel.core.config.Contact
 import de.qabel.core.crypto.QblECKeyPair
 import de.qabel.core.drop.DropMessage
-import de.qabel.core.util.DefaultHashMap
 import de.qabel.desktop.daemon.drop.MessageReceivedEvent
+import de.qabel.desktop.daemon.drop.TextMessage
 import de.qabel.desktop.ui.AbstractControllerTest
 import de.qabel.desktop.ui.actionlog.PersistenceDropMessage
-import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory
 import de.qabel.desktop.util.Translator
+import de.qabel.desktop.util.UTF8Converter
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
-import rx.Scheduler
 import rx.observers.TestSubscriber
 import rx.schedulers.Schedulers
 import rx.subjects.TestSubject
@@ -25,45 +24,27 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
     private val testSubscriber = TestSubscriber<TrayNotification>()
     private var eventTestSubject: TestSubject<MessageReceivedEvent> = TestSubject.create<MessageReceivedEvent>(testScheduler)
 
-    private var notificator: DropMessageNotificator = Tester(tray, testScheduler, testScheduler)
+    private val resourceBundle: ResourceBundle = ResourceBundle.getBundle("ui", Locale("te", "ST"), UTF8Converter())
+    private val translator: Translator = Translator(resourceBundle)
+
+    private lateinit var notificator: DropMessageNotificator
 
     private val me = Contact("the teser", null, QblECKeyPair().pub)
     private val senderContact = Contact("senderContact", null, QblECKeyPair().pub)
     private val senderContact2 = Contact("senderContact2", null, QblECKeyPair().pub)
-    private val messageRendererFactory: MessageRendererFactory = Mockito.mock(MessageRendererFactory::class.java)
 
     val delay1Sec: Long = 1000
     val delay6Sec: Long = 6000
-
-    private inner class Tester
-    internal constructor(tray: QabelTray, computationScheduler: Scheduler, fxScheduler: Scheduler) :
-        DropMessageNotificator(Mockito.mock(MessageRendererFactory::class.java),
-            Mockito.mock(ResourceBundle::class.java), Mockito.mock(Translator::class.java),
-            tray, computationScheduler, fxScheduler) {
-
-        override fun renderMultiMsgTitle(size: Int): String {
-            return "$size new messages"
-        }
-
-        override fun renderMultiMessageBody(msgCount: Int, byContact: DefaultHashMap<Contact, Int>): String {
-            val contactsCombined = byContact.keys.map { it.alias }.sorted().joinToString(",")
-            return "$msgCount new messages from $contactsCombined"
-        }
-
-        override fun renderTitle(message: PersistenceDropMessage): String {
-            val alias = (message.sender as Contact).alias
-            return "msg from $alias"
-        }
-
-        override fun renderPlaintextMessage(message: PersistenceDropMessage): String {
-            return message.dropMessage.dropPayload
-        }
-    }
 
     @Before
     @Throws(Exception::class)
     override fun setUp() {
         super.setUp()
+        notificator = DropMessageNotificator(
+            fxMessageRendererFactory,
+            resourceBundle, translator,
+            tray, testScheduler, testScheduler
+        )
 
         notificator
             .subscribeToEvents(eventTestSubject)
@@ -126,7 +107,6 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
 
     internal fun createPersistenceDropMessage(dropMessage: DropMessage, senderContact: Contact) = PersistenceDropMessage(dropMessage, senderContact, me, false, false)
 
-    internal fun createDropMessage(senderContact: Contact) = DropMessage(senderContact, "payload" + Math.random(), "type")
-
+    internal fun createDropMessage(senderContact: Contact) = DropMessage(senderContact, TextMessage("myChatDropMessagePayload").toJson(), "type")
 
 }
