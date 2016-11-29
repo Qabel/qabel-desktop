@@ -36,7 +36,6 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
 
     val delay1Sec: Long = 1000
     val delay6Sec: Long = 6000
-    val chatMessageContent = "myChatDropMessagePayload"
     @Before
     @Throws(Exception::class)
     override fun setUp() {
@@ -58,10 +57,10 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
         sendEvent(delay1Sec)
         testScheduler.advanceTimeBy(3, TimeUnit.SECONDS)
         testSubscriber.assertValueCount(1)
-
-        val title = "New message from senderContact:"
-        assertEquals(title, testSubscriber.onNextEvents[0].title)
-        assertEquals(chatMessageContent, testSubscriber.onNextEvents[0].content)
+        testSubscriber.onNextEvents.single().apply {
+            assertEquals("New message from senderContact:", this.title)
+            assertEquals("myChatDropMessagePayload", this.content)
+        }
     }
 
     @Test
@@ -70,10 +69,10 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
         sendEvent(delay1Sec)
         testScheduler.advanceTimeBy(3, TimeUnit.SECONDS)
         testSubscriber.assertValueCount(1)
-        val title = "New message from senderContact:"
-        val chatMessageContent = "2 messages from senderContact"
-        assertEquals(title, testSubscriber.onNextEvents[0].title)
-        assertEquals(chatMessageContent, testSubscriber.onNextEvents[0].content)
+        testSubscriber.onNextEvents.single().apply {
+            assertEquals("New message from senderContact:", this.title)
+            assertEquals("2 messages from senderContact", this.content)
+        }
     }
 
     @Test
@@ -82,11 +81,10 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
         sendEvent(delay1Sec, senderContact2)
         testScheduler.advanceTimeBy(3, TimeUnit.SECONDS)
         testSubscriber.assertValueCount(1)
-        val title = "2 new  messages"
-        val chatMessageContent = "2 messages from senderContact, senderContact2"
-
-        assertEquals(title, testSubscriber.onNextEvents[0].title)
-        assertEquals(chatMessageContent, testSubscriber.onNextEvents[0].content)
+        testSubscriber.onNextEvents.single().apply {
+            assertEquals("2 new  messages", this.title)
+            assertEquals("2 messages from senderContact, senderContact2", this.content)
+        }
     }
 
 
@@ -103,21 +101,18 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
 
         testScheduler.advanceTimeTo(3, TimeUnit.SECONDS)
         testSubscriber.assertValueCount(1)
-        var title = "New message from senderContact2:"
-        var chatMessageContent = "2 messages from senderContact2"
-
-        assertEquals(title, testSubscriber.onNextEvents[0].title)
-        assertEquals(chatMessageContent, testSubscriber.onNextEvents[0].content)
-        testSubscriber.assertValuesAndClear(testSubscriber.onNextEvents[0])
+        testSubscriber.onNextEvents.single().apply {
+            assertEquals("New message from senderContact2:", this.title)
+            assertEquals("2 messages from senderContact2", this.content)
+            testSubscriber.assertValuesAndClear(this)
+        }
 
         testScheduler.advanceTimeTo(6, TimeUnit.SECONDS)
         testSubscriber.assertValueCount(1)
-
-        title = "4 new  messages"
-        chatMessageContent = "4 messages from senderContact, senderContact2"
-
-        assertEquals(title, testSubscriber.onNextEvents[0].title)
-        assertEquals(chatMessageContent, testSubscriber.onNextEvents[0].content)
+        testSubscriber.onNextEvents.single().apply {
+            assertEquals("4 new  messages", this.title)
+            assertEquals("4 messages from senderContact, senderContact2", this.content)
+        }
 
     }
 
@@ -130,6 +125,6 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
 
     internal fun createPersistenceDropMessage(dropMessage: DropMessage, senderContact: Contact) = PersistenceDropMessage(dropMessage, senderContact, me, false, false)
 
-    internal fun createDropMessage(senderContact: Contact) = DropMessage(senderContact, TextMessage(chatMessageContent).toJson(), "type")
+    internal fun createDropMessage(senderContact: Contact) = DropMessage(senderContact, TextMessage("myChatDropMessagePayload").toJson(), "type")
 
 }
