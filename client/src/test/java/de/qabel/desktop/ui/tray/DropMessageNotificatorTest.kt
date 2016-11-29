@@ -57,10 +57,11 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
         sendEvent(delay1Sec)
         testScheduler.advanceTimeBy(3, TimeUnit.SECONDS)
         testSubscriber.assertValueCount(1)
-        testSubscriber.onNextEvents.single().apply {
-            assertEquals("New message from senderContact:", this.title)
-            assertEquals("myChatDropMessagePayload", this.content)
-        }
+
+        val message = testSubscriber.onNextEvents.single()
+        assertEquals("New message from senderContact:", message.title)
+        assertEquals("myChatDropMessagePayload", message.content)
+
     }
 
     @Test
@@ -81,12 +82,11 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
         sendEvent(delay1Sec, senderContact2)
         testScheduler.advanceTimeBy(3, TimeUnit.SECONDS)
         testSubscriber.assertValueCount(1)
-        testSubscriber.onNextEvents.single().apply {
-            assertEquals("2 new  messages", this.title)
-            assertEquals("2 messages from senderContact, senderContact2", this.content)
-        }
-    }
+        val message = testSubscriber.onNextEvents.single()
+        assertEquals("2 new  messages", message.title)
+        assertEquals("2 messages from senderContact, senderContact2", message.content)
 
+    }
 
     @Test
     fun multipleMessagesInMultipleTimeframe() {
@@ -101,19 +101,18 @@ class DropMessageNotificatorTest : AbstractControllerTest() {
 
         testScheduler.advanceTimeTo(3, TimeUnit.SECONDS)
         testSubscriber.assertValueCount(1)
-        testSubscriber.onNextEvents.single().apply {
-            assertEquals("New message from senderContact2:", this.title)
-            assertEquals("2 messages from senderContact2", this.content)
-            testSubscriber.assertValuesAndClear(this)
-        }
+        val message = testSubscriber.onNextEvents.single()
+
+        assertEquals("New message from senderContact2:", message.title)
+        assertEquals("2 messages from senderContact2", message.content)
+        testSubscriber.assertValuesAndClear(message)
 
         testScheduler.advanceTimeTo(6, TimeUnit.SECONDS)
         testSubscriber.assertValueCount(1)
-        testSubscriber.onNextEvents.single().apply {
-            assertEquals("4 new  messages", this.title)
-            assertEquals("4 messages from senderContact, senderContact2", this.content)
-        }
+        val message2 = testSubscriber.onNextEvents.single()
 
+        assertEquals("4 new  messages", message2.title)
+        assertEquals("4 messages from senderContact, senderContact2", message2.content)
     }
 
     fun sendEvent(delay: Long, contact: Contact = senderContact) = eventTestSubject.onNext(createNewMessageReceivedEvent(contact), delay)
