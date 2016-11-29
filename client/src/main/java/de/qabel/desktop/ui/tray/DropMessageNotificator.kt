@@ -9,7 +9,6 @@ import de.qabel.desktop.ui.actionlog.item.renderer.MessageRendererFactory
 import de.qabel.desktop.util.Translator
 import rx.Observable
 import rx.Scheduler
-import rx.lang.kotlin.observable
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -37,30 +36,24 @@ constructor(
             .filter { message -> !message.isSeen && !message.isSent }
             .buffer(3, TimeUnit.SECONDS, computationScheduler)
             .filter { it.size > 0 }
-            .flatMap(createCombinedNotification())
+            .map { combineNotifications(it) }
             .observeOn(computationScheduler)
             .subscribeOn(fxScheduler)
     }
 
-    private fun createCombinedNotification(): (MutableList<PersistenceDropMessage>) -> Observable<TrayNotification> {
-
-        return {
-            observable { subscriber ->
-                val messages = it
-                countMessagesByContact(messages).let { byContact ->
-                    val firstMessage = messages.first()
-                    if (byContact.size > 1) {
-                        val header = renderMultiMsgTitle(messages.size)
-                        val body = renderMultiMessageBody(messages.size, byContact)
-                        subscriber.onNext(TrayNotification(header, body))
-                    } else {
-                        if (messages.size > 1) {
-                            val body = renderMultiMessageBody(messages.size, byContact)
-                            subscriber.onNext(TrayNotification(renderTitle(firstMessage), body))
-                        } else {
-                            subscriber.onNext(createSingleMessageNotification(firstMessage))
-                        }
-                    }
+    private fun combineNotifications(messages: MutableList<PersistenceDropMessage>): TrayNotification {
+        countMessagesByContact(messages).let { byContact ->
+            val firstMessage = messages.first()
+            if (byContact.size > 1) {
+                val header = renderMultiMsgTitle(messages.size)
+                val body = renderMultiMessageBody(messages.size, byContact)
+                return TrayNotification(header, body)
+            } else {
+                if (messages.size > 1) {
+                    val body = renderMultiMessageBody(messages.size, byContact)
+                    return TrayNotification(renderTitle(firstMessage), body)
+                } else {
+                    return createSingleMessageNotification(firstMessage)
                 }
             }
         }
