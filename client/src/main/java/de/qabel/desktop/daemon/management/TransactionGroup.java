@@ -1,15 +1,15 @@
 package de.qabel.desktop.daemon.management;
 
+import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 
 public class TransactionGroup extends Observable implements Observer, HasProgressCollection<TransactionGroup, Transaction> {
-    protected final Set<Transaction> transactions = new HashSet<>();
+    protected final Set<Transaction<Path, Path>> transactions = new HashSet<>();
     protected final Map<Transaction, Long> transactionSize = new WeakHashMap<>();
     protected final Map<Transaction, Long> transactionTransferred = new WeakHashMap<>();
-    private List<Transaction> transactionsList;
-    private List<Transaction> filesList;
-    Boolean foundFile;
+    private HashManager hashManager = new HashManager();
+    List<Transaction<Path, Path>> transactionsList;
 
     private long size;
     private long transferred;
@@ -146,50 +146,21 @@ public class TransactionGroup extends Observable implements Observer, HasProgres
         return finished[0];
     }
 
-    private Boolean isRemote(Transaction transaction) {
-        if (transaction instanceof Upload) {
-            return true;
-        }
-        return false;
-    }
-
-    private int countAllFiles(Boolean allFiles) {
+    private void loadCurrentTransactions() {
         synchronized (transactions) {
             transactionsList = new ArrayList<>(transactions);
-            filesList = new LinkedList<>();
-            foundFile = false;
-            if (totalElements() > 0) {
-                filesList.add(transactionsList.get(0));
-                for (int i = 1; i < transactionsList.size(); i++) {
-                    for (int j = 0; j < filesList.size(); j++) {
-                        if (transactionsList.get(i).getDestination().equals(filesList.get(j).getDestination()) &&
-                            transactionsList.get(i).getSource().getFileName().equals(filesList.get(j).getSource().getFileName())) {
-                            foundFile = true;
-                            break;
-                        }
-                    }
-                    if (!foundFile && isRemote(transactionsList.get(i)) && !transactionsList.get(i).isDir()) {
-                        if (allFiles) {
-                            filesList.add(transactionsList.get(i));
-                        } else if (transactionsList.get(i).isDone()) {
-                            filesList.add(transactionsList.get(i));
-                        }
-                    }
-                    foundFile = false;
-                }
-                return filesList.size();
-            }
         }
-        return 0;
     }
 
     @Override
     public int totalFiles() {
-        return countAllFiles(true);
+        loadCurrentTransactions();
+        return hashManager.totalFiles(transactionsList);
     }
 
     @Override
     public int currentFinishedFiles() {
-        return countAllFiles(false);
+        loadCurrentTransactions();
+        return hashManager.finishedFiles(transactionsList);
     }
 }

@@ -96,7 +96,7 @@ public class WindowedTransactionGroupTest extends TransactionGroupTest {
         assertEquals(1.0, group.getProgress(), 0.001);
     }
 
-    public void createTransaction(UploadStub transaction, String sourcePath){
+    public void createTransaction(UploadStub transaction, String sourcePath) {
         transaction.setSize(1024);
         transaction.isDir = false;
         transaction.source = tmpPath(sourcePath);
@@ -105,7 +105,7 @@ public class WindowedTransactionGroupTest extends TransactionGroupTest {
 
     @Test
     public void countDifferentFiles() {
-        createTransaction(t1,"test1");
+        createTransaction(t1, "test1");
         createTransaction(t2, "test2");
         createTransaction(t3, "test3");
 
