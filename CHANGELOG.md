@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [UNRELEASED]
+### Fixed
+- fallback for not renderable emojis
 
 ## [0.11.3-beta.3] - Aged Autumn - 2016-11-21
 ### Fixed
@@ -40,8 +42,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - message indicator no longer disappears when chat is closed #436
-- tray icon behavior #525 
+- tray icon behavior #525
 - logging #547
-- sync overview has scrollbars #418  
+- sync overview has scrollbars #418
 
 ## [0.10.0-beta.3] - BASELINE
