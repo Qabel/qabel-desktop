@@ -1,5 +1,6 @@
 package de.qabel.desktop;
 
+import de.qabel.desktop.fuse.FusePlugin;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -22,6 +23,7 @@ public class DesktopClient {
         System.setProperty("log.root", qabelConfigRoot.toAbsolutePath().toString());
 
         Kernel kernel = Kernel.createWithDefaultPlugins(version);
+        kernel.registerPlugin(FusePlugin.class);
 
         if (args.length > 0) {
             kernel.setDatabaseFile(new File(args[0]).getAbsoluteFile().toPath());
