@@ -74,6 +74,10 @@ internal class TrayIconMouseAdapter(private val showApp: Runnable, private val b
 
     private fun buildSystemTrayJPopupMenu(): JPopupMenu {
         return  JPopupMenu().apply {
+            JMenuItem("Show").letApply {
+                it.addActionListener { ae -> showApp.run() }
+                add(it)
+            }
             JMenuItem("Exit").letApply {
                 it.addActionListener { ae -> System.exit(0) }
                 add(it)
