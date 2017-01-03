@@ -1,12 +1,12 @@
 package de.qabel.desktop.ui;
 
-import com.google.common.base.Optional;
 import com.sun.javafx.event.EventDispatchChainImpl;
 import com.sun.javafx.robot.FXRobot;
 import de.qabel.desktop.AsyncUtils;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Control;
 import javafx.scene.control.TextInputControl;
@@ -14,14 +14,13 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.PickResult;
 import javafx.scene.layout.Region;
+import org.testfx.api.FxRobot;
 import org.testfx.service.locator.BoundsLocatorException;
 import org.testfx.service.query.PointQuery;
 
-import javafx.scene.Node;
-import org.testfx.api.FxRobot;
-
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 
 import static de.qabel.desktop.AsyncUtils.assertAsync;
@@ -181,7 +180,7 @@ public class AbstractPage {
         assertAsync(() -> {
             try {
                 Optional<Node> node = robot.lookup(query).tryQuery();
-                boolean present = node.isPresent() && node.get() != null;
+                boolean present = node.isPresent();
                 if (present) {
                     nodes[0] = node.get();
                     robot.point(nodes[0]).query();
