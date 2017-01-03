@@ -1,7 +1,6 @@
 package de.qabel.desktop.ui;
 
 import com.airhacks.afterburner.views.FXMLView;
-import com.google.common.base.Optional;
 import com.sun.javafx.robot.impl.BaseFXRobot;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
@@ -15,6 +14,8 @@ import org.junit.rules.TestRule;
 import org.testfx.api.FxRobot;
 import org.testfx.service.locator.BoundsLocatorException;
 import org.testfx.service.query.PointQuery;
+
+import java.util.Optional;
 
 import static de.qabel.desktop.AsyncUtils.assertAsync;
 
