@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [UNRELEASED]
 ### Fixed
 
-## [0.11.4-beta.3] - Abhorrent Archive
+## [0.11.4-beta.3] - Abhorrent Archive - 2017-02-01
 
 ### Changed
 - Update legal texts
