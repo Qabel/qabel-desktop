@@ -37,7 +37,7 @@ english.licenseFile=en_license.txt
 german.licenseFile=de_license.txt
 english.termsFile=en_terms.txt
 german.termsFile=de_terms.txt
-english.policyFile=de_policy.txt
+english.policyFile=en_policy.txt
 german.policyFile=de_policy.txt
 
 english.DeleteConfig=Do you want to delete the configuration file?%n%nIf you delete the configuration file, your identities will be deleted as well and you will not be able to access your uploaded data anymore. Export your identities before you delete the configuration file, if you would still like to be able to access your data (e.g. from a different device or anytime in the future).%n%nTo export your identity, click on "Export identity" under "Identities" in your Qabel client.%n%nYour identity contains your private key. Store it safely and don't pass it on to third parties.
