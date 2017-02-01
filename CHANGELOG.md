@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [UNRELEASED]
 ### Fixed
+
+## [0.11.4-beta.3] - Abhorrent Archive
+
+### Changed
+- Update legal texts
+
+### Fixed
 - fallback for not renderable emojis
 
 ## [0.11.3-beta.3] - Aged Autumn - 2016-11-21
