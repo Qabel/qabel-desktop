@@ -45,3 +45,71 @@ E-Mail: datenschutz@qabel.de
 [13] Änderungen der Datenschutzerklärung
 Der Anbieter behält sich das Recht vor, diese Datenschutzerklärung unter Beachtung der datenschutzrechtlichen Vorschriften zu ändern. Für Fragen und Anregungen, die sich auf den Schutz personenbezogener Daten bei dem Anbieter oder im Allgemeinen beziehen, schicken Sie uns gerne eine E-Mail an datenschutz@qabel.de.
 Qabel GmbH, Hannover, Stand September 2016
+
+=================================================
+
+Usage Note Usage Note: This version is a translation of the German text provided for your convenience. In case of conflict or ambiguities the German version of this text shall prevail.
+
+Privacy Policy Qabel App
+
+The Qabel GmbH takes the protection of your personal data seriously. This is not just lip service, but the reason why we develop tools that help to keep user data in the user’s hand. Therefore we strive to collect as little personal information as possible to process or use. The personal data resulting from the use of our services, we only process in accordance with applicable data protection regulations. We will explain below how to achieve these goals:
+
+[1] Responsible Party – Scope
+[a] Qabel GmbH, Goseriede 4, 30159 Hannover (hereinafter "Provider")
+[b] This Statement of Privacy applies to the Qabel platform (hereinafter also "Qabel services") and the client software (hereinafter also "Qabel client").
+[c] If the user decides to make use of advanced features and services that incur a fee (hereinafter referred to as "Upgrade"), these are offered via the e-commerce provider MyCommerce Share-it. The Privacy Policy of MyCommerce Share-it will prevail.
+
+[2] Principles of data processing
+[a] End-to-end encryption: The most important principle and core concern of Qabel is a genuine end-to-end encryption of all information that users store on Qabel or exchange via Qabel. Stored content is encrypted so that, according to the current state of the art, neither Qabel nor third parties can access it. Data is encrypted on the user's device by the Qabel client before it is transfered to the online storage location. However, because Qabel does not retain the users' keys, it also means that Qabel can not restore user content, should the key get lost. Therefore, Qabel will never ask the user for his key.
+[b] User control: Through the use of encryption, we implement a central claim of data protectionists. The user should be able to decide and control who knows what about him and when.
+[c] Data economy: Following the principle of data reduction and data economy we collect and process as little personal data as possible.
+
+[3] Technical protection measures
+[a] We secure our systems by means of technical and organizational protection measures against loss, destruction, access, alteration or dissemination of user data by unauthorized persons.
+Despite regular controls, however, absolute protection against all dangers is not possible. In particular, we point out that the data transmission on the Internet may have security vulnerabilities. Therefore, a seamless protection of your data against access by third parties is not possible.
+[b] The Qabel services are available as a beta version. A beta version is an unfinished software version of which we can not fully guarantee the protection of the user's personal data, in particular the error-free functioning of the encryption.
+
+[4] Registration of a user account – consent
+[a] In order to use the Qabel service, the user agrees to the collection, processing and use of the following (personal) data:
+[b] Inventory data: for instance, the e-mail address specified during the registration process, as well as a personal username, the  password oft he user ("Salting hashing procedure"), the registration date, if/when the user has confirmed his e-mail address and if applicable, when
+there was last sent a reminder e-mail with the request to confirm the specified e-mail address as the user’s.
+[c] Usage data: for instance, the IP address of the user, date and number of accesses, generated traffic and currently used memory.
+[d] Content data: The content which the user stores on his storage space is fully encrypted and according to the current state of the art cannot be decrypted by the provider, which does not own the key.
+[e] If the user makes use of the upgrade, MyCommerce Share-it transfers other personal data required (for instance, name, e-mail address, method of payment – but not credit card information) to set up and administer user accounts, amount of purchase, delivery address, invoice address) to the provider. All these data are stored.
+
+[5] Data transmission to third parties
+[a] Unless in this Privacy Policy expressly stated otherwise, the supplier does not transmit user data to third parties.
+[b] The provider will, exceptionally, share the data of its users if it is legally obliged to do so, for example because a law enforcement agency or other government agency has requested such information or a third party needs the data for the technical support or execution of the Qabel services. In these cases, the third party is obliged to process or use the transmitted personal data in accordance with this Privacy Policy.
+
+[6] Consent for third party applications
+[a] For the improvement, troubleshooting and weak spot analysis of the Qabel services the supplier uses the software analysis tool HockeyApp. HockeyApp is a beta test platform operated by the Microsoft Corporation to analyze malfunctionings of the Qabel services. The Privacy Policy of HockeyApp is available at http://hockeyapp.net/privacy/. If the Qabel client crashes, the user can send a crash report to HockeyApp. The report includes inforamtion about date and time of the crash, the affected software module, operating system used, language, as well as device type and IP address. The crash report will be sent to HockeyApp only after approval by the user. The information contained in the crash report can be partly processed in the USA. The user agrees to the transmisson of the aforementioned data to the USA. If you send us a message via the feedback function, this will also be transmitted and processed by Hockey-APP.
+[b] In order to operate the index service through which users can find contacts and network with acquaintances the provider uses the SMS service Plivo. You can view the Privacy Policy of Plivo here https://www.plivo.com/privacy/. The user may announce his mobile telephone number on the index server of the Qabel service to be found by other users of the Qabel service. The mobile phone number is verified via SMS to the user.
+
+[7] Use of inventory data
+We only use your e-mail address to inform you about new versions of the client software, new features, changes to this Privacy Policy and Terms of Service as well as other security information.
+
+[8] Analysis of user data, Log Files
+In order to ensure consistent quality and speed for all users (rate limits), we collect and process the usage data as per 4c for determining the traffic caused by users. This data is stored. See also our Fair Use Policy http://www.qabel.de/en/legal/fairuse/.
+
+[9] Account termination, data deletion
+[a] In order to terminate your account, please contact delete@qabel.de stating your user name and e-mail address. Then we will send you an verification e-mail to make sure, that the termination request was sent by you. If the user account is deleted, all data stored on it including the encrypted data are also deleted completely.
+[b] Data that the user has shared with other users and which these users have stored separately are not affected by the deletion.
+
+[10] Contact
+You have the possibility to get in contact with us. We only use the data you provide to process your requests. The data will not be transmitted to third parties or used for advertising purposes.
+
+[11] Inviting new people
+Users can use Qabel to invite known people via e-mail. If the user selects this function in the Qabel client, a new message (for instance, e-mail, messenger) opens with a standard invitation text in a new window. The users themselves determine the recipients of the message. The addresses of the recipients will not be stored.
+
+[12] Provision of information
+You have the right to cost-free information about your stored data (this also includes negative information, i. e. the information that no data has been stored about you), as well as the right to correct, block or delete this data if necessary. For questions concerning the collection, processing or use of your personal data, as well as for information, correction, blocking or deletion of data, please contact:
+
+Qabel GmbH
+Goseriede 4 / Tiedthof
+30159 Hannover
+E-mail: datenschutz@qabel.de
+
+[13] Changes to the Privacy Policy
+The provider reserves the right to change this Privacy Policy in compliance with data protection regulations. For questions or suggestions concerning the protection of personal data with the supplier or in general please send us an e-mail to datenschutz@qabel.de.
+
+Qabel GmbH, Hannover, as of September 2016
