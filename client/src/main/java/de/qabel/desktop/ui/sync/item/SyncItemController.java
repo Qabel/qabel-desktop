@@ -30,6 +30,8 @@ import org.apache.commons.lang3.StringUtils;
 import javax.inject.Inject;
 import java.awt.*;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
 public class SyncItemController extends AbstractController implements Initializable {
@@ -148,30 +150,30 @@ public class SyncItemController extends AbstractController implements Initializa
             confirmationDialog.setTitle(resources.getString("deleteSyncConfirmationHeadline"));
             confirmationDialog.setHeaderText(null);
             confirmationDialog.showAndWait()
-                    .ifPresent(buttonType -> {
-                        try {
-                            if (buttonType != ButtonType.YES) {
-                                return;
-                            }
-                            boxSyncRepository.delete(syncConfig);
-                            new Thread(() -> {
-                                if (syncConfig.getSyncer() != null) {
-                                    try {
-                                        syncConfig.getSyncer().stop();
-                                    } catch (InterruptedException e) {
-                                        // best effort
-                                        alert("error while stopping sync: " + e.getMessage(), e);
-                                    } finally {
-                                        syncConfig.setSyncer(null);
-                                    }
-                                }
-                            }).start();
-                        } catch (PersistenceException e) {
-                            throw new IllegalStateException("failed to delete sync: " + e.getMessage(), e);
-                        } finally {
-                            confirmationDialog = null;
+                .ifPresent(buttonType -> {
+                    try {
+                        if (buttonType != ButtonType.YES) {
+                            return;
                         }
-                    });
+                        boxSyncRepository.delete(syncConfig);
+                        new Thread(() -> {
+                            if (syncConfig.getSyncer() != null) {
+                                try {
+                                    syncConfig.getSyncer().stop();
+                                } catch (InterruptedException e) {
+                                    // best effort
+                                    alert("error while stopping sync: " + e.getMessage(), e);
+                                } finally {
+                                    syncConfig.setSyncer(null);
+                                }
+                            }
+                        }).start();
+                    } catch (PersistenceException e) {
+                        throw new IllegalStateException("failed to delete sync: " + e.getMessage(), e);
+                    } finally {
+                        confirmationDialog = null;
+                    }
+                });
         });
     }
 
@@ -182,8 +184,11 @@ public class SyncItemController extends AbstractController implements Initializa
     private String renderTransaction(Transaction transaction) {
         String filename = transaction.getDestination().getFileName().toString();
         String direction = transaction instanceof Upload ? "Remote" : "Local";
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
         String type = transaction.getType().toString();
-        return filename + " (" + StringUtils.capitalize(type) + " " + transaction.getSize() / 1024 + "kb)";
+        return filename + " (" + StringUtils.capitalize(type) + " " +
+            dateFormat.format(transaction.getMtime()) + " " +
+            transaction.getSize() / 1024 + "kb)";
     }
 
     private void updateSyncStatus() {
@@ -199,14 +204,14 @@ public class SyncItemController extends AbstractController implements Initializa
             return "Ready";
         }
 
-        long totalTransfers = progressModel.totalItemsProperty().get();
+        long totalTransfers = progressModel.totalFilesProperty().get();
         if (syncConfig.getSyncer() == null) {
             return "unknown";
         }
         if (totalTransfers == 0) {
-            return "Collecting files... " + syncConfig.getSyncer().getHistory().size();
+            return "Collecting files... " + syncConfig.getSyncer().totalFiles();
         }
-        return "Syncing: " + progressModel.currentItemsProperty().get() + " / " + totalTransfers;
+        return "Syncing: " + progressModel.currentFilesProperty().get() + " / " + totalTransfers;
     }
 
     @FXML
@@ -218,13 +223,13 @@ public class SyncItemController extends AbstractController implements Initializa
 
             StringBuilder history = new StringBuilder();
             syncConfig.getSyncer().getHistory().stream()
-                    .sorted((o1, o2) -> (int)(o1.transactionAge() - o2.transactionAge()))
-                    .forEach(transaction -> {
-                        if (history.length() != 0) {
-                            history.append("\n");
-                        }
-                        history.append(renderTransaction(transaction)).append(" ").append(transaction.getState());
-                    });
+                .sorted((o1, o2) -> (int) (o1.transactionAge() - o2.transactionAge()))
+                .forEach(transaction -> {
+                    if (history.length() != 0) {
+                        history.append("\n");
+                    }
+                    history.append(renderTransaction(transaction)).append(" ").append(transaction.getState());
+                });
 
             TextArea textArea = new TextArea(history.toString());
             VBox.setMargin(textArea, new Insets(10, 0, 5, 0));

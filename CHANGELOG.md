@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.11.3-beta.3] - Aged Autumn - 2016-11-21
 ### Fixed
 - auth token stored and used for box communication #474
+- merge sync transactions when files are pasted into synced dirs #313
 - issues with officially unsupported openJRE #420
 - missing sharing icon in filebrowser #571
 

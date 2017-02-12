@@ -14,4 +14,8 @@ public interface HasProgressCollection<T, S> extends HasProgress<T> {
      * get the number of finished element, representing the current progress compared to totalElements()
      */
     long finishedElements();
+
+    int totalFiles();
+
+    int currentFinishedFiles();
 }

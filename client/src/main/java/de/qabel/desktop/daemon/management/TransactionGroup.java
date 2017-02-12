@@ -1,13 +1,16 @@
 package de.qabel.desktop.daemon.management;
 
+import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 
 public class TransactionGroup extends Observable implements Observer, HasProgressCollection<TransactionGroup, Transaction> {
-    public static final long METADATA_SIZE = 56320L;
-    protected final Set<Transaction> transactions = new HashSet<>();
+    protected final Set<Transaction<Path, Path>> transactions = new HashSet<>();
     protected final Map<Transaction, Long> transactionSize = new WeakHashMap<>();
     protected final Map<Transaction, Long> transactionTransferred = new WeakHashMap<>();
+    private HashManager hashManager = new HashManager();
+    List<Transaction<Path, Path>> transactionsList;
+
     private long size;
     private long transferred;
     private Runnable progressListener;
@@ -69,7 +72,7 @@ public class TransactionGroup extends Observable implements Observer, HasProgres
 
     @Override
     public double getProgress() {
-        return size == 0 ? 1.0 : (double)transferred / (double)size;
+        return size == 0 ? 1.0 : (double) transferred / (double) size;
     }
 
     @Override
@@ -108,7 +111,7 @@ public class TransactionGroup extends Observable implements Observer, HasProgres
     }
 
     public synchronized void cancel() {
-        for (Transaction t: transactions.toArray(new Transaction[0])) {
+        for (Transaction t : transactions.toArray(new Transaction[0])) {
             if (t.isDone()) {
                 continue;
             }
@@ -134,8 +137,30 @@ public class TransactionGroup extends Observable implements Observer, HasProgres
     @Override
     public long finishedElements() {
         final long[] finished = {0};
-        visitAll(t -> { if (t.isDone()) { finished[0]++;}});
+        visitAll(t -> {
+            if (t.isDone()) {
+                finished[0]++;
+            }
+        });
 
         return finished[0];
+    }
+
+    private void loadCurrentTransactions() {
+        synchronized (transactions) {
+            transactionsList = new ArrayList<>(transactions);
+        }
+    }
+
+    @Override
+    public int totalFiles() {
+        loadCurrentTransactions();
+        return hashManager.totalFiles(transactionsList);
+    }
+
+    @Override
+    public int currentFinishedFiles() {
+        loadCurrentTransactions();
+        return hashManager.finishedFiles(transactionsList);
     }
 }

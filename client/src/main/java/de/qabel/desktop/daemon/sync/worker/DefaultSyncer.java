@@ -484,4 +484,14 @@ public class DefaultSyncer implements Syncer {
     public long finishedElements() {
         return progress.finishedElements();
     }
+
+    @Override
+    public int totalFiles() {
+        return progress.totalFiles();
+    }
+
+    @Override
+    public int currentFinishedFiles() {
+        return progress.currentFinishedFiles();
+    }
 }
