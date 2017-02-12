@@ -22,16 +22,18 @@ public class AwtQabelTray implements QabelTray {
         this.toastStrategy = toastStrategy;
     }
 
-    private void showApp() {
+    protected void showApp() {
         Platform.runLater(() -> {
             if (!primaryStage.isShowing()) {
                 primaryStage.show();
             }
+            primaryStage.setIconified(false);
             primaryStage.toFront();
         });
     }
 
-    private void bringAppToFront() {
+    protected void bringAppToFront() {
+        Platform.runLater(() -> primaryStage.setIconified(false));
         Platform.runLater(primaryStage::toFront);
     }
 

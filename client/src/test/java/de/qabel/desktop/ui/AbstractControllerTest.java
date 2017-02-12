@@ -16,7 +16,6 @@ import de.qabel.core.index.IndexService;
 import de.qabel.core.repository.*;
 import de.qabel.core.repository.inmemory.*;
 import de.qabel.desktop.BlockSharingService;
-import de.qabel.desktop.ServiceFactory;
 import de.qabel.desktop.SharingService;
 import de.qabel.desktop.config.ClientConfig;
 import de.qabel.desktop.config.FilesAbout;
@@ -29,7 +28,7 @@ import de.qabel.desktop.daemon.sync.SyncDaemon;
 import de.qabel.desktop.daemon.sync.worker.FakeSyncerFactory;
 import de.qabel.desktop.daemon.sync.worker.index.SyncIndexFactory;
 import de.qabel.desktop.daemon.sync.worker.index.sqlite.SqliteSyncIndexFactory;
-import de.qabel.desktop.inject.DefaultServiceFactory;
+import de.qabel.desktop.inject.CompositeServiceFactory;
 import de.qabel.desktop.repository.BoxSyncRepository;
 import de.qabel.desktop.repository.DropMessageRepository;
 import de.qabel.desktop.repository.ShareNotificationRepository;
@@ -39,7 +38,9 @@ import de.qabel.desktop.ui.actionlog.item.renderer.PlaintextMessageRenderer;
 import de.qabel.desktop.ui.connector.DropConnector;
 import de.qabel.desktop.ui.inject.AfterburnerInjector;
 import de.qabel.desktop.ui.inject.RecursiveInjectionInstanceSupplier;
+import de.qabel.desktop.ui.tray.DropMessageNotificator;
 import de.qabel.desktop.ui.util.CallbackFileChooserFactory;
+import de.qabel.desktop.util.Translator;
 import javafx.beans.property.SimpleListProperty;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
@@ -63,7 +64,7 @@ import static org.mockito.Mockito.mock;
 public class AbstractControllerTest extends AbstractFxTest {
     protected static Logger logger;
     protected TransactionManager transactionManager = new InMemoryTransactionManager();
-    protected ServiceFactory diContainer = new DefaultServiceFactory();
+    protected CompositeServiceFactory diContainer = new CompositeServiceFactory();
     protected IdentityRepository identityRepository = new InMemoryIdentityRepository();
     protected ClientConfig clientConfiguration;
     protected IdentityBuilderFactory identityBuilderFactory;
@@ -89,6 +90,8 @@ public class AbstractControllerTest extends AbstractFxTest {
     protected Parent layoutWindow = new Pane();
     protected int remoteDebounceTimeout;
     protected EventDispatcher eventDispatcher = new SubjectEventDispatcher();
+    protected DropMessageNotificator dropMessageNotificator;
+    protected Translator translator;
 
     protected FXMessageRendererFactory fxMessageRendererFactory = new FXMessageRendererFactory();
     protected PlaintextMessageRenderer plaintextMessageRenderer = new PlaintextMessageRenderer();
@@ -119,6 +122,8 @@ public class AbstractControllerTest extends AbstractFxTest {
     @Before
     public void setUp() throws Exception {
         Locale.setDefault(new Locale("te", "ST"));
+        translator = new Translator(QabelFXMLView.getDefaultResourceBundle());
+        diContainer.put("translator", translator);
         clientConfiguration = new RepositoryBasedClientConfig(
             clientConfigRepository,
             accountRepository,

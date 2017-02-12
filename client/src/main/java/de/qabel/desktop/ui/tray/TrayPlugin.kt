@@ -13,7 +13,9 @@ import de.qabel.desktop.plugin.ServiceFactoryProvider
 import de.qabel.desktop.repository.DropMessageRepository
 import de.qabel.desktop.ui.actionlog.item.renderer.FXMessageRendererFactory
 import de.qabel.desktop.util.Translator
+import javafx.application.Platform
 import javafx.stage.Stage
+import rx.Scheduler
 import java.util.*
 import javax.inject.Inject
 
@@ -32,17 +34,19 @@ class TrayPlugin : ClientPlugin, ServiceFactoryProvider, QabelLog {
     private lateinit var resourceBundle: ResourceBundle
     @Inject
     private lateinit var dropMessageNotificator: DropMessageNotificator
+    @Inject
+    private lateinit var fxScheduler: Scheduler
 
     override fun getServiceFactory(): ServiceFactory = TrayServiceFactory()
 
     override fun initialize(serviceFactory: CompositeServiceFactory, events: EventSource) {
         installTray(events)
         dropMessageNotificator.subscribe(events)
-        closeOnMainStage(events)
+        minimizeMainStage(events)
     }
 
-    private fun closeOnMainStage(events: EventSource) = events.events(MainStageShownEvent::class.java)
-        .subscribe { event -> event.primaryStage.close() }
+    private fun minimizeMainStage(events: EventSource) = events.events(MainStageShownEvent::class.java)
+        .subscribe { event -> Platform.runLater { event.primaryStage.isIconified = true } }
 
     private fun installTray(events: EventSource) = events.events(ClientStartedEvent::class.java)
         .subscribe { event ->
