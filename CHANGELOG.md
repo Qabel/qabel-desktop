@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Internal
 - added plugin support
 
+### Changed
+- tray notification combining #527
+
 ## [0.11.2-beta.3] - Astonishing Arielle - 2016-11-01
 ### Fixed
 - sync stops trying to sync parents
